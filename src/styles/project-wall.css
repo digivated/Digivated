@@ -62,3 +62,14 @@ html body.platform.light-theme.wall-experience .compact-site-header :is(.header-
 .wall-experience .platform-footer { margin-top:0; }
 @media(max-width:760px) { .wall-experience .wall-grid { inset:-4% -24%; grid-template-columns:repeat(6,minmax(0,1fr)); grid-auto-rows:clamp(90px,23vw,150px); gap:6px; } .wall-experience .wall-tile { grid-column:span 2; } .wall-experience .wall-tile.wall-shape-0,.wall-experience .wall-tile.wall-shape-4 { grid-column:span 3; } .wall-experience .wall-tile.wall-shape-2,.wall-experience .wall-tile.wall-shape-6 { grid-column:span 2; } .wall-experience .wall-hint { top:78px; font-size:.5rem; } .wall-experience .wall-intro { bottom:32px; left:22px; right:22px; } html body.platform.light-theme.wall-experience .wall-intro h1 { font-size:clamp(3.4rem,14vw,5.8rem); } .wall-experience .wall-focus-panel { padding:16px 16px 24px; } .wall-experience .wall-focus-art { height:32vh; } }
 @media(prefers-reduced-motion:reduce) { .wall-experience .wall-grid,.wall-experience .wall-tile,.wall-experience .wall-tile img { transition:none; } }
+/* Full-viewport WebGL canvas, with the project directory as an accessible fallback. */
+.wall-experience .wall-react-root,.wall-experience .wall-stage { position:absolute; inset:0; }
+.wall-experience .wall-stage canvas { display:block; width:100%; height:100%; touch-action:pan-y; }
+.wall-experience .wall-dom-grid { z-index:0; }
+.wall-experience .wall-fallback { position:absolute; z-index:2; bottom:8%; left:5%; max-width:480px; }
+.wall-experience .wall-fallback h1 { font:400 clamp(3rem,8vw,7rem)/.95 Georgia,serif; }
+.wall-experience .wall-fallback a { color:white; }
+.wall-experience .wall-noscript { position:relative; z-index:2; padding:20px; color:white; }
+.wall-experience .wall-noscript a { color:white; }
+.wall-experience .wall-focus-backdrop { width:100%; border:0; padding:0; }
+@media(max-width:760px) { .wall-experience .wall-stage canvas { touch-action:pan-y; } }
