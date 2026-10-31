@@ -252,3 +252,23 @@ html body.platform.light-theme.wall-experience .wall-grid-view .wall-status { po
  html body.platform.light-theme.wall-experience .wall-dom-grid { inset-block-start:232px; }
  html body.platform.light-theme.moments-theme.projects-dashboard .wall-dom-grid { inset-block-start:304px; }
 }
+
+/* Project actions belong to the card; the card itself is no longer a nested button. */
+.wall-experience .wall-dom-grid .wall-tile { cursor:default; }
+.wall-experience .wall-card-open { display:flex; flex:1 1 auto; flex-direction:column; width:100%; min-height:0; padding:0; border:0; background:transparent; color:inherit; text-align:left; cursor:pointer; }
+.wall-experience .wall-card-open:focus-visible { outline:2px solid #263a43; outline-offset:-3px; }
+.wall-experience .wall-dom-grid .wall-card-open .wall-card-media { flex:1 1 auto; }
+.wall-experience .wall-grid-view .wall-card-grid .wall-card-open .wall-card-media { flex:none; }
+.wall-experience .wall-card-actions { display:flex; align-items:center; gap:5px; width:100%; min-width:0; padding:10px 14px; border-top:1px solid #e2e7e9; background:#fff; color:#4d5a60; }
+html body.platform.light-theme.wall-experience .wall-card-actions button { display:inline-flex; align-items:center; justify-content:center; gap:5px; min-height:32px; padding:5px 7px; border:0; border-radius:7px; background:transparent; color:#344148; font:600 .71rem 'Inter Variable',system-ui,sans-serif; white-space:nowrap; cursor:pointer; }
+html body.platform.light-theme.wall-experience .wall-card-actions button:hover,html body.platform.light-theme.wall-experience .wall-card-actions button[aria-pressed=true] { background:#e8eeef; color:#20282c; }
+.wall-experience .wall-card-actions button:focus-visible { outline:2px solid #263a43; outline-offset:2px; }
+.wall-experience .wall-action-icon,.wall-experience .wall-action-icon svg { display:inline-block; width:16px; height:16px; flex:none; }
+.wall-experience .wall-view-count { display:inline-flex; align-items:center; gap:5px; margin-left:auto; font-size:.7rem; white-space:nowrap; }
+.wall-experience .wall-focus-panel>.wall-card-actions { justify-content:center; margin:0 0 16px; border:1px solid #e2e7e9; border-radius:10px; }
+@media(max-width:760px) {
+ .wall-experience .wall-grid-view .wall-card-grid .wall-card-actions { padding:7px 6px; gap:1px; }
+ .wall-experience .wall-grid-view .wall-card-grid .wall-card-actions button { padding:4px; }
+ .wall-experience .wall-grid-view .wall-card-grid .wall-card-actions button>span:not(.wall-action-icon):not(.card-feedback-count):not([data-like-count]) { display:none; }
+ .wall-experience .wall-grid-view .wall-card-grid .wall-view-count { font-size:.61rem; }
+}

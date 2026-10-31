@@ -28,6 +28,7 @@ export function observeProjectViews() {
         if (views === null) { stopped.add(id); return; } // Bot traffic is intentionally excluded.
         if (!Number.isSafeInteger(views) || views < 0) throw new Error('Invalid count');
         lastSuccess.set(id, Date.now()); failures.delete(id);
+        document.dispatchEvent(new CustomEvent('digivated:project-view-updated',{detail:{id,views}}));
         for (const label of document.querySelectorAll('[data-project-views]')) {
           if (label.dataset.projectViews === id) label.textContent = viewLabel(views);
         }
