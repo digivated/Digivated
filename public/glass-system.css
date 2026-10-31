@@ -1,0 +1,90 @@
+/* Digivated preview glass system. Scoped to the public platform, preserving existing page structure. */
+html body.platform.light-theme.moments-theme {
+  --glass-surface:rgba(24,37,37,.70); --glass-surface-strong:rgba(15,26,27,.88);
+  --glass-edge:rgba(218,248,245,.32); --glass-edge-hot:rgba(233,255,251,.70);
+  --glass-copy:#e9f3ef; --glass-muted:#b8c7c3; --glass-accent:#d9f6eb;
+  background:radial-gradient(ellipse 55vw 44vw at 82% 6%,#2a44424d,transparent 74%),radial-gradient(ellipse 44vw 38vw at 9% 50%,#25384538,transparent 80%),#090e0f;
+  color:#f5faf8;
+}
+html body.platform.light-theme.moments-theme main#main { background:transparent; }
+html body.platform.light-theme.moments-theme .platform-header.compact-site-header {
+  border:1px solid #d7f6ec3b; border-radius:0 0 20px 20px;
+  background:linear-gradient(115deg,#203532bd,#101b1bd8 65%,#26383ab8);
+  box-shadow:inset 0 1px #ffffff64,0 12px 44px #0007;
+  backdrop-filter:blur(22px) saturate(1.55); -webkit-backdrop-filter:blur(22px) saturate(1.55);
+}
+html body.platform.light-theme.moments-theme.wall-experience .platform-header.compact-site-header { background:linear-gradient(115deg,#1c2d2bc4,#0a1415b6); }
+html body.platform.light-theme.moments-theme .compact-site-header .header-primary { display:flex; gap:3px; padding:4px; border:1px solid #ffffff36; border-radius:999px; background:#ffffff0c; box-shadow:inset 0 1px #ffffff38; }
+html body.platform.light-theme.moments-theme .compact-site-header .header-primary a { border-radius:999px; transition:background .22s,transform .22s; }
+html body.platform.light-theme.moments-theme .compact-site-header .header-primary a:hover,html body.platform.light-theme.moments-theme .compact-site-header .header-primary a[aria-current=page] { background:#d7eee932; transform:translateY(-1px); }
+html body.platform.light-theme.moments-theme .compact-site-header :is(.header-login,.header-search,.notebook-navigation>summary) {
+  border:1px solid #e1fff08a; border-radius:999px; background:linear-gradient(135deg,#f2fff52b,#d9f8ed08 55%,#ecfff31d);
+  color:#f7fffb; box-shadow:inset 0 1px #ffffff9a,inset 0 -1px #ffffff1f,0 5px 16px #0005;
+  backdrop-filter:blur(12px) saturate(1.5); -webkit-backdrop-filter:blur(12px) saturate(1.5);
+  transition:transform .25s,border-color .25s,background .25s;
+}
+html body.platform.light-theme.moments-theme .compact-site-header :is(.header-login,.header-search,.notebook-navigation>summary):hover { transform:translateY(-2px); border-color:#fff; background:#d9f6eb3b; }
+html body.platform.light-theme.moments-theme .notebook-navigation .navigation-panel {
+  border:1px solid #e7fff17a; border-radius:20px; background:linear-gradient(145deg,#253938e8,#111e20ef);
+  color:#f5faf7; box-shadow:inset 0 1px #ffffff61,0 28px 80px #000b;
+  backdrop-filter:blur(28px) saturate(1.45); -webkit-backdrop-filter:blur(28px) saturate(1.45);
+}
+html body.platform.light-theme.moments-theme .navigation-panel :is(.navigation-main,.navigation-builder),html body.platform.light-theme.moments-theme .navigation-bottom-row { background:transparent; border-color:#ffffff2c; }
+html body.platform.light-theme.moments-theme .navigation-destinations>a:hover,html body.platform.light-theme.moments-theme .navigation-products a:hover { border-radius:12px; background:#def8e629; }
+html body.platform.light-theme.moments-theme :is(.navigation-icon,.navigation-feature-art) { background:#e3fff116; border-color:#e3fff155; }
+/* The wall remains the WebGL canvas. Its controls are light lenses above it. */
+html body.platform.light-theme.wall-experience .wall-navigation { gap:12px; }
+html body.platform.light-theme.wall-experience .wall-search input[type=search],html body.platform.light-theme.wall-experience .wall-page-controls {
+  border:1px solid #ecfff09a; border-radius:20px; background:linear-gradient(130deg,#d6faea39,#0b2225a9 68%,#f5fff326);
+  color:#fff; box-shadow:inset 0 1px #ffffff8a,0 10px 30px #0009;
+  backdrop-filter:blur(18px) saturate(1.6); -webkit-backdrop-filter:blur(18px) saturate(1.6);
+}
+html body.platform.light-theme.wall-experience .wall-page-controls button { border-radius:14px; background:#eafff021; transition:background .2s,transform .2s; }
+html body.platform.light-theme.wall-experience .wall-page-controls button:not(:disabled):hover { background:#eafff052; transform:scale(1.06); }
+html body.platform.light-theme.wall-experience .wall-intro-links a { border:1px solid #edfff0b5; border-radius:999px; padding:10px 18px; background:linear-gradient(135deg,#f2fff32e,#18332d8f); box-shadow:inset 0 1px #ffffff98,0 10px 25px #0008; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+html body.platform.light-theme.wall-experience .wall-focus-panel { border:1px solid #dcfff17e; border-radius:22px; background:linear-gradient(145deg,#29413ce9,#0c191aee); box-shadow:inset 0 1px #ffffff77,0 35px 100px #000e; backdrop-filter:blur(28px) saturate(1.35); -webkit-backdrop-filter:blur(28px) saturate(1.35); }
+html body.platform.light-theme.wall-experience .wall-focus-controls button,html body.platform.light-theme.wall-experience .wall-focus-close { border-color:#ffffff8a; background:#ffffff27; box-shadow:inset 0 1px #ffffff77; }
+html body.platform.light-theme.moments-theme .directory-drawer>summary { border-color:#dff9ea55; }
+/* Shared surfaces with a moving, restrained specular highlight. */
+html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.product-feature,.login-panel,.project-account-card,.gumroad-card,.submission-form,.browse-controls,.founding-teaser,.promo-callout,.account-announcement,.saved-empty-panel,.community-empty) {
+  position:relative; border:1px solid var(--glass-edge); border-radius:18px;
+  background:linear-gradient(145deg,#f1fff20e,var(--glass-surface) 43%,#101c1fba);
+  box-shadow:inset 0 1px #ffffff42,inset 0 -1px #ffffff0b,0 18px 48px #0004;
+  backdrop-filter:blur(14px) saturate(1.25); -webkit-backdrop-filter:blur(14px) saturate(1.25);
+}
+html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature) { overflow:hidden; transition:transform .38s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s; }
+html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature):hover { transform:translateY(-6px); border-color:var(--glass-edge-hot); box-shadow:inset 0 1px #ffffff8c,0 26px 60px #0009; }
+html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature,.login-panel,.project-account-card,.submission-form,.wall-focus-panel)::before {
+  content:""; position:absolute; inset:0; z-index:0; border-radius:inherit; pointer-events:none;
+  background:radial-gradient(360px circle at var(--glass-x,50%) var(--glass-y,0%),#eafff02c,transparent 68%);
+  opacity:.54; transition:opacity .3s;
+}
+html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature,.login-panel,.project-account-card,.submission-form,.wall-focus-panel):hover::before { opacity:1; }
+html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature,.login-panel,.project-account-card,.submission-form,.wall-focus-panel)>* { position:relative; z-index:1; }
+html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.product-feature,.gumroad-card) :is(p,small,.quiet) { color:var(--glass-muted); }
+html body.platform.light-theme.moments-theme .gumroad-card-copy { background:linear-gradient(140deg,#a5ebd809,#0d1d1dad); }
+html body.platform.light-theme.moments-theme .gumroad-card-link { border-color:#e1fff04d; }
+html body.platform.light-theme.moments-theme .gumroad-card-link span { color:#e7fff0; }
+html body.platform.light-theme.moments-theme :is(.project-collections,.dashboard-controls,.resources-controls,.resource-topics,.carousel-browse,.login-tabs,.browse-controls) { border:1px solid #dbfff368; border-radius:16px; background:#1a303080; box-shadow:inset 0 1px #ffffff3b; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+html body.platform.light-theme.moments-theme .project-collections [aria-pressed=true],html body.platform.light-theme.moments-theme .login-tabs button[aria-selected=true] { border-radius:12px; background:#d9f6eb; color:#10201c; box-shadow:0 5px 18px #0005; }
+html body.platform.light-theme.moments-theme :is(.tag,.pill) { border:1px solid #e0fff05c; border-radius:999px; background:#e5fff016; color:#e3eee9; }
+/* Forms use glass as a frame, with opaque enough fields for legibility. */
+html body.platform.light-theme.moments-theme .submission-form { overflow:hidden; }
+html body.platform.light-theme.moments-theme .submission-form fieldset { background:#1223217d; border-color:#e1fff02b; }
+html body.platform.light-theme.moments-theme .submission-form fieldset:nth-of-type(even) { background:#1c302b8a; }
+html body.platform.light-theme.moments-theme .submission-form>.submission-account-callout { background:linear-gradient(120deg,#35574bbe,#193129d0); border-color:#dffff04a; }
+html body.platform.light-theme.moments-theme .submission-review { background:#243d32a1; }
+html body.platform.light-theme.moments-theme :is(.submission-form,.login-panel,.project-account-card) :is(input:not([type=checkbox]),select,textarea) { border:1px solid #e1fff077; border-radius:12px; background:#091715df; color:#f7fffa; box-shadow:inset 0 1px #ffffff25; }
+html body.platform.light-theme.moments-theme :is(.submission-form,.login-panel,.project-account-card) :is(input:not([type=checkbox]),select,textarea):focus-visible { outline:2px solid #e1ffed; outline-offset:2px; border-color:#f3fff7; }
+html body.platform.light-theme.moments-theme .submission-form .field-help { color:#c0d4ca; }
+html body.platform.light-theme.moments-theme .login-tabs { padding:5px; }
+html body.platform.light-theme.moments-theme .login-tabs button:not([aria-selected=true]):hover { color:#fff; background:#e1fff01f; }
+html body.platform.light-theme.moments-theme .account-item .review-feedback { background:#eafff016; border-color:#d8f5e5; }
+html body.platform.light-theme.moments-theme .account-announcement { border-color:#e4fff18a; background:#1a302de8; box-shadow:inset 0 1px #ffffff65,0 20px 60px #0009; backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); }
+html body.platform.light-theme.moments-theme .platform-footer { border-color:#e5fff02c; background:linear-gradient(160deg,#1a2d2c,#091011 65%); }
+html body.platform.light-theme.moments-theme .platform-footer .footer-group-links a:hover { color:#e4fff0; text-shadow:0 0 14px #aef4cc88; }
+html body.platform.light-theme.moments-theme :focus-visible { outline:2px solid #e8fff1; outline-offset:3px; }
+@media(max-width:990px) { html body.platform.light-theme.moments-theme .compact-site-header .header-primary { display:none; } }
+@media(max-width:767px) { html body.platform.light-theme.moments-theme .platform-header.compact-site-header { border-radius:0 0 14px 14px; backdrop-filter:blur(14px); } html body.platform.light-theme.moments-theme .notebook-navigation .navigation-panel { background:#172827f4; } html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature):hover { transform:none; } }
+@media(prefers-reduced-motion:reduce) { html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature,.header-login,.header-search) { transition:none; } html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature):hover { transform:none; } }
+@supports not (backdrop-filter:blur(1px)) { html body.platform.light-theme.moments-theme :is(.platform-header.compact-site-header,.navigation-panel,.project-card,.resource-card,.gumroad-card,.product-feature,.login-panel,.submission-form,.project-account-card,.wall-focus-panel) { background:#182826; } }
