@@ -272,7 +272,8 @@ html body.platform.light-theme.wall-experience .wall-card-actions button:hover,h
 @media(max-width:760px) {
  .wall-experience .wall-focus { align-items:center; padding:12px; }
  .wall-experience .wall-focus-panel { width:100%; max-height:calc(100dvh - 24px); max-height:calc(100svh - 24px); padding:16px; overflow-x:hidden; }
- .wall-experience .wall-focus-art { width:100%; height:min(40dvh,320px); min-height:180px; border-radius:10px; }
+ html body.platform.light-theme.wall-experience .wall-focus-art { display:flex; align-items:center; justify-content:center; flex:0 0 auto; width:100%; height:auto; min-height:0; padding:12px; overflow:visible; border-radius:10px; }
+ html body.platform.light-theme.wall-experience .wall-focus-art img { display:block; flex:none; width:auto; height:auto; max-width:100%; max-height:min(36dvh,300px); object-fit:contain; object-position:center; }
  html body.platform.light-theme.wall-experience .wall-search input[type=search],html body.platform.light-theme.moments-theme.projects-dashboard .dashboard-controls :is(input,select) { font-size:16px; }
  .wall-experience .wall-dom-grid .wall-tile:hover,.wall-experience .wall-dom-grid .wall-tile:focus-visible,.wall-experience .wall-grid-view .wall-card-grid .wall-tile:hover,.wall-experience .wall-grid-view .wall-card-grid .wall-tile:focus-visible { transform:none; }
  .wall-experience .wall-dom-grid .wall-tile:hover img,.wall-experience .wall-dom-grid .wall-tile:focus-visible img { transform:none; }
