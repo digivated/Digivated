@@ -4,6 +4,7 @@ import { resourcePathInfo } from '../data/learning-paths.mjs';
 import { safeUrl, normalizeResourceCategory } from '../data/community.mjs';
 import { cardIcon } from './card-actions.js';
 import { categoryIcon, resourceStats, formatCardDate } from '../lib/card-meta.mjs';
+import { uniqueProjects } from './wall-catalog.js';
 const el=(tag,text,className)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(className)node.className=className;return node;};
 function link(text,url){const node=el('a',text);node.href=url.startsWith('/')?url:safeUrl(url);if(!url.startsWith('/')){node.target='_blank';node.rel='noopener noreferrer';}return node;}
 function thumbnail(url,alt){const img=el('img');img.src=url;img.alt=alt;img.width=640;img.height=400;img.loading='lazy';return img;}
@@ -99,10 +100,15 @@ function setupProjectFilters(shelf) {
 async function loadProjects(){
  const shelves=[...document.querySelectorAll('[data-live-projects]')];if(!shelves.length)return;
  try{
-  const projects=await collection('/api/projects');
+  const projects=uniqueProjects(await collection('/api/projects'));
   for(const shelf of shelves){const mode=shelf.dataset.liveProjects;const selected=mode==='featured'?projects.filter(p=>p.status==='featured'):projects;renderShelf(shelf,selected,projectCard);if(shelf.hasAttribute('data-project-filters'))setupProjectFilters(shelf);}
   document.dispatchEvent(new Event('digivated:collection-updated'));
   observeProjectViews();
+  if(location.hash.startsWith('#project-')&&document.body.classList.contains('projects-dashboard')){
+   document.querySelector('.directory-drawer')?.setAttribute('open','');
+   document.querySelector('[data-directory-view="newest"]')?.click();
+   requestAnimationFrame(()=>{try{document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({block:'center'});}catch{}});
+  }
  }catch{document.dispatchEvent(new Event('digivated:collection-failed'));for(const shelf of shelves){shelf.removeAttribute('aria-busy');const empty=shelf.querySelector('[data-live-empty]');empty.hidden=true;const status=shelf.querySelector('[data-live-status]');if(status)status.textContent='Projects are temporarily unavailable. Please try again shortly.';}}
 }
 async function loadResources(){

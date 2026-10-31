@@ -16,9 +16,9 @@ export function createWallScene(host,projects,onSelect,onHover=()=>{}){
  renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setClearColor(0xe8ecee);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.domElement.className='wall-canvas';renderer.domElement.setAttribute('aria-hidden','true');host.append(renderer.domElement);
  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(44,1,.1,100),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(9,9),worldPointer=new THREE.Vector3(),plane=new THREE.Plane(new THREE.Vector3(0,0,1),0),geometry=new THREE.PlaneGeometry(1,1),loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');
  const meshes=[],textures=[];let frame=0,disposed=false,selected=-1,hovered=null,active=true,scroll=0,scrollTarget=0,width=1,height=1;
- const tiles=Array.from({length:Math.min(54,Math.max(36,projects.length))},(_,i)=>projects[i%projects.length]);
+ const tiles=projects;
  tiles.forEach((project,i)=>{
-  const placeholder=poster(project,i);textures.push(placeholder);const material=new THREE.MeshBasicMaterial({map:placeholder,side:THREE.DoubleSide});const mesh=new THREE.Mesh(geometry,material);mesh.userData={index:i%projects.length,base:new THREE.Vector3(),target:new THREE.Vector3(),order:i};scene.add(mesh);meshes.push(mesh);
+  const placeholder=poster(project,i);textures.push(placeholder);const material=new THREE.MeshBasicMaterial({map:placeholder,side:THREE.DoubleSide});const mesh=new THREE.Mesh(geometry,material);mesh.userData={index:i,base:new THREE.Vector3(),target:new THREE.Vector3(),order:i};scene.add(mesh);meshes.push(mesh);
   if(project.image){try{const url=new URL(project.image,location.origin);if(['https:','http:'].includes(url.protocol))loader.load(url.href,texture=>{if(disposed){texture.dispose();return;}texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),4);material.map=texture;material.needsUpdate=true;textures.push(texture);},undefined,()=>{});}catch{}}
  });
  function layout(){width=host.clientWidth||innerWidth;height=host.clientHeight||innerHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.position.set(0,0,width<700?13.5:15);camera.updateProjectionMatrix();
