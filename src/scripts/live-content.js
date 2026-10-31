@@ -60,7 +60,7 @@ function productCard(product){
 }
 async function collection(url){
  const items=[];let offset=0;
- do{const response=await fetch(`${url}${url.includes('?')?'&':'?'}offset=${offset}`,{cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('unavailable');const data=await response.json();items.push(...data.items);offset=data.next;}while(offset!==null);
+ do{const response=await fetch(`${url}${url.includes('?')?'&':'?'}offset=${offset}`,{cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('unavailable');const data=await response.json();items.push(...data.items);offset=data.next;}while(offset!==null);
  return items;
 }
 function renderShelf(node,items,renderer){const target=node.querySelector('[data-live-list]');const limit=Number(node.dataset.limit)||items.length;target.replaceChildren(...(node.hasAttribute('data-project-filters') ? items : items.slice(0,limit)).map(renderer));const empty=node.querySelector('[data-live-empty]');if(empty)empty.hidden=items.length>0;target.hidden=items.length===0;}
@@ -128,7 +128,7 @@ async function loadArticle(){
  const slug=new URLSearchParams(location.search).get('slug');const status=document.getElementById('article-status');
  if(!slug||!/^[a-z0-9][a-z0-9-]{0,99}$/.test(slug)){status.textContent='This article could not be found.';return;}
  try{
-  const response=await fetch(`/api/content?type=resource&id=${encodeURIComponent(slug)}`,{cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(15000)});
+  const response=await fetch(`/api/content?type=resource&id=${encodeURIComponent(slug)}`,{cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(15000)});
   if(!response.ok){status.textContent=response.status===404?'This article is not available.':'This article is temporarily unavailable. Please try again shortly.';return;}
   const {item}=await response.json();document.title=`${item.title} · Digivated`;document.querySelector('link[rel="canonical"]').href=new URL(item.url,'https://digivated.com').href;document.querySelector('meta[name="description"]').content=item.description;document.getElementById('article-title').textContent=item.title;document.getElementById('article-category').textContent=normalizeResourceCategory(item.category);document.getElementById('article-description').textContent=item.description;document.getElementById('article-meta').replaceChildren(statStrip({...item,fullDate:true}));
   const body=document.getElementById('article-body');if(item.coverImage){const image=thumbnail(item.coverImage,'');image.className='article-cover';body.append(image);}

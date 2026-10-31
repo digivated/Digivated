@@ -28,3 +28,22 @@ html body.platform.light-theme.moments-theme .shop-note a { color:#e5e5e5; text-
 @media(max-width:760px) { .shop-heading { grid-template-columns:1fr; padding-top:25px; } .shop-heading .shop-kicker { grid-column:auto; } .shop-grid { grid-template-columns:1fr; } .gumroad-art { height:clamp(240px,70vw,390px); } }
 @media(prefers-reduced-motion:reduce) { .gumroad-card,.gumroad-art>img,.gumroad-card-link span { transition:none!important; } }
 html body.platform.light-theme.moments-theme .shop-heading h1 em { color:#b9cbc4; }
+
+/* The shop uses the same calm canvas and ink as the homepage. */
+html body.platform.light-theme.moments-theme .shop-heading { border-bottom-color:#e1e3e4; }
+html body.platform.light-theme.moments-theme .shop-heading h1 { color:#20282c; }
+html body.platform.light-theme.moments-theme .shop-heading h1 em { color:#727c81; font-style:normal; }
+html body.platform.light-theme.moments-theme .shop-heading>p:last-child,html body.platform.light-theme.moments-theme .shop-note { color:#505a5f; }
+html body.platform.light-theme.moments-theme .gumroad-card { border-color:#e1e3e4; border-radius:12px; background:#fff; color:#20282c; box-shadow:0 4px 18px #1621280d; }
+html body.platform.light-theme.moments-theme .gumroad-card:hover,html body.platform.light-theme.moments-theme .gumroad-card:focus-visible { border-color:#aab3b7; box-shadow:0 12px 26px #16212818; }
+html body.platform.light-theme.moments-theme .gumroad-card-copy { background:#fff; }
+html body.platform.light-theme.moments-theme .gumroad-card h2 { color:#20282c; }
+html body.platform.light-theme.moments-theme .gumroad-meta,html body.platform.light-theme.moments-theme .gumroad-card-copy p { color:#505a5f; }
+html body.platform.light-theme.moments-theme .gumroad-meta span:last-child,html body.platform.light-theme.moments-theme .gumroad-card-link { color:#20282c; }
+html body.platform.light-theme.moments-theme .gumroad-card-link { border-top-color:#e1e3e4; }
+html body.platform.light-theme.moments-theme .gumroad-art { background:#f0f2f2; }
+html body.platform.light-theme.moments-theme .gumroad-support-art { background:#f1f3f3; }
+html body.platform.light-theme.moments-theme .gumroad-support-art>span { color:#20282c; }
+html body.platform.light-theme.moments-theme .gumroad-support-art small { color:#505a5f; }
+html body.platform.light-theme.moments-theme .shop-note a { color:#20282c; }
+@media(max-width:760px) { html body.platform.light-theme.moments-theme .shop-heading { display:block; padding:24px 0 30px; } html body.platform.light-theme.moments-theme .shop-heading h1 { font-size:clamp(2.8rem,11vw,4.4rem); } html body.platform.light-theme.moments-theme .shop-heading>p:last-child { margin-top:20px; max-width:46ch; } html body.platform.light-theme.moments-theme .shop-grid { gap:16px; padding-top:20px; } }

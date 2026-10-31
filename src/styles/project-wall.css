@@ -109,3 +109,28 @@ html body.platform.light-theme.moments-theme .directory-drawer>summary { display
 html body.platform.light-theme.moments-theme .directory-drawer .projects-workspace { padding-top:20px; }
 html body.platform.light-theme.moments-theme .directory-drawer .dashboard-intro h2 { margin:0; color:#fff; font-size:clamp(1.6rem,3vw,2.4rem); }
 @media(max-width:760px) { html body.platform.light-theme.moments-theme .directory-drawer>summary { padding:24px 20px; } }
+
+/* Light wall and list, including the empty and error states. */
+html body.platform.light-theme.wall-experience,html body.platform.light-theme.wall-experience .project-wall { background:#edf0f1; color:#20282c; }
+html body.platform.light-theme.wall-experience .wall-shade { background:linear-gradient(0deg,#f7f8f8b8,transparent 40%),linear-gradient(180deg,#f7f8f8b0,transparent 22%); }
+html body.platform.light-theme.wall-experience .wall-intro { text-shadow:none; }
+html body.platform.light-theme.wall-experience .wall-intro h1,html body.platform.light-theme.wall-experience .wall-overline,html body.platform.light-theme.wall-experience .wall-intro>p:not(.wall-overline),html body.platform.light-theme.wall-experience .wall-side-index,html body.platform.light-theme.wall-experience .wall-hint { color:#20282c; text-shadow:none; }
+html body.platform.light-theme.wall-experience .wall-intro-links a,html body.platform.light-theme.wall-experience .wall-intro-links a+a { min-height:42px; padding:10px 16px; border:1px solid #bbc6ca; border-radius:999px; background:#fff; color:#20282c; font-size:.78rem; letter-spacing:0; text-transform:none; box-shadow:0 5px 18px #17232b16; }
+html body.platform.light-theme.wall-experience .wall-intro-links a:first-child { background:#20282c; border-color:#20282c; color:#fff; }
+html body.platform.light-theme.wall-experience .wall-status { display:block; width:min(440px,calc(100% - 48px)); padding:20px; border:1px solid #dce2e4; border-radius:12px; background:#fff; color:#20282c; box-shadow:0 10px 35px #17232b14; line-height:1.5; }
+html body.platform.light-theme.wall-experience .wall-status[hidden] { display:none; }
+html body.platform.light-theme.wall-experience .wall-status a { color:#20282c; font-weight:650; }
+html body.platform.light-theme.wall-experience .wall-page-controls,html body.platform.light-theme.wall-experience .wall-search input[type=search] { border-color:#c6d0d4; background:#fff; color:#20282c; }
+html body.platform.light-theme.wall-experience .wall-page-controls button { background:#f1f3f4; color:#20282c; }
+html body.platform.light-theme.wall-experience .wall-search input::placeholder { color:#566269; }
+html body.platform.light-theme.wall-experience .wall-focus-panel { background:#fff; color:#20282c; }
+html body.platform.light-theme.wall-experience .wall-focus h2 { color:#20282c; }
+html body.platform.light-theme.wall-experience .wall-focus-description { color:#505a5f; }
+html body.platform.light-theme.wall-experience .wall-focus-actions a+a { border-color:#bec8cc; background:#fff; color:#20282c; }
+html body.platform.light-theme.wall-experience .compact-site-header,html body.platform.light-theme.wall-experience .compact-site-header .header-inner { background:#fafafa; }
+html body.platform.light-theme.wall-experience .compact-site-header .platform-brand,html body.platform.light-theme.wall-experience .compact-site-header .header-primary a { color:#20282c; text-shadow:none; }
+html body.platform.light-theme.wall-experience .compact-site-header :is(.header-login,.header-search,.notebook-navigation>summary) { background:#fff; border-color:#c6d0d4; color:#20282c; }
+html body.platform.light-theme.moments-theme .directory-drawer { background:#fafafa; color:#20282c; }
+html body.platform.light-theme.moments-theme .directory-drawer>summary { border-color:#e1e3e4; background:#fafafa; color:#20282c; }
+html body.platform.light-theme.moments-theme .directory-drawer .dashboard-intro h2 { color:#20282c; }
+@media(max-width:760px) { html body.platform.light-theme.wall-experience .wall-intro h1 { font-size:clamp(3.4rem,12vw,5rem); } html body.platform.light-theme.wall-experience .wall-intro { bottom:40px; } }
