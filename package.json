@@ -24,6 +24,7 @@
     "jose": "^6.2.12",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-liquid-glass-svg": "^1.0.5",
     "three": "^0.180.0"
   },
   "devDependencies": {
