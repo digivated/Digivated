@@ -73,3 +73,18 @@ html body.platform.light-theme.wall-experience .compact-site-header :is(.header-
 .wall-experience .wall-noscript a { color:white; }
 .wall-experience .wall-focus-backdrop { width:100%; border:0; padding:0; }
 @media(max-width:760px) { .wall-experience .wall-stage canvas { touch-action:pan-y; } }
+/* Gallery composition: typography and controls frame the scene rather than occupy a conventional hero block. */
+html body.platform.light-theme.wall-experience .project-wall { background:#080b0c; }
+.wall-experience .wall-shade { background:linear-gradient(90deg,#040708dd 0%,#04070855 26%,transparent 61%),linear-gradient(0deg,#040708da 0%,transparent 34%),linear-gradient(180deg,#0407089c 0%,transparent 19%); }
+.wall-experience .wall-intro { left:clamp(24px,5vw,88px); bottom:clamp(48px,9vh,120px); max-width:660px; }
+html body.platform.light-theme.wall-experience .wall-intro h1 { max-width:660px; font:400 clamp(5.7rem,14vw,14rem)/.7 Georgia,'Times New Roman',serif; letter-spacing:-.085em; }
+.wall-experience .wall-intro>p:not(.wall-overline) { max-width:280px; margin-top:32px; font-size:.83rem; }
+.wall-experience .wall-overline { font-size:.59rem; letter-spacing:.3em; }
+.wall-experience .wall-intro-links { margin-top:30px; gap:24px; }
+html body.platform.light-theme.wall-experience .wall-intro-links a,html body.platform.light-theme.wall-experience .wall-intro-links a+a { border:0; border-bottom:1px solid #fff9; border-radius:0; padding:8px 0; min-height:35px; background:transparent; color:white; font-size:.67rem; letter-spacing:.13em; text-transform:uppercase; backdrop-filter:none; }
+.wall-experience .wall-side-index { position:absolute; z-index:3; right:clamp(24px,5vw,88px); bottom:clamp(48px,9vh,120px); display:grid; gap:28px; color:#fff; font-size:.56rem; letter-spacing:.19em; line-height:1.6; text-align:right; text-shadow:0 2px 10px #000; pointer-events:none; }
+.wall-experience .wall-hint { top:50%; right:18px; writing-mode:vertical-rl; font-size:.52rem; }
+.wall-experience .wall-hover-caption { position:absolute; z-index:4; top:50%; left:50%; transform:translate(-50%,-50%); display:grid; gap:5px; min-width:180px; padding:16px 20px; border:1px solid #ffffffa1; background:#080c0dc7; backdrop-filter:blur(12px); pointer-events:none; color:white; text-align:center; box-shadow:0 20px 60px #000a; }
+.wall-experience .wall-hover-caption span { font-size:.52rem; letter-spacing:.2em; }
+.wall-experience .wall-hover-caption strong { font:400 1.3rem Georgia,serif; }
+@media(max-width:760px) { html body.platform.light-theme.wall-experience .wall-intro h1 { font-size:clamp(4.8rem,20vw,8rem); } .wall-experience .wall-intro { bottom:48px; } .wall-experience .wall-side-index { display:none; } .wall-experience .wall-hover-caption { display:none; } .wall-experience .wall-shade { background:linear-gradient(0deg,#040708ef,transparent 62%),linear-gradient(180deg,#040708ae,transparent 22%); } }
