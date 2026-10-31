@@ -381,7 +381,7 @@ async function loadIndex() {
   try {
     const { ok, data } = await loadJson('/api/carousels');
     if (!ok) throw new Error('unavailable');
-    if (!data.items?.length) { if (status) status.textContent = 'No educational carousels have been published yet.'; return; }
+    if (!data.items?.length) { if (status) status.textContent = 'No guides have been published yet.'; list.closest('section')?.querySelector('[data-carousel-browse]')?.setAttribute('hidden', ''); return; }
     if (status) status.textContent = '';
     renderList(list, data.items);
   } catch { if (status) status.textContent = 'Carousels are temporarily unavailable. Please try again shortly.'; }
