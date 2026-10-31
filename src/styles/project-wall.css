@@ -225,3 +225,30 @@ html body.platform.light-theme.wall-experience .wall-grid-view .wall-status { po
  html body.platform.light-theme.wall-experience .wall-grid-view .wall-card-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
  html body.platform.light-theme.wall-experience .wall-grid-view .wall-card-grid .wall-tile-caption { min-height:110px; padding:12px; }
 }
+
+/* Featured and All use the same wall controls, without opening the old directory layout. */
+.wall-experience .wall-navigation { flex-wrap:wrap; }
+.wall-experience .wall-collection-controls { display:flex; gap:3px; padding:3px; border:1px solid #c6d0d4; border-radius:10px; background:#fff; color:#20282c; }
+.wall-experience .wall-collection-controls button { min-height:34px; padding:0 11px; border:0; border-radius:7px; background:transparent; color:#4f5b61; font:600 .76rem 'Inter Variable',system-ui,sans-serif; white-space:nowrap; cursor:pointer; }
+.wall-experience .wall-collection-controls button[aria-pressed=true] { background:#20282c; color:#fff; }
+.wall-experience .wall-collection-controls button:focus-visible { outline:2px solid #20282c; outline-offset:2px; }
+@media(max-width:760px) {
+ html body.platform.light-theme.wall-experience .wall-navigation { grid-template-columns:minmax(0,1fr) auto; }
+ html body.platform.light-theme.wall-experience .wall-mobile-heading { grid-column:1/-1; grid-row:1; }
+ html body.platform.light-theme.wall-experience .wall-collection-controls { grid-column:1; grid-row:2; justify-self:start; }
+ html body.platform.light-theme.wall-experience .wall-view-controls { grid-column:2; grid-row:2; }
+ html body.platform.light-theme.wall-experience .wall-search { grid-column:1; grid-row:3; }
+ html body.platform.light-theme.wall-experience .wall-page-controls { grid-column:2; grid-row:3; }
+ html body.platform.light-theme.wall-experience .wall-dom-grid { inset-block-start:184px; }
+ html body.platform.light-theme.moments-theme.projects-dashboard .wall-dom-grid { inset-block-start:256px; }
+ html body.platform.light-theme.wall-experience .wall-grid-view .wall-navigation { display:flex; }
+ html body.platform.light-theme.wall-experience .wall-grid-view .wall-search { flex-basis:100%; }
+}
+@media(max-width:480px) {
+ html body.platform.light-theme.wall-experience .wall-collection-controls { grid-column:1/-1; }
+ html body.platform.light-theme.wall-experience .wall-view-controls { grid-column:1; grid-row:3; justify-self:start; }
+ html body.platform.light-theme.wall-experience .wall-page-controls { grid-column:2; grid-row:3; }
+ html body.platform.light-theme.wall-experience .wall-search { grid-column:1/-1; grid-row:4; }
+ html body.platform.light-theme.wall-experience .wall-dom-grid { inset-block-start:232px; }
+ html body.platform.light-theme.moments-theme.projects-dashboard .wall-dom-grid { inset-block-start:304px; }
+}
