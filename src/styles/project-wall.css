@@ -266,7 +266,16 @@ html body.platform.light-theme.wall-experience .wall-card-actions button:hover,h
 .wall-experience .wall-action-icon,.wall-experience .wall-action-icon svg { display:inline-block; width:16px; height:16px; flex:none; }
 .wall-experience .wall-view-count { display:inline-flex; align-items:center; gap:5px; margin-left:auto; font-size:.7rem; white-space:nowrap; }
 .wall-experience .wall-focus-panel>.wall-card-actions { justify-content:center; margin:0 0 16px; border:1px solid #e2e7e9; border-radius:10px; }
+/* A fixed image area must not collapse when the detail panel scrolls on a phone. */
+.wall-experience .wall-focus-art { flex:0 0 auto; min-height:0; background:#eef1f2; }
+.wall-experience .wall-focus-art img { display:block; width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; object-position:center; transform:none; }
 @media(max-width:760px) {
+ .wall-experience .wall-focus { align-items:center; padding:12px; }
+ .wall-experience .wall-focus-panel { width:100%; max-height:calc(100dvh - 24px); max-height:calc(100svh - 24px); padding:16px; overflow-x:hidden; }
+ .wall-experience .wall-focus-art { width:100%; height:min(40dvh,320px); min-height:180px; border-radius:10px; }
+ html body.platform.light-theme.wall-experience .wall-search input[type=search],html body.platform.light-theme.moments-theme.projects-dashboard .dashboard-controls :is(input,select) { font-size:16px; }
+ .wall-experience .wall-dom-grid .wall-tile:hover,.wall-experience .wall-dom-grid .wall-tile:focus-visible,.wall-experience .wall-grid-view .wall-card-grid .wall-tile:hover,.wall-experience .wall-grid-view .wall-card-grid .wall-tile:focus-visible { transform:none; }
+ .wall-experience .wall-dom-grid .wall-tile:hover img,.wall-experience .wall-dom-grid .wall-tile:focus-visible img { transform:none; }
  html body.platform.light-theme.wall-experience .project-wall:not([data-wall-directory="true"]) .wall-search { grid-column:1/-1; grid-row:2; }
  html body.platform.light-theme.wall-experience .project-wall:not([data-wall-directory="true"]) .wall-page-controls { grid-column:2; grid-row:1; }
  html body.platform.light-theme.wall-experience .project-wall:not([data-wall-directory="true"]) .wall-dom-grid { inset-block-start:142px; }
