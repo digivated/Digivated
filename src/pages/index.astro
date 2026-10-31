@@ -4,5 +4,12 @@ import ProjectWall from '../components/ProjectWall.astro';
 import '../styles/project-wall.css';
 ---
 <Platform title="Discover projects worth seeing" description="Explore independent projects on Digivated. Meet builders, share your work, and leave feedback.">
-  <ProjectWall/>
+  <section class="home-editorial" aria-labelledby="home-title">
+    <p class="home-editorial-kicker">A HOME FOR WHAT YOU'RE BUILDING</p>
+    <h1 id="home-title">Good projects deserve<br/><em>to be discovered.</em></h1>
+    <p>Explore work from independent builders, give useful feedback, and share what you're making.</p>
+    <div class="home-editorial-actions"><a class="button primary" href="#project-wall">Explore projects <span aria-hidden="true">↗</span></a><a class="button" href="/submit-project">Share your project <span aria-hidden="true">↗</span></a></div>
+    <a class="home-editorial-scroll" href="#project-wall">THE PROJECT WALL <span aria-hidden="true">↓</span></a>
+  </section>
+  <div id="project-wall"><ProjectWall/></div>
 </Platform>
