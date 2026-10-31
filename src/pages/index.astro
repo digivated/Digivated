@@ -1,12 +1,15 @@
 ---
 import Platform from '../layouts/Platform.astro';
 import LiveProjects from '../components/LiveProjects.astro';
+import '../styles/meadow-home.css';
 ---
 <<<<<<< HEAD
 <Platform title="Independent projects worth discovering" description="Discover featured independent projects, share your work, and get feedback on Digivated.">
-  <div class="compact-home">
-    <section class="compact-home-intro" aria-labelledby="home-intro-title"><img class="home-brand-mark" src="/digivated-new-mark.svg" width="64" height="64" alt=""/><p class="eyebrow">DIGIVATED</p><h1 id="home-intro-title">Good projects deserve to be seen.</h1><p>Discover independent work, share what you’re building, and get real feedback.</p><div class="compact-home-actions"><a class="button primary" href="/submit-project">Share your project</a><a class="button" href="/discover">Browse projects</a></div></section>
-    <section id="projects" class="compact-home-projects" aria-labelledby="home-heading"><div class="compact-project-heading"><h2 id="home-heading">Featured projects</h2><a href="/discover">View all projects <span aria-hidden="true">→</span></a></div><LiveProjects mode="featured" limit={4} compact title="The next discovery is still to come." description="Featured projects will appear here after review." href="/submit-project" label="Submit your project"/></section>
+  <div class="meadow-home">
+    <section class="meadow-scene" aria-labelledby="home-intro-title">
+      <div class="meadow-intro"><p class="meadow-kicker">A PLACE FOR PEOPLE WHO MAKE THINGS</p><h1 id="home-intro-title">GOOD WORK<br/><span>GROWS HERE.</span></h1><p>Discover independent projects, meet their makers, and share what you’re building with a community that cares.</p><div class="meadow-actions"><a class="meadow-button" href="/submit-project">Share your project <span aria-hidden="true">↗</span></a><a class="meadow-button secondary" href="/discover">Explore projects <span aria-hidden="true">→</span></a></div></div>
+      <section id="projects" class="meadow-featured" aria-labelledby="home-heading"><div class="meadow-project-heading"><div><p>HANDPICKED FROM THE COMMUNITY</p><h2 id="home-heading">Featured projects</h2></div><a href="/discover?view=featured">Browse all projects <span aria-hidden="true">→</span></a></div><LiveProjects mode="featured" limit={4} compact title="The next discovery is still to come." description="Featured projects will appear here after review." href="/submit-project" label="Submit your project"/></section>
+    </section>
   </div>
   <script>import '../scripts/live-content.js';</script>
 </Platform>
