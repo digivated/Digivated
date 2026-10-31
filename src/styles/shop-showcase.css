@@ -27,3 +27,4 @@ html body.platform.light-theme.moments-theme .gumroad-card h2 { margin:0; color:
 html body.platform.light-theme.moments-theme .shop-note a { color:#e5e5e5; text-underline-offset:4px; }
 @media(max-width:760px) { .shop-heading { grid-template-columns:1fr; padding-top:25px; } .shop-heading .shop-kicker { grid-column:auto; } .shop-grid { grid-template-columns:1fr; } .gumroad-art { height:clamp(240px,70vw,390px); } }
 @media(prefers-reduced-motion:reduce) { .gumroad-card,.gumroad-art>img,.gumroad-card-link span { transition:none!important; } }
+html body.platform.light-theme.moments-theme .shop-heading h1 em { color:#b9cbc4; }
