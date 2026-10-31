@@ -17,6 +17,7 @@ function setup(kind = 'projects', query = '?view=newest') {
     node({search:'zebra ai maker',category:'AI',pick:'false',featured:'false',projectName:'Zebra',projectDate:'2026-10-16',projectViewsTotal:'0'}),
     node({search:'alpha saas maker',category:'SaaS',pick:'true',featured:'true',projectName:'Alpha',projectDate:'2026-10-01',projectViewsTotal:'63'}),
   ];
+  const wallCard=node({projectId:'wall-only',projectName:'Wall project'});
   for (const [index,card] of cards.entries()) Object.assign(card.dataset,{resourceName:card.dataset.projectName,resourceDate:card.dataset.projectDate,resourceReadingTime:String(index ? 2 : 4),learningGoal:index?'markets':'ai-tools',resourceOrder:String(index?1:2)});
   const clear=node();
   const list=node();list.order=[...cards];list.moves=0;list.appendChild=card=>{list.moves++;list.order=list.order.filter(c=>c!==card);list.order.push(card);};
@@ -30,7 +31,8 @@ function setup(kind = 'projects', query = '?view=newest') {
   document.getElementById=id=>ids[id]||null;
   document.querySelector=selector=>selector==='[data-directory]'?directory:selector==='[data-directory-clear]'?clear:(selector==='[data-live-projects] [data-live-list]'||selector==='[data-live-resources] [data-live-list]')?list:null;
   document.querySelectorAll=selector=> {
-    if(selector==='[data-project]'||selector==='[data-resource]')return cards;
+    if(selector==='[data-live-projects] [data-project]'||selector==='[data-live-resources] [data-resource]')return cards;
+    if(selector==='[data-project]')return [...cards,wallCard];
     if(selector==='[data-directory-view]')return views;
     if(selector==='[data-directory-layout]')return layouts;
     if(selector==='[data-category-filter]')return chips;
@@ -41,7 +43,7 @@ function setup(kind = 'projects', query = '?view=newest') {
   const location={href:`https://digivated.com/${kind==='resources'?'resources':'discover'}${query}`,search:query};
   const history={replaceState(_state,_title,url){location.href=url.href;location.search=url.search;}};
   runInNewContext(readFileSync('src/scripts/directory.js','utf8'),{document,location,history,URL,URLSearchParams});
-  return {document,ids,cards,clear,list,views,layouts,chips,stats,counts,goals,location,emptyParts};
+  return {document,ids,cards,wallCard,clear,list,views,layouts,chips,stats,counts,goals,location,emptyParts};
 }
 test('approved projects remain visible; featured/category filters and reset combine correctly',()=>{
   const h=setup();assert.equal(h.ids['directory-status'].textContent,'Loading projects…');
@@ -152,21 +154,22 @@ test('typing a search does not rebuild cards when their order has not changed',(
  assert.ok(h.list.moves>moves);assert.equal(h.list.order[0].dataset.resourceName,'Alpha');
 });
 
- test('projects default to Featured and an explicit All projects link survives reopening',()=>{
+ test('projects default to All and an explicit Featured selection survives reopening',()=>{
  const h=setup('projects','');h.document.fire('digivated:collection-updated');
- assert.equal(h.ids['directory-view'].value,'featured');
- assert.deepEqual(h.cards.map(c=>c.hidden),[true,false]);
- h.views[0].fire('click');
+ assert.equal(h.ids['directory-view'].value,'newest');
+ assert.deepEqual(h.cards.map(c=>c.hidden),[false,false]);
+ assert.equal(h.list.order.includes(h.wallCard),false);
+ h.views[1].fire('click');
  const reopened=setup('projects',h.location.search);reopened.document.fire('digivated:collection-updated');
- assert.equal(reopened.ids['directory-view'].value,'newest');
- assert.deepEqual(reopened.cards.map(c=>c.hidden),[false,false]);
+ assert.equal(reopened.ids['directory-view'].value,'featured');
+ assert.deepEqual(reopened.cards.map(c=>c.hidden),[true,false]);
  });
 
 test('default collection is not a clearable filter and reset preserves collection',()=>{
  const h=setup('projects','');h.document.fire('digivated:collection-updated');
  assert.equal(h.clear.hidden,true);h.chips[1].fire('click');assert.equal(h.clear.hidden,false);
- h.clear.fire('click');assert.equal(h.ids['directory-view'].value,'featured');
- assert.deepEqual(h.cards.map(c=>c.hidden),[true,false]);
+ h.clear.fire('click');assert.equal(h.ids['directory-view'].value,'newest');
+ assert.deepEqual(h.cards.map(c=>c.hidden),[false,false]);
 });
 test('failed project requests replace loading and remain errors when filters change',()=>{
  const h=setup('projects','');h.document.fire('digivated:collection-failed');

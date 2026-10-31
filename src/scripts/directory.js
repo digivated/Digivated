@@ -21,13 +21,15 @@ if (directory) {
   const syncFilters = () => {
     const url = new URL(location.href);
     const values = [['category',category.value],['q',search.value.trim()],['sort',sort?.value === defaultSort ? '' : sort?.value],['layout',layout === 'grid' ? '' : layout]];
-    if (isProjects) values.push(['view',view?.value === 'featured' ? '' : view?.value]);
+    if (isProjects) values.push(['view',view?.value === 'newest' ? '' : view?.value]);
     else values.push(['path',goal]);
     for (const [key,value] of values) { if(value) url.searchParams.set(key,value); else url.searchParams.delete(key); }
     history.replaceState(null,'',url);
   };
   const update = () => {
-    const cards = [...document.querySelectorAll(directory.dataset.directory === 'projects' ? '[data-project]' : '[data-resource]')];
+    // The project wall is a separate React collection. Sorting the directory must
+    // never move its cards into the list (or leave the wall blank).
+    const cards = [...document.querySelectorAll(directory.dataset.directory === 'projects' ? '[data-live-projects] [data-project]' : '[data-live-resources] [data-resource]')];
     if (sort) {
       const ordered = [...cards].sort((a, b) => {
         if (!isProjects && sort.value === 'recommended') return Number(a.dataset.resourceOrder ?? 9999) - Number(b.dataset.resourceOrder ?? 9999);
@@ -105,7 +107,7 @@ if (directory) {
   for(const button of goalButtons) button.addEventListener('click',()=>{setGoal(button.dataset.goalFilter);category.value='';syncFilters();update();});
   for (const chip of document.querySelectorAll('[data-category-filter]')) chip.addEventListener('click', () => { category.value = chip.dataset.categoryFilter; syncFilters(); update(); });
   const requestedView = new URLSearchParams(location.search).get('view');
-  if (view && isProjects) view.value = ['featured', 'newest'].includes(requestedView) ? requestedView : 'featured';
+  if (view && isProjects) view.value = ['featured', 'newest'].includes(requestedView) ? requestedView : 'newest';
   for (const button of document.querySelectorAll('[data-directory-view]')) button.addEventListener('click', () => { if (view) view.value = button.dataset.directoryView; syncFilters(); update(); });
   for (const button of document.querySelectorAll('[data-directory-layout]')) button.addEventListener('click', () => {
     setLayout(button.dataset.directoryLayout);

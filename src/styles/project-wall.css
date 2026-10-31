@@ -267,6 +267,14 @@ html body.platform.light-theme.wall-experience .wall-card-actions button:hover,h
 .wall-experience .wall-view-count { display:inline-flex; align-items:center; gap:5px; margin-left:auto; font-size:.7rem; white-space:nowrap; }
 .wall-experience .wall-focus-panel>.wall-card-actions { justify-content:center; margin:0 0 16px; border:1px solid #e2e7e9; border-radius:10px; }
 @media(max-width:760px) {
+ html body.platform.light-theme.wall-experience .project-wall:not([data-wall-directory="true"]) .wall-search { grid-column:1/-1; grid-row:2; }
+ html body.platform.light-theme.wall-experience .project-wall:not([data-wall-directory="true"]) .wall-page-controls { grid-column:2; grid-row:1; }
+ html body.platform.light-theme.wall-experience .project-wall:not([data-wall-directory="true"]) .wall-dom-grid { inset-block-start:142px; }
+}
+@media(max-width:390px) {
+ html body.platform.light-theme.wall-experience .project-wall:not([data-wall-directory="true"]) .wall-dom-grid { inset-block-start:138px; }
+}
+@media(max-width:760px) {
  .wall-experience .wall-grid-view .wall-card-grid .wall-card-actions { padding:7px 6px; gap:1px; }
  .wall-experience .wall-grid-view .wall-card-grid .wall-card-actions button { padding:4px; }
  .wall-experience .wall-grid-view .wall-card-grid .wall-card-actions button>span:not(.wall-action-icon):not(.card-feedback-count):not([data-like-count]) { display:none; }
