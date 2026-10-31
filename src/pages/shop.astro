@@ -1,0 +1,8 @@
+---
+import Platform from '../layouts/Platform.astro';
+import FoundingPassTeaser from '../components/FoundingPassTeaser.astro';
+import PromoCallout from '../components/PromoCallout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import products from '../data/products.json';
+---
+<Platform title="Shop" description="Browse Digivated products, membership, and paid promotion options."><header class="page-intro"><p class="eyebrow">DIGIVATED SHOP</p><h1>Made for builders.</h1><p class="lede">Explore our products and optional ways to support or promote your work. Purchases are handled by Gumroad.</p></header><FoundingPassTeaser/><div class="stack">{products.map(product=><ProductCard product={product}/>)}</div><PromoCallout/><div class="stack additional-products" data-live-products></div><p class="quiet" id="products-status" role="status"></p><script>import '../scripts/live-content.js';</script></Platform>
