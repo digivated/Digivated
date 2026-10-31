@@ -102,15 +102,6 @@ html body.platform.light-theme.wall-experience .wall-intro-links a,html body.pla
 .wall-experience .wall-page-controls button:hover { background:#ffffff45; }
 .wall-experience .wall-page-controls button:disabled { opacity:.3; cursor:default; }
 @media(max-width:760px) { .wall-experience .wall-navigation { top:76px; left:16px; right:16px; align-items:stretch; gap:8px; } .wall-experience .wall-search { flex:1; min-width:0; } .wall-experience .wall-search input[type=search] { width:100%; height:42px; } .wall-experience .wall-page-controls { gap:2px; } .wall-experience .wall-page-controls span { min-width:58px; font-size:.53rem; } .wall-experience .wall-page-controls button { width:27px; height:32px; } }
-/* Optional directory retains every existing filter and project action without repeating the wall. */
-html body.platform.light-theme.moments-theme .directory-drawer { background:#0b0b0b; color:#f5f5f5; }
-html body.platform.light-theme.moments-theme .directory-drawer>summary { display:flex; justify-content:space-between; align-items:center; max-width:1120px; margin:auto; padding:30px 32px; border-top:1px solid #363636; color:#f5f5f5; font-size:.8rem; font-weight:650; cursor:pointer; list-style:none; }
-.directory-drawer>summary::-webkit-details-marker { display:none; }
-.directory-drawer>summary span { transition:transform .2s; }
-.directory-drawer[open]>summary span { transform:rotate(45deg); }
-html body.platform.light-theme.moments-theme .directory-drawer .projects-workspace { padding-top:20px; }
-html body.platform.light-theme.moments-theme .directory-drawer .dashboard-intro h2 { margin:0; color:#fff; font-size:clamp(1.6rem,3vw,2.4rem); }
-@media(max-width:760px) { html body.platform.light-theme.moments-theme .directory-drawer>summary { padding:24px 20px; } }
 
 /* Light wall and list, including the empty and error states. */
 html body.platform.light-theme.wall-experience,html body.platform.light-theme.wall-experience .project-wall { background:#edf0f1; color:#20282c; }
@@ -132,9 +123,6 @@ html body.platform.light-theme.wall-experience .wall-focus-actions a+a { border-
 html body.platform.light-theme.wall-experience .compact-site-header,html body.platform.light-theme.wall-experience .compact-site-header .header-inner { background:#fafafa; }
 html body.platform.light-theme.wall-experience .compact-site-header .platform-brand,html body.platform.light-theme.wall-experience .compact-site-header .header-primary a { color:#20282c; text-shadow:none; }
 html body.platform.light-theme.wall-experience .compact-site-header :is(.header-login,.header-search,.notebook-navigation>summary) { background:#fff; border-color:#c6d0d4; color:#20282c; }
-html body.platform.light-theme.moments-theme .directory-drawer { background:#fafafa; color:#20282c; }
-html body.platform.light-theme.moments-theme .directory-drawer>summary { border-color:#e1e3e4; background:#fafafa; color:#20282c; }
-html body.platform.light-theme.moments-theme .directory-drawer .dashboard-intro h2 { color:#20282c; }
 @media(max-width:760px) { html body.platform.light-theme.wall-experience .wall-intro h1 { font-size:clamp(3.4rem,12vw,5rem); } html body.platform.light-theme.wall-experience .wall-intro { bottom:40px; } }
 /* Mobile uses a swipeable rail so the controls never obscure a project. */
 .wall-experience .wall-mobile-heading { display:none; }
@@ -274,8 +262,8 @@ html body.platform.light-theme.wall-experience .wall-card-actions button:hover,h
 .wall-experience .wall-focus-art { flex:0 0 auto; min-height:0; background:#eef1f2; }
 .wall-experience .wall-focus-art img { display:block; width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; object-position:center; transform:none; }
 @media(max-width:760px) {
- .wall-experience .wall-focus { align-items:center; padding:12px; }
- .wall-experience .wall-focus-panel { width:100%; max-height:calc(100dvh - 24px); max-height:calc(100svh - 24px); padding:16px; overflow-x:hidden; }
+ .wall-experience .wall-focus { align-items:start; justify-items:center; padding:12px; overflow:hidden; }
+ .wall-experience .wall-focus-panel { width:100%; height:calc(100dvh - 24px); height:calc(100svh - 24px); max-height:none; padding:16px; overflow-x:hidden; overscroll-behavior:contain; }
  .wall-experience .wall-focus-controls { top:-16px; width:calc(100% + 32px); min-height:62px; margin:-16px -16px 14px; padding:8px 68px 8px 12px; justify-content:center; gap:12px; background:#fbfcfbf5; backdrop-filter:blur(12px); }
  .wall-experience .wall-focus-controls button { flex:none; width:42px; height:42px; }
  .wall-experience .wall-focus-controls .wall-focus-close { right:14px; }

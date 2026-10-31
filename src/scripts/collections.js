@@ -9,8 +9,13 @@ const saved=item=>snapshot().collections.some(c=>c.items.some(i=>itemKey(i)===it
 const buttonItem=button=>({type:button.dataset.saveType,id:button.dataset.saveId});
 function refreshButtons(){document.querySelectorAll('[data-save-id]').forEach(button=>{const yes=saved(buttonItem(button));const label=button.querySelector('[data-save-label]');if(label){if(label.textContent!==(yes?'Saved':'Save'))label.textContent=yes?'Saved':'Save';button.classList.toggle('is-saved',yes);}else if(button.textContent!==(yes?'Saved':'Save'))button.textContent=yes?'Saved':'Save';button.setAttribute('aria-label',yes?'Saved. Choose collections':'Save to collection');button.setAttribute('aria-haspopup','dialog');});}
 function updateButtons(){refreshButtons();}
-const additions=new MutationObserver(updateButtons);additions.observe(document.body,{childList:true,subtree:true});
-// Labels only change when necessary, so observer callbacks settle immediately.
+let refreshFrame=0;
+const additions=new MutationObserver(records=>{
+  if(refreshFrame)return;
+  const hasSaveButton=records.some(record=>[...record.addedNodes].some(node=>node.nodeType===1&&(node.matches?.('[data-save-id]')||node.querySelector?.('[data-save-id]'))));
+  if(hasSaveButton)refreshFrame=requestAnimationFrame(()=>{refreshFrame=0;refreshButtons();});
+});
+additions.observe(document.body,{childList:true,subtree:true});
 function message(text){const node=document.getElementById('saved-status');if(node)node.textContent=text;}
 async function change(fn){
   const run=()=>{if(!store)throw new Error(problem);store.update(fn);updateButtons();};

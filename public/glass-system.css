@@ -121,8 +121,6 @@ html body.platform.light-theme.wall-experience .wall-focus-description { color:#
 html body.platform.light-theme.wall-experience .wall-focus-controls button,html body.platform.light-theme.wall-experience .wall-focus-close { border-color:#aab9c0; background:#f0f4f5; color:#25343b; }
 html body.platform.light-theme.wall-experience .wall-focus-actions a { border-color:#263a43; background:#263a43; color:#fff; }
 html body.platform.light-theme.wall-experience .wall-focus-actions a+a { border-color:#98aab2; background:#eef3f4; color:#263840; }
-html body.platform.light-theme.moments-theme .directory-drawer { background:#fafafa; color:#27343a; }
-html body.platform.light-theme.moments-theme .directory-drawer>summary { border-color:#bac7cd; color:#27343a; }
 html body.platform.light-theme.moments-theme.projects-dashboard .projects-workspace { background:#fafafa; }
 @media(max-width:990px) { html body.platform.light-theme.moments-theme .compact-site-header .header-primary { display:none; } }
 @media(max-width:767px) { html body.platform.light-theme.moments-theme .notebook-navigation { position:static; } html body.platform.light-theme.moments-theme .notebook-navigation .navigation-panel { position:fixed; inset:76px 12px 12px; width:auto; max-width:none; max-height:none; background:#f9fbfbfa; } html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature):hover { transform:none; } }
