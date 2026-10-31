@@ -1,19 +1,19 @@
 import * as THREE from 'three';
 
-const colors=[['#1d3336','#a3d7c9'],['#39342e','#e5bd8a'],['#263449','#9bbdec'],['#41303a','#dfaccb'],['#263a30','#b7dcaa'],['#353744','#cfcee8']];
+const colors=[['#d5dde1','#50616b'],['#e8e9e6','#6b7478'],['#d9e2e5','#4b626d'],['#e1e3e5','#657078'],['#e9eceb','#617177'],['#d2dbe0','#54646d']];
 const clamp=(n,min,max)=>Math.min(max,Math.max(min,n));
 function poster(project,index){
  const canvas=document.createElement('canvas');canvas.width=768;canvas.height=960;const ctx=canvas.getContext('2d');const [dark,light]=colors[index%colors.length];
- const gradient=ctx.createLinearGradient(0,0,768,960);gradient.addColorStop(0,dark);gradient.addColorStop(1,'#101619');ctx.fillStyle=gradient;ctx.fillRect(0,0,768,960);
+ const gradient=ctx.createLinearGradient(0,0,768,960);gradient.addColorStop(0,dark);gradient.addColorStop(1,'#f7f8f8');ctx.fillStyle=gradient;ctx.fillRect(0,0,768,960);
  ctx.strokeStyle=light+'70';ctx.lineWidth=1;for(let i=0;i<15;i++){const radius=80+i*51;ctx.beginPath();ctx.arc(560,380,radius,0,Math.PI*2);ctx.stroke();}
  ctx.fillStyle=light;ctx.font='500 18px Arial';ctx.fillText('DIGIVATED   /   PROJECT '+String(index+1).padStart(2,'0'),48,68);
- ctx.fillStyle='#f3f1e9';ctx.font='650 78px Arial';const words=project.name.split(' ');let line='',y=730;for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>650&&line){ctx.fillText(line,48,y);y+=88;line=word;}else line=test;}ctx.fillText(line,48,y);
+ ctx.fillStyle='#23323a';ctx.font='650 78px Arial';const words=project.name.split(' ');let line='',y=730;for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>650&&line){ctx.fillText(line,48,y);y+=88;line=word;}else line=test;}ctx.fillText(line,48,y);
  ctx.fillStyle=light;ctx.fillRect(48,873,48,2);ctx.font='500 20px Arial';ctx.fillText(String(project.category||'INDEPENDENT WORK').toUpperCase().slice(0,34),112,880);
  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;return texture;
 }
 export function createWallScene(host,projects,onSelect,onHover=()=>{}){
  let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});}catch{return null;}
- renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setClearColor(0x080b0c);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.domElement.className='wall-canvas';renderer.domElement.setAttribute('aria-hidden','true');host.append(renderer.domElement);
+ renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setClearColor(0xe8ecee);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.domElement.className='wall-canvas';renderer.domElement.setAttribute('aria-hidden','true');host.append(renderer.domElement);
  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(44,1,.1,100),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(9,9),worldPointer=new THREE.Vector3(),plane=new THREE.Plane(new THREE.Vector3(0,0,1),0),geometry=new THREE.PlaneGeometry(1,1),loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');
  const meshes=[],textures=[];let frame=0,disposed=false,selected=-1,hovered=null,active=true,scroll=0,scrollTarget=0,width=1,height=1;
  const tiles=Array.from({length:Math.min(54,Math.max(36,projects.length))},(_,i)=>projects[i%projects.length]);
