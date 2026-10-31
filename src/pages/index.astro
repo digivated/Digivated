@@ -1,15 +1,8 @@
 ---
 import Platform from '../layouts/Platform.astro';
+import ProjectWall from '../components/ProjectWall.astro';
 import '../styles/project-wall.css';
 ---
 <Platform title="Discover projects worth seeing" description="Explore independent projects on Digivated. Meet builders, share your work, and leave feedback.">
-  <section class="project-wall" aria-labelledby="wall-title" data-project-wall>
-    <div class="wall-grid" id="wall-grid" aria-label="Project wall" aria-busy="true"></div>
-    <div class="wall-shade" aria-hidden="true"></div>
-    <div class="wall-intro"><p class="wall-overline"><span></span> A WALL OF INDEPENDENT WORK</p><h1 id="wall-title">Digivated</h1><p>Move around. Find something worth opening.</p><div class="wall-intro-links"><a href="/submit-project">Share your project <span aria-hidden="true">↗</span></a><a href="/discover?view=featured">Featured projects <span aria-hidden="true">→</span></a></div></div>
-    <div class="wall-hint" aria-hidden="true">EXPLORE · CLICK TO OPEN</div>
-    <div class="wall-status" id="wall-status" role="status">Loading projects…</div>
-    <div class="wall-focus" id="wall-focus" hidden aria-hidden="true"><div class="wall-focus-backdrop" data-close-focus></div><section class="wall-focus-panel" role="dialog" aria-modal="true" aria-labelledby="wall-focus-title" tabindex="-1"><div class="wall-focus-controls"><button type="button" data-wall-prev aria-label="Previous project">←</button><button type="button" data-wall-next aria-label="Next project">→</button></div><p class="wall-focus-category" id="wall-focus-category"></p><h2 id="wall-focus-title"></h2><div class="wall-focus-art" id="wall-focus-art"></div><p class="wall-focus-maker" id="wall-focus-maker"></p><p class="wall-focus-description" id="wall-focus-description"></p><div class="wall-focus-actions"><a id="wall-focus-detail" href="/discover">View project & feedback <span aria-hidden="true">↗</span></a><a id="wall-focus-visit" href="/discover" target="_blank" rel="noopener noreferrer">Visit website</a></div><button class="wall-focus-close" type="button" data-close-focus aria-label="Close project">×</button></section></div>
-  </section>
-  <script>import '../scripts/project-wall.js';</script>
+  <ProjectWall/>
 </Platform>
