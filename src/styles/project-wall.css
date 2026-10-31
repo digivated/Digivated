@@ -88,3 +88,15 @@ html body.platform.light-theme.wall-experience .wall-intro-links a,html body.pla
 .wall-experience .wall-hover-caption span { font-size:.52rem; letter-spacing:.2em; }
 .wall-experience .wall-hover-caption strong { font:400 1.3rem Georgia,serif; }
 @media(max-width:760px) { html body.platform.light-theme.wall-experience .wall-intro h1 { font-size:clamp(4.8rem,20vw,8rem); } .wall-experience .wall-intro { bottom:48px; } .wall-experience .wall-side-index { display:none; } .wall-experience .wall-hover-caption { display:none; } .wall-experience .wall-shade { background:linear-gradient(0deg,#040708ef,transparent 62%),linear-gradient(180deg,#040708ae,transparent 22%); } }
+/* The wall is the complete catalog: search and chapter controls remain on the scene. */
+.wall-experience .wall-navigation { position:absolute; z-index:5; top:clamp(88px,12vh,124px); left:clamp(24px,5vw,88px); right:clamp(24px,5vw,88px); display:flex; justify-content:space-between; align-items:center; gap:20px; pointer-events:none; }
+.wall-experience .wall-navigation>* { pointer-events:auto; }
+.wall-experience .wall-search input[type=search] { width:min(270px,48vw); height:42px; padding:10px 14px; border:1px solid #ffffff91; border-radius:2px; background:#0a0d0dca; color:#fff; font-size:.73rem; backdrop-filter:blur(10px); }
+.wall-experience .wall-search input::placeholder { color:#d2d6d3; }
+.wall-experience .wall-search input:focus-visible { outline:2px solid white; outline-offset:2px; }
+.wall-experience .wall-page-controls { display:flex; align-items:center; gap:12px; padding:4px; border:1px solid #ffffff69; background:#0a0d0dba; backdrop-filter:blur(12px); color:#fff; }
+.wall-experience .wall-page-controls span { min-width:90px; text-align:center; font-size:.62rem; font-weight:650; letter-spacing:.12em; }
+.wall-experience .wall-page-controls button { width:34px; height:34px; border:0; background:#ffffff18; color:#fff; font-size:1.2rem; cursor:pointer; }
+.wall-experience .wall-page-controls button:hover { background:#ffffff45; }
+.wall-experience .wall-page-controls button:disabled { opacity:.3; cursor:default; }
+@media(max-width:760px) { .wall-experience .wall-navigation { top:76px; left:16px; right:16px; align-items:stretch; gap:8px; } .wall-experience .wall-search { flex:1; min-width:0; } .wall-experience .wall-search input[type=search] { width:100%; height:42px; } .wall-experience .wall-page-controls { gap:2px; } .wall-experience .wall-page-controls span { min-width:58px; font-size:.53rem; } .wall-experience .wall-page-controls button { width:27px; height:32px; } }
