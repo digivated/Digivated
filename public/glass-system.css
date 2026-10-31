@@ -158,3 +158,11 @@ html body.platform.light-theme.moments-theme .platform-footer { background:#fafa
 html body.platform.light-theme.wall-experience .wall-side-index,html body.platform.light-theme.wall-experience .wall-hint { color:#263238; text-shadow:none; }
 html body.platform.light-theme.wall-experience .wall-intro-links a,html body.platform.light-theme.wall-experience .wall-intro-links a+a { color:#172024; border-color:#556168; background:#fff; text-shadow:none; }
 html body.platform.light-theme.wall-experience .wall-fallback :is(h1,a),html body.platform.light-theme.wall-experience .wall-noscript :is(h1,a) { color:#172024; }
+
+html body.platform.light-theme.wall-experience .wall-intro { max-width:min(620px,calc(100vw - 48px)); }
+html body.platform.light-theme.wall-experience .wall-intro h1 { font-size:clamp(3.8rem,8vw,7.5rem); line-height:.94; }
+html body.platform.light-theme.wall-experience .wall-intro>p:not(.wall-overline) { max-width:390px; color:#354147; font-size:clamp(.86rem,1.25vw,1rem); line-height:1.55; }
+html body.platform.light-theme.wall-experience .wall-intro-links { gap:10px; }
+html body.platform.light-theme.wall-experience .wall-intro-links a,html body.platform.light-theme.wall-experience .wall-intro-links a+a { min-height:42px; padding:10px 16px; border:1px solid #bec8cc; border-radius:999px; background:#fff; color:#172024; box-shadow:0 6px 20px #18242b18; text-transform:none; letter-spacing:0; font-size:.78rem; }
+html body.platform.light-theme.wall-experience .wall-intro-links a:first-child { background:#202a2e; border-color:#202a2e; color:#fff; }
+@media(max-width:760px) { html body.platform.light-theme.wall-experience .wall-intro h1 { font-size:clamp(3.5rem,12vw,5.4rem); } }
