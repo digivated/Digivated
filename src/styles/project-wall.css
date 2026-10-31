@@ -186,7 +186,10 @@ html body.platform.light-theme.wall-experience .compact-site-header :is(.header-
 
 /* Grid mode pages through the filtered catalog with matching image and caption bounds. */
 html body.platform.light-theme.wall-experience .project-wall.wall-grid-view { height:auto; min-height:100svh; overflow:visible; overflow-anchor:none; background:#f6f7f7; }
-.wall-experience .wall-grid-view .wall-react-root { position:relative; inset:auto; padding:0 24px 48px; }
+.wall-experience .wall-grid-view .wall-react-root { position:relative; inset:auto; display:flex; flex-direction:column; padding:0 24px 48px; }
+.wall-experience .wall-grid-view .wall-navigation { order:0; }
+.wall-experience .wall-grid-view .wall-dom-grid { order:1; }
+.wall-experience .wall-grid-view .wall-status { order:2; }
 .wall-experience .wall-grid-view .wall-stage,.wall-experience .wall-grid-view .wall-shade,.wall-experience .wall-grid-view .wall-intro { display:none; }
 html body.platform.light-theme.wall-experience .wall-grid-view .wall-navigation { position:relative; top:auto; left:auto; right:auto; display:flex; flex-wrap:wrap; justify-content:flex-start; width:min(1200px,100%); margin:0 auto; padding:100px 0 22px; background:transparent; }
 .wall-experience .wall-grid-view .wall-mobile-heading { display:flex; flex-direction:column; gap:3px; width:100%; color:#20282c; }
@@ -211,7 +214,7 @@ html body.platform.light-theme.wall-experience .wall-intro-links button:focus-vi
 @media(max-width:760px) {
  .wall-experience .wall-grid-view .wall-react-root { padding:0 18px 36px; }
  html body.platform.light-theme.wall-experience .wall-grid-view .wall-navigation { top:auto; padding:22px 0 18px; }
- html body.platform.light-theme.moments-theme.projects-dashboard .wall-grid-view .wall-navigation { padding-top:94px; }
+ html body.platform.light-theme.moments-theme.projects-dashboard .wall-grid-view .wall-navigation { padding-top:22px; }
  html body.platform.light-theme.wall-experience .wall-grid-view .wall-search { grid-column:auto; grid-row:auto; flex-basis:100%; }
  html body.platform.light-theme.wall-experience .wall-grid-view .wall-view-controls { grid-column:auto; grid-row:auto; }
  html body.platform.light-theme.wall-experience .wall-grid-view .wall-dom-grid.wall-card-grid { grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; gap:12px; }
