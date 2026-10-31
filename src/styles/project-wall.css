@@ -134,3 +134,36 @@ html body.platform.light-theme.moments-theme .directory-drawer { background:#faf
 html body.platform.light-theme.moments-theme .directory-drawer>summary { border-color:#e1e3e4; background:#fafafa; color:#20282c; }
 html body.platform.light-theme.moments-theme .directory-drawer .dashboard-intro h2 { color:#20282c; }
 @media(max-width:760px) { html body.platform.light-theme.wall-experience .wall-intro h1 { font-size:clamp(3.4rem,12vw,5rem); } html body.platform.light-theme.wall-experience .wall-intro { bottom:40px; } }
+/* Mobile uses a swipeable rail so the controls never obscure a project. */
+.wall-experience .wall-mobile-heading { display:none; }
+@media(max-width:760px) {
+ html body.platform.light-theme.wall-experience .project-wall,html body.platform.light-theme.moments-theme.home-refresh .project-wall { min-height:0; height:640px; background:#f6f7f7; }
+ html body.platform.light-theme.wall-experience .wall-stage,html body.platform.light-theme.wall-experience .wall-shade,html body.platform.light-theme.wall-experience .wall-intro { display:none; }
+ html body.platform.light-theme.wall-experience .wall-navigation { top:0; left:0; right:0; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; align-items:center; padding:22px 20px 0; background:#f6f7f7; }
+ html body.platform.light-theme.wall-experience .wall-mobile-heading { display:flex; flex-direction:column; gap:3px; min-width:0; color:#20282c; }
+ .wall-mobile-heading strong { font-size:1.12rem; font-weight:650; letter-spacing:-.035em; }
+ .wall-mobile-heading span { color:#68747a; font-size:.72rem; }
+ html body.platform.light-theme.wall-experience .wall-search { grid-column:1/-1; grid-row:2; width:100%; }
+ html body.platform.light-theme.wall-experience .wall-search input[type=search] { width:100%; height:46px; border-radius:10px; box-shadow:none; font-size:.85rem; }
+ html body.platform.light-theme.wall-experience .wall-page-controls { grid-column:2; grid-row:1; gap:3px; padding:3px; border:1px solid #d7dfe2; border-radius:10px; background:#fff; box-shadow:none; }
+ html body.platform.light-theme.wall-experience .wall-page-controls span { min-width:65px; font-size:.58rem; letter-spacing:0; }
+ html body.platform.light-theme.wall-experience .wall-page-controls button { width:30px; height:32px; border-radius:7px; }
+ html body.platform.light-theme.wall-experience .wall-dom-grid { position:absolute; z-index:2; inset:142px 0 15px; display:flex; gap:14px; overflow-x:auto; overflow-y:hidden; padding:0 20px 10px; transform:none; transition:none; scroll-snap-type:x mandatory; overscroll-behavior-inline:contain; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+ .wall-experience .wall-dom-grid::-webkit-scrollbar { display:none; }
+ html body.platform.light-theme.wall-experience .wall-dom-grid .wall-tile { flex:0 0 min(78vw,340px); height:100%; min-width:0; display:flex; flex-direction:column; grid-column:auto; grid-row:auto; border:1px solid #dce2e4; border-radius:14px; background:#e6eaeb; color:#20282c; transform:none; box-shadow:0 5px 18px #15232a0f; scroll-snap-align:center; }
+ html body.platform.light-theme.wall-experience .wall-dom-grid .wall-tile:hover,html body.platform.light-theme.wall-experience .wall-dom-grid .wall-tile:focus-visible { transform:none; box-shadow:0 8px 24px #15232a21; }
+ html body.platform.light-theme.wall-experience .wall-dom-grid .wall-tile img { flex:1 1 auto; width:100%; height:0; min-height:0; object-fit:cover; object-position:center; filter:none; }
+ html body.platform.light-theme.wall-experience .wall-dom-grid .wall-tile-caption { position:relative; z-index:2; inset:auto; flex:none; display:flex; gap:6px; min-height:118px; padding:17px 18px; background:#fff; color:#20282c; opacity:1; text-align:left; }
+ .wall-experience .wall-dom-grid .wall-tile-caption small { color:#637077; font-size:.6rem; letter-spacing:.1em; }
+ .wall-experience .wall-dom-grid .wall-tile-caption strong { color:#20282c; font-size:1.22rem; line-height:1.16; }
+ .wall-experience .wall-dom-grid .wall-tile-caption>span { color:#59656b; font-size:.72rem; }
+ html body.platform.light-theme.wall-experience .wall-dom-grid .wall-no-image { background:#dfe5e7; }
+ html body.platform.light-theme.wall-experience .wall-dom-grid .wall-no-image::before { inset:0 0 118px; color:#60707866; }
+ html body.platform.light-theme.wall-experience .wall-status { z-index:4; top:55%; }
+}
+@media(max-width:390px) { html body.platform.light-theme.wall-experience .project-wall,html body.platform.light-theme.moments-theme.home-refresh .project-wall { height:580px; } html body.platform.light-theme.wall-experience .wall-dom-grid { inset-block-start:138px; } html body.platform.light-theme.wall-experience .wall-page-controls span { min-width:54px; } }
+@media(max-width:760px) {
+ html body.platform.light-theme.moments-theme.projects-dashboard .project-wall { height:710px; }
+ html body.platform.light-theme.moments-theme.projects-dashboard .wall-navigation { top:72px; }
+ html body.platform.light-theme.moments-theme.projects-dashboard .wall-dom-grid { inset-block-start:214px; }
+}
