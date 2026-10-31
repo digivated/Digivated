@@ -49,6 +49,8 @@ html body.platform.light-theme.wall-experience .wall-focus h2 { margin:0 0 18px;
 html body.platform.light-theme.wall-experience .wall-focus-actions a { display:inline-flex; align-items:center; min-height:42px; padding:10px 18px; border:1px solid #fff; border-radius:24px; background:white; color:#101010; text-decoration:none; font-size:.8rem; font-weight:650; }
 html body.platform.light-theme.wall-experience .wall-focus-actions a+a { background:#ffffff1a; color:white; border-color:#fff5; }
 .wall-experience .wall-focus-close { position:absolute; top:15px; right:15px; font-size:1.4rem; }
+.wall-experience .wall-focus-controls { position:sticky; top:-14px; z-index:3; flex:none; align-items:center; justify-content:center; width:calc(100% + 64px); min-height:58px; margin:-14px -32px 14px; padding:8px 16px; background:#fffefa; border-bottom:1px solid #e1e6e8; }
+.wall-experience .wall-focus-controls .wall-focus-close { position:absolute; top:50%; right:16px; transform:translateY(-50%); }
 .wall-modal-open { overflow:hidden; }
 .wall-experience .project-wall.wall-is-open .wall-grid { filter:brightness(.45); transform:scale(1.08); }
 /* Keep the normal account logic, but let navigation sit over the visual wall. */
@@ -274,6 +276,10 @@ html body.platform.light-theme.wall-experience .wall-card-actions button:hover,h
 @media(max-width:760px) {
  .wall-experience .wall-focus { align-items:center; padding:12px; }
  .wall-experience .wall-focus-panel { width:100%; max-height:calc(100dvh - 24px); max-height:calc(100svh - 24px); padding:16px; overflow-x:hidden; }
+ .wall-experience .wall-focus-controls { top:-16px; width:calc(100% + 32px); min-height:62px; margin:-16px -16px 14px; padding:8px 68px 8px 12px; justify-content:center; gap:12px; background:#fbfcfbf5; backdrop-filter:blur(12px); }
+ .wall-experience .wall-focus-controls button { flex:none; width:42px; height:42px; }
+ .wall-experience .wall-focus-controls .wall-focus-close { right:14px; }
+ html body.platform.light-theme.wall-experience .wall-focus h2 { max-width:100%; font-size:clamp(1.65rem,8vw,2.5rem); line-height:1.08; overflow-wrap:anywhere; }
  html body.platform.light-theme.wall-experience .wall-focus-art { display:flex; align-items:center; justify-content:center; flex:0 0 auto; width:100%; height:auto; min-height:0; padding:12px; overflow:visible; border-radius:10px; }
  html body.platform.light-theme.wall-experience .wall-focus-art img { display:block; flex:none; width:auto; height:auto; max-width:100%; max-height:min(36dvh,300px); object-fit:contain; object-position:center; }
  html body.platform.light-theme.wall-experience .wall-search input[type=search],html body.platform.light-theme.moments-theme.projects-dashboard .dashboard-controls :is(input,select) { font-size:16px; }
