@@ -7,7 +7,7 @@ html body.platform.light-theme.moments-theme.wall-experience main#main { width:1
 html body.platform.light-theme.moments-theme.wall-experience .site-breadcrumbs { display:none; }
 html body.platform.light-theme.moments-theme.projects-dashboard .projects-workspace { width:min(1200px,100%); max-width:none; margin:0 auto; padding:85px 32px 100px; background:#0b0b0b; }
 html body.platform.light-theme.moments-theme.projects-dashboard .projects-content { width:100%; max-width:none; margin:0; scroll-margin-top:24px; }
-html body.platform.light-theme.moments-theme.projects-dashboard .dashboard-intro h1 { color:#fff; font:400 clamp(3rem,6vw,5.5rem)/1 Georgia,serif; letter-spacing:-.06em; }
+html body.platform.light-theme.moments-theme.projects-dashboard .dashboard-intro h1 { color:#fff; font:650 clamp(3rem,6vw,5.5rem)/1 'Inter Variable',system-ui,sans-serif; letter-spacing:-.06em; }
 html body.platform.light-theme.moments-theme.projects-dashboard :is(.dashboard-intro p,.dashboard-curation,.dashboard-review-note,.results-status) { color:#aaa; }
 html body.platform.light-theme.moments-theme.projects-dashboard :is(.project-collections,.dashboard-controls,.refined-submit,.project-browse-header) { background:#111; border-color:#333; color:#eee; }
 html body.platform.light-theme.moments-theme.projects-dashboard .project-collections :is(a,button) { color:#ddd; border-color:#333; background:transparent; }
@@ -19,7 +19,7 @@ html body.platform.light-theme.moments-theme .platform-header.compact-site-heade
 html body.platform.light-theme.moments-theme.home-refresh .platform-header.compact-site-header { position:absolute; top:0; left:0; right:0; transform:none; width:100%; max-width:none; margin:0; border:0; background:linear-gradient(#050607b8,#05060700); }
 html body.platform.light-theme.moments-theme.wall-experience .platform-header.compact-site-header { position:absolute; top:0; left:0; right:0; transform:none; width:100%; max-width:none; margin:0; border:0; background:linear-gradient(#050607b8,#05060700); }
 html body.platform.light-theme.moments-theme .compact-site-header .header-inner { max-width:1220px; min-height:64px; margin:auto; padding:10px 24px; }
-html body.platform.light-theme.moments-theme .platform-header .platform-brand { color:#fff; font:400 1.35rem/1 Georgia,'Times New Roman',serif; letter-spacing:-.04em; text-transform:none; }
+html body.platform.light-theme.moments-theme .platform-header .platform-brand { color:#fff; font:700 1.35rem/1 'Inter Variable',system-ui,sans-serif; letter-spacing:-.04em; text-transform:none; }
 html body.platform.light-theme.moments-theme .compact-site-header .new-brand-mark { display:block; width:28px; height:28px; padding:3px; border-radius:3px; background:#fff; }
 html body.platform.light-theme.moments-theme .compact-site-header .header-primary a { color:#ddd; font-size:.64rem; font-weight:550; letter-spacing:.16em; text-transform:uppercase; }
 html body.platform.light-theme.moments-theme .compact-site-header .header-primary a:is(:hover,[aria-current=page]) { color:#fff; background:#ffffff1a; }
@@ -37,19 +37,19 @@ html body.platform.light-theme.moments-theme .site-breadcrumbs { color:#999; pad
 html body.platform.light-theme.moments-theme .site-breadcrumbs a { color:#ccc; }
 html body.platform.light-theme.moments-theme :is(.page-intro,.login-heading) { max-width:800px; padding-top:clamp(35px,5vw,80px); }
 html body.platform.light-theme.moments-theme .page-intro .eyebrow,html body.platform.light-theme.moments-theme .login-heading .eyebrow { color:#aaa; font-size:.64rem; letter-spacing:.22em; }
-html body.platform.light-theme.moments-theme .page-intro h1,html body.platform.light-theme.moments-theme .login-heading h1 { color:#fff; font:400 clamp(3rem,6vw,5.8rem)/1.02 Georgia,'Times New Roman',serif; letter-spacing:-.06em; }
+html body.platform.light-theme.moments-theme .page-intro h1,html body.platform.light-theme.moments-theme .login-heading h1 { color:#fff; font:650 clamp(3rem,6vw,5.8rem)/1.02 'Inter Variable',system-ui,sans-serif; letter-spacing:-.06em; }
 html body.platform.light-theme.moments-theme :is(p,.lede,.quiet,.field-help) { color:#bbb; }
 html body.platform.light-theme.moments-theme a { color:inherit; }
 html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.product-feature,.submission-form,.project-account-card,.login-panel,.about-values>div,.promo-details>div,.browse-controls,.community-empty,.saved-empty-panel) { border:1px solid #333; border-radius:3px; background:#151515; color:#eee; box-shadow:none; }
 html body.platform.light-theme.moments-theme .product-feature { display:grid; grid-template-columns:minmax(200px,.85fr) minmax(0,1.15fr); gap:clamp(25px,4vw,60px); align-items:center; margin:0 0 24px; overflow:hidden; }
 html body.platform.light-theme.moments-theme .product-feature .product-art { min-height:330px; border:0; border-right:1px solid #333; border-radius:0; background:#252525; }
 html body.platform.light-theme.moments-theme .product-feature .product-copy { padding:30px 35px 30px 0; }
-html body.platform.light-theme.moments-theme .product-feature h2 { font:400 clamp(2rem,3vw,3rem)/1.05 Georgia,serif; letter-spacing:-.05em; }
+html body.platform.light-theme.moments-theme .product-feature h2 { font:650 clamp(2rem,3vw,3rem)/1.05 'Inter Variable',system-ui,sans-serif; letter-spacing:-.05em; }
 html body.platform.light-theme.moments-theme :is(.founding-teaser,.promo-callout,.submission-note,.promo-ready) { border:1px solid #333; border-radius:3px; background:#181818; color:#eee; box-shadow:none; }
-html body.platform.light-theme.moments-theme .founding-teaser h2 { color:#fff; font:400 clamp(1.7rem,3vw,2.8rem)/1.1 Georgia,serif; }
+html body.platform.light-theme.moments-theme .founding-teaser h2 { color:#fff; font:650 clamp(1.7rem,3vw,2.8rem)/1.1 'Inter Variable',system-ui,sans-serif; }
 html body.platform.light-theme.moments-theme .founding-teaser p { color:#bbb; }
 html body.platform.light-theme.moments-theme .carousel-library { margin-top:70px; padding-top:25px; border-top:1px solid #303030; }
-html body.platform.light-theme.moments-theme .carousel-library h2 { color:#fff; font:400 clamp(1.8rem,3vw,2.6rem) Georgia,serif; }
+html body.platform.light-theme.moments-theme .carousel-library h2 { color:#fff; font:650 clamp(1.8rem,3vw,2.6rem) 'Inter Variable',system-ui,sans-serif; }
 html body.platform.light-theme.moments-theme .carousel-browse { border-color:#333; background:#151515; color:#ddd; }
 html body.platform.light-theme.moments-theme .carousel-library .resource-grid { gap:16px; }
 html body.platform.light-theme.moments-theme .carousel-library .resource-card { overflow:hidden; }
@@ -72,7 +72,7 @@ html body.platform.light-theme.moments-theme .login-tabs button[aria-selected=tr
 html body.platform.light-theme.moments-theme .login-browse,html body.platform.light-theme.moments-theme .login-explanation,html body.platform.light-theme.moments-theme .login-help { color:#bbb; }
 html body.platform.light-theme.moments-theme .platform-footer { margin:0; border-top:1px solid #292929; background:#0b0b0b; color:#aaa; }
 html body.platform.light-theme.moments-theme .platform-footer .footer-columns { grid-template-columns:minmax(220px,2fr) repeat(5,minmax(110px,1fr)); gap:26px; }
-html body.platform.light-theme.moments-theme .platform-footer .footer-intro .platform-brand { color:#fff; font:400 1.5rem Georgia,serif; }
+html body.platform.light-theme.moments-theme .platform-footer .footer-intro .platform-brand { color:#fff; font:700 1.5rem 'Inter Variable',system-ui,sans-serif; }
 html body.platform.light-theme.moments-theme .platform-footer .footer-intro .x-brand-mark { display:none; }
 html body.platform.light-theme.moments-theme .platform-footer h2 { color:#888; font-size:.62rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; }
 html body.platform.light-theme.moments-theme .platform-footer .footer-group-links a { color:#bbb; font-size:.77rem; }
@@ -88,7 +88,7 @@ html body.platform.light-theme.moments-theme :focus-visible { outline:2px solid 
 /* Submit: consistent dark surfaces and readable field states. */
 html body.platform.light-theme.moments-theme .submission-intro { max-width:900px; padding:42px 0 28px; }
 html body.platform.light-theme.moments-theme .submission-intro .eyebrow { color:#aebdb8; }
-html body.platform.light-theme.moments-theme .submission-intro h1 { color:#fff; font:400 clamp(3.6rem,7vw,6.6rem)/.93 Georgia,serif; letter-spacing:-.065em; }
+html body.platform.light-theme.moments-theme .submission-intro h1 { color:#fff; font:650 clamp(3.6rem,7vw,6.6rem)/.93 'Inter Variable',system-ui,sans-serif; letter-spacing:-.065em; }
 html body.platform.light-theme.moments-theme .submission-intro .lede { color:#b9c1bf; }
 html body.platform.light-theme.moments-theme .submission-layout { max-width:900px; }
 html body.platform.light-theme.moments-theme .submission-form { border:1px solid #373d3c; border-radius:5px; background:#121717; }
@@ -114,3 +114,5 @@ html body.platform.light-theme.moments-theme .submission-review .button:disabled
 html body.platform.light-theme.moments-theme .submission-form :is(a,.submission-review a) { color:#d7f1df; }
 html body.platform.light-theme.moments-theme .submission-form .button.primary { color:#0e1913; background:#d7f1df; border-color:#d7f1df; }
 @media(max-width:540px) { html body.platform.light-theme.moments-theme .submission-intro { padding-top:25px; } html body.platform.light-theme.moments-theme .submission-intro h1 { font-size:3.4rem; } }
+/* Header navigation already identifies these pages. */
+html body.platform.light-theme.moments-theme:has(.shop-showcase) .site-breadcrumbs,html body.platform.light-theme.moments-theme:has(.submission-layout) .site-breadcrumbs { display:none; }

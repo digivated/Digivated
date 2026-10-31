@@ -23,7 +23,7 @@ html body.platform.light-theme.wall-experience main { width:100%; max-width:none
 .wall-experience .wall-intro { position:absolute; z-index:3; bottom:clamp(34px,6vh,80px); left:clamp(24px,4vw,70px); max-width:480px; pointer-events:none; text-shadow:0 3px 20px #000c; }
 .wall-experience .wall-overline { display:flex; align-items:center; gap:10px; margin:0 0 13px; color:#eee; font-size:.65rem; letter-spacing:.28em; font-weight:600; }
 .wall-experience .wall-overline span { display:block; width:28px; height:1px; background:#fff; }
-html body.platform.light-theme.wall-experience .wall-intro h1 { margin:0; color:#fff; font:400 clamp(3.7rem,7.5vw,7.6rem)/.95 Georgia,'Times New Roman',serif; letter-spacing:-.07em; }
+html body.platform.light-theme.wall-experience .wall-intro h1 { margin:0; color:#fff; font:650 clamp(3.7rem,7.5vw,7.6rem)/.95 'Inter Variable',system-ui,sans-serif; letter-spacing:-.07em; }
 .wall-experience .wall-intro>p:not(.wall-overline) { max-width:360px; margin:17px 0 0; color:#e5e5e5; font-size:.86rem; line-height:1.55; }
 .wall-experience .wall-intro-links { display:flex; gap:9px; flex-wrap:wrap; margin-top:20px; pointer-events:auto; }
 html body.platform.light-theme.wall-experience .wall-intro-links a { display:inline-flex; gap:15px; align-items:center; min-height:42px; padding:10px 15px; border:1px solid #ffffffaa; border-radius:2px; background:#fff; color:#151515; text-decoration:none; font-size:.74rem; font-weight:700; text-shadow:none; }
@@ -40,10 +40,10 @@ html body.platform.light-theme.wall-experience .wall-status a { color:white; tex
 .wall-experience .wall-focus-controls { display:flex; gap:10px; margin-bottom:13px; }
 .wall-experience .wall-focus-controls button,.wall-experience .wall-focus-close { display:grid; place-items:center; width:36px; height:36px; border:1px solid #fff3; border-radius:50%; background:#ffffff1e; color:white; font:inherit; cursor:pointer; }
 .wall-experience .wall-focus-category,.wall-experience .wall-focus-maker { margin:0 0 6px; color:#aaa; font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; }
-html body.platform.light-theme.wall-experience .wall-focus h2 { margin:0 0 18px; color:white; font:400 clamp(2.1rem,4vw,3.2rem)/1 Georgia,'Times New Roman',serif; letter-spacing:-.045em; }
+html body.platform.light-theme.wall-experience .wall-focus h2 { margin:0 0 18px; color:white; font:650 clamp(2.1rem,4vw,3.2rem)/1 'Inter Variable',system-ui,sans-serif; letter-spacing:-.045em; }
 .wall-experience .wall-focus-art { width:100%; height:clamp(210px,35vh,360px); display:grid; place-items:center; margin-bottom:18px; overflow:hidden; border-radius:4px; background:linear-gradient(135deg,#264b52,#8b745a); }
 .wall-experience .wall-focus-art img { width:100%; height:100%; object-fit:contain; }
-.wall-experience .wall-art-monogram { font:400 7rem Georgia,serif; opacity:.65; }
+.wall-experience .wall-art-monogram { font:400 7rem 'Inter Variable',system-ui,sans-serif; opacity:.65; }
 .wall-experience .wall-focus-description { max-width:420px; margin:10px 0 20px; color:#d5d5d5; font-size:.86rem; line-height:1.6; }
 .wall-experience .wall-focus-actions { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
 html body.platform.light-theme.wall-experience .wall-focus-actions a { display:inline-flex; align-items:center; min-height:42px; padding:10px 18px; border:1px solid #fff; border-radius:24px; background:white; color:#101010; text-decoration:none; font-size:.8rem; font-weight:650; }
@@ -54,7 +54,7 @@ html body.platform.light-theme.wall-experience .wall-focus-actions a+a { backgro
 /* Keep the normal account logic, but let navigation sit over the visual wall. */
 html body.platform.light-theme.wall-experience .compact-site-header { position:absolute; z-index:100; inset:0 0 auto; width:100%; max-width:none; margin:0; border:0; border-radius:0; background:linear-gradient(#050607a8,#05060700); box-shadow:none; backdrop-filter:none; }
 html body.platform.light-theme.wall-experience .compact-site-header .header-inner { width:min(1220px,100%); min-height:68px; margin:auto; padding:12px 22px; }
-html body.platform.light-theme.wall-experience .compact-site-header .platform-brand { color:#fff; font:400 1.35rem Georgia,serif; letter-spacing:-.04em; text-shadow:0 2px 10px #0008; }
+html body.platform.light-theme.wall-experience .compact-site-header .platform-brand { color:#fff; font:700 1.35rem 'Inter Variable',system-ui,sans-serif; letter-spacing:-.04em; text-shadow:0 2px 10px #0008; }
 .wall-experience .compact-site-header .new-brand-mark { width:30px; height:30px; padding:3px; border-radius:3px; background:white; }
 html body.platform.light-theme.wall-experience .compact-site-header .header-primary a { color:#f5f5f5; font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; }
 html body.platform.light-theme.wall-experience .compact-site-header .header-primary a:is(:hover,[aria-current=page]) { color:white; background:#ffffff25; }
@@ -67,7 +67,7 @@ html body.platform.light-theme.wall-experience .compact-site-header :is(.header-
 .wall-experience .wall-stage canvas { display:block; width:100%; height:100%; touch-action:pan-y; }
 .wall-experience .wall-dom-grid { z-index:0; }
 .wall-experience .wall-fallback { position:absolute; z-index:2; bottom:8%; left:5%; max-width:480px; }
-.wall-experience .wall-fallback h1 { font:400 clamp(3rem,8vw,7rem)/.95 Georgia,serif; }
+.wall-experience .wall-fallback h1 { font:650 clamp(3rem,8vw,7rem)/.95 'Inter Variable',system-ui,sans-serif; }
 .wall-experience .wall-fallback a { color:white; }
 .wall-experience .wall-noscript { position:relative; z-index:2; padding:20px; color:white; }
 .wall-experience .wall-noscript a { color:white; }
@@ -77,7 +77,7 @@ html body.platform.light-theme.wall-experience .compact-site-header :is(.header-
 html body.platform.light-theme.wall-experience .project-wall { background:#080b0c; }
 .wall-experience .wall-shade { background:linear-gradient(90deg,#040708dd 0%,#04070855 26%,transparent 61%),linear-gradient(0deg,#040708da 0%,transparent 34%),linear-gradient(180deg,#0407089c 0%,transparent 19%); }
 .wall-experience .wall-intro { left:clamp(24px,5vw,88px); bottom:clamp(48px,9vh,120px); max-width:660px; }
-html body.platform.light-theme.wall-experience .wall-intro h1 { max-width:660px; font:400 clamp(5.7rem,14vw,14rem)/.7 Georgia,'Times New Roman',serif; letter-spacing:-.085em; }
+html body.platform.light-theme.wall-experience .wall-intro h1 { max-width:660px; font:650 clamp(4.6rem,10vw,9rem)/.9 'Inter Variable',system-ui,sans-serif; letter-spacing:-.085em; }
 .wall-experience .wall-intro>p:not(.wall-overline) { max-width:280px; margin-top:32px; font-size:.83rem; }
 .wall-experience .wall-overline { font-size:.59rem; letter-spacing:.3em; }
 .wall-experience .wall-intro-links { margin-top:30px; gap:24px; }
@@ -86,8 +86,8 @@ html body.platform.light-theme.wall-experience .wall-intro-links a,html body.pla
 .wall-experience .wall-hint { top:50%; right:18px; writing-mode:vertical-rl; font-size:.52rem; }
 .wall-experience .wall-hover-caption { position:absolute; z-index:4; top:50%; left:50%; transform:translate(-50%,-50%); display:grid; gap:5px; min-width:180px; padding:16px 20px; border:1px solid #ffffffa1; background:#080c0dc7; backdrop-filter:blur(12px); pointer-events:none; color:white; text-align:center; box-shadow:0 20px 60px #000a; }
 .wall-experience .wall-hover-caption span { font-size:.52rem; letter-spacing:.2em; }
-.wall-experience .wall-hover-caption strong { font:400 1.3rem Georgia,serif; }
-@media(max-width:760px) { html body.platform.light-theme.wall-experience .wall-intro h1 { font-size:clamp(4.8rem,20vw,8rem); } .wall-experience .wall-intro { bottom:48px; } .wall-experience .wall-side-index { display:none; } .wall-experience .wall-hover-caption { display:none; } .wall-experience .wall-shade { background:linear-gradient(0deg,#040708ef,transparent 62%),linear-gradient(180deg,#040708ae,transparent 22%); } }
+.wall-experience .wall-hover-caption strong { font:650 1.3rem 'Inter Variable',system-ui,sans-serif; }
+@media(max-width:760px) { html body.platform.light-theme.wall-experience .wall-intro h1 { font-size:clamp(3.6rem,14vw,6.5rem); } .wall-experience .wall-intro { bottom:48px; } .wall-experience .wall-side-index { display:none; } .wall-experience .wall-hover-caption { display:none; } .wall-experience .wall-shade { background:linear-gradient(0deg,#040708ef,transparent 62%),linear-gradient(180deg,#040708ae,transparent 22%); } }
 /* The wall is the complete catalog: search and chapter controls remain on the scene. */
 .wall-experience .wall-navigation { position:absolute; z-index:5; top:clamp(88px,12vh,124px); left:clamp(24px,5vw,88px); right:clamp(24px,5vw,88px); display:flex; justify-content:space-between; align-items:center; gap:20px; pointer-events:none; }
 .wall-experience .wall-navigation>* { pointer-events:auto; }
@@ -100,3 +100,12 @@ html body.platform.light-theme.wall-experience .wall-intro-links a,html body.pla
 .wall-experience .wall-page-controls button:hover { background:#ffffff45; }
 .wall-experience .wall-page-controls button:disabled { opacity:.3; cursor:default; }
 @media(max-width:760px) { .wall-experience .wall-navigation { top:76px; left:16px; right:16px; align-items:stretch; gap:8px; } .wall-experience .wall-search { flex:1; min-width:0; } .wall-experience .wall-search input[type=search] { width:100%; height:42px; } .wall-experience .wall-page-controls { gap:2px; } .wall-experience .wall-page-controls span { min-width:58px; font-size:.53rem; } .wall-experience .wall-page-controls button { width:27px; height:32px; } }
+/* Optional directory retains every existing filter and project action without repeating the wall. */
+html body.platform.light-theme.moments-theme .directory-drawer { background:#0b0b0b; color:#f5f5f5; }
+html body.platform.light-theme.moments-theme .directory-drawer>summary { display:flex; justify-content:space-between; align-items:center; max-width:1120px; margin:auto; padding:30px 32px; border-top:1px solid #363636; color:#f5f5f5; font-size:.8rem; font-weight:650; cursor:pointer; list-style:none; }
+.directory-drawer>summary::-webkit-details-marker { display:none; }
+.directory-drawer>summary span { transition:transform .2s; }
+.directory-drawer[open]>summary span { transform:rotate(45deg); }
+html body.platform.light-theme.moments-theme .directory-drawer .projects-workspace { padding-top:20px; }
+html body.platform.light-theme.moments-theme .directory-drawer .dashboard-intro h2 { margin:0; color:#fff; font-size:clamp(1.6rem,3vw,2.4rem); }
+@media(max-width:760px) { html body.platform.light-theme.moments-theme .directory-drawer>summary { padding:24px 20px; } }

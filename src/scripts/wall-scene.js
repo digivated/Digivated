@@ -7,7 +7,7 @@ function poster(project,index){
  const gradient=ctx.createLinearGradient(0,0,768,960);gradient.addColorStop(0,dark);gradient.addColorStop(1,'#101619');ctx.fillStyle=gradient;ctx.fillRect(0,0,768,960);
  ctx.strokeStyle=light+'70';ctx.lineWidth=1;for(let i=0;i<15;i++){const radius=80+i*51;ctx.beginPath();ctx.arc(560,380,radius,0,Math.PI*2);ctx.stroke();}
  ctx.fillStyle=light;ctx.font='500 18px Arial';ctx.fillText('DIGIVATED   /   PROJECT '+String(index+1).padStart(2,'0'),48,68);
- ctx.fillStyle='#f3f1e9';ctx.font='400 84px Georgia';const words=project.name.split(' ');let line='',y=730;for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>650&&line){ctx.fillText(line,48,y);y+=88;line=word;}else line=test;}ctx.fillText(line,48,y);
+ ctx.fillStyle='#f3f1e9';ctx.font='650 78px Arial';const words=project.name.split(' ');let line='',y=730;for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>650&&line){ctx.fillText(line,48,y);y+=88;line=word;}else line=test;}ctx.fillText(line,48,y);
  ctx.fillStyle=light;ctx.fillRect(48,873,48,2);ctx.font='500 20px Arial';ctx.fillText(String(project.category||'INDEPENDENT WORK').toUpperCase().slice(0,34),112,880);
  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;return texture;
 }

@@ -1,7 +1,7 @@
 html body.platform.light-theme.moments-theme .shop-showcase { max-width:1120px; margin:auto; }
 .shop-heading { display:grid; grid-template-columns:minmax(0,1fr) minmax(220px,330px); align-items:end; gap:24px; padding:35px 0 42px; border-bottom:1px solid #444; }
 .shop-heading .shop-kicker { grid-column:1/-1; margin:0; color:#aaa; font-size:.64rem; font-weight:700; letter-spacing:.22em; }
-html body.platform.light-theme.moments-theme .shop-heading h1 { margin:0; color:#fff; font:400 clamp(3.9rem,8vw,8rem)/.86 Georgia,serif; letter-spacing:-.07em; }
+html body.platform.light-theme.moments-theme .shop-heading h1 { margin:0; color:#fff; font:650 clamp(3.2rem,6.5vw,6.2rem)/.98 'Inter Variable',system-ui,sans-serif; letter-spacing:-.07em; }
 .shop-heading h1 em { font-weight:400; color:#aeb9b5; }
 .shop-heading>p:last-child { margin:0 0 5px; max-width:30ch; color:#bbb; font-size:.88rem; line-height:1.65; }
 .shop-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; padding:28px 0 36px; }
@@ -14,14 +14,14 @@ html body.platform.light-theme.moments-theme .gumroad-card:hover,html body.platf
 .gumroad-card-copy { display:grid; grid-template-rows:auto auto 1fr auto; gap:12px; min-height:218px; padding:24px 26px 25px; }
 .gumroad-meta { display:flex; justify-content:space-between; gap:12px; color:#aaa; font-size:.61rem; font-weight:700; letter-spacing:.15em; }
 .gumroad-meta span:last-child { color:#fff; }
-html body.platform.light-theme.moments-theme .gumroad-card h2 { margin:0; color:white; font:400 clamp(1.55rem,2.3vw,2.25rem)/1.08 Georgia,serif; letter-spacing:-.04em; }
+html body.platform.light-theme.moments-theme .gumroad-card h2 { margin:0; color:white; font:650 clamp(1.55rem,2.3vw,2.25rem)/1.08 'Inter Variable',system-ui,sans-serif; letter-spacing:-.04em; }
 .gumroad-card-copy p { margin:0; color:#bcbfc0; font-size:.79rem; line-height:1.6; }
 .gumroad-card-link { display:flex; justify-content:space-between; align-items:center; padding-top:14px; border-top:1px solid #373c3c; color:#f4f4f4; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
 .gumroad-card-link span { font-size:1.25rem; transition:transform .25s; }
 .gumroad-card:hover .gumroad-card-link span { transform:translate(3px,-3px); }
 .gumroad-support-art { display:flex; flex-direction:column; justify-content:space-between; height:100%; padding:33px; background:radial-gradient(circle at 75% 30%,#36534e,#1b2929 42%,#101818 85%); }
 .gumroad-support-art img { width:48px; height:48px; padding:5px; border-radius:3px; background:#fff; }
-.gumroad-support-art>span { color:#f5f6f2; font:400 clamp(3rem,6vw,5.5rem)/.86 Georgia,serif; letter-spacing:-.07em; }
+.gumroad-support-art>span { color:#f5f6f2; font:650 clamp(2.8rem,5vw,4.8rem)/.98 'Inter Variable',system-ui,sans-serif; letter-spacing:-.07em; }
 .gumroad-support-art small { color:#c4d0cb; font-size:.59rem; letter-spacing:.18em; }
 .shop-note { margin:0; padding:0 0 34px; color:#999; font-size:.72rem; line-height:1.6; }
 html body.platform.light-theme.moments-theme .shop-note a { color:#e5e5e5; text-underline-offset:4px; }
