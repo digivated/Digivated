@@ -212,6 +212,9 @@ html body.platform.light-theme.wall-experience .wall-grid-view .wall-card-grid .
 .wall-experience .wall-grid-view .wall-card-grid .wall-tile-caption small { color:#637077; font-size:.6rem; }
 .wall-experience .wall-grid-view .wall-card-grid .wall-tile-caption strong { color:#20282c; font-size:1.05rem; line-height:1.2; }
 .wall-experience .wall-grid-view .wall-card-grid .wall-tile-caption>span { margin-top:auto; color:#59656b; font-size:.72rem; }
+html body.platform.light-theme.wall-experience .wall-focus-actions .wall-feedback-action { display:inline-flex; align-items:center; min-height:42px; padding:10px 18px; border:1px solid #263a43; border-radius:24px; background:#263a43; color:#fff; font:650 .8rem 'Inter Variable',system-ui,sans-serif; cursor:pointer; }
+html body.platform.light-theme.wall-experience .wall-focus-actions .wall-feedback-action:focus-visible { outline:2px solid #263a43; outline-offset:3px; }
+html body.platform.light-theme.wall-experience .wall-focus-actions .wall-feedback-action~a { border-color:#b8c5ca; background:#fff; color:#263840; }
 html body.platform.light-theme.wall-experience .wall-grid-view .wall-status { position:relative; top:auto; left:auto; margin:30px auto; transform:none; }
 @media(max-width:760px) {
  .wall-experience .wall-grid-view .wall-react-root { padding:0 18px 36px; }
