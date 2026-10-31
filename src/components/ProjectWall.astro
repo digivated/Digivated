@@ -1,10 +1,10 @@
 ---
 const { heading='Digivated', label='THE HOME FOR INDEPENDENT PROJECTS', description='Discover what builders are making. Explore the wall, share your own work, and get useful feedback.', directory=false }=Astro.props;
 ---
-<section class="project-wall" aria-labelledby="wall-title" data-wall-heading={heading} data-wall-label={label} data-wall-description={description} data-wall-directory={directory?'true':'false'}>
+<section id={directory?'project-wall':undefined} class="project-wall" aria-labelledby="wall-title" data-wall-heading={heading} data-wall-label={label} data-wall-description={description} data-wall-directory={directory?'true':'false'}>
   <div id="wall-react-root" class="wall-react-root">
-    <div class="wall-fallback"><p class="wall-overline">{label}</p><h1 id="wall-title">{heading}</h1><p>{description}</p><a href={directory?'#directory':'/discover'}>{directory?'Search the directory':'Explore projects'} →</a></div>
+    <div class="wall-fallback"><p class="wall-overline">{label}</p><h1 id="wall-title">{heading}</h1><p>{description}</p><a href="/discover">Explore projects →</a></div>
   </div>
-  <noscript><p class="wall-noscript">JavaScript is needed for the interactive wall. <a href="/discover#directory">Browse the project directory instead.</a></p></noscript>
+  <noscript><p class="wall-noscript">JavaScript is needed to browse projects.</p></noscript>
 </section>
 <script>import '../scripts/project-wall-entry.jsx';</script>
