@@ -85,3 +85,32 @@ html body.platform.light-theme.moments-theme :focus-visible { outline:2px solid 
 @media(max-width:767px) { html body.platform.light-theme.moments-theme main#main { padding:24px 20px 70px; } html body.platform.light-theme.moments-theme.home-refresh main#main { padding:0; } html body.platform.light-theme.moments-theme .notebook-navigation .navigation-panel { background:#111; } html body.platform.light-theme.moments-theme .navigation-panel .navigation-builder { background:#181818; } }
 @media(max-width:767px) { html body.platform.light-theme.moments-theme.wall-experience main#main { padding:0; } html body.platform.light-theme.moments-theme.projects-dashboard .projects-workspace { padding:55px 20px 75px; } html body.platform.light-theme.moments-theme .platform-footer .footer-columns { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:767px) { html body.platform.light-theme.moments-theme .product-feature { grid-template-columns:1fr; gap:0; } html body.platform.light-theme.moments-theme .product-feature .product-art { border-right:0; border-bottom:1px solid #333; min-height:260px; } html body.platform.light-theme.moments-theme .product-feature .product-copy { padding:24px; } }
+/* Submit: consistent dark surfaces and readable field states. */
+html body.platform.light-theme.moments-theme .submission-intro { max-width:900px; padding:42px 0 28px; }
+html body.platform.light-theme.moments-theme .submission-intro .eyebrow { color:#aebdb8; }
+html body.platform.light-theme.moments-theme .submission-intro h1 { color:#fff; font:400 clamp(3.6rem,7vw,6.6rem)/.93 Georgia,serif; letter-spacing:-.065em; }
+html body.platform.light-theme.moments-theme .submission-intro .lede { color:#b9c1bf; }
+html body.platform.light-theme.moments-theme .submission-layout { max-width:900px; }
+html body.platform.light-theme.moments-theme .submission-form { border:1px solid #373d3c; border-radius:5px; background:#121717; }
+html body.platform.light-theme.moments-theme .submission-form>.submission-account-callout { border-bottom:1px solid #3e514c; background:#1c302c; color:#f0f6f2; }
+html body.platform.light-theme.moments-theme .submission-account-callout strong { color:#fff; }
+html body.platform.light-theme.moments-theme .submission-account-callout p { color:#c0d0c9; }
+html body.platform.light-theme.moments-theme .submission-account-actions a:not(.button) { color:#e8f1ed; text-underline-offset:4px; }
+html body.platform.light-theme.moments-theme .submission-account-status { border-bottom:1px solid #39413e; background:#1c2422; color:#d0ded7; }
+html body.platform.light-theme.moments-theme .submission-form fieldset { border-bottom:1px solid #343d3b; background:#121717; }
+html body.platform.light-theme.moments-theme .submission-form fieldset:nth-of-type(even) { background:#161d1c; }
+html body.platform.light-theme.moments-theme .submission-form legend,html body.platform.light-theme.moments-theme .submission-review h2 { color:#f7faf8; }
+html body.platform.light-theme.moments-theme .submission-step-label,html body.platform.light-theme.moments-theme .submission-form legend .submission-step-label { color:#a9c2b8; }
+html body.platform.light-theme.moments-theme .submission-form :is(label,.submission-section-help) { color:#e4eae7; }
+html body.platform.light-theme.moments-theme .submission-form :is(.field-help,.quiet),html body.platform.light-theme.moments-theme .submission-review>p:not(.form-status) { color:#adbdb6; }
+html body.platform.light-theme.moments-theme .submission-form :is(input:not([type=checkbox]),select,textarea) { width:100%; border:1px solid #54625d; border-radius:5px; background:#0d1211; color:#f9faf9; padding:12px 14px; transition:border-color .18s,box-shadow .18s; }
+html body.platform.light-theme.moments-theme .submission-form :is(input,textarea)::placeholder { color:#a0aaa5; opacity:1; }
+html body.platform.light-theme.moments-theme .submission-form :is(input:not([type=checkbox]),select,textarea):focus-visible { outline:none; border-color:#c4e1d2; box-shadow:0 0 0 3px #a9d8be40; }
+html body.platform.light-theme.moments-theme .submission-form input[type=checkbox] { accent-color:#badfc9; width:18px; height:18px; flex:none; }
+html body.platform.light-theme.moments-theme .submission-option-detail,html body.platform.light-theme.moments-theme #promotion-fields,html body.platform.light-theme.moments-theme .submission-image-preview { border-color:#46554f; background:#202b27; color:#e1e8e3; }
+html body.platform.light-theme.moments-theme .submission-image-preview span { color:#d4e1da; }
+html body.platform.light-theme.moments-theme .submission-review { background:#1b2622; }
+html body.platform.light-theme.moments-theme .submission-review .button:disabled { border-color:#65706b; background:#43504a; color:#e2e8e4; opacity:1; cursor:not-allowed; }
+html body.platform.light-theme.moments-theme .submission-form :is(a,.submission-review a) { color:#d7f1df; }
+html body.platform.light-theme.moments-theme .submission-form .button.primary { color:#0e1913; background:#d7f1df; border-color:#d7f1df; }
+@media(max-width:540px) { html body.platform.light-theme.moments-theme .submission-intro { padding-top:25px; } html body.platform.light-theme.moments-theme .submission-intro h1 { font-size:3.4rem; } }
