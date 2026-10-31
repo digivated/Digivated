@@ -1,0 +1,25 @@
+---
+import Platform from '../layouts/Platform.astro';
+import '../styles/shop-showcase.css';
+const products = [
+  { title:'UI Prompt Package | From Basic to Polished', category:'DESIGN TOOLKIT', price:'$4', cover:'https://public-files.gumroad.com/c0h7ko24kt1edca114efelr7abtq', url:'https://digivated.gumroad.com/l/ui-prompt-package', description:'A guided starting point for cleaner websites and apps.' },
+  { title:'Digivated Founding Membership', category:'MEMBERSHIP', price:'$5', cover:'https://public-files.gumroad.com/5lwjfg0jbf5xcnboayioc56unndc', url:'https://digivated.gumroad.com/l/founding-member-pass', description:'Support the community and get the founding member benefits.' },
+  { title:'Get your product featured on Digivated!', category:'PROMOTION', price:'$3', cover:'https://public-files.gumroad.com/emysh97bskztjon9n9te8yh6ohox', url:'https://digivated.gumroad.com/l/digivated-promo', description:'Put your project in front of builders and readers.' },
+  { title:'Support Digivated', category:'TIP', price:'$1+', cover:null, url:'https://digivated.gumroad.com/l/support-digivated', description:'Help keep the project directory and builder community growing.' },
+];
+---
+<Platform title="Shop" description="Shop Digivated's digital products, membership, promotion, and support options.">
+  <section class="shop-showcase" aria-labelledby="shop-title">
+    <header class="shop-heading"><h1 id="shop-title">Made for what<br/><em>you’re building.</em></h1><p>Tools, membership, and ways to get your work seen. Select a product to view it on Gumroad.</p></header>
+    <div class="shop-grid">
+      {products.map((product,index)=><a class:list={['gumroad-card',{'gumroad-card--support':!product.cover}]} href={product.url} target="_blank" rel="noopener noreferrer" aria-label={`${product.title}, ${product.price}. View on Gumroad (opens in a new tab)`}>
+        <div class="gumroad-art">
+          <div class="gumroad-editorial-art" aria-hidden="true"><span class="gumroad-art-sheet gumroad-art-sheet--back"></span><span class="gumroad-art-sheet gumroad-art-sheet--middle"></span><span class="gumroad-art-sheet gumroad-art-sheet--front"><img src="/digivated-new-mark.svg" alt="" width="64" height="64"/></span></div>
+          <span class="gumroad-art-index">0{index+1} / 0{products.length}</span>
+        </div>
+        <div class="gumroad-card-copy"><div class="gumroad-meta"><span>{product.category}</span><span>{product.price}</span></div><h2>{product.title}</h2><p>{product.description}</p><span class="gumroad-card-link">View on Gumroad <span aria-hidden="true">↗</span></span></div>
+      </a>)}
+    </div>
+    <p class="shop-note">Checkout and delivery are handled by Gumroad. Already purchased the UI Prompt Package? <a href="/access">Open your access page</a>.</p>
+  </section>
+</Platform>

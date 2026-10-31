@@ -1,14 +1,17 @@
 ---
 import Platform from '../layouts/Platform.astro';
 import LiveProjects from '../components/LiveProjects.astro';
+import ProjectWall from '../components/ProjectWall.astro';
 import { projectCategories } from '../data/community.mjs';
 import '../styles/projects-dashboard.css';
 import '../styles/project-account.css';
+import '../styles/project-wall.css';
 ---
 <Platform title="Projects" description="An open dashboard for discovering independent projects, tools, and the people building them.">
-<div class="projects-workspace">
+<ProjectWall heading="Discover" label="INDEPENDENT PROJECTS" description="Explore the work. Open a project to meet its maker." directory/>
+<details class="directory-drawer" id="directory"><summary>Browse as a list <span aria-hidden="true">↗</span></summary><div class="projects-workspace">
   <section class="projects-content" aria-labelledby="projects-title">
-    <header class="dashboard-intro"><div><h1 id="projects-title">Projects</h1><p>Independent ideas. Worth your attention.</p></div><span class="dashboard-curation">Reviewed by Digivated</span></header>
+    <header class="dashboard-intro"><div><h2 id="projects-title">Project directory</h2></div><span class="dashboard-curation">Reviewed by Digivated</span></header>
     <div class="account-welcome" id="account-welcome" role="status" hidden><strong id="account-welcome-message"></strong><a href="/account">View your account →</a></div>
     <nav class="project-collections" aria-label="Project collections">
       <button type="button" data-directory-view="featured" aria-pressed="true">Featured <span data-project-featured>—</span></button>
@@ -24,9 +27,7 @@ import '../styles/project-account.css';
     </div>
     <div class="dashboard-results"><h2 id="directory-heading" class="sr-only">Featured projects</h2><p id="directory-status" class="results-status" role="status">Loading projects…</p><button class="clear-project-filters" type="button" data-directory-clear hidden>Clear filters</button></div>
     <LiveProjects mode="all" directory title="Your next discovery is still to come." description="Reviewed projects will appear here. Share your work for review." href="/submit-project" label="Submit Your Project"/>
-    <aside class="refined-submit" aria-label="Share your project"><div><h2>Working on something worth sharing?</h2><p>Submit your project for free.</p></div><a href="/submit-project">Get discovered <span aria-hidden="true">↗</span></a></aside>
-    <p class="dashboard-review-note">Every project is reviewed before appearing here.</p>
   </section>
-</div>
-<script>import '../scripts/directory.js'; import '../scripts/live-content.js'; import '../scripts/account-welcome.js';</script>
+</div></details>
+<script>if(location.hash==="#directory")document.querySelector(".directory-drawer")?.setAttribute("open",""); import '../scripts/directory.js'; import '../scripts/live-content.js'; import '../scripts/account-welcome.js';</script>
 </Platform>

@@ -96,3 +96,10 @@ html body.platform .carousel-added { order:-1; margin-bottom:8px; color:#595959;
   html body.platform .carousel-resource-card .card-open { min-height:44px; padding:8px 10px; font-size:.8rem; }
   html body.platform .carousel-resource-card .card-stats { flex-wrap:wrap; gap:6px 12px; }
 }
+/* Guide search and sort are ordinary fields, with padding inside the bar. */
+html body.platform.light-theme.moments-theme .carousel-browse { display:grid; grid-template-columns:minmax(0,1fr) minmax(150px,210px); align-items:end; gap:16px; margin:20px 0 28px; padding:18px; border:1px solid #e1e3e4; border-radius:14px; background:#fff; }
+html body.platform.light-theme.moments-theme .carousel-browse[hidden] { display:none!important; }
+html body.platform.light-theme.moments-theme .carousel-browse label,html body.platform.light-theme.moments-theme .carousel-browse label+label { display:block; min-width:0; width:auto; margin:0; color:#344047; font-size:.78rem; font-weight:650; line-height:1.35; }
+html body.platform.light-theme.moments-theme .carousel-browse :is(input,select) { display:block; width:100%; min-height:46px; margin:8px 0 0; padding:10px 13px; border:1px solid #cbd2d5; border-radius:9px; background:#fff; color:#20282c; font:inherit; font-weight:450; }
+html body.platform.light-theme.moments-theme .carousel-browse p { grid-column:1/-1; margin:0; color:#59646a; }
+@media(max-width:600px) { html body.platform.light-theme.moments-theme .carousel-browse { grid-template-columns:1fr; padding:16px; gap:14px; } }

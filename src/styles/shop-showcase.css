@@ -1,0 +1,68 @@
+html body.platform.light-theme.moments-theme .shop-showcase { max-width:1120px; margin:auto; }
+.shop-heading { display:grid; grid-template-columns:minmax(0,1fr) minmax(220px,330px); align-items:end; gap:24px; padding:35px 0 42px; border-bottom:1px solid #444; }
+.shop-heading .shop-kicker { grid-column:1/-1; margin:0; color:#aaa; font-size:.64rem; font-weight:700; letter-spacing:.22em; }
+html body.platform.light-theme.moments-theme .shop-heading h1 { margin:0; color:#fff; font:650 clamp(3.2rem,6.5vw,6.2rem)/.98 'Inter Variable',system-ui,sans-serif; letter-spacing:-.07em; }
+.shop-heading h1 em { font-weight:400; color:#aeb9b5; }
+.shop-heading>p:last-child { margin:0 0 5px; max-width:30ch; color:#bbb; font-size:.88rem; line-height:1.65; }
+.shop-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; padding:28px 0 36px; }
+html body.platform.light-theme.moments-theme .gumroad-card { display:block; min-width:0; overflow:hidden; border:1px solid #383b3b; border-radius:4px; background:#151718; color:#eee; text-decoration:none; transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease; }
+html body.platform.light-theme.moments-theme .gumroad-card:hover,html body.platform.light-theme.moments-theme .gumroad-card:focus-visible { transform:translateY(-6px); border-color:#b5beba; box-shadow:0 24px 54px #0007; }
+.gumroad-art { position:relative; height:clamp(250px,32vw,390px); overflow:hidden; background:#242828; }
+.gumroad-art>img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .4s; }
+.gumroad-card:hover .gumroad-art>img { transform:scale(1.055); filter:brightness(1.07); }
+.gumroad-art-index { position:absolute; top:16px; right:16px; padding:7px 9px; border:1px solid #ffffff68; background:#0b0d0d91; color:white; font-size:.57rem; letter-spacing:.16em; backdrop-filter:blur(8px); }
+.gumroad-card-copy { display:grid; grid-template-rows:auto auto 1fr auto; gap:12px; min-height:218px; padding:24px 26px 25px; }
+.gumroad-meta { display:flex; justify-content:space-between; gap:12px; color:#aaa; font-size:.61rem; font-weight:700; letter-spacing:.15em; }
+.gumroad-meta span:last-child { color:#fff; }
+html body.platform.light-theme.moments-theme .gumroad-card h2 { margin:0; color:white; font:650 clamp(1.55rem,2.3vw,2.25rem)/1.08 'Inter Variable',system-ui,sans-serif; letter-spacing:-.04em; }
+.gumroad-card-copy p { margin:0; color:#bcbfc0; font-size:.79rem; line-height:1.6; }
+.gumroad-card-link { display:flex; justify-content:space-between; align-items:center; padding-top:14px; border-top:1px solid #373c3c; color:#f4f4f4; font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+.gumroad-card-link span { font-size:1.25rem; transition:transform .25s; }
+.gumroad-card:hover .gumroad-card-link span { transform:translate(3px,-3px); }
+.gumroad-support-art { display:flex; flex-direction:column; justify-content:space-between; height:100%; padding:33px; background:radial-gradient(circle at 75% 30%,#36534e,#1b2929 42%,#101818 85%); }
+.gumroad-support-art img { width:48px; height:48px; padding:5px; border-radius:3px; background:#fff; }
+.gumroad-support-art>span { color:#f5f6f2; font:650 clamp(2.8rem,5vw,4.8rem)/.98 'Inter Variable',system-ui,sans-serif; letter-spacing:-.07em; }
+.gumroad-support-art small { color:#c4d0cb; font-size:.59rem; letter-spacing:.18em; }
+.shop-note { margin:0; padding:0 0 34px; color:#999; font-size:.72rem; line-height:1.6; }
+html body.platform.light-theme.moments-theme .shop-note a { color:#e5e5e5; text-underline-offset:4px; }
+@media(max-width:760px) { .shop-heading { grid-template-columns:1fr; padding-top:25px; } .shop-heading .shop-kicker { grid-column:auto; } .shop-grid { grid-template-columns:1fr; } .gumroad-art { height:clamp(240px,70vw,390px); } }
+@media(prefers-reduced-motion:reduce) { .gumroad-card,.gumroad-art>img,.gumroad-card-link span { transition:none!important; } }
+html body.platform.light-theme.moments-theme .shop-heading h1 em { color:#b9cbc4; }
+
+/* The shop uses the same calm canvas and ink as the homepage. */
+html body.platform.light-theme.moments-theme .shop-heading { border-bottom-color:#e1e3e4; }
+html body.platform.light-theme.moments-theme .shop-heading h1 { color:#20282c; }
+html body.platform.light-theme.moments-theme .shop-heading h1 em { color:#727c81; font-style:normal; }
+html body.platform.light-theme.moments-theme .shop-heading>p:last-child,html body.platform.light-theme.moments-theme .shop-note { color:#505a5f; }
+html body.platform.light-theme.moments-theme .gumroad-card { border-color:#e1e3e4; border-radius:12px; background:#fff; color:#20282c; box-shadow:0 4px 18px #1621280d; }
+html body.platform.light-theme.moments-theme .gumroad-card:hover,html body.platform.light-theme.moments-theme .gumroad-card:focus-visible { border-color:#aab3b7; box-shadow:0 12px 26px #16212818; }
+html body.platform.light-theme.moments-theme .gumroad-card-copy { background:#fff; }
+html body.platform.light-theme.moments-theme .gumroad-card h2 { color:#20282c; }
+html body.platform.light-theme.moments-theme .gumroad-meta,html body.platform.light-theme.moments-theme .gumroad-card-copy p { color:#505a5f; }
+html body.platform.light-theme.moments-theme .gumroad-meta span:last-child,html body.platform.light-theme.moments-theme .gumroad-card-link { color:#20282c; }
+html body.platform.light-theme.moments-theme .gumroad-card-link { border-top-color:#e1e3e4; }
+html body.platform.light-theme.moments-theme .gumroad-art { background:#f0f2f2; }
+html body.platform.light-theme.moments-theme .gumroad-support-art { background:#f1f3f3; }
+html body.platform.light-theme.moments-theme .gumroad-support-art>span { color:#20282c; }
+html body.platform.light-theme.moments-theme .gumroad-support-art small { color:#505a5f; }
+html body.platform.light-theme.moments-theme .shop-note a { color:#20282c; }
+@media(max-width:760px) { html body.platform.light-theme.moments-theme .shop-heading { display:block; padding:24px 0 30px; } html body.platform.light-theme.moments-theme .shop-heading h1 { font-size:clamp(2.8rem,11vw,4.4rem); } html body.platform.light-theme.moments-theme .shop-heading>p:last-child { margin-top:20px; max-width:46ch; } html body.platform.light-theme.moments-theme .shop-grid { gap:16px; padding-top:20px; } }
+/* Current Digivated identity replaces legacy artwork in the shop. */
+html body.platform.light-theme.moments-theme .gumroad-art { height:clamp(220px,29vw,330px); background:#f4f5f5; }
+html body.platform.light-theme.moments-theme .gumroad-editorial-art { display:flex; flex-direction:column; align-items:flex-start; justify-content:space-between; width:100%; height:100%; padding:clamp(22px,3vw,34px); color:#20282c; }
+html body.platform.light-theme.moments-theme .gumroad-editorial-art img { display:block; width:42px; height:42px; object-fit:contain; }
+html body.platform.light-theme.moments-theme .gumroad-editorial-art>span,html body.platform.light-theme.moments-theme .gumroad-editorial-art small { font-size:.62rem; font-weight:650; letter-spacing:.14em; color:#626e73; }
+html body.platform.light-theme.moments-theme .gumroad-editorial-art strong { max-width:16ch; font:650 clamp(1.7rem,3vw,2.8rem)/1.05 'Inter Variable',Inter,system-ui,sans-serif; letter-spacing:-.055em; color:#20282c; }
+html body.platform.light-theme.moments-theme .gumroad-art-index { top:22px; right:22px; border-color:#dce1e3; border-radius:999px; background:#fff; color:#465157; }
+@media(max-width:760px) { html body.platform.light-theme.moments-theme .gumroad-art { height:240px; } html body.platform.light-theme.moments-theme .gumroad-editorial-art strong { font-size:clamp(1.6rem,7vw,2.3rem); } }
+
+/* Visual-only product art; all copy appears once in the body below. */
+html body.platform.light-theme.moments-theme .gumroad-art { height:clamp(190px,23vw,260px); }
+html body.platform.light-theme.moments-theme .gumroad-editorial-art { position:relative; display:grid; place-items:center; overflow:hidden; padding:0; background:#f2f4f4; }
+html body.platform.light-theme.moments-theme .gumroad-art-sheet { position:absolute; width:clamp(110px,17vw,180px); height:clamp(120px,18vw,192px); border:1px solid #d7dddf; border-radius:16px; background:#fff; box-shadow:0 12px 25px #15222914; }
+html body.platform.light-theme.moments-theme .gumroad-art-sheet--back { transform:translate(-45px,-7px) rotate(-10deg); background:#e5e9ea; }
+html body.platform.light-theme.moments-theme .gumroad-art-sheet--middle { transform:translate(31px,-5px) rotate(8deg); background:#fafafa; }
+html body.platform.light-theme.moments-theme .gumroad-art-sheet--front { display:grid; place-items:center; transform:translate(0,4px); }
+html body.platform.light-theme.moments-theme .gumroad-editorial-art .gumroad-art-sheet img { width:64px; height:64px; }
+html body.platform.light-theme.moments-theme .gumroad-card-copy { min-height:0; }
+@media(max-width:760px) { html body.platform.light-theme.moments-theme .gumroad-art { height:190px; } html body.platform.light-theme.moments-theme .gumroad-art-sheet { width:120px; height:130px; } }

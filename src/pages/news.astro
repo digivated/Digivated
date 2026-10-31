@@ -1,0 +1,6 @@
+---
+import Platform from '../layouts/Platform.astro';
+import CarouselBrowse from '../components/CarouselBrowse.astro';
+import '../styles/carousel-library.css';
+---
+<Platform title="News & guides" description="Tools, skills, and updates from Digivated. Explore the existing carousel library while new posts are added."><header class="page-intro"><p class="eyebrow">THE DIGIVATED FEED</p><h1>News & guides</h1><p class="lede">Useful tools, skills, and ideas for people building things. Our existing guides are available below; new updates will appear here as they’re published.</p></header><section class="carousel-library" aria-labelledby="news-guides-title"><h2 id="news-guides-title">Guides</h2><p id="carousel-index-status" class="carousel-index-status" role="status">Loading guides…</p><CarouselBrowse/><div id="carousel-index" class="resource-grid carousel-library-grid"></div><noscript><p>Enable JavaScript to load the guides, or <a href="/resources">browse resources</a>.</p></noscript></section><script>import '../scripts/carousel-library.js';</script></Platform>

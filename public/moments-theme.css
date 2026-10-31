@@ -1,0 +1,45 @@
+/* Structural layout only; all colors and surfaces belong to glass-system.css. */
+html body.platform.light-theme.moments-theme .site-atmosphere { display:none; }
+html body.platform.light-theme.moments-theme main#main { max-width:1120px; min-height:calc(100svh - 70px); margin:0 auto; padding:54px 32px 100px; }
+html body.platform.light-theme.moments-theme.wall-experience main#main { width:100%; max-width:none; min-height:100svh; margin:0; padding:0; }
+html body.platform.light-theme.moments-theme.wall-experience .site-breadcrumbs { display:none; }
+html body.platform.light-theme.moments-theme.projects-dashboard .projects-workspace { width:min(1200px,100%); max-width:none; margin:0 auto; padding:85px 32px 100px; }
+html body.platform.light-theme.moments-theme.projects-dashboard .projects-content { width:100%; max-width:none; margin:0; scroll-margin-top:24px; }
+html body.platform.light-theme.moments-theme.projects-dashboard .dashboard-intro h1 { font:650 clamp(3rem,6vw,5.5rem)/1 'Inter Variable',system-ui,sans-serif; letter-spacing:-.06em; }
+html body.platform.light-theme.moments-theme.home-refresh .project-wall { width:100vw; max-width:none; min-height:100svh; margin:0; border:0; }
+html body.platform.light-theme.moments-theme.home-refresh .wall-grid { width:auto; max-width:none; }
+html body.platform.light-theme.moments-theme .platform-header.compact-site-header { position:relative; z-index:101; inset:auto; width:100%; max-width:none; margin:0; border-radius:0; transform:none; }
+html body.platform.light-theme.moments-theme.wall-experience .platform-header.compact-site-header { position:absolute; top:0; left:0; right:0; }
+html body.platform.light-theme.moments-theme .compact-site-header .header-inner { max-width:1220px; min-height:64px; margin:auto; padding:10px 24px; }
+html body.platform.light-theme.moments-theme .platform-header .platform-brand { font:700 1.35rem/1 'Inter Variable',system-ui,sans-serif; letter-spacing:-.04em; text-transform:none; }
+html body.platform.light-theme.moments-theme .compact-site-header .new-brand-mark { display:block; width:28px; height:28px; padding:3px; border-radius:3px; background:#fff; }
+html body.platform.light-theme.moments-theme .compact-site-header .header-primary a { font-size:.64rem; font-weight:550; letter-spacing:.16em; text-transform:uppercase; }
+html body.platform.light-theme.moments-theme :is(.page-intro,.login-heading) { max-width:800px; padding-top:clamp(35px,5vw,80px); }
+html body.platform.light-theme.moments-theme :is(.page-intro h1,.login-heading h1) { font:650 clamp(3rem,6vw,5.8rem)/1.02 'Inter Variable',system-ui,sans-serif; letter-spacing:-.06em; }
+html body.platform.light-theme.moments-theme .product-feature { display:grid; grid-template-columns:minmax(200px,.85fr) minmax(0,1.15fr); gap:clamp(25px,4vw,60px); align-items:center; margin:0 0 24px; overflow:hidden; }
+html body.platform.light-theme.moments-theme .product-feature .product-art { min-height:330px; border:0; border-right:1px solid #d8dcde; border-radius:0; }
+html body.platform.light-theme.moments-theme .product-feature .product-copy { padding:30px 35px 30px 0; }
+html body.platform.light-theme.moments-theme .product-feature h2 { font:650 clamp(2rem,3vw,3rem)/1.05 'Inter Variable',system-ui,sans-serif; letter-spacing:-.05em; }
+html body.platform.light-theme.moments-theme .carousel-library { margin-top:70px; padding-top:25px; border-top:1px solid #d8dcde; }
+html body.platform.light-theme.moments-theme .carousel-library .resource-grid { gap:16px; }
+html body.platform.light-theme.moments-theme .carousel-library .resource-card { overflow:hidden; }
+html body.platform.light-theme.moments-theme .login-page { max-width:640px; margin:30px auto 80px; }
+html body.platform.light-theme.moments-theme .login-heading { margin:0 auto 30px; text-align:center; }
+html body.platform.light-theme.moments-theme .login-panel { max-width:480px; padding:28px; }
+html body.platform.light-theme.moments-theme .platform-footer { margin:0; }
+html body.platform.light-theme.moments-theme .platform-footer .footer-columns { grid-template-columns:minmax(220px,2fr) repeat(5,minmax(110px,1fr)); gap:26px; }
+html body.platform.light-theme.moments-theme .platform-footer .footer-intro .x-brand-mark { display:none; }
+html body.platform.light-theme.moments-theme .submission-intro { max-width:900px; padding:42px 0 28px; }
+html body.platform.light-theme.moments-theme .submission-intro h1 { font:650 clamp(3.6rem,7vw,6.6rem)/.93 'Inter Variable',system-ui,sans-serif; letter-spacing:-.065em; }
+html body.platform.light-theme.moments-theme .submission-layout { max-width:900px; }
+html body.platform.light-theme.moments-theme:has(.shop-showcase) .site-breadcrumbs,html body.platform.light-theme.moments-theme:has(.submission-layout) .site-breadcrumbs { display:none; }
+@media(max-width:767px) {
+ html body.platform.light-theme.moments-theme main#main { padding:24px 20px 70px; }
+ html body.platform.light-theme.moments-theme.wall-experience main#main { padding:0; }
+ html body.platform.light-theme.moments-theme.projects-dashboard .projects-workspace { padding:55px 20px 75px; }
+ html body.platform.light-theme.moments-theme .platform-footer .footer-columns { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ html body.platform.light-theme.moments-theme .product-feature { grid-template-columns:1fr; gap:0; }
+ html body.platform.light-theme.moments-theme .product-feature .product-art { border-right:0; border-bottom:1px solid #d8dcde; min-height:260px; }
+ html body.platform.light-theme.moments-theme .product-feature .product-copy { padding:24px; }
+}
+@media(max-width:540px) { html body.platform.light-theme.moments-theme .submission-intro { padding-top:25px; } html body.platform.light-theme.moments-theme .submission-intro h1 { font-size:3.4rem; } }
