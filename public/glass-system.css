@@ -215,17 +215,17 @@ html body.platform.light-theme.moments-theme .account-announcement .account-anno
 /* Keep project art clear rather than placing a white veil over the wall. */
 html body.platform.light-theme.moments-theme.home-refresh .wall-shade { background:linear-gradient(180deg,#f5f7f760,transparent 16%); }
 @media(max-width:760px) { html body.platform.light-theme.moments-theme.home-refresh .wall-shade { display:none; } html body.platform.light-theme.moments-theme.home-refresh .project-wall { min-height:0; height:640px; background:#f6f7f7; } }
-/* Keep the homepage and project wall footer aligned with the page content. */
-html body.platform.light-theme.moments-theme.wall-experience .platform-footer .footer-inner { width:min(100%,1200px); margin-inline:auto; }
+/* Keep every public page footer aligned with its content. */
+html body.platform.light-theme.moments-theme .platform-footer .footer-inner { width:min(100%,1200px); margin-inline:auto; }
 @media(max-width:760px) {
- html body.platform.light-theme.moments-theme.wall-experience .platform-footer { padding:42px 0 calc(30px + env(safe-area-inset-bottom)); }
- html body.platform.light-theme.moments-theme.wall-experience .platform-footer .footer-inner { width:min(100%,560px); padding-inline:22px; }
- html body.platform.light-theme.moments-theme.wall-experience .platform-footer .footer-columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px 22px; }
- html body.platform.light-theme.moments-theme.wall-experience .platform-footer .footer-intro { grid-column:1/-1; padding:0 0 22px; border-bottom:1px solid #e1e4e5; }
- html body.platform.light-theme.moments-theme.wall-experience .platform-footer .footer-intro p { max-width:30rem; margin:12px 0 0; line-height:1.5; }
- html body.platform.light-theme.moments-theme.wall-experience .platform-footer .footer-columns>nav { min-width:0; padding:0; border:0; }
- html body.platform.light-theme.moments-theme.wall-experience .platform-footer .footer-columns>nav h2 { margin:0 0 10px; }
- html body.platform.light-theme.moments-theme.wall-experience .platform-footer .footer-group-links { display:flex; flex-direction:column; gap:2px; }
- html body.platform.light-theme.moments-theme.wall-experience .platform-footer .footer-group-links a { width:auto; min-height:36px; padding:7px 0; line-height:1.4; overflow-wrap:normal; }
- html body.platform.light-theme.moments-theme.wall-experience .platform-footer .footer-bottom { margin-top:32px; justify-content:center; align-items:center; text-align:center; gap:5px 16px; }
+ html body.platform.light-theme.moments-theme .platform-footer { padding:42px 0 calc(30px + env(safe-area-inset-bottom)); }
+ html body.platform.light-theme.moments-theme .platform-footer .footer-inner { width:min(100%,560px); padding-inline:22px; }
+ html body.platform.light-theme.moments-theme .platform-footer .footer-columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px 22px; }
+ html body.platform.light-theme.moments-theme .platform-footer .footer-intro { grid-column:1/-1; padding:0 0 22px; border-bottom:1px solid #e1e4e5; }
+ html body.platform.light-theme.moments-theme .platform-footer .footer-intro p { max-width:30rem; margin:12px 0 0; line-height:1.5; }
+ html body.platform.light-theme.moments-theme .platform-footer .footer-columns>nav { min-width:0; padding:0; border:0; }
+ html body.platform.light-theme.moments-theme .platform-footer .footer-columns>nav h2 { margin:0 0 10px; }
+ html body.platform.light-theme.moments-theme .platform-footer .footer-group-links { display:flex; flex-direction:column; gap:2px; }
+ html body.platform.light-theme.moments-theme .platform-footer .footer-group-links a { width:auto; min-height:36px; padding:7px 0; line-height:1.4; overflow-wrap:normal; }
+ html body.platform.light-theme.moments-theme .platform-footer .footer-bottom { margin-top:32px; justify-content:center; align-items:center; text-align:center; gap:5px 16px; }
 }
