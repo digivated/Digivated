@@ -14,7 +14,7 @@ const products = [
     <div class="shop-grid">
       {products.map((product,index)=><a class:list={['gumroad-card',{'gumroad-card--support':!product.cover}]} href={product.url} target="_blank" rel="noopener noreferrer" aria-label={`${product.title}, ${product.price}. View on Gumroad (opens in a new tab)`}>
         <div class="gumroad-art">
-          <div class="gumroad-editorial-art"><img src="/digivated-new-mark.svg" alt="" width="52" height="52"/><span>{product.category}</span><strong>{product.title}</strong><small>DIGIVATED / 0{index+1}</small></div>
+          <div class="gumroad-editorial-art" aria-hidden="true"><span class="gumroad-art-sheet gumroad-art-sheet--back"></span><span class="gumroad-art-sheet gumroad-art-sheet--middle"></span><span class="gumroad-art-sheet gumroad-art-sheet--front"><img src="/digivated-new-mark.svg" alt="" width="64" height="64"/></span></div>
           <span class="gumroad-art-index">0{index+1} / 0{products.length}</span>
         </div>
         <div class="gumroad-card-copy"><div class="gumroad-meta"><span>{product.category}</span><span>{product.price}</span></div><h2>{product.title}</h2><p>{product.description}</p><span class="gumroad-card-link">View on Gumroad <span aria-hidden="true">↗</span></span></div>

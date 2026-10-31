@@ -55,3 +55,14 @@ html body.platform.light-theme.moments-theme .gumroad-editorial-art>span,html bo
 html body.platform.light-theme.moments-theme .gumroad-editorial-art strong { max-width:16ch; font:650 clamp(1.7rem,3vw,2.8rem)/1.05 'Inter Variable',Inter,system-ui,sans-serif; letter-spacing:-.055em; color:#20282c; }
 html body.platform.light-theme.moments-theme .gumroad-art-index { top:22px; right:22px; border-color:#dce1e3; border-radius:999px; background:#fff; color:#465157; }
 @media(max-width:760px) { html body.platform.light-theme.moments-theme .gumroad-art { height:240px; } html body.platform.light-theme.moments-theme .gumroad-editorial-art strong { font-size:clamp(1.6rem,7vw,2.3rem); } }
+
+/* Visual-only product art; all copy appears once in the body below. */
+html body.platform.light-theme.moments-theme .gumroad-art { height:clamp(190px,23vw,260px); }
+html body.platform.light-theme.moments-theme .gumroad-editorial-art { position:relative; display:grid; place-items:center; overflow:hidden; padding:0; background:#f2f4f4; }
+html body.platform.light-theme.moments-theme .gumroad-art-sheet { position:absolute; width:clamp(110px,17vw,180px); height:clamp(120px,18vw,192px); border:1px solid #d7dddf; border-radius:16px; background:#fff; box-shadow:0 12px 25px #15222914; }
+html body.platform.light-theme.moments-theme .gumroad-art-sheet--back { transform:translate(-45px,-7px) rotate(-10deg); background:#e5e9ea; }
+html body.platform.light-theme.moments-theme .gumroad-art-sheet--middle { transform:translate(31px,-5px) rotate(8deg); background:#fafafa; }
+html body.platform.light-theme.moments-theme .gumroad-art-sheet--front { display:grid; place-items:center; transform:translate(0,4px); }
+html body.platform.light-theme.moments-theme .gumroad-editorial-art .gumroad-art-sheet img { width:64px; height:64px; }
+html body.platform.light-theme.moments-theme .gumroad-card-copy { min-height:0; }
+@media(max-width:760px) { html body.platform.light-theme.moments-theme .gumroad-art { height:190px; } html body.platform.light-theme.moments-theme .gumroad-art-sheet { width:120px; height:130px; } }
