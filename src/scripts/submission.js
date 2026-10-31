@@ -4,13 +4,14 @@ const form = document.getElementById('project-form');
 if (form) {
   let accountClient,accountVerified=false;
   const accountStatus=document.getElementById('submission-account-status');
+  const details=document.getElementById('submission-details');
   fetch('/api/project-account?action=config',{cache:'no-store'}).then(r=>r.json()).then(async config=>{
     if(!config.ready)return;
     accountClient=createClient(config.url,config.key,{auth:communityAuthOptions});
     const {data:{session}}=await accountClient.auth.getSession();
     if(session?.user?.email_confirmed_at){
       const response=await fetch('/api/project-account',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'});
-      if(response.ok){accountVerified=true;form.elements.email.value=session.user.email;form.elements.email.readOnly=true;document.getElementById('submission-account-callout').hidden=true;accountStatus.hidden=false;accountStatus.textContent=`Signed in as ${session.user.email}. This project will appear in your account.`;updateButton();}
+      if(response.ok){accountVerified=true;form.elements.email.value=session.user.email;form.elements.email.readOnly=true;document.getElementById('submission-account-callout').hidden=true;details.hidden=false;accountStatus.hidden=false;accountStatus.textContent=`Signed in as ${session.user.email}. This project will appear in your account.`;updateButton();}
       else {accountStatus.hidden=false;accountStatus.innerHTML='To submit a project, <a href="/login">sign in or create an account</a> first.';}
     }
   }).catch(()=>{accountStatus.hidden=false;accountStatus.textContent='Accounts are temporarily unavailable. Please try again shortly.';});
