@@ -1,0 +1,25 @@
+const root=document.querySelector('[data-project-wall]');
+if(root){
+ const grid=root.querySelector('#wall-grid'),status=root.querySelector('#wall-status'),focus=root.querySelector('#wall-focus');
+ let projects=[],active=-1,returnFocus=null;
+ const el=(tag,className,text)=>{const n=document.createElement(tag);if(className)n.className=className;if(text)n.textContent=text;return n;};
+ const safeUrl=(value,fallback='/discover')=>{try{const url=new URL(value,location.origin);return ['http:','https:'].includes(url.protocol)?url.href:fallback;}catch{return fallback;}};
+ const imageFor=project=>project.image?safeUrl(project.image,''):'';
+ const detailFor=project=>safeUrl(project.pageUrl||`/discover#project-${encodeURIComponent(project.id)}`);
+ const renderTile=(project,index,tileIndex)=>{const button=el('button',`wall-tile wall-shape-${tileIndex%7}`);button.type='button';button.setAttribute('aria-label',`Open ${project.name}`);button.dataset.wallIndex=index;
+  const image=imageFor(project);if(image){const img=el('img');img.src=image;img.alt='';img.loading=tileIndex<16?'eager':'lazy';img.decoding='async';img.addEventListener('error',()=>{img.remove();button.classList.add('wall-no-image')},{once:true});button.append(img);}else button.classList.add('wall-no-image');
+  const copy=el('span','wall-tile-caption');copy.append(el('small',null,project.category||'PROJECT'),el('strong',null,project.name));button.append(copy);button.addEventListener('click',()=>open(index,button));return button;};
+ function open(index,button){if(!projects.length)return;active=(index+projects.length)%projects.length;const project=projects[active];if(button)returnFocus=button;
+  focus.querySelector('#wall-focus-category').textContent=project.category||'PROJECT';focus.querySelector('#wall-focus-title').textContent=project.name;focus.querySelector('#wall-focus-maker').textContent=`BY ${project.creator||'AN INDEPENDENT BUILDER'}`;focus.querySelector('#wall-focus-description').textContent=project.description||'Explore this project and meet its maker.';
+  const art=focus.querySelector('#wall-focus-art');art.replaceChildren();const image=imageFor(project);if(image){const img=el('img');img.src=image;img.alt=`${project.name} preview`;art.append(img);}else art.append(el('span','wall-art-monogram',project.name.slice(0,2).toUpperCase()));
+  focus.querySelector('#wall-focus-detail').href=detailFor(project);const visit=focus.querySelector('#wall-focus-visit');visit.href=safeUrl(project.url,detailFor(project));visit.hidden=!project.url;
+  focus.hidden=false;focus.setAttribute('aria-hidden','false');root.classList.add('wall-is-open');document.body.classList.add('wall-modal-open');focus.querySelector('.wall-focus-panel').focus();}
+ function close(){if(focus.hidden)return;focus.hidden=true;focus.setAttribute('aria-hidden','true');root.classList.remove('wall-is-open');document.body.classList.remove('wall-modal-open');returnFocus?.focus();}
+ root.querySelectorAll('[data-close-focus]').forEach(n=>n.addEventListener('click',close));root.querySelector('[data-wall-prev]').addEventListener('click',()=>open(active-1));root.querySelector('[data-wall-next]').addEventListener('click',()=>open(active+1));
+ document.addEventListener('keydown',e=>{if(focus.hidden)return;if(e.key==='Escape')close();else if(e.key==='ArrowLeft')open(active-1);else if(e.key==='ArrowRight')open(active+1);else if(e.key==='Tab'){const items=[...focus.querySelectorAll('button,a')].filter(n=>!n.hidden);const first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
+ let frame=0;root.addEventListener('pointermove',e=>{if(focus.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&e.pointerType!=='touch'){cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{const x=e.clientX/innerWidth-.5,y=e.clientY/innerHeight-.5;grid.style.setProperty('--wall-x',`${x*18}px`);grid.style.setProperty('--wall-y',`${y*12}px`);});}});
+ async function load(){try{const response=await fetch('/api/projects',{credentials:'omit',cache:'no-store',signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('unavailable');const data=await response.json();projects=(data.items||[]).filter(p=>p&&p.id&&p.name);if(!projects.length){status.replaceChildren('No projects yet. ',Object.assign(el('a',null,'Share yours →'),{href:'/submit-project'}));grid.setAttribute('aria-busy','false');return;}
+  const tiles=Array.from({length:Math.max(28,projects.length)},(_,i)=>renderTile(projects[i%projects.length],i%projects.length,i));grid.replaceChildren(...tiles);grid.setAttribute('aria-busy','false');status.hidden=true;
+ }catch{status.replaceChildren('Projects are temporarily unavailable. ',Object.assign(el('a',null,'Try the directory →'),{href:'/discover'}));grid.setAttribute('aria-busy','false');}}
+ load();
+}
