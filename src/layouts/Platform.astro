@@ -41,6 +41,7 @@ import '../styles/navigation.css';
 <SiteHeader/>
 {path !== '/login' && path !== '/account' && path !== '/submit-project' && <aside id="account-announcement" class="account-announcement" aria-label="Digivated announcement" hidden><div class="account-announcement-copy"><span class="account-announcement-tag">NEW ON DIGIVATED</span><strong id="announcement-title">Accounts are live.</strong><span id="announcement-description">Sign up to track your projects and see feedback in one place. You can still browse without an account.</span></div><div class="account-announcement-actions"><a id="announcement-link" href="/login?mode=signup">Create an account <span aria-hidden="true">→</span></a><button type="button" id="account-announcement-close" aria-label="Dismiss announcement">×</button></div></aside>}
 <main id="main" tabindex="-1">{path !== '/' && <nav class="site-breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span>{(path.startsWith('/projects/') || path === '/launch-template') && <><a href="/discover">Projects</a><span aria-hidden="true">/</span></>}{path.startsWith('/resources/') && <><a href="/resources">Resources</a><span aria-hidden="true">/</span></>}{path.startsWith('/carousels/') && <><a href="/carousels">Carousels</a><span aria-hidden="true">/</span></>}<span aria-current="page">{breadcrumb}</span></nav>}<slot/></main>
+{(path === '/' || path === '/discover') && <ProjectTicker all/>}
 <SiteFooter/>
 <DiscoveryTools/>
 <script is:inline src="/analytics.js"></script>
