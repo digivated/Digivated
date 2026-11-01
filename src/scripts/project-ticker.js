@@ -15,7 +15,9 @@ if(ticker){
    if(!projects.length){ticker.hidden=true;return;}
    const first=document.createElement('div'),second=document.createElement('div');
    first.className=second.className='project-ticker-group';
-   projects.forEach(project=>{first.append(createItem(project));second.append(createItem(project));});
+   // Fill a desktop viewport before cloning so the loop never shows an empty gap.
+   const repeats=Math.max(1,Math.ceil((window.innerWidth+400)/(projects.length*155)));
+   for(let repeat=0;repeat<repeats;repeat++) projects.forEach(project=>{first.append(createItem(project));second.append(createItem(project));});
    second.setAttribute('aria-hidden','true');second.inert=true;
    track.replaceChildren(first,second);ticker.dataset.ready='true';
   }).catch(()=>{ticker.hidden=true;});
