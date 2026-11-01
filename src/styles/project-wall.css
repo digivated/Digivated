@@ -325,3 +325,10 @@ html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid .wal
 html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid .wall-tile-caption strong{font-size:16px;color:#28343d}
 @media(max-width:760px){html body.platform.light-theme.wall-experience .project-wall{padding:24px 16px}html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}html body.platform.light-theme.wall-experience .project-wall .wall-search{flex-basis:100%;max-width:none}html body.platform.light-theme.wall-experience .project-wall .wall-search input{font-size:16px}html body.platform.light-theme.wall-experience .project-wall .wall-stage{height:480px}}
 @media(max-width:480px){html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid{grid-template-columns:1fr!important}}
+
+/* Keep the original immersive, image-led collage rather than a framed directory. */
+html body.platform.light-theme.wall-experience .project-wall .wall-react-root{max-width:none}
+html body.platform.light-theme.wall-experience .project-wall .wall-stage{height:clamp(560px,70vh,900px);border:0;border-radius:0;background:#e8ecee}
+html body.platform.light-theme.wall-experience .project-wall .wall-intro{max-width:700px}
+html body.platform.light-theme.wall-experience .project-wall .wall-navigation{padding-bottom:8px}
+@media(max-width:760px){html body.platform.light-theme.wall-experience .project-wall .wall-stage{height:65svh;min-height:480px}}
