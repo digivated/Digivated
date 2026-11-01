@@ -8,7 +8,7 @@ const itemKey = (type,id) => `${type}:${id}`;
 const likeKey = (type,id) => `digivated:card:likes:${itemKey(type,id)}`;
 const commentIndex = (type,id) => `digivated:card:comments:${itemKey(type,id)}`;
 export const commentKey = id => `digivated:card:comment:${id}`;
-const LIKE = `local liked=redis.call('GET',KEYS[1]); local count=tonumber(redis.call('GET',KEYS[2]) or '0'); if ARGV[1]=='like' then if liked then redis.call('PERSIST',KEYS[1]); return {count,1} end; redis.call('SET',KEYS[1],'1'); return {redis.call('INCR',KEYS[2]),1} end; if ARGV[1]=='unlike' then if liked then redis.call('DEL',KEYS[1]); if count>0 then count=redis.call('DECR',KEYS[2]) end end; return {count,0} end; return {-1,0}`;
+const LIKE = `local liked=redis.call('GET',KEYS[1]); local count=tonumber(redis.call('GET',KEYS[2]) or '0'); if ARGV[1]=='like' then if liked then redis.call('PERSIST',KEYS[1]); return {count,1} end; redis.call('SET',KEYS[1],'1'); if KEYS[3] then redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]) end; return {redis.call('INCR',KEYS[2]),1} end; if ARGV[1]=='unlike' then if liked then redis.call('DEL',KEYS[1]); if KEYS[3] then redis.call('ZREM',KEYS[3],ARGV[3]) end; if count>0 then count=redis.call('DECR',KEYS[2]) end end; return {count,0} end; return {-1,0}`;
 const COMMENT = `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],86400) end; if n>3 then return 0 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); if ARGV[4]=='approved' then redis.call('ZADD',KEYS[4],ARGV[2],ARGV[3]) end; return 1`;
 const MODERATE = `local raw=redis.call('GET',KEYS[1]); if not raw then return -1 end; local entry=cjson.decode(raw); if entry.status~='pending' and not (entry.status=='approved' and entry.purpose=='project-feedback' and ARGV[1]=='rejected') then return 0 end; if ARGV[1]=='approved' and entry.purpose=='packet-feedback' and entry.quoteConsent~=true then return -3 end; entry.status=ARGV[1]; redis.call('SET',KEYS[1],cjson.encode(entry)); if ARGV[1]=='approved' then redis.call('ZADD',KEYS[2],ARGV[2],entry.id) else redis.call('ZREM',KEYS[2],entry.id) end; return 1`;
 
@@ -75,7 +75,7 @@ export function makeCardInteractionHandler(deps={}) {
       if(/bot|crawler|spider|headless|preview/i.test(req.headers['user-agent']||''))return send(403,{error:'This action is unavailable.'});
       const visitor=createHmac('sha256',env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only').update(`${type}:${id}:${ip||'fixture'}`).digest('hex');
       if(body.action==='like'||body.action==='unlike'){
-        const [likes,liked]=await redis(['EVAL',LIKE,2,`digivated:card:liked:${visitor}`,likeKey(type,id),body.action]);
+        const [likes,liked]=await redis(['EVAL',LIKE,3,`digivated:card:liked:${visitor}`,likeKey(type,id),`digivated:card:votes:${type}:${id}`,body.action,Date.now(),visitor]);
         return send(200,{liked:Boolean(Number(liked)),likes:Number(likes)});
       }
       const isFeedback=body.action==='feedback';
