@@ -332,3 +332,8 @@ html body.platform.light-theme.wall-experience .project-wall .wall-stage{height:
 html body.platform.light-theme.wall-experience .project-wall .wall-intro{max-width:700px}
 html body.platform.light-theme.wall-experience .project-wall .wall-navigation{padding-bottom:8px}
 @media(max-width:760px){html body.platform.light-theme.wall-experience .project-wall .wall-stage{height:65svh;min-height:480px}}
+
+/* Preserve the complete artwork inside a flex-based detail panel. */
+html body.platform.light-theme.wall-experience .wall-focus-art{display:flex!important;align-items:center;justify-content:center;flex:0 0 auto!important;width:100%;height:auto!important;min-height:0!important;max-height:none!important;padding:12px;overflow:visible!important;background:#f3f5f6}
+html body.platform.light-theme.wall-experience .wall-focus-art img{display:block!important;flex:none!important;width:auto!important;height:auto!important;max-width:100%!important;max-height:50dvh!important;object-fit:contain!important;object-position:center;transform:none!important}
+html body.platform.light-theme.wall-experience .wall-focus-panel{overflow-x:hidden;overflow-y:auto}
