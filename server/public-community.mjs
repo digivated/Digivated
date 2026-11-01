@@ -56,7 +56,10 @@ export function makePublicHandler(type, deps = {}) {
       if (kind === 'submission') items = await withProjectViews(redis, items);
       if (kind === 'resource') items = await withResourceViews(redis, items);
       // Article bodies are fetched only on the detail page.
-      return send(200, { items: items.map(({ content, ...item }) => item), next: items.length === 100 ? offset + 100 : null });
+      // Filtering incomplete records can make a raw page shorter than 100. Page by
+      // the index position so older valid projects are still reachable.
+      const next = kind === 'submission' ? offset + 100 < await redis(['ZCARD', 'digivated:public:submissions']) ? offset + 100 : null : items.length === 100 ? offset + 100 : null;
+      return send(200, { items: items.map(({ content, ...item }) => item), next });
     } catch { return send(503, { error: 'This collection is temporarily unavailable. Please try again shortly.' }); }
   };
 }

@@ -31,7 +31,7 @@ async function call(handler,method,id,body,headers={},type='project'){
 test('project interactions require a published project and moderate comments without changing its record',async()=>{
  const {redis,values}=fixtureRedis(),handler=makeCardInteractionHandler({redis,env:{SUBMISSIONS_ORIGIN:origin}});
  assert.equal((await call(handler,'GET','project-one')).status,404);
- const project={id:'project-one',name:'Original',status:'approved',consent:true,image:'original-image',views:52};
+ const project={id:'project-one',name:'Original',status:'approved',consent:true,image:'original-image',url:'https://fixture.test/',views:52};
  const record=JSON.stringify(project);values.set('digivated:submission:project-one',record);
  assert.deepEqual((await call(handler,'GET','project-one')).data,{likes:0,comments:[],commentCount:0});
  assert.deepEqual((await call(handler,'POST','project-one',{action:'like'})).data,{liked:true,likes:1});
@@ -52,7 +52,7 @@ test('project interactions require a published project and moderate comments wit
 });
 test('cross-site writes and invalid requests fail before any interaction is stored',async()=>{
  const {redis,values}=fixtureRedis(),handler=makeCardInteractionHandler({redis,env:{SUBMISSIONS_ORIGIN:origin}});
- values.set('digivated:submission:project-one',JSON.stringify({id:'project-one',status:'approved',consent:true}));
+ values.set('digivated:submission:project-one',JSON.stringify({id:'project-one',status:'approved',consent:true,image:'fixture-image',url:'https://fixture.test/'}));
  assert.equal((await call(handler,'POST','project-one',{action:'comment',comment:'Hello'}, {origin:'https://other.test'})).status,403);
  assert.equal((await call(handler,'POST','project-one',{action:'comment',comment:'Hi'})).status,400);
  assert.equal((await call(handler,'POST','../private',{action:'like'})).status,404);
@@ -60,7 +60,7 @@ test('cross-site writes and invalid requests fail before any interaction is stor
 });
 test('project feedback appears immediately and cannot be sent to resources',async()=>{
  const {redis,values}=fixtureRedis(),handler=makeCardInteractionHandler({redis,env:{SUBMISSIONS_ORIGIN:origin}});
- values.set('digivated:submission:project-one',JSON.stringify({id:'project-one',status:'approved',consent:true}));
+ values.set('digivated:submission:project-one',JSON.stringify({id:'project-one',status:'approved',consent:true,image:'fixture-image',url:'https://fixture.test/'}));
  const sent=await call(handler,'POST','project-one',{action:'project-feedback',name:'Visitor',comment:'The onboarding is clear; a pricing example would help.'});
  assert.equal(sent.status,201);assert.match(sent.data.message,/now visible/);
  const publicResult=(await call(handler,'GET','project-one')).data;

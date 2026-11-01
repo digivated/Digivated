@@ -73,7 +73,10 @@ export function validateEdit(kind, input, previous) {
 }
 export function projectPublic(record) {
   if (!['approved', 'featured'].includes(record.status) || record.consent !== true || (record.promotion?.requested && !record.promotion.verified)) return null;
-  return { ...(record.promotion?.verified ? {sponsored:true} : {}), ...(record.pagePublished && record.page?.consent ? { pageUrl: `/projects/${record.slug}` } : {}), id: record.id, name: record.name, creator: record.creator, description: record.description, category: record.category, url: safeUrl(record.url), socialUrl: safeUrl(record.socialUrl), date: record.date, status: record.status, pick: isDigivatedPick(record), image: record.image ? `/api/projects?image=${record.id}` : '' };
+  // Keep incomplete legacy submissions in their owners' accounts, but off every public surface.
+  const destination = safeUrl(record.url);
+  if (!record.image || !destination) return null;
+  return { ...(record.promotion?.verified ? {sponsored:true} : {}), ...(record.pagePublished && record.page?.consent ? { pageUrl: `/projects/${record.slug}` } : {}), id: record.id, name: record.name, creator: record.creator, description: record.description, category: record.category, url: destination, socialUrl: safeUrl(record.socialUrl), date: record.date, status: record.status, pick: isDigivatedPick(record), image: `/api/projects?image=${record.id}` };
 }
 export function contentPublic(kind, record) {
   if (record.status !== 'published') return null;
