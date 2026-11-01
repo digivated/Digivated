@@ -96,3 +96,10 @@ html body.platform.light-theme .navigation-bottom-row>a { color:#37352f; font-we
  .navigation-account-row kbd { display:none; }
 }
 @media(prefers-reduced-motion:reduce) { html body.platform.light-theme .notebook-navigation[open] .navigation-panel,.notebook-navigation[open] .navigation-destinations>a { animation:none; } }
+
+/* Keep primary destinations readable without crowding account controls. */
+html body.platform .header-inner{min-width:0;gap:20px}
+html body.platform .header-primary{display:flex;align-items:center;gap:22px;min-width:0}
+html body.platform .header-primary a{white-space:nowrap}
+html body.platform .compact-header-actions{margin-left:auto;flex-shrink:0}
+@media(max-width:1000px){html body.platform .header-primary{display:none!important}}
