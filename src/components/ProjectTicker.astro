@@ -1,5 +1,8 @@
-<aside class="project-ticker" aria-label="Featured projects" data-project-ticker>
-  <span class="project-ticker-label">FEATURED</span>
+---
+const { all = false } = Astro.props;
+---
+<aside class="project-ticker" aria-label={all ? 'All projects' : 'Featured projects'} data-project-ticker data-ticker-view={all ? 'all' : 'featured'}>
+  <span class="project-ticker-label">{all ? 'ALL PROJECTS' : 'FEATURED'}</span>
   <div class="project-ticker-window"><div class="project-ticker-track" data-ticker-track></div></div>
 </aside>
 <script>import '../scripts/project-ticker.js'; import '../styles/project-ticker.css';</script>
