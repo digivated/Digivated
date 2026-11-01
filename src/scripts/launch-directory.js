@@ -1,18 +1,34 @@
 const root=document.querySelector('[data-launch-directory]');
 if(root){
  const list=root.querySelector('[data-launch-list]'),status=root.querySelector('[data-launch-status]'),more=root.querySelector('[data-launch-more]');
- let projects=[],period='daily',category='All',query='',limit=30;
+ let projects=[],period='daily',category=new URLSearchParams(location.search).get('category')||'All',query='',limit=30;
  const ai=root.dataset.ai==='true';
  const aiPattern=/\bai\b|artificial intelligence|machine learning|llm|gpt|chatbot|generative/i;
- const groups=[['Video',/video|film|animation/i],['Images & design',/image|design|photo|illustrat/i],['Writing',/writing|writer|copywriting|blog/i],['Coding',/code|coding|developer|programming/i],['Voice & audio',/voice|audio|music|speech/i],['Research',/research|search|knowledge/i],['Productivity',/productivity|workflow|automation|assistant|agent/i]];
+ const groups=[['Video',/video|film|animation/i],['Images & design',/image|design|photo|illustrat/i],['Writing',/writing|writer|copywriting|blog/i],['Coding',/code|coding|developer|programming/i],['Voice & audio',/voice|audio|music|speech/i],['Research',/research|search|knowledge/i],['Productivity',/productivity|workflow|automation|assistant|agent/i],['Chatbots',/chatbot|conversational|chat assistant/i],['Marketing',/marketing|seo|social media|advertis/i],['Education',/learn|education|student|tutor|exam/i],['Sales & support',/sales|support|crm|customer/i],['Data & analytics',/analytics|data analysis|dataset/i],['Other AI tools',/./]];
  const text=(tag,value,cls)=>{const e=document.createElement(tag);e.textContent=value;if(cls)e.className=cls;return e;};
  const safe=value=>{try{const u=new URL(value,location.origin);return /^https?:$/.test(u.protocol)?u.href:'/discover';}catch{return '/discover';}};
  const liked=p=>{try{return localStorage.getItem('digivated:liked:project:'+p.id)==='1';}catch{return false;}};
+ function renderOverview(){
+  const host=root.querySelector('[data-ai-overview]');host.replaceChildren();
+  for(const [name,pattern] of groups){
+   const items=projects.filter(p=>pattern.test(p.name+' '+p.description+' '+p.category));
+   if(!items.length)continue;
+   const card=text('a','','ai-category-card');card.href='/ai-tools?category='+encodeURIComponent(name);
+   card.append(text('h2','AI '+name+' Tools'),text('p','Explore independent '+name.toLowerCase()+' tools and the people building them.'),text('span',items.length+' tools','ai-category-count'));
+   for(const p of items.slice(0,3)){const row=text('div','','ai-category-preview'),image=document.createElement('img');image.src=safe(p.image);image.alt='';image.loading='lazy';row.append(image,text('span',p.name));card.append(row);}
+   card.append(text('b','View all '+name.toLowerCase()+' tools →'));host.append(card);
+  }
+ }
  function render(){
+  const overview=ai&&category==='All'&&!query;
+  root.querySelector('[data-ai-overview]').hidden=!overview;
+  root.querySelector('[data-list-heading]').hidden=overview;
+  list.hidden=overview;
+  if(overview)renderOverview();
   const matches=projects.filter(p=>category==='All'||(ai?groups.find(([name])=>name===category)?.[1].test(p.name+' '+p.description+' '+p.category):p.category===category)).filter(p=>(p.name+' '+p.description+' '+p.creator).toLowerCase().includes(query));
   matches.sort((a,b)=>(b.votes?.[period]||0)-(a.votes?.[period]||0)||String(b.date||'').localeCompare(String(a.date||''))||a.id.localeCompare(b.id));
   root.querySelector('[data-launch-total]').textContent=matches.length+' projects';
-  root.querySelector('[data-ranking-title]').textContent={daily:"Today's rankings",weekly:"This week's rankings",monthly:"This month's rankings",all:"All-time rankings"}[period];
+  root.querySelector('[data-ranking-title]').textContent=ai?(category==='All'?'All AI tools':category+' tools'):{daily:"Today's rankings",weekly:"This week's rankings",monthly:"This month's rankings",all:"All-time rankings"}[period];
   root.querySelectorAll('[data-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.period===period)));
   root.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===category)));
   list.replaceChildren();status.textContent=matches.length?'':'No projects match yet. Try another category or search.';
@@ -24,13 +40,13 @@ if(root){
    const vote=text('button','','launch-vote');vote.type='button';vote.setAttribute('aria-pressed',String(liked(p)));vote.setAttribute('aria-label','Upvote '+p.name);vote.append(text('span','△'),text('span',String(p.votes?.[period]||0)));
    vote.onclick=async()=>{
     vote.disabled=true;const was=liked(p);
-    try{const response=await fetch('/api/card-interactions',{method:'POST',credentials:'omit',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'project',id:p.id,action:was?'unlike':'like'}),signal:AbortSignal.timeout(12000)});const data=await response.json();if(!response.ok)throw Error(data.error||'Unable to vote. Please try again.');
+    try{const response=await fetch('/api/card-interactions',{method:'POST',credentials:'omit',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'project',id:p.id,action:was?'remove-upvote':'upvote'}),signal:AbortSignal.timeout(12000)});const data=await response.json();if(!response.ok)throw Error(data.error||'Unable to vote. Please try again.');
      try{localStorage.setItem('digivated:liked:project:'+p.id,data.liked?'1':'0');}catch{}
      // Reload authoritative period totals; legacy votes may have no timestamp.
      await load();status.textContent=data.liked?'Upvote saved.':'Upvote removed.';
     }catch(error){status.textContent=error.message;}finally{vote.disabled=false;}
    };row.append(vote);list.append(row);
-  }more.hidden=matches.length<=limit;
+  }more.hidden=overview||matches.length<=limit;
  }
  async function load(){
   let offset=0;const items=[];do{const response=await fetch('/api/projects?ranking=1&offset='+offset,{cache:'no-store',signal:AbortSignal.timeout(20000)});if(!response.ok)throw Error('Projects are temporarily unavailable. Please refresh to try again.');const page=await response.json();items.push(...page.items);offset=page.next;}while(offset!=null);
