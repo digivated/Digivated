@@ -1,0 +1,23 @@
+/* Shared, restrained controls across project cards, dialogs and pagination. */
+html body.platform :is(.wall-page-controls,.wall-focus-controls){box-shadow:none;border-radius:8px}
+html body.platform .wall-page-controls{display:inline-flex;align-items:center;gap:4px;padding:3px;min-height:40px;border:1px solid #dce1e4;background:#fff;width:max-content;max-width:100%;backdrop-filter:none}
+html body.platform .wall-page-controls>button{display:grid;place-items:center;width:34px;height:34px;min-width:34px;min-height:34px;padding:0;border:0;border-radius:5px;background:transparent;color:#37424a;box-shadow:none;font:400 18px/1 system-ui;transform:none}
+html body.platform .wall-page-controls>span{min-width:66px;padding:0 8px;color:#647079;font:500 11px/1.4 system-ui;font-variant-numeric:tabular-nums;white-space:nowrap}
+html body.platform .wall-page-controls>button:hover:not(:disabled){background:#f0f3f4}
+html body.platform .wall-page-controls>button:disabled{color:#b4bcc2;background:transparent;opacity:1;cursor:default;box-shadow:none}
+html body.platform :is(.wall-card-actions,.card-actions){display:flex;align-items:center;gap:8px;background:transparent;box-shadow:none;border-radius:0}
+html body.platform .wall-card-actions{padding:12px 14px;border-top:1px solid #e8ecee;min-height:52px;flex-wrap:nowrap}
+html body.platform :is(.wall-card-actions button,.card-actions .card-icon){display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;height:34px;min-width:34px;padding:6px 8px;border:1px solid transparent;border-radius:6px;background:transparent;box-shadow:none;color:#5c6870;font:500 12px/1.2 'Inter Variable',system-ui;white-space:nowrap;transform:none}
+html body.platform :is(.wall-card-actions button,.card-actions .card-icon):hover{background:#f3f5f6;color:#20292f;box-shadow:none;transform:none}
+html body.platform :is(.wall-card-actions button,.card-actions .card-icon)[aria-pressed=true]{color:#1e2a32;background:#eef2f4;border-color:#dce3e7;box-shadow:none}
+html body.platform :is(.wall-action-icon,.card-icon>span:first-child){display:inline-flex;align-items:center}
+html body.platform :is(.wall-action-icon svg,.card-actions svg){width:16px;height:16px;stroke-width:1.6}
+html body.platform :is(.card-feedback-count,.card-count,[data-like-count]){position:static;display:inline;min-width:0;width:auto;height:auto;padding:0;background:transparent;color:#727e86;font:500 11px/1.2 system-ui;border-radius:0;box-shadow:none}
+html body.platform [data-like-count]:empty{display:none}
+html body.platform .wall-view-count{display:inline-flex;align-items:center;gap:5px;margin-left:auto;color:#8a949b;font:400 11px/1.4 system-ui;white-space:nowrap}
+html body.platform .wall-focus .wall-card-actions{width:100%;justify-content:center;flex-wrap:wrap;margin:0 0 16px}
+html body.platform :is(.wall-page-controls button,.wall-card-actions button,.card-actions button):focus-visible{outline:2px solid #556d7c;outline-offset:2px}
+html body.platform :is(.wall-focus-controls button,.wall-focus-controls .wall-focus-close){border:1px solid #e0e5e8;border-radius:7px;background:#fff;box-shadow:none;color:#56636c;font-size:18px}
+html body.platform .wall-card-media{aspect-ratio:16/10;background:#f2f4f5}
+html body.platform .wall-card-media img{object-fit:contain!important;object-position:center}
+@media(max-width:760px){html body.platform .wall-card-actions{gap:2px;padding:9px 10px}html body.platform .wall-card-actions button{font-size:11px;padding:6px;min-height:36px;height:36px}html body.platform .wall-view-count{font-size:10px}html body.platform .wall-page-controls{min-height:40px}html body.platform .wall-focus-controls button{width:40px;height:40px}}
