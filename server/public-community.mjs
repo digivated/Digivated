@@ -54,6 +54,17 @@ export function makePublicHandler(type, deps = {}) {
       if (!Number.isInteger(offset) || offset < 0 || offset > 100000) return send(400, { error: 'Invalid page.' });
       let items = await publicRecords(redis, kind, offset);
       if (kind === 'submission') items = await withProjectViews(redis, items);
+      if (kind === 'submission' && url.searchParams.get('ranking') === '1') {
+        const now=new Date(), day=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());
+        const week=day-((now.getUTCDay()+6)%7)*86400000, month=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1);
+        items=await Promise.all(items.map(async item=>{
+          const [total,daily,weekly,monthly]=await Promise.all([
+            redis(['GET','digivated:card:likes:project:'+item.id]),
+            ...[day,week,month].map(start=>redis(['ZCOUNT','digivated:card:votes:project:'+item.id,start,Date.now()]))
+          ]);
+          return {...item,votes:{all:Number(total||0),daily:Number(daily||0),weekly:Number(weekly||0),monthly:Number(monthly||0)}};
+        }));
+      }
       if (kind === 'resource') items = await withResourceViews(redis, items);
       // Article bodies are fetched only on the detail page.
       // Filtering incomplete records can make a raw page shorter than 100. Page by
