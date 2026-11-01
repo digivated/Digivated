@@ -10,7 +10,7 @@ import '../styles/submission-flow.css';
     <p class="lede">Share what you built. We review projects before they appear on Digivated.</p>
   </header>
 
-  <div class="submission-layout">
+  <div class="submission-layout submission-workspace">
     <form class="submission-form" id="project-form" action="/api/submissions" method="post">
       <div id="submission-account-callout" class="submission-account-callout">
         <strong>Create a free account to submit</strong>
@@ -21,7 +21,7 @@ import '../styles/submission-flow.css';
 
       <div id="submission-details" hidden>
       <fieldset class="submission-intent">
-        <legend><span class="submission-step-label">01 / Submission</span>Choose how to share</legend>
+        <legend><span class="submission-step-label">01 · Listing plan</span>Choose your submission</legend>
         <label>Submission type
           <select name="submissionType" id="submission-type">
             <option value="directory">Free directory review</option>
@@ -40,21 +40,21 @@ import '../styles/submission-flow.css';
       </fieldset>
 
       <fieldset>
-        <legend><span class="submission-step-label">02 / Project details</span>Tell us about your project</legend>
-        <label>Project name<input name="name" placeholder="What’s your project called?" maxlength="120" required/></label>
+        <legend><span class="submission-step-label">02 · Project details</span>Tell us about your project</legend>
+        <label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
         <label>Project URL<input name="url" type="url" placeholder="https://your-project.com" maxlength="500" required/></label>
-        <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. Describe what someone can use it for.</span></label>
+        <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. Start with what it does, then who it helps. Avoid hashtags and promotional slogans.</span></label>
         <label>Category<select name="category" required><option value="">Choose a category</option>{projectCategories.map(c=><option>{c}</option>)}</select></label>
       </fieldset>
 
       <fieldset>
-        <legend><span class="submission-step-label">03 / Image</span>Add a project image</legend>
-        <label>Project image<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Required. JPG, PNG, or WebP, up to 500 KB. Use an image you can share.</span></label>
+        <legend><span class="submission-step-label">03 · Visual identity</span>Make a strong first impression</legend>
+        <label class="submission-upload">Project cover<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Required. JPG, PNG, or WebP, up to 10 MB. Use a clear product screenshot or logo. We fit it into a consistent 16:10 frame and optimize it before upload.</span></label>
         <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project image preview"/><span id="project-image-name"></span></div>
       </fieldset>
 
       <fieldset>
-        <legend><span class="submission-step-label">04 / Contact</span>About you</legend>
+        <legend><span class="submission-step-label">04 · Creator details</span>About you</legend>
         <p class="submission-section-help">We’ll use these details to review your submission. Your email stays private.</p>
         <div class="form-row"><label>Creator name<input name="creator" placeholder="Your name" autocomplete="name" maxlength="100" required/></label><label>Email<input name="email" placeholder="you@example.com" type="email" autocomplete="email" maxlength="254" required/><span class="field-help">Use the email linked to your account.</span></label></div>
         <label>Social handle <span class="quiet">(optional)</span><input name="social" maxlength="200" placeholder="@yourhandle — include the platform"/></label>
@@ -74,6 +74,11 @@ import '../styles/submission-flow.css';
       </div>
     </form>
 
+    <aside class="submission-preview-panel" aria-labelledby="listing-preview-title">
+      <div class="submission-preview-sticky"><p class="submission-step-label">YOUR PUBLIC LISTING</p><h2 id="listing-preview-title">Preview your project</h2><p class="field-help">See how your details will look before submitting.</p>
+      <article class="submission-listing-preview"><div class="listing-preview-cover"><img data-listing-image alt="" hidden/><span data-listing-placeholder>Your project image</span></div><div class="listing-preview-copy"><span data-listing-category>Category</span><h3 data-listing-name>Your project name</h3><p data-listing-description>A clear description of what your project does and who it helps.</p><span data-listing-domain>your-project.com</span></div><div class="listing-preview-footer"><span>Feedback <b>0</b></span><span>↑ Upvote <b>0</b></span></div></article>
+      <div class="submission-quality"><h3>A listing that stands out</h3><ul><li>Use the real product name.</li><li>Show a clear screenshot or logo.</li><li>Explain one useful outcome.</li><li>Link directly to your project.</li></ul></div><p class="field-help">Your email, order details, and review notes stay private.</p></div>
+    </aside>
   </div>
-  <script>import '../scripts/submission.js';</script>
+  <script>import '../scripts/submission.js'; import '../scripts/submission-preview.js';</script>
 </Platform>
