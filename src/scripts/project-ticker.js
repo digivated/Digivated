@@ -9,7 +9,13 @@ document.querySelectorAll('[data-project-ticker]').forEach(ticker=>{
  };
  fetch(ticker.dataset.tickerView==='all'?'/api/projects':'/api/projects?view=featured',{cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(10000)})
   .then(response=>response.ok?response.json():Promise.reject())
-  .then(({items})=>{
+  .then(async page=>{
+   const items=[...page.items];
+   while(ticker.dataset.tickerView==='all' && page.next!=null){
+    const response=await fetch('/api/projects?offset='+encodeURIComponent(page.next),{credentials:'omit',signal:AbortSignal.timeout(10000)});
+    if(!response.ok) throw new Error('Project page unavailable');
+    page=await response.json();items.push(...page.items);
+   }
    const projects=items.filter(item=>item.image&&item.url&&item.name);
    if(!projects.length){ticker.hidden=true;return;}
    const first=document.createElement('div'),second=document.createElement('div');
