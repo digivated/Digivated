@@ -60,6 +60,8 @@ export function makeCardInteractionHandler(deps={}) {
         if(typeof body==='string')try{body=JSON.parse(body);}catch{return send(400,{error:'Check the form and try again.'});}
         if(!body||typeof body!=='object'||Array.isArray(body)||Buffer.byteLength(JSON.stringify(body))>2048)return send(400,{error:'Check the form and try again.'});
       }
+      if(body.action==='upvote')body.action='like';
+      if(body.action==='remove-upvote')body.action='unlike';
       const type=req.method==='GET'?url.searchParams.get('type'):body.type;
       const id=req.method==='GET'?url.searchParams.get('id'):body.id;
       if(!['project','resource'].includes(type)||!validId(id))return send(404,{error:'This item is not available.'});
