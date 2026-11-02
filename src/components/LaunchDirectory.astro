@@ -6,7 +6,7 @@ const { ai=false }=Astro.props;
  <div class="launch-toolbar"><div hidden={ai} role="group" aria-label="Ranking period" class="launch-periods"><button data-period="daily" aria-pressed="true">Today</button><button data-period="weekly" aria-pressed="false">This week</button><button data-period="monthly" aria-pressed="false">This month</button><button data-period="all" aria-pressed="false">All time</button></div><label><span class="sr-only">Search projects</span><input data-launch-search type="search" placeholder="Search projects or builders"/></label></div>
  <div class="launch-categories" data-launch-categories role="group" aria-label="Filter category"></div>
  <div class="ai-category-grid" data-ai-overview hidden></div>
- <div class="launch-list-heading" data-list-heading><h2 data-ranking-title>Today's rankings</h2><span data-launch-total></span></div>
+ <div class="launch-list-heading" data-list-heading><h2 data-ranking-title>{ai?'AI tools':"Today's rankings"}</h2><span data-launch-total></span></div>
  <p class="launch-note" hidden={ai}>Ranked by upvotes received in the selected period. Daily resets at 00:00 UTC; weeks start Monday. Period tracking began November 1, 2026. Existing votes are preserved in all-time totals.</p>
  <p role="status" data-launch-status>Loading projects…</p><ol class="launch-list" data-launch-list></ol><button class="button" data-launch-more hidden>Show more</button>
 </section>
