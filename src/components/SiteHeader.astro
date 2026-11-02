@@ -9,11 +9,7 @@ const features = [
   ['/shop','Shop','Digivated products on Gumroad'],
   ['/submit-project','Submit a project','Share your work for free review'],
 ];
-const paidOptions = [
-  ['/founding-members','Founding Membership','$5 once · Carousels, packet, and one reviewed feature'],
-  ['/ui-ux-prompt-packet','UI/UX Prompt Packet','$4 once · 75 prompts, workflows, and checklists'],
-  ['/promote','Featured project spot','$3 once · One promotional request, reviewed'],
-];
+const paidOptions = [ ['/shop','Shop','Browse current Digivated products'], ['/promote','Promote a project','Request a reviewed feature'] ];
 const active = (href: string) => path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/'));
 ---
 <header class="platform-header compact-site-header">
@@ -36,7 +32,7 @@ const active = (href: string) => path === href || path.startsWith(href + '/') ||
             </section>
           </div>
           <div class="navigation-account-row"><a id="menu-account-link" href="/account"><UiIcon name="user" size={17}/><span>Your projects</span></a><a href="/saved"><UiIcon name="bookmark" size={17}/><span>Saved items</span></a><button type="button" data-open-search><UiIcon name="search" size={17}/><span>Search Digivated</span><kbd>/</kbd></button></div>
-          <div class="navigation-bottom-row"><div><a href="/about">About</a><a href="/access">Packet access</a></div><a id="menu-login-link" href="/login">Log in or sign up <UiIcon size={15}/></a></div>
+          <div class="navigation-bottom-row"><div><a href="/about">About</a><a href="/shop">Shop</a></div><a id="menu-login-link" href="/login">Log in or sign up <UiIcon size={15}/></a></div>
         </nav>
       </details>
     </div>
