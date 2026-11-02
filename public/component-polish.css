@@ -21,3 +21,8 @@ html body.platform :is(.wall-focus-controls button,.wall-focus-controls .wall-fo
 html body.platform .wall-card-media{aspect-ratio:16/10;background:#f2f4f5}
 html body.platform .wall-card-media img{object-fit:contain!important;object-position:center}
 @media(max-width:760px){html body.platform .wall-card-actions{gap:2px;padding:9px 10px}html body.platform .wall-card-actions button{font-size:11px;padding:6px;min-height:36px;height:36px}html body.platform .wall-view-count{font-size:10px}html body.platform .wall-page-controls{min-height:40px}html body.platform .wall-focus-controls button{width:40px;height:40px}}
+
+/* Center the homepage featured introduction as a single text block. */
+html body.platform.light-theme.wall-experience .project-wall:not([data-wall-directory="true"]) .wall-intro{align-self:center!important;width:100%!important;max-width:700px!important;margin:0 auto 28px!important;text-align:center!important}
+html body.platform.light-theme.wall-experience .project-wall:not([data-wall-directory="true"]) .wall-intro .wall-overline{justify-content:center!important}
+html body.platform.light-theme.wall-experience .project-wall:not([data-wall-directory="true"]) .wall-intro h1,html body.platform.light-theme.wall-experience .project-wall:not([data-wall-directory="true"]) .wall-intro>p{margin-left:auto!important;margin-right:auto!important}
