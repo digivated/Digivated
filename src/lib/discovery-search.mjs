@@ -15,3 +15,10 @@ export function rankDiscovery(records, query = '', type = 'all', limit = 8) {
     return {record,score,index};
   }).filter(Boolean).sort((a,b) => b.score-a.score || a.index-b.index).slice(0,limit).map(({record}) => record);
 }
+
+export function discoverySelection(records, query = '', scope = 'all') {
+  const browsing = !query.trim();
+  const pool = browsing && scope === 'all' ? records.filter(record => record.type === 'project') : records;
+  const ranked = rankDiscovery(pool, query, scope, pool.length);
+  return { items: ranked.slice(0, browsing ? 3 : 5), total: ranked.length, browsing };
+}

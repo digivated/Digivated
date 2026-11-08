@@ -128,3 +128,45 @@ test('an unverified recovery callback never exposes the password form or writes 
  await expect(page.locator('#account-password-reset')).not.toBeVisible();
  expect(writes).toBe(0);
 });
+
+test('search surfaces projects before slower guides and keeps navigation out of default results',async({page})=>{
+ let releaseGuides:()=>void=()=>{};
+ const waiting=new Promise<void>(resolve=>{releaseGuides=resolve;});
+ await page.route('**/api/carousels**',async route=>{await waiting;await route.fulfill({json:{items:[{slug:'fixture-guide',title:'Fixture guide',summary:'A helpful guide.'}],next:null}});});
+ await page.goto(base+'/');
+ await page.locator('.header-search').click();
+ await expect(page.locator('#unified-results .unified-result')).toHaveCount(2,{timeout:1500});
+ await expect(page.locator('#unified-results img').first()).toBeVisible();
+ await expect(page.locator('#unified-results')).not.toContainText('Page · Digivated');
+ await expect(page.locator('#unified-results a[href="/saved"]')).toHaveCount(0);
+ releaseGuides();
+ await page.locator('#discovery-search').getByRole('button',{name:'Guides',exact:true}).click();
+ await expect(page.locator('#unified-results')).toContainText('Fixture guide');
+ await page.locator('#unified-search-input').fill('no-such-matching-content');
+ await expect(page.locator('#unified-search-empty')).toBeVisible();
+ await page.locator('#reset-discovery-search').click();
+ await expect(page.locator('#unified-search-input')).toHaveValue('');
+ await expect(page.locator('#search-shortcuts')).toBeVisible();
+ await expect(page.locator('#unified-results .unified-result')).toHaveCount(2);
+});
+for(const viewport of [{width:1280,height:720},{width:390,height:650}])test(`centered hero and bounded search at ${viewport.width}px`,async({page})=>{
+ await page.setViewportSize(viewport);
+ await page.goto(base+'/');
+ const center=await page.locator('.home-editorial h1').evaluate(el=>{const r=el.getBoundingClientRect();return r.x+r.width/2;});
+ expect(Math.abs(center-viewport.width/2)).toBeLessThan(1);
+ const activityCenter=await page.locator('.site-activity').evaluate(el=>{const r=el.getBoundingClientRect();return r.x+r.width/2;});
+ expect(Math.abs(activityCenter-center)).toBeLessThan(1);
+ await page.locator('.header-search').click();
+ await expect(page.locator('#unified-search-input')).toBeFocused();
+ await expect(page.getByRole('heading',{name:'Search Digivated',exact:true})).toBeVisible();
+ await expect(page.getByRole('button',{name:'Close search',exact:true})).toBeVisible();
+ const geometry=await page.locator('#discovery-search').evaluate(el=>{const r=el.getBoundingClientRect();return{left:r.left,right:r.right,top:r.top,bottom:r.bottom,wholeScroll:el.scrollHeight>el.clientHeight};});
+ expect(geometry.left).toBeGreaterThanOrEqual(0);expect(geometry.right).toBeLessThanOrEqual(viewport.width);
+ expect(geometry.top).toBeGreaterThanOrEqual(0);expect(geometry.bottom).toBeLessThanOrEqual(viewport.height);
+ expect(geometry.wholeScroll).toBe(false);
+ await page.locator('#unified-search-input').fill('Saved');
+ await expect(page.locator('#clear-discovery-search')).toBeVisible();
+ await page.locator('#clear-discovery-search').click();
+ await expect(page.locator('#unified-search-input')).toHaveValue('');
+ await expect(page.locator('#unified-search-input')).toBeFocused();
+});

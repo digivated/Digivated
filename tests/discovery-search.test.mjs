@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {rankDiscovery,safeSearchHref} from '../src/lib/discovery-search.mjs';
+import {rankDiscovery,safeSearchHref,discoverySelection} from '../src/lib/discovery-search.mjs';
 const records=[
  {type:'resource',title:'Read market claims clearly',description:'Evidence and investing',category:'Markets',href:'/resources/market-claims'},
  {type:'project',title:'Arvow',description:'AI agents for SEO and search',category:'AI',href:'/discover#project-arvow'},
@@ -22,4 +22,16 @@ test('destinations reject executable URLs, credentials, protocol-relative URLs a
  assert.equal(safeSearchHref('/discover#project-one'),'/discover#project-one');
  assert.equal(safeSearchHref('https://example.com'),'https://example.com/');
  assert.equal(rankDiscovery([{...records[0],href:'javascript:alert(1)'}],'').length,0);
+});
+test('initial search suggests a few real projects instead of a navigation dump',()=>{
+ const pages=Array.from({length:9},(_,i)=>({type:'page',title:`Page ${i}`,description:'A site page',href:`/page-${i}`}));
+ const projects=Array.from({length:12},(_,i)=>({type:'project',title:`Tool ${i}`,category:'AI',href:`/discover#project-${i}`}));
+ const guides=[{type:'resource',title:'A guide',description:'A useful article',href:'/news'}];
+ const initial=discoverySelection([...pages,...projects,...guides]);
+ assert.equal(initial.items.length,3);assert.ok(initial.items.every(r=>r.type==='project'));assert.equal(initial.total,12);
+ assert.equal(discoverySelection([...pages,...projects,...guides],'Tool').items.length,5);
+ assert.equal(discoverySelection([...pages,...projects,...guides],'Tool').total,12);
+ assert.equal(discoverySelection([...pages,...projects,...guides],'','resource').items[0].title,'A guide');
+ assert.equal(discoverySelection(pages).items.length,0);
+ assert.equal(discoverySelection(pages,'Page 0').items[0].type,'page');
 });
