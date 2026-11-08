@@ -5,10 +5,10 @@ const features = [
   ['/discover','Projects','Discover independent work'],
   ['/rankings','Rankings','Daily, weekly, and monthly upvotes'],
   ['/ai-tools','AI tools','Explore tools by category'],
-  ['/shop','Shop','Digivated products on Gumroad'],
+  ['/membership','Membership','$5 once. Spotlight and upcoming News access'],
   ['/submit-project','Submit a project','Share your work for free review'],
 ];
-const paidOptions = [ ['/shop','Shop','Browse current Digivated products'], ['/promote','Promote a project','Request a reviewed feature'] ];
+const paidOptions = [ ['/membership','Digivated Membership','One membership. $5 USD once.'] ];
 const active = (href: string) => path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/'));
 ---
 <header class="platform-header compact-site-header">
@@ -27,11 +27,11 @@ const active = (href: string) => path === href || path.startsWith(href + '/') ||
             </section>
             <section class="navigation-builder" aria-labelledby="navigation-builder-title"><h2 id="navigation-builder-title">For builders</h2>
               <a class="navigation-feature" href="/submit-project"><span class="navigation-feature-art" aria-hidden="true"><UiIcon name="upload" size={26}/><span class="navigation-feature-line"></span><span class="navigation-feature-line short"></span></span><strong>Made something good?</strong><span>Give your project a place to be discovered.</span><b>Submit for free <UiIcon size={15}/></b></a>
-              <details class="navigation-products"><summary>More products & paid options <UiIcon name="chevron" size={14}/></summary><div>{paidOptions.map(([href,label,description])=><a href={href} aria-current={active(href)?'page':undefined}><strong>{label}</strong><small>{description}</small></a>)}</div></details>
+              <details class="navigation-products"><summary>Membership <UiIcon name="chevron" size={14}/></summary><div>{paidOptions.map(([href,label,description])=><a href={href} aria-current={active(href)?'page':undefined}><strong>{label}</strong><small>{description}</small></a>)}</div></details>
             </section>
           </div>
           <div class="navigation-account-row"><a id="menu-account-link" href="/account"><UiIcon name="user" size={17}/><span>Your projects</span></a><a href="/saved"><UiIcon name="bookmark" size={17}/><span>Saved items</span></a><button type="button" data-open-search><UiIcon name="search" size={17}/><span>Search Digivated</span><kbd>/</kbd></button></div>
-          <div class="navigation-bottom-row"><div><a href="/about">About</a><a href="/shop">Shop</a></div><a id="menu-login-link" href="/login">Log in or sign up <UiIcon size={15}/></a></div>
+          <div class="navigation-bottom-row"><div><a href="/about">About</a><a href="/membership">Membership</a></div><a id="menu-login-link" href="/login">Log in or sign up <UiIcon size={15}/></a></div>
         </nav>
       </details>
     </div>

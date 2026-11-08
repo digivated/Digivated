@@ -1,8 +1,4 @@
 ---
-import FoundingPassTeaser from '../components/FoundingPassTeaser.astro';
-import PromoCallout from '../components/PromoCallout.astro';
-import Platform from '../layouts/Platform.astro';
-import ProductCard from '../components/ProductCard.astro';
-import products from '../data/products.json';
+import MembershipOffer from '../components/MembershipOffer.astro';
 ---
-<Platform title="Made by Digivated"><header class="page-intro"><p class="eyebrow">Our own little corner</p><h1>Made by Digivated</h1><p class="lede">Founding Membership is the main offer. It includes full carousels, the full UI/UX Prompt Packet, and one reviewed feature.</p></header><FoundingPassTeaser/><div class="stack">{products.map(product=><ProductCard product={product}/>)}</div><PromoCallout/><div class="stack additional-products" data-live-products></div><p class="quiet" id="products-status" role="status"></p><script>import '../scripts/live-content.js';</script></Platform>
+<MembershipOffer/>

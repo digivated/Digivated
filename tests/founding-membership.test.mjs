@@ -243,16 +243,20 @@ test('a member feature stays private until review, then publishes without the sa
   }
 });
 
-test('membership copy keeps the five dollar headline and the separate products', () => {
-  const offer = ['founding-pass.mjs', '../src/pages/founding-members.astro', '../src/pages/promote.astro', '../src/pages/terms.astro', '../src/pages/ui-ux-prompt-packet.astro', '../src/pages/resources/index.astro', '../src/components/FoundingPassTeaser.astro']
-    .map(name => readFileSync(new URL(name.startsWith('.') ? name : `../src/data/${name}`, import.meta.url), 'utf8')).join('\n');
-  assert.match(readFileSync(new URL('../src/data/founding-pass.mjs', import.meta.url), 'utf8'), /priceUSD:5/);
-  assert.match(offer, /Get Founding Membership/);
-  assert.match(offer, /Included with Founding Membership/);
-  assert.match(offer, /\$5 USD/);
-  assert.match(offer, /\$4 USD/);
-  assert.match(offer, /\$3 USD/);
-  assert.match(offer, /full UI\/UX Prompt Packet/);
-  assert.equal(offer.includes('\u2014'), false);
-  assert.equal(/\$2|Founding Member Pass|coming soon/i.test(offer), false);
+test('one-time membership advertises one offer and leaves checkout gated during the seller remap', async () => {
+  const { membership } = await import('../src/data/membership.mjs');
+  assert.equal(membership.priceUSD, 5);
+  assert.equal(membership.billing, 'one-time');
+  assert.equal(membership.spotlightLimit, 1);
+  assert.equal(membership.newsStatus, 'coming-soon');
+  const payload = JSON.parse(readFileSync(new URL('../gumroad/membership-product.json', import.meta.url), 'utf8'));
+  assert.equal(payload.price, 500);
+  assert.equal(payload.name, membership.name);
+  assert.equal(Object.hasOwn(payload, 'subscription_duration'), false);
+  assert.equal(Object.hasOwn(payload, 'files'), false); // Preserve existing buyers' delivered files.
+  assert.match(payload.description, /News is not available yet/);
+  const page = readFileSync(new URL('../src/components/MembershipOffer.astro', import.meta.url), 'utf8');
+  assert.match(page, /membership.checkoutReady/);
+  assert.match(page, /Checkout being updated/);
+  assert.match(page, /Previous purchases|previous purchase/);
 });

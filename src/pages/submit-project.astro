@@ -25,13 +25,13 @@ import '../styles/submission-flow.css';
         <label>Submission type
           <select name="submissionType" id="submission-type">
             <option value="directory">Free directory review</option>
-            <option value="founding-feature">Included with Founding Membership</option>
-            <option value="promotion">Paid promotion, already purchased</option>
+            <option value="founding-feature">Membership project spotlight</option>
+            <option value="promotion">Previous standalone promotion purchase</option>
           </select>
         </label>
-        <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/founding-members#member-sign-in">membership page</a> first. This uses your one included feature, with no extra payment. Review is required; a feature is never guaranteed.</p></div>
+        <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/membership#member-sign-in">membership page</a> first. This uses your one included project spotlight, with no extra payment. Review is required; a feature is never guaranteed.</p></div>
         <div id="promotion-fields" class="submission-option-detail" hidden>
-          <p>Complete your <a href="https://digivated.gumroad.com/l/digivated-promo" target="_blank" rel="noopener noreferrer">Gumroad promo purchase ↗</a> before submitting. Use the same email below as your checkout so we can match it.</p>
+          <p>For a standalone promotion you previously purchased. Use the email from that receipt so we can match it. New project spotlights are included with <a href="/membership">Digivated Membership</a>.</p>
           <label>Gumroad order reference<input name="promotionReceipt" id="promotion-receipt" maxlength="120" autocomplete="off" aria-describedby="promotion-receipt-help" disabled/></label>
           <p class="field-help" id="promotion-receipt-help">Copy the order reference from your receipt. If none is shown, enter “Match by checkout email”. Do not enter a license key or payment details.</p>
           <label class="consent"><input name="promotionPurchased" id="promotion-purchased" type="checkbox" disabled/><span>I purchased the Digivated promo and understand that my purchase and project must be reviewed before promotion.</span></label>

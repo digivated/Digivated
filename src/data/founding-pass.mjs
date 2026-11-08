@@ -1,4 +1,5 @@
-// Public offer metadata only. Paid slides must never be imported here.
+// Historical founding offer metadata. The current public offer is membership.mjs.
+// Retained for existing purchase context; never advertise these as separate products.
 export const foundingPass = Object.freeze({
   name:'Digivated Founding Membership',
   priceUSD:5,

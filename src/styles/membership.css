@@ -1,0 +1,35 @@
+html#digivated-root .membership-page { width:min(920px,100%); margin:0 auto; padding:24px 0 60px; }
+html#digivated-root .membership-heading { text-align:center; padding:24px 0 32px; }
+html#digivated-root .membership-heading h1 { margin:16px auto; font-size:clamp(36px,5vw,58px); line-height:1.1; letter-spacing:-.045em; }
+html#digivated-root .membership-heading em { font-style:normal; color:#bd9af4; }
+html#digivated-root .membership-heading>p:last-child { max-width:45ch; margin:18px auto 0; font-size:16px; line-height:1.7; }
+html#digivated-root .membership-offer { max-width:600px; margin:auto; padding:32px; border:1px solid #a77ce442; border-radius:18px; background:radial-gradient(ellipse at 50% 0,#8b4be917,transparent 75%),#101014; box-shadow:0 12px 36px #0003; }
+.membership-offer-heading { display:flex; gap:16px; justify-content:space-between; align-items:center; font-size:12px; }
+.membership-plan-label { font-weight:600; }
+.membership-once,.membership-soon { color:#d7bef9; border:1px solid #bb8cff30; background:#a773ff0b; border-radius:999px; padding:5px 9px; font-size:10px; white-space:nowrap; }
+.membership-price { display:flex; gap:16px; align-items:center; margin:28px 0; }
+.membership-price strong { font-size:70px; letter-spacing:-.065em; line-height:1; }
+.membership-price>span { font-size:14px; line-height:1.7; }
+.membership-price small { color:var(--dg-muted); font-size:12px; }
+.membership-benefits { display:grid; gap:24px; padding:26px 0; border-top:1px solid var(--dg-line); }
+.membership-benefits>div { display:flex; align-items:flex-start; gap:14px; }
+.membership-benefit-icon { display:grid; place-items:center; width:40px; height:40px; flex:none; color:#cba6ff; background:#a574ec12; border:1px solid #a574ec26; border-radius:12px; }
+html#digivated-root .membership-benefits h2 { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin:0 0 8px; font-size:16px; line-height:1.5; letter-spacing:-.02em; }
+.membership-benefits p { margin:0; font-size:13px; line-height:1.8; }
+html#digivated-root .membership-checkout { width:100%; justify-content:center; margin-top:8px; }
+.membership-small,.membership-checkout-note { text-align:center; font-size:11px; line-height:1.8; margin:12px 0 0; }
+.membership-next { text-align:center; margin:24px 0 48px; font-size:12px; }
+.membership-next a { display:inline-flex; gap:8px; align-items:center; }
+.membership-access { display:grid; grid-template-columns:1fr 1fr; gap:36px; border-top:1px solid var(--dg-line); padding:36px 0; scroll-margin-top:90px; }
+.membership-access h2,.membership-faq h2 { font-size:24px; letter-spacing:-.025em; }
+.membership-access p { font-size:13px; line-height:1.8; }
+html#digivated-root .membership-access .carousel-access { background:#101014; padding:20px; border:1px solid var(--dg-line); border-radius:12px; }
+.membership-access input { width:100%; box-sizing:border-box; margin-top:7px; }
+.membership-faq details { padding:18px 0; border-bottom:1px solid var(--dg-line); scroll-margin-top:90px; }
+.membership-faq summary { cursor:pointer; font-size:14px; font-weight:500; }
+.membership-faq p { font-size:13px; line-height:1.8; max-width:75ch; }
+@media(max-width:600px) { html#digivated-root .membership-offer { padding:24px 20px; } .membership-access { grid-template-columns:1fr; gap:14px; } .membership-offer-heading { gap:8px; } .membership-price strong { font-size:64px; } }
+.membership-access form { display:grid; gap:12px; }
+.membership-access label { display:block; font-size:13px; }
+.membership-access form p { margin:0; }
+html#digivated-root .membership-benefit-icon { color:#cba6ff; }

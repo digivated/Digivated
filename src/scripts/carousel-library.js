@@ -10,7 +10,7 @@ const carouselIds = new Set();
 let refreshingViews = false;
 let viewRefreshTimer;
 
-const FOUNDING_CHECKOUT = 'https://digivated.gumroad.com/l/founding-member-pass';
+const FOUNDING_CHECKOUT = '/membership#previous-purchases';
 
 const el = (tag, text, className) => {
   const node = document.createElement(tag);
@@ -305,8 +305,8 @@ function renderDetail(root, payload) {
   reader.append(transcript);
   const locked = el('section', undefined, 'carousel-locked');
   if (item.locked) {
-    locked.append(el('h2', item.locked.message), el('p', `${item.locked.count} more slides are included with Founding Membership, along with the full Prompt Packet and one reviewed feature. The collection grows as carousels are added.`));
-    const buy = el('a', 'Get Founding Membership', 'button');
+    locked.append(el('h2', item.locked.message), el('p', `${item.locked.count} more slides are available to existing Founding Membership purchasers. Your previous access is preserved.`));
+    const buy = el('a', 'Membership & previous purchases', 'button');
     buy.href = FOUNDING_CHECKOUT;
     buy.target = '_blank';
     buy.rel = 'noopener noreferrer';
@@ -364,7 +364,7 @@ async function bindAccess() {
       const data = await response.json().catch(() => ({}));
       if (!response.ok) { if (status) status.textContent = data.error || 'That purchase could not be verified.'; return; }
       location.reload();
-    } catch { if (status) status.textContent = 'We couldn’t check founding access right now. Please try again shortly.'; }
+    } catch { if (status) status.textContent = 'We couldn’t check membership access right now. Please try again shortly.'; }
     finally { button.disabled=false; }
   });
   document.getElementById('founding-sign-out')?.addEventListener('click', async () => {
@@ -418,7 +418,14 @@ async function loadFoundingInventory() {
   if (!list) return;
   try {
     const { ok, data } = await loadJson('/api/carousels');
-    if (!ok || !data.items?.length) return;
+    if (!ok) return;
+    const verified = document.getElementById('membership-verified');
+    if (verified) verified.hidden = !data.member;
+    const accessForm = document.getElementById('founding-access-form');
+    if (accessForm) accessForm.hidden = !!data.member;
+    const logout = document.getElementById('founding-sign-out');
+    if (logout) logout.hidden = !data.member;
+    if (!data.items?.length) return;
     list.replaceChildren(...data.items.map(item => {
       const row = el('li');
       const link = el('a', item.title);
