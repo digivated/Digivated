@@ -33,6 +33,10 @@ html body.platform.light-theme.moments-theme .submission-intro { max-width:900px
 html body.platform.light-theme.moments-theme .submission-intro h1 { font:650 clamp(3.6rem,7vw,6.6rem)/.93 'Inter Variable',system-ui,sans-serif; letter-spacing:-.065em; }
 html body.platform.light-theme.moments-theme .submission-layout { max-width:900px; }
 html body.platform.light-theme.moments-theme:has(.shop-showcase) .site-breadcrumbs,html body.platform.light-theme.moments-theme:has(.submission-layout) .site-breadcrumbs { display:none; }
+@media(min-width:768px) and (max-width:1100px) {
+ html body.platform.light-theme.moments-theme .platform-footer .footer-columns { grid-template-columns:repeat(3,minmax(0,1fr)); }
+ html body.platform.light-theme.moments-theme .platform-footer .footer-intro { grid-column:1/-1; }
+}
 @media(max-width:767px) {
  html body.platform.light-theme.moments-theme main#main { padding:24px 20px 70px; }
  html body.platform.light-theme.moments-theme.wall-experience main#main { padding:0; }

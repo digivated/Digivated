@@ -5,7 +5,12 @@ if (menu) {
   const panel = menu.querySelector('nav');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let closing = false;
+  const positionPanel = () => {
+    const header = menu.closest('header');
+    if (header) menu.style.setProperty('--navigation-top', `${Math.max(8, Math.ceil(header.getBoundingClientRect().bottom) + 8)}px`);
+  };
   const sync = () => {
+    if (menu.open) positionPanel();
     trigger.setAttribute('aria-expanded', String(menu.open));
     trigger.setAttribute('aria-label', menu.open ? 'Close navigation menu' : 'Open navigation menu');
   };
@@ -25,6 +30,7 @@ if (menu) {
     if (restoreFocus && menu.contains(document.activeElement)) trigger.focus();
   };
   menu.addEventListener('toggle', sync);
+  window.addEventListener('resize', () => { if (menu.open) positionPanel(); });
   trigger.addEventListener('click', event => {
     if (menu.open) { event.preventDefault(); close(true); }
   });

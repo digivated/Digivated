@@ -7,6 +7,17 @@ const builtins = new Set(['builtin-ui-ux-prompt-packet', ...resources.filter(ite
 const CAROUSEL_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+){0,12}$/;
 export const resourceViewKey = id => `digivated:resource-views:${id}`;
 
+// Validate publication inside Redis: full carousel records contain slide images,
+// so fetching a whole library with MGET can exceed the REST response limit.
+export const VALIDATE_CAROUSELS = `
+for i,key in ipairs(KEYS) do
+ local raw=redis.call('GET',key)
+ if not raw then return 0 end
+ local ok,record=pcall(cjson.decode,raw)
+ if not ok or type(record)~='table' or record.slug~=ARGV[i+1] or type(record.slides)~='table' or #record.slides<tonumber(ARGV[1]) then return 0 end
+end
+return 1`;
+
 function publishedCarousel(raw, id) {
   if (typeof raw !== 'string') return false;
   try {
@@ -51,8 +62,8 @@ export function makeResourceViewHandler(deps = {}) {
         if (!carousels.length && ids.length > builtins.size) return send(400, { error: 'Invalid resource IDs.' });
         if (carousels.length) {
           if (carousels.some(id => !CAROUSEL_SLUG.test(id))) return send(400, { error: 'Invalid resource IDs.' });
-          const rows = await redis(['MGET', ...carousels.map(carouselItemKey)]);
-          if (rows.some((row, index) => !publishedCarousel(row, carousels[index]))) return send(400, { error: 'Invalid resource IDs.' });
+          const valid = await redis(['EVAL', VALIDATE_CAROUSELS, carousels.length, ...carousels.map(carouselItemKey), MIN_SLIDES, ...carousels]);
+          if (valid !== 1) return send(400, { error: 'Invalid resource IDs.' });
         }
         const counts = await redis(['MGET', ...ids.map(resourceViewKey)]);
         return send(200, { views: Object.fromEntries(ids.map((id, index) => [id, Number(counts[index] || 0)])) });

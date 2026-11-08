@@ -1,14 +1,25 @@
 ---
 import resources from '../data/resources.json';
 import { resourcePathInfo } from '../data/learning-paths.mjs';
-const index = resources.filter(r => r.status === 'published').map(r => ({type:'resource',title:r.title,description:r.description,category:r.category,keywords:resourcePathInfo(r).keywords,href:`/resources/${r.slug}`}));
+const index = resources.filter(r => r.status === 'published').map(r => ({type:'resource',title:r.title,description:r.description,category:r.category,keywords:resourcePathInfo(r).keywords,href:`/resources/read?slug=${encodeURIComponent(r.slug)}`}));
 index.unshift({type:'resource',title:'UI/UX Prompt Packet',description:'75 practical prompts, workflows, and checklists.',category:'Design & UX',href:'/ui-ux-prompt-packet'});
+const pages = [
+  ['/discover','Projects','Discover independent projects and their builders.','directory explore builders'],
+  ['/rankings','Project rankings','See projects ranked by community upvotes.','today weekly monthly votes'],
+  ['/ai-tools','AI tools','Find AI tools by category.','artificial intelligence tools'],
+  ['/news','News & guides','Explore useful tools, skills, and guides.','news resources articles carousels learning'],
+  ['/submit-project','Submit a project','Share your work for review.','submit listing builder'],
+  ['/saved','Saved items','Return to your saved projects and collections.','favorites bookmarks collections'],
+  ['/shop','Shop','Browse Digivated products.','products membership prompt package'],
+  ['/account','Your projects','Manage your account, submissions, and feedback.','account profile email login'],
+  ['/about','About Digivated','Learn about Digivated.','about contact'],
+].map(([href,title,description,keywords]) => ({type:'page',href,title,description,keywords,category:'Digivated'}));
 ---
-<script type="application/json" id="discovery-index" set:html={JSON.stringify(index).replace(/</g,'\u003c')}/>
+<script type="application/json" id="discovery-index" set:html={JSON.stringify([...pages,...index]).replace(/</g,'\u003c')}/>
 <dialog class="discovery-dialog search-dialog" id="discovery-search" aria-labelledby="discovery-search-title">
   <div class="discovery-dialog-head"><div><p class="discovery-eyebrow">EXPLORE DIGIVATED</p><h2 id="discovery-search-title">Find your next good idea.</h2></div><button type="button" class="discovery-close" data-close-search aria-label="Close search">×</button></div>
   <label class="unified-search-label"><span class="sr-only">Search Digivated</span><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input id="unified-search-input" type="search" placeholder="Projects, guides, and tools…" autocomplete="off"/></label>
-  <div class="search-scopes" role="group" aria-label="Search content type"><button type="button" data-search-type="all" aria-pressed="true">All</button><button type="button" data-search-type="project" aria-pressed="false">Projects</button><button type="button" data-search-type="resource" aria-pressed="false">Resources</button></div>
+  <div class="search-scopes" role="group" aria-label="Search content type"><button type="button" data-search-type="all" aria-pressed="true">All</button><button type="button" data-search-type="project" aria-pressed="false">Projects</button><button type="button" data-search-type="resource" aria-pressed="false">Guides</button><button type="button" data-search-type="page" aria-pressed="false">Pages</button></div>
   <p class="search-count" id="unified-search-status" role="status"></p>
   <nav class="unified-results" id="unified-results" aria-label="Search results"></nav>
   <div class="search-empty" id="unified-search-empty" hidden><h3>A new direction?</h3><p>Try a project name or a broader topic such as AI, design, or markets.</p><a href="/discover">Explore all projects ↗</a></div>

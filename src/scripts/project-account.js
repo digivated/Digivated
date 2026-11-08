@@ -6,11 +6,34 @@ if(state){
  const callback=new URLSearchParams(location.hash.slice(1));
  const arrivingFromEmail=callback.has('access_token');
  const callbackError=callback.get('error_description');
+ const recovering=callback.get('type')==='recovery'||new URLSearchParams(location.search).get('reset')==='password';
  const show=message=>{state.textContent=message;};
  const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  async function boot(){
   const {state:authState,client,session,email}=await accountSession();
   if(location.hash)history.replaceState(null,'',location.pathname+location.search);
+  if(recovering){
+   document.querySelector('h1').textContent='Choose a new password.';
+   document.querySelector('.page-intro .lede').textContent='Save a new password to get back to your Digivated account.';
+   if(callbackError||!session||authState!=='signed-in'){
+    form.hidden=false;show('This password reset link could not be verified. Request a fresh link from the login page.');return;
+   }
+   history.replaceState(null,'','/account?reset=password');
+   const reset=document.getElementById('account-password-reset'),submit=reset.querySelector('button');
+   reset.hidden=false;show('Your reset link is verified. Choose your new password below.');
+   reset.elements.password.focus();
+   reset.onsubmit=async event=>{
+    event.preventDefault();
+    if(reset.elements.password.value!==reset.elements.confirmation.value){show('The passwords do not match. Please check them.');reset.elements.confirmation.focus();return;}
+    submit.disabled=true;show('Saving your new password…');
+    try{
+     const {error}=await client.auth.updateUser({password:reset.elements.password.value});
+     if(error)throw error;
+     reset.reset();location.replace('/account');
+    }catch(error){show(error.message||'Your password could not be saved. Please try again.');submit.disabled=false;}
+   };
+   return;
+  }
   document.getElementById('account-sign-out').onclick=async()=>{const {error}=await client.auth.signOut();if(error){show('Could not sign out. Please try again.');return;}location.replace('/login');};
   if(authState==='signed-out'||authState==='unverified'){
    form.hidden=false;

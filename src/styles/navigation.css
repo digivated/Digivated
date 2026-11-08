@@ -67,7 +67,7 @@ html body.platform.light-theme .navigation-bottom-row>a { color:#37352f; font-we
  .navigation-trigger-menu { display:flex; }
  .notebook-navigation[open] .navigation-trigger-menu { display:none; }
  .notebook-navigation[open] .navigation-trigger-close { display:flex; }
- html body.platform.light-theme .notebook-navigation .navigation-panel { position:fixed; inset:76px 12px 12px; width:auto; max-width:none; max-height:none; border-radius:10px; display:flex; flex-direction:column; transform-origin:top right; }
+ html body.platform.light-theme .notebook-navigation .navigation-panel { position:fixed; inset:var(--navigation-top, 118px) 12px 12px; width:auto; max-width:none; max-height:none; border-radius:10px; display:flex; flex-direction:column; transform-origin:top right; }
  .navigation-panel-grid { grid-template-columns:1fr; }
  .navigation-panel :is(.navigation-main,.navigation-builder) { padding:24px; }
  .navigation-panel .navigation-main { padding-bottom:16px; }
@@ -103,3 +103,10 @@ html body.platform .header-primary{display:flex;align-items:center;gap:22px;min-
 html body.platform .header-primary a{white-space:nowrap}
 html body.platform .compact-header-actions{margin-left:auto;flex-shrink:0}
 @media(max-width:1000px){html body.platform .header-primary{display:none!important}}
+
+/* Keep search one tap away on phones, alongside the existing account and menu. */
+@media(max-width:480px){
+ html body.platform.light-theme .compact-site-header .header-search{display:flex!important}
+ html body.platform.light-theme .compact-site-header .header-inner{gap:8px}
+ html body.platform.light-theme .compact-site-header .compact-header-actions{gap:6px}
+}

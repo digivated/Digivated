@@ -1,8 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { makeResourceViewHandler, withResourceViews, resourceViewKey, RECORD_RESOURCE_VIEW } from '../server/resource-views.mjs';
+import { makeResourceViewHandler, withResourceViews, resourceViewKey, RECORD_RESOURCE_VIEW, VALIDATE_CAROUSELS } from '../server/resource-views.mjs';
 import { carouselItemKey } from '../server/carousels.mjs';
 import { makePublicHandler } from '../server/public-community.mjs';
+import { testRedis } from './helpers/redis.mjs';
 
 const origin = 'https://views.test';
 async function invoke(handler, { id = 'builtin-ui-ux-prompt-packet', method = 'POST', headers = {} } = {}) {
@@ -56,6 +57,7 @@ test('published carousel views share the resource counter and the 24 hour dedupe
   const commands = [];
   const redis = async command => {
     commands.push(command);
+    if (command[0] === 'EVAL' && command[1] === VALIDATE_CAROUSELS) return command[3] === carouselItemKey(slug) ? 1 : 0;
     if (command[0] === 'GET' && command[1] === carouselItemKey(slug)) return record;
     if (command[0] === 'MGET' && command[1] === carouselItemKey(slug)) return [record];
     if (command[0] === 'MGET' && command[1] === resourceViewKey(slug)) return ['4'];
@@ -79,8 +81,7 @@ test('published carousel views share the resource counter and the 24 hour dedupe
   const read = await invoke(handler, { method: 'GET', id: slug });
   assert.equal(read.status, 200);
   assert.deepEqual(read.body.views, { [slug]: 4 });
-  assert.equal(commands.some(command => command[0] === 'EVAL'), false);
-  assert.deepEqual(commands[0], ['MGET', carouselItemKey(slug)]);
+  assert.deepEqual(commands[0], ['EVAL', VALIDATE_CAROUSELS, 1, carouselItemKey(slug), 7, slug]);
   assert.deepEqual(commands[1], ['MGET', resourceViewKey(slug)]);
   assert.equal((await invoke(handler, { method: 'GET', id: 'not-a-real-carousel' })).status, 400);
 });
@@ -99,4 +100,28 @@ test('paused dashboard resources stay unavailable while stored view counts are p
   assert.deepEqual(body, { error: 'Not found.' });
   assert.deepEqual(await withResourceViews(async () => ['3', null], [{ id: 'a' }, { id: 'b' }]), [{ id: 'a', views: 3 }, { id: 'b', views: 0 }]);
   assert.deepEqual(await withResourceViews(async () => { throw Error('offline'); }, [{ id: 'a' }]), [{ id: 'a', views: null }]);
+});
+
+test('real Redis: library count reads return small aggregates without transporting slide images', { skip: !process.env.DIGIVATED_TEST_REDIS_PORT }, async () => {
+  const redis = testRedis(10);
+  await redis(['FLUSHDB']);
+  try {
+    const slugs = Array.from({ length: 14 }, (_, index) => `guide-${index}`);
+    for (const slug of slugs) {
+      await redis(['SET', carouselItemKey(slug), JSON.stringify({ slug, slides: Array.from({ length: 7 }, () => ({ image: 'x'.repeat(120000) })) })]);
+      await redis(['SET', resourceViewKey(slug), '8']);
+    }
+    const commands = [];
+    const handler = makeResourceViewHandler({ redis: async command => { commands.push(command); return redis(command); } });
+    const id = slugs.join('&id=');
+    const read = await invoke(handler, { method: 'GET', id });
+    assert.equal(read.status, 200);
+    assert.equal(Object.keys(read.body.views).length, 14);
+    assert.ok(Object.values(read.body.views).every(count => count === 8));
+    assert.equal(commands.filter(c => c[0] === 'MGET').length, 1);
+    assert.ok(commands.find(c => c[0] === 'MGET').slice(1).every(key => key.startsWith('digivated:resource-views:')));
+    await redis(['SET', carouselItemKey(slugs[0]), '{bad json']);
+    assert.equal((await invoke(handler, { method: 'GET', id })).status, 400);
+    assert.equal(await redis(['GET', resourceViewKey(slugs[0])]), '8');
+  } finally { await redis(['FLUSHDB']); }
 });

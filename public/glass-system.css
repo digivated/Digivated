@@ -123,7 +123,7 @@ html body.platform.light-theme.wall-experience .wall-focus-actions a { border-co
 html body.platform.light-theme.wall-experience .wall-focus-actions a+a { border-color:#98aab2; background:#eef3f4; color:#263840; }
 html body.platform.light-theme.moments-theme.projects-dashboard .projects-workspace { background:#fafafa; }
 @media(max-width:990px) { html body.platform.light-theme.moments-theme .compact-site-header .header-primary { display:none; } }
-@media(max-width:767px) { html body.platform.light-theme.moments-theme .notebook-navigation { position:static; } html body.platform.light-theme.moments-theme .notebook-navigation .navigation-panel { position:fixed; inset:76px 12px 12px; width:auto; max-width:none; max-height:none; background:#f9fbfbfa; } html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature):hover { transform:none; } }
+@media(max-width:767px) { html body.platform.light-theme.moments-theme .notebook-navigation { position:static; } html body.platform.light-theme.moments-theme .notebook-navigation .navigation-panel { position:fixed; inset:var(--navigation-top, 118px) 12px 12px; width:auto; max-width:none; max-height:none; background:#f9fbfbfa; } html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature):hover { transform:none; } }
 @media(prefers-reduced-motion:reduce) { html body.platform.light-theme.moments-theme :is(.project-card,.resource-card,.gumroad-card,.product-feature):hover { transform:none; } }
 @supports not (backdrop-filter:blur(1px)) { html body.platform.light-theme.moments-theme :is(.navigation-panel,.project-card,.resource-card,.gumroad-card,.product-feature,.login-panel,.submission-form,.project-account-card,.wall-focus-panel) { background:#fff; } }
 /* Directory overrides need the additional projects-dashboard specificity of the earlier theme. */
@@ -226,4 +226,7 @@ html body.platform.light-theme.moments-theme .platform-footer .footer-inner { wi
  html body.platform.light-theme.moments-theme .platform-footer .footer-group-links { display:flex; flex-direction:column; gap:2px; }
  html body.platform.light-theme.moments-theme .platform-footer .footer-group-links a { width:auto; min-height:36px; padding:7px 0; line-height:1.4; overflow-wrap:normal; }
  html body.platform.light-theme.moments-theme .platform-footer .footer-bottom { margin-top:32px; justify-content:center; align-items:center; text-align:center; gap:5px 16px; }
+}
+@media(max-width:480px) {
+ html body.platform.light-theme.moments-theme.home-refresh .home-editorial-actions a { gap:10px; padding-inline:15px; }
 }

@@ -9,7 +9,7 @@ function renderSearch() {
   results.replaceChildren(...found.map(record => {
     const a=make('a',undefined,'unified-result');a.href=safeSearchHref(record.href);if(new URL(a.href).origin!==location.origin){a.target='_blank';a.rel='noopener noreferrer';}
     const mark=make('span',record.type==='project'?record.title.slice(0,2).toUpperCase():'↗','unified-result-mark');mark.setAttribute('aria-hidden','true');
-    const copy=make('span',undefined,'unified-result-copy');copy.append(make('strong',record.title),make('small',`${record.type==='project'?'Project':'Resource'} · ${record.category}`));
+    const copy=make('span',undefined,'unified-result-copy');copy.append(make('strong',record.title),make('small',`${record.type==='project'?'Project':record.type==='page'?'Page':'Guide'} · ${record.category}`));
     const arrow=make('span','↗','unified-result-arrow');arrow.setAttribute('aria-hidden','true');a.append(mark,copy,arrow);return a;
   }));
   $('#unified-search-empty').hidden=found.length>0;
@@ -26,20 +26,26 @@ async function enrichSearch() {
   if(requested)return;requested=true;loading=true;renderSearch();
   const [projects,resources,carousels] = await Promise.allSettled([collection('/api/projects'),collection('/api/content?type=resource'),collection('/api/carousels')]);
   const extra=[];
-  if(projects.status==='fulfilled')for(const p of projects.value)if(p.id&&p.name)extra.push({type:'project',title:p.name,description:p.description,category:p.category||'Independent project',href:safeSearchHref(p.pageUrl)||safeSearchHref(p.url)});
+  if(projects.status==='fulfilled')for(const p of projects.value)if(p.id&&p.name)extra.push({type:'project',title:p.name,description:p.description,keywords:p.creator,category:p.category||'Independent project',href:safeSearchHref(p.pageUrl)||`/discover#project-${encodeURIComponent(p.id)}`});
   if(resources.status==='fulfilled')for(const r of resources.value)if(safeSearchHref(r.url))extra.push({type:'resource',title:r.title,description:r.description,category:r.category,href:r.url});
   if(carousels.status==='fulfilled')for(const item of carousels.value)if(item.slug&&item.title)extra.push({type:'resource',title:item.title,description:item.summary,category:'Educational carousel',href:`/carousels/${encodeURIComponent(item.slug)}`});
-  projectsUnavailable=[projects,resources,carousels].some(result=>result.status==='rejected');records=dedupe([...extra,...records]);loading=false;renderSearch();
+  projectsUnavailable=[projects,resources,carousels].some(result=>result.status==='rejected');records=dedupe([...records,...extra]);requested=!projectsUnavailable;loading=false;renderSearch();
 }
-function openSearch(trigger) {if(document.querySelector('dialog[open]'))return;searchTrigger=trigger||document.activeElement;search.showModal();input.focus();renderSearch();enrichSearch();}
+function openSearch(trigger) {if(document.querySelector('dialog[open],.wall-focus[role="dialog"]'))return;searchTrigger=trigger||document.activeElement;search.showModal();input.focus();renderSearch();enrichSearch();}
 document.querySelectorAll('[data-open-search]').forEach(button=>button.addEventListener('click',()=>openSearch(button)));
 search.querySelector('[data-close-search]').addEventListener('click',()=>search.close());
-search.addEventListener('close',()=>searchTrigger?.focus());
+search.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();search.close();}});
+search.addEventListener('close',()=>{const trigger=searchTrigger?.getClientRects().length?searchTrigger:document.querySelector('.header-search');trigger?.focus();});
 input.addEventListener('input',renderSearch);
 input.addEventListener('keydown',event=>{if(event.key==='ArrowDown'){const first=results.querySelector('a');if(first){event.preventDefault();first.focus();}}if(event.key==='Enter'){const first=results.querySelector('a');if(first){event.preventDefault();first.click();}}});
 results.addEventListener('keydown',event=>{const links=[...results.querySelectorAll('a')],index=links.indexOf(document.activeElement);if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();const next=index+(event.key==='ArrowDown'?1:-1);if(next<0)input.focus();else links[Math.min(next,links.length-1)]?.focus();}});
 search.querySelectorAll('[data-search-type]').forEach(button=>button.addEventListener('click',()=>{scope=button.dataset.searchType;renderSearch();}));
-document.addEventListener('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'){event.preventDefault();openSearch();}});
+document.addEventListener('keydown',event=>{
+  const editing=event.target instanceof Element&&event.target.closest('input,textarea,select,[contenteditable]:not([contenteditable="false"])');
+  const shortcut=(event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k';
+  const slash=event.key==='/'&&!event.metaKey&&!event.ctrlKey&&!event.altKey&&!editing;
+  if((shortcut||slash)&&!document.querySelector('dialog[open],.wall-focus[role="dialog"]')){event.preventDefault();openSearch();}
+});
 
 const preview=$('#project-preview');let previewCards=[],previewIndex=0,previewTrigger;
 function renderPreview() {

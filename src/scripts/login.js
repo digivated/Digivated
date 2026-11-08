@@ -34,7 +34,7 @@ if(form){
    });
   };
   document.getElementById('login-email-link').onclick=event=>action(event.currentTarget,async email=>{const {error}=await client.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:`${location.origin}/account`}});if(error)throw error;status.textContent=`If ${email} has an account, a sign-in link is on its way.`;});
-  document.getElementById('login-reset').onclick=event=>action(event.currentTarget,async email=>{const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:`${location.origin}/community/settings`});if(error)throw error;status.textContent=`If ${email} has an account, a password setup link is on its way.`;});
+  document.getElementById('login-reset').onclick=event=>action(event.currentTarget,async email=>{const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:`${location.origin}/account`});if(error)throw error;status.textContent=`If ${email} has an account, a password setup link is on its way.`;});
  }
  boot().catch(error=>{status.textContent=error.message||'Account sign-in is temporarily unavailable.';submit.disabled=true;});
 }

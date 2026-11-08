@@ -1,5 +1,6 @@
 ---
 import Platform from '../layouts/Platform.astro';
+import UiIcon from '../components/UiIcon.astro';
 import '../styles/shop-showcase.css';
 const products = [
   { title:'UI Prompt Package | From Basic to Polished', category:'DESIGN TOOLKIT', price:'$4', cover:'https://public-files.gumroad.com/c0h7ko24kt1edca114efelr7abtq', url:'https://digivated.gumroad.com/l/ui-prompt-package', description:'A guided starting point for cleaner websites and apps.' },
@@ -17,7 +18,7 @@ const products = [
           <div class="gumroad-editorial-art" aria-hidden="true"><span class="gumroad-art-sheet gumroad-art-sheet--back"></span><span class="gumroad-art-sheet gumroad-art-sheet--middle"></span><span class="gumroad-art-sheet gumroad-art-sheet--front"><img src="/digivated-new-mark.svg" alt="" width="64" height="64"/></span></div>
           <span class="gumroad-art-index">0{index+1} / 0{products.length}</span>
         </div>
-        <div class="gumroad-card-copy"><div class="gumroad-meta"><span>{product.category}</span><span>{product.price}</span></div><h2>{product.title}</h2><p>{product.description}</p><span class="gumroad-card-link">View on Gumroad <span aria-hidden="true">↗</span></span></div>
+        <div class="gumroad-card-copy"><div class="gumroad-meta"><span>{product.category}</span><span>{product.price}</span></div><h2>{product.title}</h2><p>{product.description}</p><span class="gumroad-card-link">View on Gumroad <UiIcon name="external" size={16}/></span></div>
       </a>)}
     </div>
     <p class="shop-note">Checkout and delivery are handled by Gumroad. Already purchased the UI Prompt Package? <a href="/access">Open your access page</a>.</p>

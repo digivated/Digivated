@@ -6,6 +6,14 @@ import '../styles/project-account.css';
   <header class="page-intro"><p class="eyebrow">YOUR DIGIVATED ACCOUNT</p><h1>Your projects, in one place.</h1><p class="lede">Sign in with your email and password to see your submissions and any private feedback from our review.</p></header>
   <section class="project-account-card" aria-label="Project account">
     <p id="account-state" role="status" aria-live="polite">Connecting to account sign-in…</p>
+    <form id="account-password-reset" class="login-panel" hidden>
+      <label for="account-new-password">New password</label>
+      <input id="account-new-password" name="password" type="password" autocomplete="new-password" minlength="10" required aria-describedby="account-password-help"/>
+      <p id="account-password-help">Use at least 10 characters.</p>
+      <label for="account-confirm-password">Confirm new password</label>
+      <input id="account-confirm-password" name="confirmation" type="password" autocomplete="new-password" minlength="10" required/>
+      <button class="button primary" type="submit">Save new password</button>
+    </form>
     <div id="account-sign-in" class="account-actions" hidden><a class="button primary" href="/login">Log in or sign up</a><a class="button" href="/discover?view=featured">Browse featured projects</a></div>
     <div id="account-signed-in" hidden><p>Signed in as <strong id="account-email"></strong></p><div class="account-actions"><a class="button primary" href="/discover?view=featured">Browse featured projects</a><a class="button" href="/submit-project">Submit a project</a><button class="button" id="account-sign-out" type="button">Sign out</button></div><h2>My submissions</h2><div id="account-submissions"></div><section id="weekly-email" hidden><h2>Weekly email</h2><p>Get a short email when new projects appear on Digivated. Optional, and you can unsubscribe anytime.</p><button class="button" id="weekly-toggle" type="button">Get weekly emails</button><p id="weekly-status" role="status" aria-live="polite"></p></section></div>
   </section>
