@@ -1,0 +1,20 @@
+<aside class="site-activity" aria-label="Site activity">
+  <div title="Total recorded page visits, including existing analytics history. Repeat visits are included.">
+    <span class="site-activity-label">Visited this site</span>
+    <strong data-site-visits>—</strong>
+  </div>
+  <span class="site-activity-divider" aria-hidden="true"></span>
+  <div title="Approximate browsers active in the past 90 seconds. Refreshes every 30 seconds.">
+    <span class="site-activity-label"><i aria-hidden="true"></i>On the site now</span>
+    <strong data-site-online>—</strong>
+  </div>
+</aside>
+<style>
+  .site-activity { display:flex; align-items:center; justify-content:flex-end; gap:24px; width:min(1120px, calc(100% - 48px)); margin:22px auto 0; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; min-height:0; color:#272727; }
+  .site-activity > div { display:flex; align-items:center; gap:10px; }
+  .site-activity-label { display:inline-flex; align-items:center; gap:7px; color:#767676; font-size:11px; font-weight:400; letter-spacing:.01em; }
+  .site-activity strong { font-size:13px; line-height:1; font-weight:500; font-variant-numeric:tabular-nums; }
+  .site-activity-divider { height:12px; width:1px; background:#dededb; }
+  .site-activity i { width:5px; height:5px; border-radius:50%; background:#62856c; box-shadow:0 0 0 3px #62856c0d; }
+  @media(max-width:600px) { .site-activity { justify-content:center; gap:16px; width:calc(100% - 32px); margin-top:18px; } .site-activity > div { gap:7px; } .site-activity-label { font-size:10px; } .site-activity strong { font-size:12px; } }
+</style>

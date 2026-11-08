@@ -7,11 +7,13 @@ import { makeCarouselHandler, makeCarouselPublishHandler } from './carousels.mjs
 import { makeFoundingAccessHandler, makeFoundingLogoutHandler } from './founding-access.mjs';
 import { makeProjectAccountHandler } from './project-account.mjs';
 import { makeReturnEmailHandler, makeWeeklyDigestHandler } from './return-emails.mjs';
+import { makeSiteActivityHandler } from './site-activity.mjs';
 
 // Share one deployment entry point; each handler retains its validation and response.
 // Carousel routes stay on this router so the deployment does not add a serverless function.
 export function defaultPublicHandlers(overrides = {}) {
   return {
+    'site-activity': makeSiteActivityHandler(),
     content: makePublicHandler('content'),
     'saved-item': makeSavedItemHandler(),
     'project-views': makeProjectViewHandler(),
