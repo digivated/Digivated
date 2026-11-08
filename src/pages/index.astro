@@ -1,7 +1,7 @@
 ---
 import Platform from '../layouts/Platform.astro';
 import UiIcon from '../components/UiIcon.astro';
-import ProjectWall from '../components/ProjectWall.astro';
+import FeaturedProjects from '../components/FeaturedProjects.astro';
 import SiteActivity from '../components/SiteActivity.astro';
 import ProjectTicker from '../components/ProjectTicker.astro';
 import '../styles/project-wall.css';
@@ -13,8 +13,8 @@ import '../styles/project-wall.css';
     <h1 id="home-title">Good projects deserve<br/><em>to be discovered.</em></h1>
     <p>Explore work from independent builders, give useful feedback, and share what you're making.</p>
     <div class="home-editorial-actions"><a class="button primary" href="/discover#project-wall">Explore projects <UiIcon name="arrow" size={16}/></a><a class="button" href="/submit-project">Share your project <UiIcon name="arrow" size={16}/></a></div>
-    <a class="home-editorial-scroll" href="#project-reel">EXPLORE THE PROJECT REEL <span aria-hidden="true">↓</span></a>
+    <a class="home-editorial-scroll" href="#featured-projects">FEATURED PROJECTS <span aria-hidden="true">↓</span></a>
   </section>
+  <FeaturedProjects/>
   <ProjectTicker/>
-  <div id="featured-projects"><div id="project-wall"><ProjectWall/></div></div>
 </Platform>

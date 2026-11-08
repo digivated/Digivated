@@ -1,0 +1,29 @@
+/* A quiet, stationary counterpart to the moving project reel. */
+html body.platform.light-theme.moments-theme.home-refresh #main { width:100%; max-width:none; margin:0; padding:0; }
+html body.platform.light-theme.moments-theme .home-featured-projects {
+  margin:0; padding:30px 0 34px; border-top:1px solid #e2e8eb; background:#f6f8f9; color:#26343c;
+}
+.home-featured-projects[hidden] { display:none!important; }
+.home-featured-heading { position:relative; display:flex; align-items:center; justify-content:center; gap:24px; width:min(1160px,calc(100% - 48px)); margin:0 auto 20px; }
+html body.platform.light-theme.moments-theme .home-featured-heading h2 { margin:0; font-size:18px; line-height:1.4; font-weight:600; letter-spacing:-.035em; color:#283940; }
+html body.platform.light-theme.moments-theme .home-featured-heading>a { position:absolute; right:0; display:inline-flex; align-items:center; gap:7px; min-height:32px; color:#6a7d87; font-size:11px; font-weight:500; text-decoration:none; }
+.home-featured-heading>a:hover { text-decoration:underline; text-underline-offset:3px; }
+.home-featured-rail { display:flex; align-items:center; justify-content:safe center; gap:16px; width:min(1160px,calc(100% - 48px)); margin:0 auto; padding:4px 3px 6px; overflow-x:auto; overflow-y:hidden; scrollbar-width:thin; scrollbar-color:#cbd5db transparent; scroll-padding-inline:4px; }
+html body.platform.light-theme.moments-theme .home-featured-card {
+  position:relative; display:block; flex:none; width:240px; height:154px; margin:0; padding:0; overflow:hidden;
+  border:1px solid #dce4e8; border-radius:10px; background:#f8fafb; color:#27353d; text-decoration:none;
+  box-shadow:0 3px 10px #23323a06; transform:none; animation:none; transition:border-color .18s,box-shadow .18s;
+}
+html body.platform.light-theme.moments-theme .home-featured-card:is(:hover,:focus-visible) { border-color:#9bacb6; box-shadow:0 5px 16px #23323a0c; outline:2px solid #7b909d; outline-offset:2px; transform:none; }
+.home-featured-rail:focus-visible,.home-featured-heading>a:focus-visible { outline:2px solid #7b909d; outline-offset:3px; }
+.home-featured-loading { flex:none; width:240px; height:154px; border:1px solid #e5eaed; border-radius:10px; background:linear-gradient(#eef2f4 0 88px,#f8fafb 88px); }
+.home-featured-status { max-width:480px; margin:8px auto 0; padding:0 20px; color:#73828b; text-align:center; font-size:12px; line-height:1.6; }
+@media(max-width:600px) {
+  html body.platform.light-theme.moments-theme .home-featured-projects { padding:24px 0 26px; }
+  .home-featured-heading { width:calc(100% - 32px); flex-direction:column; gap:2px; margin-bottom:14px; }
+  html body.platform.light-theme.moments-theme .home-featured-heading h2 { font-size:17px; }
+  html body.platform.light-theme.moments-theme .home-featured-heading>a { position:static; min-height:28px; font-size:10px; }
+  .home-featured-rail { width:calc(100% - 32px); justify-content:flex-start; gap:16px; padding-bottom:8px; }
+  html body.platform.light-theme.moments-theme .home-featured-card,.home-featured-loading { width:194px; height:144px; }
+}
+@media(prefers-reduced-motion:reduce) { .home-featured-card { transition:none!important; } }

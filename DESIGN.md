@@ -32,8 +32,14 @@ Public references inspected: [Refero Styles](https://styles.refero.design), [Typ
 
 ## Single project reel — November 8, 2026
 
-Replace the former top Featured and bottom All Projects tickers with one Project Reel per page. The homepage places it after the centered introduction; the Projects page places it before the directory. Keep the header clean. The reel reads every page of the public catalogue, deduplicates IDs, includes approved and featured projects, and retains a project if its image fails. Project cards open their Digivated detail pages.
+Replace the former top Featured and bottom All Projects tickers with one Project Reel per page. The homepage places it after the compact featured strip; the Projects page places it before the directory. Keep the header clean. The reel reads every page of the public catalogue, deduplicates IDs, includes approved and featured projects, and retains a project if its image fails. Project cards open their Digivated detail pages.
 
 The visual treatment is a restrained charcoal gallery: actual project artwork, soft edge fades, slight card rotation and independent float, maker attribution, and a quiet illuminated title. The rail moves with a fractional position accumulator, so high-refresh displays do not lose subpixel movement. Measure the group width for seamless looping; cloned cards are omitted from keyboard order and accessibility navigation. Only the original published set contributes to the displayed count.
 
 Pause the rail and card animation on hover or keyboard focus. Provide explicit pause/play and previous/next controls; touch dragging pauses automatic movement until resumed. Honor reduced-motion preferences with a static, manually scrollable rail. Stop frame scheduling when offscreen or the document is hidden. Keep manual keyboard browsing available. No third-party animation library or backend write is involved.
+
+## Compact homepage featured projects — November 8, 2026
+
+Homepage order is introduction, stationary featured strip, all-project reel, footer. Replace the former full-size homepage wall with a small centered row of cards matching the reel artwork, category, project name and maker treatment. Keep search, pagination, upvotes, views and feedback in the Projects directory and project details. The homepage strip links to those existing detail pages and the featured directory; it does not duplicate those controls.
+
+Read the public featured feed with pagination, deduplicate IDs and require featured status. Show all current featured picks; never fill the strip with ordinary approved projects or fake cards. On phones allow native horizontal browsing. Keep the strip stationary even while the separate reel animates, preserve image-error fallbacks, and show an honest error or hide a truly empty section. `project-showcase-card.js` supplies the same safe card markup to both presentations.

@@ -1,0 +1,12 @@
+---
+import UiIcon from './UiIcon.astro';
+---
+<section id="featured-projects" class="home-featured-projects" data-home-featured aria-labelledby="home-featured-title">
+  <header class="home-featured-heading"><h2 id="home-featured-title">Featured projects</h2><a href="/discover?view=featured">View featured <UiIcon name="arrow" size={14}/></a></header>
+  <div class="home-featured-rail" data-featured-rail role="region" aria-label="Featured projects" tabindex="0" aria-busy="true">
+    <div class="home-featured-loading" aria-hidden="true"></div><div class="home-featured-loading" aria-hidden="true"></div><div class="home-featured-loading" aria-hidden="true"></div>
+  </div>
+  <p class="home-featured-status" data-featured-status role="status" hidden></p>
+  <noscript><p class="home-featured-status"><a href="/discover?view=featured">Browse featured projects in the directory.</a></p></noscript>
+</section>
+<script>import '../scripts/featured-projects.js'; import '../styles/featured-projects.css';</script>
