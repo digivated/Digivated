@@ -46,6 +46,18 @@ for(const width of [320,390,768,1440])test(`navigation and search remain usable 
   await expect(page.locator('#discovery-search')).not.toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.locator('.wall-focus')).toHaveCount(0);
+  await page.locator('.header-search').click();
+  await page.locator('#unified-search-input').fill('Featured fixture');
+  await page.locator('#unified-results').getByRole('link',{name:/Featured fixture/}).click();
+  await expect(page.locator('#wall-focus-title')).toHaveText('Featured fixture');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.wall-focus')).toHaveCount(0);
+  await page.locator('.header-search').click();
+  await page.locator('#unified-search-input').fill('Featured fixture');
+  await page.locator('#unified-results').getByRole('link',{name:/Featured fixture/}).click();
+  await expect(page.locator('#wall-focus-title')).toHaveText('Featured fixture');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.wall-focus')).toHaveCount(0);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);
   expect(errors).toEqual([]);
 });

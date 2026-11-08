@@ -10,7 +10,9 @@ function renderSearch() {
     const a=make('a',undefined,'unified-result');a.href=safeSearchHref(record.href);if(new URL(a.href).origin!==location.origin){a.target='_blank';a.rel='noopener noreferrer';}
     const mark=make('span',record.type==='project'?record.title.slice(0,2).toUpperCase():'↗','unified-result-mark');mark.setAttribute('aria-hidden','true');
     const copy=make('span',undefined,'unified-result-copy');copy.append(make('strong',record.title),make('small',`${record.type==='project'?'Project':record.type==='page'?'Page':'Guide'} · ${record.category}`));
-    const arrow=make('span','↗','unified-result-arrow');arrow.setAttribute('aria-hidden','true');a.append(mark,copy,arrow);return a;
+    const arrow=make('span','↗','unified-result-arrow');arrow.setAttribute('aria-hidden','true');a.append(mark,copy,arrow);
+    if(record.type==='project')a.addEventListener('click',event=>{const destination=new URL(a.href);if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||event.button!==0||destination.origin!==location.origin||destination.pathname!==location.pathname||!destination.hash.startsWith('#project-'))return;search.close();if(destination.href===location.href)window.dispatchEvent(new HashChangeEvent('hashchange'));});
+    return a;
   }));
   $('#unified-search-empty').hidden=found.length>0;
   $('#unified-search-status').textContent=(input.value.trim()?`${found.length} result${found.length===1?'':'s'}${found.length===8?' shown':''}`:'Start somewhere interesting')+(loading?' · Loading content…':projectsUnavailable?' · Additional content is temporarily unavailable.':'');
