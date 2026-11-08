@@ -3,6 +3,8 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   output: 'static',
+  // News is temporarily paused; keep its source in src/paused for restoration.
+  redirects: { '/news': { status: 302, destination: '/' } },
   vite: {
     plugins: [tailwindcss()],
     server: { allowedHosts: ['terminal.local'] },

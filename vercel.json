@@ -45,6 +45,11 @@
   ],
   "redirects": [
     {
+      "source": "/news/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
       "source": "/",
       "has": [
         {

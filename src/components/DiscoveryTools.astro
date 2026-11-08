@@ -8,7 +8,6 @@ const pages = [
   ['/discover','Projects','Discover independent projects and their builders.','directory explore builders'],
   ['/rankings','Project rankings','See projects ranked by community upvotes.','today weekly monthly votes'],
   ['/ai-tools','AI tools','Find AI tools by category.','artificial intelligence tools'],
-  ['/news','News & guides','Explore useful tools, skills, and guides.','news resources articles carousels learning'],
   ['/submit-project','Submit a project','Share your work for review.','submit listing builder'],
   ['/saved','Saved items','Return to your saved projects and collections.','favorites bookmarks collections'],
   ['/shop','Shop','Browse Digivated products.','products membership prompt package'],
@@ -24,7 +23,7 @@ const pages = [
     <div class="search-scopes" role="group" aria-label="Search content type"><button type="button" data-search-type="all" aria-pressed="true">All</button><button type="button" data-search-type="project" aria-pressed="false">Projects</button><button type="button" data-search-type="resource" aria-pressed="false">Guides</button></div>
   </div>
   <div class="search-body">
-    <nav class="search-shortcuts" id="search-shortcuts" aria-label="Explore Digivated"><a href="/discover"><UiIcon name="grid" size={16}/>Browse projects</a><a href="/ai-tools"><UiIcon name="sparkle" size={16}/>AI tools</a><a href="/news"><UiIcon name="book" size={16}/>Guides</a></nav>
+    <nav class="search-shortcuts" id="search-shortcuts" aria-label="Explore Digivated"><a href="/discover"><UiIcon name="grid" size={16}/>Browse projects</a><a href="/ai-tools"><UiIcon name="sparkle" size={16}/>AI tools</a></nav>
     <p class="search-count" id="unified-search-status" role="status" aria-live="polite"></p>
     <nav class="unified-results" id="unified-results" aria-label="Search results"></nav>
     <div class="search-empty" id="unified-search-empty" hidden><span class="search-empty-icon" aria-hidden="true"><UiIcon name="search" size={24}/></span><h3>No matches yet</h3><p>Try a project name, builder, or a broader topic.</p><button type="button" id="reset-discovery-search">Clear search and filters <UiIcon name="arrow" size={15}/></button></div>
