@@ -9,7 +9,7 @@ Use Inter Variable, self-hosted from Fontsource 5.3.0 with its OFL license; no r
 The reference's centered hero, single prominent action, restrained line illustration, and white browser-style product surface are the structural base. The product panel is a working directory using existing project APIs and search/filter behavior. It contains no invented project data.
 
 ## Digivated-specific adaptations
-The user's latest site-wide dark liquid-glass request supersedes the earlier light palette. Canvas #080c12, panels #101824, ink #edf3fc, copy #b7c5d8, muted #8c9db3, restrained cyan highlights and translucent cool borders. Preserve the current Digivated logo. Increase contrast where the reference's muted values would impair readability.
+The user's latest site-wide dark liquid-glass request supersedes the earlier light palette. Canvas #020304, panels #080b10, ink #edf3fc, copy #b7c5d8, muted #8c9db3, restrained cyan highlights and translucent cool borders. Preserve the current Digivated logo. Increase contrast where the reference's muted values would impair readability.
 
 Original generated illustration: monochrome editorial pen drawing of a curious maker examining a browser window at a laptop; transparent background, no words, logos, emojis, color, or decorative sparkles. Built-in image generation; WebP delivery asset is optimized for its small rendered size. Original PNG retained separately from the repository.
 
@@ -47,3 +47,5 @@ Read the public featured feed with pagination, deduplicate IDs and require featu
 ## Site-wide dark liquid glass — November 8, 2026
 
 `public/dark-glass.css` owns shared paint across Platform, Shell and Admin, including generated project pages. Use near-black canvas, subtle code-grid texture, blue-gray translucent panels, gentle edge highlights and glass controls. Keep text contrast clear, images in their original colors and typography restrained. Avoid blur on repeated cards and on headers: a filtered header changes the containing block of fixed mobile navigation. Preserve responsive geometry, selectors, script hooks, authentication, moderation and payment flows. Honor reduced motion and native dark form controls.
+
+The refined black-glass palette uses cyan and violet ambient pools in the homepage hero, an ice-to-lilac headline accent, luminous primary actions and hover edges. Keep glow static, concentrated and subordinate to readable content. No extra animation loops, overlays or layout changes.
