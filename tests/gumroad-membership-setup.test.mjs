@@ -7,12 +7,12 @@ import { makeAdminHandler } from '../server/admin-handler.mjs';
 import { adminConfig, createSession, ADMIN_COOKIE } from '../server/admin-auth.mjs';
 const key='Gumroad-SECRET-fixture-1234567890';
 function storage(){const map=new Map(),writes=[];const redis=async c=>{const[op,k,v,...args]=c;if(op==='GET')return map.get(k)||null;if(op==='SET'){if(args.includes('NX')&&map.has(k))return null;map.set(k,v);writes.push(c);return'OK'}if(op==='DEL'){map.delete(k);return 1}if(op==='EVAL'){if(map.get(c[3])===c[4])map.delete(c[3]);return 1}throw Error('Unexpected command');};return{map,writes,redis}}
-function provider(failAt=''){
+function provider(failAt='',failureStatus=403){
  const product={id:membership.gumroadProductId,name:'Digivated Founding Membership',price:500,currency:'usd',published:true,subscription_duration:null,is_tiered_membership:false,max_purchase_count:25,covers:[{id:'old-cover'}]};
  const products=[product,...['ui-prompt-package','digivated-promo','support-digivated'].map((slug,i)=>({id:'old'+i,name:slug,custom_permalink:slug,published:true})),{id:'unrelated',name:'Other draft',custom_permalink:'unrelated',published:true}];
  const calls=[];
  const fetcher=async(url,opts)=>{const path=new URL(url).pathname.slice(3),body=opts.body?JSON.parse(opts.body):null;calls.push({path,method:opts.method,body,auth:opts.headers.Authorization});assert.equal(new URL(url).origin,'https://api.gumroad.com');assert.equal(opts.redirect,'error');
-  if(`${opts.method} ${path}`===failAt)return new Response(JSON.stringify({success:false,error:key}),{status:403});
+  if(`${opts.method} ${path}`===failAt)return new Response(JSON.stringify({success:false,error:key}),{status:failureStatus});
   let data={success:true};
   if(path==='/products'&&opts.method==='GET')data.products=products;
   else if(path==='/user/preview_custom_html')data={success:true,custom_html:'<style>body{color:white}</style><h1>One membership.</h1>',sanitization_report:{truncated:false}};
@@ -38,7 +38,7 @@ test('seller remap publishes the exact one-time offer, retires only known produc
  const updates=p.calls.filter(c=>c.method==='PUT'&&c.path.includes('/products/'));assert.equal(updates.some(c=>c.path.endsWith('/disable')),true);
  assert.equal((await checkoutStatus(db.redis)).ready,true);
 });
-for(const phase of ['POST /user/preview_custom_html','POST /products/'+encodeURIComponent(membership.gumroadProductId)+'/thumbnail'])test('provider failure does not leak credentials or enable incomplete checkout: '+phase,async()=>{
+for(const phase of ['PUT /products/'+encodeURIComponent(membership.gumroadProductId),'POST /products/'+encodeURIComponent(membership.gumroadProductId)+'/thumbnail'])test('provider failure does not leak credentials or enable incomplete checkout: '+phase,async()=>{
  const db=storage(),p=provider(phase);await assert.rejects(remapGumroadMembership({token:key,redis:db.redis,fetcher:p.fetcher,assets}),e=>e.status===503&&!e.message.includes(key));
  assert.equal((await checkoutStatus(db.redis)).ready,false);assert.equal(JSON.stringify(db.writes).includes(key),false);
  assert.equal(p.products.filter(p=>p.id.startsWith('old')).every(p=>p.published),true);
@@ -75,4 +75,19 @@ test('an incorrect buyer-facing description cannot open checkout',async()=>{
  };
  await assert.rejects(remapGumroadMembership({token:key,redis:db.redis,fetcher,assets}),e=>e.status===503);
  assert.equal((await checkoutStatus(db.redis)).ready,false);
+});
+
+test('an unavailable custom storefront does not block the verified membership and cover update',async()=>{
+ const db=storage(),p=provider('POST /user/preview_custom_html',403);
+ const result=await remapGumroadMembership({token:key,redis:db.redis,fetcher:p.fetcher,assets});
+ assert.equal(result.ready,true);assert.equal(result.warnings.length,1);
+ assert.match(result.warnings[0],/native storefront was kept/);
+ assert.equal(p.calls.some(c=>c.path==='/user/custom_html'),false);
+ assert.equal(JSON.stringify(db.writes).includes(key),false);
+});
+test('an invalid token gives a useful safe error before any product mutation',async()=>{
+ const db=storage(),p=provider('GET /products',401);
+ await assert.rejects(remapGumroadMembership({token:key,redis:db.redis,fetcher:p.fetcher,assets}),e=>e.status===401&&/access token/.test(e.message)&&!e.message.includes(key));
+ assert.equal(p.calls.length,1);assert.equal((await checkoutStatus(db.redis)).ready,false);
+ assert.equal(JSON.stringify(db.writes).includes(key),false);
 });

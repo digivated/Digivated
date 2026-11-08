@@ -13,7 +13,7 @@ function request(method, path, body) {
   if(result.status!==0)throw new Error('Gumroad could not be reached. No credentials are printed.');
   const end=result.stdout.lastIndexOf('\n'),status=Number(result.stdout.slice(end+1));
   let data;try{data=JSON.parse(result.stdout.slice(0,end));}catch{throw new Error(`Gumroad returned an unexpected response (${status}).`);}
-  if(status<200||status>=300||data.success!==true)throw new Error(`Gumroad rejected ${method} ${path} (${status}). Check seller access and scopes.`);
+  if(status<200||status>=300||data.success!==true){const error=new Error(`Gumroad rejected ${method} ${path} (${status}). Check seller access and scopes.`);error.status=status;error.optionalUnavailable=/do not have access to custom HTML pages/i.test(String(data.message||''));throw error;}
   return data;
 }
 const products=request('GET','/products').products;
@@ -28,8 +28,10 @@ const backup=`/tmp/digivated-gumroad-before-${Date.now()}.json`;
 writeFileSync(backup,JSON.stringify({products},null,2),{mode:0o600});
 const payload=JSON.parse(readFileSync(new URL('../gumroad/membership-product.json',import.meta.url),'utf8'));
 const html=readFileSync(new URL('../gumroad/storefront.html',import.meta.url),'utf8');
-const preview=request('POST','/user/preview_custom_html',{custom_html:html});
-if(preview.sanitization_report?.truncated||!preview.custom_html?.includes('One membership.')||!preview.custom_html.includes('<style'))throw new Error('Storefront preview did not preserve the design. No product changes made.');
+let preview=null;
+try {preview=request('POST','/user/preview_custom_html',{custom_html:html});if(!preview.custom_html?.includes('<style'))preview=null;}
+catch(error){if(![403,404].includes(error.status)&&!error.optionalUnavailable)throw error;}
+if(!preview)console.info('Custom storefront is unavailable. The membership cover and thumbnail will still be updated; native colours are edited in Gumroad Settings > Profile > Design.');
 const id=encodeURIComponent(product.id);
 request('PUT',`/products/${id}`,{...payload,max_purchase_count:null});
 const covers=request('POST',`/products/${id}/covers`,{url:'https://digivated.com/membership-cover.png'});
@@ -38,8 +40,10 @@ const cover=covers.covers?.find(c=>!oldCoverIds.has(c.id));
 if(!cover?.id)throw new Error('New cover was not returned. Checkout must remain disabled.');
 request('PUT',`/products/${id}`,{cover_ids:[cover.id]});
 request('POST',`/products/${id}/thumbnail`,{url:'https://digivated.com/membership-thumbnail.png'});
-const beforeProfile=request('PUT','/user/custom_html',{custom_html:preview.custom_html});
-writeFileSync(backup,JSON.stringify({products,previousProfileHtml:beforeProfile.previous_custom_html},null,2),{mode:0o600});
+if(preview){
+ try {const beforeProfile=request('PUT','/user/custom_html',{custom_html:preview.custom_html});writeFileSync(backup,JSON.stringify({products,previousProfileHtml:beforeProfile.previous_custom_html},null,2),{mode:0o600});}
+ catch(error){if(![403,404].includes(error.status)&&!error.optionalUnavailable)throw error;console.info('Native storefront kept; custom HTML is not available.');}
+}
 request('PUT',`/products/${id}/enable`);
 const updated=request('GET',`/products/${id}`).product;
 if(updated.name!==membership.name||updated.price!==500||updated.currency!=='usd'||updated.subscription_duration||updated.max_purchase_count!=null||updated.published!==true)throw new Error('Product verification failed. Checkout must remain disabled.');

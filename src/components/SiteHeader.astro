@@ -2,14 +2,13 @@
 import UiIcon from './UiIcon.astro';
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const features = [
-  ['/discover','Projects','Discover independent work'],
-  ['/rankings','Rankings','Daily, weekly, and monthly upvotes'],
-  ['/ai-tools','AI tools','Explore tools by category'],
-  ['/membership','Membership','$5 once. Spotlight and upcoming News access'],
-  ['/submit-project','Submit a project','Share your work for free review'],
+  ['/discover','Projects'],
+  ['/rankings','Rankings'],
+  ['/ai-tools','AI tools'],
+  ['/membership','Membership'],
+  ['/submit-project','Submit a project'],
 ];
-const paidOptions = [ ['/membership','Digivated Membership','One membership. $5 USD once.'] ];
-const active = (href: string) => path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/'));
+const active = (href: string) => path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/')) || (href === '/membership' && ['/shop','/products','/promote','/founding-members'].includes(path));
 ---
 <header class="platform-header compact-site-header">
   <div class="header-inner">
@@ -21,17 +20,9 @@ const active = (href: string) => path === href || path.startsWith(href + '/') ||
       <details class="explore-menu notebook-navigation" data-navigation>
         <summary aria-controls="explore-navigation" aria-label="Open navigation menu" aria-expanded="false"><span class="navigation-trigger-label">Menu</span><span class="navigation-trigger-chevron"><UiIcon name="chevron" size={16}/></span><span class="navigation-trigger-menu"><UiIcon name="menu" size={21}/></span><span class="navigation-trigger-close"><UiIcon name="close" size={21}/></span></summary>
         <nav id="explore-navigation" class="navigation-panel" aria-label="Explore Digivated">
-          <div class="navigation-panel-grid">
-            <section class="navigation-main" aria-labelledby="navigation-explore-title"><h2 id="navigation-explore-title">Explore Digivated</h2>
-              <div class="navigation-destinations">{features.map(([href,label,description],index)=><a href={href} aria-current={active(href)?'page':undefined}><span class="navigation-icon"><UiIcon name={['grid','layers','search','layers','upload'][index]} size={20}/></span><span class="navigation-link-copy"><strong>{label}</strong><small>{description}</small></span><span class="navigation-link-arrow"><UiIcon size={16}/></span></a>)}</div>
-            </section>
-            <section class="navigation-builder" aria-labelledby="navigation-builder-title"><h2 id="navigation-builder-title">For builders</h2>
-              <a class="navigation-feature" href="/submit-project"><span class="navigation-feature-art" aria-hidden="true"><UiIcon name="upload" size={26}/><span class="navigation-feature-line"></span><span class="navigation-feature-line short"></span></span><strong>Made something good?</strong><span>Give your project a place to be discovered.</span><b>Submit for free <UiIcon size={15}/></b></a>
-              <details class="navigation-products"><summary>Membership <UiIcon name="chevron" size={14}/></summary><div>{paidOptions.map(([href,label,description])=><a href={href} aria-current={active(href)?'page':undefined}><strong>{label}</strong><small>{description}</small></a>)}</div></details>
-            </section>
-          </div>
-          <div class="navigation-account-row"><a id="menu-account-link" href="/account"><UiIcon name="user" size={17}/><span>Your projects</span></a><a href="/saved"><UiIcon name="bookmark" size={17}/><span>Saved items</span></a><button type="button" data-open-search><UiIcon name="search" size={17}/><span>Search Digivated</span><kbd>/</kbd></button></div>
-          <div class="navigation-bottom-row"><div><a href="/about">About</a><a href="/membership">Membership</a></div><a id="menu-login-link" href="/login">Log in or sign up <UiIcon size={15}/></a></div>
+          <div class="navigation-destinations">{features.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</div>
+          <div class="navigation-account-row"><a id="menu-account-link" href="/account"><span>Your projects</span></a><a href="/saved">Saved items</a></div>
+          <div class="navigation-bottom-row"><a href="/about">About</a><a id="menu-login-link" href="/login">Log in or sign up</a></div>
         </nav>
       </details>
     </div>

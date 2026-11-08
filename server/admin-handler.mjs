@@ -1,4 +1,4 @@
-import { remapGumroadMembership } from './gumroad-membership.mjs';
+import { remapGumroadMembership, SETUP_DIAGNOSTIC_KEY } from './gumroad-membership.mjs';
 import { checkoutStatus } from './membership-checkout.mjs';
 import { ownerCarouselList, ownerCarouselPreview } from './owner-carousels.mjs';
 import { renderLaunch, launchPublic } from './launch-pages.mjs';
@@ -72,7 +72,10 @@ export function makeAdminHandler(deps = {}) {
       const url = new URL(req.url, cfg.origin);
       const action = url.searchParams.get('action') || 'session';
       if (action === 'session') return send(200, { authenticated: true, csrf: session.csrf });
-      if (action === 'gumroad-status') return send(200,await checkoutStatus(redis));
+      if (action === 'gumroad-status') {
+        let lastAttempt=null;try{lastAttempt=JSON.parse(await redis(['GET',SETUP_DIAGNOSTIC_KEY]));}catch{}
+        return send(200,{...await checkoutStatus(redis),lastAttempt});
+      }
       if (action === 'comments') {
         const offset=Number(url.searchParams.get('offset')||0);
         if(!Number.isInteger(offset)||offset<0||offset>100000)throw new AdminError(400,'Invalid page.');
