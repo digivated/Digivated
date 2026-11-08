@@ -11,13 +11,13 @@
     "api/x-publish.js": {
       "maxDuration": 120
     },
-    "api/*.js": {
-      "includeFiles": "server/**",
-      "maxDuration": 15
-    },
     "api/admin.js": {
       "includeFiles": "{server/**,gumroad/**}",
       "maxDuration": 120
+    },
+    "api/*.js": {
+      "includeFiles": "server/**",
+      "maxDuration": 15
     }
   },
   "headers": [
