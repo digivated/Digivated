@@ -272,3 +272,7 @@ html#digivated-root .notebook-navigation[open] #explore-navigation { animation:d
 }
 @media(prefers-reduced-motion:reduce) { html#digivated-root .notebook-navigation[open] #explore-navigation { animation:none; } }
 html#digivated-root #explore-navigation [hidden] { display:none!important; }
+
+/* Quiet, readable view totals on featured artwork; no extra card height or motion. */
+html#digivated-root .home-featured-views { position:absolute; bottom:8px; right:8px; z-index:2; display:inline-flex; align-items:center; gap:5px; padding:4px 7px; border:1px solid #ffffff1c; border-radius:6px; background:#101014; color:#ddd6e8; font-size:10px; font-weight:500; line-height:1.3; font-variant-numeric:tabular-nums; white-space:nowrap; }
+html#digivated-root .home-featured-views svg { flex:none; fill:none; stroke:#bd9eea; stroke-width:1.6; }

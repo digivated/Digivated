@@ -34,3 +34,15 @@ test('featured failure leaves an honest fallback and empty featured sections dis
  fail=false;await page.reload();await expect(page.locator('[data-home-featured]')).toBeHidden();
  await expect(page.locator('.home-editorial h1')).toBeVisible();
 });
+
+test('featured views show real totals and update only after a visible impression',async({page})=>{
+ let impressions=0;
+ await page.route('**/api/**',route=>{const u=new URL(route.request().url());if(u.pathname==='/api/projects')return route.fulfill({json:{items:[{...project('views'),views:1234}],next:null}});if(u.pathname==='/api/project-views'){impressions++;return route.fulfill({json:{views:1235}});}return route.fulfill({json:{items:[],ready:false,next:null}});});
+ await page.goto(base+'/');
+ const count=page.locator('.home-featured-card [data-project-views="views"]');
+ await expect(count).toHaveText('1,234 views');
+ await count.scrollIntoViewIfNeeded();
+ await expect(count).toHaveText('1,235 views');
+ expect(impressions).toBe(1);
+ await expect(page.locator('.home-featured-views svg')).toHaveCount(1);
+});
