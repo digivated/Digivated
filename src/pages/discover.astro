@@ -1,8 +1,10 @@
 ---
 import Platform from '../layouts/Platform.astro';
+import ProjectTicker from '../components/ProjectTicker.astro';
 import ProjectWall from '../components/ProjectWall.astro';
 import '../styles/project-wall.css';
 ---
 <Platform title="Projects" description="Discover independent projects, tools, and the people building them.">
+  <ProjectTicker/>
   <ProjectWall heading="Discover" label="INDEPENDENT PROJECTS" description="Explore the work. Open a project to meet its maker." directory/>
 </Platform>

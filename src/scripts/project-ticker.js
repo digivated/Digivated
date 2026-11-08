@@ -1,30 +1,122 @@
-document.querySelectorAll('[data-project-ticker]').forEach(ticker=>{
- const track=ticker.querySelector('[data-ticker-track]');
- const createItem=project=>{
-  const link=document.createElement('a');link.className='project-ticker-item';link.href=project.pageUrl||project.url;
-  if(!project.pageUrl){link.target='_blank';link.rel='noopener noreferrer';}
-  const image=document.createElement('img');image.src=project.image;image.alt='';image.width=28;image.height=28;
-  image.addEventListener('error',()=>link.remove(),{once:true});
-  const name=document.createElement('span');name.textContent=project.name;link.append(image,name);return link;
- };
- fetch(ticker.dataset.tickerView==='all'?'/api/projects':'/api/projects?view=featured',{cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(10000)})
-  .then(response=>response.ok?response.json():Promise.reject())
-  .then(async page=>{
-   const items=[...page.items];
-   while(ticker.dataset.tickerView==='all' && page.next!=null){
-    const response=await fetch('/api/projects?offset='+encodeURIComponent(page.next),{credentials:'omit',signal:AbortSignal.timeout(10000)});
-    if(!response.ok) throw new Error('Project page unavailable');
-    page=await response.json();items.push(...page.items);
-   }
-   const projects=items.filter(item=>item.image&&item.url&&item.name);
-   if(!projects.length){ticker.hidden=true;return;}
-   const first=document.createElement('div'),second=document.createElement('div');
-   first.className=second.className='project-ticker-group';
-   // Fill a desktop viewport before cloning so the loop never shows an empty gap.
-   const repeats=Math.max(1,Math.ceil((window.innerWidth+400)/(projects.length*155)));
-   for(let repeat=0;repeat<repeats;repeat++) projects.forEach(project=>{first.append(createItem(project));second.append(createItem(project));});
-   second.setAttribute('aria-hidden','true');second.inert=true;
-   track.style.animationDuration=`${Math.max(23,projects.length*3.5*repeats)}s`;
-   track.replaceChildren(first,second);ticker.dataset.ready='true';
-  }).catch(()=>{ticker.hidden=true;});
-});
+import { safeSearchHref } from '../lib/discovery-search.mjs';
+
+for (const reel of document.querySelectorAll('[data-project-ticker]')) {
+  const rail = reel.querySelector('[data-reel-window]');
+  const track = reel.querySelector('[data-ticker-track]');
+  const toggle = reel.querySelector('[data-reel-pause]');
+  const status = reel.querySelector('[data-reel-status]');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let paused = false, hovering = false, focused = false, touching = false, visible = false;
+  let frame = 0, last = 0, position = 0, groupWidth = 0, ready = false;
+  const canMove = () => ready && !paused && !hovering && !focused && !touching && visible && !document.hidden && !reduced.matches;
+  function tick(time) {
+    frame = 0;
+    if (!canMove()) return;
+    const elapsed = last ? Math.min(40, time - last) : 0;
+    last = time;
+    if (groupWidth > 0) { position = (position + elapsed * 0.043) % groupWidth; rail.scrollLeft = position; }
+    frame = requestAnimationFrame(tick);
+  }
+  function sync() {
+    const moving = canMove();
+    reel.dataset.moving = String(moving);
+    reel.dataset.paused = String(paused || reduced.matches);
+    toggle.disabled = reduced.matches || !ready;
+    toggle.setAttribute('aria-pressed', String(paused || reduced.matches));
+    toggle.setAttribute('aria-label', reduced.matches ? 'Automatic motion disabled by your preferences' : paused ? 'Play project reel' : 'Pause project reel');
+    reel.querySelector('[data-reel-pause-icon]').hidden = paused || reduced.matches;
+    reel.querySelector('[data-reel-play-icon]').hidden = !paused && !reduced.matches;
+    status.textContent = reduced.matches ? 'Browse at your own pace.' : paused ? 'Take a closer look.' : 'Good things are being built.';
+    if (!moving) { cancelAnimationFrame(frame); frame = 0; last = 0; }
+    else if (!frame) { last = 0; position = rail.scrollLeft; frame = requestAnimationFrame(tick); }
+  }
+  toggle.addEventListener('click', () => { paused = !paused; sync(); });
+  const step = direction => {
+    paused = true; sync();
+    if (groupWidth && rail.scrollLeft >= groupWidth) rail.scrollLeft %= groupWidth;
+    if (direction < 0 && rail.scrollLeft < 1 && groupWidth > 0) rail.scrollLeft = groupWidth;
+    rail.scrollBy({ left: direction * (matchMedia('(max-width: 600px)').matches ? 210 : 256), behavior: reduced.matches ? 'auto' : 'smooth' });
+  };
+  reel.querySelector('[data-reel-previous]').addEventListener('click', () => step(-1));
+  reel.querySelector('[data-reel-next]').addEventListener('click', () => step(1));
+  rail.addEventListener('keydown', event => {
+    if (event.target === rail && ['ArrowLeft', 'ArrowRight'].includes(event.key)) {
+      event.preventDefault(); step(event.key === 'ArrowRight' ? 1 : -1);
+    }
+  });
+  rail.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') { hovering = true; sync(); } });
+  rail.addEventListener('pointerleave', () => { hovering = false; sync(); });
+  rail.addEventListener('pointerdown', event => { if (event.pointerType === 'touch') paused = true; touching = true; sync(); });
+  window.addEventListener('pointerup', () => { touching = false; sync(); }, { passive: true });
+  window.addEventListener('pointercancel', () => { touching = false; sync(); }, { passive: true });
+  rail.addEventListener('focusin', () => { focused = true; sync(); });
+  rail.addEventListener('focusout', event => { if (!rail.contains(event.relatedTarget)) { focused = false; sync(); } });
+  document.addEventListener('visibilitychange', sync);
+  reduced.addEventListener('change', sync);
+  const observer = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; sync(); }, { rootMargin: '80px' });
+  observer.observe(reel);
+
+  function createCard(project, index, duplicate = false) {
+    const link = document.createElement('a');
+    link.className = 'project-reel-card';
+    link.href = safeSearchHref(project.pageUrl) || `/discover#project-${encodeURIComponent(project.id)}`;
+    link.dataset.reelProject = project.id;
+    link.style.setProperty('--reel-tilt', `${[-1.4, 1.1, -0.7, 1.6, -1][index % 5]}deg`);
+    link.style.setProperty('--reel-delay', `${-(index % 7) * 0.9}s`);
+    if (duplicate) { link.tabIndex = -1; link.setAttribute('aria-hidden', 'true'); }
+    const artwork = document.createElement('span'); artwork.className = 'project-reel-art';
+    const monogram = document.createElement('span'); monogram.className = 'project-reel-monogram'; monogram.textContent = project.name.slice(0, 2).toUpperCase();
+    artwork.append(monogram);
+    const imageUrl = safeSearchHref(project.image);
+    if (imageUrl && new URL(imageUrl, location.origin).origin === location.origin) {
+      const image = document.createElement('img'); image.src = imageUrl; image.alt = ''; image.width = 232; image.height = 88;
+      image.loading = 'lazy'; image.decoding = 'async';
+      image.addEventListener('error', () => image.remove(), { once: true }); artwork.append(image);
+    }
+    const category = document.createElement('span'); category.className = 'project-reel-category'; category.textContent = project.category || 'Independent project';
+    const copy = document.createElement('span'); copy.className = 'project-reel-copy';
+    const name = document.createElement('strong'); name.textContent = project.name;
+    const maker = document.createElement('span'); maker.textContent = project.creator ? `By ${project.creator}` : 'Meet the project';
+    const arrow = document.createElement('span'); arrow.className = 'project-reel-arrow'; arrow.setAttribute('aria-hidden', 'true');
+    arrow.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>';
+    copy.append(name, maker, arrow); link.append(artwork, category, copy); link.title = `${project.name}${project.creator ? ` by ${project.creator}` : ''}`;
+    return link;
+  }
+  async function load() {
+    const projects = [], seen = new Set(), offsets = new Set();
+    let offset = 0;
+    do {
+      if (offsets.has(offset)) throw Error('Repeated page');
+      offsets.add(offset);
+      const response = await fetch(`/api/projects?offset=${encodeURIComponent(offset)}`, { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(15000) });
+      if (!response.ok) throw Error('Projects unavailable');
+      const page = await response.json();
+      for (const project of page.items || []) {
+        if (!project.id || !project.name || seen.has(project.id) || !['approved', 'featured'].includes(project.status)) continue;
+        seen.add(project.id); projects.push(project);
+      }
+      offset = page.next;
+    } while (offset != null);
+    if (!projects.length) { reel.hidden = true; return; }
+    const group = document.createElement('div'); group.className = 'project-reel-group';
+    projects.forEach((project, index) => group.append(createCard(project, index)));
+    // Tiny catalogues still fill the viewport; only the originals are tab stops.
+    const repeats = Math.max(1, Math.ceil((rail.clientWidth + 280) / (projects.length * 210)));
+    for (let repeat = 1; repeat < repeats; repeat++) projects.forEach((project, index) => group.append(createCard(project, index, true)));
+    const clone = group.cloneNode(true); clone.setAttribute('aria-hidden', 'true');
+    clone.querySelectorAll('a').forEach(link => { link.tabIndex = -1; link.setAttribute('aria-hidden', 'true'); });
+    // Cloning DOM does not clone image error listeners.
+    clone.querySelectorAll('img').forEach(image => image.addEventListener('error', () => image.remove(), { once: true }));
+    track.replaceChildren(group, clone);
+    groupWidth = group.getBoundingClientRect().width;
+    new ResizeObserver(() => { groupWidth = group.getBoundingClientRect().width; }).observe(group);
+    reel.querySelector('[data-reel-count]').textContent = `${projects.length} ${projects.length === 1 ? 'project' : 'projects'} in the mix`;
+    reel.dataset.ready = 'true'; ready = projects.length > 1;
+    sync();
+  }
+  load().catch(() => {
+    reel.hidden = true;
+    cancelAnimationFrame(frame);
+    observer.disconnect();
+  });
+}

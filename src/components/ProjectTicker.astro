@@ -1,8 +1,21 @@
 ---
-const { all = false } = Astro.props;
+import UiIcon from './UiIcon.astro';
 ---
-<aside class="project-ticker" aria-label={all ? 'All projects' : 'Featured projects'} data-project-ticker data-ticker-view={all ? 'all' : 'featured'}>
-  <span class="project-ticker-label">{all ? 'ALL PROJECTS' : 'FEATURED'}</span>
-  <div class="project-ticker-window"><div class="project-ticker-track" data-ticker-track></div></div>
-</aside>
+<section id="project-reel" class="project-reel" data-project-ticker aria-labelledby="project-reel-title">
+  <div class="project-reel-heading">
+    <span class="project-reel-count" data-reel-count>Independent projects</span>
+    <div class="project-reel-title"><span aria-hidden="true"></span><h2 id="project-reel-title">The project reel</h2></div>
+    <div class="project-reel-controls" role="group" aria-label="Project reel controls">
+      <button type="button" data-reel-previous aria-label="Previous projects"><span class="reel-back"><UiIcon name="arrow" size={15}/></span></button>
+      <button type="button" data-reel-pause aria-label="Pause project reel" aria-pressed="false"><svg data-reel-pause-icon width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg><svg data-reel-play-icon width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" hidden><path d="m8 5 11 7-11 7V5Z"/></svg></button>
+      <button type="button" data-reel-next aria-label="Next projects"><UiIcon name="arrow" size={15}/></button>
+    </div>
+  </div>
+  <div class="project-reel-stage">
+    <div class="project-reel-window" data-reel-window tabindex="0" role="region" aria-label="Published projects. Use the arrow keys to browse."><div class="project-reel-track" data-ticker-track></div></div>
+    <span class="project-reel-orbit" aria-hidden="true"></span>
+  </div>
+  <div class="project-reel-footer"><span data-reel-status>Good things are being built.</span><a href="/discover">Find your next favorite <UiIcon name="arrow" size={14}/></a></div>
+  <noscript><p class="project-reel-noscript"><a href="/discover">Explore every project in the directory.</a></p></noscript>
+</section>
 <script>import '../scripts/project-ticker.js'; import '../styles/project-ticker.css';</script>
