@@ -33,16 +33,30 @@
           "value": "no-referrer"
         },
         {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    },
+    {
+      "source": "/((?!video-player(?:/|$)).*)",
+      "headers": [
+        {
           "key": "X-Frame-Options",
           "value": "DENY"
         },
         {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
-        },
-        {
           "key": "Content-Security-Policy",
           "value": "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://public-files.gumroad.com https://cglkjclolglwizwepvmy.supabase.co https://*.google-analytics.com; font-src 'self'; connect-src 'self' https://cglkjclolglwizwepvmy.supabase.co wss://cglkjclolglwizwepvmy.supabase.co https://o4512195501228032.ingest.us.sentry.io https://*.google-analytics.com https://www.googletagmanager.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests"
+        }
+      ]
+    },
+    {
+      "source": "/video-player/:path*",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; media-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'self' https://x.com https://*.x.com https://twitter.com https://*.twitter.com; form-action 'none'; upgrade-insecure-requests"
         }
       ]
     }
