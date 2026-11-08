@@ -42,6 +42,7 @@ for(const width of [320,390,768,1440])test(`navigation and search remain usable 
   await expect(result).toHaveAttribute('href','/discover#project-approved-two');
   await result.click();
   await expect(page.locator('#wall-focus-title')).toHaveText('Approved fixture');
+  await expect(page.locator('body')).toHaveClass(/wall-modal-open/);
   await page.keyboard.press('/');
   await expect(page.locator('#discovery-search')).not.toBeVisible();
   await page.keyboard.press('Escape');
@@ -50,12 +51,14 @@ for(const width of [320,390,768,1440])test(`navigation and search remain usable 
   await page.locator('#unified-search-input').fill('Featured fixture');
   await page.locator('#unified-results').getByRole('link',{name:/Featured fixture/}).click();
   await expect(page.locator('#wall-focus-title')).toHaveText('Featured fixture');
+  await expect(page.locator('body')).toHaveClass(/wall-modal-open/);
   await page.keyboard.press('Escape');
   await expect(page.locator('.wall-focus')).toHaveCount(0);
   await page.locator('.header-search').click();
   await page.locator('#unified-search-input').fill('Featured fixture');
   await page.locator('#unified-results').getByRole('link',{name:/Featured fixture/}).click();
   await expect(page.locator('#wall-focus-title')).toHaveText('Featured fixture');
+  await expect(page.locator('body')).toHaveClass(/wall-modal-open/);
   await page.keyboard.press('Escape');
   await expect(page.locator('.wall-focus')).toHaveCount(0);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);
@@ -66,7 +69,7 @@ test('featured links, active navigation, filter switches and modal keyboard loop
   await expect(page.getByRole('button',{name:'Featured',exact:true})).toHaveAttribute('aria-pressed','true');
   await expect(page.locator('.wall-tile')).toHaveCount(1);
   const active=page.locator('.header-primary a[aria-current=page]');
-  await expect(active).toHaveCSS('color','rgb(32, 40, 44)');
+  await expect(active).toHaveCSS('color','rgb(237, 243, 252)');
   await page.getByRole('button',{name:'All projects',exact:true}).click();
   await expect(page).toHaveURL(base+'/discover');
   await expect(page.locator('.wall-tile')).toHaveCount(2);

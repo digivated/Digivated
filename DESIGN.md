@@ -9,7 +9,7 @@ Use Inter Variable, self-hosted from Fontsource 5.3.0 with its OFL license; no r
 The reference's centered hero, single prominent action, restrained line illustration, and white browser-style product surface are the structural base. The product panel is a working directory using existing project APIs and search/filter behavior. It contains no invented project data.
 
 ## Digivated-specific adaptations
-Honor the user's white/gray requirement: charcoal actions replace Tally's blue, gray underline replaces magenta. Canvas #fafaf9, white panels, ink #37352f, body #5c5b57, muted #696863, lines #dededb. Preserve the current Digivated logo. Increase contrast where the reference's muted values would impair readability.
+The user's latest site-wide dark liquid-glass request supersedes the earlier light palette. Canvas #080c12, panels #101824, ink #edf3fc, copy #b7c5d8, muted #8c9db3, restrained cyan highlights and translucent cool borders. Preserve the current Digivated logo. Increase contrast where the reference's muted values would impair readability.
 
 Original generated illustration: monochrome editorial pen drawing of a curious maker examining a browser window at a laptop; transparent background, no words, logos, emojis, color, or decorative sparkles. Built-in image generation; WebP delivery asset is optimized for its small rendered size. Original PNG retained separately from the repository.
 
@@ -24,7 +24,7 @@ Keep account, submission, moderation, feedback, likes, saves, views, notificatio
 
 ## Current homepage and search contract — November 8, 2026
 
-The user explicitly requested centered presentation and a more professional search experience after reviewing laptop screenshots. `src/styles/search-and-alignment.css` owns the shared geometry and search component styling. Header navigation is centered independently of the unequal logo/account widths. The homepage hero, body copy, action group, visitor counters and project-directory container share a centered axis. Keep form fields, search rows and reading copy left-aligned inside their centered containers. Preserve the existing light gray palette, Inter font, logo and project data.
+The user explicitly requested centered presentation and a more professional search experience after reviewing laptop screenshots. `src/styles/search-and-alignment.css` owns the shared geometry and search component styling. Header navigation is centered independently of the unequal logo/account widths. The homepage hero, body copy, action group, visitor counters and project-directory container share a centered axis. Keep form fields, search rows and reading copy left-aligned inside their centered containers. Preserve the Inter font, logo, project data and centered geometry; use the shared dark liquid-glass palette.
 
 Search is a compact dialog with a fixed header, input, scope controls and footer; only the results area scrolls. The blank All scope suggests at most three real projects, rather than dumping every navigation destination. Typed queries show up to five ranked matches with accurate total counts; page destinations remain searchable. Use real same-origin project thumbnails with a safe fallback, semantic SVG icons, one-line descriptions and restrained metadata. Deliver project results independently of slower guide requests. Keep Escape, arrow navigation, Enter, focus restoration, clear/reset, scope filtering, partial-error handling and same-page project links working.
 
@@ -43,3 +43,7 @@ Pause the rail and card animation on hover or keyboard focus. Provide explicit p
 Homepage order is introduction, stationary featured strip, all-project reel, footer. Replace the former full-size homepage wall with a small centered row of cards matching the reel artwork, category, project name and maker treatment. Keep search, pagination, upvotes, views and feedback in the Projects directory and project details. The homepage strip links to those existing detail pages and the featured directory; it does not duplicate those controls.
 
 Read the public featured feed with pagination, deduplicate IDs and require featured status. Show all current featured picks; never fill the strip with ordinary approved projects or fake cards. On phones allow native horizontal browsing. Keep the strip stationary even while the separate reel animates, preserve image-error fallbacks, and show an honest error or hide a truly empty section. `project-showcase-card.js` supplies the same safe card markup to both presentations.
+
+## Site-wide dark liquid glass — November 8, 2026
+
+`public/dark-glass.css` owns shared paint across Platform, Shell and Admin, including generated project pages. Use near-black canvas, subtle code-grid texture, blue-gray translucent panels, gentle edge highlights and glass controls. Keep text contrast clear, images in their original colors and typography restrained. Avoid blur on repeated cards and on headers: a filtered header changes the containing block of fixed mobile navigation. Preserve responsive geometry, selectors, script hooks, authentication, moderation and payment flows. Honor reduced motion and native dark form controls.
