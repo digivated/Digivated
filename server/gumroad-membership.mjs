@@ -67,6 +67,12 @@ export async function remapGumroadMembership({token,redis,fetcher=fetch,assets})
     if(!cover?.id)throw new Error('Cover was not returned');
     await api('PUT',`/products/${id}`,{cover_ids:[cover.id]});
     await api('POST',`/products/${id}/thumbnail`,{url:'https://digivated.com/membership-thumbnail.png'});
+    // cover_ids only reorders; omitted covers remain visible on Gumroad.
+    // Remove obsolete marketing previews only after the replacement is uploaded.
+    for(const previous of covers.covers)if(previous.id!==cover.id){
+      const remaining=await api('DELETE',`/products/${id}/covers/${encodeURIComponent(previous.id)}`);
+      if(!remaining.covers?.some(item=>item.id===cover.id))throw new Error('Replacement cover was not retained');
+    }
     if(preview){
       phase='publishing the matching storefront';
       try {

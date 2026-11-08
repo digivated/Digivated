@@ -40,6 +40,10 @@ const cover=covers.covers?.find(c=>!oldCoverIds.has(c.id));
 if(!cover?.id)throw new Error('New cover was not returned. Checkout must remain disabled.');
 request('PUT',`/products/${id}`,{cover_ids:[cover.id]});
 request('POST',`/products/${id}/thumbnail`,{url:'https://digivated.com/membership-thumbnail.png'});
+for(const previous of covers.covers)if(previous.id!==cover.id){
+  const remaining=request('DELETE',`/products/${id}/covers/${encodeURIComponent(previous.id)}`);
+  if(!remaining.covers?.some(item=>item.id===cover.id))throw new Error('Replacement cover was not retained.');
+}
 if(preview){
  try {const beforeProfile=request('PUT','/user/custom_html',{custom_html:preview.custom_html});writeFileSync(backup,JSON.stringify({products,previousProfileHtml:beforeProfile.previous_custom_html},null,2),{mode:0o600});}
  catch(error){if(![403,404].includes(error.status)&&!error.optionalUnavailable)throw error;console.info('Native storefront kept; custom HTML is not available.');}

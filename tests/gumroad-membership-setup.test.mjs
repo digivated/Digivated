@@ -17,6 +17,7 @@ function provider(failAt='',failureStatus=403){
   if(path==='/products'&&opts.method==='GET')data.products=products;
   else if(path==='/user/preview_custom_html')data={success:true,custom_html:'<style>body{color:white}</style><h1>One membership.</h1>',sanitization_report:{truncated:false}};
   else if(path==='/user/custom_html')data.previous_custom_html='<p>Previous storefront</p>';
+  else if(opts.method==='DELETE'&&path.endsWith('/covers/old-cover'))data.covers=[{id:'new-cover'}];
   else if(path.endsWith('/covers'))data.covers=[{id:'old-cover'},{id:'new-cover'}];
   else if(path.endsWith('/thumbnail')){}
   else if(path.endsWith('/disable'))products.find(p=>path.includes(encodeURIComponent(p.id))).published=false;
@@ -30,6 +31,8 @@ const assets={offer:{name:membership.name,price:500,price_currency_type:'usd',de
 test('seller remap publishes the exact one-time offer, retires only known products, and never persists the key',async()=>{
  const db=storage(),p=provider();const result=await remapGumroadMembership({token:key,redis:db.redis,fetcher:p.fetcher,assets});
  assert.equal(result.ready,true);assert.equal(result.checkoutUrl,membership.checkoutUrl);
+ assert.equal(p.calls.some(c=>c.method==='DELETE'&&c.path.endsWith('/covers/old-cover')),true);
+ assert.equal(p.calls.some(c=>c.method==='DELETE'&&c.path.endsWith('/covers/new-cover')),false);
  assert.equal(p.product.price,500);assert.equal(p.product.max_purchase_count,null);
  assert.equal(p.products.find(p=>p.id==='unrelated').published,true);
  assert.equal(p.products.filter(p=>p.id.startsWith('old')).every(p=>!p.published),true);
@@ -38,7 +41,7 @@ test('seller remap publishes the exact one-time offer, retires only known produc
  const updates=p.calls.filter(c=>c.method==='PUT'&&c.path.includes('/products/'));assert.equal(updates.some(c=>c.path.endsWith('/disable')),true);
  assert.equal((await checkoutStatus(db.redis)).ready,true);
 });
-for(const phase of ['PUT /products/'+encodeURIComponent(membership.gumroadProductId),'POST /products/'+encodeURIComponent(membership.gumroadProductId)+'/thumbnail'])test('provider failure does not leak credentials or enable incomplete checkout: '+phase,async()=>{
+for(const phase of ['DELETE /products/'+encodeURIComponent(membership.gumroadProductId)+'/covers/old-cover','PUT /products/'+encodeURIComponent(membership.gumroadProductId),'POST /products/'+encodeURIComponent(membership.gumroadProductId)+'/thumbnail'])test('provider failure does not leak credentials or enable incomplete checkout: '+phase,async()=>{
  const db=storage(),p=provider(phase);await assert.rejects(remapGumroadMembership({token:key,redis:db.redis,fetcher:p.fetcher,assets}),e=>e.status===503&&!e.message.includes(key));
  assert.equal((await checkoutStatus(db.redis)).ready,false);assert.equal(JSON.stringify(db.writes).includes(key),false);
  assert.equal(p.products.filter(p=>p.id.startsWith('old')).every(p=>p.published),true);
