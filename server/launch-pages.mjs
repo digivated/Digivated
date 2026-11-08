@@ -1,3 +1,4 @@
+import { projectCategory } from '../src/lib/project-taxonomy.mjs';
 import { readFile } from 'node:fs/promises';
 import { safeUrl } from '../src/data/community.mjs';
 import { AdminError } from './admin-auth.mjs';
@@ -32,7 +33,7 @@ export function pageSlug(record) {
 export function launchPublic(record, draft = false) {
   if (!record || (!draft && ((record.promotion?.requested && !record.promotion.verified) || !record.pagePublished || !record.page?.consent || !record.consent || !['approved','featured'].includes(record.status)))) return null;
   const page = record.page || {};
-  return { sponsored:record.promotion?.verified === true, id:record.id, slug:record.slug || pageSlug(record), name:record.name, description:record.description, creator:record.creator, category:record.category, bio:page.bio || '', ctaLabel:page.ctaLabel || 'Visit project', ctaUrl:safeUrl(page.ctaUrl || record.url), socialUrl:safeUrl(record.socialUrl), image:record.image ? (draft ? record.image : `/api/project-page?slug=${record.slug}&asset=primary`) : '', alt:page.alt || `${record.name} screenshot`, gallery:(page.gallery || []).map((item,index)=>({alt:item.alt,image:draft?item.image:`/api/project-page?slug=${record.slug}&asset=${index}`})) };
+  return { sponsored:record.promotion?.verified === true, id:record.id, slug:record.slug || pageSlug(record), name:record.name, description:record.description, creator:record.creator, category:projectCategory(record), bio:page.bio || '', ctaLabel:page.ctaLabel || 'Visit project', ctaUrl:safeUrl(page.ctaUrl || record.url), socialUrl:safeUrl(record.socialUrl), image:record.image ? (draft ? record.image : `/api/project-page?slug=${record.slug}&asset=primary`) : '', alt:page.alt || `${record.name} screenshot`, gallery:(page.gallery || []).map((item,index)=>({alt:item.alt,image:draft?item.image:`/api/project-page?slug=${record.slug}&asset=${index}`})) };
 }
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export async function renderLaunch(item, { draft = false, origin = 'https://digivated.com', template } = {}) {

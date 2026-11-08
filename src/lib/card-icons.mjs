@@ -1,4 +1,4 @@
-const strokes = {
+export const iconStrokes = {
   profile: '<circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/>',
   calendar: '<rect x="4" y="5.5" width="16" height="15" rx="3"/><path d="M8 3.5v4M16 3.5v4M4 10.5h16M8 14h2M14 14h2M8 17h2"/>',
   clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>',
@@ -12,10 +12,19 @@ const strokes = {
   layers: '<path d="m3 8 9-5 9 5-9 5zM3 12l9 5 9-5M3 16l9 5 9-5"/>',
   sparkle: '<path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/>',
   save: '<path d="M6.5 4.5h11v15l-5.5-3.7-5.5 3.7z"/>',
-  like: '<path d="m6 11 6-7 6 7zM9 11v9h6v-9"/>',
+  like: '<path d="m7 14 5-5 5 5"/>',
   comment: '<path d="M5.5 5.3h13a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8l-5 3v-3a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"/><path d="M8 10h8M8 13h5"/>',
   share: '<path d="M12 15V3M8 7l4-4 4 4M5 12v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-6"/>'
 };
+Object.assign(iconStrokes, {
+  user:iconStrokes.profile, bookmark:iconStrokes.save, message:iconStrokes.comment,
+  upload:iconStrokes.share, chevron:'<path d="m6 9 6 6 6-6"/>',
+  close:'<path d="m6 6 12 12M18 6 6 18"/>', menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+  search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/>',
+  grid:'<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>',
+  check:'<path d="m5 12 4 4L19 6"/>',
+  'arrow-left':'<path d="M19 12H5m6-6-6 6 6 6"/>',
+});
 export function cardIconMarkup(name) {
-  return `<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${strokes[name] || ''}</svg>`;
+  return `<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${iconStrokes[name] || ''}</svg>`;
 }

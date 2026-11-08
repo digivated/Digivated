@@ -1,3 +1,4 @@
+import { cardIconMarkup } from '../lib/card-icons.mjs';
 import { observeProjectViews, viewLabel } from './project-views.js';
 import { createShowcaseCard } from './project-showcase-card.js';
 
@@ -28,9 +29,7 @@ if (section) {
       card.dataset.projectId = project.id;
       const views = document.createElement('span');
       views.className = 'home-featured-views';
-      const eye = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      eye.setAttribute('viewBox', '0 0 24 24'); eye.setAttribute('width', '13'); eye.setAttribute('height', '13'); eye.setAttribute('aria-hidden', 'true');
-      eye.innerHTML = '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>';
+      const eye = document.createElement('span'); eye.innerHTML = cardIconMarkup('eye');
       const count = document.createElement('span');
       count.dataset.projectViews = project.id; count.textContent = viewLabel(project.views);
       views.append(eye, count); card.querySelector('.project-reel-art').append(views);

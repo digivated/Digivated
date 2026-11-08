@@ -70,3 +70,10 @@ Owner-only Gumroad setup is available at `/admin#gumroad-setup`: a masked API-ke
 
 ### Compact navigation
 The shared menu uses five plain destination links, followed by compact account and utility rows. Keep its opaque black surface, restrained purple states, single-line labels, and mobile touch targets. Avoid promotional cards, repeated actions, nested offer lists, and per-link icon boxes. Native disclosure, keyboard dismissal, focus return, account hooks, and the separate search remain intact.
+
+### Site identity and directory consistency
+Use `/digivated-logo.webp` for the approved white/purple portal mark (5.3 KB). Its original dark colors must not be inverted. Browser and Apple icons use the same mark. UI icons come from `src/lib/card-icons.mjs` for Astro and client components, with consistent strokes and familiar action symbols.
+
+Project cards show a category without positional numbering. Pagination uses Previous/Next only when needed, with page context reserved for screen readers. Keep controls separated and never apply the global button surface to an entire project card. Project category filters use published categories only.
+
+`src/lib/project-taxonomy.mjs` records a review of all 57 published project descriptions. Category corrections apply only when the source category still matches the reviewed value; later owner category edits take precedence. Source submissions, status, URLs, views, votes, and purchases are not mutated. Education covers learning/exam tools; Developer Tools covers coding utilities; Business covers commerce, marketing, and business operations; Creator Tools covers publishing and content workflows; Design covers visual editing; Productivity covers personal/team work. AI topic placement is reviewed for existing projects and conservative for new ones. Directories get their own topic; Other AI tools is a fallback rather than a duplicate of every tool.

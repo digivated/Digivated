@@ -1,3 +1,4 @@
+import { cardIconMarkup } from '../lib/card-icons.mjs';
 import { safeSearchHref } from '../lib/discovery-search.mjs';
 
 export function createShowcaseCard(project, index, duplicate = false) {
@@ -22,7 +23,7 @@ export function createShowcaseCard(project, index, duplicate = false) {
     const name = document.createElement('strong'); name.textContent = project.name;
     const maker = document.createElement('span'); maker.textContent = project.creator ? `By ${project.creator}` : 'Meet the project';
     const arrow = document.createElement('span'); arrow.className = 'project-reel-arrow'; arrow.setAttribute('aria-hidden', 'true');
-    arrow.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>';
+    arrow.innerHTML = cardIconMarkup('arrow');
     copy.append(name, maker, arrow); link.append(artwork, category, copy); link.title = `${project.name}${project.creator ? ` by ${project.creator}` : ''}`;
     return link;
   }

@@ -1,4 +1,4 @@
-export const projectCategories = ['Apps', 'Websites', 'AI', 'SaaS', 'Digital Products', 'Design', 'Business', 'Creator Tools', 'Productivity', 'Other'];
+export const projectCategories = ['Apps', 'Websites', 'AI', 'SaaS', 'Digital Products', 'Design', 'Business', 'Creator Tools', 'Productivity', 'Education', 'Developer Tools', 'Other'];
 export const resourceCategories = ['Technology & AI', 'Markets & Investing', 'Tools & Security', 'Design & UX', 'Creator Growth', 'Digital Products'];
 const resourceCategoryAliases = {
   'Tech': 'Technology & AI', 'AI': 'Technology & AI',
