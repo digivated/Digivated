@@ -30,3 +30,14 @@ test('membership checkout opens only for the exact verified five-dollar one-time
  await page.route('**/api/membership-checkout',r=>r.fulfill({json:{ready:true,priceUSD:5,billing:'monthly',checkoutUrl:'https://other.invalid/'}}));
  await page.reload();await expect(page.locator('button.membership-checkout')).toBeDisabled();
 });
+
+test('ready membership retains an explicit way to reapply branding',async({page})=>{
+ await page.route('**/api/admin**',r=>r.fulfill({json:new URL(r.request().url()).searchParams.get('action')==='list'?{items:[],next:null}:{csrf:'owner-fixture',ready:true}}));
+ await page.goto(base+'/admin#gumroad-setup');
+ await expect(page.locator('#owner-gumroad-form')).toBeHidden();
+ await page.getByRole('button',{name:'Reapply Gumroad branding',exact:true}).click();
+ await expect(page.locator('#owner-gumroad-form')).toBeVisible();
+ await expect(page.locator('#owner-gumroad-token')).toBeFocused();
+ await expect(page.locator('#owner-gumroad-token')).toHaveValue('');
+ await expect(page.locator('#owner-gumroad-apply')).toHaveText('Reapply Gumroad branding');
+});

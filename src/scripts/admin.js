@@ -215,11 +215,18 @@ async function checkGumroadSetup() {
   try {
     const result = await api('?action=gumroad-status');
     form.hidden = !!result.ready;
+    $('owner-gumroad-rerun').hidden = !result.ready;
     if (result.ready) { status.textContent = 'Gumroad membership checkout is open. The seller key is not saved.' + (result.lastAttempt?.warnings?.length ? ' ' + result.lastAttempt.warnings.join(' ') : ''); }
     if(!result.ready && result.lastAttempt?.outcome==='failed' && !status.textContent) status.textContent = `Last attempt failed while ${result.lastAttempt.phase || 'updating Gumroad'}${result.lastAttempt.httpStatus ? ` (HTTP ${result.lastAttempt.httpStatus})` : ''}. Your key was not saved.`;
   } catch { /* A status outage must not change the rest of the dashboard. */ }
   if (location.hash === '#gumroad-setup') { $('gumroad-setup').open = true; $('gumroad-setup').scrollIntoView(); }
 }
+$('owner-gumroad-rerun')?.addEventListener('click', () => {
+  $('owner-gumroad-form').hidden = false;
+  $('owner-gumroad-rerun').hidden = true;
+  $('owner-gumroad-apply').textContent = 'Reapply Gumroad branding';
+  $('owner-gumroad-token').focus();
+});
 const gumroadForm = $('owner-gumroad-form');
 if (gumroadForm) gumroadForm.addEventListener('submit', async event => {
   event.preventDefault();
@@ -240,6 +247,7 @@ if (gumroadForm) gumroadForm.addEventListener('submit', async event => {
     if (!response.ok || !data.ready) throw new Error(data.error || 'The update could not finish. Check its status before retrying.');
     status.textContent = 'Gumroad is updated and membership checkout is open. Your API key was not saved.' + (Array.isArray(data.warnings) ? ' ' + data.warnings.join(' ') : '');
     gumroadForm.hidden = true;
+    $('owner-gumroad-rerun').hidden = false;
   } catch (error) {
     status.textContent = error.name === 'TimeoutError' ? 'The request timed out. Refresh this dashboard to check completion before retrying.' : error.message;
     await checkGumroadSetup();
