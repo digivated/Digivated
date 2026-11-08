@@ -5,7 +5,7 @@ const labels = { submission: 'Submissions', resource: 'Articles', product: 'Prod
 const statusOptions = { submission: ['pending','approved','featured','rejected','archived'], resource: ['draft','published','archived'], product: ['draft','published','archived'], comments: ['pending','approved','rejected'], carousel: ['available'], accounts: ['verified','unverified','blocked'] };
 const element = (tag, text, className) => { const node = document.createElement(tag); if (text !== undefined) node.textContent = text; if (className) node.className = className; return node; };
 function message(text, editor = false) { const node = $(editor ? 'owner-editor-status' : 'owner-status'); node.textContent = text; }
-function signedOut() { state.csrf = ''; state.items = []; state.record = null; state.dirty = false; $('owner-editor').close(); $('owner-fields').replaceChildren(); $('owner-private-details').replaceChildren(); $('owner-list').replaceChildren(); $('owner-dashboard').hidden = true; $('owner-login').hidden = false; $('owner-logout').hidden = true; }
+function signedOut() { const keyField = $('owner-gumroad-token'); if (keyField) keyField.value = '';  state.csrf = ''; state.items = []; state.record = null; state.dirty = false; $('owner-editor').close(); $('owner-fields').replaceChildren(); $('owner-private-details').replaceChildren(); $('owner-list').replaceChildren(); $('owner-dashboard').hidden = true; $('owner-login').hidden = false; $('owner-logout').hidden = true; }
 async function api(path = '', body) {
   const response = await fetch(`/api/admin${path}`, { method: body ? 'POST' : 'GET', cache: 'no-store', credentials: 'same-origin', headers: body ? { 'Content-Type': 'application/json', 'X-Admin-CSRF': state.csrf } : {}, ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(20000) });
   const data = await response.json().catch(() => ({}));
@@ -80,7 +80,7 @@ async function load(more = false) {
   } catch (error) { message(errorText(error)); }
   finally { $('owner-more').disabled = false; }
 }
-function signedIn(csrf) { state.csrf = csrf; $('owner-password').value = ''; $('owner-login').hidden = true; $('owner-dashboard').hidden = false; $('owner-logout').hidden = false; filters(); return load(); }
+function signedIn(csrf) { state.csrf = csrf; checkGumroadSetup(); $('owner-password').value = ''; $('owner-login').hidden = true; $('owner-dashboard').hidden = false; $('owner-logout').hidden = false; filters(); return load(); }
 const form = $('owner-login-form'); form.querySelector('button').disabled = false;
 form.addEventListener('submit', async event => {
   event.preventDefault(); const button = form.querySelector('button'); button.disabled = true; message('Signing in…');
@@ -207,3 +207,40 @@ async function optimizedImage(file){
   return result;
 }
 
+
+// One-time seller setup. Never persist this key or include it in diagnostics.
+async function checkGumroadSetup() {
+  const form = $('owner-gumroad-form'), status = $('owner-gumroad-status');
+  if (!form || !status) return;
+  try {
+    const result = await api('?action=gumroad-status');
+    form.hidden = !!result.ready;
+    if (result.ready) { status.textContent = 'Gumroad membership checkout is open. The seller key is not saved.'; }
+  } catch { /* A status outage must not change the rest of the dashboard. */ }
+  if (location.hash === '#gumroad-setup') { $('gumroad-setup').open = true; $('gumroad-setup').scrollIntoView(); }
+}
+const gumroadForm = $('owner-gumroad-form');
+if (gumroadForm) gumroadForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  const field = $('owner-gumroad-token'), button = $('owner-gumroad-apply'), status = $('owner-gumroad-status');
+  if (button.disabled || !state.csrf) return;
+  let token = field.value.trim();
+  field.value = '';
+  button.disabled = true;
+  status.textContent = 'Applying the prepared Gumroad update. This may take up to two minutes. Your key has been cleared from the form.';
+  try {
+    const response = await fetch('/api/admin', {
+      method:'POST', credentials:'same-origin', cache:'no-store',
+      headers:{'Content-Type':'application/json','X-Admin-CSRF':state.csrf},
+      body:JSON.stringify({action:'gumroad-membership',gumroadToken:token}), signal:AbortSignal.timeout(115000),
+    });
+    token = '';
+    const data = await response.json().catch(()=>({}));
+    if (!response.ok || !data.ready) throw new Error(data.error || 'The update could not finish. Check its status before retrying.');
+    status.textContent = 'Gumroad is updated and membership checkout is open. Your API key was not saved.';
+    gumroadForm.hidden = true;
+  } catch (error) {
+    status.textContent = error.name === 'TimeoutError' ? 'The request timed out. Refresh this dashboard to check completion before retrying.' : error.message;
+    await checkGumroadSetup();
+  } finally { token = ''; field.value = ''; button.disabled = false; }
+});

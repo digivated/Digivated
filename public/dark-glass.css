@@ -232,3 +232,10 @@ html#digivated-root :is(.motion-tab-indicator,.site-activity i,.project-reel-tit
   html#digivated-root .home-editorial h1 em { background:none; -webkit-text-fill-color:CanvasText; }
 }
 html#digivated-root :is(.project-card,.resource-card,.gumroad-card,.product-feature,.login-panel,.project-account-card,.submission-form)::before { background:linear-gradient(145deg,#b78aff38,transparent 45%,#ffffff0b)!important; }
+html#digivated-root .owner-gumroad-setup { padding:20px 24px; margin:0 0 24px; border:1px solid var(--dg-line-strong); border-radius:12px; background:var(--dg-glass)!important; }
+html#digivated-root .owner-gumroad-setup summary { cursor:pointer; font-size:15px; font-weight:600; }
+html#digivated-root .owner-gumroad-setup p { max-width:85ch; font-size:13px; line-height:1.8; }
+html#digivated-root .owner-gumroad-setup form { display:grid; gap:12px; max-width:680px; }
+html#digivated-root .owner-gumroad-setup input { display:block; width:100%; box-sizing:border-box; margin-top:8px; }
+html#digivated-root .owner-gumroad-setup button { width:fit-content; }
+html#digivated-root .owner-gumroad-setup [hidden] { display:none!important; }

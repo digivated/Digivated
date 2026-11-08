@@ -1,3 +1,5 @@
+import { remapGumroadMembership } from './gumroad-membership.mjs';
+import { checkoutStatus } from './membership-checkout.mjs';
 import { ownerCarouselList, ownerCarouselPreview } from './owner-carousels.mjs';
 import { renderLaunch, launchPublic } from './launch-pages.mjs';
 import { createHmac } from 'node:crypto';
@@ -40,6 +42,11 @@ export function makeAdminHandler(deps = {}) {
         }
         const session = await requireSession(req, redis, cfg);
         if (req.headers['x-admin-csrf'] !== session.csrf) throw new AdminError(403, 'Refresh the dashboard before saving.');
+        if (body.action === 'gumroad-membership') {
+          if (Object.keys(body).some(key => !['action','gumroadToken'].includes(key))) throw new AdminError(400,'Use the Gumroad setup form.');
+          const token = body.gumroadToken; body.gumroadToken = '';
+          return send(200,await (deps.remapGumroadMembership || remapGumroadMembership)({token,redis,fetcher:deps.gumroadFetcher||fetch}));
+        }
         if (body.action === 'logout') {
           await redis(['DEL', `digivated:admin:session:${digest(tokenFrom(req))}`]);
           res.setHeader('Set-Cookie', cookie('', true)); return send(200, { ok: true });
@@ -65,6 +72,7 @@ export function makeAdminHandler(deps = {}) {
       const url = new URL(req.url, cfg.origin);
       const action = url.searchParams.get('action') || 'session';
       if (action === 'session') return send(200, { authenticated: true, csrf: session.csrf });
+      if (action === 'gumroad-status') return send(200,await checkoutStatus(redis));
       if (action === 'comments') {
         const offset=Number(url.searchParams.get('offset')||0);
         if(!Number.isInteger(offset)||offset<0||offset>100000)throw new AdminError(400,'Invalid page.');

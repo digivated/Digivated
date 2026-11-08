@@ -24,3 +24,9 @@ A failed or incomplete remap must leave checkout disabled. Gumroad checkout itse
 Existing server-only Gumroad verification, product ID, encrypted cookies, refund/chargeback checks and atomic one-feature claim are preserved. Internal `founding-*` names remain compatible with existing licenses; they are not a second public offer. The new News section must use server-side verified membership (`readMember`) before returning paid content; no new News content or entitlement is served by this staging change.
 
 The seller-edit token is an operator credential for this one-time remap. It is not used by the deployed site and should not replace the site's read-only purchase-verification credential.
+
+## Protected dashboard entry (preferred)
+
+Open `https://digivated.com/admin#gumroad-setup` and sign in with the existing owner dashboard password. The masked key field posts only to the same-origin authenticated admin endpoint, with the existing session and CSRF checks. The field clears before the request finishes. The seller key is used only in request memory; it is not put in cookies, browser storage, Redis, backups, error messages or response payloads.
+
+The server performs the prepared remap under a short-lived operation lock and retains only a private, seven-day backup of product/profile metadata (without the key). It writes a public-readiness marker only after verifying the exact one-time offer and retiring the known old products. Membership pages read that marker through `/api/membership-checkout` and open checkout automatically. No source flag change or redeploy is needed for this dashboard path. If a step fails, the dashboard gives a sanitized error; an incomplete remap does not open checkout. Refresh the dashboard to check completion before retrying after a timeout.

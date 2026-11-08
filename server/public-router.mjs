@@ -1,3 +1,4 @@
+import { makeMembershipCheckoutHandler } from './membership-checkout.mjs';
 import { makePublicHandler } from './public-community.mjs';
 import { makeSavedItemHandler } from './saved-items.mjs';
 import { makeProjectViewHandler } from './project-views.mjs';
@@ -14,6 +15,7 @@ import { makeSiteActivityHandler } from './site-activity.mjs';
 export function defaultPublicHandlers(overrides = {}) {
   return {
     'site-activity': makeSiteActivityHandler(),
+    'membership-checkout': makeMembershipCheckoutHandler(),
     content: makePublicHandler('content'),
     'saved-item': makeSavedItemHandler(),
     'project-views': makeProjectViewHandler(),
