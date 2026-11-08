@@ -13,7 +13,7 @@ for(const width of [390,1440])test(`dark surfaces stay readable across all layou
   for(const path of ['/','/submit-project','/saved','/about','/resources','/login','/library','/builder','/toolkit','/admin']){
     await page.goto(base+path);
     await expect(page.locator('html')).toHaveCSS('color-scheme','dark');
-    await expect(page.locator('body')).toHaveCSS('background-color','rgb(2, 3, 4)');
+    await expect(page.locator('body')).toHaveCSS('background-color','rgb(5, 5, 5)');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     // Visible text and native controls must not fall back to black-on-black or light fields.
     const failures=await page.locator('input:not([type=checkbox]):not([type=radio]),textarea,select').evaluateAll(elements=>elements.filter(e=>{

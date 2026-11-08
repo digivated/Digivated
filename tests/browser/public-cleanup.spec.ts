@@ -69,7 +69,7 @@ test('featured links, active navigation, filter switches and modal keyboard loop
   await expect(page.getByRole('button',{name:'Featured',exact:true})).toHaveAttribute('aria-pressed','true');
   await expect(page.locator('.wall-tile')).toHaveCount(1);
   const active=page.locator('.header-primary a[aria-current=page]');
-  await expect(active).toHaveCSS('color','rgb(237, 243, 252)');
+  await expect(active).toHaveCSS('color','rgb(231, 213, 255)');
   await page.getByRole('button',{name:'All projects',exact:true}).click();
   await expect(page).toHaveURL(base+'/discover');
   await expect(page.locator('.wall-tile')).toHaveCount(2);

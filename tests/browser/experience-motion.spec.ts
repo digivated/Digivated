@@ -4,15 +4,15 @@ test.beforeEach(async({page})=>{
  await page.addInitScript(()=>sessionStorage.setItem('digivated-announcement-seen-v2','1'));
  await page.route('**/api/**',r=>r.fulfill({json:{ready:false,items:[{id:'motion-fixture',name:'Motion project',creator:'Builder',category:'Apps',status:'featured',url:'https://example.invalid',image:'/digivated-dark-mark.svg',description:'An independent project.'}],next:null,views:{},counts:{}}}));
 });
-test('glass light follows the pointer and clears when motion preferences change',async({page})=>{
+test('project cards stay lightweight while the reel and controls remain usable',async({page})=>{
  await page.setViewportSize({width:1440,height:950});await page.goto(base+'/');
- const card=page.locator('.home-featured-card').first();await card.scrollIntoViewIfNeeded();
- await card.hover({position:{x:30,y:30}});
- await expect(card).toHaveAttribute('data-glass-active','true');
- expect(await card.evaluate(e=>e.style.getPropertyValue('--glass-x'))).toMatch(/%$/);
- await page.emulateMedia({reducedMotion:'reduce'});
+ const card=page.locator('.home-featured-card').first();await card.scrollIntoViewIfNeeded();await card.hover();
  await expect(card).not.toHaveAttribute('data-glass-active');
- await expect(card).toBeVisible();
+ const costs=await page.locator('.home-featured-card,.project-reel-card,.project-reel-controls button,.project-reel-category').evaluateAll(elements=>elements.map(e=>({blur:getComputedStyle(e).backdropFilter,animation:getComputedStyle(e).animationName})));
+ expect(costs.length).toBeGreaterThan(0);
+ expect(costs.every(c=>c.blur==='none'&&c.animation==='none')).toBe(true);
+ await page.emulateMedia({reducedMotion:'reduce'});await expect(card).toBeVisible();
+ await page.locator('[data-reel-next]').click();await expect(page.locator('[data-project-ticker]')).toHaveAttribute('data-moving','false');
 });
 test('reduced motion keeps all content visible and native search focus working',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:900});await page.goto(base+'/');

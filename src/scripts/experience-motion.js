@@ -3,8 +3,7 @@
 // retain their own positioning, animation and focus behavior.
 const preference = matchMedia('(prefers-reduced-motion: reduce)');
 const groups = [
-  ...document.querySelectorAll('.home-editorial > .home-editorial-kicker,.home-editorial > h1,.home-editorial > p:not(.home-editorial-kicker),.home-editorial > .home-editorial-actions'),
-  ...document.querySelectorAll('.home-featured-heading,.project-reel-heading,.page-intro > .eyebrow,.page-intro > h1,.page-intro > .lede'),
+  ...document.querySelectorAll('.home-featured-heading,.project-reel-heading'),
 ];
 const pending = new Set(groups);
 const active = new Map();
@@ -23,9 +22,9 @@ function reveal(element, delay = 0) {
   // No fill mode or inline opacity: cancellation and failures restore the base UI.
   try {
     const animation = element.animate([
-      { opacity: .35, transform: 'translateY(10px)' },
+      { opacity: .65, transform: 'translateY(6px)' },
       { opacity: 1, transform: 'translateY(0)' },
-    ], { duration: 480, delay, easing: 'cubic-bezier(.2,.75,.25,1)' });
+    ], { duration: 260, delay, easing: 'cubic-bezier(.2,.75,.25,1)' });
     animation.id = 'digivated-content-entrance';
     active.set(element, animation);
     animation.finished.then(() => finish(element), () => {

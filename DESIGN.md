@@ -53,3 +53,9 @@ The refined black-glass palette uses cyan and violet ambient pools in the homepa
 ## Motion experience — November 8, 2026
 
 References read: [Scrolltide](https://www.scrolltide.co/), [ScrollShaders](https://scrollshaders.com/) and [Footer.design](https://www.footer.design/), via the supplied Himanshu post. Original native CSS and Web Animations implementations; no third-party source copied or new runtime dependencies. One-shot hero light arrival (4.5s), small content entrances, fine-pointer glass highlights, short dialog entry, CTA arrow feedback and legible cyan active-tab indicators. Keep the reel's existing controls, focus and reduced-motion behavior. No scroll hijacking, tilt on moving cards, content hidden pending JS, or delayed dialog closing. Pointer light clears on exit, hidden tabs and preference changes; entrances cancel on focus, hidden tabs or reduced motion.
+
+## Black and purple refinement — November 8, 2026
+
+Latest user direction supersedes the earlier cyan/glass motion treatment. Reference: [dark.design](https://www.dark.design/), including the gallery's Railway example. Use #050505 canvas, #101014 cards, neutral white/gray text, #c3a0ff link/focus accents, and a saturated purple primary action. Keep a single static purple hero glow, crisp hairlines and restrained elevation. Keep centered geometry and actual project artwork.
+
+Performance takes priority over decorative motion: disable backdrop filters across all three layouts, remove per-card reel float animations, omit the duplicate studio/pointer-light scripts from the public layout, and render hero text immediately. Retain the single controlled reel, native scrolling, keyboard controls, and short dialog/section entrances. No new dependencies or changes to auth, moderation, payment, or project data. See `docs/black-purple-performance.md` for the controlled before/after sample.
