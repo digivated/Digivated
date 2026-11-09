@@ -33,3 +33,6 @@ html#digivated-root .membership-access .carousel-access { background:#101014; pa
 .membership-access label { display:block; font-size:13px; }
 .membership-access form p { margin:0; }
 html#digivated-root .membership-benefit-icon { color:#cba6ff; }
+
+html#digivated-root .membership-access-note { margin:18px 0 4px; padding:14px 16px; border:1px solid #dcdcdc; border-radius:12px; background:#f7f7f7; color:#505050; font-size:13px; line-height:1.7; }
+html#digivated-root .membership-access-note strong { color:#171717; }

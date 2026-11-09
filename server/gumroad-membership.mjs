@@ -9,7 +9,7 @@ export const SETUP_DIAGNOSTIC_KEY = 'digivated:membership:last-setup';
 class ProviderError extends Error { constructor(reason,status=0){super(reason);this.reason=reason;this.status=status;} }
 const optionalProfileFailure = e => e instanceof ProviderError && ([403,404].includes(e.status)||e.reason==='custom_html_unavailable');
 const retiredSlugs = new Set(['ui-prompt-package','digivated-promo','support-digivated']);
-const accurateDescription = value => typeof value === 'string' && /project spotlight/i.test(value) && /News is not available yet/i.test(value);
+const accurateDescription = value => typeof value === 'string' && /full UI\/UX Prompt Packet/i.test(value) && /member-only carousel library/i.test(value) && /project spotlight/i.test(value) && /News is not available yet/i.test(value);
 const backupFields = ['id','name','price','currency','published','description','custom_summary','custom_receipt','max_purchase_count','custom_html','covers'];
 export async function remapGumroadMembership({token,redis,fetcher=fetch,assets}) {
   if(typeof token!=='string'||!/[A-Za-z0-9]/.test(token)||!/^\S{20,500}$/.test(token)||/[^\x21-\x7e]/.test(token))throw new AdminError(400,'Enter a valid Gumroad seller API key.');

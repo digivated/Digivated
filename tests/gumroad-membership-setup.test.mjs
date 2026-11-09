@@ -27,7 +27,7 @@ function provider(failAt='',failureStatus=403){
   return new Response(JSON.stringify(data),{status:200});
  };return{fetcher,calls,products,product};
 }
-const assets={offer:{name:membership.name,price:500,price_currency_type:'usd',description:'One project spotlight. News is not available yet.'},html:'<style>body{background:black}</style><h1>One membership.</h1>'};
+const assets={offer:{name:membership.name,price:500,price_currency_type:'usd',description:'Full UI/UX Prompt Packet and member-only carousel library. One project spotlight. News is not available yet.'},html:'<style>body{background:black}</style><h1>One membership.</h1>'};
 test('seller remap publishes the exact one-time offer, retires only known products, and never persists the key',async()=>{
  const db=storage(),p=provider();const result=await remapGumroadMembership({token:key,redis:db.redis,fetcher:p.fetcher,assets});
  assert.equal(result.ready,true);assert.equal(result.checkoutUrl,membership.checkoutUrl);
