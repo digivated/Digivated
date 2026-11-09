@@ -2,4 +2,20 @@
 import Platform from '../layouts/Platform.astro';
 import '../styles/project-account.css';
 ---
-<Platform title="Creators" description="Meet independent builders sharing their work on Digivated."><section class="creator-public"><header class="creator-directory-intro"><p class="eyebrow">THE PEOPLE BUILDING</p><h1>Meet the creators.</h1><p>Find builders, explore their projects, and follow their work.</p></header><nav class="creator-tabs" aria-label="Creator directory"><button class="active" type="button" data-creator-filter="all">Discover</button><button type="button" data-creator-filter="following">Following</button></nav><label class="creator-search-label">Find a creator<input id="creator-search" type="search" placeholder="Search builders by name or bio" autocomplete="off"/></label><p id="creators-status" role="status">Loading creators…</p><div id="creators-grid" class="creator-directory-list"></div></section><script>import '../scripts/creators.js';</script></Platform>
+<Platform title="Creators" description="A place for independent builders to share progress, ask questions, and meet other creators.">
+  <section class="creator-social" aria-labelledby="creators-title">
+    <header class="creator-social-heading"><p class="eyebrow">THE BUILDER CONVERSATION</p><h1 id="creators-title">Creators</h1><p>Share what you’re making, ask for feedback, and meet the people behind the projects.</p></header>
+    <div class="creator-social-layout">
+      <main class="creator-social-main">
+        <nav class="creator-tabs" aria-label="Creator feed"><button class="active" type="button" data-creator-filter="latest">Latest</button><button type="button" data-creator-filter="following">Following</button><button type="button" data-creator-filter="people">People</button></nav>
+        <section id="creator-composer" class="creator-composer" hidden aria-label="Write a post"><label for="creator-post-body">What are you building?</label><textarea id="creator-post-body" maxlength="280" rows="3" placeholder="Share progress, ask a question, or start a conversation…"></textarea><div class="creator-composer-bottom"><span>Keep links on your project profile · <span id="creator-post-count">0</span>/280</span><button id="creator-post-submit" class="button primary" type="button">Post</button></div></section>
+        <p id="creators-status" role="status" aria-live="polite">Loading the conversation…</p>
+        <div id="creators-feed" class="creator-timeline"></div>
+        <button id="creators-more" class="button" type="button" hidden>Load more</button>
+        <div id="creators-people" hidden><label class="creator-search-label">Find a creator<input id="creator-search" type="search" placeholder="Search builders by name or bio" autocomplete="off"/></label><div id="creators-grid" class="creator-directory-list"></div></div>
+      </main>
+      <aside class="creator-social-sidebar"><h2>Your space</h2><p>Keep your posts and published projects together on your creator profile.</p><a id="creator-my-profile" class="button" href="/account">My profile</a><a href="/account">Edit profile and logo →</a><div class="creator-social-guidelines"><strong>Good conversation starts here</strong><p>Share useful updates and specific feedback. Project links live on profiles, so the feed stays easy to read.</p></div></aside>
+    </div>
+  </section>
+  <script>import '../scripts/creators.js';</script>
+</Platform>

@@ -1,34 +1,26 @@
 import {accountSession} from './account-session.js';
-
-const status=document.getElementById('creators-status'),list=document.getElementById('creators-grid'),search=document.getElementById('creator-search');
-const tabs=[...document.querySelectorAll('[data-creator-filter]')];
-let creators=[],filter='all',auth=null,following=new Set();
+const $=id=>document.getElementById(id),status=$('creators-status'),feed=$('creators-feed'),people=$('creators-people'),list=$('creators-grid'),search=$('creator-search'),tabs=[...document.querySelectorAll('[data-creator-filter]')];
+let creators=[],view='latest',auth=null,ownId=null,following=new Set(),offset=0,next=null;
 const profileUrl=id=>'/creator?id='+encodeURIComponent(id);
-const render=()=>{
- const query=search.value.trim().toLowerCase();
- const visible=creators.filter(creator=>(filter==='all'||following.has(creator.id))&&(!query||(creator.name+' '+(creator.bio||'')).toLowerCase().includes(query)));
- status.textContent=visible.length?`${visible.length} ${visible.length===1?'creator':'creators'}`:filter==='following'?'You are not following any creators here yet.':query?'No creators match your search.':'No public creator profiles yet.';
- list.replaceChildren();
- for(const creator of visible){
-  const card=document.createElement('article');card.className='creator-directory-card';
-  const link=document.createElement('a');link.className='creator-directory-identity';link.href=profileUrl(creator.id);
-  const avatar=document.createElement('span');avatar.className='creator-avatar';avatar.setAttribute('aria-hidden','true');avatar.textContent=creator.name.slice(0,1).toUpperCase();
-  if(creator.logoUrl){const image=document.createElement('img');image.src=creator.logoUrl;image.alt='';avatar.replaceChildren(image);}
-  const copy=document.createElement('span'),name=document.createElement('strong'),bio=document.createElement('span');name.textContent=creator.name;bio.textContent=creator.bio||'Building on Digivated.';copy.append(name,bio);link.append(avatar,copy);
-  const actions=document.createElement('div');actions.className='creator-directory-actions';
-  const visit=document.createElement('a');visit.href=profileUrl(creator.id);visit.textContent='View profile';actions.append(visit);
-  if(auth?.state==='signed-in'&&auth.session.user.id!==creator.id){const follow=document.createElement('button');follow.type='button';follow.className='button';follow.textContent=following.has(creator.id)?'Following':'Follow';follow.onclick=async()=>{follow.disabled=true;try{const result=await fetch('/api/creator-profile?action=follow',{method:'POST',headers:{Authorization:`Bearer ${auth.session.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({id:creator.id,operation:following.has(creator.id)?'unfollow':'follow'})}),data=await result.json();if(!result.ok)throw Error(data.error||'Could not update follow.');if(data.following)following.add(creator.id);else following.delete(creator.id);render();}catch(error){status.textContent=error.message;follow.disabled=false;}};actions.append(follow);}
-  card.append(link,actions);list.append(card);
- }
+const avatar=(name,url)=>{const element=document.createElement('span');element.className='creator-avatar';element.setAttribute('aria-hidden','true');element.textContent=(name||'D').slice(0,1).toUpperCase();if(url){const image=document.createElement('img');image.src=url;image.alt='';element.replaceChildren(image);}return element;};
+const api=async(path,options={})=>{const response=await fetch('/api/creator-profile'+path,{cache:'no-store',...options}),data=await response.json();if(!response.ok)throw Error(data.error||'Something went wrong.');return data;};
+const postBody=(body,parentId)=>api('?action=post',{method:'POST',headers:{Authorization:`Bearer ${auth.session.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({body,parentId})});
+const card=post=>{
+ const article=document.createElement('article');article.className='creator-post';article.append(avatar(post.author.name,post.author.logoUrl));
+ const content=document.createElement('div');content.className='creator-post-content';
+ const head=document.createElement('div');head.className='creator-post-head';const author=document.createElement('a');author.href=profileUrl(post.author.id);author.textContent=post.author.name;
+ const time=document.createElement('time');time.dateTime=post.createdAt;time.textContent=new Date(post.createdAt).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});head.append(author,time);
+ const body=document.createElement('p');body.textContent=post.body;content.append(head,body);
+ const actions=document.createElement('div');actions.className='creator-post-actions';const reply=document.createElement('button');reply.type='button';reply.textContent=`Reply${post.replies?` · ${post.replies}`:''}`;actions.append(reply);
+ if(post.author.id===ownId){const remove=document.createElement('button');remove.type='button';remove.textContent='Delete';remove.onclick=async()=>{if(!confirm('Delete this post?'))return;remove.disabled=true;try{await api('?action=delete-post',{method:'POST',headers:{Authorization:`Bearer ${auth.session.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({id:post.id})});article.remove();}catch(error){status.textContent=error.message;remove.disabled=false;}};actions.append(remove);}
+ content.append(actions);const thread=document.createElement('div');thread.className='creator-thread';thread.hidden=true;content.append(thread);
+ reply.onclick=async()=>{thread.hidden=!thread.hidden;if(thread.hidden||thread.dataset.loaded)return;thread.textContent='Loading replies…';try{const data=await api('?action=posts&parent='+encodeURIComponent(post.id));thread.replaceChildren(...data.posts.map(card));thread.dataset.loaded='true';if(auth?.state==='signed-in'){const form=document.createElement('form'),input=document.createElement('textarea'),button=document.createElement('button');input.maxLength=280;input.required=true;input.placeholder='Write a reply without links…';button.type='submit';button.className='button';button.textContent='Reply';form.append(input,button);form.onsubmit=async event=>{event.preventDefault();button.disabled=true;try{const data=await postBody(input.value,post.id);thread.prepend(card(data.post));input.value='';post.replies++;reply.textContent=`Reply · ${post.replies}`;}catch(error){status.textContent=error.message;}finally{button.disabled=false;}};thread.append(form);}else if(!data.posts.length)thread.textContent='No replies yet.';}catch(error){thread.textContent=error.message;}};
+ article.append(content);return article;
 };
-search.addEventListener('input',render);
-for(const tab of tabs)tab.onclick=()=>{filter=tab.dataset.creatorFilter;for(const item of tabs)item.classList.toggle('active',item===tab);render();};
-(async()=>{
- const response=await fetch('/api/creator-profile?action=discover',{cache:'no-store'}),data=await response.json();if(!response.ok)throw Error(data.error||'Could not load creators.');creators=data.creators;
- auth=await accountSession().catch(()=>null);
- if(auth?.state==='signed-in'){
-  const own=await fetch('/api/creator-profile',{headers:{Authorization:`Bearer ${auth.session.access_token}`},cache:'no-store'}).then(r=>r.json()).catch(()=>null);
-  for(const id of own?.followingIds||[])following.add(id);
- }else tabs.find(tab=>tab.dataset.creatorFilter==='following')?.setAttribute('hidden','');
- render();
-})().catch(error=>{status.textContent=error.message;});
+const loadFeed=async(more=false)=>{if(!more){feed.replaceChildren();offset=0;next=null;}status.textContent='Loading posts…';try{const data=await api('?action=posts&offset='+offset);const posts=view==='following'?data.posts.filter(post=>following.has(post.author.id)):data.posts;feed.append(...posts.map(card));next=data.next;offset=next||offset;$('creators-more').hidden=next===null;status.textContent=feed.childElementCount?view==='following'?'Posts from creators you follow':'Latest posts from creators':view==='following'?'Follow creators to see their posts here.':'No posts yet. Start the conversation.';}catch(error){status.textContent=error.message;}};
+const renderPeople=()=>{const query=search.value.trim().toLowerCase(),visible=creators.filter(c=>(c.name+' '+(c.bio||'')).toLowerCase().includes(query));list.replaceChildren();status.textContent=visible.length?`${visible.length} ${visible.length===1?'creator':'creators'}`:query?'No creators match your search.':'No public creator profiles yet.';for(const creator of visible){const row=document.createElement('article');row.className='creator-directory-card';const link=document.createElement('a');link.className='creator-directory-identity';link.href=profileUrl(creator.id);const copy=document.createElement('span'),name=document.createElement('strong'),bio=document.createElement('span');name.textContent=creator.name;bio.textContent=creator.bio||'Building on Digivated.';copy.append(name,bio);link.append(avatar(creator.name,creator.logoUrl),copy);const action=document.createElement('a');action.href=profileUrl(creator.id);action.textContent='View profile →';row.append(link,action);list.append(row);}};
+for(const tab of tabs)tab.onclick=()=>{view=tab.dataset.creatorFilter;for(const item of tabs)item.classList.toggle('active',item===tab);people.hidden=view!=='people';feed.hidden=view==='people';$('creators-more').hidden=true;if(view==='people')renderPeople();else loadFeed();};
+search.addEventListener('input',renderPeople);$('creators-more').onclick=()=>loadFeed(true);
+$('creator-post-body').addEventListener('input',event=>{$('creator-post-count').textContent=event.target.value.length;});
+$('creator-post-submit').onclick=async()=>{const button=$('creator-post-submit'),input=$('creator-post-body');button.disabled=true;try{const data=await postBody(input.value,null);input.value='';$('creator-post-count').textContent='0';if(view==='latest')feed.prepend(card(data.post));status.textContent='Your post is live.';}catch(error){status.textContent=error.message;}finally{button.disabled=false;}};
+(async()=>{const data=await api('?action=discover');creators=data.creators;auth=await accountSession().catch(()=>null);if(auth?.state==='signed-in'){const own=await api('',{headers:{Authorization:`Bearer ${auth.session.access_token}`}});ownId=own.id;following=new Set(own.followingIds||[]);$('creator-my-profile').href=own.profile?.public?profileUrl(ownId):'/account';$('creator-composer').hidden=!own.profile?.public;if(!own.profile?.public)status.textContent='Make your profile public in your account to join the conversation.';}else{$('creator-composer').hidden=false;$('creator-composer').replaceChildren();const signIn=document.createElement('a');signIn.className='button primary';signIn.href='/login?next=%2Fcreators';signIn.textContent='Sign in to post';$('creator-composer').append(signIn);tabs.find(tab=>tab.dataset.creatorFilter==='following')?.setAttribute('hidden','');}await loadFeed();})().catch(error=>{status.textContent=error.message;});
