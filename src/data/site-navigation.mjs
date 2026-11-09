@@ -1,9 +1,9 @@
 // Canonical public destinations shared by the header and footer.
 export const primaryLinks = [
   ['/discover', 'Projects'],
-  ['/rankings', 'Rankings'],
-  ['/ai-tools', 'AI tools'],
   ['/news', 'News'],
+  ['/ai-tools', 'AI tools'],
+  ['/rankings', 'Rankings'],
 ];
 export const menuLinks = [
   ...primaryLinks,
