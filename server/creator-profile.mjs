@@ -48,6 +48,7 @@ export function makeCreatorProfileHandler(deps={}){
    }
    if(req.method==='GET'){
     const raw=await redis(['GET',key(account.id)]);
+    if(raw){try{const saved=JSON.parse(raw);if(saved.public)await redis(['ZADD',publicIndex,Date.parse(saved.updatedAt)||Date.now(),account.id]);}catch{}}
     return send(200,{profile:raw?JSON.parse(raw):{name:'',bio:'',website:'',social:'',public:false},id:account.id,following:Number(await redis(['SCARD',`digivated:creator:following:${account.id}`]))||0});
    }
    if(req.headers.origin!=='https://digivated.com'||req.headers['sec-fetch-site']==='cross-site'||!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))return send(403,{error:'Open your account on Digivated.'});
