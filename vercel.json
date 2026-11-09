@@ -59,6 +59,19 @@
           "value": "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; media-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'self' https://x.com https://*.x.com https://twitter.com https://*.twitter.com; form-action 'none'; upgrade-insecure-requests"
         }
       ]
+    },
+    {
+      "source": "/downloads/Digivated-X-Video.mp4",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"Digivated-X-Video.mp4\""
+        },
+        {
+          "key": "Content-Type",
+          "value": "video/mp4"
+        }
+      ]
     }
   ],
   "redirects": [
