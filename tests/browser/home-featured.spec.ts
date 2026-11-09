@@ -5,11 +5,12 @@ for(const width of[1440,390])test(`compact featured projects sit above the only 
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width,height:1000});
  await page.addInitScript(()=>sessionStorage.setItem('digivated-announcement-seen-v2','1'));
- await page.route('**/api/**',route=>{const u=new URL(route.request().url());if(u.pathname==='/api/projects')return route.fulfill({json:{items:u.searchParams.get('offset')==='100'?[project('gamma'),project('alpha')]:[project('alpha'),project('beta'),project('approved','approved')],next:u.searchParams.get('offset')==='100'?null:100}});if(u.pathname==='/api/project-account')return route.fulfill({json:{ready:false}});return route.fulfill({json:{items:[],next:null,views:{},likes:{},counts:{}}})});
+ await page.route('**/api/**',route=>{const u=new URL(route.request().url());if(u.pathname==='/api/projects')return route.fulfill({json:{items:u.searchParams.get('offset')==='100'?[{...project('gamma'),views:30},project('alpha')]:[{...project('alpha'),views:10},{...project('beta'),views:20},project('approved','approved')],next:u.searchParams.get('offset')==='100'?null:100}});if(u.pathname==='/api/project-account')return route.fulfill({json:{ready:false}});return route.fulfill({json:{items:[],next:null,views:{},likes:{},counts:{}}})});
  await page.goto(base+'/');
  await expect(page.locator('[data-home-featured]')).toHaveAttribute('data-ready','true');
  await expect(page.locator('.home-featured-card')).toHaveCount(3);
- expect(await page.locator('.home-featured-card').evaluateAll(es=>es.map(e=>(e as HTMLElement).dataset.featuredProject))).toEqual(['alpha','beta','gamma']);
+ expect(await page.locator('.home-featured-card').evaluateAll(es=>es.map(e=>(e as HTMLElement).dataset.featuredProject))).toEqual(['gamma','beta','alpha']);
+ expect(await page.locator('.home-featured-card').evaluateAll(es=>es.map(e=>(e as HTMLElement).dataset.featuredRank))).toEqual(['gold','silver','bronze']);
  const order=await page.evaluate(()=>{const featured=document.querySelector('[data-home-featured]')!,reel=document.querySelector('.project-reel')!;return Boolean(featured.compareDocumentPosition(reel)&Node.DOCUMENT_POSITION_FOLLOWING)});
  expect(order).toBe(true);
  await expect(page.locator('[data-project-ticker]')).toHaveCount(1);
@@ -21,7 +22,7 @@ for(const width of[1440,390])test(`compact featured projects sit above the only 
  expect(await card.evaluate(e=>e.getBoundingClientRect().height)).toBeLessThanOrEqual(154);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);
  await card.click();
- await expect(page.locator('#wall-focus-title')).toHaveText('Project alpha');
+ await expect(page.locator('#wall-focus-title')).toHaveText('Project gamma');
  await expect(page.locator('.project-wall')).toHaveCount(1);
  expect(errors).toEqual([]);
 });

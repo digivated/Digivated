@@ -22,11 +22,20 @@ if (section) {
       offset = page.next;
     } while (offset != null);
     if (!items.length) { section.hidden = true; return; }
+    items.sort((a,b)=>(Number.isFinite(Number(b.views))?Number(b.views):0)-(Number.isFinite(Number(a.views))?Number(a.views):0));
     rail.replaceChildren(...items.map((project, index) => {
       const card = createShowcaseCard(project, index);
       card.classList.replace('project-reel-card', 'home-featured-card');
       card.dataset.featuredProject = project.id;
       card.dataset.projectId = project.id;
+      if (index < 3) {
+        const place = ['gold','silver','bronze'][index];
+        card.dataset.featuredRank = place;
+        const badge = document.createElement('span');
+        badge.className = 'home-featured-rank';
+        badge.textContent = `${index+1}${['st','nd','rd'][index]} place`;
+        card.querySelector('.project-reel-art').append(badge);
+      }
       const views = document.createElement('span');
       views.className = 'home-featured-views';
       const eye = document.createElement('span'); eye.innerHTML = cardIconMarkup('eye');
