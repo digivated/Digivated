@@ -6,13 +6,13 @@ for(const width of [320,390,1440])test(`News access, categories and layout at ${
  await page.route('**/api/**',r=>{
   if(!r.request().url().includes('/api/news'))return r.fulfill({json:{ready:false,items:[],next:null,counts:{},views:{}}});
   const category=new URL(r.request().url()).searchParams.get('category');
-  const item={id:'a'.repeat(24),headline:'Microsoft confirms a critical Windows security update',summary:'',locked:true,category:'security',classification:'breaking',sourceName:'Microsoft Security',sourceUrl:'https://www.microsoft.com/en-us/security/blog/',sourcePublishedAt:at,publishedAt:at,verifiedAt:at};
-  return r.fulfill({json:{items:category==='markets'?[]:[item],featured:category==='markets'?null:item,next:null,member:false,updatedAt:at,pipeline:{status:'ok'},markets:{status:'unavailable',items:[]}}});
+  const item={id:'a'.repeat(24),headline:'Microsoft confirms a critical Windows security update',summary:'Microsoft published a security update.',locked:false,category:'security',classification:'breaking',sourceName:'Microsoft Security',sourceUrl:'https://www.microsoft.com/en-us/security/blog/',sourcePublishedAt:at,publishedAt:at,verifiedAt:at};
+  return r.fulfill({json:{items:category==='markets'?[]:[item],featured:category==='markets'?null:item,next:null,member:true,updatedAt:at,pipeline:{status:'ok'},markets:{status:'unavailable',items:[]}}});
  });
  await page.goto('http://127.0.0.1:4321/news');
  await expect(page.locator('#news-title')).toBeVisible();
  await expect(page.locator('.news-editorial')).toContainText('Microsoft');
- await expect(page.locator('[data-news-page] a[href="/membership#member-sign-in"]').first()).toBeVisible();
+ await expect(page.locator('[data-news-refresh] svg')).toHaveCount(0);
  await expect(page.locator('[data-news-page] a[href^="https://www.microsoft.com"]').first()).toHaveAttribute('rel',/noopener/);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.locator('[data-news-category="markets"]').click();
@@ -51,12 +51,12 @@ test('News desk loads a review and requires source confirmation to publish',asyn
  expect(errors).toEqual([]);
 });
 
-test('Markets labels issuer announcements and explicit tickers without exposing member summaries',async({page})=>{
+test('Markets labels issuer announcements and explicit tickers for members',async({page})=>{
  const at=new Date().toISOString();
  const item={id:'c'.repeat(24),headline:'Example reports quarterly financial results',summary:'',locked:true,category:'markets',sourceType:'issuer-release',tickers:[{exchange:'NASDAQ',symbol:'SMALL'}],classification:'update',sourceName:'GlobeNewswire',sourceUrl:'https://www.globenewswire.com/news-release/example.html',sourcePublishedAt:at,publishedAt:at};
- await page.route('**/api/news*',r=>r.fulfill({json:{items:[item],featured:null,next:null,member:false,markets:{items:[]},pipeline:{status:'ok'}}}));
+ await page.route('**/api/news*',r=>r.fulfill({json:{items:[item],featured:null,next:null,member:true,markets:{items:[]},pipeline:{status:'ok'}}}));
  await page.goto('http://127.0.0.1:4321/news?category=markets');
  await expect(page.locator('.news-story')).toContainText('Company announcement');
  await expect(page.locator('.news-story')).toContainText('NASDAQ: SMALL');
- await expect(page.locator('.news-story')).toContainText('Full briefing for Digivated members');
+ await expect(page.locator('.news-story')).toContainText('Example reports');
 });

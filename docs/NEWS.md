@@ -1,6 +1,6 @@
 # Digivated News
 
-`/news` publishes sourced updates in AI & Tech, Markets, and Security. Public readers see headlines, labels, original source links, and the source and Digivated publication times. Verified members and the owner can read full summaries. Member access is checked server-side; locked summaries do not enter the public search response.
+`/news` publishes sourced updates in AI & Tech, Markets, and Security. Visitors can read the five newest stories with their summaries and original sources. The rest of the archive and market snapshot require verified membership or owner access. Member access is checked server-side before the feed is read.
 
 ## Automatic publication
 
@@ -14,7 +14,7 @@ Independent-reporting feeds also pass a topic check before publication. This pre
 
 Significant official developments within six hours can be labeled **Breaking**. Independent reporting and older qualifying stories are labeled **Update**. Issuer releases are identified as company announcements. A source link is available on every story. These rules support prompt automated coverage but do not guarantee that every event is detected.
 
-The market snapshot is separate from editorial articles. Its observations retain their source dates and refresh during the twice-daily checks; unavailable data leaves the prior dated snapshot in place.
+The member-only market snapshot is separate from editorial articles. Its observations retain their source dates and refresh during the twice-daily checks; unavailable data leaves the prior dated snapshot in place.
 
 ## Starter backfill
 

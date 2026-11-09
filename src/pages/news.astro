@@ -3,13 +3,15 @@ import Platform from '../layouts/Platform.astro';
 import UiIcon from '../components/UiIcon.astro';
 import '../styles/news.css';
 ---
-<Platform title="News" description="Source-checked reporting on AI and technology, markets, and security. Read the latest headlines and follow the original sources." canonicalPath="/news">
+<Platform title="News" description="Member briefings on AI and technology, markets, and security, with original sources and publication times." canonicalPath="/news">
   <section class="news-page" data-news-page aria-labelledby="news-title">
     <header class="news-masthead">
       <div><p class="news-eyebrow">THE DIGIVATED BRIEFING</p><h1 id="news-title">News worth knowing.</h1><p class="news-intro">AI & tech. Markets. Security. The important developments, with the source in view.</p></div>
-      <div class="news-check"><span data-news-checked>Checking the latest reporting</span><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><UiIcon name="arrow" size={15}/><span>Refresh</span></button></div>
+      <div class="news-check"><span data-news-checked>Checking the latest reporting</span><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><span>Refresh</span></button></div>
     </header>
-    <div class="news-toolbar">
+    <p class="news-access-status" data-news-access-status role="status">Loading the latest reporting…</p>
+    <section class="news-gate" data-news-gate hidden aria-labelledby="news-gate-title"><p class="news-eyebrow">MEMBER ACCESS</p><h2 id="news-gate-title">Go beyond the latest.</h2><p>Read the full News archive and market snapshot with Digivated Membership.</p><a href="/membership#member-sign-in">Unlock all News <span aria-hidden="true">↗</span></a><p>Already a member? Verify your purchase on the membership page, then return here.</p></section>
+    <div class="news-toolbar" hidden>
       <div class="news-filters" role="group" aria-label="News category">
         <button type="button" data-news-category="all" aria-pressed="true">Latest</button>
         <button type="button" data-news-category="ai-tech" aria-pressed="false">AI & Tech</button>
@@ -18,8 +20,7 @@ import '../styles/news.css';
       </div>
       <label class="news-search"><UiIcon name="search" size={17}/><span class="sr-only">Search news</span><input data-news-search type="search" maxlength="120" placeholder="Search a topic, company or ticker" autocomplete="off"/></label>
     </div>
-    <p class="news-member-note" data-news-member-note hidden>Headlines and original sources are open to everyone. <a href="/membership#member-sign-in">Verify membership for full briefings <span aria-hidden="true">↗</span></a></p>
-    <div class="news-layout">
+    <div class="news-layout" hidden>
       <div class="news-editorial">
         <section class="news-feature" data-news-feature aria-label="Featured story" hidden></section>
         <section class="news-latest" aria-labelledby="news-latest-title">
@@ -29,7 +30,7 @@ import '../styles/news.css';
           <button class="news-more" data-news-more type="button" hidden>More stories <UiIcon name="arrow" size={15}/></button>
         </section>
       </div>
-      <aside class="news-sidebar" aria-label="Market data and editorial standards">
+      <aside class="news-sidebar" aria-label="Market data and editorial standards" data-news-sidebar>
         <section class="news-market" aria-labelledby="news-markets-title">
           <header class="news-section-heading"><h2 id="news-markets-title">Market snapshot</h2><span class="news-data-label">DATA</span></header>
           <p class="news-market-note" data-news-market-note>Checking available market data</p>

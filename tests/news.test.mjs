@@ -36,13 +36,13 @@ test('rumors, negated claims, stale stories and uncertain importance cannot auto
  assert.equal(assessCandidate({...c,headline:'How to protect Windows'},{now}).classification,'update');
  assert.equal(assessCandidate({...c,sourcePublishedAt:new Date(now-7*3600000).toISOString(),evidence:{...c.evidence,articlePublishedAt:null}},{now}).classification,'update');
 });
-test('public response strips summaries and private evidence; member response unlocks only summary',async()=>{
+test('public News is limited to five recent stories; members get the archive and markets',async()=>{
  const record={id:'a'.repeat(24),...verified(),tickers:[{symbol:'SMALL',exchange:'NASDAQ'}],summary:'PRIVATE MEMBER SUMMARY',publishedAt:new Date(now).toISOString(),updatedAt:new Date(now).toISOString(),classification:'breaking',importance:95};
  const redis=async cmd=>cmd[0]==='ZREVRANGE'?[record.id]:cmd[0]==='MGET'?[JSON.stringify(record)]:null;
  const handler=member=>makeNewsHandler({redis,env:{},member:async()=>member,now:()=>now});
+ const publicResult=await call(handler(false));assert.equal(publicResult.code,200);assert.equal(publicResult.body.member,false);assert.equal(publicResult.body.items[0].summary,record.summary);assert.equal(publicResult.body.next,null);assert.equal(publicResult.headers.Vary,'Cookie');assert.match(publicResult.headers['Cache-Control'],/no-store/);
+ for(const secret of ['sourceText','contentHash','feedSummary'])assert.equal(JSON.stringify(publicResult.body).includes(secret),false);
  assert.equal((await call(handler(false),'/api/news?q=%24SMALL')).body.items.length,1);
- const publicResult=await call(handler(false));assert.equal(publicResult.code,200);assert.equal(publicResult.body.items[0].locked,true);assert.equal(publicResult.headers.Vary,'Cookie');assert.match(publicResult.headers['Cache-Control'],/no-store/);
- for(const secret of ['PRIVATE MEMBER SUMMARY','sourceText','contentHash','feedSummary'])assert.equal(JSON.stringify(publicResult.body).includes(secret),false);
  assert.equal((await call(handler(false),'/api/news?q=PRIVATE')).body.items.length,0);
  assert.equal((await call(handler(true))).body.items[0].summary,record.summary);
  assert.equal((await call(handler(true),'/api/news?q=PRIVATE')).body.items.length,1);
