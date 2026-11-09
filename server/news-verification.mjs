@@ -66,10 +66,14 @@ export function assessCandidate(candidate,{now=Date.now()}={}){
  if(routine.test(candidate.headline))return reject('routine_or_promotional_update');
  const guidance=/\b(?:how to|tips|tutorial|guide to|best practices)\b/i.test(candidate.headline);
  const significant=candidate.sourceType==='issuer-release'||guidance?usefulUpdate(candidate):materiality(candidate)||usefulUpdate(candidate);
- if(!significant)return review('importance_requires_editorial_judgment');
- const category=significant.category||(/\b(?:vulnerabilit|zero.day|exploit|breach|cyber|ransomware|threat actor)/i.test(candidate.headline)?'security':candidate.category);
+ // Source-confirmed, recent editorial updates are useful even when they do not
+ // match a narrow breaking-news pattern. Keep them clearly labeled Update.
+ if(!significant&&candidate.sourceType==='issuer-release')return review('importance_requires_editorial_judgment');
+ if(!significant&&candidate.sourceType!=='official-publisher'&&candidate.sourceType!=='independent-reporting')return review('importance_requires_editorial_judgment');
+ const selected=significant||{importance:45,reason:'verified_source_update',breaking:false};
+ const category=selected.category||(/\b(?:vulnerabilit|zero.day|exploit|breach|cyber|ransomware|threat actor)/i.test(candidate.headline)?'security':candidate.category);
  if(!['ai-tech','markets','security'].includes(category))return review('category_unconfirmed');
  const summary=(candidate.sourceType==='issuer-release'?'Company announcement: ':'')+excerpt(candidate.sourceText);
  if(summary.length<60)return review('source_summary_too_short');
- return {decision:'publish',classification:significant.breaking&&age<=BREAKING_MAX_AGE?'breaking':'update',category,summary,importance:significant.importance,reasons:[significant.reason],eventKey:newsEventKey(candidate),policyVersion:'news-verified-updates-v2'};
+ return {decision:'publish',classification:selected.breaking&&age<=BREAKING_MAX_AGE?'breaking':'update',category,summary,importance:selected.importance,reasons:[selected.reason],eventKey:newsEventKey(candidate),policyVersion:'news-verified-updates-v3'};
 }

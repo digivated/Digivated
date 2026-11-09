@@ -2,7 +2,7 @@ import {randomUUID} from 'node:crypto';
 import {collectCandidates,isTrustedNewsUrl} from './news-sources.mjs';
 import {assessCandidate,NEWS_MAX_AGE,BREAKING_MAX_AGE} from './news-verification.mjs';
 import {fetchMarketSnapshot} from './news-markets.mjs';
-import {NEWS,CATEGORIES,insertNews} from './news-store.mjs';
+import {NEWS,CATEGORIES,insertNews,saveNewsRecord} from './news-store.mjs';
 const RELEASE="if redis.call('GET',KEYS[1])==ARGV[1] then return redis.call('DEL',KEYS[1]) end return 0";
 function tokens(text){return new Set(String(text).toLowerCase().replace(/[^a-z0-9 -]/g,' ').split(/\s+/).filter(t=>t.length>3&&!['with','from','that','this','after','their','security','announces'].includes(t)));}
 function related(a,b){const x=tokens(a),y=tokens(b);if(x.size<5||y.size<5)return false;const shared=[...x].filter(t=>y.has(t)).length;return shared/Math.max(x.size,y.size)>=.78;}
@@ -15,6 +15,18 @@ export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Dat
  try{
   const ids=await redis(['ZREVRANGE',NEWS+'index:all',0,149]);
   const existing=ids.length?(await redis(['MGET',...ids.map(id=>NEWS+'story:'+id)])).filter(Boolean).map(JSON.parse):[];
+  // Reassess earlier review records when the policy changes. The original
+  // source evidence must still pass and the source must still be within 48h.
+  for(const old of existing.filter(r=>r.status==='review')){
+   if(now()-started>235000)break;
+   const age=now()-Date.parse(old.sourcePublishedAt);
+   if(!Number.isFinite(age)||age<0||age>NEWS_MAX_AGE||old.reasons?.some(r=>/duplicate/i.test(r)))continue;
+   const candidate={...old,evidence:old.evidence,sourceText:old.sourceText,tickers:old.tickers};
+   const assessment=assess(candidate,{now:now()});
+   if(assessment.decision!=='publish'||!isTrustedNewsUrl(old.sourceUrl))continue;
+   try{await saveNewsRecord(redis,{id:old.id,revision:old.revision,headline:old.headline,summary:assessment.summary,category:assessment.category,classification:assessment.classification,status:'published',reviewNote:'Published after renewed source and policy checks.',verificationConfirmed:false},now());report.published++;old.status='published';}
+   catch{report.errors.push('A reviewed story could not be promoted; it remains private.');}
+  }
   let cachedMarket=null;try{cachedMarket=JSON.parse(await redis(['GET',NEWS+'markets']));}catch{}
   const marketTask=cachedMarket&&started-Date.parse(cachedMarket.updatedAt)<3600000?Promise.resolve(cachedMarket):markets({fetcher,now:started});
   const [collection,snapshot]=await Promise.allSettled([collect({fetcher,now:started,knownUrls:existing.map(r=>r.sourceUrl)}),marketTask]);
