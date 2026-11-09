@@ -310,3 +310,6 @@ html#digivated-root .wall-card-open:focus-visible { outline:2px solid #bda0ec!im
 html#digivated-root .wall-collection-controls button { box-shadow:none!important; }
 html#digivated-root .wall-card-actions button { background:transparent!important; border-color:transparent!important; box-shadow:none!important; }
 html#digivated-root .wall-card-actions button:is(:hover,[aria-pressed=true]) { background:#ad83ed18!important; }
+
+/* Stable counter alignment; motion runs once per real update through WAAPI. */
+html#digivated-root :is([data-project-views],[data-resource-views],[data-site-visits],[data-site-online]) { display:inline-flex; align-items:center; font-variant-numeric:tabular-nums; }
