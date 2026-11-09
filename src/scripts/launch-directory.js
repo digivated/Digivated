@@ -29,16 +29,23 @@ if(root){
   const matches=projects.filter(p=>category==='All'||(ai?aiTopics(p).includes(category):p.category===category)).filter(p=>(p.name+' '+p.description+' '+p.creator).toLowerCase().includes(query));
   matches.sort((a,b)=>(b.votes?.[period]||0)-(a.votes?.[period]||0)||String(b.date||'').localeCompare(String(a.date||''))||a.id.localeCompare(b.id));
   root.querySelector('[data-launch-total]').textContent=matches.length+(ai?(matches.length===1?' tool':' tools'):(matches.length===1?' project':' projects'));
+  if(!ai){
+   const votes=matches.reduce((sum,p)=>sum+(p.votes?.[period]||0),0);
+   root.querySelector('[data-ranking-votes]').textContent=votes.toLocaleString()+(votes===1?' upvote':' upvotes');
+   root.querySelector('[data-ranking-context]').textContent={daily:'Upvotes received today · resets at 00:00 UTC',weekly:'Upvotes received this week · weeks start Monday (UTC)',monthly:'Upvotes received this month · calendar month (UTC)',all:'Every upvote, including votes before period tracking'}[period];
+  }
   root.querySelector('[data-ranking-title]').textContent=ai?(category==='All'?'All AI tools':category+' tools'):{daily:"Today's rankings",weekly:"This week's rankings",monthly:"This month's rankings",all:"All-time rankings"}[period];
   root.querySelectorAll('[data-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.period===period)));
   root.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===category)));
   list.replaceChildren();status.textContent=matches.length?'':'No projects match yet. Try another category or search.';
   for(const [i,p] of matches.slice(0,limit).entries()){
-   const row=text('li','','launch-row');row.append(text('span',String(i+1).padStart(2,'0'),'launch-rank'));
-   const image=document.createElement('img');image.className='launch-logo';image.src=safe(p.image);image.alt='';image.loading='lazy';image.width=64;image.height=64;image.onerror=()=>{image.hidden=true;};row.append(image);
+   const row=text('li','','launch-row');row.dataset.projectId=p.id;if(!ai&&i<3)row.classList.add('ranking-front-runner');row.append(text('span',String(i+1).padStart(2,'0'),'launch-rank'));
+   const image=document.createElement('img');image.className='launch-logo';image.src=safe(p.image);image.alt='';image.loading=i<3?'eager':'lazy';image.width=64;image.height=64;image.onerror=()=>{image.hidden=true;};
+   if(ai)row.append(image);else{const artwork=text('a','','ranking-artwork');artwork.href=safe(p.pageUrl||'/discover#project-'+p.id);artwork.setAttribute('aria-label','Explore '+p.name);artwork.append(image,text('span',p.name.slice(0,1).toUpperCase(),'ranking-image-fallback'));row.append(artwork);}
    const copy=text('div','','launch-copy'),heading=text('h3',''),link=text('a',p.name);link.href=safe(p.pageUrl||'/discover#project-'+p.id);heading.append(link);copy.append(heading,text('p',p.description||''));
-   const meta=text('div','','launch-meta');meta.append(text('span',p.category||'Project'));const visit=text('a','Visit website ↗');visit.href=safe(p.url);visit.target='_blank';visit.rel='noopener noreferrer';meta.append(visit);copy.append(meta);row.append(copy);
+   const meta=text('div','','launch-meta');meta.append(text('span',p.category||'Project'));const visit=text('a',ai?'Visit website ↗':'Visit website');if(!ai){const icon=text('span','');icon.innerHTML=cardIconMarkup('external');visit.append(icon);}visit.href=safe(p.url);visit.target='_blank';visit.rel='noopener noreferrer';meta.append(visit);copy.append(meta);row.append(copy);
    const vote=text('button','','launch-vote');vote.type='button';vote.setAttribute('aria-pressed',String(liked(p)));vote.setAttribute('aria-label','Upvote '+p.name);const voteIcon=text('span','');voteIcon.innerHTML=cardIconMarkup('like');vote.append(voteIcon,text('span',String(p.votes?.[period]||0)));
+   if(!ai)vote.append(text('span','Upvote','ranking-vote-label'));
    vote.onclick=async()=>{
     vote.disabled=true;const was=liked(p);
     try{const response=await fetch('/api/card-interactions',{method:'POST',credentials:'omit',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'project',id:p.id,action:was?'remove-upvote':'upvote'}),signal:AbortSignal.timeout(12000)});const data=await response.json();if(!response.ok)throw Error(data.error||'Unable to vote. Please try again.');
