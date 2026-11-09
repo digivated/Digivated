@@ -48,7 +48,8 @@ export function makeAgent(env, redis, fetcher = fetch) {
     if (role === 'scout') return searchX(env, redis, fetcher);
     if (role === 'verifier') return verifyX(env, redis, JSON.parse(prompt.split('Candidate data: ')[1]), fetcher);
     if(env.X_REPLY_DRAFT_MODE==='rules'){
-      const candidates=JSON.parse(prompt.split('Candidate data: ')[1]);
+      const marker=role==='reviewer'?'Data: ':'Candidate data: ';
+      const candidates=JSON.parse(prompt.slice(prompt.indexOf(marker)+marker.length));
       if(role==='writer')return candidates.map(c=>({url:c.url,reply:groundedReply(c)}));
       if(role==='reviewer')return candidates.map(c=>({url:c.url,acceptable:validReply(c.reply,c.text)&&c.reply===groundedReply(c),reason:'Checked against the verified invitation and fixed Digivated description.'}));
     }
@@ -144,7 +145,14 @@ export function makeResearchHandler(deps = {}) {
       const env = deps.env || process.env;
       const redis = deps.redis || redisClient(env);
       if(req.headers['x-digivated-operator']){
-        if(req.method!=='POST'||new URL(req.url,'https://digivated.com').searchParams.get('operator')!=='research'||!await operatorAccess(req,env,redis,'research'))return send(403,{error:'Operator capability expired, invalid, or already used.'});
+        const action=new URL(req.url,'https://digivated.com').searchParams.get('operator');
+        if(req.method!=='POST'||!['research','research-retry'].includes(action)||!await operatorAccess(req,env,redis,action))return send(403,{error:'Operator capability expired, invalid, or already used.'});
+        if(action==='research-retry'){
+          const period=new Date().toISOString().slice(0,13);
+          const latest=JSON.parse(await redis(['GET',PREFIX+'latest'])||'null');
+          if(env.X_REPLY_DRAFT_MODE!=='rules'||latest?.period!==period||latest.status!=='failed'||latest.error!=='Grok returned invalid JSON')return send(409,{error:'No matching internal formatting failure to retry.'});
+          await redis(['DEL',PREFIX+'run:'+period]);
+        }
         if(env.X_REPLY_DRAFT_MODE!=='rules'&&!grokConfigured(env))return send(200,{status:'unconfigured',added:0});
         const report=await runResearch(redis,deps.agent||makeAgent(env,redis));
         return send(report.status==='failed'?502:200,report);
