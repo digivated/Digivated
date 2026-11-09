@@ -1,0 +1,8 @@
+import test from 'node:test';import assert from 'node:assert/strict';import{invitationKind,validReply}from'../server/x-reply-rules.mjs';
+for(const source of ['Builders, drop your product links below.','Share your project with us.','What are you building?'])test('project invitation: '+source,()=>{assert.equal(invitationKind(source),'project');assert.equal(validReply('Digivated helps builders get discovered and invite feedback. https://digivated.com',source),true);});
+test('connection-only posts never receive a promotional link',()=>{const text='AI builders, let’s connect';assert.equal(invitationKind(text),'connection');assert.equal(validReply('Let’s connect! https://digivated.com',text),false);assert.equal(validReply('Let’s connect! digivated.com',text),false);assert.equal(validReply('Always good to meet fellow builders. Let’s connect!',text),true);});
+test('no-link requests, exchanges, external links and guarantees are excluded',()=>{
+ for(const text of ['Drop your project, no links please','Share your product without URLs'])assert.equal(invitationKind(text),null);
+ assert.equal(invitationKind('Drop your project for a giveaway'),null);
+ for(const reply of ['Check https://evil.example','Use https://digivated.com.evil.example','Guaranteed traffic https://digivated.com'])assert.equal(validReply(reply,'Drop your product link'),false);
+});

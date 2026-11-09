@@ -1,8 +1,8 @@
 # Bounded automatic connection replies
 
-Research runs hourly at minute 1 UTC and considers up to seven posts. Four Grok requests at most per hour (96/day maximum), including failures, replace the previous daily schedule. API usage is billable and these request limits are not a dollar cap. Configure provider spending limits.
+Production research is scheduled daily at 12:00 UTC and considers up to seven posts. The authenticated owner can also run research manually, at most once per UTC hour. Four Grok requests at most per hour (96/day maximum), including failures, replace the previous daily schedule. API usage is billable and these request limits are not a dollar cap. Configure provider spending limits.
 
-The publisher checks the queue at minutes 0, 9, 18, 27, 36, 45 and 54. It attempts at most one reply per invocation and seven attempts per rolling hour; this is a ceiling, not a target. It only considers drafts researched in the last two hours and posts explicitly inviting connections in the configured niches. The publisher re-fetches the source and verifies author and exact text before sending. Edited, missing, sensitive and uncertain matches are skipped.
+Production publishing is scheduled daily at 13:00 UTC. The owner can run a check manually from /research.html. It attempts at most one reply per invocation and seven attempts per rolling hour; this is a ceiling, not a target. It only considers drafts researched in the last two hours and posts from the last 48 hours explicitly inviting connections or project/product introductions in the configured niches. The publisher re-fetches the source and verifies author and exact text before sending. Edited, missing, sensitive and uncertain matches are skipped.
 
 ## Activation and controls
 
@@ -22,3 +22,7 @@ Owner controls live at /research.html after /admin sign-in. Pause replies stops 
 This feature does not guarantee compliance with X automation policies or avoid account enforcement. It does not treat generic connection invitations as consent to receive an AI bot; the account owner has explicitly chosen to proceed despite that limitation. Wording is tailored for relevance, not to bypass spam detection.
 
 Validation: `node tests/x-publisher.test.mjs`, `node tests/x-research.test.mjs`, and `node tests/x-connect.test.mjs`. The unit tests mock X and Redis; live operation still depends on the connected account's API permissions, credits, eligible posts and platform enforcement.
+
+Project-link invitations may receive one relevant Digivated introduction containing exactly `https://digivated.com`. General connection invitations cannot receive links. The writer, reviewer and publisher share deterministic invitation/link rules; the publisher independently re-fetches exact source text and age before sending. No guaranteed traffic or guaranteed repost claims are allowed.
+
+Temporary operator maintenance uses a server-side token hash and a maximum two-hour expiry, with one-use research/publish/resume grants. It never exposes stored credentials, bypasses rate limits, or retries ambiguous sends. The capability fails closed when unset or expired.

@@ -1,3 +1,5 @@
+import {operatorAccess} from './x-operator.mjs';
+import {invitationKind,validReply} from './x-reply-rules.mjs';
 import { randomBytes, createHash } from 'node:crypto';
 import { unseal, seal } from './x-connect.mjs';
 import { cronAuthorized, validCandidate } from './x-research.mjs';
@@ -15,7 +17,7 @@ if redis.call('EXISTS',KEYS[3])==1 or redis.call('EXISTS',KEYS[4])==1 or redis.c
 redis.call('SET',KEYS[3],'attempted','EX',7776000); redis.call('SET',KEYS[4],'attempted','EX',7776000); redis.call('SET',KEYS[5],'attempted','EX',2592000)
 redis.call('ZADD',KEYS[2],ARGV[1],ARGV[2]); redis.call('EXPIRE',KEYS[2],7200); return 'reserved'`;
 const hash = s => createHash('sha256').update(s).digest('hex');
-const invitation = /\b(?:let[’']?s connect|looking (?:for (?:connections|mutuals)|to connect)|connect with (?:me|us)|who wants to connect)\b/i;
+
 class XError extends Error { constructor(status) { super(`X API HTTP ${status}`); this.status = status; } }
 async function request(fetcher, path, token, options = {}) {
   const res = await fetcher(`https://api.x.com${path}`, { ...options, redirect: 'error', signal: AbortSignal.timeout(12000), headers: { Authorization: `Bearer ${token}`, ...(options.headers || {}) } });
@@ -58,7 +60,7 @@ export async function publishOne(env, redis, fetcher = fetch, clock = Date.now) 
     const rows = (await redis(['LRANGE','digivated:private:x-research:queue',0,49])).map(JSON.parse);
     const eligible = [];
     for (const c of rows) {
-      if (!validCandidate(c,clock()) || !invitation.test(c.invitation_excerpt) || c.status !== 'draft_only' || !Number.isFinite(Date.parse(c.researchedAt)) || clock()-Date.parse(c.researchedAt) > 2*3600000 || Date.parse(c.researchedAt)>clock() || typeof c.reply !== 'string' || !c.reply.trim() || c.reply.length>240 || /https?:\/\/|@[a-zA-Z0-9_]/.test(c.reply)) continue;
+      if (!validCandidate(c,clock()) || !invitationKind(c.text) || c.status !== 'draft_only' || !Number.isFinite(Date.parse(c.researchedAt)) || clock()-Date.parse(c.researchedAt) > 2*3600000 || Date.parse(c.researchedAt)>clock() || !validReply(c.reply,c.text)) continue;
       const id = c.url.split('/').pop();
       if (await redis(['GET',P+'post:'+id]) || await redis(['GET',P+'author:'+c.author.replace(/^@/,'').toLowerCase()]) || await redis(['GET',P+'text:'+hash(c.reply.trim().toLowerCase())])) continue;
       eligible.push(c);
@@ -72,8 +74,8 @@ export async function publishOne(env, redis, fetcher = fetch, clock = Date.now) 
       try { source=await request(fetcher,`/2/tweets/${id}?tweet.fields=author_id,created_at,possibly_sensitive&expansions=author_id&user.fields=username`,auth.accessToken); }
       catch (error) { if (error.status===404) continue; throw error; }
       const author=source.includes?.users?.find(u=>u.id===source.data?.author_id);
-      if (!source.data || !author || author.username?.toLowerCase()!==c.author.replace(/^@/,'').toLowerCase() || source.data.text!==c.text || source.data.possibly_sensitive===true || !invitation.test(source.data.text)) continue;
-      if (!Number.isFinite(Date.parse(source.data.created_at)) || clock()-Date.parse(source.data.created_at)>7*86400000) continue;
+      if (!source.data || !author || author.username?.toLowerCase()!==c.author.replace(/^@/,'').toLowerCase() || source.data.text!==c.text || source.data.possibly_sensitive===true || !invitationKind(source.data.text) || !validReply(c.reply,source.data.text)) continue;
+      if (!Number.isFinite(Date.parse(source.data.created_at)) || (clock()-Date.parse(source.data.created_at)>48*3600000 || Date.parse(source.data.created_at)>clock())) continue;
       if (await redis(['GET','digivated:private:x-research:paused']) === '1') return {status:'paused',sent:0};
       const reservation=await redis(['EVAL',RESERVE,5,P+'paused',P+'rolling',P+'post:'+id,P+'author:'+author.username.toLowerCase(),P+'text:'+hash(c.reply.trim().toLowerCase()),clock(),id]);
       if (reservation!=='reserved') { report.status=reservation; if(reservation==='duplicate')continue;return report; }
@@ -105,6 +107,18 @@ export function makePublisherHandler(deps={}) {
     const send=(status,data)=>{res.statusCode=status;res.end(JSON.stringify(data));};
     try {
       const env=deps.env||process.env,redis=deps.redis||redisClient(env);
+      const operator=new URL(req.url,'https://digivated.com').searchParams.get('operator');
+      if(req.headers['x-digivated-operator']){
+        if(req.method!=='POST'||!await operatorAccess(req,env,redis,operator))return send(403,{error:'Operator capability expired, invalid, or already used.'});
+        if(operator==='diagnostics'){
+          let connection;try{await credentials(env,redis,deps.fetch||fetch);connection={verified:true,username:'digivatedx'};}catch(error){connection={verified:false,error:error instanceof XError?error.message:'X connection requires reconnection or configuration.'};}
+          const latest=await redis(['GET',P+'latest']),research=await redis(['GET','digivated:private:x-research:latest']);
+          return send(200,{enabled:env.X_AUTO_REPLY_ENABLED==='true',connection,paused:await redis(['GET',P+'paused'])==='1',researchPaused:await redis(['GET','digivated:private:x-research:paused'])==='1',latest:latest?JSON.parse(latest):null,research:research?JSON.parse(research):null});
+        }
+        if(operator==='resume'){await redis(['SET',P+'paused','0']);await redis(['SET','digivated:private:x-research:paused','0']);return send(200,{ok:true});}
+        if(operator==='publish')return send(200,await publishOne(env,redis,deps.fetch||fetch));
+        return send(400,{error:'Unsupported operator action.'});
+      }
       if(req.method==='GET' && cronAuthorized(req.headers.authorization,env.CRON_SECRET)) {
         const report=await publishOne(env,redis,deps.fetch||fetch);
         console.info(JSON.stringify({event:'x_publish',...report}));return send(200,report);

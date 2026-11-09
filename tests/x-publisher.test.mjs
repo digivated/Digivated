@@ -38,7 +38,7 @@ function fixture(options={}) {
     const json=url.endsWith('/oauth2/token')?{access_token:'refreshed-access',refresh_token:'rotated-refresh',expires_in:7200,scope:record.scope}
       :url.endsWith('/users/me')?{data:{id:'42',username:options.wrongOwner?'other':'digivatedx'}}
       :opts.method==='POST'?{data:{id:'999'}}
-      :{data:{id:'123',author_id:'100',text:options.changed?'changed post':c.text,created_at:c.created_at,possibly_sensitive:false},includes:{users:[{id:'100',username:options.wrongAuthor?'other':'builder'}]}};
+      :{data:{id:'123',author_id:'100',text:options.changed?'changed post':(options.candidate?.text||c.text),created_at:c.created_at,possibly_sensitive:false},includes:{users:[{id:'100',username:options.wrongAuthor?'other':'builder'}]}};
     return {ok:true,json:async()=>json};
   };
   return {data,redis,rolling,history,calls,fetcher};
@@ -75,4 +75,13 @@ test('expired credentials refresh and rotated tokens remain encrypted',async()=>
 });
 test('stale research and non-invitations never reach X',async()=>{
   for(const candidate of [{researchedAt:'2026-10-05T08:00:00Z'},{invitation_excerpt:'Frontend',text:'Frontend tools are cool.'}]){const f=fixture({candidate});await publishOne(env,f.redis,f.fetcher,clock);assert.equal(f.calls.length,0);}
+});
+
+test('an explicit product-link invitation can receive only the approved Digivated link',async()=>{
+ const candidate={text:'Indie builders, drop your product links below.',invitation_excerpt:'drop your product links',reply:'Digivated helps builders get their projects seen and invite feedback. https://digivated.com'};
+ const f=fixture({candidate});const report=await publishOne(env,f.redis,f.fetcher,clock);assert.equal(report.status,'sent');
+ const write=f.calls.find(c=>c.opts.method==='POST'&&c.url.endsWith('/tweets'));assert.equal(JSON.parse(write.opts.body).text,candidate.reply);
+});
+test('connection invitations cannot receive links and posts older than 48 hours are skipped',async()=>{
+ for(const candidate of [{reply:'Let’s connect https://digivated.com'},{created_at:'2026-10-02T11:00:00Z'}]){const f=fixture({candidate});const result=await publishOne(env,f.redis,f.fetcher,clock);assert.equal(result.sent,0);assert.equal(f.calls.length,0);}
 });

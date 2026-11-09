@@ -2,6 +2,7 @@ const status = document.getElementById('status'), results = document.getElementB
 const run = document.getElementById('run'), pause = document.getElementById('pause');
 let csrf, paused = false;
 const publisherStatus = document.getElementById('publisher-status');
+const publisherRun = document.getElementById('publisher-run');
 const publisherPause = document.getElementById('publisher-pause');
 let publisherPaused = false;
 async function refreshPublisher() {
@@ -9,7 +10,7 @@ async function refreshPublisher() {
   publisherPaused = data.paused;
   publisherStatus.textContent = `${data.enabled ? (data.paused ? 'Replies paused.' : 'Automatic replies enabled: at most seven per rolling hour.') : 'Automatic replies disabled.'} ${data.latest ? `Last check: ${data.latest.status}. ${data.latest.error || ''}` : 'No publishing checks yet.'}`;
   publisherPause.textContent = publisherPaused ? 'Resume replies' : 'Pause replies';
-  publisherPause.disabled = !data.enabled;
+  publisherPause.disabled = !data.enabled;publisherRun.disabled=!data.enabled||data.paused;
 }
 publisherPause.addEventListener('click', async () => {
   publisherPause.disabled = true;
@@ -17,6 +18,10 @@ publisherPause.addEventListener('click', async () => {
     await json('/api/x-publish', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Admin-CSRF': csrf }, body: JSON.stringify({ action: publisherPaused ? 'resume' : 'pause' }) });
     await refreshPublisher();
   } catch (error) { publisherStatus.textContent = error.message; publisherPause.disabled = false; }
+});
+publisherRun.addEventListener('click',async()=>{
+ publisherRun.disabled=true;
+ try{const result=await json('/api/x-publish',{method:'POST',headers:{'Content-Type':'application/json','X-Admin-CSRF':csrf},body:JSON.stringify({action:'run'})});await refreshPublisher();publisherStatus.textContent+=` Result: ${result.status}.`;}catch(error){publisherStatus.textContent=error.message;}finally{if(!publisherPaused)publisherRun.disabled=false;}
 });
 async function json(url, options = {}) {
   const response = await fetch(url, { ...options, credentials: 'same-origin', cache: 'no-store' });
@@ -28,7 +33,7 @@ async function refresh() {
   const data = await json('/api/x-research');
   paused = data.paused;
   pause.textContent = paused ? 'Resume' : 'Pause';
-  status.textContent = `${paused ? 'Paused.' : 'Hourly research enabled.'} ${data.latest ? `Last run: ${data.latest.status}; ${data.latest.added} drafts. ${data.latest.error || ''}` : 'No runs yet.'}`;
+  status.textContent = `${paused ? 'Paused.' : 'Daily research scheduled; manual runs available.'} ${data.latest ? `Last run: ${data.latest.status}; ${data.latest.added} drafts. ${data.latest.error || ''}` : 'No runs yet.'}`;
   results.replaceChildren();
   for (const item of data.items) {
     const article = document.createElement('article');

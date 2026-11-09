@@ -1,3 +1,5 @@
+import {operatorAccess} from './x-operator.mjs';
+import {invitationKind,validReply} from './x-reply-rules.mjs';
 import { searchX, verifyX } from './x-search.mjs';
 import { timingSafeEqual } from 'node:crypto';
 import { AdminError, adminConfig, requireSession, jsonBody } from './admin-auth.mjs';
@@ -18,7 +20,7 @@ export function validCandidate(c, now = Date.now()) {
   const date = Date.parse(c.created_at);
   return Boolean(match && match[1].toLowerCase() === c.author.replace(/^@/,'').toLowerCase() && match[1].toLowerCase() !== 'digivatedx'
     && NICHES.includes(c.niche) && c.text.length <= 10000 && c.invitation_excerpt.length <= 500 && c.text.includes(c.invitation_excerpt)
-    && /(?:Z|[+-]\d{2}:\d{2})$/.test(c.created_at) && Number.isFinite(date) && date <= now && date >= now - 7 * 86400000);
+    && /(?:Z|[+-]\d{2}:\d{2})$/.test(c.created_at) && Number.isFinite(date) && date <= now && date >= now - 48 * 3600000);
 }
 
 export function cronAuthorized(header, secret) {
@@ -76,7 +78,7 @@ export async function runResearch(redis, agent, clock = Date.now) {
   const report = { day, period, status: 'running', added: 0, startedAt: new Date(clock()).toISOString(), postingEnabled: false, usage: [] };
   await redis(['SET', `${PREFIX}latest`, JSON.stringify(report)]);
   try {
-    let candidates = await agent('scout', `Find up to seven actual posts from the last seven days (prefer 48 hours) explicitly inviting professional connections. Target posts like: "I want more builders on my timeline. If you are working on AI/ML, SaaS, AI agents, dev tools or startups, tell me what you are building. Let us connect." Search multiple combinations of builder, indie hacker, SaaS, AI agents, designers and developers with "let\'s connect", "looking to connect", "more builders on my timeline" or "who wants to connect". Invitations to introduce a project are eligible; exclude requests to exchange likes, follows or reposts. Map SaaS, AI agents and dev tools to the closest supplied niche. Niches: ${JSON.stringify(NICHES)}. Exclude bios-only invitations, giveaways, sales pitches, token promotions and engagement exchanges. Read each post. Return a JSON array with url, author, text (exact full text), created_at (ISO timestamp with timezone), invitation_excerpt (exact substring), niche (exactly one supplied niche). Exclude inaccessible or undated posts. Current UTC time: ${new Date(clock()).toISOString()}.`, true, report.usage);
+    let candidates = await agent('scout', `Find up to seven actual posts from the last seven days (prefer 48 hours) explicitly inviting professional connections or asking builders to share/drop their project, product, or link. Target posts like: "I want more builders on my timeline. If you are working on AI/ML, SaaS, AI agents, dev tools or startups, tell me what you are building. Let us connect." Search multiple combinations of builder, indie hacker, SaaS, AI agents, designers and developers with "let\'s connect", "looking to connect", "more builders on my timeline" or "who wants to connect". Invitations to introduce a project are eligible; exclude requests to exchange likes, follows or reposts. Map SaaS, AI agents and dev tools to the closest supplied niche. Niches: ${JSON.stringify(NICHES)}. Exclude bios-only invitations, giveaways, sales pitches, token promotions and engagement exchanges. Read each post. Return a JSON array with url, author, text (exact full text), created_at (ISO timestamp with timezone), invitation_excerpt (exact substring), niche (exactly one supplied niche). Exclude inaccessible or undated posts. Current UTC time: ${new Date(clock()).toISOString()}.`, true, report.usage);
     if (!Array.isArray(candidates)) throw new Error('Invalid scout output');
     report.scouted = candidates.length;
     candidates = candidates.slice(0,7).filter(c => validCandidate(c, clock()));
@@ -92,18 +94,18 @@ export async function runResearch(redis, agent, clock = Date.now) {
     candidates = unique;
     report.unique = candidates.length;
     if (candidates.length) {
-      const checks = await agent('verifier', `Independently fetch each supplied X post. Confirm the exact text, author, date, niche and a clear invitation in the post itself to professional connections. If inaccessible or uncertain reject it. Return an array of {url, verified: boolean}. Candidate data: ${JSON.stringify(candidates)}`, true, report.usage);
+      const checks = await agent('verifier', `Independently fetch each supplied X post. Confirm the exact text, author, date, niche and a clear invitation in the post itself to connect or share projects/products/links. If inaccessible or uncertain reject it. Return an array of {url, verified: boolean}. Candidate data: ${JSON.stringify(candidates)}`, true, report.usage);
       if (!Array.isArray(checks)) throw new Error('Invalid verifier output');
       candidates = candidates.filter(c => checks.some(v => v.url === c.url && v.verified === true));
       report.verified = candidates.length;
     }
     if (candidates.length) {
-      const drafts = await agent('writer', `Return an array of {url, reply} for these posts. Keep replies short and friendly, usually 5–20 words, ending naturally with "Let’s connect 🤝". Where useful acknowledge the niche, for example "Always up for connecting with fellow builders. Let’s connect 🤝". Never invent what Digivated is building or claim an unsupported identity or expertise. Never rotate generic wording merely to evade detection. Do not claim experiences or interests that are not established. Stay under 200 characters. No invented familiarity, links, promotional claims or engagement bait. Candidate data: ${JSON.stringify(candidates)}`, false, report.usage);
+      const drafts = await agent('writer', `Return an array of {url, reply} for these posts. Tailor each response to the actual invitation. Digivated helps independent builders get their projects discovered, invite feedback, and submit projects for free review. For posts explicitly inviting project/product links, briefly introduce Digivated and include exactly https://digivated.com (no tracking parameters or other links). Describe feedback and discovery, not guaranteed traffic, guaranteed reposts or sales. For general connection-only invitations, write a brief genuine connection reply without a link or sales pitch. Respect no-link requests. No invented experience, familiarity, testimonials, metrics, unsupported expertise, unrelated mentions or engagement bait. Never rotate wording to evade detection. Stay under 240 characters. Candidate data: ${JSON.stringify(candidates)}`, false, report.usage);
       if (!Array.isArray(drafts)) throw new Error('Invalid writer output');
-      const proposed = candidates.map(c => ({ ...c, reply: drafts.find(d => d.url === c.url)?.reply })).filter(c => typeof c.reply === 'string' && c.reply.trim() && c.reply.length <= 240);
+      const proposed = candidates.map(c => ({ ...c, reply: drafts.find(d => d.url === c.url)?.reply })).filter(c => typeof c.reply === 'string' && c.reply.trim() && c.reply.length <= 240 && validReply(c.reply,c.text));
       report.drafted = proposed.length;
       if (proposed.length) {
-        const reviews = await agent('reviewer', `Review each proposed reply for relevance, truthfulness and natural professional connection intent. Reject promotional, unrelated or manipulative replies. A connection invitation does not establish consent to automation. You cannot authorize publication. Return array of {url, acceptable: boolean, reason: string}. A brief genuine reply to an explicit connection invitation is acceptable; assess the text, not automation permission. Data: ${JSON.stringify(proposed)}`, false, report.usage);
+        const reviews = await agent('reviewer', `Review each proposed reply for relevance, truthfulness and natural professional connection intent. A relevant short Digivated introduction and the exact https://digivated.com link are acceptable ONLY when the post explicitly invites project/product links. Reject links in general connection-only replies, unrelated promotion, guaranteed traffic claims or manipulation. A connection invitation does not establish consent to automation. You cannot authorize publication. Return array of {url, acceptable: boolean, reason: string}. A brief genuine reply to an explicit connection invitation is acceptable; assess the text, not automation permission. Data: ${JSON.stringify(proposed)}`, false, report.usage);
         if (!Array.isArray(reviews)) throw new Error('Invalid reviewer output');
         report.accepted = reviews.filter(r=>r.acceptable===true).length;
         report.reviewReasons = reviews.filter(r=>r.acceptable!==true).map(r=>String(r.reason || 'No reason supplied').slice(0,180));
@@ -136,6 +138,12 @@ export function makeResearchHandler(deps = {}) {
     try {
       const env = deps.env || process.env;
       const redis = deps.redis || redisClient(env);
+      if(req.headers['x-digivated-operator']){
+        if(req.method!=='POST'||new URL(req.url,'https://digivated.com').searchParams.get('operator')!=='research'||!await operatorAccess(req,env,redis,'research'))return send(403,{error:'Operator capability expired, invalid, or already used.'});
+        if(!grokConfigured(env))return send(200,{status:'unconfigured',added:0});
+        const report=await runResearch(redis,deps.agent||makeAgent(env,redis));
+        return send(report.status==='failed'?502:200,report);
+      }
       const isCron = req.method === 'GET' && cronAuthorized(req.headers.authorization, env.CRON_SECRET);
       if (isCron) {
         if (!grokConfigured(env)) return send(200, { status: 'unconfigured', added: 0, postingEnabled: false });
