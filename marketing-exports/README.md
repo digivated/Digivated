@@ -9,7 +9,7 @@ The UI panels are stylized product demonstrations, not literal screen recordings
 
 ## Product-led revision
 
-- `digivated-product-film.mp4` — 18-second 1280×720 film with actual public desktop page captures, restrained product framing, and a generated ambient soundtrack.
-- `digivated-product-short.mp4` — 9.6-second condensed cut.
-- `product-film-*.png` — companion stills from the revised film.
-- `live-{home,projects,creators}.png` and `render_product_film.py` — source captures and reproducible Python renderer.
+- `digivated-product-film.mp4` — 22-second 1280×720 film with actual public desktop page captures, restrained product framing, and a generated ambient soundtrack.
+- `digivated-product-short.mp4` — 10.3-second condensed cut.
+- `product-film-*.png` — companion stills from the revised film, including an actual project detail and feedback panel.
+- `live-{home,projects,project-detail,creators}.png` and `render_product_film.py` — source captures and reproducible Python renderer.
