@@ -1,0 +1,56 @@
+import {test,expect} from '@playwright/test';
+import {readFile} from 'node:fs/promises';
+import {testRedis} from '../helpers/redis.mjs';
+import {passwordHash} from '../../server/admin-auth.mjs';
+import {makeAdminHandler} from '../../server/admin-handler.mjs';
+import {makePublicHandler} from '../../server/public-community.mjs';
+import {saveRecord} from '../../server/admin-store.mjs';
+const base='http://127.0.0.1:4321',password='Fixture12!';
+test.describe.configure({mode:'serial'});
+test.skip(!process.env.DIGIVATED_TEST_REDIS_PORT,'Needs isolated local Redis.');
+for(const width of [375,768,1440])test(`owner workspace, review, library and sign-out at ${width}px`,async({page})=>{
+ test.setTimeout(60000);const redis=testRedis(13);await redis(['FLUSHDB']);
+ const image='data:image/webp;base64,'+(await readFile('public/digivated-logo.webp')).toString('base64');
+ for(let i=0;i<29;i++){
+  const record={id:'workspace-'+i,name:i===0?'Orbit workspace':'Project '+i,creator:'Independent builder',email:'private@example.com',notes:'PRIVATE-REVIEW-NOTE',category:'Apps',description:'A useful independent workspace for small creative teams.',url:'https://example.com',image,consent:true,date:new Date(Date.now()-i*43200000).toISOString(),status:i<26?'pending':i===28?'featured':'approved',revision:0};
+  await redis(['SET','digivated:submission:'+record.id,JSON.stringify(record)]);await saveRecord(redis,'submission',record);
+ }
+ const env={NODE_ENV:'test',DIGIVATED_ADMIN_ORIGIN:base,DIGIVATED_ADMIN_PASSWORD_HASH:await passwordHash(password),DIGIVATED_ADMIN_SESSION_SECRET:'a'.repeat(64)};
+ let user={id:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',email:'account@example.com',created_at:'2026-11-01T12:00:00Z',email_confirmed_at:'2026-11-01T12:00:00Z',app_metadata:{providers:['email']},banned_until:null};
+ const accountClient={auth:{admin:{listUsers:async()=>({data:{users:[user]}}),getUserById:async()=>({data:{user}}),updateUserById:async(id,values)=>{user={...user,banned_until:values.ban_duration==='none'?null:'2099-01-01T00:00:00Z'};return {data:{user}}}}}};
+ const handler=makeAdminHandler({env,redis,accountClient,notifyProjectUpdate:async()=> 'skipped'});
+ const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/api/**',async route=>{
+  const u=new URL(route.request().url());let fn=u.pathname==='/api/admin'?handler:u.pathname==='/api/projects'?makePublicHandler('projects',{env,redis}):null;
+  if(!fn)return route.fulfill({json:{ready:false,items:[],next:null}});
+  const req={url:u.pathname+u.search,method:route.request().method(),headers:await route.request().allHeaders(),body:route.request().postData()||undefined};let status=200,body:any;const headers:Record<string,string>={};
+  await fn(req,{set statusCode(v){status=v},setHeader:(k,v)=>headers[k]=v,end:v=>body=v});await route.fulfill({status,headers,body});
+ });
+ await page.setViewportSize({width,height:1000});await page.goto(base+'/admin');
+ await expect(page.locator('#owner-dashboard')).toBeHidden();await expect(page.getByLabel('Owner password')).toHaveAttribute('minlength','10');
+ await page.getByLabel('Owner password').fill(password);await page.getByRole('button',{name:'Sign in',exact:true}).click();
+ await expect(page.locator('[data-overview-number=pending]')).toHaveText('26');await expect(page.locator('[data-overview-number=total]')).toHaveText('29');await expect(page.locator('#owner-activity-chart li')).toHaveCount(7);
+ await expect(page.locator('#owner-settings')).toBeHidden();await expect(page.locator('#owner-content')).toBeHidden();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.screenshot({path:test.info().outputPath(`admin-overview-${width}.png`),fullPage:true});
+ await page.locator('[data-open-status=pending]').click();await expect(page.locator('#owner-filter')).toHaveValue('pending');await expect(page.locator('.owner-row')).toHaveCount(25);
+ await page.getByRole('button',{name:'Load more',exact:true}).click();await expect(page.locator('.owner-row')).toHaveCount(26);
+ await page.getByRole('searchbox',{name:'Search loaded items'}).fill('Orbit');await expect(page.locator('.owner-row')).toHaveCount(1);
+ await page.getByRole('button',{name:'Review & approve',exact:true}).click();await expect(page.locator('#owner-editor')).toBeVisible();
+ await expect(page.locator('#owner-private-details')).toContainText('PRIVATE-REVIEW-NOTE');
+ await expect(page.locator('.owner-editor-section')).not.toHaveAttribute('open','');
+ await page.getByLabel('Project name',{exact:true}).fill('Orbit reviewed');await page.getByRole('button',{name:'Approve & publish',exact:true}).click();
+ await expect(page.locator('#owner-editor-status')).toContainText('now public');
+ const stored=JSON.parse(await redis(['GET','digivated:submission:workspace-0']) as string);expect(stored.status).toBe('approved');expect(stored.name).toBe('Orbit reviewed');
+ await page.getByRole('button',{name:'Make Featured Build',exact:true}).click();await expect(page.locator('#owner-editor-status')).toContainText('now public');
+ await page.screenshot({path:test.info().outputPath(`admin-review-${width}.png`)});await page.getByRole('button',{name:'Close',exact:true}).click();
+ await page.locator('[data-owner-panel=overview]').click();await expect(page.locator('[data-overview-number=pending]')).toHaveText('25');await expect(page.locator('[data-overview-number=featured]')).toHaveText('2');
+ await page.locator('[data-kind=resource]').click();await page.getByRole('button',{name:'New article',exact:true}).click();
+ await page.getByLabel('Article URL slug',{exact:false}).fill('workspace-article');await page.getByLabel('Article title',{exact:true}).fill('Workspace article');await page.getByLabel('Short description',{exact:true}).fill('An article draft from the owner workspace.');await page.getByLabel('Article content',{exact:false}).fill('## A useful heading\n\nA useful article for independent builders.');
+ await page.getByRole('button',{name:'Save changes',exact:true}).click();await expect(page.locator('#owner-editor-status')).toContainText('not public');await page.getByRole('button',{name:'Publish',exact:true}).click();await expect(page.locator('#owner-editor-status')).toContainText('now public');await page.getByRole('button',{name:'Close',exact:true}).click();
+ await page.locator('[data-kind=product]').click();await expect(page.locator('#owner-protected')).toBeVisible();
+ await page.locator('[data-kind=accounts]').click();await expect(page.locator('.owner-row')).toContainText('account@example.com');page.on('dialog',d=>d.accept());await page.getByRole('button',{name:'Block sign-in',exact:true}).click();await expect(page.getByRole('button',{name:'Restore sign-in',exact:true})).toBeVisible();await page.getByRole('button',{name:'Restore sign-in',exact:true}).click();await expect(page.getByRole('button',{name:'Block sign-in',exact:true})).toBeVisible();
+ await page.locator('[data-owner-panel=settings]').click();await expect(page.locator('#gumroad-setup')).not.toHaveAttribute('open','');await page.locator('#gumroad-setup summary').click();await expect(page.locator('#owner-gumroad-form')).toBeVisible();
+ await page.getByRole('button',{name:'Sign out',exact:true}).click();await expect(page.locator('#owner-dashboard')).toBeHidden();await expect(page.getByLabel('Owner password')).toBeVisible();
+ const status=await page.evaluate(async()=> (await fetch('/api/admin?action=overview')).status);expect(status).toBe(401);expect(errors).toEqual([]);await redis(['FLUSHDB']);
+});

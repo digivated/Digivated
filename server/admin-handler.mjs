@@ -1,4 +1,5 @@
 import {listNewsRecords,getNewsRecord,saveNewsRecord,newsStatus,setNewsPaused} from './news-store.mjs';
+import {adminOverview} from './admin-overview.mjs';
 import { remapGumroadMembership, SETUP_DIAGNOSTIC_KEY } from './gumroad-membership.mjs';
 import { checkoutStatus } from './membership-checkout.mjs';
 import { ownerCarouselList, ownerCarouselPreview } from './owner-carousels.mjs';
@@ -78,6 +79,7 @@ export function makeAdminHandler(deps = {}) {
       if(action==='news-record')return send(200,await getNewsRecord(redis,url.searchParams.get('id')));
       if(action==='news-status')return send(200,{...await newsStatus(redis),enabled:env.NEWS_AUTO_PUBLISH_ENABLED==='true'});
       if (action === 'session') return send(200, { authenticated: true, csrf: session.csrf });
+      if (action === 'overview') return send(200, await adminOverview(redis));
       if (action === 'gumroad-status') {
         let lastAttempt=null;try{lastAttempt=JSON.parse(await redis(['GET',SETUP_DIAGNOSTIC_KEY]));}catch{}
         return send(200,{...await checkoutStatus(redis),lastAttempt});

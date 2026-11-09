@@ -1,11 +1,11 @@
 import { projectCategories, resourceCategories, normalizeResourceCategory } from '../data/community.mjs';
 const $ = id => document.getElementById(id);
-const state = { csrf: '', kind: 'submission', items: [], next: null, record: null, dirty: false, busy: false, request: 0, editorRequest: 0 };
+const state = { csrf: '', kind: 'submission', panel:'overview', items: [], next: null, record: null, dirty: false, busy: false, request: 0, editorRequest: 0, overviewRequest:0 };
 const labels = { submission: 'Submissions', resource: 'Articles', product: 'Products', comments: 'Comments', carousel: 'Full carousels', accounts: 'Accounts' };
 const statusOptions = { submission: ['pending','approved','featured','rejected','archived'], resource: ['draft','published','archived'], product: ['draft','published','archived'], comments: ['pending','approved','rejected'], carousel: ['available'], accounts: ['verified','unverified','blocked'] };
 const element = (tag, text, className) => { const node = document.createElement(tag); if (text !== undefined) node.textContent = text; if (className) node.className = className; return node; };
 function message(text, editor = false) { const node = $(editor ? 'owner-editor-status' : 'owner-status'); node.textContent = text; }
-function signedOut() { const keyField = $('owner-gumroad-token'); if (keyField) keyField.value = '';  state.csrf = ''; state.items = []; state.record = null; state.dirty = false; $('owner-editor').close(); $('owner-fields').replaceChildren(); $('owner-private-details').replaceChildren(); $('owner-list').replaceChildren(); $('owner-dashboard').hidden = true; $('owner-login').hidden = false; $('owner-logout').hidden = true; }
+function signedOut() { const keyField = $('owner-gumroad-token'); if (keyField) keyField.value = ''; state.request++;state.overviewRequest++; state.csrf = ''; state.items = []; state.record = null; state.dirty = false; $('owner-editor').close(); $('owner-fields').replaceChildren(); $('owner-private-details').replaceChildren(); $('owner-list').replaceChildren();document.querySelectorAll('[data-overview-number]').forEach(n=>n.textContent='—');$('owner-activity-chart').replaceChildren();$('owner-pipeline').replaceChildren(); $('owner-dashboard').hidden = true; $('owner-login').hidden = false; $('owner-logout').hidden = true; }
 async function api(path = '', body) {
   const response = await fetch(`/api/admin${path}`, { method: body ? 'POST' : 'GET', cache: 'no-store', credentials: 'same-origin', headers: body ? { 'Content-Type': 'application/json', 'X-Admin-CSRF': state.csrf } : {}, ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(20000) });
   const data = await response.json().catch(() => ({}));
@@ -23,6 +23,32 @@ function filters() {
   $('owner-search-note').hidden = state.kind !== 'accounts';
   $('owner-search-label').textContent = state.kind === 'accounts' ? 'Search loaded accounts' : 'Search loaded items';
   $('owner-search').placeholder = state.kind === 'accounts' ? 'Email or account ID' : 'Name, title, or creator';
+  $('owner-content-title').textContent=labels[state.kind];
+  $('owner-content-description').textContent={submission:'Review incoming projects, then approve, feature, or archive them.',resource:'Write and manage articles. Drafts stay private until published.',product:'Manage existing products and preserve purchase access.',comments:'Review comments and feedback with their publication permissions.',carousel:'Read full slides and references using your owner access.',accounts:'Find accounts and manage sign-in access.'}[state.kind];
+}
+function panel(name){
+ state.panel=name;
+ for(const id of ['overview','content','settings'])$('owner-'+id).hidden=id!==name;
+ document.querySelectorAll('[data-owner-panel]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ownerPanel===name)));
+ document.querySelectorAll('[data-kind]').forEach(b=>b.setAttribute('aria-pressed',String(name==='content'&&b.dataset.kind===state.kind)));
+}
+async function refreshOverview(){
+ const request=++state.overviewRequest;const button=$('owner-overview-refresh');button.disabled=true;$('owner-overview-status').textContent='Loading workspace totals…';
+ try{
+  const data=await api('?action=overview');if(request!==state.overviewRequest||!state.csrf)return;
+  const s=data.submissions,values={pending:s.statuses.pending||0,published:(s.statuses.approved||0)+(s.statuses.featured||0),featured:s.statuses.featured||0,newsReview:data.news.review,total:s.total,comments:data.comments.statuses.pending||0,articles:data.articles.total,carousels:data.carousels,products:data.products.total};
+  document.querySelectorAll('[data-overview-number]').forEach(n=>n.textContent=Number(values[n.dataset.overviewNumber]).toLocaleString());
+  const activity=$('owner-activity-chart');activity.replaceChildren();const max=Math.max(1,...s.activity.map(day=>day.count));
+  for(const day of s.activity){const li=element('li');const label=new Date(day.date+'T12:00:00Z').toLocaleDateString(undefined,{weekday:'short',timeZone:'UTC'});li.setAttribute('aria-label',`${day.date}: ${day.count} submissions`);const track=element('div',undefined,'owner-chart-track'),bar=element('span',undefined,'owner-chart-fill');bar.style.height=(day.count/max*100)+'%';track.append(bar);li.append(element('strong',String(day.count)),track,element('span',label));activity.append(li);}
+  $('owner-activity-total').textContent=s.activity.reduce((sum,day)=>sum+day.count,0).toLocaleString();
+  const pipeline=$('owner-pipeline');pipeline.replaceChildren();
+  for(const status of statusOptions.submission){const count=s.statuses[status]||0;const item=element('div',undefined,'owner-pipeline-row');item.dataset.status=status;const label=element('span',status[0].toUpperCase()+status.slice(1));const progress=element('progress');progress.max=Math.max(1,s.total);progress.value=count;progress.setAttribute('aria-label',status+' submissions');item.append(label,progress,element('strong',count.toLocaleString()));pipeline.append(item);}
+  $('owner-overview-updated').textContent='Updated '+new Date(data.generatedAt).toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})+' · refresh for the latest totals';$('owner-overview-status').textContent='';
+ }catch(error){if(request===state.overviewRequest)$('owner-overview-status').textContent=errorText(error);}
+ finally{button.disabled=false;}
+}
+function selectKind(kind,status=''){
+ state.kind=kind;state.items=[];state.next=null;$('owner-search').value='';panel('content');filters();$('owner-filter').value=status;renderList();return load();
 }
 function accountStatus(record) { return record.bannedUntil && new Date(record.bannedUntil) > new Date() ? 'blocked' : record.confirmedAt ? 'verified' : 'unverified'; }
 function renderList() {
@@ -59,6 +85,7 @@ function renderList() {
       for(const [value,label] of choices){if(value==='approved'&&packetFeedback&&!record.quoteConsent)continue;const button=element('button',label,'button');button.type='button';button.addEventListener('click',async()=>{button.disabled=true;try{await api('',{action:'moderate-comment',id:record.id,status:value});message(value==='approved'?'Comment published.':label==='Hide feedback'?'Feedback hidden.':'Comment rejected.');await load();}catch(error){button.disabled=false;message(errorText(error));}});actions.append(button);}
       row.append(copy,actions);list.append(row);continue;
     }
+    const mark=element('span',(record.name||record.title||'?').slice(0,2).toUpperCase(),'owner-row-mark');mark.setAttribute('aria-hidden','true');row.append(mark);
     copy.append(element('span', record.status, 'tag')); if (record.promotion?.requested) { const member=record.promotion.included==='founding-membership'; copy.append(element('span', record.promotion.verified ? (member ? 'Membership feature reviewed' : 'Promo purchase verified') : (member ? 'Membership feature, review required' : 'Promo — verify purchase'), 'tag')); } if (record.pick) copy.append(element('span','Digivated Pick','tag'));
     copy.append(element('h2', record.title || record.name)); copy.append(element('p', [record.creator,record.category,record.date?.slice(0,10)].filter(Boolean).join(' · '),'quiet'));
     const edit = element('button', state.kind === 'submission' ? (record.status==='pending'?'Review & approve':'Review project') : 'Edit', 'button'); edit.type = 'button'; edit.addEventListener('click', () => openRecord(record.id));
@@ -80,7 +107,7 @@ async function load(more = false) {
   } catch (error) { message(errorText(error)); }
   finally { $('owner-more').disabled = false; }
 }
-function signedIn(csrf) { state.csrf = csrf; checkGumroadSetup(); $('owner-password').value = ''; $('owner-login').hidden = true; $('owner-dashboard').hidden = false; $('owner-logout').hidden = false; filters(); return load(); }
+function signedIn(csrf) { state.csrf = csrf; checkGumroadSetup(); $('owner-password').value = ''; $('owner-login').hidden = true; $('owner-dashboard').hidden = false; $('owner-logout').hidden = false; message('');if(location.hash==='#gumroad-setup'){panel('settings');$('gumroad-setup').open=true;return;}panel('overview');return refreshOverview(); }
 const form = $('owner-login-form'); form.querySelector('button').disabled = false;
 form.addEventListener('submit', async event => {
   event.preventDefault(); const button = form.querySelector('button'); button.disabled = true; message('Signing in…');
@@ -91,10 +118,10 @@ $('owner-logout').addEventListener('click', async () => {
   if (state.busy || (state.dirty && !confirm('Discard unsaved changes and sign out?'))) return;
   try { await api('',{action:'logout'}); signedOut(); message('You have signed out.'); } catch (error) { message(errorText(error)); }
 });
-document.querySelectorAll('[data-kind]').forEach(button => button.addEventListener('click', () => {
-  state.kind = button.dataset.kind; state.items = []; state.next = null; $('owner-search').value = '';
-  document.querySelectorAll('[data-kind]').forEach(b => b.setAttribute('aria-pressed',String(b===button))); filters(); renderList(); load();
-}));
+document.querySelectorAll('[data-kind]').forEach(button=>button.addEventListener('click',()=>selectKind(button.dataset.kind)));
+document.querySelectorAll('[data-open-kind]').forEach(button=>button.addEventListener('click',()=>selectKind(button.dataset.openKind,button.dataset.openStatus||'')));
+document.querySelectorAll('[data-owner-panel]').forEach(button=>button.addEventListener('click',()=>{panel(button.dataset.ownerPanel);if(state.panel==='overview')refreshOverview();}));
+$('owner-overview-refresh').addEventListener('click',refreshOverview);
 $('owner-search').addEventListener('input',renderList); $('owner-filter').addEventListener('change',renderList); $('owner-refresh').addEventListener('click',()=>load()); $('owner-more').addEventListener('click',()=>load(true));
 function field(name,label,value,options={}) {
   const wrapper=element('label',label); let input;
@@ -153,6 +180,10 @@ function renderEditor(record) {
   }
   if(record.image){const image=element('img',undefined,'owner-editor-image');image.src=record.image;image.alt='Submitted image preview';$('owner-fields').append(image);field('removeImage','Remove image',false,{type:'checkbox'});}
   field('status','Status',record.status,{choices:statusOptions[state.kind]});
+  if(state.kind==='submission'){
+    const heading=[...$('owner-fields').querySelectorAll('h2')].find(h=>h.textContent==='Launch page');
+    if(heading){const details=element('details',undefined,'owner-editor-section'),summary=element('summary','Launch page & screenshots'),fields=element('div',undefined,'owner-launch-fields');details.append(summary,fields);heading.before(details);let next=heading.nextSibling;heading.remove();const statusField=$('edit-status').closest('label');while(next&&next!==statusField){const current=next;next=current.nextSibling;fields.append(current);}}
+  }
   const save=element('button','Save changes','button');save.type='submit';save.value='save';$('owner-editor-actions').append(save);
   if(state.kind==='submission')for(const [status,label] of [['approved','Approve & publish'],['featured','Make Featured Build'],['rejected','Reject'],['archived','Archive']]){
     const button=element('button',status==='approved'&&record.status==='pending'&&!record.promotion?.requested?'Approve with edits':label,status==='approved'?'button primary':'button');button.type='submit';button.value=status;button.disabled=status==='featured'&&!['approved','featured'].includes(record.status);$('owner-editor-actions').append(button);
@@ -167,6 +198,7 @@ function renderEditor(record) {
 async function openRecord(id){const kind=state.kind;const request=++state.editorRequest;message('Opening item…');try{const data=await api(`?action=detail&kind=${kind}&id=${encodeURIComponent(id)}`);if(kind!==state.kind||request!==state.editorRequest||!state.csrf)return;renderEditor(data.record);$('owner-editor').showModal();message('');}catch(error){message(errorText(error));}}
 $('owner-create').addEventListener('click',()=>{renderEditor({id:'',revision:0,status:'draft'});$('owner-editor').showModal();});
 $('owner-editor-form').addEventListener('input',()=>state.dirty=true);
+$('owner-editor-form').addEventListener('invalid',event=>{const section=event.target.closest('details');if(section)section.open=true;},true);
 function closeEditor(event){if(state.busy){event?.preventDefault();return;}if(state.dirty&&!confirm('Discard unsaved changes?')){event?.preventDefault();return;}$('owner-editor').close();state.dirty=false;state.record=null;$('owner-fields').replaceChildren();$('owner-private-details').replaceChildren();}
 $('owner-close').addEventListener('click',closeEditor);$('owner-editor').addEventListener('cancel',event=>{event.preventDefault();closeEditor(event);});
 window.addEventListener('beforeunload',event=>{if(state.dirty){event.preventDefault();event.returnValue='';}});

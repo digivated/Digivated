@@ -6,7 +6,7 @@ export const SESSION_SECONDS = 8 * 60 * 60;
 export class AdminError extends Error { constructor(status, message) { super(message); this.status = status; } }
 export const digest = value => createHash('sha256').update(value).digest('hex');
 export async function passwordHash(password, salt = randomBytes(16).toString('hex')) {
-  if (typeof password !== 'string' || password.length < 16 || password.length > 200) throw new Error('Use a password between 16 and 200 characters.');
+  if (typeof password !== 'string' || password.length < 10 || password.length > 200) throw new Error('Use a password between 10 and 200 characters.');
   const key = await derive(password, salt, 64, { N: 32768, r: 8, p: 1, maxmem: 64 * 1024 * 1024 });
   return `scrypt:${salt}:${key.toString('hex')}`;
 }
