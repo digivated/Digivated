@@ -1,5 +1,4 @@
-import {operatorAccess} from './x-operator.mjs';
-import {invitationKind,validReply} from './x-reply-rules.mjs';
+import {invitationKind,validReply,explicitlySummoned} from './x-reply-rules.mjs';
 import { randomBytes, createHash } from 'node:crypto';
 import { unseal, seal } from './x-connect.mjs';
 import { cronAuthorized, validCandidate } from './x-research.mjs';
@@ -78,10 +77,11 @@ export async function publishOne(env, redis, fetcher = fetch, clock = Date.now) 
     for (const c of eligible.slice(0,3)) {
       const id=c.url.split('/').pop();
       let source;
-      try { source=await request(fetcher,`/2/tweets/${id}?tweet.fields=author_id,created_at,possibly_sensitive,reply_settings&expansions=author_id&user.fields=username`,auth.accessToken); }
+      try { source=await request(fetcher,`/2/tweets/${id}?tweet.fields=author_id,created_at,possibly_sensitive,reply_settings,entities,referenced_tweets&expansions=author_id,referenced_tweets.id,referenced_tweets.id.author_id&user.fields=username`,auth.accessToken); }
       catch (error) { if (error.status===404) continue; throw error; }
       const author=source.includes?.users?.find(u=>u.id===source.data?.author_id);
       if (!source.data || !author || author.username?.toLowerCase()!==c.author.replace(/^@/,'').toLowerCase() || source.data.text!==c.text || source.data.possibly_sensitive===true || (source.data.reply_settings&&source.data.reply_settings!=='everyone') || !invitationKind(source.data.text) || !validReply(c.reply,source.data.text)) continue;
+      if(!explicitlySummoned(source.data,source.includes,auth.userId)){report.status='manual_reply_required';continue;}
       if (!Number.isFinite(Date.parse(source.data.created_at)) || (clock()-Date.parse(source.data.created_at)>48*3600000 || Date.parse(source.data.created_at)>clock())) continue;
       if (await redis(['GET','digivated:private:x-research:paused']) === '1') return {status:'paused',sent:0};
       const reservation=await redis(['EVAL',RESERVE,5,P+'paused',P+'rolling',P+'post:'+id,P+'author:'+author.username.toLowerCase(),P+'text:'+hash(c.reply.trim().toLowerCase()),clock(),id]);
@@ -114,18 +114,6 @@ export function makePublisherHandler(deps={}) {
     const send=(status,data)=>{res.statusCode=status;res.end(JSON.stringify(data));};
     try {
       const env=deps.env||process.env,redis=deps.redis||redisClient(env);
-      const operator=new URL(req.url,'https://digivated.com').searchParams.get('operator');
-      if(req.headers['x-digivated-operator']){
-        if(req.method!=='POST'||!await operatorAccess(req,env,redis,operator))return send(403,{error:'Operator capability expired, invalid, or already used.'});
-        if(operator==='diagnostics'){
-          let connection;try{await credentials(env,redis,deps.fetch||fetch);connection={verified:true,username:'digivatedx'};}catch(error){connection={verified:false,error:error instanceof XError?error.message:'X connection requires reconnection or configuration.'};}
-          const latest=await redis(['GET',P+'latest']),research=await redis(['GET','digivated:private:x-research:latest']);
-          return send(200,{enabled:env.X_AUTO_REPLY_ENABLED==='true',connection,paused:await redis(['GET',P+'paused'])==='1',researchPaused:await redis(['GET','digivated:private:x-research:paused'])==='1',latest:latest?JSON.parse(latest):null,research:research?JSON.parse(research):null,drafts:(await redis(['LRANGE','digivated:private:x-research:queue',0,4])).map(raw=>{const c=JSON.parse(raw);return {url:c.url,text:c.text,reply:c.reply,created_at:c.created_at};})});
-        }
-        if(operator==='resume'){await redis(['SET',P+'paused','0']);await redis(['SET','digivated:private:x-research:paused','0']);return send(200,{ok:true});}
-        if(operator==='publish')return send(200,await publishOne(env,redis,deps.fetch||fetch));
-        return send(400,{error:'Unsupported operator action.'});
-      }
       if(req.method==='GET' && cronAuthorized(req.headers.authorization,env.CRON_SECRET)) {
         const report=await publishOne(env,redis,deps.fetch||fetch);
         console.info(JSON.stringify({event:'x_publish',...report}));return send(200,report);

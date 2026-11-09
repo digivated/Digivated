@@ -1,6 +1,6 @@
 # X connection and product-introduction research
 
-Four Grok calls at most per UTC hour: scout and verifier with X Search, then writer and reviewer without tools. Up to seven niche connection/product-introduction invitations from the last 48 hours are considered. Research output goes to a private Redis draft queue. The separate bounded publisher can consume eligible drafts when enabled; see x-publisher.md.
+In optional Grok mode, four model calls at most per UTC hour: scout and verifier with X Search, then writer and reviewer without tools. Up to seven niche connection/product-introduction invitations from the last 48 hours are considered. Research output goes to a private Redis draft queue. The separate bounded publisher can consume eligible drafts when enabled; see x-publisher.md.
 
 The site build and X publisher do not require a Grok key. The optional research writer requires XAI_API_KEY at runtime and CRON_SECRET (at least 32 characters) for the scheduled endpoint. XAI_MODEL optionally overrides the default grok-4.7. Existing owner authentication and submission Redis settings are reused. With no usable Grok key, research returns an unconfigured status without running. No key values are logged.
 

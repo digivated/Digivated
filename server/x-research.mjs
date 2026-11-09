@@ -1,4 +1,3 @@
-import {operatorAccess} from './x-operator.mjs';
 import {invitationKind,validReply,groundedReply} from './x-reply-rules.mjs';
 import { searchX, verifyX } from './x-search.mjs';
 import { timingSafeEqual } from 'node:crypto';
@@ -144,19 +143,6 @@ export function makeResearchHandler(deps = {}) {
     try {
       const env = deps.env || process.env;
       const redis = deps.redis || redisClient(env);
-      if(req.headers['x-digivated-operator']){
-        const action=new URL(req.url,'https://digivated.com').searchParams.get('operator');
-        if(req.method!=='POST'||!['research','research-retry'].includes(action)||!await operatorAccess(req,env,redis,action))return send(403,{error:'Operator capability expired, invalid, or already used.'});
-        if(action==='research-retry'){
-          const period=new Date().toISOString().slice(0,13);
-          const latest=JSON.parse(await redis(['GET',PREFIX+'latest'])||'null');
-          if(env.X_REPLY_DRAFT_MODE!=='rules'||latest?.period!==period||latest.status!=='failed'||latest.error!=='Grok returned invalid JSON')return send(409,{error:'No matching internal formatting failure to retry.'});
-          await redis(['DEL',PREFIX+'run:'+period]);
-        }
-        if(env.X_REPLY_DRAFT_MODE!=='rules'&&!grokConfigured(env))return send(200,{status:'unconfigured',added:0});
-        const report=await runResearch(redis,deps.agent||makeAgent(env,redis));
-        return send(report.status==='failed'?502:200,report);
-      }
       const isCron = req.method === 'GET' && cronAuthorized(req.headers.authorization, env.CRON_SECRET);
       if (isCron) {
         if (env.X_REPLY_DRAFT_MODE!=='rules'&&!grokConfigured(env)) return send(200, { status: 'unconfigured', added: 0, postingEnabled: false });

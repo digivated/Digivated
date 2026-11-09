@@ -38,12 +38,13 @@ async function refresh() {
   for (const item of data.items) {
     const article = document.createElement('article');
     const title = document.createElement('h2'); title.textContent = `${item.author} · ${item.niche}`;
+    const eligibility=document.createElement('p');eligibility.textContent=item.apiReplyEligible?'X API reply eligible: author mentioned Digivated or quoted its post.':'Manual reply required: X API needs an explicit @digivatedx mention or quote.';
     const original = document.createElement('p'); original.textContent = item.text;
     const reply = document.createElement('p'); reply.textContent = `Draft: ${item.reply}`;
     const a = document.createElement('a'); a.textContent = 'Read original post';
     if (/^https:\/\/(x\.com|twitter\.com)\/[\w]+\/status\/\d+$/.test(item.url)) a.href = item.url;
     a.target = '_blank'; a.rel = 'noopener noreferrer';
-    article.append(title, original, reply, a); results.append(article);
+    article.append(title, eligibility, original, reply, a); results.append(article);
   }
 }
 async function act(action) {

@@ -29,3 +29,11 @@ export function groundedReply(candidate){
  if(/feedback|review|roast/i.test(candidate.text))return `Sharing Digivated for builders looking for feedback on ${topic}. Get your project discovered and invite useful feedback. Submit for free: ${DIGIVATED_LINK}`;
  return `We’re building Digivated to help ${topic} get discovered and invite feedback. Free project submissions: ${DIGIVATED_LINK}`;
 }
+// X API programmatic replies require an explicit author summon; an open
+// invitation alone does not grant API reply eligibility.
+export function explicitlySummoned(post,includes={},accountId){
+ if(post?.entities?.mentions?.some(m=>m.username?.toLowerCase()==='digivatedx'))return true;
+ const id=accountId||includes.users?.find(u=>u.username?.toLowerCase()==='digivatedx')?.id;
+ if(!id)return false;
+ return post?.referenced_tweets?.some(ref=>ref.type==='quoted'&&includes.tweets?.some(p=>p.id===ref.id&&p.author_id===id))||false;
+}

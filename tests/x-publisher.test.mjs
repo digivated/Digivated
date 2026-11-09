@@ -38,7 +38,7 @@ function fixture(options={}) {
     const json=url.endsWith('/oauth2/token')?{access_token:'refreshed-access',refresh_token:'rotated-refresh',expires_in:7200,scope:record.scope}
       :url.endsWith('/users/me')?{data:{id:'42',username:options.wrongOwner?'other':'digivatedx'}}
       :opts.method==='POST'?{data:{id:'999'}}
-      :{data:{id:'123',author_id:'100',text:options.changed?'changed post':(options.candidate?.text||c.text),created_at:c.created_at,possibly_sensitive:false,reply_settings:options.restrictedReplies?'mentionedUsers':'everyone'},includes:{users:[{id:'100',username:options.wrongAuthor?'other':'builder'}]}};
+      :{data:{id:'123',author_id:'100',text:options.changed?'changed post':(options.candidate?.text||c.text),created_at:c.created_at,possibly_sensitive:false,entities:{mentions:options.notSummoned?[]:[{username:'digivatedx'}]},reply_settings:options.restrictedReplies?'mentionedUsers':'everyone'},includes:{users:[{id:'100',username:options.wrongAuthor?'other':'builder'}]}};
     return {ok:true,json:async()=>json};
   };
   return {data,redis,rolling,history,calls,fetcher};
@@ -87,3 +87,5 @@ test('connection invitations cannot receive links and posts older than 48 hours 
 });
 
 test('posts with restricted reply settings are skipped before any send',async()=>{const f=fixture({restrictedReplies:true});const result=await publishOne(env,f.redis,f.fetcher,clock);assert.equal(result.sent,0);assert.equal(f.calls.filter(c=>c.opts.method==='POST').length,0);});
+
+test('generic product invitations cannot bypass the X author-summon requirement',async()=>{const f=fixture({notSummoned:true});const report=await publishOne(env,f.redis,f.fetcher,clock);assert.equal(report.status,'manual_reply_required');assert.equal(f.calls.filter(c=>c.opts.method==='POST').length,0);});
