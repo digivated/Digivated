@@ -30,14 +30,20 @@ for(const width of [320,390,768,1440])test(`plain pagination, category filtering
  for(let i=0;i<rects.length;i++)for(let j=i+1;j<rects.length;j++){const a=rects[i],b=rects[j];expect(Math.min(a.right,b.right)-Math.max(a.left,b.left)>1&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>1).toBe(false);}
  await page.screenshot({path:test.info().outputPath(`directory-${width}.png`),fullPage:true});
 });
-test('AI categories only show relevant tools and keep the remainder out of Other',async({page})=>{
- const tools=[{...items[0],id:'daf77018-7d73-4753-a24c-539ed2f80f4d',name:'Kling 4.0',category:'AI',description:'Generate AI videos with marketing examples.'},{...items[1],id:'da7df430-bf8d-4f15-8b20-79fad9dc498e',name:'AINav',category:'AI',description:'Discover tools for video, writing and coding.'}];
- await page.route('**/api/**',r=>r.fulfill({json:{items:tools,next:null,ready:false}}));await page.goto(base+'/ai-tools');
- await expect(page.locator('.ai-category-card')).toHaveCount(2);
- await expect(page.locator('.ai-category-card').filter({hasText:'AI directories'})).toContainText('AINav');
- await expect(page.locator('.ai-category-card').filter({hasText:'Video'})).not.toContainText('AINav');
- await expect(page.getByRole('button',{name:'Other AI tools',exact:true})).toHaveCount(0);
- await page.getByRole('button',{name:'Video',exact:true}).click();await expect(page.locator('.launch-row')).toHaveCount(1);await expect(page.locator('.launch-row')).toContainText('Kling 4.0');
+for(const width of [320,1440])test(`Resources category and search navigation at ${width}px`,async({page})=>{
+ await page.setViewportSize({width,height:900});await page.goto(base+'/resources');
+ await expect(page.locator('[data-link-group]:visible')).toHaveCount(1);
+ await expect(page.locator('a[href="https://60fps.design"]')).toBeVisible();
+ if(width<760)await page.locator('[data-link-select]').selectOption('security-privacy');
+ else await page.locator('[data-link-category="security-privacy"]').click();
+ await expect(page.locator('a[href="https://haveibeenpwned.com"]')).toBeVisible();
+ await expect(page.locator('a[href="https://60fps.design"]')).toBeHidden();
+ await page.locator('[data-link-search]').fill('supabase');
+ await expect(page.locator('a[href="https://supabase.com"]')).toBeVisible();
+ await expect(page.locator('a[href="https://haveibeenpwned.com"]')).toBeHidden();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.getByRole('link',{name:'Explore Digivated guides'}).click();
+ await expect(page.locator('#resources-title')).toHaveText('Digivated guides');
 });
 
 test('approved logo keeps its purple and white colours on each site layout',async({page})=>{

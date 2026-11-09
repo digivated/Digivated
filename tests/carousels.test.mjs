@@ -237,7 +237,7 @@ test('carousel routes stay on the shared function and do not add an API file', a
   assert.match(css, /grid-template-columns:1fr/);
   assert.equal(css.includes('aspect-ratio:4/5'), false);
   assert.equal(/coming soon/i.test(source), false);
-  const pages = readFileSync(new URL('../src/pages/resources/index.astro', import.meta.url), 'utf8');
+  const pages = readFileSync(new URL('../src/pages/resources/guides.astro', import.meta.url), 'utf8');
   assert.match(pages, /Previous purchasers/);
   assert.doesNotMatch(pages, /costs \$4 USD once/);
   assert.match(pages, /Educational carousels/);

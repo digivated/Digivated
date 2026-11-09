@@ -38,7 +38,7 @@ for(const width of [390,1440])test(`footer destinations use the current theme at
  await expect(footer.locator('.footer-columns>nav')).toHaveCount(4);
  const paths=await footer.locator('a[href^="/"]').evaluateAll(es=>es.map(e=>e.getAttribute('href')));
  expect(new Set(paths).size).toBe(paths.length);
- expect(paths).toEqual(expect.arrayContaining(['/discover','/rankings','/ai-tools','/submit-project','/account','/saved','/membership','/about','/privacy','/terms']));
+ expect(paths).toEqual(expect.arrayContaining(['/discover','/rankings','/resources','/submit-project','/account','/saved','/membership','/about','/privacy','/terms']));
  for(const path of paths.filter(p=>p!=='/')){
   const response=await page.goto(base+path);expect(response?.status(),path).toBe(200);
   await expect(page.locator('h1')).toHaveCount(1);

@@ -1,34 +1,29 @@
 ---
 import Platform from '../../layouts/Platform.astro';
-import FoundingPassTeaser from '../../components/FoundingPassTeaser.astro';
-import '../../styles/carousel-library.css';
-import EmptyState from '../../components/EmptyState.astro';
-import ResourceCard from '../../components/ResourceCard.astro';
-import CarouselBrowse from '../../components/CarouselBrowse.astro';
-import resources from '../../data/resources.json';
-import { resourcePathInfo } from '../../data/learning-paths.mjs';
-const packet = { id: 'builtin-ui-ux-prompt-packet', url: '/ui-ux-prompt-packet', title: 'UI/UX Prompt Packet', description: '75 practical prompts, workflows, and checklists to help you improve websites and apps with AI.', category: 'Design & UX', packet: true };
-const orderedResources = [...resources.filter(r=>r.status==='published'),packet].sort((a,b)=>resourcePathInfo(a).order-resourcePathInfo(b).order);
-const showDirectoryTools = orderedResources.length > 1;
+import {resourceGroups,resourceLinkCount} from '../../data/link-resources.mjs';
+import '../../styles/resource-links.css';
+const label = link => { const url = new URL(link.href); return url.hostname.replace(/^www\./,'') + (url.pathname === '/' ? '' : url.pathname.replace(/\/$/,'')); };
 ---
-<Platform title="Resources" description="Explore the UI/UX Prompt Packet and try three free prompts.">
-<section class="resources-workspace" aria-labelledby="resources-title">
-<header class="resources-intro"><div><h1 id="resources-title">Resources</h1><p>Explore free samples, useful guides, and resources from Digivated. Previous purchasers can continue to access their toolkit and carousels.</p></div><div class="resources-intro-links"><a class="text-link" href="/carousels">Educational carousels →</a><a class="text-link" href="/saved">Saved resources →</a></div></header>
-{showDirectoryTools && <><nav class="resource-topics" aria-label="Choose a learning goal">
-<button type="button" data-goal-filter="" aria-pressed="true">All resources</button>
-
-<a href="/saved">Saved <span aria-hidden="true">↗</span></a>
-</nav>
-<p id="directory-goal-description" class="directory-goal-description" hidden></p>
-<div class="resources-controls" data-directory="resources">
-<label class="resources-search"><span class="sr-only">Search resources</span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="directory-search" type="search" placeholder="Search resources"/></label>
-<label><span class="sr-only">Topic</span><select id="directory-category"><option value="">All topics</option>{['Design & UX'].map(c=><option>{c}</option>)}</select></label>
-<label><span class="sr-only">Sort resources</span><select id="directory-sort"><option value="recommended">Suggested order</option><option value="newest">Recently added</option><option value="quick">Quick reads first</option><option value="name">Title A–Z</option></select></label>
-<div class="resources-layout" role="group" aria-label="Resource layout"><button type="button" data-directory-layout="grid" aria-pressed="true" aria-label="Grid view"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></button><button type="button" data-directory-layout="list" aria-pressed="false" aria-label="List view"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 5h12M8 12h12M8 19h12M3 5h1M3 12h1M3 19h1"/></svg></button></div>
-</div>
-<div class="resources-results"><p id="directory-status" class="results-status" role="status">Loading resources…</p><button type="button" data-directory-clear hidden>Clear filters</button></div>
-</>}
-<div data-live-resources><div class="resource-grid" data-single={showDirectoryTools ? 'false' : 'true'} data-live-list>
-{orderedResources.map(resource=><ResourceCard resource={resource}/>)}
-</div><div id="directory-empty" data-live-empty hidden><EmptyState title="The library is taking shape." description="No resources to show yet. Articles and useful tools will appear here as they’re published."/></div><p class="quiet" data-live-status role="status"></p><noscript><p>Enable JavaScript to load additional published resources.</p></noscript></div><section class="carousel-shelf" hidden><div class="carousel-shelf-copy"><h2>Educational carousels</h2><p>Titles, summaries, and the first four slides are open. Previous Founding Membership purchases retain their full carousel access.</p></div><CarouselBrowse/><div class="resource-grid carousel-shelf-list" data-carousel-shelf></div></section><FoundingPassTeaser/></section><script>import '../../scripts/directory.js'; import '../../scripts/live-content.js'; import '../../scripts/carousel-library.js';</script></Platform>
-
+<Platform title="Resources" description="A clean, searchable directory of design inspiration, creative assets, AI tools, development resources, business tools, and more." canonicalPath="/resources">
+<section class="link-directory" data-link-directory aria-labelledby="links-title">
+  <header class="link-directory-head">
+    <p class="link-directory-kicker">THE USEFUL INTERNET, ORGANIZED</p>
+    <h1 id="links-title">Resources.</h1>
+    <p>Find the right place to design, build, learn, and grow. Browse by topic or search the full collection.</p>
+    <a href="/resources/guides">Explore Digivated guides <span aria-hidden="true">↗</span></a>
+  </header>
+  <div class="link-directory-controls">
+    <label class="link-directory-search"><span class="sr-only">Search resources</span><input data-link-search type="search" placeholder="Search a site or topic" autocomplete="off"/></label>
+    <label class="link-directory-select-label"><span class="sr-only">Choose a category</span><select data-link-select>{resourceGroups.map(group=><option value={group.id}>{group.title}</option>)}</select></label>
+  </div>
+  <div class="link-directory-layout">
+    <nav class="link-directory-categories" aria-label="Resource categories">{resourceGroups.map((group,index)=><button type="button" data-link-category={group.id} aria-current={index===0?'true':undefined}>{group.title}</button>)}</nav>
+    <div class="link-directory-content">
+      <p class="link-directory-status" data-link-status role="status">{resourceLinkCount.toLocaleString('en-US')} links across {resourceGroups.length} categories</p>
+      {resourceGroups.map((group,index)=><section class="link-directory-group" data-link-group={group.id} data-link-title={group.title.toLowerCase()} hidden={index!==0} aria-labelledby={`links-${group.id}`}><header><h2 id={`links-${group.id}`}>{group.title}</h2><span>{group.links.length} links</span></header><ul>{group.links.map(link=><li data-link-item data-link-search-text={`${group.title} ${link.href}`.toLowerCase()}><a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`Open ${label(link)} in a new tab`}><span>{label(link)}</span><span aria-hidden="true">↗</span></a></li>)}</ul></section>)}
+      <p class="link-directory-empty" data-link-empty hidden>No matching links. Try another search or category.</p>
+    </div>
+  </div>
+</section>
+</Platform>
+<script>import '../../scripts/resource-links.js';</script>

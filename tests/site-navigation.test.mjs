@@ -8,7 +8,7 @@ test('shared public destinations use canonical current routes without repeated f
  for(const [href] of [...primaryLinks,...menuLinks,...footer]){
   if(!href.startsWith('/'))continue;
   assert.ok(!['/shop','/products','/promote','/founding-members','/community'].includes(href));
-  await readFile(new URL('../src/pages'+href+'.astro',import.meta.url));
+  await readFile(new URL('../src/pages'+href+(href==='/resources'?'/index':'')+'.astro',import.meta.url));
  }
  const config=JSON.parse(await readFile(new URL('../vercel.json',import.meta.url),'utf8'));
  for(const source of ['/shop','/products','/promote','/founding-members']){

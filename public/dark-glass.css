@@ -278,6 +278,7 @@ html#digivated-root #explore-navigation {
   padding:8px; border:1px solid #302b38; border-radius:12px; background:#0d0c10!important;
   box-shadow:0 16px 40px #0006!important; color:var(--dg-ink)!important;
 }
+html#digivated-root .notebook-navigation:not([open]) #explore-navigation { display:none!important; }
 html#digivated-root #explore-navigation .navigation-destinations { display:grid; gap:2px; }
 html#digivated-root #explore-navigation .navigation-destinations>a {
   display:flex; align-items:center; min-height:46px; margin:0; padding:11px 14px; border:0; border-radius:7px;

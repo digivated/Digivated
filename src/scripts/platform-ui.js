@@ -3,8 +3,6 @@ const menu = document.querySelector('.explore-menu, .mobile-menu');
 if (menu) {
   const trigger = menu.querySelector('summary');
   const panel = menu.querySelector('nav');
-  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  let closing = false;
   const positionPanel = () => {
     const header = menu.closest('header');
     if (header) menu.style.setProperty('--navigation-top', `${Math.max(8, Math.ceil(header.getBoundingClientRect().bottom) + 8)}px`);
@@ -14,19 +12,10 @@ if (menu) {
     trigger.setAttribute('aria-expanded', String(menu.open));
     trigger.setAttribute('aria-label', menu.open ? 'Close navigation menu' : 'Open navigation menu');
   };
-  const close = async (restoreFocus = false) => {
-    if (!menu.open || closing) return;
-    closing = true;
-    if (panel && !reducedMotion.matches && typeof panel.animate === 'function') {
-      const exit = panel.animate(
-        [{ opacity: 1, transform: 'translateY(0) scale(1)' }, { opacity: 0, transform: 'translateY(-4px) scale(.985)' }],
-        { duration: 140, easing: 'cubic-bezier(.4,0,1,1)' },
-      );
-      await exit.finished.catch(() => {});
-    }
+  const close = (restoreFocus = false) => {
+    if (!menu.open) return;
     menu.open = false;
     sync();
-    closing = false;
     if (restoreFocus && menu.contains(document.activeElement)) trigger.focus();
   };
   menu.addEventListener('toggle', sync);
@@ -35,7 +24,7 @@ if (menu) {
     if (menu.open) { event.preventDefault(); close(true); }
   });
   trigger.addEventListener('keydown', event => {
-    if (event.key === 'ArrowDown' && !closing) {
+    if (event.key === 'ArrowDown') {
       event.preventDefault();
       menu.open = true;
       sync();

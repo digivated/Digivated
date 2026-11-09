@@ -80,6 +80,11 @@
   ],
   "redirects": [
     {
+      "source": "/ai-tools",
+      "destination": "/resources",
+      "permanent": true
+    },
+    {
       "source": "/shop",
       "destination": "/membership",
       "permanent": true

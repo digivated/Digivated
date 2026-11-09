@@ -1,0 +1,34 @@
+---
+import Platform from '../../layouts/Platform.astro';
+import FoundingPassTeaser from '../../components/FoundingPassTeaser.astro';
+import '../../styles/carousel-library.css';
+import EmptyState from '../../components/EmptyState.astro';
+import ResourceCard from '../../components/ResourceCard.astro';
+import CarouselBrowse from '../../components/CarouselBrowse.astro';
+import resources from '../../data/resources.json';
+import { resourcePathInfo } from '../../data/learning-paths.mjs';
+const packet = { id: 'builtin-ui-ux-prompt-packet', url: '/ui-ux-prompt-packet', title: 'UI/UX Prompt Packet', description: '75 practical prompts, workflows, and checklists to help you improve websites and apps with AI.', category: 'Design & UX', packet: true };
+const orderedResources = [...resources.filter(r=>r.status==='published'),packet].sort((a,b)=>resourcePathInfo(a).order-resourcePathInfo(b).order);
+const showDirectoryTools = orderedResources.length > 1;
+---
+<Platform title="Digivated guides" description="Explore Digivated guides and the UI/UX Prompt Packet.">
+<section class="resources-workspace" aria-labelledby="resources-title">
+<header class="resources-intro"><div><h1 id="resources-title">Digivated guides</h1><p>Explore practical guides and the UI/UX Prompt Packet. Previous purchasers can continue to access their toolkit and carousels.</p></div><div class="resources-intro-links"><a class="text-link" href="/resources">Resource links →</a><a class="text-link" href="/carousels">Educational carousels →</a><a class="text-link" href="/saved">Saved resources →</a></div></header>
+{showDirectoryTools && <><nav class="resource-topics" aria-label="Choose a learning goal">
+<button type="button" data-goal-filter="" aria-pressed="true">All resources</button>
+
+<a href="/saved">Saved <span aria-hidden="true">↗</span></a>
+</nav>
+<p id="directory-goal-description" class="directory-goal-description" hidden></p>
+<div class="resources-controls" data-directory="resources">
+<label class="resources-search"><span class="sr-only">Search resources</span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="directory-search" type="search" placeholder="Search resources"/></label>
+<label><span class="sr-only">Topic</span><select id="directory-category"><option value="">All topics</option>{['Design & UX'].map(c=><option>{c}</option>)}</select></label>
+<label><span class="sr-only">Sort resources</span><select id="directory-sort"><option value="recommended">Suggested order</option><option value="newest">Recently added</option><option value="quick">Quick reads first</option><option value="name">Title A–Z</option></select></label>
+<div class="resources-layout" role="group" aria-label="Resource layout"><button type="button" data-directory-layout="grid" aria-pressed="true" aria-label="Grid view"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></button><button type="button" data-directory-layout="list" aria-pressed="false" aria-label="List view"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 5h12M8 12h12M8 19h12M3 5h1M3 12h1M3 19h1"/></svg></button></div>
+</div>
+<div class="resources-results"><p id="directory-status" class="results-status" role="status">Loading resources…</p><button type="button" data-directory-clear hidden>Clear filters</button></div>
+</>}
+<div data-live-resources><div class="resource-grid" data-single={showDirectoryTools ? 'false' : 'true'} data-live-list>
+{orderedResources.map(resource=><ResourceCard resource={resource}/>)}
+</div><div id="directory-empty" data-live-empty hidden><EmptyState title="The library is taking shape." description="No resources to show yet. Articles and useful tools will appear here as they’re published."/></div><p class="quiet" data-live-status role="status"></p><noscript><p>Enable JavaScript to load additional published resources.</p></noscript></div><section class="carousel-shelf" hidden><div class="carousel-shelf-copy"><h2>Educational carousels</h2><p>Titles, summaries, and the first four slides are open. Previous Founding Membership purchases retain their full carousel access.</p></div><CarouselBrowse/><div class="resource-grid carousel-shelf-list" data-carousel-shelf></div></section><FoundingPassTeaser/></section><script>import '../../scripts/directory.js'; import '../../scripts/live-content.js'; import '../../scripts/carousel-library.js';</script></Platform>
+

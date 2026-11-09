@@ -5,7 +5,7 @@ const make = (tag,text,cls) => {const node=document.createElement(tag);if(text)n
 const search = $('#discovery-search'), input = $('#unified-search-input'), results = $('#unified-results');
 let records = JSON.parse($('#discovery-index').textContent), scope='all', searchTrigger, loading=false, projectsUnavailable=false;
 const dedupe = entries => [...new Map(entries.map(record => [record.href,record])).values()];
-const icons = {'/news':'book','/discover':'layers','/rankings':'chart','/ai-tools':'cpu','/submit-project':'share','/saved':'save','/membership':'sparkle','/account':'profile'};
+const icons = {'/news':'book','/discover':'layers','/rankings':'chart','/resources':'book','/submit-project':'share','/saved':'save','/membership':'sparkle','/account':'profile'};
 function resultRow(record) {
   const a=make('a',undefined,'unified-result');a.href=safeSearchHref(record.href);a.title=record.title;
   const destination=new URL(a.href);
