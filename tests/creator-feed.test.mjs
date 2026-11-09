@@ -4,7 +4,7 @@ import {makeCreatorProfileHandler} from '../server/creator-profile.mjs';
 
 const alice='123e4567-e89b-42d3-a456-426614174000',bob='123e4567-e89b-42d3-a456-426614174001';
 function fixture(){
- const values=new Map(),sets=new Map();
+ const values=new Map(),sets=new Map(),members=new Map();
  const redis=async([command,...args])=>{
   if(command==='GET')return values.get(args[0])??null;
   if(command==='SET'){values.set(args[0],args[1]);return 'OK';}
@@ -13,8 +13,10 @@ function fixture(){
   if(command==='ZREM')return 1;
   if(command==='ZREVRANGE')return(sets.get(args[0])||[]).slice(Number(args[1]),Number(args[2])+1);
   if(command==='MGET')return args.map(key=>values.get(key)||null);
-  if(command==='SCARD')return 0;
-  if(command==='SMEMBERS')return [];
+  if(command==='SCARD')return (members.get(args[0])||new Set()).size;
+  if(command==='SMEMBERS')return [...(members.get(args[0])||new Set())];
+  if(command==='SISMEMBER')return (members.get(args[0])||new Set()).has(args[1])?1:0;
+  if(command==='EVAL'&&args[1]===2){const [,count,postKey,setKey,member]=args;if(!values.has(postKey))return -1;const group=members.get(setKey)||new Set();if(group.has(member))group.delete(member);else group.add(member);members.set(setKey,group);return group.size;}
   if(command==='EVAL'){const [,count,wait,daily,duplicate]=args;assert.equal(count,3);if(values.has(wait))return 1;const n=Number(values.get(daily)||0)+1;values.set(daily,n);if(n>30)return 2;if(values.has(duplicate))return 3;values.set(wait,'1');values.set(duplicate,'1');return 0;}
   throw Error(command);
  };
@@ -36,4 +38,18 @@ test('creator conversation requires a public profile and blocks links and fast r
  assert.equal((await call('POST','/?action=delete-post',{id:first.post.id},'Bob')).status,403);
  assert.equal((await call('POST','/?action=delete-post',{id:first.post.id},'Alice')).status,200);
  assert.equal((await call('GET','/?action=posts')).posts.length,0);
+});
+
+test('likes and bookmarks are private to the signed-in viewer and can be undone',async()=>{
+ const {call,values}=fixture();await call('POST','/',{name:'Alice',public:true},'Alice');
+ const created=await call('POST','/?action=post',{body:'Building a better project page'},'Alice');const id=created.post.id;
+ assert.equal((await call('POST','/?action=react',{id,kind:'like'},'Bob')).likes,1);
+ assert.equal((await call('POST','/?action=react',{id,kind:'save'},'Bob')).active,true);
+ const publicPost=(await call('GET','/?action=posts&post='+id)).posts[0];assert.equal(publicPost.likes,1);assert.equal(publicPost.liked,false);assert.equal(publicPost.saved,false);
+ const bobPost=(await call('GET','/?action=posts&post='+id,null,'Bob')).posts[0];assert.equal(bobPost.liked,true);assert.equal(bobPost.saved,true);
+ assert.equal((await call('GET','/?action=posts&saved=1',null,'Bob')).posts.length,1);
+ assert.equal((await call('POST','/?action=react',{id,kind:'save'},'Bob')).active,false);
+ assert.equal((await call('GET','/?action=posts&saved=1',null,'Bob')).posts.length,0);
+ values.set('digivated:creator:profile:'+alice,JSON.stringify({name:'Alice',public:false}));
+ assert.equal((await call('POST','/?action=react',{id,kind:'like'},'Bob')).status,404);
 });

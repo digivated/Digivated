@@ -11,6 +11,12 @@ const logoKey=id=>`digivated:creator:logo:${id}`;
 const publicIndex='digivated:creator:public';
 const postIndex='digivated:creator:posts';
 const postKey=id=>`digivated:creator:post:${id}`;
+const likeKey=id=>`digivated:creator:likes:${id}`;
+const savedKey=id=>`digivated:creator:saved:${id}`;
+const REACT=`if redis.call('EXISTS',KEYS[1])==0 then return -1 end
+local post=cjson.decode(redis.call('GET',KEYS[1]));if post.hidden then return -1 end
+local exists=redis.call('SISMEMBER',KEYS[2],ARGV[1]);if exists==1 then redis.call('SREM',KEYS[2],ARGV[1]) else redis.call('SADD',KEYS[2],ARGV[1]) end
+return redis.call('SCARD',KEYS[2])`;
 const postRate=`local prior=redis.call('GET',KEYS[1]);if prior then return 1 end
 local daily=redis.call('INCR',KEYS[2]);if daily==1 then redis.call('EXPIRE',KEYS[2],86400) end
 if daily>30 then return 2 end
@@ -43,16 +49,22 @@ export function makeCreatorProfileHandler(deps={}){
     return send(200,{creators:rows.flatMap((raw,index)=>{try{const p=JSON.parse(raw);return p.public?[{id:ids[index],name:p.name,bio:p.bio,logoUrl:p.hasLogo?`/api/creator-profile?logo=${ids[index]}`:''}]:[];}catch{return[];}})});
    }
    if(req.method==='GET'&&url.searchParams.get('action')==='posts'){
-    const parent=url.searchParams.get('parent'),author=url.searchParams.get('author'),offset=Number(url.searchParams.get('offset')||0);
-    if(parent&&!UUID.test(parent)||author&&!UUID.test(author)||!Number.isInteger(offset)||offset<0||offset>1000)return send(400,{error:'Invalid feed request.'});
+    const parent=url.searchParams.get('parent'),author=url.searchParams.get('author'),single=url.searchParams.get('post'),saved=url.searchParams.get('saved')==='1',offset=Number(url.searchParams.get('offset')||0);
+    if(parent&&!UUID.test(parent)||author&&!UUID.test(author)||single&&!UUID.test(single)||!Number.isInteger(offset)||offset<0||offset>1000)return send(400,{error:'Invalid feed request.'});
+    const viewer=req.headers.authorization?await(deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch):null;
+    if(saved&&!viewer)return send(401,{error:'Sign in to see saved posts.'});
     const index=parent?`digivated:creator:replies:${parent}`:author?`digivated:creator:author:${author}`:postIndex;
-    const ids=await redis(['ZREVRANGE',index,offset,offset+49]);
+    const savedIds=saved?await redis(['SMEMBERS',savedKey(viewer.id)]):null;
+    const ids=single?[single]:saved?(savedIds||[]).slice(offset,offset+50):await redis(['ZREVRANGE',index,offset,offset+49]);
     const raws=ids.length?await redis(['MGET',...ids.map(postKey)]):[];
     const posts=raws.filter(Boolean).flatMap(raw=>{try{const post=JSON.parse(raw);return !post.hidden&&(!author||post.authorId===author)?[post]:[];}catch{return[];}});
     const authorIds=[...new Set(posts.map(post=>post.authorId))];
     const profiles=authorIds.length?await redis(['MGET',...authorIds.map(key)]):[];
     const people=new Map(authorIds.map((id,i)=>{try{return[id,JSON.parse(profiles[i])];}catch{return[id,null];}}));
-    return send(200,{posts:posts.filter(post=>people.get(post.authorId)?.public).map(post=>({id:post.id,body:post.body,createdAt:post.createdAt,parentId:post.parentId||null,replies:post.replies||0,author:{id:post.authorId,name:people.get(post.authorId).name,logoUrl:people.get(post.authorId).hasLogo?`/api/creator-profile?logo=${post.authorId}`:''}})),next:ids.length===50?offset+50:null});
+    const viewerSaved=viewer?new Set(savedIds||await redis(['SMEMBERS',savedKey(viewer.id)])):new Set();
+    const publicPosts=posts.filter(post=>people.get(post.authorId)?.public);
+    const enriched=await Promise.all(publicPosts.map(async post=>({id:post.id,body:post.body,createdAt:post.createdAt,parentId:post.parentId||null,replies:post.replies||0,likes:Number(await redis(['SCARD',likeKey(post.id)]))||0,liked:viewer?Number(await redis(['SISMEMBER',likeKey(post.id),viewer.id]))===1:false,saved:viewerSaved.has(post.id),author:{id:post.authorId,name:people.get(post.authorId).name,logoUrl:people.get(post.authorId).hasLogo?`/api/creator-profile?logo=${post.authorId}`:''}})));
+    return send(200,{posts:saved?enriched.sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt)):enriched,next:ids.length===50?offset+50:null});
    }
    if(req.method==='GET'&&url.searchParams.get('id')){
     const id=url.searchParams.get('id');if(!UUID.test(id))return send(404,{error:'Profile not found.'});
@@ -84,6 +96,15 @@ export function makeCreatorProfileHandler(deps={}){
    }
    if(req.headers.origin!=='https://digivated.com'||req.headers['sec-fetch-site']==='cross-site'||!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))return send(403,{error:'Open your account on Digivated.'});
    const body=typeof req.body==='string'?JSON.parse(req.body):req.body;
+   if(url.searchParams.get('action')==='react'){
+    const id=String(body?.id||''),kind=body?.kind;if(!UUID.test(id)||!['like','save'].includes(kind))return send(400,{error:'Choose a post and action.'});
+    const raw=await redis(['GET',postKey(id)]),post=raw?JSON.parse(raw):null,profile=post?await redis(['GET',key(post.authorId)]):null;
+    if(!post||post.hidden||!profile||!JSON.parse(profile).public)return send(404,{error:'Post not found.'});
+    const count=Number(await redis(['EVAL',REACT,2,postKey(id),kind==='like'?likeKey(id):savedKey(account.id),kind==='like'?account.id:id]));
+    if(count<0)return send(404,{error:'Post not found.'});
+    const active=Number(await redis(['SISMEMBER',kind==='like'?likeKey(id):savedKey(account.id),kind==='like'?account.id:id]))===1;
+    return send(200,{active,...(kind==='like'?{likes:count}:{})});
+   }
    if(url.searchParams.get('action')==='post'){
     const profileRaw=await redis(['GET',key(account.id)]),profile=profileRaw?JSON.parse(profileRaw):null;
     if(!profile?.public)return send(403,{error:'Make your creator profile public before posting.'});

@@ -71,3 +71,40 @@ html body.platform.light-theme .creator-social-main>.creator-tabs button{border-
 html body.platform.light-theme .creator-social-main>.creator-tabs button.active{background:#a77bdf11}
 html body.platform.light-theme .creator-social-main>.creator-tabs button{border-radius:0!important;background:transparent!important;box-shadow:none!important}
 html body.platform.light-theme .creator-social-main>.creator-tabs button.active{background:#a77bdf11!important}
+/* A warmer, more active social surface without animated work on scroll. */
+html body.platform.light-theme .creator-social{position:relative;isolation:isolate}
+html body.platform.light-theme .creator-social::before{content:"";position:absolute;z-index:-1;top:0;left:17%;width:70%;height:430px;pointer-events:none;background:radial-gradient(ellipse at 50% 8%,#8f3cf02a,transparent 67%)}
+html body.platform.light-theme .creator-social-heading .eyebrow{color:#ba83e7}
+html body.platform.light-theme .creator-social-heading h1{background:linear-gradient(100deg,#fff 25%,#d5b5f3 75%,#fff);background-clip:text;-webkit-text-fill-color:transparent}
+html body.platform.light-theme .creator-social-main>.creator-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
+html body.platform.light-theme .creator-social-main>.creator-tabs:has(>button[hidden]){grid-template-columns:repeat(2,minmax(0,1fr))}
+html body.platform.light-theme .creator-social-main>.creator-tabs button{min-width:0;padding-inline:3px}
+html body.platform.light-theme .creator-social-main>.creator-tabs button.active{border-bottom:2px solid #b47af0;background:#a77bdf10!important}
+html body.platform.light-theme .creator-social-main .creator-post{background:linear-gradient(90deg,#a76bda07,transparent 55%)}
+html body.platform.light-theme .creator-social-main .creator-post:hover{background:linear-gradient(90deg,#a76bda15,transparent 70%)}
+.creator-post-actions{gap:0;justify-content:space-between;max-width:430px;margin-top:16px}
+.creator-post-actions button{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:5px 8px;border-radius:9px;color:#9f91ac}
+.creator-post-actions button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.creator-post-actions button:hover,.creator-post-actions button.active{color:#c28df3;background:#a77bdf12}
+.creator-post-actions button:disabled{opacity:.6;cursor:wait}
+.creator-empty{padding:45px 32px 50px;text-align:center;border-top:1px solid #ffffff18;background:radial-gradient(ellipse at 50% 0,#a05de119,transparent 55%)}
+.creator-empty-orbit{position:relative;width:98px;height:98px;margin:0 auto 20px;border:1px solid #ad77df50;border-radius:50%;box-shadow:0 0 50px #a45be536,inset 0 0 22px #a45be523}
+.creator-empty-orbit::after{content:"";position:absolute;inset:24px;border:1px solid #e0b5ff8a;border-radius:50%}
+.creator-empty-orbit span{position:absolute;width:8px;height:8px;border-radius:50%;background:#d9a7ff;box-shadow:0 0 16px #c174ff}
+.creator-empty-orbit span:nth-child(1){top:3px;left:45px}.creator-empty-orbit span:nth-child(2){bottom:18px;left:9px}.creator-empty-orbit span:nth-child(3){right:10px;bottom:20px}
+.creator-empty h2{font-size:clamp(22px,3vw,30px);margin:8px 0 10px}
+.creator-empty>p:not(.eyebrow){max-width:470px;margin:0 auto;color:#bdb0c7;line-height:1.6}
+.creator-empty-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:25px 0 0}
+.creator-empty-actions :is(button,a){padding:10px 14px;border:1px solid #ffffff32;border-radius:999px;background:#ffffff09;color:#ebdff1;font:inherit;font-size:.8rem;text-decoration:none;cursor:pointer}
+.creator-empty-actions :is(button,a):hover{border-color:#b67cf0;background:#a77bdf1c}
+.creator-project-picks{display:grid;gap:8px;margin-top:36px;text-align:left}
+.creator-project-picks>strong{color:#ad91c4;font-size:.73rem;letter-spacing:.09em;text-transform:uppercase}
+.creator-project-picks a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;border:1px solid #ffffff1e;border-radius:12px;background:#ffffff07;text-decoration:none}
+.creator-project-picks a span{display:grid;gap:3px;min-width:0}.creator-project-picks a b{color:#eee9f3;font-size:.88rem}.creator-project-picks a small{overflow:hidden;color:#a99daf;text-overflow:ellipsis;white-space:nowrap}.creator-project-picks a em{color:#b681e4;font-style:normal}
+@media(max-width:560px){.creator-empty{padding:38px 18px}.creator-post-actions{max-width:none}.creator-post-actions button{padding:5px}.creator-post-actions button svg{width:17px;height:17px}}
+html#digivated-root body.platform.light-theme .creator-social-main>.creator-tabs button{border-radius:0!important;box-shadow:none!important}
+html#digivated-root body.platform.light-theme .creator-post-actions button{min-height:38px;border:0!important;border-radius:8px!important;background:transparent!important;box-shadow:none!important;color:#a99bb4}
+html#digivated-root body.platform.light-theme .creator-post-actions button:hover,html#digivated-root body.platform.light-theme .creator-post-actions button.active{background:#a77bdf16!important;color:#d19cff}
+.creator-follow-inline{flex:none;padding:8px 13px;border:1px solid #aa74db7a;border-radius:999px;background:#a77bdf18;color:#e3c5fa;font:inherit;font-size:.78rem;cursor:pointer}
+.creator-follow-inline:hover{background:#a77bdf2b}
+@media(max-width:560px){.creator-follow-inline{justify-self:start;margin-left:72px}}
