@@ -33,7 +33,7 @@ for(const width of [375,768,1440])test(`owner workspace, review, library and sig
  await expect(page.locator('#owner-settings')).toBeHidden();await expect(page.locator('#owner-content')).toBeHidden();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.screenshot({path:test.info().outputPath(`admin-overview-${width}.png`),fullPage:true});
- await page.locator('[data-open-status=pending]').click();await expect(page.locator('#owner-filter')).toHaveValue('pending');await expect(page.locator('.owner-row')).toHaveCount(25);
+ await page.locator('[data-open-kind=submission][data-open-status=pending]').click();await expect(page.locator('#owner-filter')).toHaveValue('pending');await expect(page.locator('.owner-row')).toHaveCount(25);
  await page.getByRole('button',{name:'Load more',exact:true}).click();await expect(page.locator('.owner-row')).toHaveCount(26);
  await page.getByRole('searchbox',{name:'Search loaded items'}).fill('Orbit');await expect(page.locator('.owner-row')).toHaveCount(1);
  await page.getByRole('button',{name:'Review & approve',exact:true}).click();await expect(page.locator('#owner-editor')).toBeVisible();
