@@ -60,7 +60,8 @@ test('post media uses signed upload ticket and verifies file before publishing',
  const env={COMMUNITY_SUPABASE_URL:'https://example.supabase.co',COMMUNITY_SUPABASE_SECRET_KEY:'test-secret'};let uploaded=false;
  const storageClient={storage:{from:bucket=>{assert.equal(bucket,'creator-media');return{createSignedUploadUrl:async()=>({data:{token:'signed-token'},error:null}),info:async()=>({data:uploaded?{size:1000,contentType:'image/png'}:null,error:uploaded?null:new Error('missing')})};}}};
  const {call}=fixture({env,storageClient});await call('POST','/',{name:'Alice',public:true},'Alice');
- assert.equal((await call('POST','/?action=media-ticket',{type:'video/mp4',size:20971521},'Alice')).status,400);
+ assert.equal((await call('POST','/?action=media-ticket',{type:'video/mp4',size:12582913},'Alice')).status,400);
+ assert.equal((await call('POST','/?action=media-ticket',{type:'image/png',size:3145729},'Alice')).status,400);
  const ticket=await call('POST','/?action=media-ticket',{type:'image/png',size:1000},'Alice');assert.equal(ticket.status,200);assert.equal(ticket.token,'signed-token');
  assert.equal((await call('POST','/?action=post',{body:'My latest work',mediaPath:ticket.path},'Alice')).status,400);
  uploaded=true;const created=await call('POST','/?action=post',{body:'My latest work',mediaPath:ticket.path},'Alice');assert.equal(created.status,201);assert.match(created.post.media.url,/creator-media/);

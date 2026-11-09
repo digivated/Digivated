@@ -12,7 +12,7 @@ const logoKey=id=>`digivated:creator:logo:${id}`;
 const publicIndex='digivated:creator:public';
 const postIndex='digivated:creator:posts';
 const postKey=id=>`digivated:creator:post:${id}`;
-const MEDIA_TYPES={'image/jpeg':{ext:'jpg',max:5242880},'image/png':{ext:'png',max:5242880},'image/webp':{ext:'webp',max:5242880},'video/mp4':{ext:'mp4',max:20971520},'video/webm':{ext:'webm',max:20971520}};
+const MEDIA_TYPES={'image/jpeg':{ext:'jpg',max:3145728},'image/png':{ext:'png',max:3145728},'image/webp':{ext:'webp',max:3145728},'video/mp4':{ext:'mp4',max:12582912},'video/webm':{ext:'webm',max:12582912}};
 const mediaUrl=(env,path)=>`${new URL(env.COMMUNITY_SUPABASE_URL).origin}/storage/v1/object/public/creator-media/${path}`;
 const likeKey=id=>`digivated:creator:likes:${id}`;
 const savedKey=id=>`digivated:creator:saved:${id}`;
@@ -101,7 +101,7 @@ export function makeCreatorProfileHandler(deps={}){
    const body=typeof req.body==='string'?JSON.parse(req.body):req.body;
    if(url.searchParams.get('action')==='media-ticket'){
     const type=String(body?.type||''),size=Number(body?.size),format=MEDIA_TYPES[type];
-    if(!format||!Number.isInteger(size)||size<12||size>format.max)return send(400,{error:'Choose an image under 5 MB or an MP4/WebM video under 20 MB.'});
+    if(!format||!Number.isInteger(size)||size<12||size>format.max)return send(400,{error:'Choose an image under 3 MB or an MP4/WebM video under 12 MB.'});
     const profile=await redis(['GET',key(account.id)]);if(!profile||!JSON.parse(profile).public)return send(403,{error:'Make your creator profile public before uploading.'});
     if(!env.COMMUNITY_SUPABASE_URL||!env.COMMUNITY_SUPABASE_SECRET_KEY)return send(503,{error:'Media uploads are temporarily unavailable.'});
     const count=Number(await redis(['EVAL',"local n=redis.call('INCR',KEYS[1]);if n==1 then redis.call('EXPIRE',KEYS[1],3600) end;return n",1,`digivated:creator:uploads:${account.id}`]));
