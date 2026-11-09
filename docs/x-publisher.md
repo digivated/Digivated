@@ -1,3 +1,5 @@
+> Paused by the owner on November 9, 2026. X API endpoints are disabled and research/publisher cron jobs are removed. The social video card remains active without X API calls. Schedule details below describe the previous setup.
+
 # Bounded automatic connection replies
 
 Production research is scheduled daily at 12:00 UTC and considers up to seven posts. The authenticated owner can also run research manually, at most once per UTC hour. Four Grok requests at most per hour (96/day maximum), including failures, replace the previous daily schedule. API usage is billable and these request limits are not a dollar cap. Configure provider spending limits.

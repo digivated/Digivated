@@ -52,6 +52,7 @@ export function makeXConnectHandler(deps = {}) {
     const send = (status, data) => { res.statusCode = status; res.end(JSON.stringify(data)); };
     try {
       const env = deps.env || process.env;
+      if(env.X_API_ENABLED==='false')return send(503,{status:'disabled',error:'X API integration is paused.'});
       const cfg = config(env);
       const redis = deps.redis || redisClient(env);
       const fetcher = deps.fetch || fetch;

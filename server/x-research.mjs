@@ -142,6 +142,7 @@ export function makeResearchHandler(deps = {}) {
     const send = (status, data) => { res.statusCode = status; res.end(JSON.stringify(data)); };
     try {
       const env = deps.env || process.env;
+      if(env.X_API_ENABLED==='false')return send(503,{status:'disabled',error:'X API integration is paused.'});
       const redis = deps.redis || redisClient(env);
       const isCron = req.method === 'GET' && cronAuthorized(req.headers.authorization, env.CRON_SECRET);
       if (isCron) {

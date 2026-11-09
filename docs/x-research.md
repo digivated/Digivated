@@ -1,3 +1,5 @@
+> Paused by the owner on November 9, 2026. X API endpoints are disabled and research/publisher cron jobs are removed. The social video card remains active without X API calls. Schedule details below describe the previous setup.
+
 # X connection and product-introduction research
 
 In optional Grok mode, four model calls at most per UTC hour: scout and verifier with X Search, then writer and reviewer without tools. Up to seven niche connection/product-introduction invitations from the last 48 hours are considered. Research output goes to a private Redis draft queue. The separate bounded publisher can consume eligible drafts when enabled; see x-publisher.md.

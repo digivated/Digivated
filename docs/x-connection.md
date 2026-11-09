@@ -1,3 +1,5 @@
+> Paused by the owner on November 9, 2026. X API endpoints are disabled and research/publisher cron jobs are removed. The social video card remains active without X API calls. Schedule details below describe the previous setup.
+
 # Owner X connection
 
 This module provides account authorization and private token storage. Separate research and publisher workers use the connection; see x-publisher.md.

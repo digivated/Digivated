@@ -113,7 +113,9 @@ export function makePublisherHandler(deps={}) {
     res.setHeader('Content-Type','application/json; charset=utf-8');res.setHeader('Cache-Control','private, no-store');res.setHeader('Vercel-CDN-Cache-Control','no-store');
     const send=(status,data)=>{res.statusCode=status;res.end(JSON.stringify(data));};
     try {
-      const env=deps.env||process.env,redis=deps.redis||redisClient(env);
+      const env=deps.env||process.env;
+      if(env.X_API_ENABLED==='false')return send(503,{status:'disabled',error:'X API integration is paused.'});
+      const redis=deps.redis||redisClient(env);
       if(req.method==='GET' && cronAuthorized(req.headers.authorization,env.CRON_SECRET)) {
         const report=await publishOne(env,redis,deps.fetch||fetch);
         console.info(JSON.stringify({event:'x_publish',...report}));return send(200,report);
