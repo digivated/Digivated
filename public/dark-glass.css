@@ -223,17 +223,21 @@ html#digivated-root .home-editorial::before {
 }
 html#digivated-root .home-editorial::after { content:none; }
 html#digivated-root .home-editorial>.home-signal {
-  position:absolute; inset:0; z-index:1; overflow:hidden; pointer-events:none;
+  position:absolute; top:0; bottom:0; left:50%; width:100vw; z-index:1; overflow:visible; pointer-events:none;
+  transform:translateX(-50%);
 }
 html#digivated-root .home-signal svg {
-  position:absolute; top:50%; left:-15%; width:130%; height:100%; transform:translateY(-50%);
-  filter:drop-shadow(0 0 12px #a36ee977);
-  animation:digivated-signal-drift 22s ease-in-out infinite alternate;
+  position:absolute; top:50%; left:0; display:block; width:100%; height:100%; transform:translateY(-50%);
+  overflow:visible; filter:drop-shadow(0 0 9px #a36ee977);
+}
+html#digivated-root .home-signal path {
+  stroke-dasharray:1; stroke-dashoffset:1; opacity:0;
+  animation:digivated-signal-draw 8s cubic-bezier(.45,0,.55,1) infinite alternate;
 }
 @keyframes digivated-hero-glow { to { transform:translate3d(-50%,3%,0) scale(1.04); opacity:.74; } }
-@keyframes digivated-signal-drift { from { transform:translate3d(-5%,-50%,0); } to { transform:translate3d(5%,-50%,0); } }
+@keyframes digivated-signal-draw { 0% { stroke-dashoffset:1; opacity:0; } 8% { opacity:.9; } 92% { opacity:.9; } 100% { stroke-dashoffset:0; opacity:0; } }
 @media(max-width:600px) { html#digivated-root .home-editorial::before { top:-40px; bottom:-85px; background:radial-gradient(ellipse 75% 47% at 18% 44%,#7938c74d,transparent 80%),radial-gradient(ellipse 72% 42% at 90% 62%,#7237c340,transparent 82%); } }
-@media(prefers-reduced-motion:reduce) { html#digivated-root .home-editorial::before,html#digivated-root .home-signal svg { animation:none!important; } html#digivated-root .home-signal svg { transform:translate3d(0,-50%,0); } }
+@media(prefers-reduced-motion:reduce) { html#digivated-root .home-editorial::before,html#digivated-root .home-signal path { animation:none!important; } html#digivated-root .home-signal path { stroke-dashoffset:0; opacity:.35; } }
 html#digivated-root .home-editorial h1 { max-width:1000px; font-size:clamp(44px,6vw,80px); line-height:1.07; letter-spacing:-.055em; color:#f4f2f8!important; text-shadow:none; }
 html#digivated-root .home-editorial h1 em { color:#bd9af4!important; background:linear-gradient(105deg,#eadbff,#c3a0ff 55%,#aa83e5); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; text-shadow:none; }
 html#digivated-root .home-editorial-kicker { color:#b9a7cd!important; }
