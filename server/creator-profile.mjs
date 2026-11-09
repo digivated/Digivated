@@ -2,9 +2,11 @@ import {redisClient} from './submissions.mjs';
 import {verifiedAccount} from './project-account.mjs';
 import {projectPublic} from './admin-store.mjs';
 import {safeUrl} from '../src/data/community.mjs';
+import {imageBytes} from './member-community.mjs';
 
 const UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 const key=id=>`digivated:creator:profile:${id}`;
+const logoKey=id=>`digivated:creator:logo:${id}`;
 const publicIndex='digivated:creator:public';
 const FOLLOW=`if redis.call('EXISTS',KEYS[3])==0 then return -1 end
 local profile=cjson.decode(redis.call('GET',KEYS[3]));if profile.public~=true then return -1 end
@@ -18,10 +20,18 @@ export function makeCreatorProfileHandler(deps={}){
    const env=deps.env||process.env,url=new URL(req.url,'https://digivated.com');
    if(!deps.redis&&!env.SUBMISSIONS_REDIS_REST_TOKEN)return send(503,{error:'Profiles are temporarily unavailable.'});
    const redis=deps.redis||redisClient(env);
+   if(req.method==='GET'&&url.searchParams.get('logo')){
+    const id=url.searchParams.get('logo');if(!UUID.test(id))return send(404,{error:'Logo not found.'});
+    const raw=await redis(['GET',key(id)]);if(!raw)return send(404,{error:'Logo not found.'});
+    const profile=JSON.parse(raw);
+    if(!profile.public){const owner=req.headers.authorization?await(deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch):null;if(owner?.id!==id)return send(404,{error:'Logo not found.'});}
+    const image=await redis(['GET',logoKey(id)]);if(!image)return send(404,{error:'Logo not found.'});
+    const {bytes,type}=imageBytes(image);res.setHeader('Content-Type',type);res.statusCode=200;return res.end(bytes);
+   }
    if(req.method==='GET'&&url.searchParams.get('action')==='discover'){
     const ids=await redis(['ZREVRANGE',publicIndex,0,99]);
     const rows=ids.length?await redis(['MGET',...ids.map(key)]):[];
-    return send(200,{creators:rows.flatMap((raw,index)=>{try{const p=JSON.parse(raw);return p.public?[{id:ids[index],name:p.name,bio:p.bio}]:[];}catch{return[];}})});
+    return send(200,{creators:rows.flatMap((raw,index)=>{try{const p=JSON.parse(raw);return p.public?[{id:ids[index],name:p.name,bio:p.bio,logoUrl:p.hasLogo?`/api/creator-profile?logo=${ids[index]}`:''}]:[];}catch{return[];}})});
    }
    if(req.method==='GET'&&url.searchParams.get('id')){
     const id=url.searchParams.get('id');if(!UUID.test(id))return send(404,{error:'Profile not found.'});
@@ -33,7 +43,7 @@ export function makeCreatorProfileHandler(deps={}){
     const followers=Number(await redis(['SCARD',`digivated:creator:followers:${id}`]))||0;
     const viewer=req.headers.authorization?await(deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch):null;
     const following=viewer&&viewer.id!==id?Number(await redis(['SISMEMBER',`digivated:creator:followers:${id}`,viewer.id]))===1:false;
-    return send(200,{profile:{name:profile.name,bio:profile.bio,website:profile.website,social:profile.social||'',id},projects,followers,following,ownProfile:viewer?.id===id});
+    return send(200,{profile:{name:profile.name,bio:profile.bio,website:profile.website,social:profile.social||'',logoUrl:profile.hasLogo?`/api/creator-profile?logo=${id}`:'',id},projects,followers,following,ownProfile:viewer?.id===id});
    }
    if(!['GET','POST'].includes(req.method))return send(405,{error:'Method not allowed.'});
    const account=await(deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch);if(!account)return send(401,{error:'Sign in to manage your profile.'});
@@ -49,10 +59,18 @@ export function makeCreatorProfileHandler(deps={}){
    if(req.method==='GET'){
     const raw=await redis(['GET',key(account.id)]);
     if(raw){try{const saved=JSON.parse(raw);if(saved.public)await redis(['ZADD',publicIndex,Date.parse(saved.updatedAt)||Date.now(),account.id]);}catch{}}
-    return send(200,{profile:raw?JSON.parse(raw):{name:'',bio:'',website:'',social:'',public:false},id:account.id,following:Number(await redis(['SCARD',`digivated:creator:following:${account.id}`]))||0});
+    return send(200,{profile:raw?JSON.parse(raw):{name:'',bio:'',website:'',social:'',public:false},id:account.id,following:Number(await redis(['SCARD',`digivated:creator:following:${account.id}`]))||0,followingIds:await redis(['SMEMBERS',`digivated:creator:following:${account.id}`])});
    }
    if(req.headers.origin!=='https://digivated.com'||req.headers['sec-fetch-site']==='cross-site'||!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))return send(403,{error:'Open your account on Digivated.'});
    const body=typeof req.body==='string'?JSON.parse(req.body):req.body;
+   if(url.searchParams.get('action')==='logo'){
+    const {bytes}=imageBytes(body?.image);
+    if(bytes.length>180000)return send(400,{error:'Choose a smaller logo image.'});
+    const previous=await redis(['GET',key(account.id)]);if(!previous)return send(400,{error:'Save your profile before uploading a logo.'});
+    const profile={...JSON.parse(previous),hasLogo:true,updatedAt:new Date().toISOString()};
+    await redis(['SET',logoKey(account.id),body.image]);await redis(['SET',key(account.id),JSON.stringify(profile)]);
+    return send(200,{logoUrl:`/api/creator-profile?logo=${account.id}`});
+   }
    if(url.searchParams.get('action')==='follow'){
     const id=String(body?.id||'');if(!UUID.test(id)||id===account.id||!['follow','unfollow'].includes(body?.operation))return send(400,{error:'Choose a valid creator.'});
     const followers=await redis(['EVAL',FOLLOW,3,`digivated:creator:followers:${id}`,`digivated:creator:following:${account.id}`,key(id),body.operation,account.id,id]);
@@ -60,10 +78,11 @@ export function makeCreatorProfileHandler(deps={}){
    }
    const name=String(body?.name||'').trim(),bio=String(body?.bio||'').trim(),website=String(body?.website||'').trim(),social=String(body?.social||'').trim();
    if(name.length<2||name.length>60||bio.length>240||website.length>300||website&&!safeUrl(website)||social.length>300||social&&!safeUrl(social))return send(400,{error:'Check your name, bio and links.'});
-   const profile={name,bio,website:website?safeUrl(website):'',social:social?safeUrl(social):'',public:body?.public===true,updatedAt:new Date().toISOString()};
+   const previous=await redis(['GET',key(account.id)]);
+   const profile={name,bio,website:website?safeUrl(website):'',social:social?safeUrl(social):'',public:body?.public===true,hasLogo:previous?!!JSON.parse(previous).hasLogo:false,updatedAt:new Date().toISOString()};
    await redis(['SET',key(account.id),JSON.stringify(profile)]);
    await redis([profile.public?'ZADD':'ZREM',publicIndex,...(profile.public?[Date.now(),account.id]:[account.id])]);
    return send(200,{profile,id:account.id});
-  }catch{return send(503,{error:'Profile could not be loaded or saved. Try again shortly.'});}
+  }catch(error){return send(error?.status||503,{error:error?.status===400?error.message:'Profile could not be loaded or saved. Try again shortly.'});}
  };
 }

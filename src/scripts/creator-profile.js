@@ -7,7 +7,7 @@ if(!id||!/^[a-f0-9-]{36}$/i.test(id))status.textContent='This profile could not 
 else (async()=>{
  const auth=await accountSession().catch(()=>null),headers=auth?.state==='signed-in'?{Authorization:`Bearer ${auth.session.access_token}`}:{},response=await fetch('/api/creator-profile?id='+encodeURIComponent(id),{headers,cache:'no-store'}),data=await response.json();
  if(!response.ok)throw Error(data.error||'This profile could not be found.');
- const {profile,projects=[],followers}=data;document.title=profile.name+' · Digivated';document.getElementById('creator-title').textContent=profile.name;document.getElementById('creator-avatar').textContent=profile.name.slice(0,1).toUpperCase();document.getElementById('creator-bio').textContent=profile.bio||'Building and sharing on Digivated.';
+ const {profile,projects=[],followers}=data;document.title=profile.name+' · Digivated';document.getElementById('creator-title').textContent=profile.name;const avatar=document.getElementById('creator-avatar');avatar.textContent=profile.name.slice(0,1).toUpperCase();if(profile.logoUrl){const image=document.createElement('img');image.src=profile.logoUrl;image.alt='';avatar.replaceChildren(image);}document.getElementById('creator-bio').textContent=profile.bio||'Building and sharing on Digivated.';
  for(const [field,value] of [['website',profile.website],['social',profile.social]]){const href=safeUrl(value);if(href){const link=document.getElementById('creator-'+field);link.href=href;link.hidden=false;}}
  const followerLabel=count=>`${count} ${count===1?'follower':'followers'}`;document.getElementById('creator-followers').textContent=followerLabel(followers);
  const follow=document.getElementById('creator-follow');let following=!!data.following;
