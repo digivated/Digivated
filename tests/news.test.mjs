@@ -53,6 +53,15 @@ test('public visitors cannot trigger source ingestion',async()=>{
  assert.equal((await call(handler,'/api/news-ingest')).code,403);assert.equal(called,false);
  assert.equal((await call(handler,'/api/news-ingest',{headers:{authorization:'Bearer '+'s'.repeat(40)}})).code,200);assert.equal(called,true);
 });
+test('owner can publish a fully source-verified review story without redundant confirmation or note', {skip:!process.env.DIGIVATED_TEST_REDIS_PORT}, async()=>{
+ const redis=testRedis(9);await redis(['FLUSHDB']);
+ const c=verified(),review={decision:'review',classification:'update',summary:summary,reasons:['importance_requires_editorial_judgment'],importance:0};
+ const saved=await insertNews(redis,c,review,now),{record}=await getNewsRecord(redis,saved.id);
+ assert.equal(record.status,'review');
+ const published=await saveNewsRecord(redis,{id:record.id,revision:record.revision,headline:record.headline,summary:record.summary,category:record.category,classification:'update',status:'published',verificationConfirmed:false,reviewNote:''},now+1000);
+ assert.equal(published.status,'published');assert.equal(published.ownerVerified,true);assert.equal(await redis(['GET',NEWS+'public:'+record.id])!==null,true);
+ await redis(['FLUSHDB']);
+});
 test('real Redis: automatic publish, atomic dedup, review fallback, corrections and removal preserve audit', {skip:!process.env.DIGIVATED_TEST_REDIS_PORT}, async()=>{
  const redis=testRedis(9);await redis(['FLUSHDB']);
  const c=verified(),assessment=assessCandidate(c,{now});

@@ -52,11 +52,20 @@ export async function saveNewsRecord(redis,input,now=Date.now()){
  const {record:old}=await getNewsRecord(redis,input.id);
  const headline=String(input.headline||'').trim(),summary=String(input.summary||'').trim(),note=String(input.reviewNote||'').trim();
  if(headline.length<8||headline.length>240||(input.status==='published'&&summary.length<20)||summary.length>900||note.length>1200||!CATEGORIES.includes(input.category)||!['published','review','removed'].includes(input.status)||!['breaking','update'].includes(input.classification))throw new AdminError(400,'Check the headline, summary, category and status.');
- if(input.status==='published'&&(!input.verificationConfirmed||note.length<8))throw new AdminError(400,'Confirm the source and add a short review note before publishing.');
+ // A fully verified ingest record already carries the source, exact time,
+ // matched headline and supported summary. Owners can publish it directly;
+ // corrections and manual verification still leave an audit note.
+ const storedEvidence=old.evidence||{};
+ const verifiedRecord=storedEvidence.verified===true&&storedEvidence.headlineMatched===true&&storedEvidence.summarySupported===true&&storedEvidence.originalPublicationTimeConfirmed===true&&Number.isFinite(Date.parse(old.sourcePublishedAt))&&!!old.verifiedAt;
+ const ownerConfirmed=input.verificationConfirmed===true;
  const sourcePublishedAt=typeof input.sourcePublishedAt==='string'&&input.sourcePublishedAt.trim()?input.sourcePublishedAt.trim():old.sourcePublishedAt;
+ const hasEditedContent=String(input.headline||'').trim()!==old.headline||String(input.summary||'').trim()!==old.summary||input.category!==old.category||sourcePublishedAt!==old.sourcePublishedAt;
+ if(input.status==='published'&&!verifiedRecord&&!ownerConfirmed)throw new AdminError(400,'Open and confirm the original source before publishing this unverified story.');
+ if(input.status==='published'&&hasEditedContent&&note.length<8)throw new AdminError(400,'Add a short note describing the correction before publishing edits.');
+ if(input.status==='published'&&ownerConfirmed&&note.length<8)throw new AdminError(400,'Add a short verification note when confirming a source manually.');
  const sourceTime=Date.parse(sourcePublishedAt);if(input.status==='published'&&(!Number.isFinite(sourceTime)||sourceTime>now))throw new AdminError(400,'The original source publication time must be verified before publishing.');
  const at=new Date(now).toISOString();
- const record={...old,headline,summary,sourcePublishedAt,ownerVerified:input.status==='published'&&input.verificationConfirmed,summaryMethod:summary!==old.summary?'owner-edited':old.summaryMethod,category:input.category,status:input.status,classification:input.classification==='breaking'&&now-sourceTime<=6*3600000?'breaking':'update',reviewNote:note,revision:old.revision+1,updatedAt:at,verifiedAt:input.verificationConfirmed?at:old.verifiedAt,publishedAt:input.status==='published'?(old.publishedAt||at):old.publishedAt,autoPublished:false};
+ const record={...old,headline,summary,sourcePublishedAt,ownerVerified:input.status==='published'&&(ownerConfirmed||verifiedRecord),summaryMethod:summary!==old.summary?'owner-edited':old.summaryMethod,category:input.category,status:input.status,classification:input.classification==='breaking'&&now-sourceTime<=6*3600000?'breaking':'update',reviewNote:note,revision:old.revision+1,updatedAt:at,verifiedAt:ownerConfirmed?at:old.verifiedAt,publishedAt:input.status==='published'?(old.publishedAt||at):old.publishedAt,autoPublished:false};
  const audit={at,operation:input.status==='removed'?'remove':input.status==='published'?'owner-publish':'owner-edit',revision:record.revision,note,before:projection(old),after:projection(record)};
  const result=await redis(['EVAL',EDIT_NEWS,7,newsKey(record.id),NEWS+'index:review',NEWS+'index:published',NEWS+'index:removed',NEWS+'index:'+record.status,NEWS+'public:'+record.id,NEWS+'audit:'+record.id,input.revision,JSON.stringify(record),record.id,Number.isFinite(sourceTime)?sourceTime:Date.parse(old.createdAt),record.status,JSON.stringify(projection(record)),JSON.stringify(audit)]);
  if(result!==1)throw new AdminError(result===-1?404:409,result===-1?'Story no longer exists.':'Another update changed this story. Reload before saving.');
