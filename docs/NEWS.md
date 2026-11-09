@@ -1,29 +1,25 @@
 # Digivated News
 
-`/news` displays public headlines, original source links and original/site publication times. Verified members (or authenticated owner sessions) receive summaries from `/api/news`. Membership is checked on the server; responses are private/no-store and public searches do not search locked summaries.
+`/news` publishes sourced updates in AI & Tech, Markets, and Security. Public readers see headlines, labels, original source links, and the source and Digivated publication times. Verified members and the owner can read full summaries. Member access is checked server-side; locked summaries do not enter the public search response.
 
-## Automatic checks
+## Automatic publication
 
-Vercel Pro runs `/api/news-ingest` every five minutes with the existing `CRON_SECRET`. `NEWS_AUTO_PUBLISH_ENABLED=true` enables publication. `NEWS_INITIAL_RUN_ID` runs one source check during the first production build for that identifier. No new paid news API is needed. Existing X jobs stay disabled.
+Vercel checks sources at **08:00 and 20:00 UTC** (`/api/news-ingest`, authenticated by `CRON_SECRET`). `NEWS_AUTO_PUBLISH_ENABLED=true` enables the worker. The owner can also run an extra check or pause it from `/admin/news`.
 
-The fixed official feeds are Federal Reserve, SEC, OpenAI, Google and Microsoft Security. Feeds and articles have bounded responses/timeouts and cannot redirect outside the allowlist. Exact original publication time, matching article headline and a supported extract are required. Candidates older than 48 hours are excluded; Breaking expires after six hours. Conservative significance rules publish qualifying developments automatically; uncertain claims, importance or verification go to review. Summaries use concise source-supported extracts rather than invented reporting. Coverage is limited to these sources and rules; there is no guarantee every breaking story is detected.
+The source list includes official publishers and independent reporting: Federal Reserve, SEC, OpenAI, Google, Microsoft Security, GitHub, TechCrunch, Ars Technica, The Verge, BleepingComputer, SecurityWeek, The Register, MarketWatch, Nasdaq, PR Newswire, and GlobeNewswire. Source hosts and feed URLs are fixed in `server/news-sources.mjs`; article links cannot expand that list. Feeds and articles have bounded response sizes and timeouts.
 
-Redis provides a run lease, atomic URL/event deduplication, optimistic editing, and independent public/private records. A failed source check preserves existing stories and dated market observations. The private run report records source health. Source evidence, original values, summary and publication timestamps remain with each story; the last 50 audit entries are retained. Records have a rolling one-year retention. Market observations refresh hourly and are separate from editorial content: government Treasury yields and broad dollar index, with their original observation dates, never fabricated live prices.
+An article must be no more than **seven days old**, have a matching original headline, source-supported summary text, and a publication time confirmed by the article. A feed time can differ by up to six hours from article metadata; the article's original time is used on Digivated. Unverified, uncertain, stale, promotional, and duplicate candidates are **skipped**, not queued for approval. Each published record retains its source, original time, verification evidence, summary, Digivated publication time, and correction history.
+
+Significant official developments within six hours can be labeled **Breaking**. Independent reporting and older qualifying stories are labeled **Update**. Issuer releases are identified as company announcements. A source link is available on every story. These rules support prompt automated coverage but do not guarantee that every event is detected.
+
+The market snapshot is separate from editorial articles. Its observations retain their source dates and refresh during the twice-daily checks; unavailable data leaves the prior dated snapshot in place.
+
+## Starter backfill
+
+A one-time production build task checks up to fifteen recent items per source, for up to three passes, while the published collection is under forty stories. It uses the same source verification and publication rules as scheduled checks. It never invents articles or publishes unsupported claims to reach the target. The task is idempotent across builds and does not fail the site deployment if a source is unavailable.
 
 ## Owner workflow
 
-Sign in at `/admin`, then open **News desk** (`/admin/news`). Review pending stories, open their source, correct headline/summary/category/original timestamp, confirm verification and record a note before publishing. Removing a story withdraws its public projection and retains its private source/audit record. Concurrent edits require reloading. Pause/resume checks or run a manual check from the desk. These mutations require the existing owner session, same origin and CSRF token. Public visitors cannot trigger ingestion.
+The News desk shows published and removed stories, source evidence, check status, and correction history. There is no approval queue. Owners can correct or remove published stories; corrections leave an audit trail. A removed story leaves the public feed but keeps its private record. The former manual-review workflow is retained only in [historical notes](archive/news-policy-before-twice-daily.md).
 
-## Verification
-
-`npm test` runs source/policy/API/Markets tests. With a dedicated loopback Redis, `DIGIVATED_TEST_REDIS_PORT=6389 node --test tests/news*.test.mjs` also exercises real Lua atomic deduplication, automatic publication, verification fallback, corrections, revision conflicts and withdrawal. Browser coverage: `tests/browser/news-paused.spec.ts` (retained filename replaces the former paused-section checks).
-
-## Reviewed starter collection (9 November 2026)
-
-`NEWS_STARTER_RUN_ID=reviewed-20261109-v1` enables one idempotent production-build import of ten individually reviewed Reuters and TechCrunch briefs. Every original article must still be within 48 hours. A direct article recheck verifies original date, source headline and a supporting extract; publishers that deny direct automated retrieval can use the recorded fresh Firecrawl live-capture review for at most 30 minutes. Capture ID, verification time, original publication time and content hash are retained in private evidence. A failed verification goes to review; an expired article is skipped. All starter briefs are Updates and use attributed editorial summaries. This does not broaden or relax the five-feed automatic breaking-news policy. Existing source URL deduplication prevents repeat imports and removed stories remain removed.
-
-## Broader coverage
-
-The automatic source list also includes GitHub’s official changelog, TechCrunch, BleepingComputer, PR Newswire’s earnings feed and GlobeNewswire company announcements. Verified product releases, developer features, patches and practical security guidance can publish as Updates. Security guidance never receives a Breaking label. Rumors, unsupported claims, old stories, promotional investor alerts and uncertain content remain excluded or queued for review.
-
-Issuer releases require explicit source ticker notation and qualifying financial/company news, regardless of company size. They are labeled Company announcement and summarized with that attribution; they are not presented as independently confirmed financial performance. Ticker symbols are extracted only from explicit exchange notation in the verified article and can be searched with or without a leading `$`. No market-cap threshold or investment recommendation is applied. Already recorded URLs are skipped during feed collection so new entries progress beyond the first three items without repeatedly fetching the same articles.
+`npm test` covers source parsing, verification, publication policy, and the public API. With an isolated local Redis, `DIGIVATED_TEST_REDIS_PORT=6389 node --test tests/news*.test.mjs` also covers atomic deduplication, corrections, and removal.

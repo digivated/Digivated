@@ -9,7 +9,13 @@ export const NEWS_SOURCES=Object.freeze([
  {id:'microsoft-security',name:'Microsoft Security',feedUrl:'https://www.microsoft.com/en-us/security/blog/feed/',hosts:['www.microsoft.com'],category:'security'},
  {id:'github',name:'GitHub',feedUrl:'https://github.blog/changelog/feed/',hosts:['github.blog'],category:'ai-tech'},
  {id:'techcrunch',name:'TechCrunch',feedUrl:'https://techcrunch.com/feed/',hosts:['techcrunch.com'],category:'ai-tech',sourceType:'independent-reporting'},
+ {id:'ars-technica',name:'Ars Technica',feedUrl:'https://feeds.arstechnica.com/arstechnica/technology-lab',hosts:['arstechnica.com'],category:'ai-tech',sourceType:'independent-reporting'},
+ {id:'the-verge',name:'The Verge',feedUrl:'https://www.theverge.com/rss/index.xml',hosts:['www.theverge.com'],category:'ai-tech',sourceType:'independent-reporting'},
  {id:'bleepingcomputer',name:'BleepingComputer',feedUrl:'https://www.bleepingcomputer.com/feed/',hosts:['www.bleepingcomputer.com'],category:'security',sourceType:'independent-reporting'},
+ {id:'securityweek',name:'SecurityWeek',feedUrl:'https://www.securityweek.com/feed/',hosts:['www.securityweek.com'],category:'security',sourceType:'independent-reporting'},
+ {id:'the-register',name:'The Register',feedUrl:'https://api.theregister.com/api/v1/article?orderBy=published&site_id=2&remapper=rss&query=tag:security',hosts:['www.theregister.com'],category:'security',sourceType:'independent-reporting'},
+ {id:'marketwatch',name:'MarketWatch',feedUrl:'https://feeds.content.dowjones.io/public/rss/mw_marketpulse',hosts:['www.marketwatch.com'],category:'markets',sourceType:'independent-reporting'},
+ {id:'nasdaq-markets',name:'Nasdaq',feedUrl:'https://www.nasdaq.com/feed/rssoutbound?category=Markets',hosts:['www.nasdaq.com'],category:'markets',sourceType:'independent-reporting'},
  {id:'prnewswire-earnings',name:'PR Newswire',feedUrl:'https://www.prnewswire.com/rss/financial-services-latest-news/earnings-list.rss',hosts:['www.prnewswire.com'],category:'markets',sourceType:'issuer-release'},
  {id:'globenewswire',name:'GlobeNewswire',feedUrl:'https://www.globenewswire.com/RssFeed/subjectcode/27-Company%20Announcement/feedTitle/GlobeNewswire%20-%20Company%20Announcement',hosts:['www.globenewswire.com'],category:'markets',sourceType:'issuer-release'},
 ]);
@@ -45,6 +51,9 @@ export function canonicalNewsUrl(value,source){
   if(source.id==='prnewswire-earnings'&&!u.pathname.startsWith('/news-releases/'))return '';
   if(source.id==='globenewswire'&&!u.pathname.startsWith('/news-release/'))return '';
   if(source.id==='openai'&&!u.pathname.startsWith('/index/'))return '';
+  if(source.id==='marketwatch'&&!u.pathname.startsWith('/story/'))return '';
+  if(source.id==='the-register'&&!u.pathname.startsWith('/security/'))return '';
+  if(source.id==='nasdaq-markets'&&!u.pathname.startsWith('/articles/'))return '';
   u.hash='';for(const name of [...u.searchParams.keys()])if(/^(utm_|fbclid$|gclid$)/i.test(name))u.searchParams.delete(name);
   return u.href;
  }catch{return '';}
@@ -111,7 +120,9 @@ export function verifyArticle(candidate,html,checkedAt=new Date().toISOString())
  const sourceText=candidate.feedSummary?.length>=60&&norm(text).includes(norm(candidate.feedSummary))?candidate.feedSummary:firstParagraph;
  const summarySupported=!!sourceText&&norm(text).includes(norm(sourceText));
  const feedTime=candidate.sourcePublishedAt;
- let matchingDate=original.find(date=>feedTime&&Math.abs(Date.parse(date)-Date.parse(feedTime))<=60000);
+ // Article publication metadata is authoritative. Feeds may round or update
+ // timestamps; a bounded six-hour discrepancy can still be source-confirmed.
+ let matchingDate=original.find(date=>!feedTime||Math.abs(Date.parse(date)-Date.parse(feedTime))<=6*3600000);
  let articlePublishedDate=null,timeSource='article_metadata';
  if(!matchingDate&&!original.length&&feedTime&&['fed','sec'].includes(source.id)){
   const rawDate=source.id==='fed'?html.match(/<p\b[^>]*class=["'][^"']*article__time[^"']*["'][^>]*>([^<]+)</i)?.[1]:html.match(/Washington[^<]{0,100}?,\s*([A-Z][a-z]{2,8}\.?\s+\d{1,2},\s+\d{4})/i)?.[1];
@@ -121,24 +132,24 @@ export function verifyArticle(candidate,html,checkedAt=new Date().toISOString())
  const reasons=[];
  if(!finalHeadlineMatched)reasons.push('article_headline_not_supported');
  if(!summarySupported)reasons.push('feed_summary_not_supported_by_article');
- if(!feedTime)reasons.push('original_publication_time_missing');
+ if(!matchingDate&&!feedTime)reasons.push('original_publication_time_missing');
  if(!matchingDate)reasons.push(original.length?'article_and_feed_times_disagree':'article_publication_time_not_confirmed');
  const verified=finalHeadlineMatched&&summarySupported&&!!matchingDate;
- return {...candidate,tickers:extractNewsTickers(candidate.headline+' '+sourceText+' '+firstParagraph),sourceText,articleText:text,sourcePublishedAt:matchingDate||feedTime,evidence:{verified,checkedAt,feedUrl:source.feedUrl,feedPublishedAt:feedTime,articleUrl:candidate.sourceUrl,articlePublishedAt:timeSource==='article_metadata'?(matchingDate||original[0]||null):null,articlePublishedDate,timeSource,originalPublicationTimeConfirmed:!!matchingDate,headlineMatched:finalHeadlineMatched,summarySupported,timePrecision:feedTime?'second':'unknown',contentHash:createHash('sha256').update(text).digest('hex'),verificationReasons:reasons}};
+ return {...candidate,tickers:extractNewsTickers(candidate.headline+' '+sourceText+' '+firstParagraph),sourceText,articleText:text,sourcePublishedAt:matchingDate||feedTime,evidence:{verified,checkedAt,feedUrl:source.feedUrl,feedPublishedAt:feedTime,articleUrl:candidate.sourceUrl,articlePublishedAt:timeSource==='article_metadata'?(matchingDate||original[0]||null):null,articlePublishedDate,timeSource,originalPublicationTimeConfirmed:!!matchingDate,headlineMatched:finalHeadlineMatched,summarySupported,timePrecision:matchingDate||feedTime?'second':'unknown',contentHash:createHash('sha256').update(text).digest('hex'),verificationReasons:reasons}};
 }
-export async function collectCandidates({fetcher=fetch,now=Date.now(),knownUrls=[]}={}){
+export async function collectCandidates({fetcher=fetch,now=Date.now(),knownUrls=[],maxPerSource=5}={}){
  const known=new Set(knownUrls);
  const checkedAt=new Date(now).toISOString(),candidates=[],sources=[];
  await Promise.all(NEWS_SOURCES.map(async source=>{
-  const status={id:source.id,name:source.name,status:'ok',checkedAt,feedUrl:source.feedUrl,found:0,verified:0,review:0};
+  const status={id:source.id,name:source.name,status:'ok',checkedAt,feedUrl:source.feedUrl,found:0,verified:0,unverified:0};
   try{
    const entries=parseFeed(await getText(source.feedUrl,source,fetcher),source);status.found=entries.length;
-   // Fetch at most three current items per publisher, concurrently; stale feed items
-   // are reported in source counts but never disguised as a new publication.
-   const current=entries.filter(c=>!known.has(c.sourceUrl)&&(!c.sourcePublishedAt||(Date.parse(c.sourcePublishedAt)>=now-48*3600000&&Date.parse(c.sourcePublishedAt)<=now+300000))).slice(0,3);
+   // The scheduled run checks a few items per publisher; the one-time starter
+   // backfill can look farther into each feed without altering the source rules.
+   const current=entries.filter(c=>!known.has(c.sourceUrl)&&(!c.sourcePublishedAt||(Date.parse(c.sourcePublishedAt)>=now-7*24*3600000&&Date.parse(c.sourcePublishedAt)<=now+300000))).slice(0,Math.max(1,Math.min(15,maxPerSource)));
    await Promise.all(current.map(async c=>{
-    try{const result=verifyArticle(c,await getText(c.sourceUrl,source,fetcher),checkedAt);candidates.push(result);result.evidence.verified?status.verified++:status.review++;}
-    catch(error){status.review++;candidates.push({...c,sourceText:c.feedSummary,evidence:{verified:false,checkedAt,feedUrl:source.feedUrl,timePrecision:c.sourcePublishedAt?'second':'unknown',verificationReasons:['article_could_not_be_verified']}});}
+    try{const result=verifyArticle(c,await getText(c.sourceUrl,source,fetcher),checkedAt);candidates.push(result);result.evidence.verified?status.verified++:status.unverified++;}
+    catch(error){status.unverified++;candidates.push({...c,sourceText:c.feedSummary,evidence:{verified:false,checkedAt,feedUrl:source.feedUrl,timePrecision:c.sourcePublishedAt?'second':'unknown',verificationReasons:['article_could_not_be_verified']}});}
    }));
   }catch(error){status.status='failed';status.error=/^(source_http_\d{3}|source_too_large|source_url_not_allowed|xml_entities_not_allowed|invalid_feed)$/.test(error.message||'')?error.message:'source_fetch_failed';}
   sources.push(status);

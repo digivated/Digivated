@@ -1,10 +1,10 @@
 import {createHash} from 'node:crypto';
 import {NEWS_SOURCES,canonicalNewsUrl,plainText} from './news-sources.mjs';
 export const BREAKING_MAX_AGE=6*3600000;
-export const NEWS_MAX_AGE=48*3600000;
+export const NEWS_MAX_AGE=7*24*3600000;
 const negation=/\b(?:not|no|never)\b.{0,45}\b(?:actively exploited|active exploitation|confirmed breach|global outage)\b/i;
 const uncertainty=/\b(?:rumou?rs?|unconfirmed|unverified|speculat(?:ion|e|es)|reportedly|could be|might be|may have|possible breach|potential breach|investigating reports)\b/i;
-const routine=/\b(?:webinar|podcast|roundup|weekly digest|monthly recap|sponsored|sign up|register now|partnering with|partnership|benchmark|announces approval of application|termination of enforcement)\b/i;
+const routine=/\b(?:webinar|podcast|roundup|weekly digest|monthly recap|sponsored|sign up|register now|partnering with|partnership|benchmark|announces approval of application|termination of enforcement|price target|is it time to buy|stocks to buy|if you(?:'d| had) invested)\b/i;
 const normalize=s=>plainText(s).toLowerCase().replace(/https?:\/\/\S+/g,' ').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 export function newsEventKey(candidate){
  const cves=[...new Set((candidate.headline+' '+candidate.sourceText).match(/CVE-\d{4}-\d{4,7}/gi)||[])].map(s=>s.toUpperCase()).sort();
@@ -64,6 +64,7 @@ export function assessCandidate(candidate,{now=Date.now()}={}){
  if(/\b(?:last (?:week|month|year)|previously (?:reported|disclosed)|retrospective|looking back)\b/i.test(text))return review('historical_context_requires_review');
  if(uncertainty.test(text)||negation.test(text))return review('claim_or_importance_requires_editorial_verification');
  if(routine.test(candidate.headline))return reject('routine_or_promotional_update');
+ if(['securityweek','the-register'].includes(candidate.sourceId)&&!/\b(?:vulnerabilit|exploit|breach|ransomware|malware|phishing|cyberattack|security patch|security update|data leak|attackers?|threat actor|CVE-\d{4})/i.test(text))return reject('outside_security_coverage');
  const guidance=/\b(?:how to|tips|tutorial|guide to|best practices)\b/i.test(candidate.headline);
  const significant=candidate.sourceType==='issuer-release'||guidance?usefulUpdate(candidate):materiality(candidate)||usefulUpdate(candidate);
  // Source-confirmed, recent editorial updates are useful even when they do not
@@ -75,5 +76,5 @@ export function assessCandidate(candidate,{now=Date.now()}={}){
  if(!['ai-tech','markets','security'].includes(category))return review('category_unconfirmed');
  const summary=(candidate.sourceType==='issuer-release'?'Company announcement: ':'')+excerpt(candidate.sourceText);
  if(summary.length<60)return review('source_summary_too_short');
- return {decision:'publish',classification:selected.breaking&&age<=BREAKING_MAX_AGE?'breaking':'update',category,summary,importance:selected.importance,reasons:[selected.reason],eventKey:newsEventKey(candidate),policyVersion:'news-verified-updates-v3'};
+ return {decision:'publish',classification:selected.breaking&&candidate.sourceType!=='independent-reporting'&&age<=BREAKING_MAX_AGE?'breaking':'update',category,summary,importance:selected.importance,reasons:[selected.reason],eventKey:newsEventKey(candidate),policyVersion:'news-verified-updates-v4'};
 }

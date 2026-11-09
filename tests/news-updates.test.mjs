@@ -25,7 +25,7 @@ test('broader coverage still blocks rumors, stale articles and promotional stock
  const c=candidate('globenewswire','Example reports financial results','Example (NASDAQ: SMALL) reported revenue and earnings with supporting details in its latest financial results.');c.tickers=extractNewsTickers(c.sourceText);
  assert.equal(assessCandidate({...c,headline:'Investor alert: buy now before earnings'},{now}).decision,'review');
  assert.equal(assessCandidate({...c,headline:'Example to announce third quarter financial results next week'},{now}).decision,'review');
- assert.equal(assessCandidate({...c,sourcePublishedAt:new Date(now-49*3600000).toISOString()},{now}).decision,'reject');
+ assert.equal(assessCandidate({...c,sourcePublishedAt:new Date(now-8*24*3600000).toISOString()},{now}).decision,'reject');
  assert.equal(assessCandidate({...c,sourceText:c.sourceText+' Unconfirmed merger rumors.'},{now}).decision,'review');
  assert.equal(assessCandidate({...c,evidence:{...evidence,verified:false}},{now}).decision,'review');
 });
@@ -43,6 +43,28 @@ test('HTML doctypes inside RSS CDATA are content, not XML entity declarations',(
  assert.throws(()=>parseFeed('<!DOCTYPE rss><rss/>',source));
 });
 
+test('new reporting feeds keep their article hosts restricted',()=>{
+ for(const id of ['ars-technica','the-verge','securityweek','the-register','marketwatch','nasdaq-markets'])assert.ok(NEWS_SOURCES.some(source=>source.id===id));
+ const marketwatch=NEWS_SOURCES.find(source=>source.id==='marketwatch');
+ assert.equal(parseFeed('<rss><item><title>Markets rise</title><link>https://www.marketwatch.com/not-an-article</link></item></rss>',marketwatch).length,0);
+});
+
+test('article metadata can confirm an original time missing from a feed',()=>{
+ const source=NEWS_SOURCES.find(s=>s.id==='the-verge'),published=new Date(now-6*24*3600000).toISOString();
+ const [entry]=parseFeed('<feed><entry><title>New developer tool launches</title><link href="https://www.theverge.com/tech/123/new-tool"/><summary>A new developer tool is now available to software builders.</summary></entry></feed>',source);
+ assert.equal(entry.sourcePublishedAt,null);
+ const article=verifyArticle(entry,`<article><h1>New developer tool launches</h1><p>The new developer tool is now available to software builders and includes updates to the development workflow used by teams across the industry.</p></article><script>{"datePublished":"${published}"}</script>`);
+ assert.equal(article.evidence.verified,true);
+ assert.equal(article.sourcePublishedAt,published);
+ assert.equal(assessCandidate(article,{now}).decision,'publish');
+ assert.equal(assessCandidate({...article,sourcePublishedAt:new Date(now-8*24*3600000).toISOString()},{now}).decision,'reject');
+});
+
+test('independent reporting is an Update even for a major recent claim',()=>{
+ const c=candidate('the-verge','Windows vulnerability actively exploited','Microsoft confirmed attackers are actively exploiting a Windows vulnerability and released an emergency security update to protect affected organizations.');
+ assert.equal(assessCandidate(c,{now}).classification,'update');
+});
+
 test('feed checks progress past recorded URLs while keeping article fetches bounded',async()=>{
  const source=NEWS_SOURCES.find(s=>s.id==='github');const calls=[];
  const summary='This developer feature updates the GitHub API with additional capabilities for software teams and enterprise administrators.';
@@ -53,6 +75,6 @@ test('feed checks progress past recorded URLs while keeping article fetches boun
   const i=url.match(/update-(\d+)/)?.[1];return new Response(`<article><h1>GitHub API update ${i}</h1><p>${summary}</p></article><script>{"datePublished":"${at}"}</script>`);
  }});
  assert.equal(calls.includes('https://github.blog/changelog/update-0'),false);
- assert.deepEqual(result.candidates.map(c=>c.headline).sort(),['GitHub API update 1','GitHub API update 2','GitHub API update 3']);
+ assert.deepEqual(result.candidates.map(c=>c.headline).sort(),['GitHub API update 1','GitHub API update 2','GitHub API update 3','GitHub API update 4']);
  assert.ok(result.candidates.every(c=>c.evidence.verified));
 });

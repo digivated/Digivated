@@ -17,7 +17,7 @@ export function makeNewsIngestHandler(deps={}){
     const body=await jsonBody(req,1024);if(body.action!=='run')throw new AdminError(400,'Choose Run source check.');
    }
    const report=await(deps.run||runNewsIngest)({env,redis,fetcher:deps.fetcher||fetch});
-   console.info(JSON.stringify({event:'news_ingest',status:report.status,published:report.published||0,reviewed:report.reviewed||0,rejected:report.rejected||0,duplicates:report.duplicates||0}));
+   console.info(JSON.stringify({event:'news_ingest',status:report.status,published:report.published||0,skipped:report.skipped||0,rejected:report.rejected||0,duplicates:report.duplicates||0}));
    return send(report.status==='failed'?502:200,report);
   }catch(error){return send(error instanceof AdminError?error.status:503,{error:error instanceof AdminError?error.message:'News source checks are temporarily unavailable.'});}
  };

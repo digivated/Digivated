@@ -30,7 +30,7 @@ test('Atom updated and date-only values never become original publication times'
 test('rumors, negated claims, stale stories and uncertain importance cannot auto-publish',()=>{
  const c=verified();
  for(const text of ['Rumors of active exploitation of Windows','Windows is not actively exploited','A possible breach involving Windows'])assert.equal(assessCandidate({...c,headline:text},{now}).decision,'review');
- assert.equal(assessCandidate({...c,sourcePublishedAt:new Date(now-49*3600000).toISOString()},{now}).decision,'reject');
+ assert.equal(assessCandidate({...c,sourcePublishedAt:new Date(now-8*24*3600000).toISOString()},{now}).decision,'reject');
  assert.equal(assessCandidate({...c,sourcePublishedAt:new Date(now+1).toISOString()},{now}).decision,'review');
  assert.equal(assessCandidate({...c,headline:'A normal product update',sourceText:'An ordinary product improvement without a significant development worth breaking news coverage.'},{now}).decision,'review');
  assert.equal(assessCandidate({...c,headline:'How to protect Windows'},{now}).classification,'update');
@@ -52,6 +52,14 @@ test('public visitors cannot trigger source ingestion',async()=>{
  let called=false;const handler=makeNewsIngestHandler({env:{CRON_SECRET:'s'.repeat(40)},redis:async()=>null,run:async()=>{called=true;return {status:'ok'};}});
  assert.equal((await call(handler,'/api/news-ingest')).code,403);assert.equal(called,false);
  assert.equal((await call(handler,'/api/news-ingest',{headers:{authorization:'Bearer '+'s'.repeat(40)}})).code,200);assert.equal(called,true);
+});
+test('automatic ingestion skips uncertain stories without creating a review item',async()=>{
+ const writes=[];
+ const redis=async command=>{writes.push(command);if(command[0]==='GET')return null;if(command[0]==='SET')return 'OK';if(command[0]==='ZREVRANGE')return [];if(command[0]==='EVAL')return 1;return null;};
+ const report=await runNewsIngest({env:{NEWS_AUTO_PUBLISH_ENABLED:'true'},redis,now:()=>now,collect:async()=>({candidates:[{...verified(),evidence:{...verified().evidence,verified:false}}],sources:[{status:'ok'}]}),markets:async()=>({items:[]})});
+ assert.equal(report.skipped,1);
+ assert.equal(report.published,0);
+ assert.equal(writes.some(command=>command[0]==='ZADD'||command[0]==='EVAL'&&String(command).includes('index:review')),false);
 });
 test('owner can publish a fully source-verified review story without redundant confirmation or note', {skip:!process.env.DIGIVATED_TEST_REDIS_PORT}, async()=>{
  const redis=testRedis(9);await redis(['FLUSHDB']);
@@ -77,6 +85,6 @@ test('real Redis: automatic publish, atomic dedup, review fallback, corrections 
  await redis(['FLUSHDB']);
  const unverified={...c,evidence:{...c.evidence,verified:false}};
  const report=await runNewsIngest({env:{NEWS_AUTO_PUBLISH_ENABLED:'true'},redis,now:()=>now,collect:async()=>({candidates:[unverified],sources:[{status:'ok'}]}),markets:async()=>({items:[]}),assess:()=>assessment});
- assert.equal(report.published,0);assert.equal(report.reviewed,1);assert.equal((await redis(['ZCARD',NEWS+'index:published'])),0);
+ assert.equal(report.published,0);assert.equal(report.skipped,1);assert.equal((await redis(['ZCARD',NEWS+'index:published'])),0);assert.equal((await redis(['ZCARD',NEWS+'index:review'])),0);
  await redis(['FLUSHDB']);
 });
