@@ -22,8 +22,8 @@ test('unknown routes cannot invoke handlers, including prototype properties', ()
     assert.equal(res.statusCode,404); assert.equal(headers['Cache-Control'],'no-store'); assert.equal(body.error,'Not found.');
   }
 });
-test('deployment keeps all capabilities within the Hobby function limit', () => {
+test('deployment keeps all capabilities with the dedicated scheduled News worker on Pro', () => {
   const entries=readdirSync(new URL('../api/',import.meta.url)).filter(name=>name.endsWith('.js'));
-  assert.equal(entries.length,12);
+  assert.equal(entries.length,13);
   for (const name of ['[route].js','projects.js','submissions.js','admin.js','activate.js','edition.js','logout.js','x-connect.js','x-research.js','x-publish.js']) assert.ok(entries.includes(name));
 });

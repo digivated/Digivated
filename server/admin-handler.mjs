@@ -1,3 +1,4 @@
+import {listNewsRecords,getNewsRecord,saveNewsRecord,newsStatus,setNewsPaused} from './news-store.mjs';
 import { remapGumroadMembership, SETUP_DIAGNOSTIC_KEY } from './gumroad-membership.mjs';
 import { checkoutStatus } from './membership-checkout.mjs';
 import { ownerCarouselList, ownerCarouselPreview } from './owner-carousels.mjs';
@@ -42,6 +43,8 @@ export function makeAdminHandler(deps = {}) {
         }
         const session = await requireSession(req, redis, cfg);
         if (req.headers['x-admin-csrf'] !== session.csrf) throw new AdminError(403, 'Refresh the dashboard before saving.');
+        if(body.action==='news-save')return send(200,{ok:true,record:await saveNewsRecord(redis,body.record)});
+        if(body.action==='news-pause')return send(200,await setNewsPaused(redis,body.paused));
         if (body.action === 'gumroad-membership') {
           if (Object.keys(body).some(key => !['action','gumroadToken'].includes(key))) throw new AdminError(400,'Use the Gumroad setup form.');
           const token = body.gumroadToken; body.gumroadToken = '';
@@ -71,6 +74,9 @@ export function makeAdminHandler(deps = {}) {
       const session = await requireSession(req, redis, cfg);
       const url = new URL(req.url, cfg.origin);
       const action = url.searchParams.get('action') || 'session';
+      if(action==='news-list')return send(200,await listNewsRecords(redis,{status:url.searchParams.get('status')||'review',cursor:url.searchParams.get('cursor')||0}));
+      if(action==='news-record')return send(200,await getNewsRecord(redis,url.searchParams.get('id')));
+      if(action==='news-status')return send(200,{...await newsStatus(redis),enabled:env.NEWS_AUTO_PUBLISH_ENABLED==='true'});
       if (action === 'session') return send(200, { authenticated: true, csrf: session.csrf });
       if (action === 'gumroad-status') {
         let lastAttempt=null;try{lastAttempt=JSON.parse(await redis(['GET',SETUP_DIAGNOSTIC_KEY]));}catch{}

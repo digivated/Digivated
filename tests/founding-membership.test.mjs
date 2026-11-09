@@ -248,7 +248,7 @@ test('one-time membership advertises one offer and leaves checkout gated during 
   assert.equal(membership.priceUSD, 5);
   assert.equal(membership.billing, 'one-time');
   assert.equal(membership.spotlightLimit, 1);
-  assert.equal(membership.newsStatus, 'coming-soon');
+  assert.equal(membership.newsStatus, 'live');
   const payload = JSON.parse(readFileSync(new URL('../gumroad/membership-product.json', import.meta.url), 'utf8'));
   assert.equal(payload.price, 500);
   assert.equal(payload.name, membership.name);

@@ -215,7 +215,7 @@ test('founding license and purchase email unlock only this product', async () =>
 
 test('carousel routes stay on the shared function and do not add an API file', async () => {
   const entries = readdirSync(new URL('../api/', import.meta.url)).filter(name => name.endsWith('.js'));
-  assert.equal(entries.length, 12);
+  assert.equal(entries.length, 13);
   const headers = {};
   let body = '';
   const res = { statusCode: 0, setHeader: (key, value) => { headers[key] = value; }, end: value => { body = value; } };
@@ -248,7 +248,7 @@ test('carousel routes stay on the shared function and do not add an API file', a
   assert.match(offer, /Digivated Membership/);
   assert.match(offer, /\$5 USD/);
   assert.doesNotMatch(offer, /\$2/);
-  assert.match(offer, /coming soon/i);
+  assert.match(offer, /full member News summaries/i);
   assert.match(offer, /checkoutReady: false/);
   assert.equal(offer.includes('\u2014'), false);
 });

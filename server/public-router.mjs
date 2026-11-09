@@ -1,3 +1,4 @@
+import {makeNewsHandler} from './news-handler.mjs';
 import { makeMembershipCheckoutHandler } from './membership-checkout.mjs';
 import { makePublicHandler } from './public-community.mjs';
 import { makeSavedItemHandler } from './saved-items.mjs';
@@ -14,6 +15,7 @@ import { makeSiteActivityHandler } from './site-activity.mjs';
 // Carousel routes stay on this router so the deployment does not add a serverless function.
 export function defaultPublicHandlers(overrides = {}) {
   return {
+    news:makeNewsHandler(),
     'site-activity': makeSiteActivityHandler(),
     'membership-checkout': makeMembershipCheckoutHandler(),
     content: makePublicHandler('content'),

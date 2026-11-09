@@ -3,6 +3,7 @@ export const primaryLinks = [
   ['/discover', 'Projects'],
   ['/rankings', 'Rankings'],
   ['/ai-tools', 'AI tools'],
+  ['/news', 'News'],
 ];
 export const menuLinks = [
   ...primaryLinks,

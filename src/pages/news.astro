@@ -1,0 +1,46 @@
+---
+import Platform from '../layouts/Platform.astro';
+import UiIcon from '../components/UiIcon.astro';
+import '../styles/news.css';
+---
+<Platform title="News" description="Source-checked reporting on AI and technology, markets, and security. Read the latest headlines and follow the original sources." canonicalPath="/news">
+  <section class="news-page" data-news-page aria-labelledby="news-title">
+    <header class="news-masthead">
+      <div><p class="news-eyebrow">THE DIGIVATED BRIEFING</p><h1 id="news-title">News worth knowing.</h1><p class="news-intro">AI & tech. Markets. Security. The important developments, with the source in view.</p></div>
+      <div class="news-check"><span data-news-checked>Checking the latest reporting</span><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><UiIcon name="arrow" size={15}/><span>Refresh</span></button></div>
+    </header>
+    <div class="news-toolbar">
+      <div class="news-filters" role="group" aria-label="News category">
+        <button type="button" data-news-category="all" aria-pressed="true">Latest</button>
+        <button type="button" data-news-category="ai-tech" aria-pressed="false">AI & Tech</button>
+        <button type="button" data-news-category="markets" aria-pressed="false">Markets</button>
+        <button type="button" data-news-category="security" aria-pressed="false">Security</button>
+      </div>
+      <label class="news-search"><UiIcon name="search" size={17}/><span class="sr-only">Search news</span><input data-news-search type="search" maxlength="120" placeholder="Search a topic or headline" autocomplete="off"/></label>
+    </div>
+    <p class="news-member-note" data-news-member-note hidden>Headlines and original sources are open to everyone. <a href="/membership#member-sign-in">Verify membership for full briefings <span aria-hidden="true">↗</span></a></p>
+    <div class="news-layout">
+      <div class="news-editorial">
+        <section class="news-feature" data-news-feature aria-label="Featured story" hidden></section>
+        <section class="news-latest" aria-labelledby="news-latest-title">
+          <header class="news-section-heading"><h2 id="news-latest-title">Latest</h2><span>Newest first</span></header>
+          <p class="news-status" data-news-status role="status">Loading the latest stories…</p>
+          <div class="news-feed" data-news-feed aria-busy="true"></div>
+          <button class="news-more" data-news-more type="button" hidden>More stories <UiIcon name="arrow" size={15}/></button>
+        </section>
+      </div>
+      <aside class="news-sidebar" aria-label="Market data and editorial standards">
+        <section class="news-market" aria-labelledby="news-markets-title">
+          <header class="news-section-heading"><h2 id="news-markets-title">Market snapshot</h2><span class="news-data-label">DATA</span></header>
+          <p class="news-market-note" data-news-market-note>Checking available market data</p>
+          <dl class="news-quotes" data-news-quotes></dl>
+          <div class="news-market-footer" data-news-market-footer></div>
+        </section>
+        <details class="news-standards"><summary>How this feed is published <UiIcon name="chevron" size={15}/></summary><div><p>Stories link to the original source and show its publication time separately from the time published here.</p><p><strong>Breaking</strong> marks a significant, source-verified recent development. Regular stories are labeled <strong>Update</strong>.</p><p>Uncertain stories go to review. Summaries can be corrected or removed as the reporting develops.</p></div></details>
+        <p class="news-sidebar-caption">Read the original reporting for the full context.</p>
+      </aside>
+    </div>
+    <noscript><p class="news-status">JavaScript is needed to load and filter the News feed.</p></noscript>
+  </section>
+</Platform>
+<script>import '../scripts/news.js';</script>

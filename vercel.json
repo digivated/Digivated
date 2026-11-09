@@ -2,9 +2,13 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "astro",
   "installCommand": "npm ci",
-  "buildCommand": "npm run build && npm run monitoring:deploy && node scripts/verify-sentry.mjs",
+  "buildCommand": "npm run build && npm run monitoring:deploy && node scripts/verify-sentry.mjs && node scripts/initialize-news.mjs",
   "outputDirectory": "dist",
   "functions": {
+    "api/news-ingest.js": {
+      "includeFiles": "server/**",
+      "maxDuration": 300
+    },
     "api/x-research.js": {
       "maxDuration": 300
     },
@@ -96,11 +100,6 @@
       "permanent": true
     },
     {
-      "source": "/news/:path*",
-      "destination": "/",
-      "permanent": false
-    },
-    {
       "source": "/",
       "has": [
         {
@@ -189,6 +188,10 @@
     {
       "path": "/api/weekly-digest",
       "schedule": "0 15 * * 0"
+    },
+    {
+      "path": "/api/news-ingest",
+      "schedule": "*/5 * * * *"
     }
   ],
   "rewrites": [
