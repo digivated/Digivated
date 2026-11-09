@@ -38,7 +38,7 @@ function fixture(options={}) {
     const json=url.endsWith('/oauth2/token')?{access_token:'refreshed-access',refresh_token:'rotated-refresh',expires_in:7200,scope:record.scope}
       :url.endsWith('/users/me')?{data:{id:'42',username:options.wrongOwner?'other':'digivatedx'}}
       :opts.method==='POST'?{data:{id:'999'}}
-      :{data:{id:'123',author_id:'100',text:options.changed?'changed post':(options.candidate?.text||c.text),created_at:c.created_at,possibly_sensitive:false},includes:{users:[{id:'100',username:options.wrongAuthor?'other':'builder'}]}};
+      :{data:{id:'123',author_id:'100',text:options.changed?'changed post':(options.candidate?.text||c.text),created_at:c.created_at,possibly_sensitive:false,reply_settings:options.restrictedReplies?'mentionedUsers':'everyone'},includes:{users:[{id:'100',username:options.wrongAuthor?'other':'builder'}]}};
     return {ok:true,json:async()=>json};
   };
   return {data,redis,rolling,history,calls,fetcher};
@@ -85,3 +85,5 @@ test('an explicit product-link invitation can receive only the approved Digivate
 test('connection invitations cannot receive links and posts older than 48 hours are skipped',async()=>{
  for(const candidate of [{reply:'Let’s connect https://digivated.com'},{created_at:'2026-10-02T11:00:00Z'}]){const f=fixture({candidate});const result=await publishOne(env,f.redis,f.fetcher,clock);assert.equal(result.sent,0);assert.equal(f.calls.length,0);}
 });
+
+test('posts with restricted reply settings are skipped before any send',async()=>{const f=fixture({restrictedReplies:true});const result=await publishOne(env,f.redis,f.fetcher,clock);assert.equal(result.sent,0);assert.equal(f.calls.filter(c=>c.opts.method==='POST').length,0);});

@@ -18,10 +18,13 @@ redis.call('SET',KEYS[3],'attempted','EX',7776000); redis.call('SET',KEYS[4],'at
 redis.call('ZADD',KEYS[2],ARGV[1],ARGV[2]); redis.call('EXPIRE',KEYS[2],7200); return 'reserved'`;
 const hash = s => createHash('sha256').update(s).digest('hex');
 
-class XError extends Error { constructor(status) { super(`X API HTTP ${status}`); this.status = status; } }
+class XError extends Error { constructor(status,reason='') { super(`X API HTTP ${status}${reason?' ('+reason+')':''}`); this.status = status; } }
 async function request(fetcher, path, token, options = {}) {
   const res = await fetcher(`https://api.x.com${path}`, { ...options, redirect: 'error', signal: AbortSignal.timeout(12000), headers: { Authorization: `Bearer ${token}`, ...(options.headers || {}) } });
-  if (!res.ok) throw new XError(res.status);
+  if (!res.ok){
+    let reason='';try{const body=await res.json();const detail=String(body.detail||body.title||'');reason=/reply/i.test(detail)?'reply_not_permitted':/credit|balance|payment/i.test(detail)?'credits_required':/scope|permission/i.test(detail)?'permission_required':/enroll|access level/i.test(detail)?'api_access_required':'';}catch{}
+    throw new XError(res.status,reason);
+  }
   return res.json();
 }
 
@@ -37,7 +40,10 @@ export async function credentials(env, redis, fetcher = fetch, clock = Date.now)
     const res = await fetcher('https://api.x.com/2/oauth2/token', { method: 'POST', redirect: 'error', signal: AbortSignal.timeout(12000),
       headers: { Authorization: `Basic ${basic}`, 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: record.refreshToken }).toString() });
-    if (!res.ok) throw new XError(res.status);
+    if (!res.ok){
+    let reason='';try{const body=await res.json();const detail=String(body.detail||body.title||'');reason=/reply/i.test(detail)?'reply_not_permitted':/credit|balance|payment/i.test(detail)?'credits_required':/scope|permission/i.test(detail)?'permission_required':/enroll|access level/i.test(detail)?'api_access_required':'';}catch{}
+    throw new XError(res.status,reason);
+  }
     const next = await res.json();
     if (typeof next.access_token !== 'string' || !next.access_token || typeof next.refresh_token !== 'string' || !next.refresh_token || !Number.isFinite(next.expires_in) || next.expires_in <= 0) throw new Error('Invalid refresh response');
     const scope = next.scope || record.scope;
@@ -66,15 +72,16 @@ export async function publishOne(env, redis, fetcher = fetch, clock = Date.now) 
       eligible.push(c);
     }
     if (!eligible.length) return report;
+    eligible.sort((a,b)=>Number(invitationKind(b.text)==='project')-Number(invitationKind(a.text)==='project'));
     const auth = await credentials(env,redis,fetcher,clock);
     // At most three preflight lookups and one send per invocation.
     for (const c of eligible.slice(0,3)) {
       const id=c.url.split('/').pop();
       let source;
-      try { source=await request(fetcher,`/2/tweets/${id}?tweet.fields=author_id,created_at,possibly_sensitive&expansions=author_id&user.fields=username`,auth.accessToken); }
+      try { source=await request(fetcher,`/2/tweets/${id}?tweet.fields=author_id,created_at,possibly_sensitive,reply_settings&expansions=author_id&user.fields=username`,auth.accessToken); }
       catch (error) { if (error.status===404) continue; throw error; }
       const author=source.includes?.users?.find(u=>u.id===source.data?.author_id);
-      if (!source.data || !author || author.username?.toLowerCase()!==c.author.replace(/^@/,'').toLowerCase() || source.data.text!==c.text || source.data.possibly_sensitive===true || !invitationKind(source.data.text) || !validReply(c.reply,source.data.text)) continue;
+      if (!source.data || !author || author.username?.toLowerCase()!==c.author.replace(/^@/,'').toLowerCase() || source.data.text!==c.text || source.data.possibly_sensitive===true || (source.data.reply_settings&&source.data.reply_settings!=='everyone') || !invitationKind(source.data.text) || !validReply(c.reply,source.data.text)) continue;
       if (!Number.isFinite(Date.parse(source.data.created_at)) || (clock()-Date.parse(source.data.created_at)>48*3600000 || Date.parse(source.data.created_at)>clock())) continue;
       if (await redis(['GET','digivated:private:x-research:paused']) === '1') return {status:'paused',sent:0};
       const reservation=await redis(['EVAL',RESERVE,5,P+'paused',P+'rolling',P+'post:'+id,P+'author:'+author.username.toLowerCase(),P+'text:'+hash(c.reply.trim().toLowerCase()),clock(),id]);
@@ -113,7 +120,7 @@ export function makePublisherHandler(deps={}) {
         if(operator==='diagnostics'){
           let connection;try{await credentials(env,redis,deps.fetch||fetch);connection={verified:true,username:'digivatedx'};}catch(error){connection={verified:false,error:error instanceof XError?error.message:'X connection requires reconnection or configuration.'};}
           const latest=await redis(['GET',P+'latest']),research=await redis(['GET','digivated:private:x-research:latest']);
-          return send(200,{enabled:env.X_AUTO_REPLY_ENABLED==='true',connection,paused:await redis(['GET',P+'paused'])==='1',researchPaused:await redis(['GET','digivated:private:x-research:paused'])==='1',latest:latest?JSON.parse(latest):null,research:research?JSON.parse(research):null});
+          return send(200,{enabled:env.X_AUTO_REPLY_ENABLED==='true',connection,paused:await redis(['GET',P+'paused'])==='1',researchPaused:await redis(['GET','digivated:private:x-research:paused'])==='1',latest:latest?JSON.parse(latest):null,research:research?JSON.parse(research):null,drafts:(await redis(['LRANGE','digivated:private:x-research:queue',0,4])).map(raw=>{const c=JSON.parse(raw);return {url:c.url,text:c.text,reply:c.reply,created_at:c.created_at};})});
         }
         if(operator==='resume'){await redis(['SET',P+'paused','0']);await redis(['SET','digivated:private:x-research:paused','0']);return send(200,{ok:true});}
         if(operator==='publish')return send(200,await publishOne(env,redis,deps.fetch||fetch));

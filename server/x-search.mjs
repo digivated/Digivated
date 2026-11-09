@@ -29,13 +29,14 @@ export function candidatesFromSearch(result) {
   return (result.data || []).flatMap(p=>{
     const author=authors.get(p.author_id), kind=invitationKind(p.text), niche=nicheRules.find(([re])=>re.test(p.text || ''))?.[1];
     if(/giveaway|airdrop|follow.?back|follow for follow|like (?:and|&) (?:repost|retweet)/i.test(p.text || '')) return [];
+    if(p.reply_settings&&p.reply_settings!=='everyone')return [];
     if(!author || !kind || !niche || p.possibly_sensitive===true || author.toLowerCase()==='digivatedx')return [];
     return [{url:`https://x.com/${author}/status/${p.id}`,author,text:p.text,created_at:p.created_at,invitation_excerpt:p.text.slice(0,500),invitationKind:kind,niche}];
   });
 }
 export async function searchX(env,redis,fetcher=fetch) {
   return withX(env,redis,fetcher,async get=>{
-    const query=new URLSearchParams({start_time:new Date(Date.now()-48*3600000).toISOString(),query:SEARCH_QUERY,max_results:'30','tweet.fields':'author_id,created_at,possibly_sensitive',expansions:'author_id','user.fields':'username',sort_order:'recency'});
+    const query=new URLSearchParams({start_time:new Date(Date.now()-48*3600000).toISOString(),query:SEARCH_QUERY,max_results:'30','tweet.fields':'author_id,created_at,possibly_sensitive,reply_settings',expansions:'author_id','user.fields':'username',sort_order:'recency'});
     const candidates=candidatesFromSearch(await get('/2/tweets/search/recent?'+query));
     console.info(JSON.stringify({event:'x_direct_search',candidates:candidates.length}));
     return candidates;
@@ -44,7 +45,7 @@ export async function searchX(env,redis,fetcher=fetch) {
 export async function verifyX(env,redis,candidates,fetcher=fetch) {
   return withX(env,redis,fetcher,async get=>{
     const ids=candidates.map(c=>c.url.split('/').pop()).join(',');
-    const query=new URLSearchParams({ids,'tweet.fields':'author_id,created_at,possibly_sensitive',expansions:'author_id','user.fields':'username'});
+    const query=new URLSearchParams({ids,'tweet.fields':'author_id,created_at,possibly_sensitive,reply_settings',expansions:'author_id','user.fields':'username'});
     const actual=candidatesFromSearch(await get('/2/tweets?'+query));
     return candidates.map(c=>({url:c.url,verified:actual.some(a=>a.url===c.url&&a.text===c.text&&a.created_at===c.created_at)}));
   });
