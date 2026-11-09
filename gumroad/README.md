@@ -1,8 +1,8 @@
-# Digivated single-offer remap
+# Digivated membership checkout history
 
-The owner selected **$5 USD once**, not recurring billing. Benefits: one reviewed project spotlight and full News access when News launches. News is not built yet; no launch date is promised.
+Digivated's public offer is **$5 USD once**. It includes one reviewed project spotlight and full News summaries. The News section is live. Check the current offer and access instructions on `/membership` before changing seller settings.
 
-The site is staged with checkout disabled until the seller listing matches. Existing packet, founding membership and promotional purchases retain their original access and included benefits. The existing one-time product ID and permalink are retained so purchase verification does not break.
+The remap procedure below is retained as an operations record; it is not a routine deployment step. Existing packet, founding membership, and promotional purchases retain their original access and benefits. Preserve the existing one-time product ID and permalink because purchase verification depends on them.
 
 ## Prepared assets
 

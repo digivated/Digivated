@@ -94,7 +94,7 @@ function renderList() {
   const loadedLabel = state.kind === 'accounts' ? `account${state.items.length === 1 ? '' : 's'}` : labels[state.kind].toLowerCase();
   $('owner-count').textContent = state.kind==='submission' ? `${state.items.filter(item=>item.status==='pending').length} pending · ${items.length} shown · ${state.items.length} submissions loaded` : `${items.length} shown · ${state.items.length} ${loadedLabel} loaded`;
   $('owner-empty').hidden = items.length > 0;
-  $('owner-empty').querySelector('h2').textContent=state.kind==='carousel'?'No full carousels found.':state.kind==='accounts'?'No accounts found in this page.':'Nothing here just yet.';
+  $('owner-empty').querySelector('h2').textContent=state.kind==='carousel'?'No full carousels found.':state.kind==='accounts'?'No accounts found in this page.':'No items found.';
   $('owner-empty').querySelector('p').textContent=state.kind==='carousel'?'Published carousels will appear here automatically. If you just added one, choose Refresh.':state.kind==='accounts'?'Clear filters or load more accounts.':'New submissions and saved content will appear here.'; $('owner-more').hidden = state.next === null;
 }
 async function load(more = false) {

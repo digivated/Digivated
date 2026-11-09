@@ -21,7 +21,7 @@ export const footerGroups = [
     ['/about', 'About'], ['/privacy', 'Privacy & Data'], ['/terms', 'Terms of Use'],
   ] },
   { title: 'Connect', links: [
-    ['https://x.com/digivatedx', 'X / Twitter'],
+    ['https://x.com/digivatedx', 'X'],
     ['https://www.threads.com/@digivated', 'Threads'],
     ['https://www.instagram.com/digivated/', 'Instagram'],
     ['https://www.pinterest.com/digivated/', 'Pinterest'],
