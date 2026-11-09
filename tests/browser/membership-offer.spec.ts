@@ -9,7 +9,8 @@ for(const width of [390,1440])test(`one membership offer is honest and usable at
  for(const path of ['/membership','/shop','/products','/promote','/founding-members']){
   await page.goto(base+path);await expect(page.locator('.membership-offer')).toHaveCount(1);
   await expect(page.locator('.membership-price strong')).toHaveText('$5');
-  await expect(page.locator('.membership-soon')).toHaveText('Coming soon');
+  await expect(page.locator('.membership-soon')).toHaveCount(0);
+  await expect(page.locator('.membership-benefits')).toContainText('Full source-checked summaries');
   await expect(page.locator('.membership-checkout')).toBeDisabled();
   await expect(page.locator('a[href*="gumroad.com/l/"]')).toHaveCount(0);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
