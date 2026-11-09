@@ -101,7 +101,8 @@ async function load(more = false) {
   const request = ++state.request; const kind = state.kind;
   message(kind==='accounts'?'Loading accounts…':'Loading your content…'); $('owner-more').disabled = true;
   try {
-    const data = await api(kind==='accounts'?`?action=accounts&page=${more ? state.next : 1}`:kind==='carousel'?`?action=carousels&offset=${more ? state.next : 0}`:kind==='comments'?`?action=comments&offset=${more ? state.next : 0}`:`?action=list&kind=${kind}&offset=${more ? state.next : 0}`);
+    const status=['submission','resource','product'].includes(kind)?$('owner-filter').value:'';
+    const data = await api(kind==='accounts'?`?action=accounts&page=${more ? state.next : 1}`:kind==='carousel'?`?action=carousels&offset=${more ? state.next : 0}`:kind==='comments'?`?action=comments&offset=${more ? state.next : 0}`:`?action=list&kind=${kind}&offset=${more ? state.next : 0}${status?'&status='+encodeURIComponent(status):''}`);
     if (request !== state.request) return;
     state.items = more ? [...state.items,...data.items] : data.items; state.next = data.next; renderList(); message('');
   } catch (error) { message(errorText(error)); }
@@ -122,7 +123,7 @@ document.querySelectorAll('[data-kind]').forEach(button=>button.addEventListener
 document.querySelectorAll('[data-open-kind]').forEach(button=>button.addEventListener('click',()=>selectKind(button.dataset.openKind,button.dataset.openStatus||'')));
 document.querySelectorAll('[data-owner-panel]').forEach(button=>button.addEventListener('click',()=>{panel(button.dataset.ownerPanel);if(state.panel==='overview')refreshOverview();}));
 $('owner-overview-refresh').addEventListener('click',refreshOverview);
-$('owner-search').addEventListener('input',renderList); $('owner-filter').addEventListener('change',renderList); $('owner-refresh').addEventListener('click',()=>load()); $('owner-more').addEventListener('click',()=>load(true));
+$('owner-search').addEventListener('input',renderList); $('owner-filter').addEventListener('change',()=>{if(['submission','resource','product'].includes(state.kind)){state.items=[];state.next=null;renderList();load();}else renderList();}); $('owner-refresh').addEventListener('click',()=>load()); $('owner-more').addEventListener('click',()=>load(true));
 function field(name,label,value,options={}) {
   const wrapper=element('label',label); let input;
   if(options.choices){input=element('select');options.choices.forEach(choice=>input.add(new Option(choice,choice)));}
