@@ -17,3 +17,7 @@ Sign in at `/admin`, then open **News desk** (`/admin/news`). Review pending sto
 ## Verification
 
 `npm test` runs source/policy/API/Markets tests. With a dedicated loopback Redis, `DIGIVATED_TEST_REDIS_PORT=6389 node --test tests/news*.test.mjs` also exercises real Lua atomic deduplication, automatic publication, verification fallback, corrections, revision conflicts and withdrawal. Browser coverage: `tests/browser/news-paused.spec.ts` (retained filename replaces the former paused-section checks).
+
+## Reviewed starter collection (9 November 2026)
+
+`NEWS_STARTER_RUN_ID=reviewed-20261109-v1` enables one idempotent production-build import of ten individually reviewed Reuters and TechCrunch briefs. Every original article must still be within 48 hours. A direct article recheck verifies original date, source headline and a supporting extract; publishers that deny direct automated retrieval can use the recorded fresh Firecrawl live-capture review for at most 30 minutes. Capture ID, verification time, original publication time and content hash are retained in private evidence. A failed verification goes to review; an expired article is skipped. All starter briefs are Updates and use attributed editorial summaries. This does not broaden or relax the five-feed automatic breaking-news policy. Existing source URL deduplication prevents repeat imports and removed stories remain removed.
