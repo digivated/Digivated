@@ -3,11 +3,12 @@ import assert from 'node:assert/strict';
 import {makeCreatorProfileHandler} from '../server/creator-profile.mjs';
 
 const alice='123e4567-e89b-42d3-a456-426614174000',bob='123e4567-e89b-42d3-a456-426614174001';
-function fixture(){
+function fixture(options={}){
  const values=new Map(),sets=new Map(),members=new Map();
  const redis=async([command,...args])=>{
   if(command==='GET')return values.get(args[0])??null;
   if(command==='SET'){values.set(args[0],args[1]);return 'OK';}
+  if(command==='DEL'){values.delete(args[0]);return 1;}
   if(command==='INCR'){const n=Number(values.get(args[0])||0)+1;values.set(args[0],n);return n;}
   if(command==='ZADD'){const items=sets.get(args[0])||[];items.unshift(args[2]);sets.set(args[0],items);return 1;}
   if(command==='ZREM')return 1;
@@ -16,11 +17,12 @@ function fixture(){
   if(command==='SCARD')return (members.get(args[0])||new Set()).size;
   if(command==='SMEMBERS')return [...(members.get(args[0])||new Set())];
   if(command==='SISMEMBER')return (members.get(args[0])||new Set()).has(args[1])?1:0;
+  if(command==='EVAL'&&args[1]===1){const key=args[2];const n=Number(values.get(key)||0)+1;values.set(key,n);return n;}
   if(command==='EVAL'&&args[1]===2){const [,count,postKey,setKey,member]=args;if(!values.has(postKey))return -1;const group=members.get(setKey)||new Set();if(group.has(member))group.delete(member);else group.add(member);members.set(setKey,group);return group.size;}
   if(command==='EVAL'){const [,count,wait,daily,duplicate]=args;assert.equal(count,3);if(values.has(wait))return 1;const n=Number(values.get(daily)||0)+1;values.set(daily,n);if(n>30)return 2;if(values.has(duplicate))return 3;values.set(wait,'1');values.set(duplicate,'1');return 0;}
   throw Error(command);
  };
- const handler=makeCreatorProfileHandler({redis,env:{},verifyAccount:async req=>req.headers.authorization?{id:req.headers.authorization==='Alice'?alice:bob}:null});
+ const handler=makeCreatorProfileHandler({redis,env:options.env||{},storageClient:options.storageClient,verifyAccount:async req=>req.headers.authorization?{id:req.headers.authorization==='Alice'?alice:bob}:null});
  const call=async(method,url,body,actor)=>{let raw;const res={setHeader(){},end(value){raw=value;}};await handler({method,url,body,headers:{origin:'https://digivated.com','content-type':'application/json',...(actor?{authorization:actor}:{})}},res);return{status:res.statusCode,...JSON.parse(raw)};};
  return{call,values};
 }
@@ -52,4 +54,15 @@ test('likes and bookmarks are private to the signed-in viewer and can be undone'
  assert.equal((await call('GET','/?action=posts&saved=1',null,'Bob')).posts.length,0);
  values.set('digivated:creator:profile:'+alice,JSON.stringify({name:'Alice',public:false}));
  assert.equal((await call('POST','/?action=react',{id,kind:'like'},'Bob')).status,404);
+});
+
+test('post media uses signed upload ticket and verifies file before publishing',async()=>{
+ const env={COMMUNITY_SUPABASE_URL:'https://example.supabase.co',COMMUNITY_SUPABASE_SECRET_KEY:'test-secret'};let uploaded=false;
+ const storageClient={storage:{from:bucket=>{assert.equal(bucket,'creator-media');return{createSignedUploadUrl:async()=>({data:{token:'signed-token'},error:null}),info:async()=>({data:uploaded?{size:1000,contentType:'image/png'}:null,error:uploaded?null:new Error('missing')})};}}};
+ const {call}=fixture({env,storageClient});await call('POST','/',{name:'Alice',public:true},'Alice');
+ assert.equal((await call('POST','/?action=media-ticket',{type:'video/mp4',size:20971521},'Alice')).status,400);
+ const ticket=await call('POST','/?action=media-ticket',{type:'image/png',size:1000},'Alice');assert.equal(ticket.status,200);assert.equal(ticket.token,'signed-token');
+ assert.equal((await call('POST','/?action=post',{body:'My latest work',mediaPath:ticket.path},'Alice')).status,400);
+ uploaded=true;const created=await call('POST','/?action=post',{body:'My latest work',mediaPath:ticket.path},'Alice');assert.equal(created.status,201);assert.match(created.post.media.url,/creator-media/);
+ assert.equal((await call('POST','/?action=post',{body:'Another work',mediaPath:ticket.path},'Bob')).status,403);
 });

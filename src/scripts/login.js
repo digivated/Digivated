@@ -4,7 +4,7 @@ const form=document.getElementById('login-email-form');
 if(form){
  const tabs=[document.getElementById('login-tab-signin'),document.getElementById('login-tab-signup')];
  const status=document.getElementById('login-status'),submit=document.getElementById('login-submit'),explanation=document.getElementById('login-explanation'),password=form.elements.password;
- const next=new URLSearchParams(location.search).get('next');const destination=next&&/^\/creator\?id=[a-f0-9-]{36}$/i.test(next)?next:'/account';
+ const next=new URLSearchParams(location.search).get('next');const destination=next&&(/\/creator\?id=[a-f0-9-]{36}$/i.test(next)||/^\/inbox(?:\?id=[a-f0-9-]{36})?$/i.test(next))?next:'/account';
  let mode=new URLSearchParams(location.search).get('mode')==='signup'?'signup':'signin';
  const render=()=>{
   tabs.forEach((tab,index)=>{const selected=(index===0?'signin':'signup')===mode;tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1;});
