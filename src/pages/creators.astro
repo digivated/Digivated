@@ -4,9 +4,8 @@ import '../styles/project-account.css';
 ---
 <Platform title="Creators" description="A place for independent builders to share progress, ask questions, and meet other creators.">
   <section class="creator-social" aria-labelledby="creators-title">
-    <header class="creator-social-heading"><p class="eyebrow">THE BUILDER CONVERSATION</p><h1 id="creators-title">Creators</h1><p>Share what you’re making, ask for feedback, and meet the people behind the projects.</p></header>
+    <div class="creator-feed-shell"><header class="creator-social-heading"><p class="eyebrow">THE BUILDER CONVERSATION</p><h1 id="creators-title">Creators</h1><p>Share what you’re making, ask for feedback, and meet the people behind the projects.</p><nav class="creator-quicknav" aria-label="Creator shortcuts"><a href="/discover">Projects</a><a href="/inbox">Inbox <span id="creator-inbox-count"></span></a><a id="creator-my-profile" href="/account">My profile</a></nav></header>
     <div class="creator-social-layout">
-      <aside class="creator-social-rail" aria-label="Creator navigation"><p class="eyebrow">YOUR NETWORK</p><a class="active" href="/creators" aria-current="page">Conversation</a><a href="/discover">Explore projects</a><a href="/inbox">Inbox <span id="creator-inbox-count"></span></a><a href="/account">Your account</a><div class="creator-social-rail-note">A place to build in public and hear from other makers.</div></aside>
       <main class="creator-social-main">
         <nav class="creator-tabs" aria-label="Creator feed"><button class="active" type="button" data-creator-filter="latest">Latest</button><button type="button" data-creator-filter="following">Following</button><button type="button" data-creator-filter="saved">Saved</button><button type="button" data-creator-filter="people">People</button></nav>
         <section id="creator-composer" class="creator-composer" hidden aria-label="Write a post"><label for="creator-post-body">What are you building?</label><textarea id="creator-post-body" maxlength="280" rows="3" placeholder="Share progress, ask a question, or start a conversation…"></textarea><div id="creator-media-preview" class="creator-media-preview" hidden></div><div class="creator-composer-tools"><label class="creator-media-upload" for="creator-media-input">＋ Add photo or video</label><input id="creator-media-input" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" hidden/></div><div class="creator-composer-bottom"><span>Do not spam links. · <span id="creator-post-count">0</span>/280</span><button id="creator-post-submit" class="button primary" type="button">Post</button></div></section>
@@ -15,8 +14,7 @@ import '../styles/project-account.css';
         <button id="creators-more" class="button" type="button" hidden>Load more</button>
         <div id="creators-people" hidden><label class="creator-search-label">Find a creator<input id="creator-search" type="search" placeholder="Search builders by name or bio" autocomplete="off"/></label><div id="creators-grid" class="creator-directory-list"></div></div>
       </main>
-      <aside class="creator-social-sidebar"><h2>Your space</h2><p>Keep your posts and published projects together on your creator profile.</p><a id="creator-my-profile" class="button" href="/account">My profile</a><a href="/inbox">Inbox →</a><a href="/account">Edit profile and logo →</a><div class="creator-social-guidelines"><strong>Good conversation starts here</strong><p>Share useful updates and specific feedback. Project links live on profiles, so the feed stays easy to read.</p></div></aside>
-    </div>
+    </div></div>
   </section>
   <script>import '../scripts/creators.js';</script>
 </Platform>
