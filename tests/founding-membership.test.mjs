@@ -257,6 +257,6 @@ test('one-time membership advertises one offer and leaves checkout gated during 
   assert.match(payload.description, /News is not available yet/);
   const page = readFileSync(new URL('../src/components/MembershipOffer.astro', import.meta.url), 'utf8');
   assert.match(page, /membership.checkoutReady/);
-  assert.match(page, /Checkout being updated/);
+  assert.match(page, /Checking the live \$5 one-time Gumroad offer/);
   assert.match(page, /Previous purchases|previous purchase/);
 });

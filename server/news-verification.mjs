@@ -43,7 +43,7 @@ export function assessCandidate(candidate,{now=Date.now()}={}){
  if(candidate.evidence?.verified!==true||!candidate.evidence.headlineMatched||!candidate.evidence.summarySupported||candidate.evidence.originalPublicationTimeConfirmed!==true)return {...review('source_verification_incomplete'),reasons:['source_verification_incomplete',...(candidate.evidence?.verificationReasons||[])]};
  if(candidate.evidence.articlePublishedAt&&Math.abs(Date.parse(candidate.evidence.articlePublishedAt)-timestamp)>60000)return review('source_timestamp_mismatch');
  const text=candidate.headline+' '+candidate.sourceText;
- if(/\b(?:last (?:week|month|year)|previously (?:reported|disclosed)|retrospective|looking back)\b/i.test(candidate.headline))return review('historical_context_requires_review');
+ if(/\b(?:last (?:week|month|year)|previously (?:reported|disclosed)|retrospective|looking back)\b/i.test(text))return review('historical_context_requires_review');
  if(uncertainty.test(text)||negation.test(text))return review('claim_or_importance_requires_editorial_verification');
  if(routine.test(candidate.headline))return reject('routine_or_promotional_update');
  const significant=materiality(candidate);

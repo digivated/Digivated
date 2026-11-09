@@ -141,7 +141,7 @@ test('anonymous readers receive four slides and no locked image bytes', async ()
   const detail = await call(handler, { url: '/api/carousels?slug=how-indexes-work' });
   assert.equal(detail.json.item.slides.length, 4);
   assert.equal(detail.json.item.slides[0].text, 'Private lesson 1');
-  assert.equal(detail.json.item.locked.message, 'The rest of this carousel is for Founding Members.');
+  assert.equal(detail.json.item.locked.message, 'The rest of this carousel is for Digivated Members.');
   assert.equal(detail.json.item.locked.href, '/founding-members');
   assert.deepEqual(detail.json.item.references, []);
   assert.equal(JSON.stringify(detail.json).includes(PNG), false);
