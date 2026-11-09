@@ -3,7 +3,7 @@ export function uniqueProjects(items) {
  return items.filter(project=>{
   if(!project?.id||!project?.name||seen.has(project.id))return false;
   seen.add(project.id);return true;
- }).sort((a,b)=>Number(b.status==='featured')-Number(a.status==='featured'));
+ }); // Preserve the API's newest-upload-first order across paginated results.
 }
 
 export function adjacentProject(catalog,id,direction) {

@@ -1,6 +1,18 @@
 import {test,expect} from '@playwright/test';
 const base='http://127.0.0.1:4321';
 const items=Array.from({length:15},(_,i)=>({id:'project-'+i,name:'Project '+i,category:i===0?'Education':'Apps',description:'A useful independent project.',creator:'Builder',status:i<2?'featured':'approved',image:'/digivated-new-mark.svg',url:'https://example.com',views:12}));
+test('All projects retains upload order across pages and collection switches',async({page})=>{
+ const catalog=items.map((p,i)=>({...p,status:i===5||i===13?'featured':'approved',date:new Date(Date.UTC(2026,10,15-i)).toISOString()}));
+ await page.route('**/api/**',r=>{const u=new URL(r.request().url());return r.fulfill({json:u.pathname==='/api/projects'?(u.searchParams.get('offset')==='100'?{items:catalog.slice(10),next:null}:{items:catalog.slice(0,10),next:100}):{items:[],ready:false}});});
+ await page.goto(base+'/discover');await expect(page.locator('.wall-tile')).toHaveCount(12);
+ const names=()=>page.locator('.wall-tile-caption strong').allTextContents();
+ await expect.poll(names).toEqual(catalog.slice(0,12).map(p=>p.name));
+ await page.getByRole('button',{name:'Next group of projects'}).click();await expect.poll(names).toEqual(catalog.slice(12).map(p=>p.name));
+ await page.getByRole('button',{name:'Featured',exact:true}).click();await expect.poll(names).toEqual(['Project 5','Project 13']);
+ await page.getByRole('button',{name:'All projects',exact:true}).click();await expect.poll(names).toEqual(catalog.slice(0,12).map(p=>p.name));
+ await page.getByRole('button',{name:'Open Project 0',exact:true}).click();await expect(page.locator('#wall-focus-title')).toHaveText('Project 0');
+ await page.keyboard.press('Escape');await page.reload();await expect.poll(names).toEqual(catalog.slice(0,12).map(p=>p.name));
+});
 for(const width of [320,390,768,1440])test(`plain pagination, category filtering and separate controls at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:950});await page.addInitScript(()=>sessionStorage.setItem('digivated-announcement-seen-v2','1'));
  await page.route('**/api/**',r=>r.fulfill({json:{items,next:null,views:12,ready:false}}));await page.goto(base+'/discover');
