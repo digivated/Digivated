@@ -11,9 +11,9 @@ const active = (href: string) => path === href || path.startsWith(href + '/') ||
     <div class="compact-header-actions">
       <button class="header-search" type="button" data-open-search aria-label="Search Digivated"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></button>
       <a class="header-login" id="header-account-link" href="/login" aria-current={active('/login')?'page':undefined}>Log In</a>
-      <a class="header-membership" href="/membership" aria-current={active('/membership')?'page':undefined}>Membership <span aria-hidden="true">↗</span></a>
+      <a class="header-membership" href="/membership" aria-current={active('/membership')?'page':undefined}>Membership</a>
       <details class="explore-menu notebook-navigation" data-navigation>
-        <summary aria-controls="explore-navigation" aria-label="Open navigation menu" aria-expanded="false"><span class="navigation-trigger-label">Menu</span><span class="navigation-trigger-chevron"><UiIcon name="chevron" size={16}/></span><span class="navigation-trigger-menu"><UiIcon name="menu" size={21}/></span><span class="navigation-trigger-close"><UiIcon name="close" size={21}/></span></summary>
+        <summary aria-controls="explore-navigation" aria-label="Open navigation menu" aria-expanded="false"><span class="navigation-trigger-menu"><UiIcon name="menu" size={21}/></span><span class="navigation-trigger-close"><UiIcon name="close" size={21}/></span></summary>
         <nav id="explore-navigation" class="navigation-panel" aria-label="Explore Digivated">
           <div class="navigation-destinations">{menuLinks.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</div>
           <div class="navigation-account-row"><a id="menu-account-link" href="/account"><span>Your projects</span></a><a href="/saved">Saved items</a></div>
