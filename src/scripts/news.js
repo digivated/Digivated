@@ -72,7 +72,7 @@ if(root){
    const response=await fetch('/api/news?'+params,{credentials:'same-origin',cache:'no-store',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(15000)])});
    if(!response.ok)throw Error('News unavailable');const data=await response.json();if(request!==version)return;
    if(!Array.isArray(data.items))throw Error('Invalid news response');
-   gate.hidden=data.member===true;toolbar.hidden=false;layout.hidden=false;sidebar.hidden=data.member!==true;accessStatus.hidden=true;
+   gate.hidden=data.member===true;toolbar.hidden=false;layout.hidden=false;sidebar.hidden=data.member!==true;accessStatus.hidden=true;$('[data-news-scope]').textContent=data.member===true?'Newest first':'Five free stories';
    const incoming=data.items.filter(valid),seen=new Set();items=(reset?incoming:[...items,...incoming]).filter(story=>{if(seen.has(story.id))return false;seen.add(story.id);return true;});
    if(reset)featured=valid(data.featured)&&current(data.featured)?data.featured:items.find(story=>story.featured&&current(story))||null;
    next=data.next==null||String(data.next)===cursor?null:String(data.next);

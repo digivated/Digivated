@@ -10,7 +10,6 @@ import '../styles/news.css';
       <div class="news-check"><span data-news-checked>Checking the latest reporting</span><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><span>Refresh</span></button></div>
     </header>
     <p class="news-access-status" data-news-access-status role="status">Loading the latest reporting…</p>
-    <section class="news-gate" data-news-gate hidden aria-labelledby="news-gate-title"><p class="news-eyebrow">MEMBER ACCESS</p><h2 id="news-gate-title">Go beyond the latest.</h2><p>Read the full News archive and market snapshot with Digivated Membership.</p><a href="/membership#member-sign-in">Unlock all News <span aria-hidden="true">↗</span></a><p>Already a member? Verify your purchase on the membership page, then return here.</p></section>
     <div class="news-toolbar" hidden>
       <div class="news-filters" role="group" aria-label="News category">
         <button type="button" data-news-category="all" aria-pressed="true">Latest</button>
@@ -24,7 +23,7 @@ import '../styles/news.css';
       <div class="news-editorial">
         <section class="news-feature" data-news-feature aria-label="Featured story" hidden></section>
         <section class="news-latest" aria-labelledby="news-latest-title">
-          <header class="news-section-heading"><h2 id="news-latest-title" data-news-latest-title>Latest</h2><span>Newest first</span></header>
+          <header class="news-section-heading"><h2 id="news-latest-title" data-news-latest-title>Latest</h2><span data-news-scope>Newest first</span></header>
           <p class="news-status" data-news-status role="status">Loading the latest stories…</p>
           <div class="news-feed" data-news-feed aria-busy="true"></div>
           <button class="news-more" data-news-more type="button" hidden>More stories <UiIcon name="arrow" size={15}/></button>
@@ -41,6 +40,7 @@ import '../styles/news.css';
         <p class="news-sidebar-caption">Read the original reporting for the full context.</p>
       </aside>
     </div>
+    <section class="news-gate" data-news-gate hidden aria-labelledby="news-gate-title"><p class="news-eyebrow">MEMBER ACCESS</p><h2 id="news-gate-title">Go beyond the latest.</h2><p>These five stories are free. Digivated Membership opens the full News archive and market snapshot.</p><a href="/membership#member-sign-in">Unlock all News <span aria-hidden="true">↗</span></a><p>Already a member? Verify your purchase on the membership page, then return here.</p></section>
     <noscript><p class="news-status">JavaScript is needed to load and filter the News feed.</p></noscript>
   </section>
 </Platform>

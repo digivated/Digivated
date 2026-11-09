@@ -1,6 +1,6 @@
 # Digivated News
 
-`/news` publishes sourced updates in AI & Tech, Markets, and Security. Visitors can read the five newest stories with their summaries and original sources. The rest of the archive and market snapshot require verified membership or owner access. Member access is checked server-side before the feed is read.
+`/news` publishes sourced updates in AI & Tech, Markets, and Security. Visitors can read the five newest stories with their summaries and original sources. The rest of the archive and market snapshot require verified membership. An owner dashboard session does not unlock the public News page; the authenticated News desk still shows all published records and their full summaries. Member access is checked server-side before the feed is read.
 
 ## Automatic publication
 

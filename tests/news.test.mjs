@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {NEWS_SOURCES,parseFeed,verifyArticle,canonicalNewsUrl} from '../server/news-sources.mjs';
 import {assessCandidate} from '../server/news-verification.mjs';
-import {makeNewsHandler} from '../server/news-handler.mjs';
+import {makeNewsHandler,newsMember} from '../server/news-handler.mjs';
 import {makeNewsIngestHandler} from '../server/news-ingest-handler.mjs';
 import {runNewsIngest} from '../server/news-pipeline.mjs';
 import {NEWS,insertNews,getNewsRecord,saveNewsRecord} from '../server/news-store.mjs';
@@ -47,6 +47,10 @@ test('public News is limited to five recent stories; members get the archive and
  assert.equal((await call(handler(true))).body.items[0].summary,record.summary);
  assert.equal((await call(handler(true),'/api/news?q=PRIVATE')).body.items.length,1);
  assert.equal((await call(handler(false),'/api/news?category=invalid')).code,400);
+});
+test('owner dashboard cookie does not unlock the public News archive',async()=>{
+ const req={headers:{cookie:'__Host-digivated-admin=owner-session'}};
+ assert.equal(await newsMember(req,async()=>{throw Error('Admin Redis must not be consulted');},{},async()=>{throw Error('Gumroad must not be consulted');}),false);
 });
 test('public visitors cannot trigger source ingestion',async()=>{
  let called=false;const handler=makeNewsIngestHandler({env:{CRON_SECRET:'s'.repeat(40)},redis:async()=>null,run:async()=>{called=true;return {status:'ok'};}});

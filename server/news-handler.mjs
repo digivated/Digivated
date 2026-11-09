@@ -1,9 +1,7 @@
 import {NEWS,CATEGORIES,newsStatus} from './news-store.mjs';
 import {redisClient} from './submissions.mjs';
 import {foundingConfig,readMember,FOUNDING_COOKIE} from './founding-access.mjs';
-import {adminConfig,requireSession,tokenFrom} from './admin-auth.mjs';
 export async function newsMember(req,redis,env,fetcher=fetch){
- if(tokenFrom(req)){try{await requireSession(req,redis,adminConfig(env));return true;}catch{}}
  if(!String(req.headers.cookie||'').includes(FOUNDING_COOKIE+'='))return false;
  try{return !!await readMember(req,foundingConfig(env),fetcher);}catch{return false;}
 }
