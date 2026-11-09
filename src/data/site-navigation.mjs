@@ -7,11 +7,12 @@ export const primaryLinks = [
 ];
 export const menuLinks = [
   ...primaryLinks,
+  ['/creators', 'Creators'],
   ['/membership', 'Membership'],
   ['/submit-project', 'Submit a project'],
 ];
 export const footerGroups = [
-  { title: 'Explore', links: primaryLinks },
+  { title: 'Explore', links: [...primaryLinks, ['/creators', 'Creators']] },
   { title: 'Your workspace', links: [
     ['/submit-project', 'Submit a project'], ['/account', 'Your projects'],
     ['/saved', 'Saved items'], ['/membership', 'Membership'],

@@ -4,6 +4,7 @@ const form=document.getElementById('login-email-form');
 if(form){
  const tabs=[document.getElementById('login-tab-signin'),document.getElementById('login-tab-signup')];
  const status=document.getElementById('login-status'),submit=document.getElementById('login-submit'),explanation=document.getElementById('login-explanation'),password=form.elements.password;
+ const next=new URLSearchParams(location.search).get('next');const destination=next&&/^\/creator\?id=[a-f0-9-]{36}$/i.test(next)?next:'/account';
  let mode=new URLSearchParams(location.search).get('mode')==='signup'?'signup':'signin';
  const render=()=>{
   tabs.forEach((tab,index)=>{const selected=(index===0?'signin':'signup')===mode;tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1;});
@@ -18,7 +19,7 @@ if(form){
  render();
  async function boot(){
   const {state:authState,client}=await accountSession();
-  if(authState==='signed-in'){location.replace('/account');return;}
+  if(authState==='signed-in'){location.replace(destination);return;}
   if(authState==='unverified')status.textContent='Finish verifying your email with the link we sent.';
   if(authState==='unavailable')status.textContent='Account verification is temporarily unavailable. Please try again.';
   async function action(button,work){const email=form.elements.email.value.trim();if(!form.elements.email.reportValidity())return;button.disabled=true;status.textContent='Working…';try{await work(email);}catch(error){status.textContent=error.code==='invalid_credentials'?'Email or password is incorrect. Use Forgot password if you need to set one.':error.code==='email_not_confirmed'?'Confirm your email with the verification link first.':error.message||'Please try again.';}finally{button.disabled=false;}}
@@ -28,7 +29,7 @@ if(form){
     if(mode==='signup'){const response=await fetch('/api/project-account?action=signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:password.value})});if(!response.ok){const result=await response.json();throw Error(result.error||'Account could not be created.');}}
     const {data,error}=await client.auth.signInWithPassword({email,password:password.value});
     if(error)throw error;
-    if(data.session){password.value='';location.replace('/account');return;}
+    if(data.session){password.value='';location.replace(destination);return;}
     status.textContent='Please try signing in again.';
    }catch(error){throw error;}
    });
