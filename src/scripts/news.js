@@ -60,9 +60,7 @@ if(root){
   else footer.textContent='Market data is separate from editorial reporting.';
  }
  function renderPipeline(pipeline){
-  const checked=$('[data-news-checked]');checked.replaceChildren();
-  if(timestamp(pipeline?.lastCheckedAt)!==null&&pipeline?.lastCheckedAt){checked.append(document.createTextNode('Checked '),time(pipeline.lastCheckedAt));if(['failed','partial','paused'].includes(pipeline.status))checked.append(document.createTextNode(pipeline.status==='paused'?' · publishing paused':' · some sources unavailable'));}
-  else checked.textContent='Awaiting the first completed source check';
+  const checked=$('[data-news-checked]');checked.textContent='Refreshed twice daily';
  }
  function controls(){for(const button of root.querySelectorAll('[data-news-category]'))button.setAttribute('aria-pressed',String(button.dataset.newsCategory===category));}
  function updateLocation(){const u=new URL(location.href);if(category==='all')u.searchParams.delete('category');else u.searchParams.set('category',category);if(query)u.searchParams.set('q',query);else u.searchParams.delete('q');history.replaceState(null,'',u.pathname+u.search+u.hash);}
