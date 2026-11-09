@@ -19,3 +19,13 @@ export function validReply(text,source){
  if(/guaranteed? (?:traffic|sales|visitors|reposts)|100%|automatically (?:bring|generate)/i.test(text))return false;
  return !!invitationKind(source);
 }
+export function groundedReply(candidate){
+ const kind=invitationKind(candidate.text);
+ if(!kind)return '';
+ const topic={
+ 'UI/UX':'design tools','Product Design':'design tools','Frontend Development':'frontend projects','Backend Development':'backend projects','Software Engineering':'developer tools','AI & Machine Learning':'AI projects','Cybersecurity':'security tools','Tech & Startup Builders':'startup projects','Digital Products':'digital products','Indie Hackers':'indie projects','Indie Builders':'indie projects','Content Creation':'creator tools','Product Management':'product ideas','Web3':'Web3 projects','Blockchain':'blockchain projects'
+ }[candidate.niche]||'independent projects';
+ if(kind==='connection')return `Always glad to connect with people building ${topic}. Digivated is a home for independent projects. Let’s connect 🤝`;
+ if(/feedback|review|roast/i.test(candidate.text))return `Sharing Digivated for builders looking for feedback on ${topic}. Get your project discovered and invite useful feedback. Submit for free: ${DIGIVATED_LINK}`;
+ return `We’re building Digivated to help ${topic} get discovered and invite feedback. Free project submissions: ${DIGIVATED_LINK}`;
+}

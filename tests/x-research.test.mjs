@@ -100,3 +100,9 @@ test('Grok requests never access X publishing API', async () => {
   assert.deepEqual(await agent('writer','draft',false,usage),[]);assert.equal(usage.length,1);
 });
 
+test('rules mode drafts and reviews without a Grok key or provider call',async()=>{
+ let calls=0;const agent=makeAgent({X_REPLY_DRAFT_MODE:'rules'},async()=>null,async()=>{calls++;throw Error('Unexpected paid provider call');});
+ const project={...candidate,text:'Indie builders, share your project links.',invitation_excerpt:'share your project links'};
+ const draft=await agent('writer','Candidate data: '+JSON.stringify([project]),false,[]);assert.match(draft[0].reply,/https:\/\/digivated.com/);
+ const reviewed=await agent('reviewer','Candidate data: '+JSON.stringify([{...project,reply:draft[0].reply}]),false,[]);assert.equal(reviewed[0].acceptable,true);assert.equal(calls,0);
+});

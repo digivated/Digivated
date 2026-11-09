@@ -6,3 +6,4 @@ test('no-link requests, exchanges, external links and guarantees are excluded',(
  assert.equal(invitationKind('Drop your project for a giveaway'),null);
  for(const reply of ['Check https://evil.example','Use https://digivated.com.evil.example','Guaranteed traffic https://digivated.com'])assert.equal(validReply(reply,'Drop your product link'),false);
 });
+test('provider-free drafting is grounded in the invitation and fits the reply limit',async()=>{const {groundedReply}=await import('../server/x-reply-rules.mjs');for(const text of ['AI builders, let’s connect','Drop your product links for feedback','Share your project below']){const c={text,niche:'AI & Machine Learning'};const reply=groundedReply(c);assert.ok(validReply(reply,text));assert.ok(reply.length<=240);}assert.equal(groundedReply({text:'No invitation here'}),'');});

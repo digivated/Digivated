@@ -12,3 +12,5 @@ Deduplication covers this queue only, with a 90-day post/author history. The que
 
 This research worker does not access X tokens. The separate publisher implements refresh and replies. Debug the latest report and sanitized x_research runtime events; do not log provider response bodies or credentials.
 
+
+Production can use `X_REPLY_DRAFT_MODE=rules` to remove the Grok dependency. Search and independent verification still use the connected X API. Writer/reviewer then use a fixed truthful Digivated description tailored to the invitation and niche, validated by the shared link rules. No model calls are made in this mode. Identical replies remain subject to the existing 30-day suppression; they are not reworded to evade it.

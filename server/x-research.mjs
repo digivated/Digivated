@@ -1,5 +1,5 @@
 import {operatorAccess} from './x-operator.mjs';
-import {invitationKind,validReply} from './x-reply-rules.mjs';
+import {invitationKind,validReply,groundedReply} from './x-reply-rules.mjs';
 import { searchX, verifyX } from './x-search.mjs';
 import { timingSafeEqual } from 'node:crypto';
 import { AdminError, adminConfig, requireSession, jsonBody } from './admin-auth.mjs';
@@ -47,6 +47,11 @@ export function makeAgent(env, redis, fetcher = fetch) {
     if (await redis(['GET', `${PREFIX}paused`]) === '1') throw new Error('Research paused');
     if (role === 'scout') return searchX(env, redis, fetcher);
     if (role === 'verifier') return verifyX(env, redis, JSON.parse(prompt.split('Candidate data: ')[1]), fetcher);
+    if(env.X_REPLY_DRAFT_MODE==='rules'){
+      const candidates=JSON.parse(prompt.split('Candidate data: ')[1]);
+      if(role==='writer')return candidates.map(c=>({url:c.url,reply:groundedReply(c)}));
+      if(role==='reviewer')return candidates.map(c=>({url:c.url,acceptable:validReply(c.reply,c.text)&&c.reply===groundedReply(c),reason:'Checked against the verified invitation and fixed Digivated description.'}));
+    }
     if (!env.XAI_API_KEY) throw new Error('Grok key missing');
     if (!selectedModel) {
       const modelsResponse=await fetcher('https://api.x.ai/v1/models',{headers:{Authorization:`Bearer ${env.XAI_API_KEY}`},redirect:'error',signal:AbortSignal.timeout(15000)});
@@ -140,13 +145,13 @@ export function makeResearchHandler(deps = {}) {
       const redis = deps.redis || redisClient(env);
       if(req.headers['x-digivated-operator']){
         if(req.method!=='POST'||new URL(req.url,'https://digivated.com').searchParams.get('operator')!=='research'||!await operatorAccess(req,env,redis,'research'))return send(403,{error:'Operator capability expired, invalid, or already used.'});
-        if(!grokConfigured(env))return send(200,{status:'unconfigured',added:0});
+        if(env.X_REPLY_DRAFT_MODE!=='rules'&&!grokConfigured(env))return send(200,{status:'unconfigured',added:0});
         const report=await runResearch(redis,deps.agent||makeAgent(env,redis));
         return send(report.status==='failed'?502:200,report);
       }
       const isCron = req.method === 'GET' && cronAuthorized(req.headers.authorization, env.CRON_SECRET);
       if (isCron) {
-        if (!grokConfigured(env)) return send(200, { status: 'unconfigured', added: 0, postingEnabled: false });
+        if (env.X_REPLY_DRAFT_MODE!=='rules'&&!grokConfigured(env)) return send(200, { status: 'unconfigured', added: 0, postingEnabled: false });
         const report = await runResearch(redis, deps.agent || makeAgent(env, redis));
         console.info(JSON.stringify({ event: 'x_research', status: report.status, added: report.added || 0, error: report.error || null, postingEnabled: false }));
         return send(report.status === 'failed' ? 502 : 200, report);
@@ -167,7 +172,7 @@ export function makeResearchHandler(deps = {}) {
         return send(200, { ok: true });
       }
       if (body.action !== 'run') throw new AdminError(400, 'Invalid research action.');
-      if (!grokConfigured(env)) return send(200, { status: 'unconfigured', added: 0, postingEnabled: false });
+      if (env.X_REPLY_DRAFT_MODE!=='rules'&&!grokConfigured(env)) return send(200, { status: 'unconfigured', added: 0, postingEnabled: false });
       const report = await runResearch(redis, deps.agent || makeAgent(env, redis));
       return send(report.status === 'failed' ? 502 : 200, report);
     } catch (error) {
