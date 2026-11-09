@@ -2,7 +2,7 @@
   {
     "category": "markets",
     "headline": "Oil falls as Trump downplays fresh Iran strikes",
-    "summary": "Reuters reports oil prices fell at Monday’s open following Trump’s comments on Iran negotiations. Brent was down 0.85% at $97.48 a barrel at 01:38 GMT; these are reported market observations, not live quotes.",
+    "summary": "Oil prices slipped at Monday’s open after Trump said new strikes on Iran were unlikely. Brent was down 0.85% at $97.48 a barrel at 01:38 GMT, according to Reuters; that was an early market snapshot.",
     "importance": 82,
     "sourceName": "Reuters",
     "sourceUrl": "https://www.reuters.com/business/energy/oil-falls-open-trump-says-fresh-iran-attacks-unlikely-2026-11-08/",
@@ -25,7 +25,7 @@
   {
     "category": "markets",
     "headline": "Asian stocks steady after a volatile week for AI shares",
-    "summary": "Reuters reports Asian equities opened higher after a sharp week of selling. Its early-session figures showed MSCI’s Asia-Pacific index excluding Japan up 0.8%, with investors watching technology earnings and US inflation data.",
+    "summary": "Asian stocks edged up at the start of Monday’s session after a rough week for technology shares. Reuters put the MSCI Asia-Pacific index excluding Japan up 0.8%; investors were also watching tech earnings and U.S. inflation data.",
     "importance": 78,
     "sourceName": "Reuters",
     "sourceUrl": "https://www.reuters.com/world/asia-pacific/global-markets-global-markets-2026-11-09/",
@@ -48,7 +48,7 @@
   {
     "category": "markets",
     "headline": "China’s producer inflation rises while consumer prices cool",
-    "summary": "China’s October producer-price index rose 5.7% from a year earlier, while consumer prices increased 0.7%, Reuters reports from official statistics. The figures show a widening gap between factory cost pressures and household demand.",
+    "summary": "Factory prices in China rose 5.7% from a year earlier in October, while consumer prices rose 0.7%. That points to stronger cost pressures for producers than for households, according to official figures.",
     "importance": 84,
     "sourceName": "Reuters",
     "sourceUrl": "https://www.reuters.com/world/asia-pacific/chinas-october-producer-inflation-quickens-further-consumer-prices-edge-down-2026-11-09/",
@@ -71,7 +71,7 @@
   {
     "category": "markets",
     "headline": "UK hiring contracts as starting salary growth picks up",
-    "summary": "A new REC/KPMG survey showed permanent hiring fell in October for the first time in four months, Reuters reports. Starting salaries rose faster, illustrating the tension between a cooling jobs market and continuing pay pressures.",
+    "summary": "A REC/KPMG survey found that permanent hiring in the UK fell in October for the first time in four months. Starting salaries grew faster, even as employers hired less.",
     "importance": 75,
     "sourceName": "Reuters",
     "sourceUrl": "https://www.reuters.com/world/uk/uk-employers-report-weaker-hiring-stronger-pay-growth-october-2026-11-09/",
@@ -94,7 +94,7 @@
   {
     "category": "markets",
     "headline": "Iraq’s foreign minister reports understanding on Hormuz oil exports",
-    "summary": "Iraq’s foreign minister said an understanding with the US would allow Iraqi oil exports through a shipping lane near Oman, Reuters reports. The announcement concerns export access; it does not establish that all shipping risks have ended.",
+    "summary": "Iraq’s foreign minister says the country reached an understanding with the U.S. to move Iraqi oil through a shipping lane near Oman. The announcement concerns export access; it does not mean all shipping risks have ended.",
     "importance": 77,
     "sourceName": "Reuters",
     "sourceUrl": "https://www.reuters.com/business/energy/iraq-has-reached-understandings-with-us-allow-oil-exports-through-hormuz-2026-11-08/",
@@ -117,7 +117,7 @@
   {
     "category": "ai-tech",
     "headline": "Trump signals openness to AI safeguards in CBS interview",
-    "summary": "Trump said AI risks could be managed and expressed openness to safeguards in a CBS interview, Reuters reports. His remarks indicate a policy position, rather than an enacted regulation or a detailed new legislative proposal.",
+    "summary": "In a CBS interview, Trump said AI risks could be managed and said he was open to safeguards. He did not announce a new regulation or a detailed legislative plan.",
     "importance": 81,
     "sourceName": "Reuters",
     "sourceUrl": "https://www.reuters.com/world/trump-says-ai-risks-can-be-managed-signals-openness-guardrails-2026-11-09/",
@@ -140,7 +140,7 @@
   {
     "category": "ai-tech",
     "headline": "Researchers link synchronized battery checks to power-grid disturbances",
-    "summary": "TechCrunch reports researchers traced recurring grid-frequency dips to synchronized charge checks in battery systems. They recommend randomizing those checks. The finding matters as data centers and grid-scale batteries expand.",
+    "summary": "Researchers traced repeated dips in grid frequency to battery systems checking their charge at the same time. They recommend randomizing those checks as large batteries and data centers place more demand on the grid.",
     "importance": 76,
     "sourceName": "TechCrunch",
     "sourceUrl": "https://techcrunch.com/2026/11/08/coordinated-disturbances-haunt-grids-worldwide-heres-how-researchers-solved-the-mystery/",
@@ -163,7 +163,7 @@
   {
     "category": "markets",
     "headline": "Binance names Justin Yek CFO as Kaiser Ng prepares to leave",
-    "summary": "TechCrunch reports Binance named Justin Yek to replace CFO Kaiser Ng. The company said Ng is leaving to pursue a new venture and that the transition had been planned over the previous six months.",
+    "summary": "Binance has named Justin Yek as its next CFO. The company says Kaiser Ng plans to leave for a new venture and that the handover has been planned for six months.",
     "importance": 74,
     "sourceName": "TechCrunch",
     "sourceUrl": "https://techcrunch.com/2026/11/07/binance-cfo-is-leaving-to-pursue-a-new-venture-after-6-3-billion-hack/",
@@ -186,7 +186,7 @@
   {
     "category": "ai-tech",
     "headline": "Nvidia board opens independent review",
-    "summary": "Nvidia’s board announced an independent investigation overseen by independent directors and outside counsel, TechCrunch reports. The board said it had no reason to believe company secrets or national security were compromised. Allegations remain under review.",
+    "summary": "Nvidia’s board has opened an independent review led by independent directors and outside counsel. The company says it has no reason to believe secrets or national security were compromised; the allegations are still being examined.",
     "importance": 86,
     "sourceName": "TechCrunch",
     "sourceUrl": "https://techcrunch.com/2026/11/08/nvidia-says-its-investigating-ceo-jensen-huangs-relationship-with-possible-chinese-spy/",
@@ -209,7 +209,7 @@
   {
     "category": "ai-tech",
     "headline": "RBA’s Hunter cautions on AI productivity claims and financial risks",
-    "summary": "RBA Assistant Governor Sarah Hunter said evidence of broad AI productivity gains and large employment effects remains limited, Reuters reports. She warned AI investment could initially add to inflation and expose asset prices to repricing risk.",
+    "summary": "RBA Assistant Governor Sarah Hunter said there is still little evidence that AI has broadly lifted productivity or sharply changed employment. She also warned that AI investment could add to inflation and leave asset prices exposed to a repricing.",
     "importance": 80,
     "sourceName": "Reuters",
     "sourceUrl": "https://www.reuters.com/world/asia-pacific/rbas-hunter-says-ai-has-yet-deliver-productivity-boost-trigger-job-losses-2026-11-08/",

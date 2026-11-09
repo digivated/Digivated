@@ -42,7 +42,7 @@ html#digivated-root .news-page .news-section-heading>span { color:#8c8096; font-
 html#digivated-root .news-page .news-feed { min-width:0; }
 html#digivated-root .news-page .news-story { padding:24px 0; border-bottom:1px solid var(--news-line); }
 html#digivated-root .news-page .news-story h3 { margin:10px 0 11px; color:var(--news-ink); font-size:21px; line-height:1.32; letter-spacing:-.025em; font-weight:550; overflow-wrap:anywhere; }
-html#digivated-root .news-page .news-story .news-summary { margin-bottom:12px; font-size:13px; line-height:1.75; }
+html#digivated-root .news-page .news-story .news-summary { margin-bottom:12px; font-size:14px; line-height:1.8; max-width:68ch; }
 html#digivated-root .news-page .news-source { display:inline-flex; align-items:center; gap:5px; max-width:100%; color:#d2bedf; font-size:11px; line-height:1.7; text-decoration:none; overflow-wrap:anywhere; }
 html#digivated-root .news-page .news-source:hover { color:#ecdaff; text-decoration:underline; text-underline-offset:3px; }
 html#digivated-root .news-page .news-source svg { width:12px; height:12px; flex:none; }
