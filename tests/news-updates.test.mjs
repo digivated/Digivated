@@ -64,6 +64,14 @@ test('independent reporting is an Update even for a major recent claim',()=>{
  const c=candidate('the-verge','Windows vulnerability actively exploited','Microsoft confirmed attackers are actively exploiting a Windows vulnerability and released an emergency security update to protect affected organizations.');
  assert.equal(assessCandidate(c,{now}).classification,'update');
 });
+test('broad sources do not publish unrelated entertainment or misclassify Cybertruck',()=>{
+ const music=candidate('the-verge','Soul Glo releases a hardcore record','The band released a new album that explores its musical influences and its latest run of live performances.');
+ assert.equal(assessCandidate(music,{now}).decision,'reject');
+ const cybertruck=candidate('techcrunch','TechCrunch Mobility: The Cybertruck experiment is over','The publication looks back at the vehicle experiment and explains why the story is changing for car buyers.');
+ assert.equal(assessCandidate(cybertruck,{now}).decision,'reject');
+ const software=candidate('techcrunch','Tesla announces Cybertruck software update','Tesla announced a software update for its electric vehicle with new features and improvements to the vehicle interface.');
+ assert.equal(assessCandidate(software,{now}).category,'ai-tech');
+});
 
 test('feed checks progress past recorded URLs while keeping article fetches bounded',async()=>{
  const source=NEWS_SOURCES.find(s=>s.id==='github');const calls=[];

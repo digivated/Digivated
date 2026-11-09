@@ -43,7 +43,7 @@ function usefulUpdate(candidate){
   if(/disable.{0,30}(?:security|antivirus|defender)|turn off.{0,30}(?:security|antivirus)/i.test(text))return null;
   return {importance:55,reason:'source_checked_security_guidance',breaking:false,category:'security'};
  }
- const techSource=['google','openai','techcrunch'].includes(candidate.sourceId);
+ const techSource=['google','openai','techcrunch','ars-technica','the-verge'].includes(candidate.sourceId);
  if(techSource&&/\b(?:launch(?:es|ed)?|introduc(?:es|ing)|announc(?:es|ing)|releas(?:es|ing)|rolls? out|now available|adds?|new features?|updates?|upgrades?|support(?:s)?|API|GPT-\d|Gemini|Copilot|Claude)\b/i.test(h)&&/\b(?:AI|artificial intelligence|model|app|software|hardware|chip|processor|device|phone|laptop|robot|developer|API|browser|cloud|feature|tool|coding|code|search|Android|Chrome|Gemini|GPT|Copilot|Claude|ChatGPT)\b/i.test(text))return {importance:62,reason:'verified_technology_product_update',breaking:false,category:'ai-tech'};
  return null;
 }
@@ -71,8 +71,17 @@ export function assessCandidate(candidate,{now=Date.now()}={}){
  // match a narrow breaking-news pattern. Keep them clearly labeled Update.
  if(!significant&&candidate.sourceType==='issuer-release')return review('importance_requires_editorial_judgment');
  if(!significant&&candidate.sourceType!=='official-publisher'&&candidate.sourceType!=='independent-reporting')return review('importance_requires_editorial_judgment');
+ if(!significant&&candidate.sourceType==='independent-reporting'){
+  const headline=candidate.headline;
+  const relevant=candidate.category==='markets'
+   ? /\b(?:stocks?|shares?|markets?|bonds?|interest rates?|inflation|GDP|earnings|revenue|profit|oil|bitcoin|crypto|Fed|banks?|economy|jobs?|merger|acquisition|IPO|tariffs?)\b/i.test(headline)
+   : candidate.category==='security'
+    ? /\b(?:vulnerabilit\w*|exploits?|breach|ransomware|malware|phishing|cyberattacks?|security (?:flaw|patch|update)|data leak|CVE-\d{4}|hackers?|attackers?|threat actors?)\b/i.test(headline)
+    : /\b(?:AI|artificial intelligence|GPT|Gemini|Claude|OpenAI|Nvidia|Microsoft|Google|Apple|Meta|Amazon|software|apps?|devices?|chips?|browsers?|robots?|cloud|developers?|startups?|platforms?|technology|SteamOS|Siri)\b/i.test(headline)&&/\b(?:launch\w*|releas\w*|introduc\w*|updat\w*|announc\w*|add\w*|build\w*|expand\w*|bring\w*|coming|invest\w*|fund\w*|acquir\w*|develop\w*|racing|report\w*|chang\w*)\b/i.test(headline);
+  if(!relevant)return reject('outside_editorial_scope');
+ }
  const selected=significant||{importance:45,reason:'verified_source_update',breaking:false};
- const category=selected.category||(/\b(?:vulnerabilit|zero.day|exploit|breach|cyber|ransomware|threat actor)/i.test(candidate.headline)?'security':candidate.category);
+ const category=selected.category||(/\b(?:vulnerabilit\w*|zero.day|exploits?|breach|cyberattacks?|ransomware|threat actors?)\b/i.test(candidate.headline)?'security':candidate.category);
  if(!['ai-tech','markets','security'].includes(category))return review('category_unconfirmed');
  const summary=(candidate.sourceType==='issuer-release'?'Company announcement: ':'')+excerpt(candidate.sourceText);
  if(summary.length<60)return review('source_summary_too_short');

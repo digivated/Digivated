@@ -10,6 +10,8 @@ The source list includes official publishers and independent reporting: Federal 
 
 An article must be no more than **seven days old**, have a matching original headline, source-supported summary text, and a publication time confirmed by the article. A feed time can differ by up to six hours from article metadata; the article's original time is used on Digivated. Unverified, uncertain, stale, promotional, and duplicate candidates are **skipped**, not queued for approval. Each published record retains its source, original time, verification evidence, summary, Digivated publication time, and correction history.
 
+Independent-reporting feeds also pass a topic check before publication. This prevents broad technology feeds from placing entertainment coverage in AI & Tech or matching words such as “Cybertruck” to the Security category. Clearly off-topic articles from the initial backfill are withdrawn with their correction history retained.
+
 Significant official developments within six hours can be labeled **Breaking**. Independent reporting and older qualifying stories are labeled **Update**. Issuer releases are identified as company announcements. A source link is available on every story. These rules support prompt automated coverage but do not guarantee that every event is detected.
 
 The market snapshot is separate from editorial articles. Its observations retain their source dates and refresh during the twice-daily checks; unavailable data leaves the prior dated snapshot in place.
