@@ -22,6 +22,8 @@ if(root){
   const activeBreaking=story.classification==='breaking'&&current(story)&&Date.now()-timestamp(story.sourcePublishedAt)<=6*3600000;
   head.append(element('span',activeBreaking?'Breaking':'Update','news-story-kind'+(activeBreaking?' news-story-kind--breaking':'')));
   if(featuredStory)head.append(element('span','In focus','news-story-kind'));
+  if(story.sourceType==='issuer-release')head.append(element('span','Company announcement','news-story-kind'));
+  for(const t of (Array.isArray(story.tickers)?story.tickers:[]).slice(0,8)){if(/^[A-Z][A-Z0-9.-]{0,11}$/.test(t.symbol)&&/^[A-Z]+$/.test(t.exchange))head.append(element('span',t.exchange+': '+t.symbol,'news-story-kind'));}
   frag.append(head,element(featuredStory?'h2':'h3',story.headline));
   if(story.locked){
    const lock=element('div',null,'news-lock');lock.append(element('span','Full briefing for Digivated members.'));const a=element('a','Read the member briefing ↗');a.href='/membership#member-sign-in';lock.append(a);frag.append(lock);

@@ -16,7 +16,7 @@ import '../styles/news.css';
         <button type="button" data-news-category="markets" aria-pressed="false">Markets</button>
         <button type="button" data-news-category="security" aria-pressed="false">Security</button>
       </div>
-      <label class="news-search"><UiIcon name="search" size={17}/><span class="sr-only">Search news</span><input data-news-search type="search" maxlength="120" placeholder="Search a topic or headline" autocomplete="off"/></label>
+      <label class="news-search"><UiIcon name="search" size={17}/><span class="sr-only">Search news</span><input data-news-search type="search" maxlength="120" placeholder="Search a topic, company or ticker" autocomplete="off"/></label>
     </div>
     <p class="news-member-note" data-news-member-note hidden>Headlines and original sources are open to everyone. <a href="/membership#member-sign-in">Verify membership for full briefings <span aria-hidden="true">↗</span></a></p>
     <div class="news-layout">
@@ -36,7 +36,7 @@ import '../styles/news.css';
           <dl class="news-quotes" data-news-quotes></dl>
           <div class="news-market-footer" data-news-market-footer></div>
         </section>
-        <details class="news-standards"><summary>How this feed is published <UiIcon name="chevron" size={15}/></summary><div><p>Stories link to the original source and show its publication time separately from the time published here.</p><p><strong>Breaking</strong> marks a significant, source-verified recent development. Regular stories are labeled <strong>Update</strong>.</p><p>Uncertain stories go to review. Summaries can be corrected or removed as the reporting develops.</p></div></details>
+        <details class="news-standards"><summary>How this feed is published <UiIcon name="chevron" size={15}/></summary><div><p>Stories link to the original source and show its publication time separately from the time published here.</p><p><strong>Breaking</strong> marks a significant, source-verified recent development. Regular stories are labeled <strong>Update</strong>.</p><p>Company announcements are labeled separately from independent reporting. Ticker labels come from the source. Uncertain stories go to review. Summaries can be corrected or removed as the reporting develops.</p></div></details>
         <p class="news-sidebar-caption">Read the original reporting for the full context.</p>
       </aside>
     </div>

@@ -33,13 +33,14 @@ test('rumors, negated claims, stale stories and uncertain importance cannot auto
  assert.equal(assessCandidate({...c,sourcePublishedAt:new Date(now-49*3600000).toISOString()},{now}).decision,'reject');
  assert.equal(assessCandidate({...c,sourcePublishedAt:new Date(now+1).toISOString()},{now}).decision,'review');
  assert.equal(assessCandidate({...c,headline:'A normal product update',sourceText:'An ordinary product improvement without a significant development worth breaking news coverage.'},{now}).decision,'review');
- assert.equal(assessCandidate({...c,headline:'How to protect Windows'},{now}).decision,'reject');
+ assert.equal(assessCandidate({...c,headline:'How to protect Windows'},{now}).classification,'update');
  assert.equal(assessCandidate({...c,sourcePublishedAt:new Date(now-7*3600000).toISOString(),evidence:{...c.evidence,articlePublishedAt:null}},{now}).classification,'update');
 });
 test('public response strips summaries and private evidence; member response unlocks only summary',async()=>{
- const record={id:'a'.repeat(24),...verified(),summary:'PRIVATE MEMBER SUMMARY',publishedAt:new Date(now).toISOString(),updatedAt:new Date(now).toISOString(),classification:'breaking',importance:95};
+ const record={id:'a'.repeat(24),...verified(),tickers:[{symbol:'SMALL',exchange:'NASDAQ'}],summary:'PRIVATE MEMBER SUMMARY',publishedAt:new Date(now).toISOString(),updatedAt:new Date(now).toISOString(),classification:'breaking',importance:95};
  const redis=async cmd=>cmd[0]==='ZREVRANGE'?[record.id]:cmd[0]==='MGET'?[JSON.stringify(record)]:null;
  const handler=member=>makeNewsHandler({redis,env:{},member:async()=>member,now:()=>now});
+ assert.equal((await call(handler(false),'/api/news?q=%24SMALL')).body.items.length,1);
  const publicResult=await call(handler(false));assert.equal(publicResult.code,200);assert.equal(publicResult.body.items[0].locked,true);assert.equal(publicResult.headers.Vary,'Cookie');assert.match(publicResult.headers['Cache-Control'],/no-store/);
  for(const secret of ['PRIVATE MEMBER SUMMARY','sourceText','contentHash','feedSummary'])assert.equal(JSON.stringify(publicResult.body).includes(secret),false);
  assert.equal((await call(handler(false),'/api/news?q=PRIVATE')).body.items.length,0);

@@ -50,3 +50,13 @@ test('News desk loads a review and requires source confirmation to publish',asyn
  await expect(page.locator('#news-review-source-time')).not.toHaveValue('');
  expect(errors).toEqual([]);
 });
+
+test('Markets labels issuer announcements and explicit tickers without exposing member summaries',async({page})=>{
+ const at=new Date().toISOString();
+ const item={id:'c'.repeat(24),headline:'Example reports quarterly financial results',summary:'',locked:true,category:'markets',sourceType:'issuer-release',tickers:[{exchange:'NASDAQ',symbol:'SMALL'}],classification:'update',sourceName:'GlobeNewswire',sourceUrl:'https://www.globenewswire.com/news-release/example.html',sourcePublishedAt:at,publishedAt:at};
+ await page.route('**/api/news*',r=>r.fulfill({json:{items:[item],featured:null,next:null,member:false,markets:{items:[]},pipeline:{status:'ok'}}}));
+ await page.goto('http://127.0.0.1:4321/news?category=markets');
+ await expect(page.locator('.news-story')).toContainText('Company announcement');
+ await expect(page.locator('.news-story')).toContainText('NASDAQ: SMALL');
+ await expect(page.locator('.news-story')).toContainText('Full briefing for Digivated members');
+});

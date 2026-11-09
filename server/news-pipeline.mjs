@@ -13,9 +13,11 @@ export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Dat
  if(await redis(['SET',NEWS+'lock',lease,'NX','EX',260])!=='OK')return {status:'busy',published:0};
  const report={id:lease,status:'running',startedAt:new Date(started).toISOString(),published:0,reviewed:0,rejected:0,duplicates:0,sources:[],errors:[]};
  try{
+  const ids=await redis(['ZREVRANGE',NEWS+'index:all',0,149]);
+  const existing=ids.length?(await redis(['MGET',...ids.map(id=>NEWS+'story:'+id)])).filter(Boolean).map(JSON.parse):[];
   let cachedMarket=null;try{cachedMarket=JSON.parse(await redis(['GET',NEWS+'markets']));}catch{}
   const marketTask=cachedMarket&&started-Date.parse(cachedMarket.updatedAt)<3600000?Promise.resolve(cachedMarket):markets({fetcher,now:started});
-  const [collection,snapshot]=await Promise.allSettled([collect({fetcher,now:started}),marketTask]);
+  const [collection,snapshot]=await Promise.allSettled([collect({fetcher,now:started,knownUrls:existing.map(r=>r.sourceUrl)}),marketTask]);
   if(snapshot.status==='fulfilled'){
    if(snapshot.value.items?.length)await redis(['SET',NEWS+'markets',JSON.stringify(snapshot.value),'EX',172800]);
    else report.errors.push('Market observations are unavailable; prior dated snapshot retained.');
@@ -23,8 +25,6 @@ export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Dat
   if(collection.status!=='fulfilled')throw Error('Source collection failed.');
   report.sources=collection.value.sources||[];
   const candidates=(collection.value.candidates||[]).slice(0,40);
-  const ids=await redis(['ZREVRANGE',NEWS+'index:all',0,149]);
-  const existing=ids.length?(await redis(['MGET',...ids.map(id=>NEWS+'story:'+id)])).filter(Boolean).map(JSON.parse):[];
   for(const candidate of candidates){
    if(await redis(['GET',NEWS+'paused'])==='1'){report.status='paused';break;}
    if(now()-started>235000){report.errors.push('Run reached its time budget; remaining sources deferred.');break;}
