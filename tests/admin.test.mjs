@@ -34,9 +34,9 @@ test('real Redis: owner security, atomic moderation, publishing, withdrawal and 
  assert.equal((await invoke(handler,{headers:{cookie:`${ADMIN_COOKIE}=${'f'.repeat(64)}`}})).status,401);
  const storedSession=await redis(['GET',sessionKey]);await redis(['EXPIRE',sessionKey,0]);assert.equal((await invoke(handler)).status,401);await redis(['SET',sessionKey,storedSession,'EX',SESSION_SECONDS]);
  assert.equal((await invoke(handler,{method:'POST',body:{action:'logout'},headers:{'x-admin-csrf':'wrong'}})).status,403);
- const submission=makeSubmissionHandler({env:{SUBMISSIONS_ORIGIN:origin},redis});const png='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aFJkAAAAASUVORK5CYII=';
+ const submission=makeSubmissionHandler({env:{SUBMISSIONS_ORIGIN:origin},redis,verifyAccount:async()=>({id:'owner-review-fixture',email:'private@example.com'})});const png='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aFJkAAAAASUVORK5CYII=';
  const input={creator:'Fixture creator',email:'private@example.com',name:'Fixture build',url:'https://example.com',description:'A fixture project for testing owner moderation.',category:'Apps',notes:'PRIVATE NOTES',image:png,consent:true};
- const submitted=await invoke(submission,{method:'POST',body:input,url:'/api/submissions'});assert.equal(submitted.status,201);const id=submitted.body.id;
+ const submitted=await invoke(submission,{method:'POST',body:input,url:'/api/submissions',headers:{authorization:'Bearer owner-review-fixture'}});assert.equal(submitted.status,201);const id=submitted.body.id;
  const projects=makePublicHandler('projects',{redis});assert.equal((await invoke(projects,{url:'/api/projects'})).body.items.length,0);assert.equal((await invoke(projects,{url:`/api/projects?image=${id}`})).status,404);
  const detail=await invoke(handler,{url:`/api/admin?action=detail&kind=submission&id=${id}`});const pending=detail.body.record;
  assert.equal((await invoke(handler,{method:'POST',body:{action:'save',kind:'submission',record:{...pending,revision:0,status:'featured'}}})).status,400);
@@ -45,7 +45,7 @@ test('real Redis: owner security, atomic moderation, publishing, withdrawal and 
  const competing=await Promise.allSettled([saveRecord(redis,'submission',{...approved.body.record,status:'featured'}),saveRecord(redis,'submission',{...approved.body.record,status:'archived'})]);assert.equal(competing.filter(r=>r.status==='rejected'&&r.reason.status===409).length,1);
  let after=JSON.parse(await redis(['GET',`digivated:submission:${id}`]));
  if(after.status!=='featured'){after=await saveRecord(redis,'submission',{...after,status:'approved'});await saveRecord(redis,'submission',{...after,status:'featured'});}
- const submitted2=await invoke(submission,{method:'POST',body:{...input,name:'Second fixture'},url:'/api/submissions'});const id2=submitted2.body.id;const pending2=JSON.parse(await redis(['GET',`digivated:submission:${id2}`]));
+ const submitted2=await invoke(submission,{method:'POST',body:{...input,name:'Second fixture'},url:'/api/submissions',headers:{authorization:'Bearer owner-review-fixture'}});const id2=submitted2.body.id;const pending2=JSON.parse(await redis(['GET',`digivated:submission:${id2}`]));
  const approved2=await saveRecord(redis,'submission',{...pending2,revision:0,status:'approved'});await saveRecord(redis,'submission',{...approved2,status:'featured'});
  const featured=(await invoke(projects,{url:'/api/projects?view=featured'})).body.items;
  assert.deepEqual(new Set(featured.map(item=>item.id)),new Set([id,id2]));
