@@ -10,7 +10,7 @@ import '../styles/news.css';
       <div class="news-check"><span data-news-checked>Checking the latest reporting</span><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><span>Refresh</span></button></div>
     </header>
     <p class="news-access-status" data-news-access-status role="status">Loading the latest reporting…</p>
-    <div class="news-toolbar" hidden>
+    <nav class="news-toolbar" hidden aria-label="Browse News">
       <div class="news-filters" role="group" aria-label="News category">
         <button type="button" data-news-category="all" aria-pressed="true">Latest</button>
         <button type="button" data-news-category="ai-tech" aria-pressed="false">AI & Tech</button>
@@ -18,15 +18,17 @@ import '../styles/news.css';
         <button type="button" data-news-category="security" aria-pressed="false">Security</button>
       </div>
       <label class="news-search"><UiIcon name="search" size={17}/><span class="sr-only">Search news</span><input data-news-search type="search" maxlength="120" placeholder="Search a topic, company or ticker" autocomplete="off"/></label>
-    </div>
+    </nav>
     <div class="news-layout" hidden>
       <div class="news-editorial">
         <section class="news-feature" data-news-feature aria-label="Featured story" hidden></section>
         <section class="news-latest" aria-labelledby="news-latest-title">
           <header class="news-section-heading"><h2 id="news-latest-title" data-news-latest-title>Latest</h2><span data-news-scope>Newest first</span></header>
+          <p class="news-results" data-news-results hidden role="status"></p>
           <p class="news-status" data-news-status role="status">Loading the latest stories…</p>
           <div class="news-feed" data-news-feed aria-busy="true"></div>
-          <button class="news-more" data-news-more type="button" hidden>More stories <UiIcon name="arrow" size={15}/></button>
+          <button class="news-more" data-news-more type="button" hidden>Load older stories</button>
+          <a class="news-top" data-news-top href="#news-title" hidden>Back to top ↑</a>
         </section>
       </div>
       <aside class="news-sidebar" aria-label="Market data and editorial standards" data-news-sidebar>

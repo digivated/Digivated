@@ -4,7 +4,7 @@ const root=document.querySelector('[data-news-page]');
 if(root){
  const categories={'ai-tech':'AI & Tech',markets:'Markets',security:'Security'};
  const $=selector=>root.querySelector(selector);
- const feed=$('[data-news-feed]'),feature=$('[data-news-feature]'),status=$('[data-news-status]'),more=$('[data-news-more]'),refresh=$('[data-news-refresh]'),search=$('[data-news-search]');
+ const feed=$('[data-news-feed]'),feature=$('[data-news-feature]'),status=$('[data-news-status]'),more=$('[data-news-more]'),topLink=$('[data-news-top]'),refresh=$('[data-news-refresh]'),search=$('[data-news-search]');
  const toolbar=$('.news-toolbar'),layout=$('.news-layout'),gate=$('[data-news-gate]'),accessStatus=$('[data-news-access-status]'),sidebar=$('[data-news-sidebar]');
  const url=new URL(location.href);
  let category=Object.hasOwn(categories,url.searchParams.get('category'))?url.searchParams.get('category'):'all';
@@ -38,8 +38,11 @@ if(root){
   feature.replaceChildren();feature.hidden=!featured;
   if(featured)feature.append(storyContents(featured,true));
   const shown=items.filter(story=>story.id!==featured?.id);
-  feed.replaceChildren(...shown.map(story=>{const article=element('article',null,'news-story');article.id='news-'+story.id;article.append(storyContents(story));return article;}));
+  const groups=document.createDocumentFragment();let lastDay='';
+  for(const story of shown){const date=timestamp(story.sourcePublishedAt),day=date===null?'':new Date(date).toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'});if(day!==lastDay){const heading=element('h3',day,'news-day');groups.append(heading);lastDay=day;}const article=element('article',null,'news-story');article.id='news-'+story.id;article.append(storyContents(story));groups.append(article);}
+  feed.replaceChildren(groups);
   more.hidden=next===null;
+  topLink.hidden=items.length<20;
   $('[data-news-latest-title]').textContent=category==='all'?'Latest':categories[category];
  }
  function renderMarkets(markets){
@@ -63,7 +66,7 @@ if(root){
   const checked=$('[data-news-checked]');checked.textContent='Refreshed twice daily';
  }
  function controls(){for(const button of root.querySelectorAll('[data-news-category]'))button.setAttribute('aria-pressed',String(button.dataset.newsCategory===category));}
- function updateLocation(){const u=new URL(location.href);if(category==='all')u.searchParams.delete('category');else u.searchParams.set('category',category);if(query)u.searchParams.set('q',query);else u.searchParams.delete('q');history.replaceState(null,'',u.pathname+u.search+u.hash);}
+ function updateLocation(push=false){const u=new URL(location.href);if(category==='all')u.searchParams.delete('category');else u.searchParams.set('category',category);if(query)u.searchParams.set('q',query);else u.searchParams.delete('q');history[push?'pushState':'replaceState'](null,'',u.pathname+u.search+u.hash);}
  async function load(reset=true){
   const request=++version;controller?.abort();controller=new AbortController();const cursor=reset?null:next;
   feed.setAttribute('aria-busy','true');refresh.disabled=true;more.disabled=true;status.textContent=reset?'Checking the latest stories…':'Loading more stories…';status.hidden=false;
@@ -77,15 +80,17 @@ if(root){
    if(reset)featured=valid(data.featured)&&current(data.featured)?data.featured:items.find(story=>story.featured&&current(story))||null;
    next=data.next==null||String(data.next)===cursor?null:String(data.next);
    renderStories();renderMarkets(data.markets);renderPipeline(data.pipeline);
+   const results=$('[data-news-results]');results.hidden=!query;results.textContent=query?(items.length?`Results for “${query}”`:`No results for “${query}”`):'';
    if(!items.length&&!featured){status.textContent=query||category!=='all'?'No stories match. Try another topic or category.':'No verified stories are published yet. New reporting will appear here after source checks.';status.hidden=false;}
    else{status.textContent='';status.hidden=true;}
-  }catch(error){if(request!==version||error.name==='AbortError')return;items=[];featured=null;next=null;feed.replaceChildren();feature.replaceChildren();feature.hidden=true;more.hidden=true;toolbar.hidden=true;layout.hidden=true;gate.hidden=true;accessStatus.textContent='News is temporarily unavailable. Try Refresh in a moment.';accessStatus.hidden=false;$('[data-news-checked]').textContent='Source-check status unavailable';}
+  }catch(error){if(request!==version||error.name==='AbortError')return;items=[];featured=null;next=null;feed.replaceChildren();feature.replaceChildren();feature.hidden=true;more.hidden=true;topLink.hidden=true;toolbar.hidden=true;layout.hidden=true;gate.hidden=true;accessStatus.textContent='News is temporarily unavailable. Try Refresh in a moment.';accessStatus.hidden=false;$('[data-news-checked]').textContent='Source-check status unavailable';}
   finally{if(request===version){feed.setAttribute('aria-busy','false');refresh.disabled=false;more.disabled=false;}}
  }
- function change(){clearTimeout(timer);version++;controller?.abort();controls();updateLocation();timer=setTimeout(()=>load(true),220);}
- for(const button of root.querySelectorAll('[data-news-category]'))button.addEventListener('click',()=>{category=button.dataset.newsCategory;change();});
+ function change(push=false){clearTimeout(timer);version++;controller?.abort();controls();updateLocation(push);timer=setTimeout(()=>load(true),220);}
+ for(const button of root.querySelectorAll('[data-news-category]'))button.addEventListener('click',()=>{if(category===button.dataset.newsCategory)return;category=button.dataset.newsCategory;change(true);});
  search.addEventListener('input',()=>{query=search.value.trim().slice(0,120);change();});
  refresh.addEventListener('click',()=>{clearTimeout(timer);load(true);});more.addEventListener('click',()=>load(false));
+ window.addEventListener('popstate',()=>{const u=new URL(location.href);category=Object.hasOwn(categories,u.searchParams.get('category'))?u.searchParams.get('category'):'all';query=(u.searchParams.get('q')||'').slice(0,120);search.value=query;controls();clearTimeout(timer);load(true);});
  window.addEventListener('pagehide',()=>{controller?.abort();clearTimeout(timer);});
  controls();load(true);
 }
