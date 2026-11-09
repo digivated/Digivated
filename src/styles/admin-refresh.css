@@ -28,7 +28,7 @@ html#digivated-root body.owner .owner-news-shortcut { display:flex; align-items:
 html#digivated-root body.owner .owner-workspace-grid { display:grid; grid-template-columns:200px minmax(0,1fr); gap:40px; align-items:start; }
 html#digivated-root body.owner .owner-sidebar { display:block; position:sticky; top:24px; min-width:0; padding:0; border:0; background:transparent; }
 html#digivated-root body.owner .owner-nav-label { margin:0 12px 12px; font-size:10px; letter-spacing:.12em; color:var(--dg-muted); }
-html#digivated-root body.owner .owner-tabs { display:flex; flex-direction:column; gap:4px; overflow:visible; border:0!important; margin:0; padding:0; background:transparent!important; }
+html#digivated-root body.owner .owner-tabs { display:flex; flex-direction:column; flex-wrap:nowrap; gap:4px; overflow:visible; border:0!important; margin:0; padding:0; background:transparent!important; }
 html#digivated-root body.owner .owner-tabs :is(.button,a) { display:flex; align-items:center; justify-content:flex-start; gap:12px; min-height:46px; min-width:0; width:100%; padding:12px; margin:0; border:1px solid transparent!important; border-radius:8px; font-size:13px; font-weight:500; line-height:1.4; text-align:left; text-decoration:none; color:var(--dg-muted)!important; background:transparent!important; box-shadow:none!important; box-sizing:border-box; }
 html#digivated-root body.owner .owner-tabs svg { flex:none; }
 html#digivated-root body.owner .owner-tabs .button::after { content:none; }
