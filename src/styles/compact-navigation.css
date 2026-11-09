@@ -85,3 +85,42 @@ html body.platform.light-theme .compact-site-header .header-primary a:hover,html
 @media(max-width:480px){.compact-site-header .explore-utilities button{display:flex;align-items:center}}
 .home-start{margin:0 0 56px}.home-start .eyebrow{font-size:.7rem;font-weight:750;letter-spacing:.12em;color:#666;margin:0 0 14px}.home-start h1{font-size:clamp(2.15rem,5vw,3.3rem);line-height:1.12;letter-spacing:-.045em;margin:0 0 15px}.home-start>p:not(.eyebrow){max-width:670px;color:#505050;font-size:1rem;line-height:1.6;margin:0 0 30px}.home-paths{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.home-paths>a{display:flex;flex-direction:column;align-items:flex-start;min-height:176px;padding:20px;border:1px solid #dedede;border-radius:12px;background:#fff;text-decoration:none;color:#171717;transition:border-color .16s,background .16s}.home-paths>a:hover,.home-paths>a:focus-visible{border-color:#888;background:#fafafa}.home-paths strong{font-size:1.15rem;line-height:1.35}.home-paths span{color:#555;font-size:.88rem;line-height:1.55;margin-top:9px}.home-paths b{font-size:.84rem;margin-top:auto;padding-top:20px}.home-paths b span{color:inherit;font-size:inherit}
 @media(max-width:760px){.home-paths{grid-template-columns:1fr;gap:12px}.home-paths>a{min-height:0;padding:18px}.home-paths b{padding-top:12px}.home-start{margin-bottom:42px}}
+
+/* Membership is a visible destination in the shared header and homepage. */
+html body.platform.light-theme .compact-header-actions .header-membership {
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  min-height:44px; padding:10px 15px; border:1px solid #171717; border-radius:11px;
+  background:#171717; color:#fff; text-decoration:none; font-size:.86rem; font-weight:650;
+  white-space:nowrap; transition:background .16s,transform .16s;
+}
+html body.platform.light-theme .compact-header-actions .header-membership:hover,
+html body.platform.light-theme .compact-header-actions .header-membership[aria-current=page] {
+  background:#383838; border-color:#383838; color:#fff;
+}
+.header-membership:focus-visible { outline:2px solid #171717; outline-offset:3px; }
+html body.platform.light-theme .home-membership-promo {
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+  max-width:690px; margin:22px 0 0; padding:16px 18px; border:1px solid #d9d9d9;
+  border-radius:13px; background:#fff; color:#171717; text-decoration:none;
+  box-shadow:0 4px 18px #00000006; transition:border-color .16s,box-shadow .16s,transform .16s;
+}
+html body.platform.light-theme .home-membership-promo:hover {
+  border-color:#9c9c9c; box-shadow:0 8px 24px #0000000c; transform:translateY(-1px);
+}
+.home-membership-copy { display:grid; gap:4px; }
+html body.platform.light-theme .home-membership-label {
+  color:#666; font-size:.64rem; line-height:1.4; letter-spacing:.09em; font-weight:700;
+}
+html body.platform.light-theme .home-membership-copy strong { font-size:.98rem; line-height:1.4; font-weight:650; }
+html body.platform.light-theme .home-membership-copy>span:last-child { color:#595959; font-size:.77rem; line-height:1.5; }
+html body.platform.light-theme .home-membership-link {
+  display:inline-flex; align-items:center; gap:7px; flex:none; color:#171717; font-size:.78rem; font-weight:650;
+}
+@media(max-width:520px) {
+  html body.platform.light-theme .compact-header-actions .header-membership { min-height:40px; padding:8px 10px; font-size:.76rem; }
+  html body.platform.light-theme .home-membership-promo { align-items:flex-start; flex-direction:column; gap:12px; margin-top:18px; padding:15px; }
+  html body.platform.light-theme .home-membership-link { min-height:36px; }
+}
+@media(max-width:370px) {
+  html body.platform.light-theme .compact-header-actions .header-membership { padding:7px 8px; font-size:.72rem; }
+}
