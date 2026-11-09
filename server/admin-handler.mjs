@@ -107,7 +107,9 @@ export function makeAdminHandler(deps = {}) {
       if (action === 'list') {
         const offset = Number(url.searchParams.get('offset') || 0);
         if (!Number.isInteger(offset) || offset < 0 || offset > 100000) throw new AdminError(400, 'Invalid page.');
-        return send(200, await listRecords(redis, kind, offset));
+        const status=url.searchParams.get('status')||'';
+        if(status&&!(kind==='submission'?['pending','approved','featured','rejected','archived']:['draft','published','archived']).includes(status))throw new AdminError(400,'Invalid status.');
+        return send(200, await listRecords(redis, kind, offset, status));
       }
       if (action === 'detail' || (action === 'preview' && kind === 'submission')) {
         const id = url.searchParams.get('id');

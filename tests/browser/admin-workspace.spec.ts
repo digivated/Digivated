@@ -12,7 +12,7 @@ for(const width of [375,768,1440])test(`owner workspace, review, library and sig
  test.setTimeout(60000);const redis=testRedis(13);await redis(['FLUSHDB']);
  const image='data:image/webp;base64,'+(await readFile('public/digivated-logo.webp')).toString('base64');
  for(let i=0;i<29;i++){
-  const record={id:'workspace-'+i,name:i===0?'Orbit workspace':'Project '+i,creator:'Independent builder',email:'private@example.com',notes:'PRIVATE-REVIEW-NOTE',category:'Apps',description:'A useful independent workspace for small creative teams.',url:'https://example.com',image,consent:true,date:new Date(Date.now()-i*43200000).toISOString(),status:i<26?'pending':i===28?'featured':'approved',revision:0};
+  const record={id:'workspace-'+i,name:i===0?'Orbit workspace':'Project '+i,creator:'Independent builder',email:'private@example.com',notes:'PRIVATE-REVIEW-NOTE',category:'Apps',description:'A useful independent workspace for small creative teams.',url:'https://example.com',image,consent:true,date:new Date(Date.now()-i*43200000).toISOString(),status:i===28?'featured':[3,13].includes(i)?'approved':'pending',revision:0};
   await redis(['SET','digivated:submission:'+record.id,JSON.stringify(record)]);await saveRecord(redis,'submission',record);
  }
  const env={NODE_ENV:'test',DIGIVATED_ADMIN_ORIGIN:base,DIGIVATED_ADMIN_PASSWORD_HASH:await passwordHash(password),DIGIVATED_ADMIN_SESSION_SECRET:'a'.repeat(64)};

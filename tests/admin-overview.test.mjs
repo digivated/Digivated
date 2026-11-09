@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {adminOverview} from '../server/admin-overview.mjs';
 import {passwordHash,verifyPassword,adminConfig,createSession,requireSession,ADMIN_COOKIE} from '../server/admin-auth.mjs';
 import {makeAdminHandler} from '../server/admin-handler.mjs';
+import {listRecords} from '../server/admin-store.mjs';
 import {testRedis} from './helpers/redis.mjs';
 
 test('requested password length is accepted, shorter passwords rejected, rotation invalidates sessions',async()=>{
@@ -30,5 +31,11 @@ test('real Redis: overview aggregates all pages, keeps UTC dates, and returns no
   assert.equal(data.submissions.total,253);assert.equal(data.submissions.statuses.pending,127);assert.equal(data.submissions.statuses.approved,126);
   assert.equal(data.submissions.activity.length,7);assert.equal(data.submissions.activity[0].date,'2026-11-03');assert.equal(data.submissions.activity[6].count,252);assert.equal(data.comments.statuses.pending,1);
   const output=JSON.stringify(data);for(const privateValue of ['PRIVATE','private@example.com','fixture-'])assert(!output.includes(privateValue));
+  const first=await listRecords(redis,'submission',0,'pending');assert.equal(first.items.length,25);assert(first.items.every(item=>item.status==='pending'));assert(first.next>25);
+  let pending=first.items.length,cursor=first.next;
+  while(cursor!==null){const page=await listRecords(redis,'submission',cursor,'pending');pending+=page.items.length;cursor=page.next;}
+  assert.equal(pending,127);
+  assert.deepEqual(await listRecords(redis,'submission',0,'featured'),{items:[],next:null});
+  assert(!JSON.stringify(first).includes('private@example.com'));
  }finally{await redis(['FLUSHDB']);}
 });
