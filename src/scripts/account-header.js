@@ -3,6 +3,7 @@ import { accountSession } from './account-session.js';
 const link=document.getElementById('header-account-link');
 const menuAccount=document.getElementById('menu-account-link');
 const menuLogin=document.getElementById('menu-login-link');
+const inboxBadge=document.getElementById('header-inbox-badge');
 // Let an incoming email callback establish its session on the account page first.
 if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.includes('access_token='))){
  let request=0;
@@ -21,6 +22,7 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
    else link.removeAttribute('aria-current');
    if(menuAccount)(menuAccount.querySelector('span')||menuAccount).textContent=hasAccount?'My account':'Your projects';
    if(menuLogin)menuLogin.hidden=hasAccount;
+   if(inboxBadge){inboxBadge.hidden=true;if(state==='signed-in'){fetch('/api/creator-inbox?action=list',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'}).then(response=>response.ok?response.json():null).then(data=>{if(current!==request)return;const unread=(data?.conversations||[]).reduce((sum,item)=>sum+Number(item.unread||0),0);inboxBadge.textContent=unread>9?'9+':String(unread);inboxBadge.hidden=!unread;}).catch(()=>{});}}
   }catch{
    // Keep the visible sign-in route available during a temporary outage.
   }

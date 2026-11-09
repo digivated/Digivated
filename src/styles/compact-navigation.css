@@ -124,3 +124,9 @@ html body.platform.light-theme .home-membership-link {
 @media(max-width:370px) {
   html body.platform.light-theme .compact-header-actions .header-membership { padding:7px 8px; font-size:.72rem; }
 }
+html#digivated-root body.platform .compact-site-header .header-inbox{position:relative;display:inline-grid;place-items:center;flex:none;width:42px;height:42px;border:0;border-radius:9px;color:var(--dg-copy,#d8cedf);text-decoration:none}
+html#digivated-root body.platform .compact-site-header .header-inbox:hover,html#digivated-root body.platform .compact-site-header .header-inbox[aria-current=page]{background:var(--dg-raised,#ffffff15);color:var(--dg-ink,#fff)}
+html#digivated-root body.platform .compact-site-header .header-inbox-badge{position:absolute;top:3px;right:2px;display:grid;place-items:center;min-width:15px;height:15px;padding:0 3px;border:2px solid #080609;border-radius:999px;background:#b678ef;color:#080609;font-size:9px;font-weight:700;line-height:1}
+html#digivated-root body.platform .compact-site-header .header-inbox-badge[hidden]{display:none}
+html#digivated-root body.platform .compact-site-header .header-inbox:focus-visible{outline:2px solid var(--dg-accent,#b678ef);outline-offset:3px}
+@media(max-width:480px){html#digivated-root body.platform .compact-site-header .header-inbox{width:38px;height:38px}}
