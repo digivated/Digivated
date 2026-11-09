@@ -42,8 +42,7 @@ for(const width of [320,1440])test(`Resources category and search navigation at 
  await expect(page.locator('a[href="https://supabase.com"]')).toBeVisible();
  await expect(page.locator('a[href="https://haveibeenpwned.com"]')).toBeHidden();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
- await page.getByRole('link',{name:'Explore Digivated guides'}).click();
- await expect(page.locator('#resources-title')).toHaveText('Digivated guides');
+ await expect(page.getByRole('link',{name:'Explore Digivated guides'})).toHaveCount(0);
 });
 
 test('approved logo keeps its purple and white colours on each site layout',async({page})=>{
