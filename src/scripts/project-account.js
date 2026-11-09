@@ -45,6 +45,11 @@ if(state){
   if(authState==='unavailable'){show('You have a session, but we could not verify your account right now. Please try again shortly.');list.textContent='Your submissions could not be loaded.';return;}
   if(arrivingFromEmail){location.replace('/discover?view=featured&signed_in=1');return;}
   show(`You're logged in as ${email}.`);
+  const profileForm=document.getElementById('creator-profile-form'),profileStatus=document.getElementById('creator-profile-status'),profileLink=document.getElementById('creator-profile-link');
+  const profileHeaders={Authorization:`Bearer ${session.access_token}`};
+  const showProfile=({profile,id})=>{profileForm.elements.name.value=profile?.name||'';profileForm.elements.bio.value=profile?.bio||'';profileForm.elements.website.value=profile?.website||'';profileForm.elements.public.checked=!!profile?.public;profileLink.href='/creator?id='+encodeURIComponent(id);profileLink.hidden=!profile?.public;};
+  try{const response=await fetch('/api/creator-profile',{headers:profileHeaders,cache:'no-store'}),data=await response.json();if(response.ok)showProfile(data);else profileStatus.textContent=data.error||'Profile is temporarily unavailable.';}catch{profileStatus.textContent='Profile is temporarily unavailable.';}
+  profileForm.onsubmit=async event=>{event.preventDefault();const button=profileForm.querySelector('button[type=submit]');button.disabled=true;profileStatus.textContent='Saving profile…';try{const response=await fetch('/api/creator-profile',{method:'POST',headers:{...profileHeaders,'Content-Type':'application/json'},body:JSON.stringify({name:profileForm.elements.name.value,bio:profileForm.elements.bio.value,website:profileForm.elements.website.value,public:profileForm.elements.public.checked})}),data=await response.json();if(!response.ok)throw Error(data.error||'Profile could not be saved.');showProfile(data);profileStatus.textContent=data.profile.public?'Profile saved and visible to everyone.':'Profile saved privately.';}catch(error){profileStatus.textContent=error.message;}finally{button.disabled=false;}};
   const weekly=document.getElementById('weekly-email'),toggle=document.getElementById('weekly-toggle'),weeklyStatus=document.getElementById('weekly-status');
   try{
    const headers={Authorization:`Bearer ${session.access_token}`};

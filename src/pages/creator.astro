@@ -1,0 +1,8 @@
+---
+import Platform from '../layouts/Platform.astro';
+import '../styles/project-account.css';
+---
+<Platform title="Creator profile" description="Meet builders and explore their published projects on Digivated.">
+  <section class="creator-public" aria-labelledby="creator-title"><a class="creator-back" href="/discover">← Explore projects</a><div class="creator-public-intro"><span class="creator-avatar" id="creator-avatar" aria-hidden="true">D</span><div><p class="eyebrow">DIGIVATED CREATOR</p><h1 id="creator-title">Creator profile</h1><p id="creator-bio"></p><a id="creator-website" hidden target="_blank" rel="noopener noreferrer">Visit website ↗</a></div></div><p id="creator-public-status" role="status">Loading profile…</p><h2 id="creator-projects-title" hidden>Published projects</h2><div id="creator-projects" class="creator-projects"></div></section>
+  <script>import '../scripts/creator-profile.js';</script>
+</Platform>

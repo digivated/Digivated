@@ -8,6 +8,7 @@ import { makeCardInteractionHandler } from './card-interactions.mjs';
 import { makeCarouselHandler, makeCarouselPublishHandler } from './carousels.mjs';
 import { makeFoundingAccessHandler, makeFoundingLogoutHandler } from './founding-access.mjs';
 import { makeProjectAccountHandler } from './project-account.mjs';
+import { makeCreatorProfileHandler } from './creator-profile.mjs';
 import { makeReturnEmailHandler, makeWeeklyDigestHandler } from './return-emails.mjs';
 import { makeSiteActivityHandler } from './site-activity.mjs';
 
@@ -28,6 +29,7 @@ export function defaultPublicHandlers(overrides = {}) {
     'founding-access': makeFoundingAccessHandler(),
     'founding-logout': makeFoundingLogoutHandler(),
     'project-account': makeProjectAccountHandler(),
+    'creator-profile': makeCreatorProfileHandler(),
     'return-emails': makeReturnEmailHandler(),
     'weekly-digest': makeWeeklyDigestHandler(),
     ...overrides,
