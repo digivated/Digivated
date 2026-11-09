@@ -221,10 +221,19 @@ html#digivated-root .home-editorial::before {
   mask-image:linear-gradient(to bottom,transparent,black 23%,black 70%,transparent);
   transform:translate3d(-50%,0,0); animation:digivated-hero-glow 16s ease-in-out infinite alternate!important;
 }
-html#digivated-root .home-editorial::after { content:none; }
+html#digivated-root .home-editorial::after {
+  content:""; position:absolute; top:50%; left:50%; width:100vw; height:min(850px,95vw);
+  z-index:1; pointer-events:none; border-radius:50%;
+  background:repeating-radial-gradient(circle at center,transparent 0 94px,#bb87ff50 95px,transparent 97px,transparent 164px);
+  -webkit-mask-image:radial-gradient(circle at center,transparent 0 18%,black 38%,black 65%,transparent 83%);
+  mask-image:radial-gradient(circle at center,transparent 0 18%,black 38%,black 65%,transparent 83%);
+  transform:translate3d(-50%,-50%,0) scale(.68); opacity:0;
+  animation:digivated-beacon 8s ease-out infinite;
+}
 @keyframes digivated-hero-glow { to { transform:translate3d(-50%,3%,0) scale(1.04); opacity:.74; } }
+@keyframes digivated-beacon { 12% { opacity:.52; } 68% { opacity:.32; } 100% { transform:translate3d(-50%,-50%,0) scale(1.16); opacity:0; } }
 @media(max-width:600px) { html#digivated-root .home-editorial::before { top:-40px; bottom:-85px; background:radial-gradient(ellipse 75% 47% at 18% 44%,#7938c74d,transparent 80%),radial-gradient(ellipse 72% 42% at 90% 62%,#7237c340,transparent 82%); } }
-@media(prefers-reduced-motion:reduce) { html#digivated-root .home-editorial::before { animation:none!important; } }
+@media(prefers-reduced-motion:reduce) { html#digivated-root .home-editorial::before,html#digivated-root .home-editorial::after { animation:none!important; } html#digivated-root .home-editorial::after { opacity:.18; transform:translate3d(-50%,-50%,0) scale(1); } }
 html#digivated-root .home-editorial h1 { max-width:1000px; font-size:clamp(44px,6vw,80px); line-height:1.07; letter-spacing:-.055em; color:#f4f2f8!important; text-shadow:none; }
 html#digivated-root .home-editorial h1 em { color:#bd9af4!important; background:linear-gradient(105deg,#eadbff,#c3a0ff 55%,#aa83e5); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; text-shadow:none; }
 html#digivated-root .home-editorial-kicker { color:#b9a7cd!important; }
