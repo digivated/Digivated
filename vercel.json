@@ -63,6 +63,26 @@
   ],
   "redirects": [
     {
+      "source": "/shop",
+      "destination": "/membership",
+      "permanent": true
+    },
+    {
+      "source": "/products",
+      "destination": "/membership",
+      "permanent": true
+    },
+    {
+      "source": "/promote",
+      "destination": "/membership",
+      "permanent": true
+    },
+    {
+      "source": "/founding-members",
+      "destination": "/membership",
+      "permanent": true
+    },
+    {
       "source": "/news/:path*",
       "destination": "/",
       "permanent": false
