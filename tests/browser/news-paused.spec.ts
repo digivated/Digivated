@@ -40,6 +40,9 @@ test('News desk loads a review and requires source confirmation to publish',asyn
  await page.route('**/api/admin*',r=>{const action=new URL(r.request().url()).searchParams.get('action');return r.fulfill({json:action==='news-list'?{items:[record],next:null}:action==='news-record'?{record,audit:[]}:action==='news-status'?{enabled:true,status:'ok',paused:false,lastCheckedAt:at,report:{sources:[]}}:{csrf:'fixture-only'}});});
  await page.goto('http://127.0.0.1:4321/admin/news');
  await expect(page.locator('#news-owner')).toBeVisible();
+ await expect(page.locator('#news-owner-filter')).toHaveValue('published');
+ await expect(page.locator('.news-owner-summary')).toHaveText(record.summary);
+ await expect(page.getByRole('link',{name:'Read original article',exact:true})).toHaveAttribute('href',record.sourceUrl);
  await page.getByRole('button',{name:'Review story',exact:true}).click();
  await expect(page.locator('#news-review-dialog')).toBeVisible();
  await page.locator('#news-review-state').selectOption('published');
