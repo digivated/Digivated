@@ -47,3 +47,14 @@ test('site atmosphere moves without covering controls or widening mobile pages',
  await page.emulateMedia({reducedMotion:'reduce'});
  await expect(atmosphere).toBeHidden();
 });
+test('home light trails replace the canvas wave without blocking hero actions',async({page})=>{
+ await page.setViewportSize({width:390,height:900});await page.goto(base+'/');
+ await expect(page.locator('.home-signal')).toHaveCount(0);
+ await expect(page.locator('.home-kinetic-beam')).toHaveCount(2);
+ const motion=await page.locator('.home-kinetic').evaluate(element=>({pointer:getComputedStyle(element).pointerEvents,animation:getComputedStyle(element.querySelector('.home-kinetic-beam')).animationName}));
+ expect(motion.pointer).toBe('none');expect(motion.animation).toBe('digivated-light-trail');
+ await expect(page.locator('.home-editorial-actions a').first()).toHaveAttribute('href','/discover#project-wall');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.emulateMedia({reducedMotion:'reduce'});
+ expect(await page.locator('.home-kinetic-beam').first().evaluate(element=>getComputedStyle(element).animationName)).toBe('none');
+});
