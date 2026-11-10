@@ -35,3 +35,15 @@ test('hero stays readable when JavaScript is disabled',async({browser})=>{
  await expect(p.locator('#home-title')).toBeVisible();await expect(p.locator('.home-editorial-actions a').first()).toHaveAttribute('href','/discover#project-wall');
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
 });
+test('site atmosphere moves without covering controls or widening mobile pages',async({page})=>{
+ await page.setViewportSize({width:390,height:900});await page.goto(base+'/resources');
+ const atmosphere=page.locator('.site-atmosphere');
+ await expect(atmosphere).toBeVisible();
+ const styles=await atmosphere.evaluate(element=>({pointer:getComputedStyle(element).pointerEvents,motion:getComputedStyle(element,'::before').animationName}));
+ expect(styles.pointer).toBe('none');
+ expect(styles.motion).toBe('digivated-atmosphere-orbit');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.locator('.header-search').click();await expect(page.locator('#discovery-search')).toBeVisible();
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await expect(atmosphere).toBeHidden();
+});
