@@ -129,3 +129,9 @@ html#digivated-root .news-page :is(.news-refresh,.news-more):hover { border-colo
  html#digivated-root .news-page .news-story { padding:23px 0 25px; }
 }
 @media(max-width:360px) { html#digivated-root .news-page .news-filters { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* The scheduled check is a quiet status element, separate from manual refresh. */
+html#digivated-root .news-page .news-check-status{display:grid;gap:5px;text-align:right}
+html#digivated-root .news-page .news-countdown{display:flex;align-items:baseline;justify-content:flex-end;gap:10px;color:var(--news-muted);font-size:11px}
+html#digivated-root .news-page .news-countdown time{min-width:68px;color:var(--news-accent);font:600 13px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;font-variant-numeric:tabular-nums;text-align:right}
+@media(max-width:760px){html#digivated-root .news-page .news-check-status{text-align:left}html#digivated-root .news-page .news-countdown{justify-content:flex-start;gap:7px}html#digivated-root .news-page .news-countdown time{min-width:65px}}
