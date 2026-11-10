@@ -7,7 +7,7 @@ import '../styles/news.css';
   <section class="news-page" data-news-page aria-labelledby="news-title">
     <header class="news-masthead">
       <div><p class="news-eyebrow">THE DIGIVATED BRIEFING</p><h1 id="news-title">News worth knowing.</h1><p class="news-intro">AI & tech. Markets. Security. The important developments, with the source in view.</p></div>
-      <div class="news-check"><span data-news-checked>Checking the latest reporting</span><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><span>Refresh</span></button></div>
+      <div class="news-check"><div class="news-check-status"><span data-news-checked>Checking the latest reporting</span><div class="news-countdown"><span>Next source check</span><time data-news-countdown role="timer" aria-live="off">Checking…</time></div></div><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><span>Refresh</span></button></div>
     </header>
     <p class="news-access-status" data-news-access-status role="status">Loading the latest reporting…</p>
     <nav class="news-toolbar" hidden aria-label="Browse News">
