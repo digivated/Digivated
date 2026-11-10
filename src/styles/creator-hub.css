@@ -51,6 +51,11 @@ html#digivated-root body.platform .creator-social-main>.creator-composer textare
 html#digivated-root body.platform .creator-media-upload { min-height:40px; padding:9px 13px; border:1px solid #ffffff30; border-radius:10px; background:linear-gradient(155deg,#ffffff12,transparent),#1b1522; color:#e7d5f5; }
 html#digivated-root body.platform .creator-post { border-bottom:1px solid #ffffff16; }
 html#digivated-root body.platform .creator-post-head a:hover { color:#dcb8ff; }
+html#digivated-root body.platform .creator-post-head .creator-post-permalink { color:#9f94a8!important; font-weight:400; }
+html#digivated-root body.platform .creator-post-head .creator-post-permalink:hover { color:#dcb8ff!important; text-decoration:underline; }
+.creator-post-follow { margin-left:auto; padding:5px 9px; border:1px solid #b38be456; border-radius:8px; background:#a76cdf18; color:#d5b5f2; font-size:12px; font-weight:600; cursor:pointer; }
+.creator-post-follow:hover { background:#a76cdf2b; }
+.creator-post-follow:disabled { opacity:.55; cursor:wait; }
 html#digivated-root body.platform .creator-post-actions { max-width:540px; }
 .creator-new-posts { display:block; width:100%; min-height:45px; border:0; border-bottom:1px solid #ffffff1c; background:#9e6bd31f; color:#e2c7ff; font:600 13px 'Inter Variable',sans-serif; cursor:pointer; }
 .creator-new-posts[hidden] { display:none!important; }

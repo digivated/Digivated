@@ -40,6 +40,7 @@ test('a shared creator post remains visible after the latest feed loads',async({
  await page.route('**/api/projects*',route=>route.fulfill({json:{items:[],next:null}}));
  await page.goto(base+'/creators?post='+id);
  await expect(page.locator('.creator-post')).toContainText('A new project is on the way');
+ await expect(page.locator('.creator-post-permalink')).toHaveAttribute('href','/creators?post='+id);
  await expect(page.locator('#creators-status')).toContainText('Shared conversation');
 });
 test('switching to People does not let an older feed request replace the directory',async({page})=>{
@@ -63,6 +64,25 @@ test('switching to People does not let an older feed request replace the directo
  await page.waitForTimeout(200);
  await expect(page.locator('#creators-status')).toContainText('2 creators');
  await expect(page.locator('#creators-feed')).toBeHidden();
+});
+test('older creator posts load as the reader reaches the end of the feed',async({page})=>{
+ const first='44444444-4444-4444-8444-444444444444',older='55555555-5555-4555-8555-555555555555';
+ await page.setViewportSize({width:390,height:700});
+ await page.route('**/api/creator-profile*',route=>{
+  const url=new URL(route.request().url());
+  if(url.searchParams.get('action')==='discover')return route.fulfill({json:{creators:people}});
+  if(url.searchParams.get('action')==='posts'){
+   const later=url.searchParams.get('offset')==='50';
+   return route.fulfill({json:{posts:[{id:later?older:first,body:later?'An earlier update':'The latest update',createdAt:'2026-11-10T12:00:00.000Z',author:people[0],likes:0,replies:0}],next:later?null:50}});
+  }
+  return route.fulfill({status:401,json:{error:'Sign in required'}});
+ });
+ await page.route('**/api/projects*',route=>route.fulfill({json:{items:[],next:null}}));
+ await page.goto(base+'/creators');
+ await expect(page.locator('.creator-post')).toHaveCount(1);
+ await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
+ await expect(page.locator('.creator-post')).toHaveCount(2);
+ await expect(page.locator('#creators-more')).toBeHidden();
 });
 
 test('the inbox handles unavailable sign-in without trapping visitors',async({page})=>{

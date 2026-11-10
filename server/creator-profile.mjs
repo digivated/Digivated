@@ -52,13 +52,33 @@ export function makeCreatorProfileHandler(deps={}){
     return send(200,{creators:rows.flatMap((raw,index)=>{try{const p=JSON.parse(raw);return p.public?[{id:ids[index],name:p.name,bio:p.bio,logoUrl:p.hasLogo?`/api/creator-profile?logo=${ids[index]}`:''}]:[];}catch{return[];}})});
    }
    if(req.method==='GET'&&url.searchParams.get('action')==='posts'){
-    const parent=url.searchParams.get('parent'),author=url.searchParams.get('author'),single=url.searchParams.get('post'),saved=url.searchParams.get('saved')==='1',offset=Number(url.searchParams.get('offset')||0);
+    const parent=url.searchParams.get('parent'),author=url.searchParams.get('author'),single=url.searchParams.get('post'),saved=url.searchParams.get('saved')==='1',followingOnly=url.searchParams.get('following')==='1',offset=Number(url.searchParams.get('offset')||0);
     if(parent&&!UUID.test(parent)||author&&!UUID.test(author)||single&&!UUID.test(single)||!Number.isInteger(offset)||offset<0||offset>1000)return send(400,{error:'Invalid feed request.'});
     const viewer=req.headers.authorization?await(deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch):null;
-    if(saved&&!viewer)return send(401,{error:'Sign in to see saved posts.'});
+    if((saved||followingOnly)&&!viewer)return send(401,{error:'Sign in to see your feed.'});
+    if(followingOnly&&(saved||parent||author||single))return send(400,{error:'Choose one feed view.'});
     const index=parent?`digivated:creator:replies:${parent}`:author?`digivated:creator:author:${author}`:postIndex;
     const savedIds=saved?await redis(['SMEMBERS',savedKey(viewer.id)]):null;
-    const ids=single?[single]:saved?(savedIds||[]).slice(offset,offset+50):await redis(['ZREVRANGE',index,offset,offset+49]);
+    let ids,nextOffset=null;
+    if(followingOnly){
+     const followed=new Set(await redis(['SMEMBERS',`digivated:creator:following:${viewer.id}`]));followed.add(viewer.id);
+     ids=[];let cursor=offset,scanned=0,exhausted=false;
+     while(ids.length<20&&scanned<200&&cursor<=1000){
+      const batch=await redis(['ZREVRANGE',postIndex,cursor,Math.min(cursor+49,1000)]);
+      if(!batch.length){exhausted=true;break;}
+      const raws=await redis(['MGET',...batch.map(postKey)]),start=cursor;
+      for(let i=0;i<batch.length&&ids.length<20;i++){
+       cursor++;scanned++;
+       try{const post=JSON.parse(raws[i]);if(!post.hidden&&followed.has(post.authorId))ids.push(batch[i]);}catch{}
+      }
+      if(batch.length<50&&cursor-start===batch.length)exhausted=true;
+      if(exhausted)break;
+     }
+     nextOffset=exhausted||cursor>1000?null:cursor;
+    }else{
+     ids=single?[single]:saved?(savedIds||[]).slice(offset,offset+50):await redis(['ZREVRANGE',index,offset,offset+49]);
+     nextOffset=ids.length===50?offset+50:null;
+    }
     const raws=ids.length?await redis(['MGET',...ids.map(postKey)]):[];
     const posts=raws.filter(Boolean).flatMap(raw=>{try{const post=JSON.parse(raw);return !post.hidden&&(!author||post.authorId===author)?[post]:[];}catch{return[];}});
     const authorIds=[...new Set(posts.map(post=>post.authorId))];
@@ -67,7 +87,7 @@ export function makeCreatorProfileHandler(deps={}){
     const viewerSaved=viewer?new Set(savedIds||await redis(['SMEMBERS',savedKey(viewer.id)])):new Set();
     const publicPosts=posts.filter(post=>people.get(post.authorId)?.public);
     const enriched=await Promise.all(publicPosts.map(async post=>({id:post.id,body:post.body,media:post.media&&env.COMMUNITY_SUPABASE_URL?{type:post.media.type,url:mediaUrl(env,post.media.path)}:null,createdAt:post.createdAt,parentId:post.parentId||null,replies:post.replies||0,likes:Number(await redis(['SCARD',likeKey(post.id)]))||0,liked:viewer?Number(await redis(['SISMEMBER',likeKey(post.id),viewer.id]))===1:false,saved:viewerSaved.has(post.id),author:{id:post.authorId,name:people.get(post.authorId).name,logoUrl:people.get(post.authorId).hasLogo?`/api/creator-profile?logo=${post.authorId}`:''}})));
-    return send(200,{posts:saved?enriched.sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt)):enriched,next:ids.length===50?offset+50:null});
+    return send(200,{posts:saved?enriched.sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt)):enriched,next:nextOffset});
    }
    if(req.method==='GET'&&url.searchParams.get('id')){
     const id=url.searchParams.get('id');if(!UUID.test(id))return send(404,{error:'Profile not found.'});

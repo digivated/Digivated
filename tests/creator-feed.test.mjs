@@ -24,8 +24,38 @@ function fixture(options={}){
  };
  const handler=makeCreatorProfileHandler({redis,env:options.env||{},storageClient:options.storageClient,verifyAccount:async req=>req.headers.authorization?{id:req.headers.authorization==='Alice'?alice:bob}:null});
  const call=async(method,url,body,actor)=>{let raw;const res={setHeader(){},end(value){raw=value;}};await handler({method,url,body,headers:{origin:'https://digivated.com','content-type':'application/json',...(actor?{authorization:actor}:{})}},res);return{status:res.statusCode,...JSON.parse(raw)};};
- return{call,values};
+ return{call,values,sets,members};
 }
+test('Following is authenticated and pages the actual followed authors',async()=>{
+ const {call,values,sets,members}=fixture();
+ assert.equal((await call('GET','/?action=posts&following=1')).status,401);
+ values.set('digivated:creator:profile:'+alice,JSON.stringify({name:'Alice',public:true}));
+ values.set('digivated:creator:profile:'+bob,JSON.stringify({name:'Bob',public:true}));
+ const outsider='123e4567-e89b-42d3-a456-426614174002';
+ values.set('digivated:creator:profile:'+outsider,JSON.stringify({name:'Outsider',public:true}));
+ members.set('digivated:creator:following:'+alice,new Set([bob]));
+ const ids=Array.from({length:82},(_,index)=>`123e4567-e89b-42d3-a456-${String(index).padStart(12,'0')}`);
+ sets.set('digivated:creator:posts',ids);
+ ids.forEach((id,index)=>values.set('digivated:creator:post:'+id,JSON.stringify({id,authorId:index===8?alice:index===63?bob:outsider,body:'A real update',createdAt:'2026-11-10T12:00:00.000Z'})));
+ const feed=await call('GET','/?action=posts&following=1',null,'Alice');
+ assert.equal(feed.status,200);assert.deepEqual(feed.posts.map(post=>post.author.name),['Alice','Bob']);assert.equal(feed.next,null);
+ assert.equal((await call('GET','/?action=posts',null,'Alice')).posts.length,50);
+});
+
+test('Following pagination resumes after the last matched post',async()=>{
+ const {call,values,sets,members}=fixture();
+ values.set('digivated:creator:profile:'+alice,JSON.stringify({name:'Alice',public:true}));
+ values.set('digivated:creator:profile:'+bob,JSON.stringify({name:'Bob',public:true}));
+ members.set('digivated:creator:following:'+alice,new Set([bob]));
+ const ids=Array.from({length:30},(_,index)=>`123e4567-e89b-42d3-a456-${String(index).padStart(12,'0')}`);
+ sets.set('digivated:creator:posts',ids);
+ ids.forEach(id=>values.set('digivated:creator:post:'+id,JSON.stringify({id,authorId:bob,body:'A real update',createdAt:'2026-11-10T12:00:00.000Z'})));
+ const first=await call('GET','/?action=posts&following=1',null,'Alice');
+ assert.equal(first.posts.length,20);assert.equal(first.next,20);
+ const second=await call('GET','/?action=posts&following=1&offset='+first.next,null,'Alice');
+ assert.equal(second.posts.length,10);assert.equal(second.next,null);
+ assert.equal(new Set([...first.posts,...second.posts].map(post=>post.id)).size,30);
+});
 test('creator conversation requires a public profile and blocks links and fast repeated posts',async()=>{
  const {call,values}=fixture();
  assert.equal((await call('POST','/?action=post',{body:'Hello builders'},'Alice')).status,403);
