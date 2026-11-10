@@ -40,6 +40,15 @@ test('automatic motion pauses, resumes and allows manual keyboard browsing',asyn
  await expect.poll(()=>rail.evaluate(e=>e.scrollLeft)).toBeGreaterThan(before);
  await expect(page.getByRole('button',{name:'Play project reel',exact:true})).toHaveAttribute('aria-pressed','true');
 });
+test('automatic reel motion pauses while the page scrolls',async({page})=>{
+ await page.goto(base+'/');
+ const reel=page.locator('.project-reel');
+ await reel.scrollIntoViewIfNeeded();await page.mouse.move(0,0);
+ await expect(reel).toHaveAttribute('data-moving','true');
+ await page.evaluate(()=>window.dispatchEvent(new Event('scroll')));
+ await expect(reel).toHaveAttribute('data-moving','false');
+ await expect(reel).toHaveAttribute('data-moving','true');
+});
 test('reduced motion stays still and arrow controls still browse',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.goto(base+'/');
  const reel=page.locator('.project-reel'),rail=page.locator('[data-reel-window]');

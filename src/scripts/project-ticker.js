@@ -7,9 +7,9 @@ for (const reel of document.querySelectorAll('[data-project-ticker]')) {
   const status = reel.querySelector('[data-reel-status]');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const mobile = matchMedia('(max-width: 760px)');
-  let paused = false, hovering = false, focused = false, touching = false, visible = false;
+  let paused = false, hovering = false, focused = false, touching = false, visible = false, pageScrolling = false, scrollTimer;
   let frame = 0, last = 0, position = 0, groupWidth = 0, ready = false;
-  const canMove = () => ready && !paused && !hovering && !focused && !touching && visible && !document.hidden && !reduced.matches && !mobile.matches;
+  const canMove = () => ready && !paused && !hovering && !focused && !touching && !pageScrolling && visible && !document.hidden && !reduced.matches && !mobile.matches;
   function tick(time) {
     frame = 0;
     if (!canMove()) return;
@@ -55,6 +55,12 @@ for (const reel of document.querySelectorAll('[data-project-ticker]')) {
   document.addEventListener('visibilitychange', sync);
   reduced.addEventListener('change', sync);
   mobile.addEventListener('change', sync);
+  window.addEventListener('scroll', () => {
+    if (!visible || mobile.matches) return;
+    if (!pageScrolling) { pageScrolling = true; sync(); }
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => { pageScrolling = false; sync(); }, 180);
+  }, { passive: true });
   const observer = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; sync(); }, { rootMargin: '80px' });
   observer.observe(reel);
 
