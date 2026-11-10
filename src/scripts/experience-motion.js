@@ -1,10 +1,10 @@
 // Progressive, one-shot entrances: content never depends on JavaScript to be visible.
-// Only small, static content groups move; the reel, fixed navigation and dialogs
+// Only small, static headings move; the reel, fixed navigation and dialogs
 // retain their own positioning, animation and focus behavior.
 const preference = matchMedia('(prefers-reduced-motion: reduce)');
 const groups = [
-  ...document.querySelectorAll('.home-featured-heading,.project-reel-heading'),
-];
+  ...document.querySelectorAll('#home-title,.page-intro h1,.rankings-hero h1,#creators-title,#news-title,.resources-hero h1,.home-featured-heading,.project-reel-heading,.news-section-heading h2,.ranking-personal-heading h2,.launch-list-heading h2'),
+].slice(0, 12);
 const pending = new Set(groups);
 const active = new Map();
 let observer;
@@ -18,13 +18,13 @@ function finish(element) {
 function reveal(element, delay = 0) {
   if (!pending.delete(element)) return;
   observer?.unobserve(element);
-  if (preference.matches || document.hidden || !element.animate || element.contains(document.activeElement)) return;
+  if (preference.matches || navigator.connection?.saveData || document.hidden || !element.animate || element.contains(document.activeElement)) return;
   // No fill mode or inline opacity: cancellation and failures restore the base UI.
   try {
     const animation = element.animate([
-      { opacity: .65, transform: 'translateY(6px)' },
+      { opacity: .65, transform: 'translateY(9px)' },
       { opacity: 1, transform: 'translateY(0)' },
-    ], { duration: 260, delay, easing: 'cubic-bezier(.2,.75,.25,1)' });
+    ], { duration: 390, delay, easing: 'cubic-bezier(.2,.75,.25,1)' });
     animation.id = 'digivated-content-entrance';
     active.set(element, animation);
     animation.finished.then(() => finish(element), () => {
@@ -33,7 +33,7 @@ function reveal(element, delay = 0) {
   } catch { /* Keep the unanimated, fully readable baseline. */ }
 }
 function start() {
-  if (preference.matches || document.hidden) return;
+  if (preference.matches || navigator.connection?.saveData || document.hidden) return;
   if ('IntersectionObserver' in window && !observer) {
     observer = new IntersectionObserver(entries => {
       for (const entry of entries) if (entry.isIntersecting) reveal(entry.target);

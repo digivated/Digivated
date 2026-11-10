@@ -42,7 +42,7 @@ function renderPicker(){
  dialog.append(el('p','Stored only in this browser. Back up your finds from the Saved page.','picker-privacy'));
 }
 dialog.addEventListener('cancel',event=>{if(pendingChanges)event.preventDefault();});
-dialog.addEventListener('close',()=>returnFocus?.focus());
+dialog.addEventListener('close',()=>{if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});});
 document.addEventListener('click',event=>{const trigger=event.target.closest('[data-save-id]');if(!trigger)return;event.preventDefault();event.stopPropagation();picker(buttonItem(trigger),trigger);});
 window.addEventListener('storage',event=>{if(event.key!==STORAGE_KEY)return;try{store?.refresh();updateButtons();renderSaved();resolveItems();}catch(error){message(error.message);}});
 const root=document.getElementById('saved-root');let active='saved', resolved=new Map(), loadGeneration=0;
