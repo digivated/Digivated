@@ -9,6 +9,15 @@ if(root){
  const text=(tag,value,cls)=>{const e=document.createElement(tag);e.textContent=value;if(cls)e.className=cls;return e;};
  const safe=value=>{try{const u=new URL(value,location.origin);return /^https?:$/.test(u.protocol)?u.href:'/discover';}catch{return '/discover';}};
  const liked=p=>{try{return localStorage.getItem('digivated:liked:project:'+p.id)==='1';}catch{return false;}};
+ function renderPicks(){
+  if(ai)return;
+  const host=root.querySelector('[data-ranking-picks]'),count=root.querySelector('[data-ranking-picks-count]');
+  const picks=projects.filter(liked);
+  count.textContent=picks.length?String(picks.length):'';
+  host.replaceChildren();
+  if(!picks.length){host.append(text('span','Upvote a project to keep it close.'));return;}
+  for(const project of picks){const link=text('a',project.name);link.href=safe(project.pageUrl||'/discover#project-'+encodeURIComponent(project.id));link.title='Explore '+project.name;host.append(link);}
+ }
  function renderOverview(){
   const host=root.querySelector('[data-ai-overview]');host.replaceChildren();
   for(const [name,pattern] of groups){
@@ -52,9 +61,11 @@ if(root){
      try{localStorage.setItem('digivated:liked:project:'+p.id,data.liked?'1':'0');}catch{}
      // Reload authoritative period totals; legacy votes may have no timestamp.
      await load();status.textContent=data.liked?'Upvote saved.':'Upvote removed.';
+     if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const updated=[...list.children].find(item=>item.dataset.projectId===p.id);updated?.classList.add('ranking-vote-confirmed');}
     }catch(error){status.textContent=error.message;}finally{vote.disabled=false;}
    };row.append(vote);list.append(row);
   }more.hidden=overview||matches.length<=limit;
+  renderPicks();
  }
  async function load(){
   let offset=0;const items=[];do{const response=await fetch('/api/projects?ranking=1&offset='+offset,{cache:'no-store',signal:AbortSignal.timeout(20000)});if(!response.ok)throw Error('Projects are temporarily unavailable. Please refresh to try again.');const page=await response.json();items.push(...page.items);offset=page.next;}while(offset!=null);
@@ -65,5 +76,10 @@ if(root){
  root.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{period=b.dataset.period;limit=30;render();});
  root.querySelector('[data-launch-search]').oninput=e=>{query=e.target.value.trim().toLowerCase();limit=30;render();};
  more.onclick=()=>{limit+=30;render();};
+ if(!ai)root.querySelector('[data-ranking-share]').onclick=async()=>{
+  const target=new URL('/rankings',location.origin).href,feedback=root.querySelector('[data-ranking-share-status]');
+  try{if(navigator.share){await navigator.share({title:'Digivated project rankings',url:target});feedback.textContent='';return;}if(!navigator.clipboard?.writeText)throw Error('Clipboard unavailable');await navigator.clipboard.writeText(target);feedback.textContent='Link copied.';}
+  catch(error){if(error?.name==='AbortError')return;feedback.textContent='Share this link: '+target;}
+ };
  load().then(categories).catch(error=>{status.textContent=error.message;});
 }

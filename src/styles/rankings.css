@@ -119,3 +119,43 @@ html#digivated-root .rankings-directory .launch-meta a { overflow-wrap:anywhere;
  html#digivated-root .rankings-directory .launch-copy h3 { font-size:14px; }
  html#digivated-root .rankings-directory .launch-meta { gap:4px 8px; }
 }
+/* Motion is tied to reading and actions; every animation has a reduced-motion exit. */
+html#digivated-root .rankings-directory .rankings-hero{position:relative;isolation:isolate;overflow:hidden;border-bottom:1px solid var(--dg-line)}
+html#digivated-root .rankings-directory .rankings-hero::before{content:"";position:absolute;z-index:-1;inset:-50% -15% -35% 45%;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,#7048a522,transparent 64%)}
+html#digivated-root .rankings-directory .rankings-hero::after{content:"";position:absolute;bottom:0;left:0;width:22%;height:1px;pointer-events:none;background:linear-gradient(90deg,transparent,#c49bff,transparent);opacity:.75}
+html#digivated-root .rankings-directory .ranking-personal{display:grid;grid-template-columns:190px minmax(0,1fr) auto;align-items:center;gap:24px;margin:24px 0 36px;padding:20px 22px;border:1px solid #3a2d46;border-radius:12px;background:linear-gradient(115deg,#1c14243d,#111015 65%);min-width:0}
+html#digivated-root .rankings-directory .ranking-personal-heading{min-width:0}
+html#digivated-root .rankings-directory .ranking-personal-heading .rankings-section-label{margin-bottom:5px}
+html#digivated-root .rankings-directory .ranking-personal h2{display:flex;align-items:center;gap:8px;margin:0;color:var(--dg-ink);font-size:18px;letter-spacing:-.03em}
+html#digivated-root .rankings-directory [data-ranking-picks-count]:not(:empty){display:grid;place-items:center;min-width:23px;height:23px;padding:0 5px;border:1px solid #8b60aa75;border-radius:6px;color:#d6b3f5;font:600 11px/1 ui-monospace,SFMono-Regular,Consolas,monospace}
+html#digivated-root .rankings-directory .ranking-personal-heading>p:last-child{margin:6px 0 0;color:var(--dg-muted);font-size:11px;line-height:1.45}
+html#digivated-root .rankings-directory .ranking-personal-list{display:flex;align-items:center;gap:8px;min-width:0;overflow-x:auto;padding:5px 2px;scrollbar-width:thin;scrollbar-color:#6b5379 transparent;overscroll-behavior-inline:contain}
+html#digivated-root .rankings-directory .ranking-personal-list>span{color:var(--dg-copy);font-size:12px;line-height:1.5}
+html#digivated-root .rankings-directory .ranking-personal-list a{display:inline-flex;align-items:center;flex:none;min-height:36px;max-width:190px;overflow:hidden;padding:7px 11px;border:1px solid #5b456a;border-radius:7px;background:#21182b;color:#e9d7f5;font-size:12px;text-decoration:none;text-overflow:ellipsis;white-space:nowrap;transition:border-color .18s ease,background-color .18s ease}
+html#digivated-root .rankings-directory .ranking-personal-list a:hover{border-color:#b68ce0;background:#30213d}
+html#digivated-root .rankings-directory .ranking-personal-share{display:grid;justify-items:end;gap:6px}
+html#digivated-root .rankings-directory .ranking-share{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:9px 12px;border:1px solid #5b4b68;border-radius:8px;background:#1b1720;color:#eee6f6;font-size:12px;white-space:nowrap;cursor:pointer;transition:border-color .18s ease,background-color .18s ease}
+html#digivated-root .rankings-directory .ranking-share:hover{border-color:#b68ce0;background:#2c2035}
+html#digivated-root .rankings-directory [data-ranking-share-status]{max-width:180px;color:#cba8e9;font-size:11px;overflow-wrap:anywhere;text-align:right}
+html#digivated-root .rankings-directory :is(.launch-periods,.launch-categories) button{position:relative;overflow:hidden;transition:color .18s ease,background-color .18s ease,border-color .18s ease,box-shadow .18s ease}
+html#digivated-root .rankings-directory :is(.launch-periods,.launch-categories) button:hover{border-color:#8c69a5!important;background:#2c20364d!important}
+html#digivated-root .rankings-directory :is(.launch-periods,.launch-categories) button[aria-pressed=true]{box-shadow:inset 0 -2px 0 #c49bff!important}
+html#digivated-root .rankings-directory .launch-vote{transition:border-color .18s ease,background-color .18s ease,box-shadow .18s ease}
+html#digivated-root .rankings-directory .launch-vote:not(:disabled):hover{box-shadow:0 0 0 3px #ae7dd526!important}
+html#digivated-root .rankings-directory .launch-vote[aria-pressed=true]{box-shadow:0 0 0 3px #ae7dd51e!important}
+@keyframes ranking-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ranking-signal{from{transform:translateX(-110%);opacity:0}20%{opacity:.75}80%{opacity:.75}to{transform:translateX(520%);opacity:0}}
+@keyframes ranking-vote-flash{0%{box-shadow:inset 0 0 0 2px #b388dfaa,0 0 22px #9c65cb55}100%{box-shadow:none}}
+@media(prefers-reduced-motion:no-preference){
+ html#digivated-root .rankings-directory .rankings-hero>div{animation:ranking-rise .55s cubic-bezier(.2,.7,.2,1) both}
+ html#digivated-root .rankings-directory .rankings-hero>div+div{animation-delay:.08s}
+ html#digivated-root .rankings-directory .rankings-hero::after{animation:ranking-signal 8s ease-in-out 1s infinite}
+ html#digivated-root .rankings-directory .ranking-personal{animation:ranking-rise .5s cubic-bezier(.2,.7,.2,1) .12s both}
+ html#digivated-root .rankings-directory .ranking-front-runner{animation:ranking-rise .48s cubic-bezier(.2,.7,.2,1) both}
+ html#digivated-root .rankings-directory .ranking-front-runner:nth-child(2){animation-delay:.07s}
+ html#digivated-root .rankings-directory .ranking-front-runner:nth-child(3){animation-delay:.14s}
+ html#digivated-root .rankings-directory .launch-row.ranking-vote-confirmed{animation:ranking-vote-flash .7s ease-out}
+}
+@media(max-width:900px){html#digivated-root .rankings-directory .ranking-personal{grid-template-columns:minmax(0,1fr) auto;gap:12px 20px}html#digivated-root .rankings-directory .ranking-personal-heading{grid-column:1/-1}}
+@media(max-width:600px){html#digivated-root .rankings-directory .ranking-personal{grid-template-columns:minmax(0,1fr);gap:12px;padding:17px;margin:18px 0 28px}html#digivated-root .rankings-directory .ranking-personal-heading{grid-column:auto}html#digivated-root .rankings-directory .ranking-personal-list{width:100%}html#digivated-root .rankings-directory .ranking-personal-share{justify-items:start}html#digivated-root .rankings-directory [data-ranking-share-status]{max-width:100%;text-align:left}}
+@media(prefers-reduced-motion:reduce){html#digivated-root .rankings-directory :is(.ranking-share,.ranking-personal-list a,.launch-vote,.launch-periods button,.launch-categories button){transition:none!important}}
