@@ -88,3 +88,44 @@ html#digivated-root .news-page button:disabled { opacity:.5; cursor:wait; }
 html#digivated-root body .news-page .news-sidebar { background:transparent!important; color:var(--news-ink); border:0; box-shadow:none; }
 html#digivated-root body .news-page .news-standards { background:transparent!important; color:var(--news-muted); }
 html#digivated-root body .news-page .news-standards summary { color:var(--news-ink); }
+/* Editorial rhythm: distinct lead story, quiet feed rows, legible controls. */
+html#digivated-root body .news-page { --news-line:#2b2630; width:min(1200px,100%); padding-top:42px; }
+html#digivated-root .news-page .news-masthead { margin-bottom:38px; }
+html#digivated-root .news-page h1 { font-size:clamp(44px,5.7vw,70px); line-height:1.02; }
+html#digivated-root .news-page .news-intro { font-size:15px; line-height:1.7; }
+html#digivated-root .news-page .news-check { align-items:flex-end; flex-direction:column; gap:8px; text-align:right; }
+html#digivated-root .news-page .news-toolbar { gap:20px; padding:13px 0; }
+html#digivated-root .news-page .news-filters { gap:2px; }
+html#digivated-root .news-page .news-filters button { min-height:42px; padding-inline:15px; border-radius:6px; }
+html#digivated-root .news-page .news-filters button[aria-pressed=true] { background:#21182b!important; border-color:#513d64!important; }
+html#digivated-root .news-page .news-search { width:320px; }
+html#digivated-root .news-page .news-layout { grid-template-columns:minmax(0,1fr) 270px; gap:clamp(30px,4vw,60px); padding-top:34px; }
+html#digivated-root .news-page .news-feature { position:relative; overflow:hidden; margin-bottom:40px; padding:clamp(24px,3vw,38px); border-color:#604573; border-radius:12px; background:radial-gradient(ellipse at 96% 0%,#66388345,transparent 48%),linear-gradient(135deg,#1b1323,#100e13 78%); }
+html#digivated-root .news-page .news-feature::before { content:''; position:absolute; inset:0 auto 0 0; width:2px; background:linear-gradient(#d4aaff,#74529b); }
+html#digivated-root .news-page .news-feature h2 { max-width:22ch; font-size:clamp(27px,3.3vw,39px); line-height:1.14; }
+html#digivated-root .news-page .news-section-heading { margin-bottom:10px; }
+html#digivated-root .news-page .news-section-heading h2 { font-size:17px; }
+html#digivated-root .news-page .news-story { padding:27px 0 29px; }
+html#digivated-root .news-page .news-story h3 { max-width:35ch; font-size:clamp(20px,2.15vw,25px); line-height:1.24; letter-spacing:-.03em; }
+html#digivated-root .news-page .news-summary { color:#c8becf; line-height:1.65; }
+html#digivated-root .news-page .news-story .news-summary { line-height:1.65; }
+html#digivated-root .news-page .news-story-times { margin-top:10px; color:#a297ad; font-size:11px; }
+html#digivated-root .news-page .news-market { padding:22px; border-color:#38303e; background:#100e13; }
+html#digivated-root .news-page .news-standards summary { min-height:32px; }
+html#digivated-root .news-page :is(.news-refresh,.news-more):hover { border-color:#795b94!important; background:#211729!important; color:#fff!important; }
+@media(max-width:1000px) { html#digivated-root .news-page .news-layout { grid-template-columns:minmax(0,1fr) 240px; gap:26px; } }
+@media(max-width:760px) {
+ html#digivated-root body .news-page { padding-top:22px; }
+ html#digivated-root .news-page .news-masthead { gap:18px; margin-bottom:25px; }
+ html#digivated-root .news-page h1 { font-size:clamp(39px,10vw,56px); }
+ html#digivated-root .news-page .news-check { align-items:center; flex-direction:row; text-align:left; }
+ html#digivated-root .news-page .news-toolbar { gap:12px; }
+ html#digivated-root .news-page .news-filters { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:3px; }
+ html#digivated-root .news-page .news-filters button { padding-inline:5px; font-size:11px; white-space:nowrap; }
+ html#digivated-root .news-page .news-search { width:100%; }
+ html#digivated-root .news-page .news-layout { padding-top:24px; }
+ html#digivated-root .news-page .news-feature { padding:22px; margin-bottom:30px; }
+ html#digivated-root .news-page .news-feature h2 { font-size:clamp(25px,7vw,33px); }
+ html#digivated-root .news-page .news-story { padding:23px 0 25px; }
+}
+@media(max-width:360px) { html#digivated-root .news-page .news-filters { grid-template-columns:repeat(2,minmax(0,1fr)); } }

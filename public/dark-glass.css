@@ -475,3 +475,61 @@ html#digivated-root body.platform .wall-focus-panel .wall-focus-art{background:#
 html#digivated-root body.platform .wall-focus-panel .wall-focus-actions a{background:#281b38!important;border:1px solid #78549a!important;color:#f5eafa!important;border-radius:9px!important;box-shadow:none!important}
 html#digivated-root body.platform .wall-focus-panel .wall-focus-actions a:hover{background:#39254c!important}
 html#digivated-root body.platform .wall-focus-panel .wall-focus-actions a+a{background:#17111e!important;border-color:#5b486a!important;color:#e7d9f0!important}
+
+/* Shared editorial finish: quiet surfaces, one purple accent, and legible hierarchy.
+   These are paint and type refinements; page geometry stays with each component. */
+html#digivated-root,html#digivated-root body {
+  --dg-bg:#07070a;
+  --dg-panel:#111116;
+  --dg-raised:#1b1a21;
+  --dg-ink:#f5f3f8;
+  --dg-copy:#c5c1cd;
+  --dg-muted:#aaa4b5;
+  --dg-line:#ffffff1b;
+  --dg-line-strong:#ffffff31;
+  --dg-accent:#b995f4;
+  --dg-glass:linear-gradient(145deg,#ffffff08,transparent 58%),#111116;
+  --dg-control:linear-gradient(180deg,#ffffff0a,transparent 85%),#19171f;
+  --dg-selected:linear-gradient(145deg,#ad7eef2b,#ad7eef0d),#241a32;
+  --dg-shadow:inset 0 1px 0 #ffffff09,0 6px 20px #00000024;
+}
+html#digivated-root body.platform :is(.page-intro,.dashboard-intro,.resources-intro,.submission-intro,.shop-heading,.login-heading) h1 {
+  font-weight:650;
+  letter-spacing:-.045em;
+  text-wrap:balance;
+}
+html#digivated-root body.platform :is(.page-intro,.dashboard-intro,.resources-intro,.submission-intro,.shop-heading,.login-heading) p {
+  max-width:68ch;
+  line-height:1.65;
+}
+html#digivated-root body.platform :is(.panel,.resource-card,.project-card,.login-panel,.submission-form,.owner-card,.project-account-card,.community-post) {
+  border-color:var(--dg-line)!important;
+  box-shadow:var(--dg-shadow)!important;
+}
+html#digivated-root body.platform :is(.button,button:not(.card-icon),.header-membership) {
+  transition:background-color 180ms ease,border-color 180ms ease,color 180ms ease,box-shadow 180ms ease;
+}
+html#digivated-root body.platform :is(.button.primary,.header-submit) {
+  background:linear-gradient(180deg,#9661dd,#7543bd)!important;
+  border-color:#c89bf966!important;
+  box-shadow:inset 0 1px 0 #ffffff38,0 6px 18px #7041af30!important;
+}
+html#digivated-root body.platform :is(.button.primary,.header-submit):hover:not(:disabled) {
+  background:linear-gradient(180deg,#a572e8,#8250ca)!important;
+  border-color:#d6adff99!important;
+  box-shadow:inset 0 1px 0 #ffffff48,0 8px 22px #7041af40!important;
+}
+html#digivated-root body.platform :is(input,textarea,select,button,a,summary,[tabindex]):focus-visible {
+  outline:2px solid var(--dg-accent)!important;
+  outline-offset:3px;
+}
+@media(prefers-reduced-motion:reduce) {
+  html#digivated-root body.platform :is(.button,button:not(.card-icon),.header-membership) { transition:none!important; }
+}
+@media(max-width:390px) {
+  html#digivated-root body.platform .compact-site-header .header-inner { gap:6px!important; }
+  html#digivated-root body.platform .compact-site-header .platform-brand { gap:5px; font-size:18px; }
+  html#digivated-root body.platform .compact-site-header .compact-header-actions { gap:2px; }
+  html#digivated-root body.platform .compact-site-header :is(.header-search,.notebook-navigation>summary) { width:40px!important; min-width:40px; }
+  html#digivated-root body.platform .compact-site-header .header-membership { padding-inline:8px; }
+}

@@ -1,5 +1,6 @@
 ---
 import Platform from '../../layouts/Platform.astro';
+import UiIcon from '../../components/UiIcon.astro';
 import {resourceGroups,resourceLinkCount} from '../../data/link-resources.mjs';
 import '../../styles/resource-links.css';
 const label = link => { const url = new URL(link.href); return url.hostname.replace(/^www\./,'') + (url.pathname === '/' ? '' : url.pathname.replace(/\/$/,'')); };
@@ -9,10 +10,10 @@ const label = link => { const url = new URL(link.href); return url.hostname.repl
   <header class="link-directory-head">
     <p class="link-directory-kicker">THE USEFUL INTERNET, ORGANIZED</p>
     <h1 id="links-title">Resources.</h1>
-    <p>Find the right place to design, build, learn, and grow. Browse by topic or search the full collection.</p>
+    <p>A considered index for making things. Find inspiration, tools, and practical places to learn or grow.</p>
   </header>
   <div class="link-directory-controls">
-    <label class="link-directory-search"><span class="sr-only">Search resources</span><input data-link-search type="search" placeholder="Search a site or topic" autocomplete="off"/></label>
+    <label class="link-directory-search"><UiIcon name="search" size={18}/><span class="sr-only">Search resources</span><input data-link-search type="search" placeholder="Search all resources" autocomplete="off"/></label>
     <label class="link-directory-select-label"><span class="sr-only">Choose a category</span><select data-link-select>{resourceGroups.map(group=><option value={group.id}>{group.title}</option>)}</select></label>
   </div>
   <div class="link-directory-layout">

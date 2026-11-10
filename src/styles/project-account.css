@@ -190,3 +190,11 @@ html body.platform.light-theme .creator-feed-shell .creator-social-main{width:10
 html body.platform.light-theme .creator-feed-shell .creator-tabs{display:flex;min-width:0;overflow-x:auto}
 html body.platform.light-theme .creator-feed-shell .creator-tabs button{min-width:0;white-space:nowrap}
 @media(max-width:740px){html body.platform.light-theme .creator-feed-shell .creator-social-heading{padding:0 16px 18px;gap:14px}html body.platform.light-theme .creator-feed-shell .creator-quicknav{width:100%;gap:4px}html body.platform.light-theme .creator-feed-shell .creator-quicknav a{padding:8px 10px;font-size:.78rem}html body.platform.light-theme .creator-feed-shell .creator-social-main>.creator-tabs button{padding-inline:8px;font-size:.83rem}}
+
+/* Creator feed: keep the introduction together and shortcuts legible at every width. */
+html body.platform.light-theme .creator-feed-shell .creator-social-heading-copy{flex:1 1 440px;min-width:0}
+html body.platform.light-theme .creator-feed-shell .creator-social-heading-copy>p:last-child{max-width:570px;margin:0;color:#bdb1c5;line-height:1.55}
+html body.platform.light-theme .creator-feed-shell .creator-social-heading h1{background:none;-webkit-text-fill-color:currentColor;color:#f6f2f8}
+html body.platform.light-theme .creator-feed-shell .creator-quicknav{max-width:100%;align-self:flex-end}
+html body.platform.light-theme .creator-feed-shell .creator-quicknav a:focus-visible,html body.platform.light-theme .creator-feed-shell .creator-tabs button:focus-visible{outline:2px solid #c996f2;outline-offset:2px}
+@media(max-width:760px){html body.platform.light-theme .creator-feed-shell .creator-social-heading-copy{width:100%}html body.platform.light-theme .creator-feed-shell .creator-quicknav{align-self:auto;margin-top:14px}html body.platform.light-theme .creator-feed-shell .creator-social-main>.creator-tabs{scrollbar-width:none}html body.platform.light-theme .creator-feed-shell .creator-social-main>.creator-tabs::-webkit-scrollbar{display:none}}

@@ -1,0 +1,86 @@
+/* Homepage composition. Keep the moving signal as the only ambient motion. */
+html#digivated-root body .home-editorial {
+  width:min(1120px,calc(100% - 48px));
+  min-height:clamp(480px,62svh,650px);
+  padding-block:clamp(78px,12vh,132px) clamp(74px,11vh,116px);
+  margin-inline:auto;
+}
+html#digivated-root .home-editorial::before {
+  background:radial-gradient(ellipse 46% 52% at 50% 54%,#6d37b63d,transparent 80%),
+    radial-gradient(ellipse 34% 42% at 8% 70%,#6b35af27,transparent 82%),
+    radial-gradient(ellipse 34% 42% at 94% 29%,#7142ae22,transparent 82%);
+  animation:none!important;
+}
+html#digivated-root .home-editorial-kicker {
+  margin-bottom:26px;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.18em;
+}
+html#digivated-root .home-editorial h1 {
+  margin-inline:auto;
+  max-width:990px;
+  font-size:clamp(48px,6.5vw,88px);
+  line-height:1.035;
+  letter-spacing:-.064em;
+  text-wrap:balance;
+}
+html#digivated-root .home-editorial>p:not(.home-editorial-kicker) {
+  max-width:48ch;
+  margin:28px auto 0;
+  color:#b9b4c2;
+  font-size:clamp(15px,1.4vw,17px);
+  line-height:1.6;
+  text-wrap:pretty;
+}
+html#digivated-root .home-editorial-actions { margin-top:28px; gap:10px; }
+html#digivated-root .home-editorial-actions .button { min-height:44px; padding-inline:20px; }
+html#digivated-root .home-featured-projects {
+  position:relative;
+  padding-block:40px 38px;
+  border-top:1px solid #ffffff10;
+}
+html#digivated-root .home-featured-heading {
+  justify-content:space-between;
+  width:min(1160px,calc(100% - 48px));
+  margin-bottom:24px;
+}
+html#digivated-root .home-featured-heading h2 {
+  color:#f3f0f8!important;
+  background:none!important;
+  -webkit-text-fill-color:currentColor!important;
+  filter:none!important;
+  font-size:clamp(20px,2vw,26px)!important;
+  font-weight:630;
+  letter-spacing:-.045em;
+}
+html#digivated-root .home-featured-heading h2::before,
+html#digivated-root .home-featured-heading h2::after,
+html#digivated-root .home-featured-heading:has(h2)::after { content:none!important; animation:none!important; }
+html#digivated-root .home-featured-heading>a {
+  position:static;
+  min-height:40px;
+  color:#cdb7ed;
+  font-size:12px;
+  font-weight:550;
+}
+html#digivated-root .home-featured-heading>a:hover { color:#f1e8ff; }
+html#digivated-root .project-reel { border-top:1px solid #ffffff10; }
+html#digivated-root .project-reel-heading { margin-bottom:10px; }
+html#digivated-root .project-reel-title h2 { font-size:11px; letter-spacing:.12em; }
+@media(max-width:600px) {
+  html#digivated-root body .home-editorial {
+    width:calc(100% - 32px);
+    min-height:430px;
+    padding-block:70px 62px;
+  }
+  html#digivated-root .home-editorial-kicker { margin-bottom:22px; font-size:9px; }
+  html#digivated-root .home-editorial h1 { font-size:clamp(38px,10vw,55px); line-height:1.07; }
+  html#digivated-root .home-editorial>p:not(.home-editorial-kicker) { margin-top:22px; font-size:15px; }
+  html#digivated-root .home-editorial-actions { margin-top:24px; }
+  html#digivated-root .home-editorial-actions .button { min-height:42px; padding-inline:14px; }
+  html#digivated-root .home-featured-projects { padding-block:34px 30px; }
+  html#digivated-root .home-featured-heading { width:calc(100% - 32px); flex-direction:row; align-items:center; gap:10px; }
+  html#digivated-root .home-featured-heading h2 { font-size:20px!important; }
+  html#digivated-root .home-featured-heading>a { min-height:40px; white-space:nowrap; font-size:11px; }
+}
