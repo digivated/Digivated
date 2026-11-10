@@ -16,6 +16,12 @@ for(const width of [375,1440])test(`Creators feed starts cleanly and stays usabl
  await page.goto(base+'/creators');
  await expect(page.locator('#creator-people-strip')).toBeVisible();
  await expect(page.getByRole('link',{name:/Ada Maker/}).first()).toBeVisible();
+ if(width>1000){
+  await expect(page.locator('.creator-hub-rail')).toBeVisible();
+  await expect(page.locator('#creator-suggestions')).toContainText('Noah Builder');
+  await page.locator('#creator-see-people').click();
+  await expect(page.locator('#creators-grid')).toContainText('Ada Maker');
+ }
  await expect(page.locator('#creators-status')).not.toContainText('Loading');
  await page.getByRole('button',{name:'People',exact:true}).click();
  await expect(page.locator('#creators-grid')).toContainText('Ada Maker');
@@ -35,6 +41,28 @@ test('a shared creator post remains visible after the latest feed loads',async({
  await page.goto(base+'/creators?post='+id);
  await expect(page.locator('.creator-post')).toContainText('A new project is on the way');
  await expect(page.locator('#creators-status')).toContainText('Shared conversation');
+});
+test('switching to People does not let an older feed request replace the directory',async({page})=>{
+ let delayPosts=false;
+ await page.route('**/api/creator-profile*',async route=>{
+  const action=new URL(route.request().url()).searchParams.get('action');
+  if(action==='discover')return route.fulfill({json:{creators:people}});
+  if(action==='posts'){
+   if(delayPosts)await new Promise(resolve=>setTimeout(resolve,150));
+   return route.fulfill({json:{posts:[],next:null}});
+  }
+  return route.fulfill({status:401,json:{error:'Sign in required'}});
+ });
+ await page.route('**/api/projects*',route=>route.fulfill({json:{items:[],next:null}}));
+ await page.goto(base+'/creators');
+ await expect(page.locator('#creators-status')).not.toContainText('Loading');
+ delayPosts=true;
+ await page.getByRole('button',{name:'Latest',exact:true}).click();
+ await page.getByRole('button',{name:'People',exact:true}).click();
+ await expect(page.locator('#creators-grid')).toContainText('Ada Maker');
+ await page.waitForTimeout(200);
+ await expect(page.locator('#creators-status')).toContainText('2 creators');
+ await expect(page.locator('#creators-feed')).toBeHidden();
 });
 
 test('the inbox handles unavailable sign-in without trapping visitors',async({page})=>{

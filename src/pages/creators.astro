@@ -1,6 +1,7 @@
 ---
 import Platform from '../layouts/Platform.astro';
 import '../styles/project-account.css';
+import '../styles/creator-hub.css';
 ---
 <Platform
   title="Creators"
@@ -22,6 +23,14 @@ import '../styles/project-account.css';
       </header>
 
       <div class="creator-social-layout">
+        <aside class="creator-hub-rail" aria-label="Creator navigation">
+          <p>YOUR SPACE</p>
+          <a class="active" href="/creators" aria-current="page">Conversation</a>
+          <a href="/discover">Explore projects</a>
+          <a href="/inbox">Messages</a>
+          <a id="creator-rail-profile" href="/account">Your profile</a>
+          <div class="creator-hub-rail-note">A place to share progress, ask useful questions, and meet other builders.</div>
+        </aside>
         <main class="creator-social-main">
           <nav class="creator-tabs" aria-label="Creator feed">
             <button class="active" type="button" data-creator-filter="latest">Latest</button>
@@ -50,6 +59,7 @@ import '../styles/project-account.css';
             </div>
           </section>
 
+          <button id="creator-new-posts" class="creator-new-posts" type="button" hidden>New posts are ready · Show updates</button>
           <p id="creators-status" role="status" aria-live="polite">Loading the conversation…</p>
           <div id="creators-feed" class="creator-timeline" aria-label="Creator posts"></div>
           <div id="creators-empty" class="creator-empty" hidden>
@@ -74,6 +84,10 @@ import '../styles/project-account.css';
             <div id="creators-grid" class="creator-directory-list"></div>
           </div>
         </main>
+        <aside class="creator-hub-sidebar" aria-label="Discover creators">
+          <section class="creator-hub-panel"><div class="creator-hub-panel-head"><h2>People to know</h2><button type="button" id="creator-see-people">See all</button></div><div id="creator-suggestions" class="creator-suggestions"><p>Finding builders…</p></div></section>
+          <section class="creator-hub-panel creator-hub-about"><h2>Build in public</h2><p>Share a real update, ask for feedback, and follow the people behind projects you like.</p><a href="/submit-project">Share your project <span aria-hidden="true">↗</span></a></section>
+        </aside>
       </div>
     </div>
   </section>

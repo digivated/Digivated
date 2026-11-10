@@ -549,12 +549,12 @@ html#digivated-root .site-atmosphere::after {
 }
 html#digivated-root .site-atmosphere::before {
   width:min(54vw,680px); aspect-ratio:1;
-  background:radial-gradient(circle,#a469ff3c 0%,#8040dc23 36%,transparent 72%);
+  background:radial-gradient(circle,#a469ff27 0%,#8040dc16 36%,transparent 72%);
   animation:digivated-atmosphere-orbit 24s ease-in-out infinite alternate;
 }
 html#digivated-root .site-atmosphere::after {
   width:min(24vw,300px); aspect-ratio:1;
-  background:radial-gradient(circle,#d7b9ff55 0%,#ad70f030 28%,transparent 72%);
+  background:radial-gradient(circle,#d7b9ff36 0%,#ad70f01c 28%,transparent 72%);
   animation:digivated-atmosphere-trace 18s ease-in-out infinite alternate;
 }
 @keyframes digivated-atmosphere-orbit {
@@ -576,7 +576,7 @@ html#digivated-root .site-atmosphere::after {
   html#digivated-root .site-atmosphere { display:none; }
 }
 
-/* Home-only signal waves and drifting points. Paint stays inside a soft edge
+/* Home-only drifting points. Paint stays inside a soft edge
    mask; transforms and opacity provide the motion without a canvas loop. */
 html#digivated-root .home-editorial>.home-kinetic {
   position:absolute; z-index:1; left:50%; top:-50px; bottom:-60px; width:100vw;
@@ -584,51 +584,25 @@ html#digivated-root .home-editorial>.home-kinetic {
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
   mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
 }
-html#digivated-root .home-kinetic-beam {
-  position:absolute; left:0; width:min(54vw,680px); height:100px;
-  border-top:1px solid #bb91ee8c; border-radius:50% 50% 0 0;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);
-  will-change:transform,opacity;
-}
-html#digivated-root .home-kinetic-beam::after {
-  content:""; position:absolute; inset:14px 0 auto; height:100px;
-  border-top:1px solid #ab7de061; border-radius:50% 50% 0 0;
-}
-html#digivated-root .home-kinetic-beam:first-child { top:25%; animation:digivated-light-trail 22s linear infinite; }
-html#digivated-root .home-kinetic-beam:nth-child(2) { top:71%; animation:digivated-light-trail-reverse 27s linear -9s infinite; }
 html#digivated-root .home-kinetic-spark {
   position:absolute; width:5px; height:5px; border-radius:50%;
   background:#dfc4ff; box-shadow:0 0 9px 3px #b26cff7d,0 0 28px 7px #8e47dc45;
   animation:digivated-signal-drift 7s ease-in-out infinite alternate;
 }
-html#digivated-root .home-kinetic-spark:nth-child(3) { left:8%; top:26%; animation-delay:-1s; }
-html#digivated-root .home-kinetic-spark:nth-child(4) { left:18%; top:71%; animation-delay:-5s; animation-duration:9s; }
-html#digivated-root .home-kinetic-spark:nth-child(5) { left:29%; top:17%; animation-delay:-3s; }
-html#digivated-root .home-kinetic-spark:nth-child(6) { right:22%; top:19%; animation-delay:-6s; animation-duration:10s; }
-html#digivated-root .home-kinetic-spark:nth-child(7) { right:10%; top:48%; animation-delay:-2s; }
-html#digivated-root .home-kinetic-spark:nth-child(8) { right:27%; top:80%; animation-delay:-4s; animation-duration:8s; }
-@keyframes digivated-light-trail {
-  0% { transform:translate3d(-60vw,12px,0) rotate(-6deg); opacity:0; }
-  16%,75% { opacity:.48; }
-  100% { transform:translate3d(110vw,-24px,0) rotate(-6deg); opacity:0; }
-}
-@keyframes digivated-light-trail-reverse {
-  0% { transform:translate3d(110vw,-18px,0) rotate(5deg); opacity:0; }
-  16%,78% { opacity:.34; }
-  100% { transform:translate3d(-60vw,22px,0) rotate(5deg); opacity:0; }
-}
+html#digivated-root .home-kinetic-spark:nth-child(1) { left:8%; top:26%; animation-delay:-1s; }
+html#digivated-root .home-kinetic-spark:nth-child(2) { left:18%; top:71%; animation-delay:-5s; animation-duration:9s; }
+html#digivated-root .home-kinetic-spark:nth-child(3) { left:29%; top:17%; animation-delay:-3s; }
+html#digivated-root .home-kinetic-spark:nth-child(4) { right:22%; top:19%; animation-delay:-6s; animation-duration:10s; }
+html#digivated-root .home-kinetic-spark:nth-child(5) { right:10%; top:48%; animation-delay:-2s; }
+html#digivated-root .home-kinetic-spark:nth-child(6) { right:27%; top:80%; animation-delay:-4s; animation-duration:8s; }
 @keyframes digivated-signal-drift {
   from { transform:translate3d(-9px,11px,0) scale(.7); opacity:.2; }
   to { transform:translate3d(13px,-15px,0) scale(1.1); opacity:.9; }
 }
 @media(max-width:760px) {
-  html#digivated-root .home-kinetic-beam { width:75vw; }
-  html#digivated-root .home-kinetic-spark:nth-child(5),
-  html#digivated-root .home-kinetic-spark:nth-child(6) { display:none; }
+  html#digivated-root .home-kinetic-spark:nth-child(1),
+  html#digivated-root .home-kinetic-spark:nth-child(2) { display:none; }
 }
 @media(prefers-reduced-motion:reduce) {
-  html#digivated-root .home-kinetic-beam,
-  html#digivated-root .home-kinetic-spark { animation:none; opacity:.35; }
-  html#digivated-root .home-kinetic-beam { display:none; }
+  html#digivated-root .home-kinetic-spark { animation:none; opacity:.25; }
 }
