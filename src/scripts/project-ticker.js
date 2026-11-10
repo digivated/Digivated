@@ -6,9 +6,10 @@ for (const reel of document.querySelectorAll('[data-project-ticker]')) {
   const toggle = reel.querySelector('[data-reel-pause]');
   const status = reel.querySelector('[data-reel-status]');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const mobile = matchMedia('(max-width: 760px)');
   let paused = false, hovering = false, focused = false, touching = false, visible = false;
   let frame = 0, last = 0, position = 0, groupWidth = 0, ready = false;
-  const canMove = () => ready && !paused && !hovering && !focused && !touching && visible && !document.hidden && !reduced.matches;
+  const canMove = () => ready && !paused && !hovering && !focused && !touching && visible && !document.hidden && !reduced.matches && !mobile.matches;
   function tick(time) {
     frame = 0;
     if (!canMove()) return;
@@ -20,13 +21,13 @@ for (const reel of document.querySelectorAll('[data-project-ticker]')) {
   function sync() {
     const moving = canMove();
     reel.dataset.moving = String(moving);
-    reel.dataset.paused = String(paused || reduced.matches);
-    toggle.disabled = reduced.matches || !ready;
-    toggle.setAttribute('aria-pressed', String(paused || reduced.matches));
-    toggle.setAttribute('aria-label', reduced.matches ? 'Automatic motion disabled by your preferences' : paused ? 'Play project reel' : 'Pause project reel');
-    reel.querySelector('[data-reel-pause-icon]').hidden = paused || reduced.matches;
-    reel.querySelector('[data-reel-play-icon]').hidden = !paused && !reduced.matches;
-    status.textContent = reduced.matches ? 'Browse at your own pace.' : paused ? 'Take a closer look.' : 'Good things are being built.';
+    reel.dataset.paused = String(paused || reduced.matches || mobile.matches);
+    toggle.disabled = reduced.matches || mobile.matches || !ready;
+    toggle.setAttribute('aria-pressed', String(paused || reduced.matches || mobile.matches));
+    toggle.setAttribute('aria-label', mobile.matches ? 'Swipe or use arrows to browse projects' : reduced.matches ? 'Automatic motion disabled by your preferences' : paused ? 'Play project reel' : 'Pause project reel');
+    reel.querySelector('[data-reel-pause-icon]').hidden = paused || reduced.matches || mobile.matches;
+    reel.querySelector('[data-reel-play-icon]').hidden = !paused && !reduced.matches && !mobile.matches;
+    status.textContent = mobile.matches ? 'Swipe to explore projects.' : reduced.matches ? 'Browse at your own pace.' : paused ? 'Take a closer look.' : 'Good things are being built.';
     if (!moving) { cancelAnimationFrame(frame); frame = 0; last = 0; }
     else if (!frame) { last = 0; position = rail.scrollLeft; frame = requestAnimationFrame(tick); }
   }
@@ -53,6 +54,7 @@ for (const reel of document.querySelectorAll('[data-project-ticker]')) {
   rail.addEventListener('focusout', event => { if (!rail.contains(event.relatedTarget)) { focused = false; sync(); } });
   document.addEventListener('visibilitychange', sync);
   reduced.addEventListener('change', sync);
+  mobile.addEventListener('change', sync);
   const observer = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; sync(); }, { rootMargin: '80px' });
   observer.observe(reel);
 

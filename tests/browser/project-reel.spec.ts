@@ -57,6 +57,10 @@ test('a missing thumbnail keeps its project in the reel and mobile never overflo
  await expect(page.locator('[data-reel-count]')).toHaveText('4 projects in the mix');await page.locator('.project-reel').scrollIntoViewIfNeeded();
  await expect(page.locator('.project-reel-card:not([aria-hidden])')).toHaveCount(4);
  await expect(page.locator('.project-reel-monogram').first()).toBeVisible();
+ await expect(page.locator('.project-reel')).toHaveAttribute('data-moving','false');
+ const rail=page.locator('[data-reel-window]'),start=await rail.evaluate(e=>e.scrollLeft);
+ await page.mouse.move(0,0);await page.mouse.wheel(0,450);await page.waitForTimeout(200);
+ expect(await rail.evaluate(e=>e.scrollLeft)).toBe(start);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);
 });
 test('a failed catalogue hides the optional reel without breaking the directory',async({page})=>{

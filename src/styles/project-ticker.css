@@ -67,3 +67,5 @@ html body.platform.light-theme.moments-theme .project-reel-footer a { display:in
 }
 
 html body.platform.light-theme.moments-theme .project-reel-controls button:disabled { opacity:.45; cursor:default; }
+
+@media(max-width:760px){.project-reel-controls [data-reel-pause]{display:none!important}}
