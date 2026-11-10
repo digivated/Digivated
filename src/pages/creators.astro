@@ -2,19 +2,80 @@
 import Platform from '../layouts/Platform.astro';
 import '../styles/project-account.css';
 ---
-<Platform title="Creators" description="A place for independent builders to share progress, ask questions, and meet other creators.">
+<Platform
+  title="Creators"
+  description="The Digivated builder feed. Share progress, exchange feedback, and connect with independent creators."
+>
   <section class="creator-social" aria-labelledby="creators-title">
-    <div class="creator-feed-shell"><header class="creator-social-heading"><div class="creator-social-heading-copy"><p class="eyebrow">THE BUILDER CONVERSATION</p><h1 id="creators-title">Creators</h1><p>Share what you’re making, ask for feedback, and meet the people behind the projects.</p></div><nav class="creator-quicknav" aria-label="Creator shortcuts"><a href="/discover">Projects</a><a href="/inbox">Inbox <span id="creator-inbox-count"></span></a><a id="creator-my-profile" href="/account">My profile</a></nav></header>
-    <div class="creator-social-layout">
-      <main class="creator-social-main">
-        <nav class="creator-tabs" aria-label="Creator feed"><button class="active" type="button" data-creator-filter="latest">Latest</button><button type="button" data-creator-filter="following">Following</button><button type="button" data-creator-filter="saved">Saved</button><button type="button" data-creator-filter="people">People</button></nav>
-        <section id="creator-composer" class="creator-composer" hidden aria-label="Write a post"><label for="creator-post-body">What are you building?</label><textarea id="creator-post-body" maxlength="280" rows="3" placeholder="Share progress, ask a question, or start a conversation…"></textarea><div id="creator-media-preview" class="creator-media-preview" hidden></div><div class="creator-composer-tools"><label class="creator-media-upload" for="creator-media-input">＋ Add photo or video</label><input id="creator-media-input" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" hidden/></div><div class="creator-composer-bottom"><span>Do not spam links. · <span id="creator-post-count">0</span>/280</span><button id="creator-post-submit" class="button primary" type="button">Post</button></div></section>
-        <p id="creators-status" role="status" aria-live="polite">Loading the conversation…</p>
-        <div id="creators-feed" class="creator-timeline"></div><div id="creators-empty" class="creator-empty" hidden><div class="creator-empty-mark" aria-hidden="true"><img src="/digivated-favicon.png" alt="" width="64" height="64"/></div><p class="eyebrow">START THE CONVERSATION</p><h2>Every project starts somewhere.</h2><p>Tell builders what you’re making, ask a specific question, or share a small win. The first post is yours.</p><div class="creator-empty-actions"><button type="button" data-prompt="What are you building today?">What are you building?</button><button type="button" data-prompt="What feedback would help you most right now?">Ask for feedback</button><a href="/discover">Explore projects ↗</a></div><div id="creator-project-picks" class="creator-project-picks"></div></div>
-        <button id="creators-more" class="button" type="button" hidden>Load more</button>
-        <div id="creators-people" hidden><label class="creator-search-label">Find a creator<input id="creator-search" type="search" placeholder="Search builders by name or bio" autocomplete="off"/></label><div id="creators-grid" class="creator-directory-list"></div></div>
-      </main>
-    </div></div>
+    <div class="creator-feed-shell">
+      <header class="creator-social-heading">
+        <div class="creator-social-heading-copy">
+          <p class="eyebrow">DIGIVATED COMMUNITY</p>
+          <h1 id="creators-title">Creators</h1>
+          <p>Build in public. Share progress, get specific feedback, and meet the people behind the work.</p>
+        </div>
+        <nav class="creator-quicknav" aria-label="Creator shortcuts">
+          <a href="/discover">Explore projects</a>
+          <a href="/inbox">Inbox <span id="creator-inbox-count" aria-live="polite"></span></a>
+          <a id="creator-my-profile" href="/account">My profile</a>
+        </nav>
+      </header>
+
+      <div class="creator-social-layout">
+        <main class="creator-social-main">
+          <nav class="creator-tabs" aria-label="Creator feed">
+            <button class="active" type="button" data-creator-filter="latest">Latest</button>
+            <button type="button" data-creator-filter="following">Following</button>
+            <button type="button" data-creator-filter="saved">Saved</button>
+            <button type="button" data-creator-filter="people">People</button>
+          </nav>
+          <div id="creator-people-strip" class="creator-people-strip" hidden aria-label="People to know"></div>
+
+          <section id="creator-composer" class="creator-composer" hidden aria-label="Write a post">
+            <label for="creator-post-body">What are you building?</label>
+            <textarea
+              id="creator-post-body"
+              maxlength="280"
+              rows="3"
+              placeholder="Share progress, ask a question, or start a conversation…"
+            ></textarea>
+            <div id="creator-media-preview" class="creator-media-preview" hidden></div>
+            <div class="creator-composer-tools">
+              <button id="creator-media-trigger" class="creator-media-upload" type="button">Add photo or video</button>
+              <input id="creator-media-input" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" hidden />
+            </div>
+            <div class="creator-composer-bottom">
+              <span>Keep links on your project profile · <span id="creator-post-count">0</span>/280</span>
+              <button id="creator-post-submit" class="button primary" type="button">Post</button>
+            </div>
+          </section>
+
+          <p id="creators-status" role="status" aria-live="polite">Loading the conversation…</p>
+          <div id="creators-feed" class="creator-timeline" aria-label="Creator posts"></div>
+          <div id="creators-empty" class="creator-empty" hidden>
+            <div class="creator-empty-mark" aria-hidden="true">
+              <img src="/digivated-favicon.png" alt="" width="64" height="64" />
+            </div>
+            <p class="eyebrow">JOIN THE CONVERSATION</p>
+            <h2>What are you working on?</h2>
+            <p>Share a small win, a decision you’re making, or a question another builder can answer.</p>
+            <div class="creator-empty-actions">
+              <button type="button" data-prompt="What are you building today?">Share an update</button>
+              <button type="button" data-prompt="What feedback would help you most right now?">Ask for feedback</button>
+              <a href="/discover">Explore projects ↗</a>
+            </div>
+            <div id="creator-project-picks" class="creator-project-picks"></div>
+          </div>
+          <button id="creators-more" class="button" type="button" hidden>Load more</button>
+          <div id="creators-people" hidden>
+            <label class="creator-search-label">Find a creator
+              <input id="creator-search" type="search" placeholder="Search builders by name or bio" autocomplete="off" />
+            </label>
+            <div id="creators-grid" class="creator-directory-list"></div>
+          </div>
+        </main>
+      </div>
+    </div>
   </section>
   <script>import '../scripts/creators.js';</script>
 </Platform>

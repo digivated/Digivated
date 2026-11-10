@@ -198,3 +198,76 @@ html body.platform.light-theme .creator-feed-shell .creator-social-heading h1{ba
 html body.platform.light-theme .creator-feed-shell .creator-quicknav{max-width:100%;align-self:flex-end}
 html body.platform.light-theme .creator-feed-shell .creator-quicknav a:focus-visible,html body.platform.light-theme .creator-feed-shell .creator-tabs button:focus-visible{outline:2px solid #c996f2;outline-offset:2px}
 @media(max-width:760px){html body.platform.light-theme .creator-feed-shell .creator-social-heading-copy{width:100%}html body.platform.light-theme .creator-feed-shell .creator-quicknav{align-self:auto;margin-top:14px}html body.platform.light-theme .creator-feed-shell .creator-social-main>.creator-tabs{scrollbar-width:none}html body.platform.light-theme .creator-feed-shell .creator-social-main>.creator-tabs::-webkit-scrollbar{display:none}}
+
+/* Conversation layout: one readable stream, visible people, and quiet controls. */
+html#digivated-root body.platform .creator-social{padding-block:44px 96px;background:radial-gradient(ellipse 560px 270px at 50% 0,#5224751b,transparent 78%),#08080b}
+html#digivated-root body.platform .creator-feed-shell{width:min(820px,100%)}
+html#digivated-root body.platform .creator-feed-shell .creator-social-heading{align-items:end;padding-bottom:28px}
+html#digivated-root body.platform .creator-feed-shell .creator-social-heading h1{font-size:clamp(40px,5vw,60px);letter-spacing:-.055em}
+html#digivated-root body.platform .creator-feed-shell .creator-social-heading-copy>p:last-child{font-size:15px;line-height:1.6}
+html#digivated-root body.platform .creator-feed-shell .creator-quicknav{gap:4px}
+html#digivated-root body.platform .creator-feed-shell .creator-quicknav a{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 12px;border:1px solid transparent;border-radius:8px;color:#bdb5c7;font-size:12px;font-weight:550}
+html#digivated-root body.platform .creator-feed-shell .creator-quicknav a:hover{border-color:#6e4e89;background:#201629;color:#f3eafa}
+html#digivated-root body.platform .creator-feed-shell .creator-quicknav #creator-my-profile{border-color:#59436a;background:#1d1724;color:#eee2f6}
+html#digivated-root body.platform .creator-feed-shell .creator-social-main{min-height:68vh;border-top:1px solid #ffffff22}
+html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-tabs{position:sticky;top:0;z-index:3;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible;border-bottom:1px solid #ffffff22;background:#0b0a0ef5;backdrop-filter:none}
+html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-tabs button{display:grid;place-items:center;min-height:56px;padding:0 8px;border:0;border-bottom:2px solid transparent;border-radius:0!important;background:transparent!important;color:#aaa2b3;font-size:13px;font-weight:550;transition:color .15s ease,background-color .15s ease}
+html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-tabs button:hover{background:#ffffff08!important;color:#fff}
+html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-tabs button.active{border-bottom-color:#bb91ec;background:#ffffff07!important;color:#f5eff9}
+html#digivated-root body.platform .creator-feed-shell .creator-people-strip{display:flex;gap:15px;align-items:center;min-height:88px;padding:15px 24px;border-bottom:1px solid #ffffff1c;background:#100e13;scrollbar-width:thin}
+html#digivated-root body.platform .creator-feed-shell .creator-people-strip[hidden]{display:none}
+html#digivated-root body.platform .creator-feed-shell .creator-people-strip>span{max-width:100px;color:#aaa0b4;font-size:10px;line-height:1.4;letter-spacing:.09em}
+html#digivated-root body.platform .creator-feed-shell .creator-people-strip a{width:72px;gap:7px;color:#dcd4e4}
+html#digivated-root body.platform .creator-feed-shell .creator-people-strip a .creator-avatar{width:44px;height:44px;border-radius:12px}
+html#digivated-root body.platform .creator-feed-shell .creator-people-strip a:hover{color:#d5a9fc}
+html#digivated-root body.platform .creator-feed-shell .creator-people-strip button{color:#d0a4ef}
+html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-composer{padding:25px 24px 21px;border-bottom:1px solid #ffffff21;background:#0d0c10}
+html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-composer label[for=creator-post-body]{font-size:14px;font-weight:650}
+html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-composer textarea{min-height:86px;max-height:260px;margin-top:10px;color:#eee8f3;font-size:15px;line-height:1.55}
+html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-composer textarea::placeholder{color:#8f849a}
+html#digivated-root body.platform .creator-feed-shell .creator-composer-bottom{align-items:center;gap:12px}
+html#digivated-root body.platform .creator-feed-shell .creator-composer-bottom>span{color:#93899f;font-size:11px}
+html#digivated-root body.platform .creator-feed-shell .creator-media-upload{min-height:38px;padding:8px 10px;border:0;border-radius:7px;background:transparent;color:#caa4e8;font-size:12px}
+html#digivated-root body.platform .creator-feed-shell .creator-media-upload:hover{background:#a77bdf18}
+html#digivated-root body.platform .creator-feed-shell #creators-status{margin:0;padding:14px 24px;border-bottom:1px solid #ffffff14;color:#9c91a5;font-size:12px}
+html#digivated-root body.platform .creator-feed-shell #creators-status:empty{display:none}
+html#digivated-root body.platform .creator-feed-shell .creator-post{padding:23px 24px;background:transparent;border-bottom:1px solid #ffffff1b;transition:background-color .15s ease}
+html#digivated-root body.platform .creator-feed-shell .creator-post:hover{background:#ffffff07}
+html#digivated-root body.platform .creator-feed-shell .creator-post-media{max-height:530px;border-radius:12px;border-color:#ffffff26}
+html#digivated-root body.platform .creator-feed-shell .creator-post-actions{max-width:520px;margin-top:14px}
+html#digivated-root body.platform .creator-feed-shell .creator-post-actions button{min-height:40px;color:#a79bad}
+html#digivated-root body.platform .creator-feed-shell .creator-post-actions button:hover{color:#e3c5fb}
+html#digivated-root body.platform .creator-feed-shell .creator-empty{grid-template-columns:54px minmax(0,1fr);padding:33px 24px 45px;background:none}
+html#digivated-root body.platform .creator-feed-shell .creator-empty h2{font-size:22px;letter-spacing:-.035em}
+html#digivated-root body.platform .creator-feed-shell .creator-empty>p:not(.eyebrow){color:#afa5b8}
+html#digivated-root body.platform .creator-feed-shell .creator-empty-actions{gap:7px;margin-top:8px}
+html#digivated-root body.platform .creator-feed-shell .creator-empty-actions :is(button,a){min-height:39px;border-color:#ffffff28;background:#161319;color:#dacde3;font-size:12px}
+html#digivated-root body.platform .creator-feed-shell .creator-empty-actions :is(button,a):hover{border-color:#8763a2;background:#251a30}
+html#digivated-root body.platform .creator-feed-shell #creators-people{padding:28px 24px}
+html#digivated-root body.platform .creator-feed-shell .creator-directory-card{padding:17px 0}
+html#digivated-root body.platform .creator-feed-shell .creator-directory-identity>span:last-child span{white-space:normal;line-height:1.5}
+@media(max-width:760px){
+ html#digivated-root body.platform .creator-social{padding:20px 0 66px}
+ html#digivated-root body.platform .creator-feed-shell .creator-social-heading{padding:8px 18px 20px}
+ html#digivated-root body.platform .creator-feed-shell .creator-social-heading h1{font-size:clamp(34px,10vw,46px)}
+ html#digivated-root body.platform .creator-feed-shell .creator-quicknav{gap:4px;margin-top:18px}
+ html#digivated-root body.platform .creator-feed-shell .creator-quicknav a{min-height:38px;padding:7px 10px}
+ html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-tabs{top:0}
+ html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-tabs button{min-height:50px;padding-inline:2px;font-size:12px}
+ html#digivated-root body.platform .creator-feed-shell .creator-people-strip{padding:13px 18px}
+ html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-composer{padding:20px 18px}
+ html#digivated-root body.platform .creator-feed-shell .creator-post{padding:19px 18px}
+ html#digivated-root body.platform .creator-feed-shell .creator-empty{padding:27px 18px 38px}
+ html#digivated-root body.platform .creator-feed-shell #creators-people{padding:22px 18px}
+}
+@media(max-width:390px){html#digivated-root body.platform .creator-feed-shell .creator-social-heading{padding-inline:16px}html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-tabs button{font-size:11px}html#digivated-root body.platform .creator-feed-shell .creator-post,html#digivated-root body.platform .creator-feed-shell .creator-social-main>.creator-composer{padding-inline:16px}}
+@media(prefers-reduced-motion:reduce){html#digivated-root body.platform .creator-feed-shell :is(.creator-post,.creator-social-main>.creator-tabs button){transition:none}}
+/* The empty feed keeps its message in the reading column at every breakpoint. */
+html#digivated-root body.platform .creator-feed-shell .creator-empty-mark{grid-column:1;grid-row:1 / span 3}
+html#digivated-root body.platform .creator-feed-shell .creator-empty>.eyebrow,
+html#digivated-root body.platform .creator-feed-shell .creator-empty>h2,
+html#digivated-root body.platform .creator-feed-shell .creator-empty>p:not(.eyebrow),
+html#digivated-root body.platform .creator-feed-shell .creator-empty-actions{grid-column:2;min-width:0}
+html#digivated-root body.platform .creator-feed-shell .creator-empty>h2{max-width:32ch;overflow-wrap:normal}
+html#digivated-root body.platform .creator-feed-shell .creator-empty>p:not(.eyebrow){max-width:55ch;margin:0}
+html#digivated-root body.platform .creator-feed-shell .creator-project-picks{grid-column:1 / -1}

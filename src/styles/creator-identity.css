@@ -1,0 +1,88 @@
+/* A single social reading surface for profiles and private conversations. */
+html#digivated-root body.platform .creator-public {
+  width:min(860px,calc(100% - 40px));
+  margin:32px auto 96px;
+}
+html#digivated-root body.platform .creator-back {
+  display:inline-flex;align-items:center;min-height:40px;margin-bottom:22px;
+  color:#bbb2c4;font-size:13px;text-decoration:none;
+}
+html#digivated-root body.platform .creator-back:hover {color:#f5e9ff}
+html#digivated-root body.platform .creator-cover {
+  height:clamp(150px,23vw,218px);padding:22px 26px;border:1px solid #312638;
+  border-radius:12px 12px 0 0;
+  background:radial-gradient(ellipse 46% 88% at 82% 70%,#67428755,transparent 75%),
+    linear-gradient(115deg,#0c0b10,#191321 70%,#100d14);
+  color:#aea0bc;font-size:10px;font-weight:600;letter-spacing:.17em;
+}
+html#digivated-root body.platform .creator-cover+.creator-public-intro {
+  display:block;margin:0;padding:0 28px 30px;border:1px solid #312638;border-top:0;
+  border-radius:0;background:#0d0b10;box-shadow:none;
+}
+html#digivated-root body.platform .creator-cover+.creator-public-intro .creator-avatar {
+  display:grid;width:84px;height:84px;margin-top:-38px;margin-bottom:16px;
+  border:4px solid #0d0b10;border-radius:18px;background:#2d1d3f;font-size:29px;
+}
+html#digivated-root body.platform .creator-public-intro .eyebrow {margin:0 0 4px;font-size:10px;letter-spacing:.15em}
+html#digivated-root body.platform .creator-public-intro h1 {margin:0 0 9px;font-size:clamp(29px,4.5vw,40px);line-height:1.12;letter-spacing:-.045em}
+html#digivated-root body.platform .creator-public-intro #creator-bio {max-width:64ch;margin:0;color:#c4bcca;line-height:1.6;overflow-wrap:anywhere}
+html#digivated-root body.platform .creator-profile-links {margin:14px 0 8px;font-size:13px}
+html#digivated-root body.platform .creator-profile-links a {color:#c6a2eb;text-underline-offset:3px}
+html#digivated-root body.platform .creator-followers {margin:9px 0 17px;color:#ada2b8;font-size:12px}
+html#digivated-root body.platform .creator-public .creator-profile-actions {gap:9px;margin-top:18px}
+html#digivated-root body.platform .creator-public .creator-profile-actions :is(a,button) {min-height:40px;padding:8px 16px;border-radius:8px;font-size:12px}
+html#digivated-root body.platform .creator-public #creator-public-status {margin:21px 0 0;color:#a99eaf;font-size:12px}
+html#digivated-root body.platform .creator-public .creator-tabs {margin:20px 0 0;border-color:#302835}
+html#digivated-root body.platform .creator-public .creator-tabs button {min-width:115px;padding:14px 18px;font-size:13px}
+html#digivated-root body.platform .creator-public .creator-timeline {border-inline:1px solid #302835;border-bottom:1px solid #302835}
+html#digivated-root body.platform .creator-public .creator-post {padding:22px 27px;border-bottom:1px solid #2b2430;background:#0c0a0f}
+html#digivated-root body.platform .creator-public .creator-post:last-child {border-bottom:0}
+html#digivated-root body.platform .creator-public .creator-post p {max-width:68ch;line-height:1.65;overflow-wrap:anywhere}
+html#digivated-root body.platform .creator-public .creator-post-actions {display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:15px}
+html#digivated-root body.platform .creator-public .creator-post-actions :is(a,button) {display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 13px;border:0;border-radius:7px;background:transparent;color:#b4a7c0;font-family:inherit;font-size:12px;font-weight:500;line-height:1.2;text-decoration:none;cursor:pointer}
+html#digivated-root body.platform .creator-public .creator-post-actions :is(a,button):hover {background:#2a1b34;color:#eee1f6}
+html#digivated-root body.platform .creator-public .creator-post-actions .active {color:#c99aef}
+html#digivated-root body.platform .creator-public .creator-projects {gap:0;margin:0;border-inline:1px solid #302835;border-bottom:1px solid #302835}
+html#digivated-root body.platform .creator-public .creator-projects article {border:0;border-bottom:1px solid #302835;border-radius:0;background:#0c0a0f}
+html#digivated-root body.platform .creator-public .creator-projects article:last-child {border-bottom:0}
+html#digivated-root body.platform .creator-public .creator-projects article a {padding:20px 26px}
+html#digivated-root body.platform .creator-public .creator-projects article:hover {background:#15101a}
+
+html#digivated-root body.platform .creator-inbox-page {width:min(1180px,calc(100% - 48px));padding:30px 0 88px}
+html#digivated-root body.platform .creator-inbox-heading>a {display:inline-flex;min-height:36px;align-items:center;color:#beb0cb;font-size:12px}
+html#digivated-root body.platform .creator-inbox-heading h1 {font-size:clamp(33px,4.5vw,48px);letter-spacing:-.045em}
+html#digivated-root body.platform .creator-inbox-heading>p:last-child {margin:7px 0 0;color:#b8afc0;font-size:14px}
+html#digivated-root body.platform .creator-inbox-layout {grid-template-columns:minmax(260px,320px) minmax(0,1fr);min-height:min(690px,76vh);margin-top:26px;border-color:#302735;border-radius:12px;background:#0b090e}
+html#digivated-root body.platform .creator-inbox-list {border-color:#302735;background:#0f0d12}
+html#digivated-root body.platform .creator-inbox-list-head {min-height:68px;padding:15px 20px;border-color:#302735}
+html#digivated-root body.platform .creator-inbox-list-head h2 {font-size:15px}
+html#digivated-root body.platform .creator-inbox-list-head button {min-height:38px;padding:7px 12px;border-radius:7px;color:#f3e5ff;font-size:12px}
+html#digivated-root body.platform .inbox-conversation {min-height:73px;padding:16px 20px;border-color:#241f29}
+html#digivated-root body.platform .inbox-conversation.active {background:#4c315a2e}
+html#digivated-root body.platform .inbox-conversation strong {font-size:13px}
+html#digivated-root body.platform .inbox-conversation span {color:#a99faf;font-size:12px}
+html#digivated-root body.platform .creator-inbox-thread>#inbox-contact {min-height:68px;border-color:#302735;background:#0f0c13;font-size:14px}
+html#digivated-root body.platform #inbox-messages {min-height:360px;max-height:min(55vh,540px);padding:25px;scrollbar-color:#49345c transparent}
+html#digivated-root body.platform .inbox-message p {border-color:#32283a;background:#1a1420}
+html#digivated-root body.platform .inbox-message.mine p {border-color:#6c4a87;background:#3f2a52}
+html#digivated-root body.platform #inbox-form {padding:17px 20px;border-color:#302735;background:#0f0c13}
+html#digivated-root body.platform #inbox-form textarea {min-height:72px;border-color:#3a3041;border-radius:8px;background:#130f18;line-height:1.5}
+html#digivated-root body.platform :is(.creator-public,.creator-inbox-page) :is(a,button,input,textarea):focus-visible {outline:2px solid #c698f0;outline-offset:3px}
+@media(max-width:720px) {
+  html#digivated-root body.platform .creator-public {width:100%;margin:0 auto 70px}
+  html#digivated-root body.platform .creator-back {margin:10px 17px 15px}
+  html#digivated-root body.platform .creator-cover {height:150px;border-radius:0;border-inline:0;padding:17px}
+  html#digivated-root body.platform .creator-cover+.creator-public-intro {padding:0 18px 25px;border-inline:0}
+  html#digivated-root body.platform .creator-cover+.creator-public-intro .creator-avatar {width:72px;height:72px;margin-top:-32px}
+  html#digivated-root body.platform .creator-public #creator-public-status {margin-inline:18px}
+  html#digivated-root body.platform .creator-public .creator-tabs button {flex:1;min-width:0}
+  html#digivated-root body.platform .creator-public .creator-timeline,
+  html#digivated-root body.platform .creator-public .creator-projects {border-inline:0}
+  html#digivated-root body.platform .creator-public .creator-post {padding:20px 18px}
+  html#digivated-root body.platform .creator-inbox-page {width:100%;padding:16px 0 65px}
+  html#digivated-root body.platform .creator-inbox-heading {padding-inline:18px}
+  html#digivated-root body.platform .creator-inbox-layout {display:block;min-height:0;margin-top:20px;border-radius:0;border-inline:0}
+  html#digivated-root body.platform .creator-inbox-list-head {min-height:60px}
+  html#digivated-root body.platform #inbox-messages {min-height:calc(100dvh - 340px);max-height:calc(100dvh - 340px);padding:18px}
+  html#digivated-root body.platform #inbox-form {padding:14px 18px}
+}
