@@ -1,0 +1,104 @@
+/* Digivated glass finish. Blur is reserved for small overlays; repeated content
+   surfaces use layered color, a light-catching rim, and inexpensive shadows. */
+html#digivated-root {
+  --glass-rim:#e8d6ff32;
+  --glass-rim-hover:#dfc2ff65;
+  --glass-face:linear-gradient(155deg,#f5eaff13 0%,#f1e5ff05 23%,transparent 55%),linear-gradient(180deg,#24202aee,#100f14f5);
+  --glass-control:linear-gradient(165deg,#ffffff20 0%,#ffffff08 28%,#ffffff02 64%),linear-gradient(180deg,#25212d,#18161d);
+  --glass-shadow:inset 0 1px 0 #ffffff1b,inset 0 -1px 0 #00000070,0 12px 30px #0000003d;
+}
+
+/* Keep the header in normal stacking geometry so the mobile menu stays fixed. */
+html#digivated-root body.platform .compact-site-header {
+  background:linear-gradient(180deg,#ffffff0b,transparent 60%),#0c0a10f2!important;
+  border-bottom:1px solid #ffffff20!important;
+  box-shadow:inset 0 1px 0 #ffffff10,0 12px 32px #0005!important;
+}
+html#digivated-root body.platform .compact-site-header .header-inner { background:transparent!important; }
+html#digivated-root body.platform .compact-site-header :is(.header-search,.header-inbox,.notebook-navigation>summary,.header-membership) {
+  border:1px solid #ffffff1f!important;
+  border-radius:12px!important;
+  background:var(--glass-control)!important;
+  box-shadow:inset 0 1px 0 #ffffff18,0 3px 12px #0003!important;
+}
+html#digivated-root body.platform .compact-site-header :is(.header-search,.header-inbox,.notebook-navigation>summary,.header-membership):is(:hover,:focus-visible),
+html#digivated-root body.platform .compact-site-header .notebook-navigation[open]>summary {
+  border-color:var(--glass-rim-hover)!important;
+  background:linear-gradient(155deg,#d9b4ff21,#6b43861c 58%),#24202b!important;
+  box-shadow:inset 0 1px 0 #ffffff27,0 5px 18px #7d45b52e!important;
+}
+
+/* Floating surfaces get real translucency; no blur is placed on scrolling lists. */
+html#digivated-root body.platform :is(#explore-navigation,.discovery-dialog,.collection-dialog,.comment-dialog,.account-announcement,.wall-focus-panel) {
+  background:linear-gradient(145deg,#c19aea1c 0%,#ffffff07 27%,transparent 55%),#15111bf8!important;
+  border:1px solid var(--glass-rim)!important;
+  box-shadow:inset 0 1px 0 #ffffff29,inset 0 -1px 0 #0008,0 28px 72px #000a!important;
+}
+@supports (backdrop-filter:blur(1px)) {
+  html#digivated-root[data-theme] body.platform :is(#explore-navigation,.discovery-dialog,.collection-dialog,.comment-dialog,.account-announcement,.wall-focus-panel) {
+    backdrop-filter:blur(16px) saturate(1.2)!important;
+    -webkit-backdrop-filter:blur(16px) saturate(1.2)!important;
+  }
+}
+html#digivated-root body.platform :is(.discovery-dialog,.collection-dialog,.comment-dialog) { border-radius:22px!important; }
+html#digivated-root body.platform #explore-navigation { border-radius:18px!important; }
+html#digivated-root body.platform .notebook-navigation[open] #explore-navigation { animation:glass-menu-settle 140ms ease-out; }
+@keyframes glass-menu-settle { from { opacity:.96; } to { opacity:1; } }
+html#digivated-root body.platform #explore-navigation .navigation-destinations>a:is(:hover,:focus-visible,[aria-current=page]) {
+  background:linear-gradient(110deg,#c096ff24,#ffffff09 68%)!important;
+  box-shadow:inset 0 1px 0 #ffffff12!important;
+}
+
+/* Content keeps its own geometry and interaction hooks. The rim and highlight
+   make the material legible without a backdrop filter on every card. */
+html#digivated-root body.platform :is(.home-featured-card,.project-reel-card,.wall-tile,.project-card,.resource-card,.gumroad-card,.product-feature,.starter-card,.saved-card,.owner-card,.owner-row,.account-item,.login-panel,.submission-form,.community-post,.promotion-card,.news-feature,.news-gate) {
+  background:var(--glass-face)!important;
+  border-color:#ffffff20!important;
+  box-shadow:inset 0 1px 0 #ffffff16,0 10px 30px #0004!important;
+}
+html#digivated-root body.platform :is(.home-featured-card,.project-reel-card,.wall-tile,.project-card,.resource-card,.saved-card):is(:hover,:focus-within) {
+  border-color:#cbabfa5c!important;
+  box-shadow:inset 0 1px 0 #ffffff26,0 14px 34px #0006,0 0 0 1px #a36fe51a!important;
+}
+
+html#digivated-root body.platform :is(.button,.news-refresh,.news-more,.ranking-share) {
+  border-color:#ffffff2b!important;
+  background:var(--glass-control)!important;
+  box-shadow:var(--glass-shadow)!important;
+}
+html#digivated-root body.platform :is(.button,.news-refresh,.news-more,.ranking-share):is(:hover,:focus-visible):not(:disabled) {
+  border-color:var(--glass-rim-hover)!important;
+  box-shadow:inset 0 1px 0 #ffffff30,0 7px 20px #6e3d9833!important;
+}
+html#digivated-root body.platform :is(.button.primary,.header-submit,.creator-social .button.primary) {
+  border:1px solid #dbb9ff7a!important;
+  background:linear-gradient(165deg,#f4e8ff30 0%,transparent 42%),linear-gradient(180deg,#9a63df,#7040b3)!important;
+  box-shadow:inset 0 1px 0 #ffffff68,inset 0 -1px 0 #53258a66,0 7px 20px #7344b744!important;
+}
+html#digivated-root body.platform :is(.button.primary,.header-submit,.creator-social .button.primary):hover:not(:disabled) {
+  background:linear-gradient(165deg,#f4e8ff43 0%,transparent 45%),linear-gradient(180deg,#a675e9,#7a49c0)!important;
+  box-shadow:inset 0 1px 0 #ffffff85,0 9px 24px #824aca55!important;
+}
+
+html#digivated-root body.platform :is(input:not([type=checkbox]):not([type=radio]),textarea,select) {
+  background:linear-gradient(180deg,#ffffff08,transparent 55%),#100e16!important;
+  border-color:#ffffff29!important;
+  box-shadow:inset 0 2px 8px #0005,inset 0 1px 0 #ffffff08!important;
+}
+html#digivated-root body.platform :is(input:not([type=checkbox]):not([type=radio]),textarea,select):focus-visible {
+  border-color:#bd93efaa!important;
+  box-shadow:inset 0 2px 8px #0005,0 0 0 3px #a876db28!important;
+}
+@media(prefers-reduced-motion:no-preference) {
+  html#digivated-root body.platform :is(.button,.header-membership,.header-search,.news-refresh,.ranking-share) {
+    transition:background-color 180ms ease,border-color 180ms ease,box-shadow 180ms ease,filter 180ms ease;
+  }
+  html#digivated-root body.platform :is(.button,.header-membership,.header-search,.news-refresh,.ranking-share):active:not(:disabled) { filter:brightness(1.12); }
+}
+@media(prefers-reduced-motion:reduce) {
+  html#digivated-root body.platform :is(.button,.header-membership,.header-search,.news-refresh,.ranking-share) { transition:none!important; }
+  html#digivated-root body.platform .notebook-navigation[open] #explore-navigation { animation:none; }
+}
+@media(forced-colors:active) {
+  html#digivated-root body.platform :is(.button,.header-membership,.header-search,#explore-navigation,.discovery-dialog) { border:1px solid ButtonText!important; }
+}

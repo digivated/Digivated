@@ -16,7 +16,9 @@ for(const width of [320,390,768,1024,1440])test(`compact menu fits and keeps all
  await expect(menu.locator('small,.navigation-icon,.navigation-builder,.navigation-products')).toHaveCount(0);
  await expect(menu.locator('a[href="/membership"]')).toHaveCount(1);await expect(menu.locator('a[href="/submit-project"]')).toHaveCount(1);
  const rect=await menu.boundingBox();expect(rect!.height).toBeLessThan(530);expect(rect!.x).toBeGreaterThanOrEqual(0);expect(rect!.x+rect!.width).toBeLessThanOrEqual(width);
- await expect(menu).toHaveCSS('background-color','rgb(13, 12, 16)');
+ const material=await menu.evaluate(element=>({color:getComputedStyle(element).backgroundColor,blur:getComputedStyle(element).backdropFilter}));
+ expect(Number(material.color.match(/,\s*([\d.]+)\)$/)?.[1])).toBeGreaterThanOrEqual(.96);
+ expect(material.blur).toContain('blur(');
  await page.keyboard.press('Escape');await expect(menu).toBeHidden();await expect(page.locator('.notebook-navigation>summary')).toBeFocused();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
