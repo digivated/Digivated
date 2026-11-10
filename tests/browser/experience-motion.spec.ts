@@ -47,7 +47,7 @@ test('site atmosphere moves without covering controls or widening mobile pages',
  await page.emulateMedia({reducedMotion:'reduce'});
  await expect(atmosphere).toBeHidden();
 });
-test('home light trails replace the canvas wave without blocking hero actions',async({page})=>{
+test('home signal waves replace the canvas wave without blocking hero actions',async({page})=>{
  await page.setViewportSize({width:390,height:900});await page.goto(base+'/');
  await expect(page.locator('.home-signal')).toHaveCount(0);
  await expect(page.locator('.home-kinetic-beam')).toHaveCount(2);
