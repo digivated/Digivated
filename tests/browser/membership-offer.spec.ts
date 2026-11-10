@@ -10,11 +10,18 @@ for(const width of [390,1440])test(`one membership offer is honest and usable at
   await page.goto(base+path);await expect(page.locator('.membership-offer')).toHaveCount(1);
   await expect(page.locator('.membership-price strong')).toHaveText('$5');
   await expect(page.locator('.membership-soon')).toHaveCount(0);
-  await expect(page.locator('.membership-benefits')).toContainText('Full source-checked summaries');
+  await expect(page.locator('.membership-benefits')).toContainText('Full News access');
   await expect(page.locator('.membership-checkout')).toBeDisabled();
   await expect(page.locator('a[href*="gumroad.com/l/"]')).toHaveCount(0);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  }
+});
+test('verified one-time checkout exposes the correct Gumroad purchase link',async({page})=>{
+ await page.route('**/api/membership-checkout',r=>r.fulfill({json:{ready:true,checkoutUrl:'https://digivated.gumroad.com/l/founding-member-pass',priceUSD:5,billing:'one-time'}}));
+ await page.goto(base+'/membership');
+ const checkout=page.getByRole('link',{name:/Get membership · \$5 once/});
+ await expect(checkout).toHaveAttribute('href','https://digivated.gumroad.com/l/founding-member-pass');
+ await expect(checkout).toHaveAttribute('target','_blank');
 });
 test('previous purchase pages keep working without standalone buy links',async({page})=>{
  for(const path of ['/access','/library','/ui-ux-prompt-packet','/resources','/carousels','/submit-project']){
