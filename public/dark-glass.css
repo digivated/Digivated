@@ -463,3 +463,15 @@ html#digivated-root body.platform .compact-site-header :is(a,button,summary):foc
 @media(max-width:370px) {
   html#digivated-root body.platform .compact-site-header .platform-brand>span { display:none; }
 }
+/* Project picker and detail panel: readable native select, one dark surface. */
+html#digivated-root body.platform .project-wall .wall-category select{height:52px;min-height:52px;padding:10px 44px 10px 16px;line-height:1.4;font-size:16px;color:#f2eaf8!important;background:#130e19!important;box-sizing:border-box}
+html#digivated-root body.platform .wall-focus-panel{animation:none!important;background:#100d15!important;color:#f3edf8!important;border:1px solid #493a57;border-radius:14px}
+html#digivated-root body.platform .wall-focus-backdrop{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:#050408d9!important}
+html#digivated-root body.platform .wall-focus-controls{background:#17111e!important;border-bottom:1px solid #4a3956!important;backdrop-filter:none!important}
+html#digivated-root body.platform .wall-focus-controls button{background:#241b2d!important;border-color:#5d496d!important;color:#f4ecfa!important}
+html#digivated-root body.platform .wall-focus-panel .wall-card-actions{background:#17111e!important;border:1px solid #4a3956!important;color:#d6c9df!important}
+html#digivated-root body.platform .wall-focus-panel .wall-card-actions button{color:#e7d9f0!important}
+html#digivated-root body.platform .wall-focus-panel .wall-focus-art{background:#17111e!important;border:1px solid #493a57!important}
+html#digivated-root body.platform .wall-focus-panel .wall-focus-actions a{background:#281b38!important;border:1px solid #78549a!important;color:#f5eafa!important;border-radius:9px!important;box-shadow:none!important}
+html#digivated-root body.platform .wall-focus-panel .wall-focus-actions a:hover{background:#39254c!important}
+html#digivated-root body.platform .wall-focus-panel .wall-focus-actions a+a{background:#17111e!important;border-color:#5b486a!important;color:#e7d9f0!important}
