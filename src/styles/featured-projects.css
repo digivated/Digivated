@@ -113,29 +113,70 @@ html#digivated-root body.platform .home-featured-arrow { color:#f0cc83; }
  html#digivated-root body.platform .home-featured-ribbon { padding-inline:12px; }
 }
 
-/* A moving foil highlight behind the stationary labels. */
+/* An arcade-style unlock burst, clipped to the gold banner. */
 html#digivated-root body.platform .home-featured-ribbon {
  position:relative;
  isolation:isolate;
  overflow:hidden;
 }
+.home-featured-ribbon::before,
 .home-featured-ribbon::after {
  content:'';
  position:absolute;
+ inset:0;
  z-index:-1;
- inset:0 auto 0 0;
- width:35%;
  pointer-events:none;
- background:linear-gradient(105deg,transparent 12%,#fff7d99e 50%,transparent 88%);
- transform:translateX(-120%) skewX(-18deg);
- animation:featured-foil-glint 9s ease-in-out infinite;
+ opacity:0;
 }
-.home-featured-card:nth-child(2) .home-featured-ribbon::after { animation-delay:1s; }
-.home-featured-card:nth-child(3) .home-featured-ribbon::after { animation-delay:2s; }
-@keyframes featured-foil-glint {
- 0%,12% { transform:translateX(-120%) skewX(-18deg); }
- 42%,100% { transform:translateX(320%) skewX(-18deg); }
+.home-featured-ribbon::before {
+ background:
+  radial-gradient(circle at 12% 24%,#fff 0 1px,transparent 3px),
+  radial-gradient(circle at 20% 72%,#fff4c5 0 2px,transparent 4px),
+  radial-gradient(circle at 32% 18%,#fff 0 1px,transparent 3px),
+  radial-gradient(circle at 45% 82%,#fff4c5 0 2px,transparent 4px),
+  radial-gradient(circle at 57% 20%,#fff 0 2px,transparent 4px),
+  radial-gradient(circle at 69% 72%,#fff4c5 0 1px,transparent 3px),
+  radial-gradient(circle at 80% 22%,#fff 0 2px,transparent 4px),
+  radial-gradient(circle at 91% 65%,#fff4c5 0 1px,transparent 3px);
 }
-@media(prefers-reduced-motion:reduce) {
- .home-featured-ribbon::after { display:none; }
+.home-featured-ribbon::after {
+ background:repeating-linear-gradient(110deg,transparent 0 15px,#fff8db90 16px 21px,transparent 22px 32px);
+ mask-image:linear-gradient(90deg,transparent,#000 38% 62%,transparent);
+}
+@keyframes featured-unlock-sparks {
+ 0% { opacity:0; transform:scale(.5,.55); }
+ 24% { opacity:1; }
+ 100% { opacity:0; transform:scale(1.16,1.32); }
+}
+@keyframes featured-unlock-charge {
+ 0% { opacity:0; transform:translateX(-100%); }
+ 24% { opacity:.85; }
+ 100% { opacity:0; transform:translateX(100%); }
+}
+@media(prefers-reduced-motion:no-preference) {
+ html#digivated-root body.platform .home-featured-card {
+  transition:transform 200ms ease-out,border-color 200ms ease-out,box-shadow 200ms ease-out;
+ }
+ html#digivated-root body.platform .home-featured-card:is(:hover,:focus-visible) {
+  transform:translateY(-3px);
+  box-shadow:inset 0 1px 0 #fff3c944,0 5px 24px #ffc45e38!important;
+ }
+ .home-featured-card:is(:hover,:focus-visible,:active) .home-featured-ribbon::before {
+  animation:featured-unlock-sparks 680ms ease-out both;
+ }
+ .home-featured-card:is(:hover,:focus-visible,:active) .home-featured-ribbon::after {
+  animation:featured-unlock-charge 560ms ease-out both;
+ }
+ @supports(animation-timeline:view()) {
+  .home-featured-card:not(:hover,:focus-visible,:active) .home-featured-ribbon::before {
+   animation:featured-unlock-sparks linear both;
+   animation-timeline:view();
+   animation-range:entry 0% entry 100%;
+  }
+  .home-featured-card:not(:hover,:focus-visible,:active) .home-featured-ribbon::after {
+   animation:featured-unlock-charge linear both;
+   animation-timeline:view();
+   animation-range:entry 0% entry 100%;
+  }
+ }
 }
