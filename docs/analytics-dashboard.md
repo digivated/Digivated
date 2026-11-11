@@ -1,6 +1,6 @@
 # Digivated analytics workspace
 
-Use one GA4 property for `digivated.com`. The production site sends page views and the product events below. Keep the reporting timezone consistent with the property timezone, and use a 28-day default comparison with the preceding 28 days. Exclude internal traffic in GA4 before judging acquisition or conversion trends.
+Use one GA4 property for `digivated.com`. The production site sends page views and the product events below. The owner-only `/admin/analytics` page uses the existing GA4 read-only connection for a 28-day overview of audience, traffic sources, top pages, and product actions. Keep the reporting timezone consistent with the property timezone, and use a 28-day default comparison with the preceding 28 days. Exclude internal traffic in GA4 before judging acquisition or conversion trends.
 
 ## Reports Library
 

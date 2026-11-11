@@ -13,10 +13,10 @@ async function googleError(response, stage) {
   return reportingError(`${stage}_${category || response.status}`);
 }
 
-// Only aggregate counts leave this module. Google credentials remain server-side.
-export async function getVisitorReport({ env = process.env, fetcher = fetch, now = new Date() } = {}) {
+// The token is used only by owner-facing server modules; never return it to a browser.
+export async function analyticsToken({ env = process.env, fetcher = fetch, now = new Date() } = {}) {
   const property = env.GA4_PROPERTY_ID;
-  if (!property || !env.GA4_CLIENT_EMAIL || !env.GA4_PRIVATE_KEY) return { status: 'unconfigured' };
+  if (!property || !env.GA4_CLIENT_EMAIL || !env.GA4_PRIVATE_KEY) return null;
   if (!/^\d+$/.test(property)) throw new Error('Invalid GA4 property');
   const issuedAt = Math.floor(now.getTime() / 1000);
   const encode = value => Buffer.from(JSON.stringify(value)).toString('base64url');
@@ -34,6 +34,14 @@ export async function getVisitorReport({ env = process.env, fetcher = fetch, now
   if (!tokenResponse.ok) throw await googleError(tokenResponse, 'AUTH');
   const token = (await tokenResponse.json()).access_token;
   if (!token) throw new Error('Missing analytics token');
+  return token;
+}
+
+// Only aggregate counts leave this module. Google credentials remain server-side.
+export async function getVisitorReport({ env = process.env, fetcher = fetch, now = new Date() } = {}) {
+  const token = await analyticsToken({env,fetcher,now});
+  if (!token) return { status: 'unconfigured' };
+  const property = env.GA4_PROPERTY_ID;
   const report = async dimensions => {
     const response = await fetcher(`https://analyticsdata.googleapis.com/v1beta/properties/${property}:runReport`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ dateRanges: [{ startDate: '30daysAgo', endDate: 'yesterday' }], metrics: [{ name: 'totalUsers' }], dimensions, ...(dimensions.length ? { orderBys: [{ dimension: { dimensionName: 'date' } }] } : {}) }), signal: AbortSignal.timeout(5000) });
     if (!response.ok) throw await googleError(response, 'REPORT');

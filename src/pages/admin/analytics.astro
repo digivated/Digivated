@@ -1,0 +1,29 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import '../../styles/admin-analytics.css';
+---
+<Admin>
+  <section class="analytics-signin" id="analytics-signin">
+    <p class="eyebrow">OWNER ANALYTICS</p>
+    <h1>Sign in to view analytics.</h1>
+    <p id="analytics-signin-status">Checking your dashboard session…</p>
+    <a class="button primary" href="/admin">Open owner dashboard</a>
+  </section>
+  <section class="analytics-page" id="analytics-page" hidden>
+    <header class="analytics-heading">
+      <div><p class="eyebrow">DIGIVATED / ANALYTICS</p><h1>Site performance</h1><p>Audience, discovery, and the actions that move people through Digivated.</p></div>
+      <div class="analytics-actions"><a href="/admin">← Dashboard</a><button class="button" type="button" id="analytics-refresh">Refresh data</button></div>
+    </header>
+    <p class="analytics-period" id="analytics-period">Last 28 complete days · Google Analytics 4</p>
+    <p class="analytics-status" id="analytics-status" role="status" aria-live="polite"></p>
+    <div class="analytics-metrics" id="analytics-metrics" aria-label="Audience summary"></div>
+    <div class="analytics-columns">
+      <section class="analytics-panel analytics-trend" aria-labelledby="analytics-trend-title"><header><h2 id="analytics-trend-title">Audience trend</h2><span>Active users by day</span></header><ol id="analytics-trend" aria-label="Daily active users"></ol></section>
+      <section class="analytics-panel" aria-labelledby="analytics-actions-title"><header><h2 id="analytics-actions-title">Product actions</h2><span>Completed actions and clicks</span></header><div id="analytics-events" class="analytics-list"></div></section>
+      <section class="analytics-panel" aria-labelledby="analytics-sources-title"><header><h2 id="analytics-sources-title">Traffic sources</h2><span>Sessions by source / medium</span></header><div id="analytics-sources" class="analytics-list"></div></section>
+      <section class="analytics-panel" aria-labelledby="analytics-pages-title"><header><h2 id="analytics-pages-title">Top pages</h2><span>Page views</span></header><div id="analytics-pages" class="analytics-list"></div></section>
+    </div>
+    <p class="analytics-footnote">Checkout clicks are visits to Gumroad, not purchases. Membership verifications include returning customers. GA4 totals may differ from Digivated’s own project-view counters.</p>
+  </section>
+  <script>import '../../scripts/admin-analytics.js';</script>
+</Admin>
