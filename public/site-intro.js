@@ -1,6 +1,6 @@
 (() => {
   const root = document.documentElement;
-  const key = 'digivated:intro:v1';
+  const key = 'digivated:intro:v2';
   try {
     if (sessionStorage.getItem(key) ||
         matchMedia('(prefers-reduced-motion: reduce)').matches ||
@@ -21,8 +21,9 @@
     intro.classList.add('leaving');
     setTimeout(() => { delete root.dataset.siteIntro; intro.remove(); }, document.hidden ? 0 : 260);
   };
-  document.addEventListener('DOMContentLoaded', () => setTimeout(finish, 560), { once: true });
+  // Keep the mark brief so it never feels like a page-loading gate.
+  document.addEventListener('DOMContentLoaded', () => setTimeout(finish, 180), { once: true });
   document.addEventListener('visibilitychange', () => { if (document.hidden) finish(); });
   window.addEventListener('pageshow', event => { if (event.persisted) finish(); }, { once: true });
-  setTimeout(finish, 1800);
+  setTimeout(finish, 900);
 })();
