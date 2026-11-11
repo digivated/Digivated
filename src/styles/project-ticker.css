@@ -103,3 +103,6 @@ html#digivated-root body.platform .project-reel-card:is(:hover,:focus-visible) {
  border-color:#c9a6f2!important; outline:2px solid #c9a6f2; outline-offset:2px;
 }
 html#digivated-root body.platform .project-reel-controls [data-reel-pause] { display:grid!important; }
+
+/* Keep banner controls below the fixed site header on the directory page. */
+html#digivated-root body.platform.projects-dashboard .project-reel { margin-top:80px!important; }
