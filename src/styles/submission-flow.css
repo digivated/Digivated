@@ -120,3 +120,9 @@ html#digivated-root .submission-form [hidden],html#digivated-root .submission-pr
   html#digivated-root .submission-account-actions {align-items:stretch;flex-direction:column;gap:8px}
   html#digivated-root .submission-account-actions .button {width:100%}
 }
+
+/* Match the square logo upload and keep transparent marks fully visible. */
+html#digivated-root .submission-image-preview img { width:112px; height:112px; aspect-ratio:1; object-fit:contain; }
+html#digivated-root .listing-preview-cover { width:80px; height:80px; aspect-ratio:1; margin:20px 20px 0; border:1px solid var(--dg-line); border-radius:16px; }
+html#digivated-root .listing-preview-cover img { object-fit:contain; }
+html#digivated-root .listing-preview-cover>span { padding:8px; text-align:center; font-size:11px; }
