@@ -62,7 +62,7 @@ if (form) {
       payload.consent = values.get('consent') === 'on';
       payload.emailOutreachConsent = values.get('emailOutreachConsent') === 'on';
       const file = values.get('image');
-      if (!file?.size) throw new Error('Add at least one project image.');
+      if (!file?.size) throw new Error('Add your project logo.');
       if (file?.size) {
         
         payload.image = await prepareProjectImage(file);
