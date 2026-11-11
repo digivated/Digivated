@@ -1,6 +1,6 @@
 import { cardIconMarkup } from '../lib/card-icons.mjs';
 import { observeProjectViews, viewLabel } from './project-views.js';
-import { createShowcaseCard } from './project-showcase-card.js';
+import { safeSearchHref } from '../lib/discovery-search.mjs';
 
 const section = document.querySelector('[data-home-featured]');
 if (section) {
@@ -23,25 +23,41 @@ if (section) {
     } while (offset != null);
     if (!items.length) { section.hidden = true; return; }
     items.sort((a,b)=>(Number.isFinite(Number(b.views))?Number(b.views):0)-(Number.isFinite(Number(a.views))?Number(a.views):0));
-    rail.replaceChildren(...items.map((project, index) => {
-      const card = createShowcaseCard(project, index);
-      card.classList.replace('project-reel-card', 'home-featured-card');
+    rail.replaceChildren(...items.slice(0, 3).map((project, index) => {
+      const card = document.createElement('a');
+      card.className = 'home-featured-card';
+      card.href = safeSearchHref(project.pageUrl) || `/discover#project-${encodeURIComponent(project.id)}`;
       card.dataset.featuredProject = project.id;
       card.dataset.projectId = project.id;
-      if (index < 3) {
-        const place = ['gold','silver','bronze'][index];
-        card.dataset.featuredRank = place;
-        const badge = document.createElement('span');
-        badge.className = 'home-featured-rank';
-        badge.textContent = `${index+1}${['st','nd','rd'][index]} place`;
-        card.querySelector('.project-reel-art').append(badge);
+      card.dataset.featuredRank = ['gold','silver','bronze'][index];
+      const ribbon = document.createElement('span');
+      ribbon.className = 'home-featured-ribbon';
+      ribbon.setAttribute('aria-label', 'Featured project');
+      const track = document.createElement('span');
+      track.className = 'home-featured-ribbon-track';
+      track.setAttribute('aria-hidden', 'true');
+      track.textContent = 'FEATURED  ·  FEATURED  ·  FEATURED  ·  FEATURED  ·  ';
+      ribbon.append(track);
+      const content = document.createElement('span'); content.className = 'home-featured-content';
+      const art = document.createElement('span'); art.className = 'home-featured-logo';
+      const imageUrl = safeSearchHref(project.image);
+      if (imageUrl && new URL(imageUrl, location.origin).origin === location.origin) {
+        const image = document.createElement('img'); image.src = imageUrl; image.alt = '';
+        image.width = 64; image.height = 64; image.loading = 'lazy'; image.decoding = 'async';
+        image.addEventListener('error', () => image.remove(), { once: true }); art.append(image);
       }
-      const views = document.createElement('span');
-      views.className = 'home-featured-views';
+      const monogram = document.createElement('span'); monogram.className = 'home-featured-monogram'; monogram.textContent = project.name.slice(0,2).toUpperCase(); art.prepend(monogram);
+      const copy = document.createElement('span'); copy.className = 'home-featured-copy';
+      const meta = document.createElement('small'); meta.textContent = `${index+1}${['st','nd','rd'][index]} place · ${project.category || 'Project'}`;
+      const name = document.createElement('strong'); name.textContent = project.name;
+      const summary = document.createElement('span'); summary.className = 'home-featured-summary'; summary.textContent = project.description || 'Explore this project and meet its maker.';
+      copy.append(meta,name,summary);
+      const views = document.createElement('span'); views.className = 'home-featured-views';
       const eye = document.createElement('span'); eye.innerHTML = cardIconMarkup('eye');
-      const count = document.createElement('span');
-      count.dataset.projectViews = project.id; count.textContent = viewLabel(project.views);
-      views.append(eye, count); card.querySelector('.project-reel-art').append(views);
+      const count = document.createElement('span'); count.dataset.projectViews = project.id; count.textContent = viewLabel(project.views);
+      views.append(eye,count);
+      const arrow = document.createElement('span'); arrow.className = 'home-featured-arrow'; arrow.setAttribute('aria-hidden','true'); arrow.innerHTML = cardIconMarkup('arrow');
+      content.append(art,copy,views,arrow); card.append(ribbon,content);
       return card;
     }));
     rail.setAttribute('aria-busy', 'false');

@@ -341,3 +341,27 @@ html body.platform.light-theme.wall-experience .wall-focus-panel{overflow-x:hidd
 
 /* Use the shared SVG icon rather than relying on an arrow font glyph. */
 .wall-experience .wall-open-label { display:inline-flex; align-items:center; gap:4px; }
+
+/* Compact project directory: a crisp mark, useful description and quiet actions. */
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid.wall-card-grid { display:flex!important; flex-direction:column; gap:0!important; max-width:1060px; margin-inline:auto; border-top:1px solid #ffffff1c; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile { display:grid!important; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:18px; flex:0 0 auto!important; min-width:0; height:auto!important; border:0!important; border-bottom:1px solid #ffffff1c!important; border-radius:0; background:transparent!important; box-shadow:none!important; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile:hover { background:#b987f90b!important; transform:none!important; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-open { display:grid; grid-template-columns:64px minmax(0,1fr) 20px; align-items:center; gap:18px; min-height:106px; padding:16px 0; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-media { display:grid; place-items:center; width:64px; height:64px; aspect-ratio:1; overflow:hidden; border:1px solid #ffffff25; border-radius:14px; background:#17101f!important; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-media img { position:relative; width:100%; height:100%; padding:5px; object-fit:contain; filter:none; }
+.wall-list-monogram { font:650 18px/1 'Inter Variable',system-ui,sans-serif; color:#d8c0ff; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile-caption { position:static; display:flex; flex-direction:column; justify-content:center; gap:4px; min-width:0; min-height:0; padding:0; background:transparent!important; opacity:1; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile-caption small { color:#a894c0!important; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:none; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile-caption strong { color:#f5f0fb!important; font-size:16px; line-height:1.25; letter-spacing:-.02em; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-list-summary { display:-webkit-box; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:2; max-width:66ch; color:#ab9eb9; font-size:12px; line-height:1.45; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-open-label { display:grid; place-items:center; color:#bda2db; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions { width:auto; min-width:210px; padding:0; border:0; background:transparent!important; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions button { color:#baadc9; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions button:is(:hover,[aria-pressed=true]) { background:#a877e522; color:#f4eaff; }
+@media(max-width:760px) {
+ html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile { grid-template-columns:minmax(0,1fr); gap:0; padding:0 0 8px; }
+ html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-open { grid-template-columns:56px minmax(0,1fr) 18px; gap:12px; min-height:92px; padding:13px 0 8px; }
+ html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-media { width:56px; height:56px; }
+ html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions { width:100%; min-width:0; padding:0 0 0 68px; }
+ html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-list-summary { -webkit-line-clamp:1; }
+}
