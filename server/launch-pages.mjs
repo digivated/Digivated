@@ -46,7 +46,7 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
   const formattedDate = date && Number.isFinite(Date.parse(date))
     ? new Intl.DateTimeFormat('en-US', {dateStyle:'medium',timeZone:'UTC'}).format(new Date(date)) : '';
   const categoryHref = `/discover?category=${encodeURIComponent(item.category)}`;
-  const sidebar = `<aside class="launch-sidebar" aria-label="Project details and discovery">
+  const sidebar = `<div class="launch-sidebar" role="complementary" aria-label="Project details and discovery">
     <section class="launch-side-panel" aria-labelledby="launch-details-title">
       <h2 id="launch-details-title">Details</h2>
       <dl class="launch-facts">
@@ -63,7 +63,7 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
     ${draft ? '' : `<section class="launch-side-panel" aria-labelledby="launch-featured-title" data-launch-featured="${e(item.id)}" hidden>
       <h2 id="launch-featured-title">Featured projects</h2><ul class="launch-featured-list"></ul><a class="launch-featured-all" href="/discover?view=featured">View all featured <span aria-hidden="true">→</span></a>
     </section>`}
-  </aside>`;
+  </div>`;
   const body = `${draft?'<p class="launch-draft" role="status">Private draft preview · Only an explicit Publish launch page action makes this public.</p>':''}<article class="launch-page"><header class="launch-intro"><a class="launch-back" href="/discover">← Explore projects</a>
 <div class="launch-hero">${item.logo ? `<div class="launch-identity"><span aria-hidden="true">${e(item.name.slice(0,2).toUpperCase())}</span><img src="${e(item.logo)}" alt="" width="96" height="96"></div>` : ''}
 <div class="launch-hero-copy"><p class="launch-labels"><span>${e(item.category)}</span>${item.featured ? '<span class="launch-spotlight">Spotlight</span>' : ''}${item.sponsored ? '<span>Sponsored</span>' : ''}</p>
