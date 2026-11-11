@@ -36,8 +36,12 @@ if (section) {
       const track = document.createElement('span');
       track.className = 'home-featured-ribbon-track';
       track.setAttribute('aria-hidden', 'true');
-      track.textContent = 'FEATURED  ·  FEATURED  ·  FEATURED  ·  FEATURED  ·  ';
-      ribbon.append(track);
+      track.textContent = 'FEATURED';
+      const edition = document.createElement('span');
+      edition.className = 'home-featured-edition';
+      edition.setAttribute('aria-hidden', 'true');
+      edition.textContent = `SPOTLIGHT  ${String(index + 1).padStart(2, '0')}`;
+      ribbon.append(track, edition);
       const content = document.createElement('span'); content.className = 'home-featured-content';
       const art = document.createElement('span'); art.className = 'home-featured-logo';
       const imageUrl = safeSearchHref(project.image);
