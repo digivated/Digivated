@@ -240,7 +240,7 @@ test('carousel routes stay on the shared function and do not add an API file', a
   const pages = readFileSync(new URL('../src/pages/resources/guides.astro', import.meta.url), 'utf8');
   assert.match(pages, /Previous purchasers/);
   assert.doesNotMatch(pages, /costs \$4 USD once/);
-  assert.match(pages, /Educational carousels/);
+  assert.doesNotMatch(pages, /Educational carousels|data-carousel-shelf|carousel-library\.js/);
   const offerPages = ['founding-members.astro', 'terms.astro'].map(name => readFileSync(new URL(`../src/pages/${name}`, import.meta.url), 'utf8')).join('\n');
   const teaser = readFileSync(new URL('../src/components/FoundingPassTeaser.astro', import.meta.url), 'utf8');
   const offer = `${offerPages}\n${teaser}\n${source}\n${readFileSync(new URL('../src/components/MembershipOffer.astro', import.meta.url), 'utf8')}\n${readFileSync(new URL('../src/data/membership.mjs', import.meta.url), 'utf8')}`;

@@ -79,6 +79,9 @@
     }
   ],
   "redirects": [
+    {"source":"/carousels","destination":"/resources/guides","permanent":true},
+    {"source":"/carousels/:slug","destination":"/resources/guides","permanent":true},
+    {"source":"/carousels/read","destination":"/resources/guides","permanent":true},
     {
       "source": "/ai-tools",
       "destination": "/resources",

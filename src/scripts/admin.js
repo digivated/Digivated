@@ -18,7 +18,6 @@ function filters() {
   statusOptions[state.kind].forEach(status => select.add(new Option(status[0].toUpperCase()+status.slice(1),status)));
   $('owner-create').hidden = state.kind === 'submission' || state.kind === 'comments' || state.kind === 'carousel' || state.kind === 'accounts';
   $('owner-create').textContent = state.kind === 'resource' ? 'New article' : 'New product';
-  $('owner-carousel-note').hidden = state.kind !== 'carousel';
   $('owner-protected').hidden = state.kind !== 'product';
   $('owner-search-note').hidden = state.kind !== 'accounts';
   $('owner-search-label').textContent = state.kind === 'accounts' ? 'Search loaded accounts' : 'Search loaded items';

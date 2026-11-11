@@ -52,7 +52,6 @@ async function enrichSearch() {
   const outcomes=await Promise.allSettled([
     collection('/api/projects').then(items=>merge(items.filter(p=>p.id&&p.name).map(p=>({type:'project',title:p.name,description:p.description,keywords:p.creator,image:p.image,category:p.category||'Project',href:safeSearchHref(p.pageUrl)||`/discover#project-${encodeURIComponent(p.id)}`})))),
     collection('/api/content?type=resource').then(items=>merge(items.filter(r=>safeSearchHref(r.url)).map(r=>({type:'resource',title:r.title,description:r.description,category:r.category,href:r.url})))),
-    collection('/api/carousels').then(items=>merge(items.filter(item=>item.slug&&item.title).map(item=>({type:'resource',title:item.title,description:item.summary,category:'Guide',href:`/carousels/${encodeURIComponent(item.slug)}`})))),
   ]);
   projectsUnavailable=outcomes.some(result=>result.status==='rejected');requested=!projectsUnavailable;loading=false;renderSearch();
 }

@@ -42,7 +42,7 @@ for(const width of [390,1440])test(`footer destinations use the current theme at
  for(const path of paths.filter(p=>p!=='/')){
   const response=await page.goto(base+path);expect(response?.status(),path).toBe(200);
   await expect(page.locator('h1')).toHaveCount(1);
-  await expect(page.locator('body')).toHaveCSS('background-color','rgb(5, 5, 5)');
+  await expect(page.locator('body')).toHaveCSS('background-color','rgb(7, 7, 10)');
   await expect(page.locator('html')).toHaveCSS('color-scheme','dark');
   await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href','https://digivated.com'+path);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),path).toBe(true);
@@ -54,8 +54,8 @@ for(const width of [390,1440])test(`footer destinations use the current theme at
  await page.locator('.platform-footer').scrollIntoViewIfNeeded();await page.screenshot({path:test.info().outputPath(`footer-${width}.png`)});
 });
 test('previous purchase routes retain theme, access form and their own canonical URL',async({page})=>{
- for(const path of ['/access','/start','/library','/toolkit','/carousels','/ui-ux-prompt-packet']){
-  await page.goto(base+path);await expect(page.locator('body')).toHaveCSS('background-color','rgb(5, 5, 5)');
+ for(const path of ['/access','/start','/library','/toolkit','/ui-ux-prompt-packet']){
+  await page.goto(base+path);await expect(page.locator('body')).toHaveCSS('background-color','rgb(7, 7, 10)');
   await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href','https://digivated.com'+path);
   await expect(page.locator('a[href*="gumroad.com/l/"]')).toHaveCount(0);
  }
