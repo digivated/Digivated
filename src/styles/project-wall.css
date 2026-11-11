@@ -55,7 +55,7 @@ html body.platform.light-theme.wall-experience .wall-focus-actions a+a { backgro
 .wall-experience .project-wall.wall-is-open .wall-grid { filter:brightness(.45); transform:scale(1.08); }
 /* Keep the normal account logic, but let navigation sit over the visual wall. */
 html body.platform.light-theme.wall-experience .compact-site-header { position:absolute; z-index:100; inset:0 0 auto; width:100%; max-width:none; margin:0; border:0; border-radius:0; background:linear-gradient(#050607a8,#05060700); box-shadow:none; backdrop-filter:none; }
-html body.platform.light-theme.wall-experience.projects-dashboard .compact-site-header { position:sticky; }
+html#digivated-root body.platform.wall-experience.projects-dashboard .compact-site-header { position:sticky; }
 html body.platform.light-theme.wall-experience .compact-site-header .header-inner { width:min(1220px,100%); min-height:68px; margin:auto; padding:12px 22px; }
 html body.platform.light-theme.wall-experience .compact-site-header .platform-brand { color:#fff; font:700 1.35rem 'Inter Variable',system-ui,sans-serif; letter-spacing:-.04em; text-shadow:0 2px 10px #0008; }
 .wall-experience .compact-site-header .new-brand-mark { width:30px; height:30px; padding:3px; border-radius:3px; background:white; }
