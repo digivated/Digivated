@@ -93,13 +93,13 @@ html#digivated-root .project-reel-title h2 { font-size:11px; letter-spacing:.12e
 html#digivated-root .home-editorial > .home-whats-new { z-index: 3; }
 @media (min-width: 1024px) {
   .home-editorial { position: relative; }
-  .home-whats-new {
+  html#digivated-root .home-editorial > .home-whats-new {
     position: absolute; top: 16px; left: 0; display: block;
     width: 160px; margin: 0; text-align: left;
     border: 1px solid var(--dg-line-strong); border-radius: 14px;
     background: var(--dg-glass); color: var(--dg-ink); box-shadow: var(--dg-shadow);
   }
-  .home-whats-new[open] { width: 224px; }
+  html#digivated-root .home-editorial > .home-whats-new[open] { width: 224px; }
   .home-whats-new summary {
     display: flex; justify-content: space-between; align-items: center; gap: 12px;
     min-height: 44px; padding: 10px 14px; border-radius: 13px;
@@ -116,7 +116,7 @@ html#digivated-root .home-editorial > .home-whats-new { z-index: 3; }
   .home-whats-new li::marker { color: var(--dg-accent); }
 }
 @media (min-width: 1280px) {
-  .home-whats-new {
+  html#digivated-root .home-editorial > .home-whats-new {
     top: 28px; left: calc((100% - 100vw) / 2 + 28px);
   }
 }
