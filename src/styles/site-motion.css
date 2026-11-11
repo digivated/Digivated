@@ -1,4 +1,4 @@
-/* A shared motion rhythm for pages that do not have their own entrance. */
+/* Shared page and card entrance motion. */
 @keyframes digivated-page-arrive {
   from { opacity:.7; transform:translateY(12px); }
   to { opacity:1; transform:translateY(0); }
@@ -6,13 +6,6 @@
 @keyframes digivated-detail-arrive {
   from { opacity:.72; transform:translateY(8px); }
   to { opacity:1; transform:translateY(0); }
-}
-/* The signal path is shared with Rankings: one sweep, one timing curve. */
-@keyframes digivated-signal-sweep {
-  from { transform:translateX(-110%); opacity:0; }
-  20% { opacity:.8; }
-  80% { opacity:.8; }
-  to { transform:translateX(520%); opacity:0; }
 }
 @media (prefers-reduced-motion:no-preference) {
   html body.platform:not(.home-refresh) main#main > :is(section,article,header):not(.rankings-directory) {
@@ -23,16 +16,4 @@
   }
   html body.platform :is(.news-card,.creator-hub-panel,.membership-benefits > div,.project-account-card,.creator-inbox-page .inbox-thread,.resource-grid > .resource-card):nth-child(2) { animation-delay:.055s; }
   html body.platform :is(.news-card,.creator-hub-panel,.membership-benefits > div,.project-account-card,.creator-inbox-page .inbox-thread,.resource-grid > .resource-card):nth-child(3) { animation-delay:.11s; }
-  html#digivated-root body.platform :is(.page-intro h1,.creator-social-heading h1,.news-masthead h1,.link-directory-head h1,.membership-heading h1,.creator-inbox-heading h1,.wall-intro h1,.wall-fallback h1,.login-heading h1,.home-editorial h1,.rankings-directory .rankings-hero)::after {
-    content:"";position:absolute;left:0;bottom:-10px;width:22%;height:2px;pointer-events:none;
-    border-radius:999px;background:linear-gradient(90deg,transparent,#c49bff,transparent);
-    box-shadow:0 0 10px rgba(185,120,255,.48);
-    animation:digivated-signal-sweep 8s ease-in-out 1s infinite;
-  }
-  html#digivated-root body.platform :is(.page-intro h1,.creator-social-heading h1,.news-masthead h1,.link-directory-head h1,.membership-heading h1,.creator-inbox-heading h1,.wall-intro h1,.wall-fallback h1,.login-heading h1,.home-editorial h1,.rankings-directory .rankings-hero) { position:relative; }
 }
-
-/* Keep the home title's trace centered under the headline. */
-html#digivated-root body.platform .home-editorial h1::after{left:50%;translate:-50% 0}
-
-html#digivated-root body.platform .rankings-directory .rankings-hero::after{bottom:0}
