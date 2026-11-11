@@ -7,7 +7,7 @@ test.describe.configure({mode:'serial'});
 test.skip(!process.env.DIGIVATED_TEST_REDIS_PORT,'Requires isolated local Redis.');
 for(const width of [375,768,1440])test(`visible card counts persist safely at ${width}px`,async({page})=>{
  const redis=testRedis(11);await redis(['FLUSHDB']);
- const project={id:'view-fixture',name:'View fixture',creator:'Test creator',category:'Apps',description:'A test project used only by the local browser verification.',url:'https://example.com',status:'featured',pick:true};
+ const project={id:'view-fixture',name:'View fixture',creator:'Test creator',category:'Apps',description:'A test project used only by the local browser verification.',url:'https://example.com',status:'featured',pick:true,image:'data:image/png;base64,aA=='};
  await redis(['SET','digivated:submission:view-fixture',JSON.stringify({...project,consent:true})]);
  await redis(['SET','digivated:public:submission:view-fixture',JSON.stringify(project)]);await redis(['ZADD','digivated:public:submissions',1,project.id]);
  const handlers={'/api/projects':makePublicHandler('projects',{redis}),'/api/project-views':makeProjectViewHandler({redis,env:{SUBMISSIONS_ORIGIN:base}})};
@@ -22,13 +22,13 @@ for(const width of [375,768,1440])test(`visible card counts persist safely at ${
  });
  await page.setViewportSize({width,height:900});await page.goto(base+'/discover');
  const card=page.locator('[data-project-id]');await expect(card).toHaveCount(1);
- await page.getByLabel('Search projects').fill('no matches');await page.waitForTimeout(1200);expect(writes).toBe(0);
- await page.getByLabel('Search projects').fill('View fixture');await card.scrollIntoViewIfNeeded();await expect(card.locator('[data-project-views]')).toHaveText('1 view');
+ await page.getByLabel('Search the wall').fill('no matches');await page.waitForTimeout(1200);expect(writes).toBe(0);
+ await page.getByLabel('Search the wall').fill('View fixture');await card.scrollIntoViewIfNeeded();await expect(card.locator('[data-project-views]')).toHaveText('1 view');
  await page.reload();await card.scrollIntoViewIfNeeded();await expect.poll(()=>writes).toBe(2);await expect(card.locator('[data-project-views]')).toHaveText('1 view');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.screenshot({path:test.info().outputPath(`project-views-${width}.png`),fullPage:true});
  await page.goto(base);await expect(page.locator('[data-project-id]')).toHaveCount(1);await page.locator('[data-project-id]').first().scrollIntoViewIfNeeded();await expect.poll(()=>writes).toBe(3);await expect(page.locator('[data-project-views]')).toHaveText(['1 view']);
- await page.route('**/api/project-views?*',r=>r.fulfill({status:503,json:{error:'offline'}}));await page.goto(base+'/discover');await card.scrollIntoViewIfNeeded();await card.getByRole('link',{name:'Visit Project'}).click({trial:true});
+ await page.route('**/api/project-views?*',r=>r.fulfill({status:503,json:{error:'offline'}}));await page.goto(base+'/discover');await card.scrollIntoViewIfNeeded();await card.getByRole('button',{name:'Open View fixture',exact:true}).click({trial:true});
  expect(errors).toEqual([]);await redis(['FLUSHDB']);
 });
 
@@ -40,5 +40,5 @@ test('view counts recover from failure and refresh without reloading',async({pag
  await page.clock.fastForward(1100);await expect.poll(()=>requests).toBe(1);await expect(card.locator('[data-project-views]')).toHaveText('5 views');
  await page.clock.fastForward(2500);await expect(card.locator('[data-project-views]')).toHaveText('7 views');
  await page.clock.fastForward(61000);await expect(card.locator('[data-project-views]')).toHaveText('8 views');
- await page.getByLabel('Search projects').fill('no match');await expect(card).toBeHidden();await page.clock.fastForward(120000);expect(requests).toBe(3);
+ await page.getByLabel('Search the wall').fill('no match');await expect(card).toBeHidden();await page.clock.fastForward(120000);expect(requests).toBe(3);
 });
