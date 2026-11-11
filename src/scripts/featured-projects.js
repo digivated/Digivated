@@ -40,7 +40,7 @@ if (section) {
       const edition = document.createElement('span');
       edition.className = 'home-featured-edition';
       edition.setAttribute('aria-hidden', 'true');
-      edition.textContent = `SPOTLIGHT  ${String(index + 1).padStart(2, '0')}`;
+      edition.textContent = 'SPOTLIGHT';
       ribbon.append(track, edition);
       const content = document.createElement('span'); content.className = 'home-featured-content';
       const art = document.createElement('span'); art.className = 'home-featured-logo';
