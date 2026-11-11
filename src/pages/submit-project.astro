@@ -49,8 +49,8 @@ import '../styles/submission-flow.css';
 
       <fieldset>
         <legend><span class="submission-step-label">03 · Visual identity</span>Make a strong first impression</legend>
-        <label class="submission-upload">Project cover<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Required. JPG, PNG, or WebP, up to 10 MB. Use a clear product screenshot or logo. We fit it into a consistent 16:10 frame and optimize it before upload.</span></label>
-        <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project image preview"/><span id="project-image-name"></span></div>
+        <label class="submission-upload">Project logo<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Required. Upload your project’s logo, not a website screenshot. JPG, PNG, or WebP, up to 10 MB. A square PNG or WebP with a transparent background works best. We preserve the full logo in a consistent square frame.</span></label>
+        <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project logo preview"/><span id="project-image-name"></span></div>
       </fieldset>
 
       <fieldset>
@@ -65,7 +65,7 @@ import '../styles/submission-flow.css';
         <h2>Ready to send?</h2>
         <p>Your project stays private until approved. Track its status and private feedback in <a href="/account">Your Projects</a>.</p>
         <label class="honeypot" aria-hidden="true">Leave this empty<input name="company" tabindex="-1" autocomplete="off"/></label>
-        <label class="consent"><input name="consent" type="checkbox" required/><span>I confirm that I own or am authorized to submit this project and allow Digivated to display the submitted information and project image.</span></label>
+        <label class="consent"><input name="consent" type="checkbox" required/><span>I confirm that I own or am authorized to submit this project and allow Digivated to display the submitted information and project logo.</span></label>
         <label class="consent"><input name="emailOutreachConsent" type="checkbox"/><span>Send me one follow-up email about my submission, my account, and how to opt in to weekly updates. I will not be subscribed automatically.</span></label>
         <button class="button primary" type="submit" disabled>Sign in to submit your project</button>
         <noscript>Enable JavaScript to submit your project securely.</noscript>
@@ -76,7 +76,7 @@ import '../styles/submission-flow.css';
 
     <aside class="submission-preview-panel" aria-labelledby="listing-preview-title">
       <div class="submission-preview-sticky"><p class="submission-step-label">YOUR PUBLIC LISTING</p><h2 id="listing-preview-title">Preview your project</h2><p class="field-help">See how your details will look before submitting.</p>
-      <article class="submission-listing-preview"><div class="listing-preview-cover"><img data-listing-image alt="" hidden/><span data-listing-placeholder>Your project image</span></div><div class="listing-preview-copy"><span data-listing-category>Category</span><h3 data-listing-name>Your project name</h3><p data-listing-description>A clear description of what your project does and who it helps.</p><span data-listing-domain>your-project.com</span></div><div class="listing-preview-footer"><span>Feedback <b>0</b></span><span>↑ Upvote <b>0</b></span></div></article>
+      <article class="submission-listing-preview"><div class="listing-preview-cover"><img data-listing-image alt="" hidden/><span data-listing-placeholder>Your project logo</span></div><div class="listing-preview-copy"><span data-listing-category>Category</span><h3 data-listing-name>Your project name</h3><p data-listing-description>A clear description of what your project does and who it helps.</p><span data-listing-domain>your-project.com</span></div><div class="listing-preview-footer"><span>Feedback <b>0</b></span><span>↑ Upvote <b>0</b></span></div></article>
       <div class="submission-quality"><h3>A listing that stands out</h3><ul><li>Use the real product name.</li><li>Show a clear screenshot or logo.</li><li>Explain one useful outcome.</li><li>Link directly to your project.</li></ul></div><p class="field-help">Your email, order details, and review notes stay private.</p></div>
     </aside>
   </div>
