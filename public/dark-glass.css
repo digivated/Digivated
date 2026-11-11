@@ -377,8 +377,10 @@ html#digivated-root body.platform .project-wall .wall-page-controls button { min
 
 /* Four useful footer groups, without a separate single-link About column. */
 html#digivated-root body.platform .platform-footer .footer-columns {
-  grid-template-columns:minmax(180px,1.5fr) repeat(4,minmax(0,1fr)); gap:28px;
+  width:100%; grid-template-columns:minmax(210px,1.4fr) repeat(4,minmax(135px,1fr)); gap:clamp(24px,3vw,48px);
 }
+html#digivated-root body.platform .platform-footer .footer-inner { width:min(1160px,calc(100% - 48px)); max-width:none; margin-inline:auto; }
+html#digivated-root body.platform .platform-footer .footer-bottom { width:100%; }
 html#digivated-root body.platform .platform-footer .footer-columns>nav { min-width:0; }
 html#digivated-root body.platform .platform-footer .footer-columns h2 {
   font-size:12px; line-height:1.5; margin:0 0 12px; letter-spacing:0; text-transform:none;
