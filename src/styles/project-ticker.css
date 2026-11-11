@@ -69,3 +69,37 @@ html body.platform.light-theme.moments-theme .project-reel-footer a { display:in
 html body.platform.light-theme.moments-theme .project-reel-controls button:disabled { opacity:.45; cursor:default; }
 
 @media(max-width:760px){.project-reel-controls [data-reel-pause]{display:none!important}}
+
+/* Flat glass banner: one animated track, no individual floating or tilted cards. */
+html#digivated-root body.platform .project-reel {
+ background:linear-gradient(120deg,#1f1926d9,#100e15ed)!important;
+ border-block:1px solid #ffffff20; padding:18px 0; border-radius:0;
+}
+html#digivated-root body.platform .project-reel-stage { min-height:114px; }
+html#digivated-root body.platform .project-reel-window { padding:14px 0; scroll-behavior:auto; }
+html#digivated-root body.platform .project-reel-track { transform-origin:left center; }
+html#digivated-root body.platform .project-reel-card {
+ display:grid; grid-template-columns:56px minmax(0,1fr); align-items:center; gap:12px;
+ width:280px; height:84px; padding:12px; box-sizing:border-box;
+ border:1px solid #ffffff28!important; border-radius:16px;
+ background:linear-gradient(125deg,#ffffff10,#ffffff04)!important;
+ box-shadow:inset 0 1px 0 #ffffff15!important;
+ transform:none!important; animation:none!important; backdrop-filter:none!important;
+}
+html#digivated-root body.platform .project-reel-art {
+ width:56px; height:56px; border-radius:11px; border:1px solid #ffffff18;
+ background:#ffffff08!important; overflow:hidden;
+}
+html#digivated-root body.platform .project-reel-art img { object-fit:contain; background:transparent; }
+html#digivated-root body.platform .project-reel-category,
+html#digivated-root body.platform .project-reel-orbit { display:none; }
+html#digivated-root body.platform .project-reel-copy {
+ height:auto; padding:0 20px 0 0; gap:4px; background:transparent!important;
+}
+html#digivated-root body.platform .project-reel-copy strong { color:#f4f0fa; font-size:13px; }
+html#digivated-root body.platform .project-reel-copy>span { color:#b4a6c2; }
+html#digivated-root body.platform .project-reel-arrow { right:0; bottom:8px; }
+html#digivated-root body.platform .project-reel-card:is(:hover,:focus-visible) {
+ border-color:#c9a6f2!important; outline:2px solid #c9a6f2; outline-offset:2px;
+}
+html#digivated-root body.platform .project-reel-controls [data-reel-pause] { display:grid!important; }
