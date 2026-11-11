@@ -1,8 +1,4 @@
-/* Native cross-document transitions keep navigation full-load and script-safe. */
-@view-transition {
-  navigation: auto;
-}
-
+/* Platform opts eligible pages into native cross-document transitions. */
 ::view-transition-group(root) {
   animation-duration: 180ms;
   animation-timing-function: cubic-bezier(.2, .75, .25, 1);
