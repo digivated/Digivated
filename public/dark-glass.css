@@ -379,7 +379,7 @@ html#digivated-root body.platform .project-wall .wall-page-controls button { min
 html#digivated-root body.platform .platform-footer .footer-columns {
   width:100%; grid-template-columns:minmax(220px,1.4fr) repeat(4,minmax(145px,1fr)); gap:clamp(24px,3vw,48px);
 }
-html#digivated-root body.platform .platform-footer .footer-inner { box-sizing:border-box; width:calc(100% - 64px); max-width:1440px; margin-inline:auto; padding-inline:0; }
+html#digivated-root body.platform .platform-footer .footer-inner { box-sizing:border-box; width:100%; max-width:none; margin-inline:auto; padding-inline:clamp(24px,4vw,72px); }
 html#digivated-root body.platform .platform-footer .footer-bottom { width:100%; }
 html#digivated-root body.platform .platform-footer .footer-columns>nav { min-width:0; }
 html#digivated-root body.platform .platform-footer .footer-columns h2 {
