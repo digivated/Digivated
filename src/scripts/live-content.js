@@ -5,6 +5,7 @@ import { safeUrl, normalizeResourceCategory } from '../data/community.mjs';
 import { cardIcon } from './card-actions.js';
 import { categoryIcon, resourceStats, formatCardDate } from '../lib/card-meta.mjs';
 import { uniqueProjects } from './wall-catalog.js';
+import { projectFeedbackHref } from '../lib/project-links.mjs';
 const el=(tag,text,className)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(className)node.className=className;return node;};
 function link(text,url){const node=el('a',text);node.href=url.startsWith('/')?url:safeUrl(url);if(!url.startsWith('/')){node.target='_blank';node.rel='noopener noreferrer';}return node;}
 function thumbnail(url,alt){const img=el('img');img.src=url;img.alt=alt;img.width=640;img.height=400;img.loading='lazy';return img;}
@@ -15,7 +16,16 @@ function cardButton(action,type,id,url,label){
  button.append(cardIcon(action),el('span',label,'sr-only'));return button;
 }
 function cardSave(type,id){const button=saveButton(type,id);button.className='card-icon card-save';button.textContent='';button.title='Save to collections';button.append(cardIcon('save'),el('span','Save','sr-only'));button.lastChild.dataset.saveLabel='';return button;}
-function cardSocial(type,id,url){const row=el('div',undefined,'card-social');const feedback=cardButton('comment',type,id,null,type==='project'?'Give feedback on this project':'Read or leave a comment');if(type==='project'){feedback.classList.add('card-feedback-trigger');feedback.querySelector('.sr-only')?.remove();feedback.append(el('span','Feedback','card-feedback-label'),el('span','0','card-feedback-count'));}row.append(feedback,cardButton('share',type,id,url,'Share this '+type));const like=cardButton('like',type,id,null,'Like this '+type);const count=el('span',undefined,'card-count');count.dataset.likeCount='';like.append(count);row.append(like);return row;}
+function cardSocial(type,id,url){const row=el('div',undefined,'card-social');const feedback=type==='project'
+  ? link('',projectFeedbackHref(id,url))
+  : cardButton('comment',type,id,null,'Read or leave a comment');
+ if(type==='project'){
+  feedback.className='card-icon card-feedback-trigger';
+  feedback.dataset.commentType=type;
+  feedback.dataset.commentId=id;
+  feedback.setAttribute('aria-label','Give feedback on this project');
+  feedback.append(cardIcon('comment'),el('span','Feedback','card-feedback-label'),el('span','0','card-feedback-count'));
+ }row.append(feedback,cardButton('share',type,id,url,'Share this '+type));const like=cardButton('like',type,id,null,'Like this '+type);const count=el('span',undefined,'card-count');count.dataset.likeCount='';like.append(count);row.append(like);return row;}
 function cardActions(type,id,url){const row=cardSocial(type,id,url);row.className='card-actions';row.setAttribute('role','group');row.setAttribute('aria-label',type==='project'?'Feedback, share, like, and save':'Comment, share, like, and save');row.append(cardSave(type,id));return row;}
 function statStrip(resource){
  const strip=el('div',undefined,'card-stats');strip.setAttribute('aria-label','Resource details');

@@ -1,3 +1,74 @@
+import { requestCardInteraction } from './card-actions.js';
+
+const comments = document.querySelector('[data-project-comments]');
+if (comments) {
+  const id = comments.dataset.projectComments;
+  const form = comments.querySelector('form');
+  const name = form.elements.namedItem('name');
+  const body = form.elements.namedItem('comment');
+  const counter = comments.querySelector('#launch-comment-length');
+  const submit = form.querySelector('button[type="submit"]');
+  const formStatus = form.querySelector('[data-project-comment-status]');
+  const message = comments.querySelector('[data-project-comments-message]');
+  const count = comments.querySelector('[data-project-comment-count]');
+  const list = comments.querySelector('.launch-comment-list');
+
+  async function loadComments() {
+    const data = await requestCardInteraction('project', id);
+    const entries = data.comments || [];
+    const rows = entries.map(entry => {
+      const row = document.createElement('li');
+      const author = document.createElement('strong');
+      const text = document.createElement('p');
+      author.textContent = entry.name;
+      text.textContent = entry.body;
+      row.append(author, text);
+      return row;
+    });
+    list.replaceChildren(...rows);
+    list.hidden = !rows.length;
+    count.textContent = String(data.commentCount ?? rows.length);
+    count.hidden = false;
+    message.textContent = rows.length ? '' : 'Be the first to comment.';
+  }
+
+  const updateCounter = () => { counter.textContent = `${body.value.length} / 500`; };
+  body.addEventListener('input', updateCounter);
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (submit.disabled) return;
+    if (body.value.trim().length < 4) {
+      formStatus.textContent = 'Enter at least 4 characters.';
+      body.focus();
+      return;
+    }
+    submit.disabled = true;
+    formStatus.textContent = 'Posting comment…';
+    try {
+      await requestCardInteraction('project', id, {
+        action: 'project-feedback',
+        name: name.value,
+        comment: body.value
+      });
+      body.value = '';
+      updateCounter();
+      formStatus.textContent = 'Comment posted.';
+      try {
+        await loadComments();
+      } catch {
+        message.textContent = 'Refresh the page to see your comment.';
+      }
+    } catch (error) {
+      formStatus.textContent = error.message;
+    } finally {
+      submit.disabled = false;
+    }
+  });
+  loadComments().catch(() => {
+    message.textContent = 'Comments are temporarily unavailable.';
+  }).finally(() => { submit.disabled = false; });
+}
+
 const status = document.querySelector('[data-share-status]');
 const url = location.origin + location.pathname;
 document.querySelector('[data-copy-link]')?.addEventListener('click',async()=>{

@@ -55,6 +55,7 @@ html body.platform.light-theme.wall-experience .wall-focus-actions a+a { backgro
 .wall-experience .project-wall.wall-is-open .wall-grid { filter:brightness(.45); transform:scale(1.08); }
 /* Keep the normal account logic, but let navigation sit over the visual wall. */
 html body.platform.light-theme.wall-experience .compact-site-header { position:absolute; z-index:100; inset:0 0 auto; width:100%; max-width:none; margin:0; border:0; border-radius:0; background:linear-gradient(#050607a8,#05060700); box-shadow:none; backdrop-filter:none; }
+html body.platform.light-theme.wall-experience.projects-dashboard .compact-site-header { position:sticky; }
 html body.platform.light-theme.wall-experience .compact-site-header .header-inner { width:min(1220px,100%); min-height:68px; margin:auto; padding:12px 22px; }
 html body.platform.light-theme.wall-experience .compact-site-header .platform-brand { color:#fff; font:700 1.35rem 'Inter Variable',system-ui,sans-serif; letter-spacing:-.04em; text-shadow:0 2px 10px #0008; }
 .wall-experience .compact-site-header .new-brand-mark { width:30px; height:30px; padding:3px; border-radius:3px; background:white; }
@@ -261,9 +262,9 @@ html body.platform.light-theme.wall-experience .wall-intro-links button:focus-vi
 .wall-experience .wall-dom-grid .wall-card-open .wall-card-media { flex:1 1 auto; }
 .wall-experience .wall-grid-view .wall-card-grid .wall-card-open .wall-card-media { flex:none; }
 .wall-experience .wall-card-actions { display:flex; align-items:center; gap:5px; width:100%; min-width:0; padding:10px 14px; border-top:1px solid #e2e7e9; background:#fff; color:#4d5a60; }
-html body.platform.light-theme.wall-experience .wall-card-actions button { display:inline-flex; align-items:center; justify-content:center; gap:5px; min-height:32px; padding:5px 7px; border:0; border-radius:7px; background:transparent; color:#344148; font:600 .71rem 'Inter Variable',system-ui,sans-serif; white-space:nowrap; cursor:pointer; }
-html body.platform.light-theme.wall-experience .wall-card-actions button:hover,html body.platform.light-theme.wall-experience .wall-card-actions button[aria-pressed=true] { background:#e8eeef; color:#20282c; }
-.wall-experience .wall-card-actions button:focus-visible { outline:2px solid #263a43; outline-offset:2px; }
+html body.platform.light-theme.wall-experience .wall-card-actions :is(button, a) { text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:5px; min-height:32px; padding:5px 7px; border:0; border-radius:7px; background:transparent; color:#344148; font:600 .71rem 'Inter Variable',system-ui,sans-serif; white-space:nowrap; cursor:pointer; }
+html body.platform.light-theme.wall-experience .wall-card-actions :is(button, a):hover,html body.platform.light-theme.wall-experience .wall-card-actions :is(button, a)[aria-pressed=true] { background:#e8eeef; color:#20282c; }
+.wall-experience .wall-card-actions :is(button, a):focus-visible { outline:2px solid #263a43; outline-offset:2px; }
 .wall-experience .wall-action-icon,.wall-experience .wall-action-icon svg { display:inline-block; width:16px; height:16px; flex:none; }
 .wall-experience .wall-view-count { display:inline-flex; align-items:center; gap:5px; margin-left:auto; font-size:.7rem; white-space:nowrap; }
 .wall-experience .wall-focus-panel>.wall-card-actions { justify-content:center; margin:0 0 16px; border:1px solid #e2e7e9; border-radius:10px; }
@@ -291,8 +292,8 @@ html body.platform.light-theme.wall-experience .wall-card-actions button:hover,h
 }
 @media(max-width:760px) {
  .wall-experience .wall-grid-view .wall-card-grid .wall-card-actions { padding:7px 6px; gap:1px; }
- .wall-experience .wall-grid-view .wall-card-grid .wall-card-actions button { padding:4px; }
- .wall-experience .wall-grid-view .wall-card-grid .wall-card-actions button>span:not(.wall-action-icon):not(.card-feedback-count):not([data-like-count]) { display:none; }
+ .wall-experience .wall-grid-view .wall-card-grid .wall-card-actions :is(button, a) { padding:4px; }
+ .wall-experience .wall-grid-view .wall-card-grid .wall-card-actions :is(button, a)>span:not(.wall-action-icon):not(.card-feedback-count):not([data-like-count]) { display:none; }
  .wall-experience .wall-grid-view .wall-card-grid .wall-view-count { font-size:.61rem; }
 }
 
@@ -356,8 +357,8 @@ html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .
 html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-list-summary { display:-webkit-box; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:2; max-width:66ch; color:#ab9eb9; font-size:12px; line-height:1.45; }
 html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-open-label { display:grid; place-items:center; color:#bda2db; }
 html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions { width:auto; min-width:210px; padding:0; border:0; background:transparent!important; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions button { color:#baadc9; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions button:is(:hover,[aria-pressed=true]) { background:#a877e522; color:#f4eaff; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions :is(button, a) { color:#baadc9; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions :is(button, a):is(:hover,[aria-pressed=true]) { background:#a877e522; color:#f4eaff; }
 @media(max-width:760px) {
  html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile { grid-template-columns:minmax(0,1fr); gap:0; padding:0 0 8px; }
  html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-open { grid-template-columns:56px minmax(0,1fr) 18px; gap:12px; min-height:92px; padding:13px 0 8px; }

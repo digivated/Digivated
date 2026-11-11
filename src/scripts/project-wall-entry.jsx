@@ -6,6 +6,7 @@ import {scanCardActions} from './card-actions.js';
 import {observeProjectViews,viewLabel} from './project-views.js';
 import {projectCategories} from '../data/community.mjs';
 import {cardIconMarkup} from '../lib/card-icons.mjs';
+import {projectFeedbackHref} from '../lib/project-links.mjs';
 
 const safe=(value,fallback='/discover')=>{try{const url=new URL(value,location.origin);return ['https:','http:'].includes(url.protocol)?url.href:fallback;}catch{return fallback;}};
 const Icon=({name})=><span className="wall-action-icon" aria-hidden="true" dangerouslySetInnerHTML={{__html:cardIconMarkup(name)}}/>;
@@ -16,16 +17,27 @@ function ProjectPreview({project}) {
  const source=project.image?safe(project.image,''):'';
  return source&&!failed?<img src={source} alt="" loading="lazy" decoding="async" onError={()=>setFailed(true)}/>:<span className="wall-list-monogram" aria-hidden="true">{project.name.slice(0,2).toUpperCase()}</span>;
 }
-function ProjectActions({project}){return <div className="wall-card-actions" role="group" aria-label={`Feedback and upvotes for ${project.name}`}><button type="button" data-comment-type="project" data-comment-id={project.id} aria-label={`Feedback for ${project.name}`}><Icon name="comment"/><span>Feedback</span><span className="card-feedback-count">0</span></button><button type="button" data-like-type="project" data-like-id={project.id} aria-label={`Upvote ${project.name}`} aria-pressed="false"><Icon name="like"/><span>Upvote</span><span data-like-count=""/></button></div>;}
+function ProjectActions({project}){return <div className="wall-card-actions" role="group" aria-label={`Feedback and upvotes for ${project.name}`}><a href={projectFeedbackHref(project.id,project.pageUrl)} data-comment-type="project" data-comment-id={project.id} aria-label={`Feedback for ${project.name}`}><Icon name="comment"/><span>Feedback</span><span className="card-feedback-count">0</span></a><button type="button" data-like-type="project" data-like-id={project.id} aria-label={`Upvote ${project.name}`} aria-pressed="false"><Icon name="like"/><span>Upvote</span><span data-like-count=""/></button></div>;}
 function Wall({section}){
- const host=useRef(null),rail=useRef(null),scene=useRef(null),closeButton=useRef(null),returnFocus=useRef(null),catalogRef=useRef([]),feedbackOpened=useRef(false),positionRef=useRef(null);
+ const host=useRef(null),rail=useRef(null),scene=useRef(null),closeButton=useRef(null),returnFocus=useRef(null),catalogRef=useRef([]),positionRef=useRef(null);
  const [projects,setProjects]=useState([]),[status,setStatus]=useState('Loading projects…'),[selected,setSelected]=useState(null),[hovered,setHovered]=useState(null),[webgl]=useState(false),[compact,setCompact]=useState(()=>matchMedia('(max-width: 760px)').matches),[view,setView]=useState('grid'),[collection,setCollection]=useState(()=>section.dataset.wallDirectory==='true'&&new URLSearchParams(location.search).get('view')!=='featured'?'all':'featured'),[page,setPage]=useState(0),[query,setQuery]=useState(''),[category,setCategory]=useState(()=>{const value=new URLSearchParams(location.search).get('category');return projectCategories.includes(value)?value:'';}),[viewCounts,setViewCounts]=useState({});
  const directory=section.dataset.wallDirectory==='true';
  const chooseCollection=next=>{if(directory){const url=new URL(location.href);if(url.hash.startsWith('#project-'))url.hash='';url.searchParams.delete('feedback');if(next==='featured')url.searchParams.set('view','featured');else url.searchParams.delete('view');history.replaceState(null,'',url.pathname+url.search+url.hash);}setCollection(next);setPage(0);setSelected(null);setView('grid');setQuery('');setCategory('');};
- useEffect(()=>{if(!directory)return;const sync=()=>{let requested;try{requested=new URLSearchParams(location.search).get('feedback')||(location.hash.startsWith('#project-')?decodeURIComponent(location.hash.slice(9)):null);}catch{return;}if(!requested){setSelected(null);return;}if(projects.some(project=>project.id===requested)){setCollection('all');setQuery('');setSelected(requested);}};window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[directory,projects]);
+ useEffect(()=>{if(!directory)return;const sync=()=>{let requested;try{requested=location.hash.startsWith('#project-')?decodeURIComponent(location.hash.slice(9)):null;}catch{return;}if(!requested){setSelected(null);return;}if(projects.some(project=>project.id===requested)){setCollection('all');setQuery('');setSelected(requested);}};window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[directory,projects]);
  useEffect(()=>{if(directory)return;const sync=()=>{if(location.hash==='#featured-projects'||location.hash==='#project-wall'){setCollection('featured');setView('grid');setPage(0);setSelected(null);}};window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[directory,compact]);
  useEffect(()=>{section.classList.toggle('wall-grid-view',view==='grid');return()=>section.classList.remove('wall-grid-view');},[section,view]);
- useEffect(()=>{const position=`${view}:${page}`;if(positionRef.current===null){positionRef.current=position;return;}if(positionRef.current===position)return;positionRef.current=position;if(!directory)return;const frame=requestAnimationFrame(()=>window.scrollTo({top:window.scrollY+section.getBoundingClientRect().top,behavior:'auto'}));return()=>cancelAnimationFrame(frame);},[view,page,directory]);
+ useEffect(()=>{
+  const position=`${view}:${page}`;
+  const previous=positionRef.current;
+  positionRef.current=position;
+  if(!directory||previous===null||previous===position)return;
+  const frame=requestAnimationFrame(()=>{
+   const header=document.querySelector('.platform-header');
+   const headerHeight=header?.getBoundingClientRect().height||0;
+   window.scrollTo({top:window.scrollY+section.getBoundingClientRect().top-headerHeight,behavior:'instant'});
+  });
+  return()=>cancelAnimationFrame(frame);
+ },[section,view,page,directory]);
  useEffect(()=>{const media=matchMedia('(max-width: 760px)');const update=()=>setCompact(media.matches);media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[]);
  useEffect(()=>{rail.current?.scrollTo({left:0,behavior:'instant'});},[page,query,collection]);
  const catalog=projects.filter(p=>(collection==='all'||p.status==='featured')&&(!category||p.category===category)&&`${p.name} ${p.creator||''} ${p.category||''}`.toLowerCase().includes(query.trim().toLowerCase()));
@@ -35,8 +47,7 @@ function Wall({section}){
  const moveSelection=direction=>setSelected(id=>adjacentProject(catalogRef.current,id,direction));
  const pageSize=12,pageCount=Math.max(1,Math.ceil(catalog.length/pageSize)),visible=catalog.slice(page*pageSize,(page+1)*pageSize);
  useEffect(()=>{if(selectedIndex>=0&&Math.floor(selectedIndex/pageSize)!==page)setPage(Math.floor(selectedIndex/pageSize));},[selectedIndex,page]);
- useEffect(()=>{let live=true;const controller=new AbortController();(async()=>{const items=[];try{let offset=0;do{const response=await fetch(`/api/projects?offset=${offset}`,{cache:'no-store',credentials:'same-origin',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(15000)])});if(!response.ok)throw Error('Projects unavailable');const data=await response.json();items.push(...(data.items||[]));if(!live)return;const valid=uniqueProjects(items);setProjects(valid);setStatus(valid.length?'':'No projects yet.');if(directory){const hash=location.hash.startsWith('#project-')?decodeURIComponent(location.hash.slice(9)):null;const requested=new URLSearchParams(location.search).get('feedback')||hash;const index=valid.findIndex(project=>project.id===requested);if(index>=0){setCollection('all');setPage(Math.floor(index/12));setSelected(requested);}}offset=data.next;}while(offset!==null&&live);}catch{if(live&&!items.length)setStatus('Projects are temporarily unavailable.');}})();return()=>{live=false;controller.abort();};},[]);
- useEffect(()=>{if(!directory||feedbackOpened.current||!isOpen||selected!==new URLSearchParams(location.search).get('feedback'))return;feedbackOpened.current=true;document.querySelector('.wall-focus [data-comment-type="project"]')?.click();},[directory,isOpen,selected]);
+ useEffect(()=>{let live=true;const controller=new AbortController();(async()=>{const items=[];try{let offset=0;do{const response=await fetch(`/api/projects?offset=${offset}`,{cache:'no-store',credentials:'same-origin',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(15000)])});if(!response.ok)throw Error('Projects unavailable');const data=await response.json();items.push(...(data.items||[]));if(!live)return;const valid=uniqueProjects(items);setProjects(valid);setStatus(valid.length?'':'No projects yet.');if(directory){const hash=location.hash.startsWith('#project-')?decodeURIComponent(location.hash.slice(9)):null;const feedback=new URLSearchParams(location.search).get('feedback');const target=feedback && valid.find(project=>project.id===feedback);if(target){location.replace(projectFeedbackHref(target.id,target.pageUrl));return;}const requested=hash;const index=valid.findIndex(project=>project.id===requested);if(index>=0){setCollection('all');setPage(Math.floor(index/12));setSelected(requested);}}offset=data.next;}while(offset!==null&&live);}catch{if(live&&!items.length)setStatus('Projects are temporarily unavailable.');}})();return()=>{live=false;controller.abort();};},[]);
  useEffect(()=>{scanCardActions();},[projects,view,collection,query,category,page,webgl]);
  useEffect(()=>{if(selected)scanCardActions(document.querySelector('.wall-focus'));},[selected]);
  useEffect(()=>{if(view==='grid'||!webgl)observeProjectViews();},[projects,view,collection,query,category,page,webgl]);
