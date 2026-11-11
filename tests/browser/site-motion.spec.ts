@@ -16,12 +16,13 @@ test('reduced motion keeps content immediately visible', async ({ page }) => {
   const section = page.locator('main#main > section').first();
   await expect(section).toBeVisible();
   expect(await section.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
+  expect(await page.locator('.creator-social-heading h1').evaluate(element => getComputedStyle(element, '::after').content)).toBe('none');
 });
 
 for (const [path, selector] of [
-  ['/', '.home-editorial h1'], ['/discover', '.wall-intro'], ['/creators', '.creator-social-heading'],
-  ['/news', '.news-masthead'], ['/resources', '.link-directory-head'], ['/membership', '.membership-heading'],
-  ['/inbox', '.creator-inbox-heading'], ['/account', '.page-intro'], ['/login', '.login-heading'],
+  ['/', '.home-editorial h1'], ['/discover', '.wall-intro h1'], ['/creators', '.creator-social-heading h1'],
+  ['/news', '.news-masthead h1'], ['/resources', '.link-directory-head h1'], ['/membership', '.membership-heading h1'],
+  ['/inbox', '.creator-inbox-heading h1'], ['/account', '.page-intro h1'], ['/login', '.login-heading h1'],
 ] as const) {
   test(`${path} has a visible heading trace`, async ({ page }) => {
     await page.goto(base + path);
@@ -33,6 +34,11 @@ for (const [path, selector] of [
     });
     expect(trace.content).not.toBe('none');
     expect(trace.name).toContain('digivated-heading-trace');
-    expect(trace.width).toBeGreaterThan(0);
+    expect(trace.width).toBeGreaterThanOrEqual(140);
+    if (path === '/creators') {
+      await page.waitForTimeout(2000);
+      const visible = await heading.evaluate(element => Number(getComputedStyle(element, '::after').opacity));
+      expect(visible).toBeGreaterThan(.7);
+    }
   });
 }
