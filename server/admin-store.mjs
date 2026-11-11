@@ -1,4 +1,5 @@
 import { projectCategory } from '../src/lib/project-taxonomy.mjs';
+import { projectPricingOptions } from '../src/lib/project-pricing.mjs';
 import { launchFields, pageSlug } from './launch-pages.mjs';
 import { AdminError } from './admin-auth.mjs';
 import { projectCategories, resourceCategories, normalizeResourceCategory, safeUrl, statuses } from '../src/data/community.mjs';
@@ -49,6 +50,7 @@ export function validateEdit(kind, input, previous) {
     Object.assign(record, launchFields(input, previous));
     if (record.page) record.slug = previous.slug || pageSlug(record);
     if (!['approved','featured'].includes(record.status)) record.pagePublished = false;
+    if (!record.publishedAt && !projectPublic(previous) && projectPublic(record)) record.publishedAt = now;
   } else {
     if (!['draft', 'published', 'archived'].includes(input.status)) throw new AdminError(400, 'Choose a valid publishing status.');
     record = { id: input.id, status: input.status, description: text(input.description, 'description', 600), date: previous?.date || now, image: input.removeImage === true ? '' : input.image ? imageValue(input.image) : previous?.image || '' };
@@ -77,7 +79,7 @@ export function projectPublic(record) {
   // Keep incomplete legacy submissions in their owners' accounts, but off every public surface.
   const destination = safeUrl(record.url);
   if (!record.image || !destination) return null;
-  return { ...(record.promotion?.verified ? {sponsored:true} : {}), pageUrl: record.pagePublished && record.page?.consent && record.slug ? `/projects/${record.slug}` : `/projects/listing/${record.id}`, id: record.id, name: record.name, creator: record.creator, description: record.description, category: projectCategory(record), url: destination, socialUrl: safeUrl(record.socialUrl), date: record.date, status: record.status, pick: isDigivatedPick(record), image: `/api/projects?image=${record.id}` };
+  return { ...(record.promotion?.verified ? {sponsored:true} : {}), pageUrl: record.pagePublished && record.page?.consent && record.slug ? `/projects/${record.slug}` : `/projects/listing/${record.id}`, id: record.id, name: record.name, creator: record.creator, description: record.description, category: projectCategory(record), url: destination, socialUrl: safeUrl(record.socialUrl), date: record.date, ...(record.publishedAt ? { publishedAt: record.publishedAt } : {}), ...(projectPricingOptions.includes(record.pricing) ? { pricing: record.pricing } : {}), status: record.status, pick: isDigivatedPick(record), image: `/api/projects?image=${record.id}` };
 }
 export function contentPublic(kind, record) {
   if (record.status !== 'published') return null;

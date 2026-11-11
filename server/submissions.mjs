@@ -2,6 +2,7 @@
 // founding-access imports redisClient from this module. The membership helpers are
 // used only inside request handlers, after both modules have finished loading.
 import { randomUUID, createHmac } from 'node:crypto';
+import { projectPricingOptions } from '../src/lib/project-pricing.mjs';
 import { projectCategories, safeUrl } from '../src/data/community.mjs';
 import { FoundingError, foundingConfig, readMember } from './founding-access.mjs';
 import { accountIndex, verifiedAccount } from './project-account.mjs';
@@ -15,6 +16,8 @@ export function validateSubmission(body) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) fail('Enter a valid email address.');
   if (!safeUrl(url)) fail('Enter a valid HTTP or HTTPS project URL.');
   if (description.length<20) fail('Describe your project in at least 20 characters.');
+  const pricing = text('pricing', 24, false);
+  if (pricing && !projectPricingOptions.includes(pricing)) fail('Choose a listed pricing option.');
   if (!projectCategories.includes(category)) fail('Choose a listed category.');
   if (body.consent!==true) fail('Please confirm you have permission to submit this project.');
   const submissionType = body.submissionType || 'directory';
@@ -39,7 +42,7 @@ export function validateSubmission(body) {
     image=body.image;
   }
   // Never accept caller-supplied status, ID, approval, picks, or timestamps.
-  return {...(promotion ? {promotion} : {}),creator,email,name,url:safeUrl(url),description,category,social,notes,image,consent:true,consentVersion:1,emailOutreachConsent:body.emailOutreachConsent===true,status:'pending',pick:false};
+  return {...(promotion ? {promotion} : {}),...(pricing ? { pricing } : {}),creator,email,name,url:safeUrl(url),description,category,social,notes,image,consent:true,consentVersion:1,emailOutreachConsent:body.emailOutreachConsent===true,status:'pending',pick:false};
 }
 export function redisClient(env=process.env,fetcher=fetch) {
   const endpoint=env.SUBMISSIONS_REDIS_REST_URL, token=env.SUBMISSIONS_REDIS_REST_TOKEN;

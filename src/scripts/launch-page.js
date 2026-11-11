@@ -13,3 +13,45 @@ if (logo) {
   if (logo.complete && !logo.naturalWidth) logo.remove();
   else logo.addEventListener('error', () => logo.remove(), { once: true });
 }
+
+const featuredPanel = document.querySelector('[data-launch-featured]');
+if (featuredPanel) {
+  const currentId = featuredPanel.dataset.launchFeatured;
+  fetch('/api/projects?view=featured', { signal: AbortSignal.timeout(8000) })
+    .then(response => response.ok ? response.json() : null)
+    .then(data => {
+      if (!Array.isArray(data?.items)) return;
+      const projects = data.items.filter(project => project.id !== currentId && project.status === 'featured'
+        && /^\/projects\/(?:listing\/)?[a-z0-9][a-z0-9-]*$/.test(project.pageUrl || '')).slice(0, 4);
+      if (!projects.length) return;
+      const list = featuredPanel.querySelector('ul');
+      for (const project of projects) {
+        const row = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = project.pageUrl;
+        const art = document.createElement('span');
+        art.className = 'launch-featured-art';
+        art.setAttribute('aria-hidden', 'true');
+        art.textContent = project.name.slice(0, 2).toUpperCase();
+        if (project.image === '/api/projects?image=' + project.id) {
+          const image = document.createElement('img');
+          image.src = project.image;
+          image.alt = '';
+          image.loading = 'lazy';
+          image.addEventListener('error', () => image.remove(), { once: true });
+          art.append(image);
+        }
+        const copy = document.createElement('span');
+        copy.className = 'launch-featured-copy';
+        const name = document.createElement('strong');
+        name.textContent = project.name;
+        const description = document.createElement('small');
+        description.textContent = project.description;
+        copy.append(name, description);
+        link.append(art, copy);
+        row.append(link);
+        list.append(row);
+      }
+      featuredPanel.hidden = false;
+    }).catch(() => {});
+}

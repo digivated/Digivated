@@ -1,5 +1,6 @@
 ---
 import Platform from '../layouts/Platform.astro';
+import { projectPricingOptions } from '../lib/project-pricing.mjs';
 import { projectCategories } from '../data/community.mjs';
 import '../styles/submission-flow.css';
 ---
@@ -45,6 +46,7 @@ import '../styles/submission-flow.css';
         <label>Project URL<input name="url" type="url" placeholder="https://your-project.com" maxlength="500" required/></label>
         <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. Start with what it does, then who it helps. Avoid hashtags and promotional slogans.</span></label>
         <label>Category<select aria-describedby="project-category-help" name="category" required><option value="">Choose a category</option>{projectCategories.map(c=><option>{c}</option>)}</select></label><p id="project-category-help" class="field-help">Choose the main thing your project helps people do. Use Education for learning tools and Developer Tools for coding utilities.</p>
+        <label>Pricing <span class="quiet">(optional)</span><select name="pricing"><option value="">Not specified</option>{projectPricingOptions.map(option => <option>{option}</option>)}</select></label>
       </fieldset>
 
       <fieldset>
