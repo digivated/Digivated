@@ -90,10 +90,11 @@ html#digivated-root .project-reel-title h2 { font-size:11px; letter-spacing:.12e
 }
 
 .home-whats-new { display: none; }
+html#digivated-root .home-editorial > .home-whats-new { z-index: 3; }
 @media (min-width: 1024px) {
   .home-editorial { position: relative; }
   .home-whats-new {
-    position: relative; z-index: 10; display: block; align-self: flex-start;
+    position: relative; display: block; align-self: flex-start;
     width: min(100%, 224px); margin: 0 0 24px; text-align: left;
     border: 1px solid var(--dg-line-strong); border-radius: 14px;
     background: var(--dg-glass); color: var(--dg-ink); box-shadow: var(--dg-shadow);
