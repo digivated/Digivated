@@ -94,11 +94,12 @@ html#digivated-root .home-editorial > .home-whats-new { z-index: 3; }
 @media (min-width: 1024px) {
   .home-editorial { position: relative; }
   .home-whats-new {
-    position: relative; display: block; align-self: flex-start;
-    width: min(100%, 224px); margin: 0 0 24px; text-align: left;
+    position: absolute; top: 16px; left: 0; display: block;
+    width: 160px; margin: 0; text-align: left;
     border: 1px solid var(--dg-line-strong); border-radius: 14px;
     background: var(--dg-glass); color: var(--dg-ink); box-shadow: var(--dg-shadow);
   }
+  .home-whats-new[open] { width: 224px; }
   .home-whats-new summary {
     display: flex; justify-content: space-between; align-items: center; gap: 12px;
     min-height: 44px; padding: 10px 14px; border-radius: 13px;
@@ -116,7 +117,6 @@ html#digivated-root .home-editorial > .home-whats-new { z-index: 3; }
 }
 @media (min-width: 1280px) {
   .home-whats-new {
-    position: absolute; top: 28px; left: calc((100% - 100vw) / 2 + 28px);
-    width: clamp(198px, 15vw, 224px); margin: 0;
+    top: 28px; left: calc((100% - 100vw) / 2 + 28px);
   }
 }
