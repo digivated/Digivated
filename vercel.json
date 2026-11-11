@@ -19,6 +19,10 @@
       "includeFiles": "{server/**,gumroad/**}",
       "maxDuration": 120
     },
+    "api/sitemap.js": {
+      "includeFiles": "{server/**,src/data/resources.json}",
+      "maxDuration": 15
+    },
     "api/*.js": {
       "includeFiles": "server/**",
       "maxDuration": 15
@@ -203,6 +207,8 @@
     }
   ],
   "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    { "source": "/googlef8b001e22ee0d4b9.html", "destination": "/api/google-site-verification" },
     { "source": "/projects/listing/:id", "destination": "/api/project-page?listing=:id" },
     {
       "source": "/projects/:slug",

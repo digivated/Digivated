@@ -2,13 +2,13 @@
 import '../styles/global.css';
 import '../styles/reference-design.css';
 import '../styles/packet-theme.css';
-const {title='UI Prompt Package',section='home'}=Astro.props;
+const {title='UI Prompt Package',section='home',description}=Astro.props;
 const workspace=['library','fixes','builder','workflows','checklists','learn','toolkit'].includes(section);
 const links=[['start','Start Here'],['library','Prompt library'],['fixes','Help me choose'],['builder','Customize a prompt'],['workflows','Step-by-step guides'],['checklists','Review checklists'],['learn','Learn the basics'],['toolkit','My saved work']];
 const siteTitle=`${title} · Digivated Prompt Packet`;
 const canonicalUrl = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', 'https://digivated.com').href;
 const socialTitle=siteTitle;
-const siteDescription='A beginner-friendly UI prompt package with 75 detailed prompts, workflows, checklists, and a prompt builder for improving websites and apps with AI.';
+const siteDescription=description || 'A beginner-friendly UI prompt package with 75 detailed prompts, workflows, checklists, and a prompt builder for improving websites and apps with AI.';
 const siteUrl='https://digivated.com';
 const previewImage=`${siteUrl}/digivated-social-card.png`;
 import '../styles/monochrome.css';
