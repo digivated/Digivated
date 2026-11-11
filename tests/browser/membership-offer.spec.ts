@@ -32,7 +32,7 @@ test('previous purchase pages keep working without standalone buy links',async({
 });
 test('membership sign-in preserves the verified member spotlight flow',async({page})=>{
  let member=false;
- await page.route('**/api/carousels',r=>r.fulfill({json:{member,items:[]}}));
+ await page.route('**/api/member-status',r=>r.fulfill({json:{member,items:[]}}));
  await page.route('**/api/founding-access',async r=>{
   const body=r.request().postDataJSON();expect(body).toEqual({email:'member@example.com'});member=true;await r.fulfill({json:{ok:true}});
  });

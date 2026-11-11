@@ -12,6 +12,7 @@ import { makeCreatorProfileHandler } from './creator-profile.mjs';
 import { makeCreatorInboxHandler } from './creator-inbox.mjs';
 import { makeReturnEmailHandler, makeWeeklyDigestHandler } from './return-emails.mjs';
 import { makeSiteActivityHandler } from './site-activity.mjs';
+import { makeMemberStatusHandler } from './member-status.mjs';
 
 // Share one deployment entry point; each handler retains its validation and response.
 // Carousel routes stay on this router so the deployment does not add a serverless function.
@@ -20,6 +21,7 @@ export function defaultPublicHandlers(overrides = {}) {
     news:makeNewsHandler(),
     'site-activity': makeSiteActivityHandler(),
     'membership-checkout': makeMembershipCheckoutHandler(),
+    'member-status': makeMemberStatusHandler(),
     content: makePublicHandler('content'),
     'saved-item': makeSavedItemHandler(),
     'project-views': makeProjectViewHandler(),

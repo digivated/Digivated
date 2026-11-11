@@ -241,7 +241,7 @@ export function makeFoundingAccessHandler(deps = {}) {
         audit({ event: 'founding_access', outcome: 'unavailable' });
         return send(503, { error: UNAVAILABLE, href: FOUNDING_HREF, memberAccess: 'unavailable' });
       }
-      if (req.headers['sec-fetch-site'] === 'cross-site' || req.headers.origin !== cfg.origin) throw new FoundingError(403, 'Open this carousel on Digivated and try again.');
+      if (req.headers['sec-fetch-site'] === 'cross-site' || req.headers.origin !== cfg.origin) throw new FoundingError(403, 'Open Digivated and try again.');
       if (deps.limit) await deps.limit(req);
       else {
         let redis = deps.redis || null;
@@ -277,7 +277,7 @@ export function makeFoundingLogoutHandler(deps = {}) {
     const env = deps.env || process.env;
     const cfg = foundingConfig(env);
     if (cfg.enabled && (req.headers['sec-fetch-site'] === 'cross-site' || req.headers.origin !== cfg.origin)) {
-      res.statusCode = 403; res.end(JSON.stringify({ error: 'Open this carousel on Digivated and try again.' })); return;
+      res.statusCode = 403; res.end(JSON.stringify({ error: 'Open Digivated and try again.' })); return;
     }
     res.setHeader('Set-Cookie', foundingCookie('', true));
     res.statusCode = 200;
