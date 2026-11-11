@@ -19,6 +19,10 @@
       "includeFiles": "{server/**,gumroad/**}",
       "maxDuration": 120
     },
+    "api/sitemap.js": {
+      "includeFiles": "{server/**,src/data/resources.json}",
+      "maxDuration": 15
+    },
     "api/*.js": {
       "includeFiles": "server/**",
       "maxDuration": 15
@@ -203,6 +207,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/projects/listing/:id", "destination": "/api/project-page?listing=:id" },
     {
       "source": "/projects/:slug",
