@@ -1,5 +1,5 @@
 import { cardIconMarkup } from '../lib/card-icons.mjs';
-import { observeProjectViews, viewLabel } from './project-views.js';
+import { observeProjectViews } from './project-views.js';
 import { safeSearchHref } from '../lib/discovery-search.mjs';
 
 const section = document.querySelector('[data-home-featured]');
@@ -52,12 +52,8 @@ if (section) {
       const name = document.createElement('strong'); name.textContent = project.name;
       const summary = document.createElement('span'); summary.className = 'home-featured-summary'; summary.textContent = project.description || 'Explore this project and meet its maker.';
       copy.append(meta,name,summary);
-      const views = document.createElement('span'); views.className = 'home-featured-views';
-      const eye = document.createElement('span'); eye.innerHTML = cardIconMarkup('eye');
-      const count = document.createElement('span'); count.dataset.projectViews = project.id; count.textContent = viewLabel(project.views);
-      views.append(eye,count);
       const arrow = document.createElement('span'); arrow.className = 'home-featured-arrow'; arrow.setAttribute('aria-hidden','true'); arrow.innerHTML = cardIconMarkup('arrow');
-      content.append(art,copy,views,arrow); card.append(ribbon,content);
+      content.append(art,copy,arrow); card.append(ribbon,content);
       return card;
     }));
     rail.setAttribute('aria-busy', 'false');

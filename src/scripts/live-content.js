@@ -1,4 +1,4 @@
-import { observeProjectViews, viewLabel } from './project-views.js';
+import { observeProjectViews } from './project-views.js';
 import { observeResourceViews } from './resource-views.js';
 import { resourcePathInfo } from '../data/learning-paths.mjs';
 import { safeUrl, normalizeResourceCategory } from '../data/community.mjs';
@@ -39,7 +39,7 @@ function projectCard(project){
  const description=el('p',project.description,'project-description');
  copy.append(heading,meta,description);
  if(project.description.length>100){const details=el('details',undefined,'project-details');details.append(el('summary','Read full description'),el('p',project.description));copy.append(details);}
- const stats=el('div',undefined,'card-stats project-stats');const viewStat=el('span',undefined,'card-stat');const eye=el('span',undefined,'stat-icon');eye.append(cardIcon('eye'));const views=el('span',viewLabel(project.views));views.dataset.projectViews=project.id;viewStat.title='Approximate project views. Repeat views from the same network count once every 24 hours.';viewStat.append(eye,views);stats.append(viewStat);
+ const stats=el('div',undefined,'card-stats project-stats');
  if(formatCardDate(project.date)){const dateStat=el('span',undefined,'card-stat');dateStat.title=formatCardDate(project.date,true);dateStat.append(cardIcon('calendar'),el('span',formatCardDate(project.date)));stats.prepend(dateStat);}copy.append(stats);
  if(project.pageUrl){const detail=link('View project',project.pageUrl);detail.className='project-detail-link';detail.append(cardIcon('arrow'));copy.append(detail);}
  const actions=el('div',undefined,'card-links card-footer');const visit=openLink('Visit project',project.url,'external');visit.classList.add('button','primary');actions.append(cardActions('project',project.id,project.pageUrl||`/discover#project-${project.id}`),visit);copy.append(actions);
