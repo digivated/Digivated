@@ -18,7 +18,7 @@ html body.platform.light-theme.moments-theme .home-featured-card:is(:hover,:focu
 .home-featured-rail:focus-visible,.home-featured-heading>a:focus-visible { outline:2px solid #7b909d; outline-offset:3px; }
 .home-featured-loading { flex:none; width:240px; height:154px; border:1px solid #e5eaed; border-radius:10px; background:linear-gradient(#eef2f4 0 88px,#f8fafb 88px); }
 .home-featured-status { max-width:480px; margin:8px auto 0; padding:0 20px; color:#73828b; text-align:center; font-size:12px; line-height:1.6; }
-html#digivated-root .home-featured-card[data-featured-rank=gold] { border-color:#c6a257!important; box-shadow:inset 0 0 0 1px #f5d99424,0 0 18px #c6a25722!important; }
+html#digivated-root .home-featured-card[data-featured-rank=gold] { border-color:#c6a257!important; box-shadow:inset 0 0 0 1px #e6dfd224,0 0 18px #c6a25722!important; }
 html#digivated-root .home-featured-card[data-featured-rank=silver] { border-color:#aeb4c2!important; box-shadow:inset 0 0 0 1px #e4e8f124,0 0 16px #b9bfd022!important; }
 html#digivated-root .home-featured-card[data-featured-rank=bronze] { border-color:#a87558!important; box-shadow:inset 0 0 0 1px #e3ae8924,0 0 16px #bd815c22!important; }
 html#digivated-root .home-featured-rank { position:absolute; z-index:3; top:8px; right:8px; padding:4px 7px; border:1px solid currentColor; border-radius:5px; background:#0b0910e8; color:#e3c981; font:600 10px/1.2 'Inter Variable',system-ui,sans-serif; }
@@ -67,32 +67,32 @@ html#digivated-root .home-featured-loading { width:100%; height:114px; border-ra
 
 /* Editorial gold foil with stationary labels and a contained, responsive card rail. */
 html#digivated-root body.platform .home-featured-projects {
- background:radial-gradient(ellipse at 32% 0,#b37b2019,transparent 65%),#100e12!important;
+ background:radial-gradient(ellipse at 32% 0,#b5a17c0a,transparent 65%),#101014!important;
  border-top-color:#bc985739;
 }
 html#digivated-root body.platform .home-featured-heading h2 {
  font-size:clamp(22px,3vw,31px); line-height:1.18;
- color:#f5d994!important; -webkit-text-fill-color:#f5d994; background:none; filter:none;
+ color:#e6dfd2!important; -webkit-text-fill-color:#e6dfd2; background:none; filter:none;
 }
 html#digivated-root body.platform .home-featured-heading>a {
- color:#f2d394!important; border:1px solid #c49a514f; border-radius:100px;
+ color:#d3c8b4!important; border:1px solid #d0bea43b; border-radius:100px;
  padding:0 12px; white-space:nowrap; font-size:11px;
 }
 html#digivated-root body.platform .home-featured-rail { gap:14px; box-sizing:border-box; }
 html#digivated-root body.platform .home-featured-card {
  max-width:100%; box-sizing:border-box; min-width:0; border-radius:16px;
- border-color:#c2974e80!important;
- background:linear-gradient(115deg,#302418 0%,#1b1615 45%,#131116 100%)!important;
+ border-color:#cdbb9e42!important;
+ background:linear-gradient(115deg,#211e23 0%,#19171e 45%,#131218 100%)!important;
  box-shadow:inset 0 1px 0 #fff2c114,0 5px 16px #0003!important;
 }
 html#digivated-root body.platform .home-featured-card:is(:hover,:focus-visible) {
- border-color:#f7d58b!important; outline-color:#f7d58b;
+ border-color:#d9c8aa!important; outline-color:#d9c8aa;
 }
 html#digivated-root body.platform .home-featured-ribbon {
  display:flex; align-items:center; justify-content:space-between; gap:10px;
- min-height:36px; padding:6px 17px; box-sizing:border-box; border-bottom:1px solid #b48a48;
- color:#211508;
- background:linear-gradient(105deg,#bb8840 0%,#eed092 20%,#fff0bc 37%,#c9984d 66%,#e8be75 100%);
+ min-height:36px; padding:6px 17px; box-sizing:border-box; border-bottom:1px solid #c5b09135;
+ color:#e6dac6;
+ background:linear-gradient(105deg,#342e2b 0%,#4b4137 42%,#352e2d 100%);
 }
 .home-featured-ribbon-track,.home-featured-edition {
  display:inline-flex; align-items:center; gap:8px; width:auto;
@@ -107,7 +107,7 @@ html#digivated-root body.platform .home-featured-logo { border-color:#d4b37146; 
 html#digivated-root body.platform .home-featured-copy small { color:#dec298!important; }
 html#digivated-root body.platform .home-featured-copy strong { font-size:17px; overflow-wrap:anywhere; }
 html#digivated-root body.platform .home-featured-summary { -webkit-line-clamp:2; color:#c8b9aa; }
-html#digivated-root body.platform .home-featured-arrow { color:#f0cc83; }
+html#digivated-root body.platform .home-featured-arrow { color:#cdbb9e; }
 @media(max-width:600px) {
  html#digivated-root body.platform .home-featured-content { grid-template-columns:54px minmax(0,1fr) 16px; }
  html#digivated-root body.platform .home-featured-ribbon { padding-inline:12px; }
@@ -140,17 +140,17 @@ html#digivated-root body.platform .home-featured-ribbon {
   radial-gradient(circle at 91% 65%,#fff4c5 0 1px,transparent 3px);
 }
 .home-featured-ribbon::after {
- background:repeating-linear-gradient(110deg,transparent 0 15px,#fff8db90 16px 21px,transparent 22px 32px);
+ background:repeating-linear-gradient(110deg,transparent 0 15px,#ede0c529 16px 21px,transparent 22px 32px);
  mask-image:linear-gradient(90deg,transparent,#000 38% 62%,transparent);
 }
 @keyframes featured-unlock-sparks {
  0% { opacity:0; transform:scale(.5,.55); }
- 24% { opacity:1; }
+ 24% { opacity:.38; }
  100% { opacity:0; transform:scale(1.16,1.32); }
 }
 @keyframes featured-unlock-charge {
  0% { opacity:0; transform:translateX(-100%); }
- 24% { opacity:.85; }
+ 24% { opacity:.52; }
  100% { opacity:0; transform:translateX(100%); }
 }
 @media(prefers-reduced-motion:no-preference) {
@@ -158,8 +158,8 @@ html#digivated-root body.platform .home-featured-ribbon {
   transition:transform 200ms ease-out,border-color 200ms ease-out,box-shadow 200ms ease-out;
  }
  html#digivated-root body.platform .home-featured-card:is(:hover,:focus-visible) {
-  transform:translateY(-3px);
-  box-shadow:inset 0 1px 0 #fff3c944,0 5px 24px #ffc45e38!important;
+  transform:translateY(-2px);
+  box-shadow:inset 0 1px 0 #e2ceb423,0 5px 20px #c8b08b20!important;
  }
  .home-featured-card:is(:hover,:focus-visible,:active) .home-featured-ribbon::before {
   animation:featured-unlock-sparks 680ms ease-out both;
