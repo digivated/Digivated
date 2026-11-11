@@ -99,9 +99,6 @@ html#digivated-root body.platform .home-featured-ribbon {
  font:800 10px/1.2 'Inter Variable',system-ui,sans-serif; color:inherit;
  letter-spacing:.16em; white-space:nowrap;
 }
-.home-featured-ribbon-track::before {
- content:''; width:7px; height:7px; border:1px solid currentColor; transform:rotate(45deg);
-}
 .home-featured-edition { font-size:9px; letter-spacing:.12em; }
 html#digivated-root body.platform .home-featured-content {
  grid-template-columns:64px minmax(0,1fr) 24px; min-height:96px;
@@ -114,4 +111,31 @@ html#digivated-root body.platform .home-featured-arrow { color:#f0cc83; }
 @media(max-width:600px) {
  html#digivated-root body.platform .home-featured-content { grid-template-columns:54px minmax(0,1fr) 16px; }
  html#digivated-root body.platform .home-featured-ribbon { padding-inline:12px; }
+}
+
+/* A moving foil highlight behind the stationary labels. */
+html#digivated-root body.platform .home-featured-ribbon {
+ position:relative;
+ isolation:isolate;
+ overflow:hidden;
+}
+.home-featured-ribbon::after {
+ content:'';
+ position:absolute;
+ z-index:-1;
+ inset:0 auto 0 0;
+ width:35%;
+ pointer-events:none;
+ background:linear-gradient(105deg,transparent 12%,#fff7d99e 50%,transparent 88%);
+ transform:translateX(-120%) skewX(-18deg);
+ animation:featured-foil-glint 9s ease-in-out infinite;
+}
+.home-featured-card:nth-child(2) .home-featured-ribbon::after { animation-delay:1s; }
+.home-featured-card:nth-child(3) .home-featured-ribbon::after { animation-delay:2s; }
+@keyframes featured-foil-glint {
+ 0%,12% { transform:translateX(-120%) skewX(-18deg); }
+ 42%,100% { transform:translateX(320%) skewX(-18deg); }
+}
+@media(prefers-reduced-motion:reduce) {
+ .home-featured-ribbon::after { display:none; }
 }
