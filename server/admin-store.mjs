@@ -77,7 +77,7 @@ export function projectPublic(record) {
   // Keep incomplete legacy submissions in their owners' accounts, but off every public surface.
   const destination = safeUrl(record.url);
   if (!record.image || !destination) return null;
-  return { ...(record.promotion?.verified ? {sponsored:true} : {}), ...(record.pagePublished && record.page?.consent ? { pageUrl: `/projects/${record.slug}` } : {}), id: record.id, name: record.name, creator: record.creator, description: record.description, category: projectCategory(record), url: destination, socialUrl: safeUrl(record.socialUrl), date: record.date, status: record.status, pick: isDigivatedPick(record), image: `/api/projects?image=${record.id}` };
+  return { ...(record.promotion?.verified ? {sponsored:true} : {}), pageUrl: record.pagePublished && record.page?.consent && record.slug ? `/projects/${record.slug}` : `/projects/listing/${record.id}`, id: record.id, name: record.name, creator: record.creator, description: record.description, category: projectCategory(record), url: destination, socialUrl: safeUrl(record.socialUrl), date: record.date, status: record.status, pick: isDigivatedPick(record), image: `/api/projects?image=${record.id}` };
 }
 export function contentPublic(kind, record) {
   if (record.status !== 'published') return null;

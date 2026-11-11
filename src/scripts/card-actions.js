@@ -40,8 +40,10 @@ async function openComments(type,id,trigger){if(current && key(current.type,curr
 form.addEventListener('submit',async event=>{event.preventDefault();if(!current)return;submit.disabled=true;submit.setAttribute('aria-busy','true');feedback.textContent=current.type==='project'?'Sending your feedback…':'Sending your comment…';try{const target={...current};const data=await request(target.type,target.id,{action:target.type==='project'?'project-feedback':'comment',name:name.value,comment:comment.value});feedback.textContent=data.message;comment.value='';counter.textContent='0 / 500';if(target.type==='project'){try{const updated=await request(target.type,target.id);refreshFeedbackCount(target.type,target.id,updated.commentCount||0);if(current && key(current.type,current.id)===key(target.type,target.id))renderComments(updated.comments||[]);}catch{feedback.textContent=`${data.message} Reopen feedback to see it.`;}}}catch(error){feedback.textContent=error.message;}finally{submit.disabled=false;submit.removeAttribute('aria-busy');}});
 
 document.addEventListener('click',async event=>{
- const target=event.target.closest('button');if(!target)return;
- if(target.matches('[data-comment-id]')){openComments(target.dataset.commentType,target.dataset.commentId,target);return;}
+ const target=event.target.closest('button, a[data-comment-id]');if(!target)return;
+ if(target.matches('[data-comment-id]')){
+  if (target.tagName === 'A' && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) return;
+  event.preventDefault();openComments(target.dataset.commentType,target.dataset.commentId,target);return;}
  if(target.matches('[data-share-url]')){
   const url=new URL(target.dataset.shareUrl,location.origin).href;
   try{if(navigator.share)await navigator.share({url});else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(url);notice('Link copied.');}else notice('Share this link: '+url);}catch(error){if(error.name!=='AbortError')notice('Could not share this link. Try again.');}return;

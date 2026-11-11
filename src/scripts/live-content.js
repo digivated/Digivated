@@ -29,7 +29,9 @@ function topicLabel(category){const topic=el('div',undefined,'card-topic');const
 function openLink(text,url,icon='arrow'){const anchor=link('',url);anchor.className='card-open';const arrow=el('span',undefined,'button-arrow');arrow.append(cardIcon(icon));anchor.append(el('span',text),arrow);return anchor;}
 function projectCard(project){
  const card=el('article',undefined,'project-card');card.id=`project-${project.id}`;card.dataset.project='';card.dataset.projectId=project.id;card.dataset.projectDate=project.date||'';card.dataset.projectName=project.name;card.dataset.projectViewsTotal=String(project.views||0);card.dataset.category=project.category;card.dataset.featured=String(project.status==='featured');card.dataset.pick=String(project.pick===true);card.dataset.search=`${project.name} ${project.creator} ${project.description} ${project.category}`.toLowerCase();
- const image=el('div',undefined,'project-image card-visual');
+ const image=project.pageUrl ? link('',project.pageUrl) : el('div');
+ image.className='project-image card-visual';
+ if(project.pageUrl) image.setAttribute('aria-label',`View ${project.name}`);
  const fallback=()=>{image.querySelector('img')?.remove();image.prepend(el('span',project.name.slice(0,2).toUpperCase(),'project-monogram'));};
  if(project.image){const preview=thumbnail(project.image,`${project.name} project preview`);preview.decoding='async';preview.addEventListener('error',fallback,{once:true});image.append(preview);}else fallback();
  const copy=el('div',undefined,'project-copy');

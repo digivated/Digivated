@@ -203,6 +203,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/projects/listing/:id", "destination": "/api/project-page?listing=:id" },
     {
       "source": "/projects/:slug",
       "destination": "/api/project-page?slug=:slug"
