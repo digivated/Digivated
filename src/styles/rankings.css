@@ -25,6 +25,10 @@ html#digivated-root .rankings-totals { display:flex; align-items:center; gap:16p
 html#digivated-root .rankings-totals [data-ranking-votes] { border-left:1px solid var(--dg-line-strong); padding-left:16px; color:var(--dg-accent)!important; }
 html#digivated-root .rankings-context { display:flex; align-items:start; justify-content:space-between; gap:20px; margin:0 0 24px; font-size:12px; color:var(--dg-muted)!important; }
 html#digivated-root .rankings-context>p { margin:0; line-height:1.7; font-size:12px; }
+html#digivated-root .rankings-context-status{display:grid;gap:4px;min-width:0}
+html#digivated-root .rankings-countdown{display:flex;align-items:baseline;gap:9px;color:var(--dg-muted)!important;font-size:11px;font-variant-numeric:tabular-nums}
+html#digivated-root .rankings-countdown time{min-width:68px;color:var(--dg-accent)!important;font:600 13px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace}
+html#digivated-root .rankings-countdown[hidden]{display:none!important}
 html#digivated-root .rankings-context details { max-width:440px; text-align:right; }
 html#digivated-root .rankings-context summary { cursor:pointer; padding:0 0 8px; min-height:24px; line-height:1.7; color:var(--dg-copy)!important; }
 html#digivated-root .rankings-context details p { font-size:12px; line-height:1.7; margin:4px 0 8px; text-align:left; }

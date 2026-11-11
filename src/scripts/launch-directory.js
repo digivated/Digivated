@@ -5,6 +5,10 @@ if(root){
  const list=root.querySelector('[data-launch-list]'),status=root.querySelector('[data-launch-status]'),more=root.querySelector('[data-launch-more]');
  let projects=[],period='daily',category=new URLSearchParams(location.search).get('category')||'All',query='',limit=30;
  const ai=root.dataset.ai==='true';
+ const countdown=root.querySelector('[data-ranking-countdown]'),countdownLabel=root.querySelector('[data-ranking-countdown-label]');
+ const nextReset=now=>{const d=new Date(now),midnight=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate());if(period==='daily')return midnight+86400000;if(period==='weekly')return midnight+((8-d.getUTCDay())%7||7)*86400000;if(period==='monthly')return Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1);return null;};
+ function updateCountdown(){if(ai||!countdown)return;const target=nextReset(Date.now());if(target===null){countdown.closest('.rankings-countdown').hidden=true;return;}countdown.closest('.rankings-countdown').hidden=false;countdownLabel.textContent=`Next ${period==='daily'?'daily':period==='weekly'?'weekly':'monthly'} reset`;const seconds=Math.max(0,Math.ceil((target-Date.now())/1000));countdown.dateTime=new Date(target).toISOString();countdown.title=`Ranking period resets at ${new Date(target).toISOString().slice(0,16).replace('T',' ')} UTC`;countdown.textContent=[Math.floor(seconds/3600),Math.floor(seconds%3600/60),seconds%60].map(n=>String(n).padStart(2,'0')).join(':');}
+ const countdownInterval=setInterval(updateCountdown,1000);updateCountdown();document.addEventListener('visibilitychange',updateCountdown);
  const groups=aiGroups;
  const text=(tag,value,cls)=>{const e=document.createElement(tag);e.textContent=value;if(cls)e.className=cls;return e;};
  const safe=value=>{try{const u=new URL(value,location.origin);return /^https?:$/.test(u.protocol)?u.href:'/discover';}catch{return '/discover';}};
@@ -42,6 +46,7 @@ if(root){
    const votes=matches.reduce((sum,p)=>sum+(p.votes?.[period]||0),0);
    root.querySelector('[data-ranking-votes]').textContent=votes.toLocaleString()+(votes===1?' upvote':' upvotes');
    root.querySelector('[data-ranking-context]').textContent={daily:'Upvotes received today · resets at 00:00 UTC',weekly:'Upvotes received this week · weeks start Monday (UTC)',monthly:'Upvotes received this month · calendar month (UTC)',all:'Every upvote, including votes before period tracking'}[period];
+   updateCountdown();
   }
   root.querySelector('[data-ranking-title]').textContent=ai?(category==='All'?'All AI tools':category+' tools'):{daily:"Today's rankings",weekly:"This week's rankings",monthly:"This month's rankings",all:"All-time rankings"}[period];
   root.querySelectorAll('[data-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.period===period)));
@@ -82,4 +87,5 @@ if(root){
   catch(error){if(error?.name==='AbortError')return;feedback.textContent='Share this link: '+target;}
  };
  load().then(categories).catch(error=>{status.textContent=error.message;});
+ window.addEventListener('pagehide',()=>clearInterval(countdownInterval),{once:true});
 }
