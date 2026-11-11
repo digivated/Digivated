@@ -104,5 +104,5 @@ html#digivated-root body.platform .project-reel-card:is(:hover,:focus-visible) {
 }
 html#digivated-root body.platform .project-reel-controls [data-reel-pause] { display:grid!important; }
 
-/* Keep banner controls below the fixed site header on the directory page. */
-html#digivated-root body.platform.projects-dashboard .project-reel { margin-top:80px!important; }
+/* The directory banner stays in the normal page flow and scrolls away independently. */
+html#digivated-root body.platform.projects-dashboard .project-reel { margin-top:0!important; }
