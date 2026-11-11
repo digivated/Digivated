@@ -22,7 +22,7 @@ test('reduced motion keeps content immediately visible', async ({ page }) => {
 for (const [path, selector] of [
   ['/', '.home-editorial h1'], ['/discover', '.wall-intro h1'], ['/creators', '.creator-social-heading h1'],
   ['/news', '.news-masthead h1'], ['/resources', '.link-directory-head h1'], ['/membership', '.membership-heading h1'],
-  ['/inbox', '.creator-inbox-heading h1'], ['/account', '.page-intro h1'], ['/login', '.login-heading h1'],
+  ['/inbox', '.creator-inbox-heading h1'], ['/rankings', '.rankings-hero'], ['/account', '.page-intro h1'], ['/login', '.login-heading h1'],
 ] as const) {
   test(`${path} has a visible heading trace`, async ({ page }) => {
     await page.goto(base + path);
@@ -30,13 +30,16 @@ for (const [path, selector] of [
     await expect(heading).toBeVisible();
     const trace = await heading.evaluate(element => {
       const style = getComputedStyle(element, '::after');
-      return { content: style.content, name: style.animationName, width: parseFloat(style.width) };
+      return { content: style.content, name: style.animationName, width: parseFloat(style.width), duration: style.animationDuration, delay: style.animationDelay, timing: style.animationTimingFunction };
     });
     expect(trace.content).not.toBe('none');
-    expect(trace.name).toContain('digivated-heading-trace');
-    expect(trace.width).toBeGreaterThanOrEqual(140);
+    expect(trace.name).toContain('digivated-signal-sweep');
+    expect(trace.duration).toBe('8s');
+    expect(trace.delay).toBe('1s');
+    expect(trace.timing).toBe('ease-in-out');
+    expect(trace.width).toBeGreaterThan(30);
     if (path === '/creators') {
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(2200);
       const visible = await heading.evaluate(element => Number(getComputedStyle(element, '::after').opacity));
       expect(visible).toBeGreaterThan(.7);
     }

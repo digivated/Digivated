@@ -122,7 +122,6 @@ html#digivated-root .rankings-directory .launch-meta a { overflow-wrap:anywhere;
 /* Motion is tied to reading and actions; every animation has a reduced-motion exit. */
 html#digivated-root .rankings-directory .rankings-hero{position:relative;isolation:isolate;overflow:hidden;border-bottom:1px solid var(--dg-line)}
 html#digivated-root .rankings-directory .rankings-hero::before{content:"";position:absolute;z-index:-1;inset:-50% -15% -35% 45%;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,#7048a522,transparent 64%)}
-html#digivated-root .rankings-directory .rankings-hero::after{content:"";position:absolute;bottom:0;left:0;width:22%;height:1px;pointer-events:none;background:linear-gradient(90deg,transparent,#c49bff,transparent);opacity:.75}
 html#digivated-root .rankings-directory .ranking-personal{display:grid;grid-template-columns:190px minmax(0,1fr) auto;align-items:center;gap:24px;margin:24px 0 36px;padding:20px 22px;border:1px solid #3a2d46;border-radius:12px;background:linear-gradient(115deg,#1c14243d,#111015 65%);min-width:0}
 html#digivated-root .rankings-directory .ranking-personal-heading{min-width:0}
 html#digivated-root .rankings-directory .ranking-personal-heading .rankings-section-label{margin-bottom:5px}
@@ -144,12 +143,10 @@ html#digivated-root .rankings-directory .launch-vote{transition:border-color .18
 html#digivated-root .rankings-directory .launch-vote:not(:disabled):hover{box-shadow:0 0 0 3px #ae7dd526!important}
 html#digivated-root .rankings-directory .launch-vote[aria-pressed=true]{box-shadow:0 0 0 3px #ae7dd51e!important}
 @keyframes ranking-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes ranking-signal{from{transform:translateX(-110%);opacity:0}20%{opacity:.75}80%{opacity:.75}to{transform:translateX(520%);opacity:0}}
 @keyframes ranking-vote-flash{0%{box-shadow:inset 0 0 0 2px #b388dfaa,0 0 22px #9c65cb55}100%{box-shadow:none}}
 @media(prefers-reduced-motion:no-preference){
  html#digivated-root .rankings-directory .rankings-hero>div{animation:ranking-rise .55s cubic-bezier(.2,.7,.2,1) both}
  html#digivated-root .rankings-directory .rankings-hero>div+div{animation-delay:.08s}
- html#digivated-root .rankings-directory .rankings-hero::after{animation:ranking-signal 8s ease-in-out 1s infinite}
  html#digivated-root .rankings-directory .ranking-personal{animation:ranking-rise .5s cubic-bezier(.2,.7,.2,1) .12s both}
  html#digivated-root .rankings-directory .ranking-front-runner{animation:ranking-rise .48s cubic-bezier(.2,.7,.2,1) both}
  html#digivated-root .rankings-directory .ranking-front-runner:nth-child(2){animation-delay:.07s}
