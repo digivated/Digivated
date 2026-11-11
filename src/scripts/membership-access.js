@@ -36,6 +36,7 @@ if (form) {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) { if (status) status.textContent = data.error || 'That purchase could not be verified.'; return; }
+      window.digivatedTrack?.('membership_verified');
       location.reload();
     } catch { if (status) status.textContent = 'We couldn’t check membership access right now. Please try again shortly.'; }
     finally { button.disabled = false; }

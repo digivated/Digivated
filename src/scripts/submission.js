@@ -72,6 +72,7 @@ if (form) {
       const response = await fetch('/api/submissions', {method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json',...(session?.user?.email_confirmed_at?{Authorization:`Bearer ${session.access_token}`}:{})},body:JSON.stringify(payload),signal:AbortSignal.timeout(20000)});
       const data = await response.json().catch(()=>({}));
       if (!response.ok) throw new Error(data.error || 'Your project could not be submitted. Your details are still here; please try again.');
+      window.digivatedTrack?.('project_submit', {project_category:payload.category});
       const promotion = intent.value === 'promotion';
       const membership = intent.value === 'founding-feature';
       form.reset();form.dispatchEvent(new Event('input'));if(session?.user?.email_confirmed_at)form.elements.email.value=session.user.email;syncIntent();updateImagePreview();

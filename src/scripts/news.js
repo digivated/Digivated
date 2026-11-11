@@ -93,7 +93,7 @@ if(root){
   finally{if(request===version){feed.setAttribute('aria-busy','false');refresh.disabled=false;more.disabled=false;}}
  }
  function change(push=false){clearTimeout(timer);version++;controller?.abort();controls();updateLocation(push);timer=setTimeout(()=>load(true),220);}
- for(const button of root.querySelectorAll('[data-news-category]'))button.addEventListener('click',()=>{if(category===button.dataset.newsCategory)return;category=button.dataset.newsCategory;change(true);});
+ for(const button of root.querySelectorAll('[data-news-category]'))button.addEventListener('click',()=>{if(category===button.dataset.newsCategory)return;category=button.dataset.newsCategory;window.digivatedTrack?.('news_category_select',{news_category:category});change(true);});
  search.addEventListener('input',()=>{query=search.value.trim().slice(0,120);change();});
  refresh.addEventListener('click',()=>{clearTimeout(timer);load(true);});more.addEventListener('click',()=>load(false));
  window.addEventListener('popstate',()=>{const u=new URL(location.href);category=Object.hasOwn(categories,u.searchParams.get('category'))?u.searchParams.get('category'):'all';query=(u.searchParams.get('q')||'').slice(0,120);search.value=query;controls();clearTimeout(timer);load(true);});
