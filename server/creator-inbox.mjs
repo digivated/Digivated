@@ -1,6 +1,7 @@
 import {redisClient} from './submissions.mjs';
 import {verifiedAccount} from './project-account.mjs';
 import {randomUUID} from 'node:crypto';
+import {addNotification} from './notifications.mjs';
 const UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 const profileKey=id=>`digivated:creator:profile:${id}`;
 const pair=(a,b)=>[a,b].sort().join(':');
@@ -41,6 +42,7 @@ export function makeCreatorInboxHandler(deps={}){return async(req,res)=>{
   const rate=Number(await redis(['EVAL',"local n=redis.call('INCR',KEYS[1]);if n==1 then redis.call('EXPIRE',KEYS[1],3600) end;return n",1,`digivated:creator:dm-rate:${account.id}`]));if(rate>30)return send(429,{error:'You reached the hourly message limit.'});
   const id=randomUUID(),createdAt=new Date().toISOString(),msg={id,from:account.id,to:other,body:text,createdAt},thread=pair(account.id,other),now=Date.now();
   await redis(['SET',messageKey(id),JSON.stringify(msg)]);await redis(['ZADD',threadKey(thread),now,id]);await redis(['ZADD',`digivated:creator:inbox:${account.id}`,now,thread]);await redis(['ZADD',`digivated:creator:inbox:${other}`,now,thread]);await redis(['INCR',`digivated:creator:unread:${other}:${thread}`]);
+  await addNotification(redis,{recipientId:other,type:'message',actorId:account.id}).catch(()=>{});
   return send(201,{message:{id,from:account.id,body:text,createdAt}});
  }catch{return send(503,{error:'Inbox is temporarily unavailable. Try again shortly.'});}
 };}

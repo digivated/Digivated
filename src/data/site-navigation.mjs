@@ -15,7 +15,7 @@ export const footerGroups = [
   { title: 'Explore', links: primaryLinks },
   { title: 'Your workspace', links: [
     ['/submit-project', 'Submit a project'], ['/account', 'Your projects'],
-    ['/saved', 'Saved items'], ['/inbox', 'Inbox'], ['/membership', 'Membership'],
+    ['/saved', 'Saved items'], ['/inbox', 'Inbox'], ['/notifications', 'Notifications'], ['/membership', 'Membership'],
   ] },
   { title: 'Digivated', links: [
     ['/about', 'About'], ['/privacy', 'Privacy & Data'], ['/terms', 'Terms of Use'],

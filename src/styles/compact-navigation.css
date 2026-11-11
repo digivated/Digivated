@@ -129,4 +129,5 @@ html#digivated-root body.platform .compact-site-header .header-inbox:hover,html#
 html#digivated-root body.platform .compact-site-header .header-inbox-badge{position:absolute;top:3px;right:2px;display:grid;place-items:center;min-width:15px;height:15px;padding:0 3px;border:2px solid #080609;border-radius:999px;background:#b678ef;color:#080609;font-size:9px;font-weight:700;line-height:1}
 html#digivated-root body.platform .compact-site-header .header-inbox-badge[hidden]{display:none}
 html#digivated-root body.platform .compact-site-header .header-inbox:focus-visible{outline:2px solid var(--dg-accent,#b678ef);outline-offset:3px}
+html#digivated-root body.platform #menu-notifications-badge{margin-left:4px;color:var(--dg-accent,#b678ef);font-size:11px}
 @media(max-width:480px){html#digivated-root body.platform .compact-site-header .header-inbox{width:38px;height:38px}}

@@ -2,6 +2,7 @@ import { createHmac, randomUUID } from 'node:crypto';
 import resources from '../src/data/resources.json' with { type: 'json' };
 import { redisClient } from './submissions.mjs';
 import { validId, storageKey, projectPublic, contentPublic } from './admin-store.mjs';
+import { addNotification } from './notifications.mjs';
 
 const builtinResources = new Set(['builtin-ui-ux-prompt-packet', ...resources.filter(item => item.status === 'published').map(item => item.slug)]);
 const itemKey = (type,id) => `${type}:${id}`;
@@ -92,6 +93,7 @@ export function makeCardInteractionHandler(deps={}) {
       const entry={id:randomUUID(),type,itemId:id,name:name||(isFeedback?'Anonymous tester':'Guest'),body:comment,date:new Date().toISOString(),status:isProjectFeedback?'approved':'pending',...(isFeedback?{purpose:'packet-feedback',quoteConsent:body.quoteConsent}:isProjectFeedback?{purpose:'project-feedback'}:{})};
       const saved=await redis(['EVAL',COMMENT,4,`digivated:card:comment-limit:${visitor}`,commentKey(entry.id),'digivated:card:comments:all',commentIndex(type,id),JSON.stringify(entry),Date.parse(entry.date),entry.id,entry.status]);
       if(saved!==1){res.setHeader('Retry-After','86400');return send(429,{error:`You’ve reached today’s ${isProjectFeedback?'feedback':'comment'} limit. Please try again tomorrow.`});}
+      if(isProjectFeedback){try{const raw=await redis(['GET',storageKey('submission',id)]);const owner=raw&&JSON.parse(raw).accountId;if(owner)await addNotification(redis,{recipientId:owner,type:'feedback',targetId:id});}catch{}}
       return send(201,{ok:true,message:isFeedback ? body.quoteConsent ? 'Thanks. Your feedback is saved for review. You have allowed a public quote; nothing is published automatically.' : 'Thanks. Your feedback is saved privately for review and will not be published.' : isProjectFeedback?'Thanks for sharing your feedback. It is now visible on this project.':'Thanks for sharing your thoughts. Your comment will appear after review.'});
     }catch{return send(503,{error:'This action is temporarily unavailable. Please try again later.'});}
   };

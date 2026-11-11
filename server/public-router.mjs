@@ -10,6 +10,7 @@ import { makeFoundingAccessHandler, makeFoundingLogoutHandler } from './founding
 import { makeProjectAccountHandler } from './project-account.mjs';
 import { makeCreatorProfileHandler } from './creator-profile.mjs';
 import { makeCreatorInboxHandler } from './creator-inbox.mjs';
+import { makeNotificationsHandler } from './notifications-handler.mjs';
 import { makeReturnEmailHandler, makeWeeklyDigestHandler } from './return-emails.mjs';
 import { makeSiteActivityHandler } from './site-activity.mjs';
 import { makeMemberStatusHandler } from './member-status.mjs';
@@ -34,6 +35,7 @@ export function defaultPublicHandlers(overrides = {}) {
     'project-account': makeProjectAccountHandler(),
     'creator-profile': makeCreatorProfileHandler(),
     'creator-inbox': makeCreatorInboxHandler(),
+    notifications: makeNotificationsHandler(),
     'return-emails': makeReturnEmailHandler(),
     'weekly-digest': makeWeeklyDigestHandler(),
     ...overrides,

@@ -1,0 +1,18 @@
+---
+import Platform from '../layouts/Platform.astro';
+import UiIcon from '../components/UiIcon.astro';
+import '../styles/notifications.css';
+---
+<Platform title="Notifications" description="Your Digivated activity, on your terms.">
+  <section class="notifications-page" aria-labelledby="notifications-title">
+    <header class="notifications-heading"><div><p class="eyebrow">YOUR ACTIVITY</p><h1 id="notifications-title">Notifications</h1><p>Updates from your projects and conversations, in one quiet place.</p></div><a href="/account">Your account <span aria-hidden="true">→</span></a></header>
+    <div id="notifications-auth" class="notifications-auth" role="status"><p>Checking your account…</p><a class="button primary" href="/login?next=%2Fnotifications" hidden>Sign in</a></div>
+    <div id="notifications-main" hidden>
+      <section class="notifications-preferences" aria-labelledby="notifications-preferences-title"><div class="notifications-preferences-copy"><span class="notifications-setting-icon"><UiIcon name="bell" size={21}/></span><div><h2 id="notifications-preferences-title">Activity notifications</h2><p>Choose what appears here. No email or browser alerts.</p></div></div><label class="notifications-master"><input type="checkbox" id="notifications-enabled"/><span class="notifications-switch" aria-hidden="true"></span><span class="sr-only">Turn on activity notifications</span></label></section>
+      <details class="notifications-choices"><summary>Choose activity</summary><div class="notifications-choice-list"><label><span><strong>Replies</strong><small>When someone replies to your post.</small></span><input type="checkbox" data-notification-pref="reply"/></label><label><span><strong>New followers</strong><small>When a creator follows you.</small></span><input type="checkbox" data-notification-pref="follow"/></label><label><span><strong>Messages</strong><small>When a creator sends you a message.</small></span><input type="checkbox" data-notification-pref="message"/></label><label><span><strong>Project feedback</strong><small>When someone leaves feedback on a project you submitted.</small></span><input type="checkbox" data-notification-pref="feedback"/></label></div></details>
+      <p id="notifications-settings-status" class="notifications-settings-status" role="status" aria-live="polite"></p>
+      <section class="notifications-feed" aria-labelledby="notifications-feed-title"><header><div><h2 id="notifications-feed-title">Recent activity</h2><p id="notifications-count">Your updates will appear here.</p></div><div class="notifications-feed-actions"><button id="notifications-read-all" type="button" hidden>Mark all read</button><button id="notifications-clear" type="button" hidden>Clear history</button></div></header><div id="notifications-items" class="notifications-items" aria-live="polite"></div></section>
+    </div>
+  </section>
+  <script>import '../scripts/notifications.js';</script>
+</Platform>

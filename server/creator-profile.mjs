@@ -5,6 +5,7 @@ import {safeUrl} from '../src/data/community.mjs';
 import {imageBytes} from './member-community.mjs';
 import {randomUUID,createHash} from 'node:crypto';
 import {createClient} from '@supabase/supabase-js';
+import {addNotification} from './notifications.mjs';
 
 const UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 const key=id=>`digivated:creator:profile:${id}`;
@@ -158,7 +159,7 @@ export function makeCreatorProfileHandler(deps={}){
     if(media)await redis(['DEL',`digivated:creator:pending-media:${media.path}`]);
     await redis(['ZADD',parentId?`digivated:creator:replies:${parentId}`:postIndex,Date.now(),id]);
     if(!parentId)await redis(['ZADD',`digivated:creator:author:${account.id}`,Date.now(),id]);
-    if(parentId){const raw=await redis(['GET',postKey(parentId)]);if(raw){const parent=JSON.parse(raw);parent.replies=(parent.replies||0)+1;await redis(['SET',postKey(parentId),JSON.stringify(parent)]);}}
+    if(parentId){const raw=await redis(['GET',postKey(parentId)]);if(raw){const parent=JSON.parse(raw);parent.replies=(parent.replies||0)+1;await redis(['SET',postKey(parentId),JSON.stringify(parent)]);await addNotification(redis,{recipientId:parent.authorId,type:'reply',actorId:account.id,targetId:parentId}).catch(()=>{});}}
     return send(201,{post:{...post,media:media?{type:media.type,url:mediaUrl(env,media.path)}:null,author:{id:account.id,name:profile.name,logoUrl:profile.hasLogo?`/api/creator-profile?logo=${account.id}`:''}}});
    }
    if(url.searchParams.get('action')==='delete-post'){
@@ -180,6 +181,7 @@ export function makeCreatorProfileHandler(deps={}){
    if(url.searchParams.get('action')==='follow'){
     const id=String(body?.id||'');if(!UUID.test(id)||id===account.id||!['follow','unfollow'].includes(body?.operation))return send(400,{error:'Choose a valid creator.'});
     const followers=await redis(['EVAL',FOLLOW,3,`digivated:creator:followers:${id}`,`digivated:creator:following:${account.id}`,key(id),body.operation,account.id,id]);
+    if(Number(followers)>=0&&body.operation==='follow')await addNotification(redis,{recipientId:id,type:'follow',actorId:account.id}).catch(()=>{});
     return followers===-1?send(404,{error:'Creator profile not found.'}):send(200,{following:body.operation==='follow',followers:Number(followers)});
    }
    const name=String(body?.name||'').trim(),bio=String(body?.bio||'').trim(),website=String(body?.website||'').trim(),social=String(body?.social||'').trim();
