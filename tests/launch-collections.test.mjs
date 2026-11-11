@@ -10,6 +10,13 @@ const template='<html><head><title>LAUNCH_TITLE</title><meta name="description" 
 const png='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aFJkAAAAASUVORK5CYII=';
 const record=id=>({id,name:'Same name',creator:'Creator',email:'SECRET_EMAIL',notes:'SECRET_NOTES',description:'An independent project to help creators build.',url:'https://example.com',category:'Apps',status:'pending',consent:true,date:new Date().toISOString(),image:png});
 const page={bio:'An approved bio.',alt:'Project dashboard',ctaLabel:'Try the app',ctaUrl:'https://example.com/app',consent:true,gallery:[{image:png,alt:'Settings screen'}]};
+test('published project pages lead to feedback and further discovery', async () => {
+ const item={id:'project-one',slug:'same-name-project-one',name:'Same name',description:'A useful project.',creator:'Creator',category:'Apps',sponsored:false,bio:'',ctaLabel:'Visit project',ctaUrl:'https://example.com',socialUrl:'',image:'',gallery:[]};
+ const html=await renderLaunch(item,{template});
+ assert.match(html,/href="\/discover\?feedback=project-one">Give feedback<\/a>/);
+ assert.match(html,/class="launch-next"/);
+ assert.match(html,/href="\/creators">Meet the builders/);
+});
 async function call(handler,url){let body;const headers={};const res={statusCode:200,setHeader:(k,v)=>headers[k]=v,end:x=>body=x};await handler({method:'GET',url,headers:{}},res);return {status:res.statusCode,body:Buffer.isBuffer(body)?body:String(body),headers};}
 test('Redis: explicit page publication, collision-safe stable URLs, private fields, withdrawal and deletion',{skip:!process.env.DIGIVATED_TEST_REDIS_PORT},async()=>{
  const redis=testRedis(11);await redis(['FLUSHDB']);
