@@ -21,10 +21,13 @@
   }
   html body.platform :is(.news-card,.creator-hub-panel,.membership-benefits > div,.project-account-card,.creator-inbox-page .inbox-thread,.resource-grid > .resource-card):nth-child(2) { animation-delay:.055s; }
   html body.platform :is(.news-card,.creator-hub-panel,.membership-benefits > div,.project-account-card,.creator-inbox-page .inbox-thread,.resource-grid > .resource-card):nth-child(3) { animation-delay:.11s; }
-  html body.platform :is(.page-intro,.creator-social-heading,.news-masthead,.link-directory-head,.membership-heading,.creator-inbox-heading)::after {
+  html body.platform :is(.page-intro,.creator-social-heading,.news-masthead,.link-directory-head,.membership-heading,.creator-inbox-heading,.wall-intro,.wall-fallback,.login-heading,.home-editorial h1)::after {
     content:"";position:absolute;left:0;bottom:-9px;width:min(240px,65%);height:1px;pointer-events:none;
     background:linear-gradient(90deg,#bc85ef,rgba(188,133,239,0));transform-origin:left center;
     animation:digivated-heading-trace .85s cubic-bezier(.2,.7,.2,1) .15s both;
   }
-  html body.platform :is(.page-intro,.creator-social-heading,.news-masthead,.link-directory-head,.membership-heading,.creator-inbox-heading) { position:relative; }
+  html body.platform :is(.page-intro,.creator-social-heading,.news-masthead,.link-directory-head,.membership-heading,.creator-inbox-heading,.wall-intro,.wall-fallback,.login-heading,.home-editorial h1) { position:relative; }
 }
+
+/* The home headline is centered; keep its brief trace centered too. */
+html body.platform .home-editorial h1::after{left:50%;translate:-50% 0}
