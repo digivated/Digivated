@@ -113,3 +113,10 @@ html body.platform .site-breadcrumbs a:hover{color:#fff;text-decoration:none}
 html body.platform .site-breadcrumbs [aria-current="page"]{color:#f0eaf7;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:min(45vw,340px)}
 html body.platform .breadcrumb-home-icon{font-size:18px;line-height:1;color:#b48ae6}
 html body.platform .breadcrumb-separator{font-size:17px;line-height:1;color:#736684}
+html body.platform .site-breadcrumbs{box-sizing:border-box;display:flex;align-items:center;flex-wrap:nowrap;white-space:nowrap;overflow:hidden;max-width:calc(100vw - 32px);padding-inline:12px}
+html body.platform .site-breadcrumbs a{flex:none;white-space:nowrap}
+html body.platform .site-breadcrumbs .breadcrumb-home-icon{flex:none;display:block;width:15px;height:15px}
+html body.platform .site-breadcrumbs .breadcrumb-separator{flex:none}
+html body.platform:has(.creator-social) .site-breadcrumbs{margin-inline-start:clamp(22px,3vw,48px)}
+@media(max-width:740px){html body.platform:has(.creator-social) .site-breadcrumbs{margin-inline-start:22px}}
+html#digivated-root body.platform .site-breadcrumbs{padding-inline:12px}

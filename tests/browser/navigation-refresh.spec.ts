@@ -66,3 +66,17 @@ test('saved collection creation still works',async({page})=>{
  await page.locator('#collection-manager-form button[type=submit]').click();await expect(page.locator('#saved-heading')).toHaveText('My project shortlist');
  await page.reload();await expect(page.locator('#saved-folders')).toContainText('My project shortlist');
 });
+
+for (const width of [390, 1440]) test(`creator breadcrumbs align and fit at ${width}px`, async ({page}) => {
+ await page.setViewportSize({width,height:900});
+ await page.goto(base+'/creators');
+ const result = await page.evaluate(() => {
+  const crumb = document.querySelector('.site-breadcrumbs')!.getBoundingClientRect();
+  const heading = document.querySelector('.creator-social-heading')!.getBoundingClientRect();
+  const last = document.querySelector('.site-breadcrumbs [aria-current="page"]')!.getBoundingClientRect();
+  return {offset:Math.abs(crumb.left-heading.left),fits:last.right<=crumb.right-4,inside:crumb.left>=0&&crumb.right<=innerWidth};
+ });
+ expect(result.offset).toBeLessThan(24);
+ expect(result.fits).toBe(true);
+ expect(result.inside).toBe(true);
+});
