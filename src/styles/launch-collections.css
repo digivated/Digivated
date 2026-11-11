@@ -125,3 +125,9 @@
 @media (max-width: 899px) {
   .launch-page .launch-layout { grid-template-columns: minmax(0, 1fr); }
 }
+
+.launch-page .launch-content-column .launch-intro { width: 100%; margin-bottom: 20px; }
+.launch-page .launch-content-column .launch-hero { max-width: 100%; }
+@media (min-width: 900px) {
+  .launch-page .launch-content-column .launch-hero { padding: clamp(20px, 3vw, 36px); }
+}
