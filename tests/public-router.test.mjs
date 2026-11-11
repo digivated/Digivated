@@ -24,7 +24,8 @@ test('unknown routes cannot invoke handlers, including prototype properties', ()
 });
 test('deployment keeps all capabilities with the dedicated scheduled News worker on Pro', () => {
   const entries=readdirSync(new URL('../api/',import.meta.url)).filter(name=>name.endsWith('.js'));
-  assert.equal(entries.length,14);
+  assert.equal(entries.length,15);
   assert.equal(entries.includes('sitemap.js'), true);
+  assert.equal(entries.includes('google-site-verification.js'), true);
   for (const name of ['[route].js','projects.js','submissions.js','admin.js','activate.js','edition.js','logout.js','x-connect.js','x-research.js','x-publish.js']) assert.ok(entries.includes(name));
 });

@@ -5,6 +5,17 @@ import { buildSitemapEntries, collectSitemapEntries, renderSitemap, sitemapLastm
 
 const creator = '123e4567-e89b-42d3-a456-426614174000';
 
+test('google verification handler returns the exact plain body', async () => {
+  const { default: handler } = await import('../api/google-site-verification.js');
+  let body = '';
+  const headers = {};
+  const res = { statusCode: 0, setHeader: (key, value) => { headers[key] = value; }, end: value => { body = value; } };
+  handler({ method: 'GET' }, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(headers['Content-Type'], 'text/plain; charset=utf-8');
+  assert.equal(body, 'google-site-verification: googlef8b001e22ee0d4b9.html');
+});
+
 test('verification files are exact root responses', () => {
   const google = readFileSync(new URL('../public/googlef8b001e22ee0d4b9.html', import.meta.url));
   assert.equal(google.toString('utf8'), 'google-site-verification: googlef8b001e22ee0d4b9.html');

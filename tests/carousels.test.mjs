@@ -215,8 +215,9 @@ test('founding license and purchase email unlock only this product', async () =>
 
 test('carousel routes stay on the shared function and do not add an API file', async () => {
   const entries = readdirSync(new URL('../api/', import.meta.url)).filter(name => name.endsWith('.js'));
-  assert.equal(entries.length, 14);
+  assert.equal(entries.length, 15);
   assert.equal(entries.includes('sitemap.js'), true);
+  assert.equal(entries.includes('google-site-verification.js'), true);
   assert.equal(entries.includes('carousels.js'), false);
   const headers = {};
   let body = '';
