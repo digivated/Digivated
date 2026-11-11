@@ -3,7 +3,7 @@ const { heading='Digivated', label='THE HOME FOR INDEPENDENT PROJECTS', descript
 ---
 <section id={directory?'project-wall':undefined} class="project-wall" aria-labelledby="wall-title" data-wall-heading={heading} data-wall-label={label} data-wall-description={description} data-wall-directory={directory?'true':'false'}>
   <div id="wall-react-root" class="wall-react-root">
-    <div class="wall-fallback"><p class="wall-overline">{label}</p>{directory?<h1 id="wall-title">{heading}</h1>:<h2 id="wall-title">{heading}</h2>}<p>{description}</p><a href="/discover">Explore projects →</a></div>
+    <div class="wall-fallback"><p class="wall-overline">{label}</p>{directory?<h1 id="wall-title">{heading}</h1>:<h2 id="wall-title">{heading}</h2>}<p>{description}</p>{!directory&&<a href="/discover">Explore projects →</a>}</div>
   </div>
   <noscript><p class="wall-noscript">JavaScript is needed to browse projects.</p></noscript>
 </section>
