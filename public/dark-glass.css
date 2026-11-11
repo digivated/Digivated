@@ -606,3 +606,15 @@ html#digivated-root .home-kinetic-spark:nth-child(6) { right:27%; top:80%; anima
 @media(prefers-reduced-motion:reduce) {
   html#digivated-root .home-kinetic-spark { animation:none; opacity:.25; }
 }
+
+/* Native document navigation: no click interception, loading gate or router. */
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 120ms;
+  animation-timing-function: ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}
