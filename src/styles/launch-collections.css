@@ -98,3 +98,30 @@
 .launch-featured-copy strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .launch-featured-copy small { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; color: var(--dg-muted, var(--muted)); line-height: 1.35; }
 .launch-featured-all { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; font-size: .82rem; }
+
+/* Keep the information rail inside the project grid and below the header. */
+.launch-content-column { min-width: 0; }
+.launch-page .launch-layout { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.launch-page .launch-maker-column { grid-template-columns: minmax(0, 1fr); }
+.launch-page .launch-info-panel {
+  min-width: 0; padding: 20px; border: 1px solid var(--dg-line, var(--line));
+  border-radius: 16px; background: var(--dg-panel, var(--paper));
+}
+.launch-page .launch-info-panel h2 { margin: 0 0 12px; font-size: 1.05rem; }
+.launch-facts { display: grid; gap: 10px; margin: 0; font-size: .875rem; }
+.launch-facts > div { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; }
+.launch-facts dt { color: var(--dg-muted, var(--muted)); }
+.launch-facts dd { margin: 0; min-width: 0; text-align: right; overflow-wrap: anywhere; }
+.launch-category-chip { display: inline-flex; max-width: 100%; align-items: center; min-height: 36px; padding: 4px 12px; border: 1px solid var(--dg-line, var(--line)); border-radius: 999px; background: var(--dg-control, var(--tint)); font-size: .82rem; overflow-wrap: anywhere; }
+.launch-details-vote { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px; margin-top: 16px; padding: 8px; border: 1px solid var(--dg-line, var(--line)); border-radius: 12px; cursor: pointer; }
+.launch-details-vote [data-like-count] { font-weight: 700; font-variant-numeric: tabular-nums; }
+@media (min-width: 900px) and (min-height: 560px) {
+  .launch-page .launch-maker-column {
+    position: sticky; top: 104px; align-self: start;
+    max-height: calc(100dvh - 120px); overflow-y: auto;
+  }
+  .launch-page .launch-maker-column > * { scroll-margin-block: 8px; }
+}
+@media (max-width: 899px) {
+  .launch-page .launch-layout { grid-template-columns: minmax(0, 1fr); }
+}
