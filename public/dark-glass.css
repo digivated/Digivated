@@ -618,3 +618,13 @@ html#digivated-root .home-kinetic-spark:nth-child(6) { right:27%; top:80%; anima
   ::view-transition-old(root),
   ::view-transition-new(root) { animation: none; }
 }
+
+/* Remove homepage decorative stars and particles. */
+html#digivated-root .home-kinetic { display:none; }
+html#digivated-root .home-featured-heading h2::before,
+html#digivated-root .home-featured-heading h2::after,
+html#digivated-root .home-featured-heading:has(h2)::after {
+  content:none;
+  display:none;
+  animation:none;
+}
