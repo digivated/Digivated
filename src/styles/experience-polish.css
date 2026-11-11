@@ -70,14 +70,14 @@
 .platform .launch-intro h1 { font-size:clamp(2.3rem,5vw,4rem); line-height:1.12; margin:16px 0; }
 .platform .launch-intro .lede { font-size:1.0625rem; line-height:1.8; }
 .platform .launch-intro .actions { margin-top:24px; gap:10px; flex-wrap:wrap; }
-.platform .launch-creator { position:sticky; top:104px; border-top:2px solid #dfdfdf; }
+.platform .launch-creator { border-top:2px solid #dfdfdf; }
 .platform .launch-creator h2 { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
 .platform .launch-creator .creator-name { color:white; font-size:1.35rem; margin-top:20px; }
 .platform .launch-creator p { font-size:.875rem; }
 .platform .launch-creator a { display:inline-flex; align-items:center; min-height:44px; font-size:.875rem; }
 .platform .launch-shot { box-shadow:0 12px 36px #0003; }
 @media(max-width:900px) { .saved-workspace { grid-template-columns:200px minmax(0,1fr); gap:24px; } .platform #saved-items { grid-template-columns:1fr; } .saved-content-heading { align-items:flex-start; flex-direction:column; } .platform .discovery-guide a { padding:18px; gap:10px; } }
-@media(max-width:640px) { .saved-workspace { grid-template-columns:1fr; gap:28px; padding-top:24px; } .saved-sidebar { border-bottom:1px solid var(--line); padding-bottom:20px; } .platform #saved-folders { display:flex; overflow-x:auto; padding-bottom:6px; } .platform #saved-folders .button { width:auto; flex:none; max-width:240px; } .saved-backup { margin-top:12px; padding-top:8px; } .saved-helper { display:none; } .platform #saved-root .browse-controls { grid-template-columns:1fr; } .saved-empty-panel { padding:32px 20px; } .platform .discovery-guide { grid-template-columns:1fr; } .platform .discovery-guide a+a { border-left:0; border-top:1px solid var(--line); } .platform .discovery-guide a { padding:20px; } .platform .launch-creator { position:static; } }
+@media(max-width:640px) { .saved-workspace { grid-template-columns:1fr; gap:28px; padding-top:24px; } .saved-sidebar { border-bottom:1px solid var(--line); padding-bottom:20px; } .platform #saved-folders { display:flex; overflow-x:auto; padding-bottom:6px; } .platform #saved-folders .button { width:auto; flex:none; max-width:240px; } .saved-backup { margin-top:12px; padding-top:8px; } .saved-helper { display:none; } .platform #saved-root .browse-controls { grid-template-columns:1fr; } .saved-empty-panel { padding:32px 20px; } .platform .discovery-guide { grid-template-columns:1fr; } .platform .discovery-guide a+a { border-left:0; border-top:1px solid var(--line); } .platform .discovery-guide a { padding:20px; } }
 @media(prefers-reduced-motion:reduce) { .platform .saved-card,.platform .discovery-guide a { transition:none; } }
 /* A dedicated promotion path, with clear purchase and review steps. */
 .platform .promo-callout,.platform .submission-promo-note,.platform .promo-ready { display:flex; align-items:center; justify-content:space-between; gap:28px; padding:28px; margin:32px 0; border:1px solid #dfdfdf4d; border-radius:14px; background:linear-gradient(120deg,#181818,#1c1c1c); }
