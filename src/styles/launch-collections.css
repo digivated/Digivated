@@ -118,7 +118,8 @@
 @media (min-width: 900px) and (min-height: 560px) {
   .launch-page .launch-maker-column {
     position: sticky; top: 104px; align-self: start;
-    max-height: calc(100dvh - 120px); overflow-y: auto;
+    max-height: min(640px, calc(100dvh - 120px)); overflow-y: auto;
+    scrollbar-width: thin;
   }
   .launch-page .launch-maker-column > * { scroll-margin-block: 8px; }
 }
