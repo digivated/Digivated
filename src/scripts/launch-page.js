@@ -29,6 +29,7 @@ if (featuredPanel) {
         const row = document.createElement('li');
         const link = document.createElement('a');
         link.href = project.pageUrl;
+        link.setAttribute('aria-label', project.name);
         const art = document.createElement('span');
         art.className = 'launch-featured-art';
         art.setAttribute('aria-hidden', 'true');
@@ -37,6 +38,9 @@ if (featuredPanel) {
           const image = document.createElement('img');
           image.src = project.image;
           image.alt = '';
+          image.width = 40;
+          image.height = 40;
+          image.decoding = 'async';
           image.loading = 'lazy';
           image.addEventListener('error', () => image.remove(), { once: true });
           art.append(image);
@@ -46,7 +50,8 @@ if (featuredPanel) {
         const name = document.createElement('strong');
         name.textContent = project.name;
         const description = document.createElement('small');
-        description.textContent = project.description;
+        const summary = String(project.description || '').trim().replace(/\s+/g, ' ');
+        description.textContent = summary.length > 100 ? summary.slice(0, 99).trimEnd() + '…' : summary;
         copy.append(name, description);
         link.append(art, copy);
         row.append(link);
