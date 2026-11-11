@@ -84,13 +84,19 @@ ${item.image || item.gallery.length ? `<section class="launch-media" aria-label=
 </section>`}</div></div><nav class="launch-next" aria-label="Keep exploring"><a href="/discover">Explore more projects <span aria-hidden="true">→</span></a><a href="/creators">Meet the builders <span aria-hidden="true">→</span></a></nav></article>`;
   let shell = template || await readFile(new URL('./generated/project.html', import.meta.url),'utf8');
   if(draft) shell=shell.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'');
+  shell=shell.replace(/<script\b[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/i,'');
+  const schema=draft?'':`<script type="application/ld+json">${JSON.stringify({
+    '@context':'https://schema.org', '@type':'WebPage', '@id':`${canonical}#webpage`,
+    name:item.name, description:item.description, url:canonical,
+    isPartOf:{'@id':'https://digivated.com/#website'}, isAccessibleForFree:true,
+  }).replace(/</g,'\\u003c')}</script>`;
   const substitutions = {
     LAUNCH_TITLE:e(item.name), LAUNCH_DESCRIPTION:e(item.description),
     'launch-template':e(canonical),
     'digivated-tech-markets-banner.png':e((item.image || item.logo) && !draft ? new URL(item.image || item.logo,origin).href : `${origin}/digivated-tech-markets-banner.png`)
   };
   return shell.replace(/LAUNCH_TITLE|LAUNCH_DESCRIPTION|https:\/\/digivated(?:\.vercel\.app|\.com)\/(launch-template|digivated-tech-markets-banner\.png)(?:\/)?/g,(match, asset)=>substitutions[asset || match])
-    .replace('</head>',()=>`<meta property="og:url" content="${e(canonical)}"><meta name="twitter:card" content="summary_large_image">${draft?'<meta name="robots" content="noindex,nofollow">':''}</head>`)
+    .replace('</head>',()=>`${schema}<meta property="og:url" content="${e(canonical)}">${draft?'<meta name="robots" content="noindex,nofollow">':''}</head>`)
     .replace('<!--LAUNCH_BODY-->',()=>body);
 }
 export function makeLaunchHandler(deps = {}) {

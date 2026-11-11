@@ -20,6 +20,10 @@ test('published project pages lead to feedback and further discovery', async () 
  assert.doesNotMatch(draft,/data-project-comments|href="#feedback"/);
  assert.match(html,/class="launch-next"/);
  assert.match(html,/href="\/creators">Meet the builders/);
+ assert.match(html,/rel="canonical" href="https:\/\/digivated.com\/projects\/same-name-project-one"/);
+ const schema=JSON.parse(html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)?.[1]||'{}');
+ assert.equal(schema.name,'Same name');
+ assert.equal(schema.url,'https://digivated.com/projects/same-name-project-one');
 });
 async function call(handler,url){let body;const headers={};const res={statusCode:200,setHeader:(k,v)=>headers[k]=v,end:x=>body=x};await handler({method:'GET',url,headers:{}},res);return {status:res.statusCode,body:Buffer.isBuffer(body)?body:String(body),headers};}
 test('Redis: explicit page publication, collision-safe stable URLs, private fields, withdrawal and deletion',{skip:!process.env.DIGIVATED_TEST_REDIS_PORT},async()=>{

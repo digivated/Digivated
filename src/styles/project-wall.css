@@ -354,7 +354,7 @@ html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .
 html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile-caption { position:static; display:flex; flex-direction:column; justify-content:center; gap:4px; min-width:0; min-height:0; padding:0; background:transparent!important; opacity:1; }
 html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile-caption small { color:#a894c0!important; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:none; }
 html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile-caption strong { color:#f5f0fb!important; font-size:16px; line-height:1.25; letter-spacing:-.02em; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-list-summary { display:-webkit-box; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:2; max-width:66ch; color:#ab9eb9; font-size:12px; line-height:1.45; }
+html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-list-summary { display:-webkit-box; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:2; max-width:66ch; color:#ab9eb9; font-size:14px; line-height:1.45; }
 html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-open-label { display:grid; place-items:center; color:#bda2db; }
 html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions { width:auto; min-width:210px; padding:0; border:0; background:transparent!important; }
 html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions :is(button, a) { color:#baadc9; }

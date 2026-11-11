@@ -50,7 +50,7 @@ html#digivated-root body.platform .home-featured-logo { position:relative; displ
 .home-featured-copy { display:flex; flex-direction:column; gap:4px; min-width:0; }
 html#digivated-root .home-featured-copy small { color:#bda9cf!important; font-size:11px; font-weight:600; }
 html#digivated-root .home-featured-copy strong { color:#f7f2fc!important; font-size:16px; line-height:1.2; letter-spacing:-.02em; }
-.home-featured-summary { display:-webkit-box; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:1; color:#ad9fbc; font-size:12px; line-height:1.4; }
+.home-featured-summary { display:-webkit-box; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:1; color:#ad9fbc; font-size:14px; line-height:1.45; }
 html#digivated-root .home-featured-views { position:static; display:inline-flex; align-items:center; gap:5px; color:#bbaacb; font-size:12px; white-space:nowrap; }
 .home-featured-views svg,.home-featured-arrow svg { width:15px; height:15px; }
 .home-featured-arrow { color:#bda2db; }
@@ -109,7 +109,7 @@ html#digivated-root body.platform .home-featured-copy strong { font-size:17px; o
 html#digivated-root body.platform .home-featured-summary { -webkit-line-clamp:2; color:#c8b9aa; }
 html#digivated-root body.platform .home-featured-arrow { color:#cdbb9e; }
 @media(max-width:600px) {
- html#digivated-root body.platform .home-featured-content { grid-template-columns:54px minmax(0,1fr) 16px; }
+ html#digivated-root body.platform .home-featured-content { grid-template-columns:54px minmax(0,1fr) 16px; padding-block:10px; }
  html#digivated-root body.platform .home-featured-ribbon { padding-inline:12px; }
 }
 

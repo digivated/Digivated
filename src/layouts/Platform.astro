@@ -18,6 +18,17 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 // Native page transitions briefly duplicate the sticky header during navigation.
 const sectionNames: Record<string,string> = { '/discover':'Projects', '/resources':'Resources', '/products':'Membership', '/ui-ux-prompt-packet':'Prompt Packet', '/submit-project':'Submit Project', '/account':'Your Projects', '/login':'Log in', '/promote':'Membership', '/about':'About', '/privacy':'Privacy & Data', '/terms':'Terms of Use' };
 const breadcrumb = sectionNames[path] || title;
+const canonicalUrl = new URL(canonicalPath || path, 'https://digivated.com').href;
+const pageType = ['/discover','/news','/resources','/rankings','/creators'].includes(path) ? 'CollectionPage' : path === '/about' ? 'AboutPage' : 'WebPage';
+const privatePage = ['/account','/inbox','/login','/saved','/email-preferences'].includes(path);
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type':'Organization', '@id':'https://digivated.com/#organization', name:'Digivated', url:'https://digivated.com/', logo:'https://digivated.com/digivated-logo.webp', sameAs:['https://x.com/digivatedx','https://www.threads.com/@digivated'] },
+    { '@type':'WebSite', '@id':'https://digivated.com/#website', name:'Digivated', url:'https://digivated.com/', description:'Discover independent projects, give feedback, and share what you are building.', publisher:{'@id':'https://digivated.com/#organization'}, inLanguage:'en' },
+    { '@type':pageType, '@id':`${canonicalUrl}#webpage`, name:title, url:canonicalUrl, description, isPartOf:{'@id':'https://digivated.com/#website'}, publisher:{'@id':'https://digivated.com/#organization'}, inLanguage:'en', ...(path === '/' ? {isAccessibleForFree:true} : {}) }
+  ]
+};
 import '../styles/monochrome.css';
 import '../styles/projects-refined.css';
 import '../styles/resources-refined.css';
@@ -40,7 +51,7 @@ import '../styles/search-and-alignment.css';
 import '../styles/page-transitions.css';
 ---
 <!doctype html>
-<html id="digivated-root" lang="en" data-theme="dark-glass" style="background:#050505;color-scheme:dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><title>{title} · Digivated</title><meta name="description" content={description}/><meta name="theme-color" content="#050505"/><link rel="icon" href="/digivated-favicon.png" type="image/png"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><link rel="canonical" href={new URL(canonicalPath || path, 'https://digivated.com')}/><meta property="og:title" content={`${title} · Digivated`}/><meta property="og:description" content={description}/><meta property="og:image" content={path==='/'?'https://digivated.com/downloads/digivated-x-poster.jpg':'https://digivated.com/digivated-social-card.png'}/><meta name="twitter:card" content={path==='/'?'player':'summary_large_image'}/>{path==='/'&&<><meta name="twitter:player" content="https://digivated.com/video-player/index.html?v=4"/><meta name="twitter:player:width" content="1280"/><meta name="twitter:player:height" content="720"/><meta name="twitter:player:stream" content="https://digivated.com/media/digivated-promo-v3.mp4"/><meta name="twitter:player:stream:content_type" content="video/mp4"/></>}<meta name="twitter:site" content="@digivatedx"/><meta name="twitter:title" content={path==='/'?'Get your project seen · Digivated':`${title} · Digivated`}/><meta name="twitter:description" content={path==='/'?'Get your project seen. Submit your project for free at Digivated.':description}/><meta name="twitter:image" content={path==='/'?'https://digivated.com/downloads/digivated-x-poster.jpg':'https://digivated.com/digivated-social-card.png'}/><link rel="stylesheet" href="/moments-theme.css"/><link rel="stylesheet" href="/glass-system.css"/><link rel="stylesheet" href="/component-polish.css"/><link rel="stylesheet" href="/dark-glass.css"/><link rel="stylesheet" href="/liquid-glass.css"/><link rel="stylesheet" href="/site-intro.css"/><script is:inline src="/site-intro.js"></script></head>
+<html id="digivated-root" lang="en" data-theme="dark-glass" style="background:#050505;color-scheme:dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><title>{title} · Digivated</title><meta name="description" content={description}/>{privatePage && <meta name="robots" content="noindex,follow"/>}<meta name="theme-color" content="#050505"/><link rel="icon" href="/digivated-favicon.png" type="image/png"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><link rel="canonical" href={canonicalUrl}/><script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/</g,'\\u003c')}/><meta property="og:title" content={`${title} · Digivated`}/><meta property="og:description" content={description}/><meta property="og:image" content={path==='/'?'https://digivated.com/downloads/digivated-x-poster.jpg':'https://digivated.com/digivated-social-card.png'}/><meta name="twitter:card" content={path==='/'?'player':'summary_large_image'}/>{path==='/'&&<><meta name="twitter:player" content="https://digivated.com/video-player/index.html?v=4"/><meta name="twitter:player:width" content="1280"/><meta name="twitter:player:height" content="720"/><meta name="twitter:player:stream" content="https://digivated.com/media/digivated-promo-v3.mp4"/><meta name="twitter:player:stream:content_type" content="video/mp4"/></>}<meta name="twitter:site" content="@digivatedx"/><meta name="twitter:title" content={path==='/'?'Get your project seen · Digivated':`${title} · Digivated`}/><meta name="twitter:description" content={path==='/'?'Get your project seen. Submit your project for free at Digivated.':description}/><meta name="twitter:image" content={path==='/'?'https://digivated.com/downloads/digivated-x-poster.jpg':'https://digivated.com/digivated-social-card.png'}/><link rel="stylesheet" href="/moments-theme.css"/><link rel="stylesheet" href="/glass-system.css"/><link rel="stylesheet" href="/component-polish.css"/><link rel="stylesheet" href="/dark-glass.css"/><link rel="stylesheet" href="/liquid-glass.css"/><link rel="stylesheet" href="/site-intro.css"/><script is:inline src="/site-intro.js"></script></head>
 <body class:list={['platform', 'light-theme', 'moments-theme', { 'home-refresh': path === '/', 'wall-experience': path === '/' || path === '/discover', 'projects-dashboard': path === '/discover', 'resources-dashboard': path === '/resources/guides', 'community-page': path.startsWith('/community') }]}><div id="site-intro" hidden aria-hidden="true"><span class="site-intro-mark"><img src="/digivated-favicon.png" width="74" height="74" alt=""/></span></div><div class="site-atmosphere" aria-hidden="true"></div><a class="skip" href="#main">Skip to content</a>
 <SiteHeader/>
 {path !== '/login' && path !== '/account' && path !== '/submit-project' && path !== '/creators' && path !== '/inbox' && <aside id="account-announcement" class="account-announcement" aria-label="Digivated announcement" hidden><div class="account-announcement-copy"><span class="account-announcement-tag">NEW ON DIGIVATED</span><strong id="announcement-title">Accounts are live.</strong><span id="announcement-description">Sign up to track your projects and see feedback in one place. You can still browse without an account.</span></div><div class="account-announcement-actions"><a id="announcement-link" href="/login?mode=signup">Create an account <span aria-hidden="true">→</span></a><button type="button" id="account-announcement-close" aria-label="Dismiss announcement">×</button></div></aside>}
@@ -49,14 +60,17 @@ import '../styles/page-transitions.css';
 <DiscoveryTools/>
 <script is:inline src="/analytics.js"></script>
 <script is:inline defer src="/site-activity.js"></script>
-<script is:inline defer src="/_vercel/insights/script.js"></script><script>import '../scripts/experience-motion.js'; import '../scripts/monitoring.js'; import '../scripts/platform-ui.js'; import '../scripts/collections.js';</script>
-<script>import '../scripts/motion.js'; import '../scripts/card-actions.js';</script>
-<script>import '../scripts/resource-views.js';</script>
-<script>import '../scripts/account-announcement.js';</script>
+<script is:inline defer src="/_vercel/insights/script.js"></script><script>
+import '../scripts/experience-motion.js';
+import '../scripts/monitoring.js';
+import '../scripts/platform-ui.js';
+import '../scripts/collections.js';
+import '../scripts/motion.js';
+import '../scripts/card-actions.js';
+import '../scripts/resource-views.js';
+import '../scripts/account-announcement.js';
+import '../scripts/count-motion.js';
+</script>
 {path === '/' && <script is:inline>if(location.hash.includes('access_token='))location.replace('/account'+location.hash);</script>}
 
 </body></html>
-
-
-
-<script>import '../scripts/count-motion.js';</script>

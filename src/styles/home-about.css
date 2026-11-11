@@ -1,0 +1,11 @@
+html#digivated-root body.platform .home-about { width:min(1060px,calc(100% - 48px)); margin:0 auto; padding:54px 0 72px; border-top:1px solid #ffffff1b; text-align:left; }
+html#digivated-root body.platform .home-about-label { margin:0 0 12px; color:#ac93cc; font:650 11px/1.4 'Inter Variable',system-ui,sans-serif; letter-spacing:.14em; }
+html#digivated-root body.platform .home-about h2 { margin:0 0 14px; color:#f5f0fb; font-size:clamp(24px,3vw,36px); line-height:1.15; letter-spacing:-.04em; }
+html#digivated-root body.platform .home-about>p:not(.home-about-label) { max-width:65ch; margin:0; color:#baafc7; font-size:15px; line-height:1.7; }
+.home-about-details { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:36px; margin:32px 0 24px; }
+html#digivated-root body.platform .home-about-details>div { min-width:0; padding-top:18px; border-top:1px solid #ffffff1b; }
+html#digivated-root body.platform .home-about-details h3 { margin:0 0 7px; color:#f1eaf9; font-size:16px; line-height:1.35; }
+html#digivated-root body.platform .home-about-details p { max-width:52ch; margin:0; color:#aa9db8; font-size:14px; line-height:1.65; }
+html#digivated-root body.platform .home-about>a { display:inline-flex; align-items:center; gap:8px; min-height:40px; color:#d8baff; font-size:13px; font-weight:600; text-decoration:none; }
+html#digivated-root body.platform .home-about>a:is(:hover,:focus-visible) { text-decoration:underline; text-underline-offset:4px; }
+@media(max-width:600px) { html#digivated-root body.platform .home-about { width:calc(100% - 32px); padding:38px 0 56px; } .home-about-details { grid-template-columns:1fr; gap:20px; margin:25px 0 15px; } }

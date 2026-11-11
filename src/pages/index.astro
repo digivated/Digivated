@@ -6,8 +6,9 @@ import SiteActivity from '../components/SiteActivity.astro';
 import ProjectTicker from '../components/ProjectTicker.astro';
 import '../styles/project-wall.css';
 import '../styles/home-refinement.css';
+import '../styles/home-about.css';
 ---
-<Platform title="Discover projects worth seeing" description="Explore independent projects on Digivated. Meet builders, share your work, and leave feedback.">
+<Platform title="Good projects deserve to be discovered" description="Discover independent projects on Digivated. Meet builders, give feedback, and submit your own work for review.">
   <SiteActivity/>
   <section class="home-editorial" aria-labelledby="home-title">
     <details class="home-whats-new">
@@ -28,4 +29,14 @@ import '../styles/home-refinement.css';
   </section>
   <FeaturedProjects/>
   <ProjectTicker/>
+  <section class="home-about" aria-labelledby="home-about-title">
+    <p class="home-about-label">ABOUT DIGIVATED</p>
+    <h2 id="home-about-title">A place to find good work.</h2>
+    <p>Digivated helps people discover independent projects and the builders behind them. Browse the directory, leave useful feedback, or submit what you’re making.</p>
+    <div class="home-about-details">
+      <div><h3>How are projects listed?</h3><p>Builders submit their projects for free. Digivated reviews submissions before publishing them in the directory.</p></div>
+      <div><h3>How are projects featured?</h3><p>Selected projects get a spotlight after review. The featured list is ordered by project views; a spotlight does not guarantee traffic or engagement.</p></div>
+    </div>
+    <a href="/about">Read how Digivated works <UiIcon name="arrow" size={15}/></a>
+  </section>
 </Platform>
