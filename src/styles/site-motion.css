@@ -1,0 +1,30 @@
+/* A shared motion rhythm for pages that do not have their own entrance. */
+@keyframes digivated-page-arrive {
+  from { opacity:.7; transform:translateY(12px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes digivated-detail-arrive {
+  from { opacity:.72; transform:translateY(8px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes digivated-heading-trace {
+  0% { opacity:0; transform:scaleX(0); }
+  55% { opacity:.75; transform:scaleX(1); }
+  100% { opacity:0; transform:scaleX(1); }
+}
+@media (prefers-reduced-motion:no-preference) {
+  html body.platform:not(.home-refresh) main#main > :is(section,article,header):not(.rankings-directory) {
+    animation:digivated-page-arrive .48s cubic-bezier(.2,.7,.2,1) both;
+  }
+  html body.platform :is(.news-card,.creator-hub-panel,.membership-benefits > div,.project-account-card,.creator-inbox-page .inbox-thread,.resource-grid > .resource-card):nth-child(-n+3) {
+    animation:digivated-detail-arrive .44s cubic-bezier(.2,.7,.2,1) both;
+  }
+  html body.platform :is(.news-card,.creator-hub-panel,.membership-benefits > div,.project-account-card,.creator-inbox-page .inbox-thread,.resource-grid > .resource-card):nth-child(2) { animation-delay:.055s; }
+  html body.platform :is(.news-card,.creator-hub-panel,.membership-benefits > div,.project-account-card,.creator-inbox-page .inbox-thread,.resource-grid > .resource-card):nth-child(3) { animation-delay:.11s; }
+  html body.platform :is(.page-intro,.creator-social-heading,.news-masthead,.link-directory-head,.membership-heading,.creator-inbox-heading)::after {
+    content:"";position:absolute;left:0;bottom:-9px;width:min(240px,65%);height:1px;pointer-events:none;
+    background:linear-gradient(90deg,#bc85ef,rgba(188,133,239,0));transform-origin:left center;
+    animation:digivated-heading-trace .85s cubic-bezier(.2,.7,.2,1) .15s both;
+  }
+  html body.platform :is(.page-intro,.creator-social-heading,.news-masthead,.link-directory-head,.membership-heading,.creator-inbox-heading) { position:relative; }
+}
