@@ -88,3 +88,34 @@ html#digivated-root .project-reel-title h2 { font-size:11px; letter-spacing:.12e
   html#digivated-root .home-featured-heading h2 { font-size:20px!important; }
   html#digivated-root .home-featured-heading>a { min-height:40px; white-space:nowrap; font-size:11px; }
 }
+
+.home-whats-new { display: none; }
+@media (min-width: 1024px) {
+  .home-editorial { position: relative; }
+  .home-whats-new {
+    position: relative; z-index: 1; display: block; align-self: flex-start;
+    width: min(100%, 224px); margin: 0 0 24px; text-align: left;
+    border: 1px solid var(--dg-line-strong); border-radius: 14px;
+    background: var(--dg-glass); color: var(--dg-ink); box-shadow: var(--dg-shadow);
+  }
+  .home-whats-new summary {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    min-height: 44px; padding: 10px 14px; border-radius: 13px;
+    font-size: .875rem; font-weight: 650; cursor: pointer; list-style: none;
+  }
+  .home-whats-new summary::-webkit-details-marker { display: none; }
+  .home-whats-new summary svg { flex: none; color: var(--dg-accent); }
+  .home-whats-new[open] summary svg { transform: rotate(180deg); }
+  .home-whats-new ul {
+    display: grid; gap: 9px; margin: 0; padding: 10px 14px 14px 28px;
+    border-top: 1px solid var(--dg-line); color: var(--dg-copy);
+    font-size: .78rem; line-height: 1.5;
+  }
+  .home-whats-new li::marker { color: var(--dg-accent); }
+}
+@media (min-width: 1280px) {
+  .home-whats-new {
+    position: absolute; top: 28px; left: calc((100% - 100vw) / 2 + 28px);
+    width: clamp(198px, 15vw, 224px); margin: 0;
+  }
+}
