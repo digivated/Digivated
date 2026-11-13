@@ -115,7 +115,6 @@ if (!document.querySelector('.ascii-ambient')) {
           '|___/|____',
         ];
         builder.textContent = [
-          'DIGIVATED / BUILD LOG                     v0.2',
           '             +----------------------------------+',
           ...screen.map((line, i) => figure[i] + '   ' + line),
           '             +-----------------+----------------+',
