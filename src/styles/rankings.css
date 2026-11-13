@@ -160,3 +160,28 @@ html#digivated-root .rankings-directory .launch-vote[aria-pressed=true]{box-shad
 @media(max-width:900px){html#digivated-root .rankings-directory .ranking-personal{grid-template-columns:minmax(0,1fr) auto;gap:12px 20px}html#digivated-root .rankings-directory .ranking-personal-heading{grid-column:1/-1}}
 @media(max-width:600px){html#digivated-root .rankings-directory .ranking-personal{grid-template-columns:minmax(0,1fr);gap:12px;padding:17px;margin:18px 0 28px}html#digivated-root .rankings-directory .ranking-personal-heading{grid-column:auto}html#digivated-root .rankings-directory .ranking-personal-list{width:100%}html#digivated-root .rankings-directory .ranking-personal-share{justify-items:start}html#digivated-root .rankings-directory [data-ranking-share-status]{max-width:100%;text-align:left}}
 @media(prefers-reduced-motion:reduce){html#digivated-root .rankings-directory :is(.ranking-share,.ranking-personal-list a,.launch-vote,.launch-periods button,.launch-categories button){transition:none!important}}
+
+/* Keep the rank on the canvas above the artwork, regardless of image shape. */
+html#digivated-root[data-ascii] body.platform .rankings-directory .ranking-front-runner {
+  grid-template-rows: auto auto 1fr;
+  row-gap: 12px;
+}
+
+html#digivated-root[data-ascii] .rankings-directory .ranking-front-runner .launch-rank {
+  position: static;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: block;
+  min-width: 0;
+  height: auto;
+  line-height: 1.25;
+}
+
+html#digivated-root[data-ascii] .rankings-directory .ranking-front-runner .ranking-artwork {
+  grid-row: 2;
+  min-width: 0;
+}
+
+html#digivated-root[data-ascii] .rankings-directory .ranking-front-runner .launch-copy {
+  padding-left: 0;
+}
