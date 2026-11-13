@@ -70,7 +70,7 @@ async function savePreferences() {
   for (const input of prefInputs) next[input.dataset.notificationPref] = input.checked;
   busy = true; $('notifications-enabled').disabled = true; prefInputs.forEach(input => { input.disabled = true; });
   status('Saving your choices…');
-  try { const data = await api('preferences',{preferences:next}); preferences = data.preferences; render(); status('Preferences saved.'); }
+  try { const data = await api('preferences',{preferences:next}); preferences = data.preferences; syncPreferences(); render(); status('Preferences saved.'); }
   catch(error) { syncPreferences(); status(error.message); }
   finally { busy = false; $('notifications-enabled').disabled = false; prefInputs.forEach(input => { input.disabled = false; }); }
 }
