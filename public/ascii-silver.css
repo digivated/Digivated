@@ -1,0 +1,71 @@
+/* One visual system. Important layer deliberately outranks legacy component skins,
+   while leaving component layout, visibility and interaction rules intact. */
+@font-face{font-family:Digivated Mono;src:url('/fonts/ibm-plex-mono-500.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+@layer ascii {
+ html[data-ascii]{background:#090909!important;color-scheme:dark;scroll-behavior:smooth;--ascii-mono:'Digivated Mono',monospace;--accent:#dedede;--muted:#aaa;--line:transparent;--paper:transparent;--tint:transparent;--glass-face:transparent;--glass-control:transparent;--glass-rim:transparent;--glass-shadow:none;--dg-glass:transparent;--dg-line:transparent;--dg-line-strong:transparent;--dg-shadow:none;--dg-ink:#eee;--dg-copy:#bbb;--dg-accent:#ddd}
+ html[data-ascii] body{background:#090909!important;color:#d0d0d0!important;isolation:isolate;--accent:#ddd;--muted:#aaa;--paper:transparent;--line:transparent;--tint:transparent}
+ html[data-ascii] body *,html[data-ascii] body *::before,html[data-ascii] body *::after {
+  font-family:var(--ascii-mono)!important;box-shadow:none!important;text-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-color:transparent!important;background-image:none!important;
+ }
+ html[data-ascii] body :where(div,section,article,aside,header,footer,nav,main,details,summary,fieldset,form,li,ul,ol,table,tr,td,th,pre,code,label,span,p,a,button,h1,h2,h3,h4,h5,h6) {background-color:transparent!important;color:inherit!important;}
+ html[data-ascii] body :is(h1,h2,h3,h4,h5,h6){color:#eee!important;font-weight:500!important;letter-spacing:-.045em!important;-webkit-text-fill-color:currentColor!important}
+ html[data-ascii] body :is(p,li){line-height:1.8}
+ html[data-ascii] body :is(.eyebrow,.tiny,.quiet,.lede,small,.home-featured-summary,.project-reel-copy>span){color:#a9a9a9!important}
+ html[data-ascii] body :is(button,.button,summary,.header-login,.header-membership,.header-primary a){border:0!important;border-radius:0!important;background:transparent!important;color:#ccc!important;min-height:40px;text-decoration:none;transition:color .18s ease!important;}
+ html[data-ascii] body :is(button,.button,.header-login,.header-membership)::before,html[data-ascii] body :is(button,.button,.header-login,.header-membership)::after{background:none!important;box-shadow:none!important;}
+ html[data-ascii] body :is(button,.button,a,summary):hover{color:#fff!important;text-underline-offset:5px;text-decoration:underline!important;}
+ html[data-ascii] body :is([aria-current=page],[aria-pressed=true],.button.primary){color:#fff!important;text-decoration:underline!important;text-underline-offset:6px;}
+ html[data-ascii] body :is(button,.button):disabled{opacity:.45;cursor:not-allowed}
+ html[data-ascii] body :is(a,button,input,textarea,select,summary,[tabindex]):focus-visible{outline:2px solid #ddd!important;outline-offset:5px!important}
+ html[data-ascii] body :is(input:not([type=checkbox],[type=radio],[type=range]),textarea,select){background:#151515!important;color:#eee!important;border:0!important;border-radius:0!important;box-shadow:none!important;caret-color:#fff;}
+ html[data-ascii] body :is(input,textarea)::placeholder{color:#858585!important;opacity:1}
+ html[data-ascii] body :is(input[type=checkbox],input[type=radio],input[type=range],progress){accent-color:#ccc}
+ html[data-ascii] body :is(hr,.ascii-rule,.home-ascii-divider,.home-kinetic,.site-atmosphere){display:none!important}
+ html[data-ascii] body :is(.home-editorial,.home-featured-card,.home-featured-ribbon,.platform-section,.platform-footer,.project-wall,.project-reel)::before,
+ html[data-ascii] body :is(.home-editorial,.home-featured-card,.home-featured-ribbon,.platform-section,.platform-footer,.project-wall,.project-reel)::after{content:none!important}
+ html[data-ascii] body .home-featured-ribbon-track::before{content:none!important}
+ /* Opaque overlays preserve legibility; they are never glass. */
+ html[data-ascii] body :is(dialog,#explore-navigation,.navigation-panel,.wall-focus-panel,.owner-editor,.home-whats-new[open],.notebook-navigation[open],.explore-menu[open]){background:#111!important;color:#ddd!important;border:0!important;border-radius:0!important}
+ html[data-ascii] dialog::backdrop{background:#090909e8!important;backdrop-filter:none!important}
+ html[data-ascii] body :is(.compact-site-header,.platform-header,.topbar){background:#090909!important;backdrop-filter:none!important;}
+ html[data-ascii] body main{position:relative;z-index:1;}
+ html[data-ascii] body.platform main{width:min(100%,1200px);margin-inline:auto;padding-inline:clamp(24px,5vw,64px)}
+ html[data-ascii] body main>:is(section,article){margin-block:clamp(48px,7vw,88px)}
+ html[data-ascii] body :is(.platform-footer,body>footer){position:relative;z-index:1;padding-block:56px!important;margin-top:64px!important}
+ html[data-ascii] body :is(.home-featured-card,.project-card,.resource-card,.news-card,.panel,.prompt-row,.launch-info-panel,.launch-creator,.launch-overview){border-radius:0!important;}
+ html[data-ascii] body .home-featured-card{padding-block:14px!important;}
+ html[data-ascii] body .home-featured-ribbon{min-height:28px!important;color:#aaa!important;}
+ html[data-ascii] body .home-featured-summary{font-size:12px!important;line-height:1.8!important}
+ html[data-ascii] body .home-featured-copy strong{font-size:18px!important;}
+ html[data-ascii] body .home-editorial{display:block!important;text-align:left!important;padding-block:120px 100px!important;margin-block:0!important;}
+ html[data-ascii] body .home-editorial h1{font-size:clamp(34px,4.7vw,66px)!important;max-width:14ch!important;line-height:1.15!important;margin-inline:0!important;}
+ html[data-ascii] body .home-editorial h1 em{font-style:normal!important;color:#aaa!important;-webkit-text-fill-color:currentColor!important;}
+ html[data-ascii] body .home-editorial>p{max-width:46ch!important;margin-inline:0!important;text-align:left!important;font-size:13px!important;}
+ html[data-ascii] body .home-editorial-actions{justify-content:flex-start!important;gap:24px!important;margin-top:28px!important;}
+ html[data-ascii] body .home-editorial-actions .button{padding-inline:0!important;font-size:12px!important;}
+ html[data-ascii] body .ascii-field{position:absolute;top:220px;right:max(4vw,calc((100vw - 1200px)/2));width:42%;margin:0;padding:0;z-index:0;pointer-events:none;user-select:none;white-space:pre;line-height:1.5;font-size:clamp(8px,.9vw,12px);color:#aaa!important;opacity:.85;background:none!important;text-align:center;}
+ html[data-ascii] body:not(.home-refresh) .ascii-field{display:none!important;}
+ html[data-ascii] .ascii-ambient{position:fixed;inset:0;overflow:hidden;pointer-events:none;user-select:none;z-index:0;contain:strict;}
+ html[data-ascii] .ascii-drift{position:absolute;margin:0;font:11px/1.35 var(--ascii-mono)!important;color:#c0c0c0!important;opacity:.13;white-space:pre;animation:ascii-float 28s ease-in-out infinite alternate;}
+ html[data-ascii] .ascii-drift:nth-child(1){left:2%;top:16%}
+ html[data-ascii] .ascii-drift:nth-child(2){right:2%;top:48%;animation-delay:-14s;animation-duration:36s;}
+ html[data-ascii] .ascii-drift:nth-child(3){left:12%;bottom:6%;animation-delay:-8s;animation-duration:40s;}
+ html[data-ascii] .ascii-drift:nth-child(4){right:16%;top:8%;animation-delay:-20s;animation-duration:32s;}
+ html[data-ascii] .ascii-ambient[data-paused] .ascii-drift{animation-play-state:paused;}
+ @keyframes ascii-float{from{transform:translate3d(-10px,-16px,0)}to{transform:translate3d(16px,22px,0)}}
+ @media(max-width:760px){
+ html[data-ascii] body .home-editorial{padding-block:290px 56px!important}
+ html[data-ascii] body .ascii-field{top:130px;right:0;width:100%;font-size:9px;}
+ html[data-ascii] body .home-editorial h1{font-size:36px!important;max-width:100%!important}
+ html[data-ascii] .ascii-drift{font-size:8px!important;opacity:.085;}
+ html[data-ascii] body main>:is(section,article){margin-block:48px}
+ }
+ @media(prefers-reduced-motion:reduce){html[data-ascii]{scroll-behavior:auto}html[data-ascii] .ascii-drift{animation:none!important}}
+}
+@layer ascii {
+ html[data-ascii] body .account-announcement{background:#111!important;color:#ddd!important;}
+ html[data-ascii] body .compact-site-header .header-inner{display:flex!important;gap:24px!important;justify-content:space-between!important;}
+ html[data-ascii] body .header-primary{display:flex!important;gap:22px!important;flex:0 1 auto!important;}
+ html[data-ascii] body .compact-header-actions{display:flex!important;gap:18px!important;flex:0 0 auto!important;}
+ @media(max-width:1100px){html[data-ascii] body .header-primary{display:none!important;}}
+}
