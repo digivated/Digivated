@@ -36,7 +36,7 @@ if (section) {
       const track = document.createElement('span');
       track.className = 'home-featured-ribbon-track';
       track.setAttribute('aria-hidden', 'true');
-      track.textContent = index === 0 ? '[ LEAD SPOTLIGHT ]' : '[ SPOTLIGHT ]';
+      track.textContent = '[ SPOTLIGHT ]';
       ribbon.append(track);
       const content = document.createElement('span'); content.className = 'home-featured-content';
       const art = document.createElement('span'); art.className = 'home-featured-logo';
