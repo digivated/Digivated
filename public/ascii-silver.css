@@ -83,26 +83,6 @@ html#digivated-root[data-ascii] body :is(a,button,input,select,textarea,summary)
   outline-offset: 3px;
 }
 
-html#digivated-root[data-ascii] body .home-ascii-scene {
-  width: min(680px, calc(100% - 32px));
-  margin: 32px auto 0;
-  overflow: hidden;
-  border: 1px solid var(--ascii-line) !important;
-  border-radius: 12px;
-  background: radial-gradient(ellipse, #242424, #0e0e0e 72%) !important;
-  box-shadow: none !important;
-}
-html#digivated-root[data-ascii] body .home-ascii-scene pre {
-  display: grid;
-  place-content: center;
-  width: 100%;
-  min-height: 165px;
-  margin: 0;
-  padding: 12px 0;
-  font-size: clamp(6px, 1.2vw, 11px);
-  line-height: 1.1;
-  text-shadow: none !important;
-}
 html#digivated-root[data-ascii] body .ascii-rule {
   display: block;
   margin: 0;
@@ -118,4 +98,81 @@ html#digivated-root[data-ascii] body .ascii-rule {
 }
 @media (prefers-reduced-motion: reduce) {
   html[data-ascii] .home-ascii-scene { animation: none !important; }
+}
+
+/* The sculpture lives in the page canvas. It never takes pointer input. */
+html#digivated-root[data-ascii] body.platform { isolation: isolate; }
+html#digivated-root[data-ascii] .ascii-field {
+  position: absolute;
+  z-index: -1;
+  inset: 72px 0 auto auto;
+  width: min(56vw, 800px);
+  height: clamp(260px, 40vw, 550px);
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  white-space: pre;
+  text-align: center;
+  align-content: center;
+  background: none;
+  border: 0;
+  color: #cecece;
+  opacity: .2;
+  font: 400 clamp(7px, 1vw, 13px)/1.12 var(--ascii-mono);
+  mask-image: radial-gradient(ellipse, #000 37%, transparent 76%);
+}
+html#digivated-root[data-ascii] body.home-refresh .ascii-field {
+  inset-block-start: clamp(100px, 14vw, 180px);
+  inset-inline-end: max(0px, calc((100% - 1360px) / 2));
+  opacity: .94;
+  mask-image: radial-gradient(ellipse, #000 47%, transparent 76%);
+}
+html#digivated-root[data-ascii] body .home-editorial::before,
+html#digivated-root[data-ascii] body .home-editorial::after { content: none !important; }
+
+html#digivated-root[data-ascii] body .home-editorial {
+  background: transparent !important;
+  text-align: left;
+  display: block;
+  padding-block: clamp(130px, 18vw, 224px) clamp(78px, 13vw, 165px);
+  border: 0;
+}
+html#digivated-root[data-ascii] body .home-editorial h1 {
+  max-width: 12ch;
+  margin-inline: 0;
+  font-size: clamp(44px, 6vw, 86px);
+  text-wrap: initial;
+}
+html#digivated-root[data-ascii] body .home-editorial > p,
+html#digivated-root[data-ascii] body .home-editorial-kicker {
+  text-align: left;
+  margin-inline: 0;
+}
+html#digivated-root[data-ascii] body .home-editorial-actions { justify-content: flex-start; }
+html#digivated-root[data-ascii] body :is(.home-featured-projects,.home-about,.project-reel,.project-wall) {
+  background: transparent !important;
+  border-color: #272727 !important;
+}
+html#digivated-root[data-ascii] body .home-featured-card {
+  border-radius: 3px;
+  background: #0f0f0f !important;
+}
+html#digivated-root[data-ascii] body .home-featured-ribbon {
+  background: transparent !important;
+  border-color: #303030 !important;
+}
+html#digivated-root[data-ascii] body .home-featured-ribbon-track::before {
+  content: "[+]";
+  margin-right: .5ch;
+  color: #aaa;
+}
+@media (max-width: 760px) {
+  html#digivated-root[data-ascii] .ascii-field { width: 100%; height: 260px; opacity: .12; }
+  html#digivated-root[data-ascii] body.home-refresh .ascii-field {
+    inset-block-start: 76px;
+    height: 235px;
+    opacity: .72;
+  }
+  html#digivated-root[data-ascii] body .home-editorial { padding-block: 255px 68px; }
 }
