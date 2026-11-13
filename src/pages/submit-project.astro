@@ -6,9 +6,9 @@ import '../styles/submission-flow.css';
 ---
 <Platform title="Submit Your Project" description="Share what you built. Digivated reviews projects before they appear in the directory.">
   <header class="page-intro submission-intro">
-    <p class="eyebrow">Share your work</p>
+
     <h1>Submit a project.</h1>
-    <p class="lede">Add your project details, preview your listing, and choose how to launch.</p>
+    <p class="lede">Add your details and choose how to launch.</p>
   </header>
 
   <div class="submission-layout submission-workspace">
@@ -26,11 +26,11 @@ import '../styles/submission-flow.css';
 
       <fieldset>
         <legend><span class="submission-step-label">01 · Project details</span>Tell us about your project</legend>
-        <p class="field-help">Start with your website. You can import its name and description, then review and edit them.</p><label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
+        <p class="field-help">Import a name and description from your website. You can edit both.</p><label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
         <label>Project URL<input name="url" type="url" placeholder="https://your-project.com" maxlength="500" required/></label>
         <button type="button" id="project-import">[ Import website details ]</button><p id="project-import-status" role="status"></p>
         <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. Start with what it does, then who it helps. Avoid hashtags and promotional slogans.</span></label>
-        <label>Category<select aria-describedby="project-category-help" name="category" required><option value="">Choose a category</option>{projectCategories.map(c=><option>{c}</option>)}</select></label><p id="project-category-help" class="field-help">Choose the main thing your project helps people do. Use Education for learning tools and Developer Tools for coding utilities.</p>
+        <label>Category<select aria-describedby="project-category-help" name="category" required><option value="">Choose a category</option>{projectCategories.map(c=><option>{c}</option>)}</select></label><p id="project-category-help" class="field-help">Pick the category that best fits your project.</p>
         <label>Pricing <span class="quiet">(optional)</span><select name="pricing"><option value="">Not specified</option>{projectPricingOptions.map(option => <option>{option}</option>)}</select></label>
       </fieldset>
 
@@ -57,14 +57,14 @@ import '../styles/submission-flow.css';
             <option value="founding-feature">Membership Spotlight</option>
           </select>
         </label>
-        <p id="free-launch-help" class="field-help">Free: add a Digivated text badge to your website, verify it in Your Projects, and join the scheduled launch queue. Your listing stays available after launch. <span id="free-launch-date"></span> An admin can also approve it manually.</p>
-        <p id="instant-launch-help" class="field-help" hidden>Save your project, complete the one-time payment using your Digivated account email, then return to publish after we verify the payment.</p>
-        <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/membership#member-sign-in">membership page</a> first. This uses your one included project spotlight, with no extra payment. Review is required; a feature is never guaranteed.</p></div>
+        <p id="free-launch-help" class="field-help">Add the Digivated badge to your site and verify it in Your Projects to schedule your free launch. <span id="free-launch-date"></span></p>
+        <p id="instant-launch-help" class="field-help" hidden>Pay $5 once with your account email, then return to verify payment and publish.</p>
+        <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/membership#member-sign-in">membership page</a> first to request your included spotlight. We review each request.</p></div>
       </fieldset>
 
       <div class="submission-review">
         <h2>Confirm and submit</h2>
-        <p>Track your project’s status in <a href="/account">Your Projects</a>. New free submissions need badge verification before their scheduled launch. Membership Spotlight stays subject to review.</p>
+        <p>Track your project’s status in <a href="/account">Your Projects</a>.</p>
         <label class="honeypot" aria-hidden="true">Leave this empty<input name="company" tabindex="-1" autocomplete="off"/></label>
         <label class="consent"><input name="consent" type="checkbox" required/><span>I confirm that I own or am authorized to submit this project and allow Digivated to display the submitted information and project logo.</span></label>
         <label class="consent"><input name="emailOutreachConsent" type="checkbox"/><span>Send me one follow-up email about my submission, my account, and how to opt in to weekly updates. I will not be subscribed automatically.</span></label>
@@ -76,9 +76,9 @@ import '../styles/submission-flow.css';
     </form>
 
     <aside class="submission-preview-panel" aria-labelledby="listing-preview-title">
-      <div class="submission-preview-sticky"><p class="submission-step-label">YOUR PUBLIC LISTING</p><h2 id="listing-preview-title">Preview your project</h2><p class="field-help">See how your details will look before submitting.</p>
+      <div class="submission-preview-sticky"><p class="submission-step-label">YOUR PUBLIC LISTING</p><h2 id="listing-preview-title">Preview your project</h2>
       <article class="submission-listing-preview"><div class="listing-preview-cover"><img data-listing-image alt="" hidden/><span data-listing-placeholder>Your project logo</span></div><div class="listing-preview-copy"><span data-listing-category>Category</span><h3 data-listing-name>Your project name</h3><p data-listing-description>A clear description of what your project does and who it helps.</p><span data-listing-domain>your-project.com</span></div><div class="listing-preview-footer"><span>Feedback <b>0</b></span><span>↑ Upvote <b>0</b></span></div></article>
-      <div class="submission-quality"><h3>A listing that stands out</h3><ul><li>Use the real product name.</li><li>Upload a clear project logo.</li><li>Explain one useful outcome.</li><li>Link directly to your project.</li></ul></div><p class="field-help">Your email, order details, and review notes stay private.</p></div>
+      <p class="field-help">Your email, order details, and review notes stay private.</p></div>
     </aside>
   </div>
   <script>import '../scripts/submission.js'; import '../scripts/submission-preview.js';</script>
