@@ -378,3 +378,34 @@
   }
  }
 }
+
+/* Let the main frame supply the homepage gutter once. */
+@layer ascii {
+ @media (min-width: 761px) {
+  html[data-ascii] body.home-refresh #main {
+   margin-inline: auto !important;
+  }
+  html[data-ascii] body.home-refresh #main :is(.home-featured-heading, .home-featured-rail, .home-launches, .project-reel-heading, .home-about) {
+   width: 100% !important;
+   max-width: none !important;
+  }
+  html[data-ascii] body.home-refresh #main .site-activity {
+   position: relative !important;
+   inset: auto !important;
+   transform: none !important;
+   width: 100% !important;
+   margin: 24px 0 0 !important;
+   padding: 0 !important;
+  }
+  html[data-ascii] body.home-refresh #main .home-editorial {
+   padding-top: 28px !important;
+  }
+  html[data-ascii] body.home-refresh #home-title {
+   font-size: clamp(34px, 3.7vw, 54px) !important;
+   width: 62% !important;
+  }
+  html[data-ascii] body.home-refresh .ascii-field {
+   top: 155px !important;
+  }
+ }
+}
