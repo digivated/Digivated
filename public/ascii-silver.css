@@ -534,3 +534,19 @@
   padding: 4px !important;
  }
 }
+
+
+/* Round the logo artwork itself, including images with opaque corners. */
+@layer ascii {
+ html#digivated-root[data-ascii] body.platform :is(.home-featured-logo, .home-launch-art, .wall-card-media, .launch-identity, .launch-featured-art) {
+  border-radius: 10px !important;
+  overflow: hidden;
+ }
+ html#digivated-root[data-ascii] body.platform :is(.home-featured-logo, .home-launch-art, .wall-card-media, .launch-identity, .launch-featured-art) img {
+  border-radius: 10px !important;
+  clip-path: inset(4px round 8px);
+ }
+ html#digivated-root[data-ascii] body.platform :is(.launch-identity, .launch-featured-art) img {
+  clip-path: inset(0 round 10px);
+ }
+}
