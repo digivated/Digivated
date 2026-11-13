@@ -23,24 +23,24 @@ if (!document.querySelector('.ascii-ambient')) {
   let tick = 0;
   let timer;
   function draw() {
-    const stage = stages[Math.floor(tick / 5) % stages.length];
+    const stage = stages[Math.floor(tick / 40) % stages.length];
     const screen = stage[1].map(line => '| ' + line.padEnd(17) + '|').join('\n');
     if (builder) builder.textContent =
       'a little workshop / always making\n\n' +
       '                       .-------------------.\n' +
       screen.split('\n').map((line,i)=> ['     .---.             ','     |o o|             ','     \'---\'             ','      /|\\              '][i]+line).join('\n') +
-      '\n     / | ' + (tick % 2 ? '\\__' : '\\_ ') + '          \'---------+---------\'\n' +
+      '\n     / | ' + (Math.floor(tick / 8) % 2 ? '\\__' : '\\_ ') + '          \'---------+---------\'\n' +
       '    /__|____                 _|_\n' +
       '   /  /    /========================\n' +
       '  /__/____/    |               |\n' +
       '     / \\       |               |\n\n' +
       stage[0] + '\n' +
-      stages.map((_,i)=>i === Math.floor(tick / 5) % stages.length ? '[+]' : ' . ').join('  ');
-    pieces[0].textContent = '     .---.     .-------.\n     |o o|     | '+(tick%2?'code_':'code ')+' |\n     \'---\'     \'---+---\'\n      /|\\____     _|_\n   __/_|____/============\n      / \\       |     |';
+      stages.map((_,i)=>i === Math.floor(tick / 40) % stages.length ? '[+]' : ' . ').join('  ');
+    pieces[0].textContent = '     .---.     .-------.\n     |o o|     | '+(Math.floor(tick / 8)%2?'code_':'code ')+' |\n     \'---\'     \'---+---\'\n      /|\\____     _|_\n   __/_|____/============\n      / \\       |     |';
     pieces[1].textContent = '   o          o\n  /|\\   .-.  /|\\\n  / \\  ( + ) / \\\n        \'-\'\n     making together';
     pieces[2].textContent = Array.from({length:8},(_,y)=>
       Array.from({length:42},(_,x)=>{
-        const v=Math.sin(x*.21+tick*.10+y*.55);
+        const v=Math.sin(x*.21+tick*.0125+y*.55);
         return Math.abs(v-y*.13+.45)<.23 ? '~' : Math.abs(v-y*.13+.45)<.42 ? '.' : ' ';
       }).join('')).join('\n');
     pieces[3].textContent = '      .\n   .     .\n     /\\\n    /++\\\n   /____\\\n   | [] |\n   | __ |\n   ||  ||\n  little ideas';
@@ -49,7 +49,7 @@ if (!document.querySelector('.ascii-ambient')) {
     clearInterval(timer);
     ambient.toggleAttribute('data-paused', document.hidden);
     draw();
-    if (!document.hidden && !reduced.matches) timer=setInterval(()=>{tick++;draw();},1000);
+    if (!document.hidden && !reduced.matches) timer=setInterval(()=>{tick++;draw();},125);
   }
   reduced.addEventListener('change',sync);
   document.addEventListener('visibilitychange',sync);
