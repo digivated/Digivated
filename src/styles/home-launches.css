@@ -1,0 +1,44 @@
+@layer ascii {
+ html[data-ascii] body .home-launches{width:min(1120px,calc(100% - 48px));margin:32px auto 72px}
+ html[data-ascii] body .home-launch-jump{display:flex;flex-wrap:wrap;gap:16px 28px;padding:16px 0 32px;font-size:12px}
+ html[data-ascii] body .home-launch-group{scroll-margin-top:110px;margin:0 0 72px}
+ html[data-ascii] body .home-launch-heading{display:flex;justify-content:space-between;gap:20px;align-items:end;margin:0 0 16px}
+ html[data-ascii] body .home-launch-heading h2{font-size:clamp(24px,3vw,36px);margin:8px 0;line-height:1.25}
+ html[data-ascii] body .home-launch-heading p{margin:0;font-size:12px;color:#aaa!important}
+ html[data-ascii] body .home-launch-heading>a{font-size:12px;flex:none;padding:10px 0}
+ html[data-ascii] body .home-launch-date{font-size:10px!important;letter-spacing:.08em}
+ html[data-ascii] body .home-launch-summary{font-size:11px;color:#999!important;margin:16px 0 12px}
+ html[data-ascii] body .home-launch-list{list-style:none;padding:0;margin:0}
+ html[data-ascii] body .home-launch-row{display:grid;grid-template-columns:64px minmax(0,1fr) 64px;gap:24px;align-items:center;padding:25px 0;margin:0;border:0}
+ html[data-ascii] body .home-launch-art{width:64px;height:64px;display:grid;place-items:center;position:relative;overflow:hidden;text-decoration:none!important}
+ html[data-ascii] body .home-launch-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+ html[data-ascii] body .home-launch-art:has(img)>span{visibility:hidden}
+ html[data-ascii] body .home-launch-copy{min-width:0}
+ html[data-ascii] body .home-launch-copy h3{font-size:17px;line-height:1.4;margin:0 0 6px;overflow-wrap:anywhere}
+ html[data-ascii] body .home-launch-description{font-size:12px;line-height:1.7;margin:0 0 10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#aaa!important}
+ html[data-ascii] body .home-launch-meta{display:flex;gap:8px 20px;flex-wrap:wrap;font-size:10px;line-height:1.6;margin:0;color:#999!important}
+ html[data-ascii] body .home-launch-vote{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;min-height:64px;padding:8px;cursor:pointer}
+ html[data-ascii] body .home-launch-vote small{font-size:9px}
+ html[data-ascii] body .home-launch-vote[aria-pressed=true]{text-decoration:none!important;color:#fff!important}
+ html[data-ascii] body .home-launch-vote[aria-pressed=true] strong::before{content:'[';margin-right:3px}html[data-ascii] body .home-launch-vote[aria-pressed=true] strong::after{content:']';margin-left:3px}
+ html[data-ascii] body #home-spotlights .home-featured-projects{padding:24px 0!important;margin:0 auto!important}
+ html[data-ascii] body #home-spotlights .home-featured-rail{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:24px!important;overflow:visible!important}
+ html[data-ascii] body #home-spotlights .home-featured-card{width:auto!important;min-width:0!important;margin:0!important}
+ html[data-ascii] body #home-spotlights .home-featured-content{padding:18px 0!important;gap:12px!important}
+ html[data-ascii] body #home-spotlights .home-featured-logo{width:48px!important;height:48px!important;flex:0 0 48px!important}
+ html[data-ascii] body #home-spotlights .home-featured-summary{display:none!important}
+ html[data-ascii] body #home-spotlights .home-featured-copy small{display:none!important}
+ html[data-ascii] body #home-spotlights .home-featured-copy strong{font-size:14px!important;overflow-wrap:anywhere}
+ html[data-ascii] body #home-spotlights .home-featured-ribbon{height:auto!important;min-height:0!important;padding:0!important;font-size:9px!important}
+ html[data-ascii] body #home-spotlights .home-featured-edition{display:none!important}
+ html[data-ascii] body .directory-launch-nav{display:flex;flex-wrap:wrap;gap:24px;width:min(1120px,calc(100% - 48px));margin:24px auto;font-size:12px}
+ @media(max-width:650px){
+ html[data-ascii] body .home-launches{width:calc(100% - 36px)}
+ html[data-ascii] body .home-launch-heading{display:block}.home-launch-heading>a{display:inline-block;margin-top:10px}
+ html[data-ascii] body .home-launch-row{grid-template-columns:44px minmax(0,1fr) 48px;gap:12px;padding:22px 0}
+ html[data-ascii] body .home-launch-art{width:44px;height:44px}
+ html[data-ascii] body .home-launch-copy h3{font-size:15px}
+ html[data-ascii] body #home-spotlights .home-featured-rail{grid-template-columns:1fr!important;gap:8px!important}
+ html[data-ascii] body #home-spotlights .home-featured-content{padding:10px 0!important}
+ }
+}

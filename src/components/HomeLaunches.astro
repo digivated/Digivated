@@ -1,0 +1,16 @@
+---
+import '../styles/home-launches.css';
+const groups=[{key:'current',title:'This week’s launches',note:'New projects. Fresh ideas. Find your next favorite.',href:'/rankings?launch=current&period=weekly',link:'This week’s rankings'},{key:'previous',title:'Last week’s launches',note:'Good work is worth another look.',href:'/rankings?launch=previous&period=all',link:'Last week’s launches'},{key:'archive',title:'From the archive',note:'Independent projects that are still worth discovering.',href:'/discover',link:'Explore the all-time directory'}];
+---
+<div class="home-launches" data-home-launches>
+ <nav class="home-launch-jump" aria-label="Browse launches"><a href="#this-week">[ this week ]</a><a href="#last-week">[ last week ]</a><a href="/discover">[ all-time directory → ]</a></nav>
+ <p role="status" data-home-launch-status>Loading the latest launches…</p>
+ {groups.map(group=><section id={group.key==='current'?'this-week':group.key==='previous'?'last-week':'launch-archive'} class="home-launch-group" data-launch-group={group.key} aria-labelledby={`home-launch-${group.key}`}>
+  <header class="home-launch-heading"><div><p class="home-launch-date" data-group-date>Independent projects</p><h2 id={`home-launch-${group.key}`}>{group.title}</h2><p>{group.note}</p></div><a href={group.href}>{group.link} →</a></header>
+  <p class="home-launch-summary" data-group-summary></p>
+  <ol class="home-launch-list" data-group-list aria-label={group.title}></ol>
+  <button type="button" data-group-more hidden>Show more launches ↓</button>
+ </section>)}
+ <noscript><p><a href="/discover">Open the all-time project directory.</a></p></noscript>
+</div>
+<script>import '../scripts/home-launches.js';</script>

@@ -2,8 +2,9 @@
 import Platform from '../layouts/Platform.astro';
 import ProjectWall from '../components/ProjectWall.astro';
 import '../styles/project-wall.css';
+import '../styles/home-launches.css';
 ---
-<Platform title="Projects" description="Discover independent projects, tools, and the people building them.">
-  <nav aria-label="Launches" style="margin-block:24px"><a href="/rankings?launch=current">This week’s launches →</a></nav>
-  <ProjectWall heading="Discover" label="INDEPENDENT PROJECTS" description="Explore the work. Open a project to meet its maker." directory/>
+<Platform title="All-time project directory" description="Discover independent projects, tools, and the people building them.">
+  <nav class="directory-launch-nav" aria-label="Launches"><a href="/#this-week">This week’s launches →</a><a href="/#last-week">Last week’s launches →</a><a href="/rankings?period=all">All-time rankings →</a></nav>
+  <ProjectWall heading="All-time directory" label="EVERY LAUNCH HAS A HOME" description="Explore every published project, from the newest launch to the archive. Search, browse categories, and meet the makers." directory/>
 </Platform>
