@@ -362,3 +362,21 @@ html#digivated-root[data-ascii] body :is(dialog,#explore-navigation,.navigation-
 @media(max-width:760px) {
   html#digivated-root[data-ascii] body .ascii-ambient { opacity: .1; font-size: 10px; }
 }
+
+/* Keep persistent navigation and utility surfaces on the same open canvas. */
+html#digivated-root[data-ascii] body :is(.header-primary a[aria-current=page],.header-search,.header-inbox,.launch-page,.platform-footer,.home-about,.project-reel,.project-wall,.home-featured-projects,.wall-list-item,.saved-card,.owner-card,.launch-info-panel,.launch-creator,.launch-overview,.launch-featured-panel,.membership-benefits > div) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+html#digivated-root[data-ascii] body .home-featured-ribbon-track::before { content: none; }
+html#digivated-root[data-ascii] body .ascii-ambient {
+  animation: ascii-canvas-drift 32s ease-in-out infinite alternate;
+}
+@keyframes ascii-canvas-drift {
+  from { transform: translate3d(-6px, -8px, 0); }
+  to { transform: translate3d(8px, 12px, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html#digivated-root[data-ascii] body .ascii-ambient { animation: none; }
+}
