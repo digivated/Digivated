@@ -4,8 +4,66 @@
 import { randomUUID, createHmac } from 'node:crypto';
 import { projectPricingOptions } from '../src/lib/project-pricing.mjs';
 import { projectCategories, safeUrl } from '../src/data/community.mjs';
-import { FoundingError, foundingConfig, readMember } from './founding-access.mjs';
+import { FoundingError, foundingConfig, readMember, verifyFoundingEmail } from './founding-access.mjs';
 import { accountIndex, verifiedAccount } from './project-account.mjs';
+import { projectPublic, SAVE_EDIT, validId } from './admin-store.mjs';
+
+function instantLaunchConfig(env) {
+  if (env.INSTANT_LAUNCH_ENABLED !== 'true') return null;
+  const productId = env.INSTANT_LAUNCH_PRODUCT_ID;
+  const price = Number(env.INSTANT_LAUNCH_PRICE_CENTS);
+  const gumroadToken = env.FOUNDING_GUMROAD_ACCESS_TOKEN;
+  let checkout;
+  try { checkout = new URL(env.INSTANT_LAUNCH_CHECKOUT_URL); } catch { return null; }
+  if (!/^[A-Za-z0-9+=/_-]{8,120}$/.test(productId || '') || [env.FOUNDING_GUMROAD_PRODUCT_ID, env.GUMROAD_PRODUCT_ID].includes(productId) ||
+      !gumroadToken || !Number.isSafeInteger(price) || price < 100 || price > 10000 ||
+      checkout.protocol !== 'https:' || !checkout.hostname.endsWith('.gumroad.com') ||
+      !/^\/l\/[\w-]+\/?$/.test(checkout.pathname) || checkout.search || checkout.hash ||
+      checkout.username || checkout.password || checkout.port) return null;
+  return { productId, price, checkoutUrl: checkout.href, gumroadToken };
+}
+
+async function publishInstantProject(redis, account, id, config, fetcher) {
+  if (!validId(id)) throw new SubmissionError(400, 'Choose a saved project.');
+  if (account.mailboxVerified === false) throw new SubmissionError(403, 'Sign in with an emailed link to verify your checkout email.');
+  const key = `digivated:submission:${id}`;
+  const record = JSON.parse(await redis(['GET', key]));
+  if (record?.accountId !== account.id || record.email.toLowerCase() !== account.email ||
+      record.promotion?.included !== 'instant-launch') throw new SubmissionError(404, 'Saved project not found.');
+  if (record.promotion.verified && projectPublic(record)) return projectPublic(record);
+  if (record.status !== 'pending') throw new SubmissionError(409, 'This project is no longer awaiting payment.');
+  let saleId;
+  try {
+    ({ saleId } = await verifyFoundingEmail(account.email, {
+      productId: config.productId, gumroadToken: config.gumroadToken, minimumPriceUSD: config.price, allowTest: false
+    }, fetcher));
+  } catch (error) {
+    if (error instanceof FoundingError && error.status === 401) {
+      throw new SubmissionError(409, 'We could not find an eligible payment for your account email. If you just paid, wait a moment and try again.');
+    }
+    throw new SubmissionError(503, 'Payment verification is temporarily unavailable. Try again here after checkout.');
+  }
+  const now = new Date();
+  const updated = {
+    ...record, status: 'approved', publishedAt: now.toISOString(), revision: (record.revision || 0) + 1,
+    promotion: { ...record.promotion, verified: true, verifiedAt: now.toISOString() }
+  };
+  const projection = projectPublic(updated);
+  if (!projection) throw new SubmissionError(409, 'The listing is incomplete. Contact Digivated before publishing.');
+  const saleKey = createHmac('sha256', 'digivated:instant-launch').update(config.productId + ':' + saleId).digest('hex');
+  const saved = await redis(['EVAL', SAVE_EDIT, 5, key, 'digivated:submissions',
+    `digivated:public:submission:${id}`, 'digivated:public:submissions', `digivated:instant-sale:${saleKey}`,
+    record.revision || 0, JSON.stringify(updated), JSON.stringify(projection), now.getTime(), 'submission']);
+  if (saved !== 1) {
+    const latest = JSON.parse(await redis(['GET', key]));
+    if (latest?.accountId === account.id && latest.promotion?.verified && projectPublic(latest)) return projectPublic(latest);
+    if (saved === -3) throw new SubmissionError(409, 'That purchase has already been used.');
+    if (saved === -2) throw new SubmissionError(409, 'This account already has a live project.');
+    throw new SubmissionError(409, 'The project changed. Refresh and try again.');
+  }
+  return projection;
+}
+
 export class SubmissionError extends Error { constructor(status,message) { super(message); this.status=status; } }
 export function validateSubmission(body) {
   const fail = message => {throw new SubmissionError(400,message);};
@@ -21,7 +79,7 @@ export function validateSubmission(body) {
   if (!projectCategories.includes(category)) fail('Choose a listed category.');
   if (body.consent!==true) fail('Please confirm you have permission to submit this project.');
   const submissionType = body.submissionType || 'directory';
-  if (!['directory','promotion','founding-feature'].includes(submissionType)) fail('Choose a valid submission type.');
+  if (!['directory','promotion','founding-feature','instant'].includes(submissionType)) fail('Choose a valid submission type.');
   let promotion;
   if (submissionType === 'promotion') {
     if (body.promotionPurchased !== true) fail('Purchase the Digivated promo on Gumroad before submitting a promotion request.');
@@ -30,6 +88,7 @@ export function validateSubmission(body) {
     // The handler replaces this after checking the founding session. Callers cannot mark it paid or verified.
     promotion = { requested:true, included:'founding-membership', verified:false };
   }
+  if (submissionType === 'instant') promotion = { requested: true, included: 'instant-launch', verified: false };
   if (!body.image) fail('Add at least one project image.');
   let image='';
   if (body.image) {
@@ -84,8 +143,10 @@ export function makeSubmissionHandler(deps={}) {
     res.setHeader('Content-Type','application/json; charset=utf-8');res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
     const send=(status,data)=>{res.statusCode=status;res.end(JSON.stringify(data));};
     try {
-      if(req.method!=='POST'){res.setHeader('Allow','POST');throw new SubmissionError(405,'Use the project submission form.');}
       const env=deps.env||process.env;
+      const instant = instantLaunchConfig(env);
+      if (req.method === 'GET' && new URL(req.url || '/api/submissions', 'https://digivated.invalid').searchParams.get('action') === 'launch-options') return send(200, instant ? { instant: { price: instant.price, checkoutUrl: instant.checkoutUrl } } : { instant: null });
+      if(req.method!=='POST'){res.setHeader('Allow','GET, POST');throw new SubmissionError(405,'Use the project submission form.');}
       const origin=env.SUBMISSIONS_ORIGIN||'https://digivated.com';
       if(req.headers.origin!==origin||req.headers['sec-fetch-site']==='cross-site')throw new SubmissionError(403,'Open the submission form on Digivated and try again.');
       if(!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))throw new SubmissionError(415,'Use the project submission form.');
@@ -96,9 +157,16 @@ export function makeSubmissionHandler(deps={}) {
       if(Buffer.isBuffer(body))body=body.toString('utf8');
       if(typeof body==='string'){if(Buffer.byteLength(body)>max)throw new SubmissionError(413,'The submission is too large.');try{body=JSON.parse(body);}catch{throw new SubmissionError(400,'Invalid submission.');}}
       if(Buffer.byteLength(JSON.stringify(body)||'')>max)throw new SubmissionError(413,'The submission is too large.');
-      let record=validateSubmission(body);
       const account=req.headers.authorization?await (deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch):null;
       if(!account)throw new SubmissionError(401,'Create an account or sign in before submitting your project.');
+      if (body?.action === 'publish-instant') {
+        if (!instant) throw new SubmissionError(403, 'Instant publishing is currently unavailable.');
+        const project = await publishInstantProject(deps.redis || redisClient(env), account, body.id, instant, deps.fetcher || fetch);
+        return send(200, { ok: true, id: project.id, pageUrl: project.pageUrl });
+      }
+      let record = validateSubmission(body);
+      if (record.promotion?.included === 'instant-launch' && !instant) throw new SubmissionError(403, 'Instant publishing is currently unavailable.');
+      if (record.promotion?.included === 'instant-launch' && account.mailboxVerified === false) throw new SubmissionError(403, 'Sign in with an emailed link before choosing instant publishing.');
       if(account&&record.email.toLowerCase()!==account.email)throw new SubmissionError(403,'Use the same email as your verified account.');
       if (record.promotion?.included === 'founding-membership') record = { ...record, promotion: await memberFeature(req, env, deps) };
       const redis=deps.redis||redisClient(env);

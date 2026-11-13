@@ -36,9 +36,12 @@ export function validateEdit(kind, input, previous) {
     const socialUrl = text(input.socialUrl, 'creator profile URL', 500, false);
     record = { ...previous, name: text(input.name, 'project name', 120), creator: text(input.creator, 'creator', 100), description: text(input.description, 'description', 600), category: input.category, status: input.status, reviewFeedback: text(input.reviewFeedback ?? previous.reviewFeedback ?? '', 'private review feedback', 1500, false), pickOverride: input.pick === true, pick: input.pick === true && ['approved', 'featured'].includes(input.status), socialUrl: socialUrl ? safeUrl(socialUrl) : '', url: safeUrl(text(input.url, 'project URL', 500)) };
     if (previous.promotion?.requested) {
+      if (previous.promotion.included === 'instant-launch' && approving && !previous.promotion.verified) {
+        throw new AdminError(400, 'The creator must verify their instant launch payment before publishing.');
+      }
       const memberIncluded = previous.promotion.included === 'founding-membership' && typeof previous.promotion.memberSaleId === 'string';
       const approving = ['approved', 'featured'].includes(input.status);
-      const verified = (memberIncluded && approving) || (input.promotionVerified === undefined ? previous.promotion.verified === true : input.promotionVerified === true);
+      const verified = (memberIncluded && approving) || (previous.promotion.included === 'instant-launch' || input.promotionVerified === undefined ? previous.promotion.verified === true : input.promotionVerified === true);
       record.promotion = {...previous.promotion, verified};
       if (verified && !previous.promotion.verified) record.promotion.verifiedAt = now;
       if (!verified) delete record.promotion.verifiedAt;
@@ -114,6 +117,7 @@ if ARGV[5]=='submission' and record.slug then
  if owner and owner~=id then return -1 end
  redis.call('SET',key,id)
 end
+if KEYS[5] and not redis.call('SET',KEYS[5],id,'NX') then return -3 end
 redis.call('SET',KEYS[1],ARGV[2]); redis.call('ZADD',KEYS[2],ARGV[4],id)
 if ARGV[3]~='' then redis.call('SET',KEYS[3],ARGV[3]); redis.call('ZADD',KEYS[4],ARGV[4],id)
 else redis.call('DEL',KEYS[3]); redis.call('ZREM',KEYS[4],id) end

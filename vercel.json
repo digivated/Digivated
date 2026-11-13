@@ -19,6 +19,9 @@
       "includeFiles": "{server/**,gumroad/**}",
       "maxDuration": 120
     },
+    "api/submissions.js": {
+      "maxDuration": 35
+    },
     "api/sitemap.js": {
       "includeFiles": "{server/**,src/data/resources.json}",
       "maxDuration": 15

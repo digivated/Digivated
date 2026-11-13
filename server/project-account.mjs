@@ -87,8 +87,8 @@ export function makeProjectAccountHandler(deps={}) {
       if(account.mailboxVerified!==false)await indexLegacySubmissions(redis,account,key);
       const ids=await redis(['ZREVRANGE',key,0,99]);
       const rows=ids.length?await redis(['MGET',...ids.map(id=>`digivated:submission:${id}`)]):[];
-      const submissions=rows.filter(Boolean).map(raw=>JSON.parse(raw)).filter(row=>row.email?.trim().toLowerCase()===account.email&&(row.accountId===account.id||account.mailboxVerified!==false&&!row.accountId)).map(row=>({id:row.id,name:row.name,url:row.url,date:row.date,status:row.status,feedback:row.reviewFeedback||'',reviewedAt:row.reviewedAt||null}));
-      return send(200,{email:account.email,submissions});
+      const submissions=rows.filter(Boolean).map(raw=>JSON.parse(raw)).filter(row=>row.email?.trim().toLowerCase()===account.email&&(row.accountId===account.id||account.mailboxVerified!==false&&!row.accountId)).map(row=>({id:row.id,name:row.name,url:row.url,date:row.date,status:row.status,feedback:row.reviewFeedback||'',reviewedAt:row.reviewedAt||null,...(row.accountId===account.id && row.status==='pending' && row.promotion?.included==='instant-launch' && !row.promotion.verified ? { awaitingInstantPayment:true } : {})}));
+      return send(200,{email:account.email,submissions,mailboxVerified:account.mailboxVerified!==false});
     } catch {return send(503,{error:'Your submissions could not be loaded. Try again shortly.'});}
   };
 }
