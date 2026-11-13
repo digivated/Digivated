@@ -22,13 +22,8 @@
  html[data-ascii] body .home-launch-vote[aria-pressed=true]{text-decoration:none!important;color:#fff!important}
  html[data-ascii] body .home-launch-vote[aria-pressed=true] strong::before{content:'[';margin-right:3px}html[data-ascii] body .home-launch-vote[aria-pressed=true] strong::after{content:']';margin-left:3px}
  html[data-ascii] body #home-spotlights .home-featured-projects{padding:24px 0!important;margin:0 auto!important}
- html[data-ascii] body #home-spotlights .home-featured-rail{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:24px!important;overflow:visible!important}
  html[data-ascii] body #home-spotlights .home-featured-card{width:auto!important;min-width:0!important;margin:0!important}
- html[data-ascii] body #home-spotlights .home-featured-content{padding:18px 0!important;gap:12px!important}
- html[data-ascii] body #home-spotlights .home-featured-logo{width:48px!important;height:48px!important;flex:0 0 48px!important}
- html[data-ascii] body #home-spotlights .home-featured-summary{display:none!important}
  html[data-ascii] body #home-spotlights .home-featured-copy small{display:none!important}
- html[data-ascii] body #home-spotlights .home-featured-copy strong{font-size:14px!important;overflow-wrap:anywhere}
  html[data-ascii] body #home-spotlights .home-featured-ribbon{height:auto!important;min-height:0!important;padding:0!important;font-size:9px!important}
  html[data-ascii] body #home-spotlights .home-featured-edition{display:none!important}
  html[data-ascii] body .directory-launch-nav{display:flex;flex-wrap:wrap;gap:24px;width:min(1120px,calc(100% - 48px));margin:24px auto;font-size:12px}
@@ -38,8 +33,6 @@
  html[data-ascii] body .home-launch-row{grid-template-columns:44px minmax(0,1fr) 48px;gap:12px;padding:22px 0}
  html[data-ascii] body .home-launch-art{width:44px;height:44px}
  html[data-ascii] body .home-launch-copy h3{font-size:15px}
- html[data-ascii] body #home-spotlights .home-featured-rail{grid-template-columns:1fr!important;gap:8px!important}
- html[data-ascii] body #home-spotlights .home-featured-content{padding:10px 0!important}
  }
 }
 
