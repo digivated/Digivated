@@ -8,19 +8,40 @@ import { FoundingError, foundingConfig, readMember, verifyFoundingEmail } from '
 import { accountIndex, verifiedAccount } from './project-account.mjs';
 import { projectPublic, SAVE_EDIT, validId } from './admin-store.mjs';
 
-function instantLaunchConfig(env) {
+async function instantLaunchConfig(env, fetcher) {
   if (env.INSTANT_LAUNCH_ENABLED !== 'true') return null;
-  const productId = env.INSTANT_LAUNCH_PRODUCT_ID;
   const price = Number(env.INSTANT_LAUNCH_PRICE_CENTS);
   const gumroadToken = env.FOUNDING_GUMROAD_ACCESS_TOKEN;
   let checkout;
   try { checkout = new URL(env.INSTANT_LAUNCH_CHECKOUT_URL); } catch { return null; }
-  if (!/^[A-Za-z0-9+=/_-]{8,120}$/.test(productId || '') || [env.FOUNDING_GUMROAD_PRODUCT_ID, env.GUMROAD_PRODUCT_ID].includes(productId) ||
-      !gumroadToken || !Number.isSafeInteger(price) || price < 100 || price > 10000 ||
-      checkout.protocol !== 'https:' || !checkout.hostname.endsWith('.gumroad.com') ||
-      !/^\/l\/[\w-]+\/?$/.test(checkout.pathname) || checkout.search || checkout.hash ||
-      checkout.username || checkout.password || checkout.port) return null;
-  return { productId, price, checkoutUrl: checkout.href, gumroadToken };
+  if (!gumroadToken || !Number.isSafeInteger(price) || price < 100 || price > 10000 ||
+      checkout.origin !== 'https://digivated.gumroad.com' ||
+      !/^\/l\/[\w-]+$/.test(checkout.pathname) || checkout.search || checkout.hash ||
+      checkout.username || checkout.password) return null;
+
+  const slug = checkout.pathname.split('/').pop();
+  try {
+    const response = await fetcher('https://api.gumroad.com/v2/products', {
+      headers: { Authorization: `Bearer ${gumroadToken}`, Accept: 'application/json' },
+      redirect: 'error', signal: AbortSignal.timeout(5000)
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (data.success !== true || !Array.isArray(data.products)) return null;
+    const product = data.products.find(item =>
+      (item.custom_permalink || item.permalink) === slug ||
+      item.short_url === checkout.href
+    );
+    const productId = product?.id;
+    if (!/^[A-Za-z0-9+=/_-]{8,120}$/.test(productId || '') ||
+        [env.FOUNDING_GUMROAD_PRODUCT_ID, env.GUMROAD_PRODUCT_ID].includes(productId) ||
+        (env.INSTANT_LAUNCH_PRODUCT_ID && productId !== env.INSTANT_LAUNCH_PRODUCT_ID) ||
+        product.published !== true || product.price !== price || product.currency !== 'usd' ||
+        product.subscription_duration || product.is_tiered_membership) return null;
+    return { productId, price, checkoutUrl: checkout.href, gumroadToken };
+  } catch {
+    return null;
+  }
 }
 
 async function publishInstantProject(redis, account, id, config, fetcher) {
@@ -144,8 +165,10 @@ export function makeSubmissionHandler(deps={}) {
     const send=(status,data)=>{res.statusCode=status;res.end(JSON.stringify(data));};
     try {
       const env=deps.env||process.env;
-      const instant = instantLaunchConfig(env);
-      if (req.method === 'GET' && new URL(req.url || '/api/submissions', 'https://digivated.invalid').searchParams.get('action') === 'launch-options') return send(200, instant ? { instant: { price: instant.price, checkoutUrl: instant.checkoutUrl } } : { instant: null });
+      if (req.method === 'GET' && new URL(req.url || '/api/submissions', 'https://digivated.invalid').searchParams.get('action') === 'launch-options') {
+        const instant = await instantLaunchConfig(env, deps.fetcher || fetch);
+        return send(200, instant ? { instant: { price: instant.price, checkoutUrl: instant.checkoutUrl } } : { instant: null });
+      }
       if(req.method!=='POST'){res.setHeader('Allow','GET, POST');throw new SubmissionError(405,'Use the project submission form.');}
       const origin=env.SUBMISSIONS_ORIGIN||'https://digivated.com';
       if(req.headers.origin!==origin||req.headers['sec-fetch-site']==='cross-site')throw new SubmissionError(403,'Open the submission form on Digivated and try again.');
@@ -160,12 +183,13 @@ export function makeSubmissionHandler(deps={}) {
       const account=req.headers.authorization?await (deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch):null;
       if(!account)throw new SubmissionError(401,'Create an account or sign in before submitting your project.');
       if (body?.action === 'publish-instant') {
+        const instant = await instantLaunchConfig(env, deps.fetcher || fetch);
         if (!instant) throw new SubmissionError(403, 'Instant publishing is currently unavailable.');
         const project = await publishInstantProject(deps.redis || redisClient(env), account, body.id, instant, deps.fetcher || fetch);
         return send(200, { ok: true, id: project.id, pageUrl: project.pageUrl });
       }
       let record = validateSubmission(body);
-      if (record.promotion?.included === 'instant-launch' && !instant) throw new SubmissionError(403, 'Instant publishing is currently unavailable.');
+      if (record.promotion?.included === 'instant-launch' && !await instantLaunchConfig(env, deps.fetcher || fetch)) throw new SubmissionError(403, 'Instant publishing is currently unavailable.');
       if (record.promotion?.included === 'instant-launch' && account.mailboxVerified === false) throw new SubmissionError(403, 'Sign in with an emailed link before choosing instant publishing.');
       if(account&&record.email.toLowerCase()!==account.email)throw new SubmissionError(403,'Use the same email as your verified account.');
       if (record.promotion?.included === 'founding-membership') record = { ...record, promotion: await memberFeature(req, env, deps) };
