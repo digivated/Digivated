@@ -88,3 +88,16 @@
  html[data-ascii] body .compact-header-actions{gap:6px!important;}
  }
 }
+
+@layer ascii {
+ html[data-ascii] .ascii-drift{opacity:.21;animation-name:ascii-community-drift;animation-duration:16s;animation-timing-function:ease-in-out;animation-iteration-count:infinite;animation-direction:alternate;}
+ html[data-ascii] .ascii-drift:nth-child(2){animation-duration:20s;}
+ html[data-ascii] .ascii-drift:nth-child(3){animation-duration:24s;opacity:.25;}
+ html[data-ascii] .ascii-drift:nth-child(4){animation-duration:18s;}
+ @keyframes ascii-community-drift {
+  from{transform:translate3d(-22px,-24px,0)}
+  to{transform:translate3d(28px,38px,0)}
+ }
+ @media(max-width:760px){html[data-ascii] .ascii-drift{opacity:.16;}html[data-ascii] .ascii-drift:nth-child(3){opacity:.20;}}
+ @media(prefers-reduced-motion:reduce){html[data-ascii] .ascii-drift{animation:none!important}}
+}
