@@ -109,3 +109,9 @@
 }
 
 @layer ascii {html[data-ascii] body .ascii-brand-art{width:min(100%,340px);margin:24px auto 64px!important}html[data-ascii] body .ascii-brand-art img{display:block;width:100%;height:auto;mix-blend-mode:screen}}
+
+@layer ascii {
+ html[data-ascii] body :is(.new-brand-mark,.platform-brand img,.login-brand-mark,.footer-logo,.footer-logo-wrap,.site-intro-mark,.site-intro-mark img) {
+  background:transparent!important;border:0!important;outline:0!important;box-shadow:none!important;border-radius:0!important;
+ }
+}
