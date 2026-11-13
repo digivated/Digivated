@@ -42,3 +42,62 @@
  html[data-ascii] body #home-spotlights .home-featured-content{padding:10px 0!important}
  }
 }
+
+/* Keep launch navigation and featured rows on their content columns. */
+html[data-ascii] body #home-spotlights :is(.home-featured-heading, .home-featured-rail) {
+  width: min(1120px, calc(100% - 48px));
+  max-width: none;
+  padding-inline: 0;
+}
+
+html[data-ascii] body .home-launch-jump,
+html[data-ascii] body .directory-launch-nav {
+  display: flex !important;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 20px;
+}
+
+html[data-ascii] body :is(.home-launch-jump, .directory-launch-nav) > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 0;
+}
+
+html[data-ascii] body.wall-experience .directory-launch-nav {
+  width: min(960px, calc(100% - 2 * clamp(24px, 5vw, 64px)));
+  margin: 12px auto 0;
+}
+
+@media (max-width: 650px) {
+  html[data-ascii] body #home-spotlights :is(.home-featured-heading, .home-featured-rail) {
+    width: calc(100% - 36px);
+  }
+
+  html[data-ascii] body #home-spotlights .home-featured-heading {
+    flex-wrap: wrap;
+    gap: 4px 16px;
+  }
+
+  html[data-ascii] body .home-launch-heading > a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 380px) {
+  html[data-ascii] body.wall-experience .project-wall .wall-collection-controls {
+    grid-column: 1 / -1 !important;
+    display: flex !important;
+    flex-wrap: wrap;
+  }
+
+  html[data-ascii] body.wall-experience .project-wall .wall-page-controls {
+    grid-column: 1 / -1 !important;
+    grid-row: 4 !important;
+    justify-self: start !important;
+  }
+}
