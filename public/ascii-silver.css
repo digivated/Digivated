@@ -488,3 +488,7 @@
  html#digivated-root[data-ascii] body:not(.platform) #main {min-width:0;}
  @media(min-width:901px){html#digivated-root[data-ascii] body:not(.platform) .shell {padding-inline:clamp(24px,4vw,64px);}}
 }
+
+@layer ascii {
+ html#digivated-root[data-ascii] #main .project-wall .wall-react-root {width:100%!important;max-width:none!important;margin-inline:0!important;}
+}
