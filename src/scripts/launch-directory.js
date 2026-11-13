@@ -3,6 +3,17 @@ import { cardIconMarkup } from '../lib/card-icons.mjs';
 const root=document.querySelector('[data-launch-directory]');
 if(root){
  const list=root.querySelector('[data-launch-list]'),status=root.querySelector('[data-launch-status]'),more=root.querySelector('[data-launch-more]');
+ const launchBatch = root.querySelector('[data-launch-batch]');
+ const dayMs = 86400000;
+ function inLaunchBatch(project, batch, now = Date.now()) {
+   if (!batch) return true;
+   const launched = Date.parse(project.publishedAt || project.date);
+   if (!Number.isFinite(launched)) return false;
+   const today = new Date(now);
+   const monday = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()) - ((today.getUTCDay() + 6) % 7) * dayMs;
+   const end = batch === 'current' ? monday + 7 * dayMs : monday;
+   return launched >= end - 7 * dayMs && launched < Math.min(end, now + 1);
+ }
  let projects=[],period='daily',category=new URLSearchParams(location.search).get('category')||'All',query='',limit=30;
  const ai=root.dataset.ai==='true';
  const countdown=root.querySelector('[data-ranking-countdown]'),countdownLabel=root.querySelector('[data-ranking-countdown-label]');
@@ -39,7 +50,7 @@ if(root){
   root.querySelector('[data-list-heading]').hidden=overview;
   list.hidden=overview;
   if(overview)renderOverview();
-  const matches=projects.filter(p=>category==='All'||(ai?aiTopics(p).includes(category):p.category===category)).filter(p=>(p.name+' '+p.description+' '+p.creator).toLowerCase().includes(query));
+  const matches=projects.filter(p=>inLaunchBatch(p, launchBatch?.value)).filter(p=>category==='All'||(ai?aiTopics(p).includes(category):p.category===category)).filter(p=>(p.name+' '+p.description+' '+p.creator).toLowerCase().includes(query));
   matches.sort((a,b)=>(b.votes?.[period]||0)-(a.votes?.[period]||0)||String(b.date||'').localeCompare(String(a.date||''))||a.id.localeCompare(b.id));
   root.querySelector('[data-launch-total]').textContent=matches.length+(ai?(matches.length===1?' tool':' tools'):(matches.length===1?' project':' projects'));
   if(!ai){
@@ -78,6 +89,15 @@ if(root){
  }
  const categoryHost=root.querySelector('[data-launch-categories]');
  function categories(){const names=['All',...(ai?groups.filter(([name])=>projects.some(p=>aiTopics(p).includes(name))).map(([name])=>name):[...new Set(projects.map(p=>p.category).filter(Boolean))].sort())];categoryHost.replaceChildren();for(const name of names){const b=text('button',name);b.type='button';b.dataset.category=name;b.setAttribute('aria-pressed',String(name===category));b.onclick=()=>{category=name;limit=30;render();};categoryHost.append(b);}}
+ launchBatch?.addEventListener('change', () => {
+   period = launchBatch.value === 'current' ? 'weekly' : launchBatch.value === 'previous' ? 'all' : 'daily';
+   limit = 30;
+   render();
+ });
+ if (launchBatch && new URLSearchParams(location.search).get('launch') === 'current') {
+   launchBatch.value = 'current';
+   period = 'weekly';
+ }
  root.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{period=b.dataset.period;limit=30;render();});
  root.querySelector('[data-launch-search]').oninput=e=>{query=e.target.value.trim().toLowerCase();limit=30;render();};
  more.onclick=()=>{limit+=30;render();};
