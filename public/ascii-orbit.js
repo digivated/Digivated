@@ -18,10 +18,17 @@
         const dy = (y - (rows - 1) / 2) / (rows * .57);
         const radius = Math.hypot(dx, dy);
         const angle = Math.atan2(dy, dx);
-        const ring = Math.exp(-Math.pow((radius - .72) / .16, 2));
-        const orbit = .72 + .28 * Math.sin(angle * 4 - time * .00055);
-        const sparks = Math.max(0, Math.sin(x * .37 + y * .71 + time * .00035)) * .15;
-        const strength = ring * orbit + (ring > .15 ? sparks : 0);
+        const tilt = -.32;
+        const orbitX = dx * Math.cos(tilt) + dy * Math.sin(tilt);
+        const orbitY = -dx * Math.sin(tilt) + dy * Math.cos(tilt);
+        const orbitRadius = Math.hypot(orbitX * .82, orbitY * 2.65);
+        const band = Math.exp(-Math.pow((orbitRadius - .79) / .09, 2));
+        const globe = radius < .44
+          ? .18 + .68 * Math.max(0, .55 - dx + Math.sqrt(.194 - radius * radius))
+          : 0;
+        const drift = .73 + .19 * Math.sin(angle * 3 - time * .00038);
+        const ring = globe && orbitY < 0 ? 0 : band * drift;
+        const strength = Math.max(globe, ring);
         line += shades[Math.min(shades.length - 1, Math.floor(strength * (shades.length - 1)))];
       }
       output.push(line);
@@ -31,7 +38,7 @@
 
   function tick(time) {
     if (!visible || document.hidden || reduced.matches) return;
-    if (time - last > 85) { draw(time); last = time; }
+    if (time - last > 120) { draw(time); last = time; }
     frame = requestAnimationFrame(tick);
   }
   function start() {
@@ -39,7 +46,7 @@
     draw(performance.now());
     if (visible && !document.hidden && !reduced.matches) frame = requestAnimationFrame(tick);
   }
-  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; start(); }).observe(canvas);
+  if ('IntersectionObserver' in window) new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; start(); }).observe(canvas);
   reduced.addEventListener('change', start);
   document.addEventListener('visibilitychange', start);
   window.addEventListener('resize', start, { passive: true });
