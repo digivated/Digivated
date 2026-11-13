@@ -508,3 +508,29 @@
   }
  }
 }
+
+
+/* Project thumbnails share a square frame; full previews keep their own proportions. */
+@layer ascii {
+ html#digivated-root[data-ascii] body.platform {
+  --project-thumbnail-size: clamp(48px, 6vw, 64px);
+ }
+ html#digivated-root[data-ascii] body.platform :is(#home-spotlights .home-featured-logo, .home-launch-art, .project-wall .wall-dom-grid .wall-card-media) {
+  box-sizing: border-box;
+  width: var(--project-thumbnail-size) !important;
+  height: var(--project-thumbnail-size) !important;
+  flex: none !important;
+  aspect-ratio: 1;
+ }
+ html#digivated-root[data-ascii] body.platform .project-wall .wall-dom-grid .wall-card-open {
+  grid-template-columns: var(--project-thumbnail-size) minmax(0, 1fr) 20px !important;
+ }
+ html#digivated-root[data-ascii] body.platform :is(.home-featured-logo, .home-launch-art, .project-reel-art, .wall-card-media, .ranking-artwork, .launch-identity, .launch-featured-art, .project-image) img {
+  box-sizing: border-box;
+  object-fit: contain !important;
+  object-position: center !important;
+ }
+ html#digivated-root[data-ascii] body.platform :is(.home-featured-logo, .home-launch-art, .wall-card-media) img {
+  padding: 4px !important;
+ }
+}
