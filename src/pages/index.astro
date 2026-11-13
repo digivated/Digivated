@@ -11,6 +11,13 @@ import '../styles/home-about.css';
 ---
 <Platform title="Good projects deserve to be discovered" description="Discover independent projects on Digivated. Meet builders, give feedback, and submit your own work for review.">
   <SiteActivity/>
+  <aside class="queue-countdown" aria-label="Weekly project queue">
+    <div>
+      <strong>Next free project launch</strong>
+      <small>Weekly · Monday at 00:10 UTC</small>
+    </div>
+    <time id="queue-countdown" role="timer" aria-live="off"></time>
+  </aside>
   <section class="home-editorial" aria-labelledby="home-title">
     <div class="home-workshop-copy">
     <details class="home-whats-new">
@@ -43,3 +50,60 @@ import '../styles/home-about.css';
     <a href="/about">Read how Digivated works <UiIcon name="arrow" size={15}/></a>
   </section>
 </Platform>
+
+<script>
+  const countdown = document.querySelector<HTMLTimeElement>('#queue-countdown');
+
+  function updateCountdown() {
+    if (!countdown) return;
+    const now = new Date();
+    // Free launches become eligible on Monday at midnight UTC.
+    // The scheduled queue job runs daily at 00:10 UTC.
+    const daysUntilMonday = (8 - now.getUTCDay()) % 7;
+    let target = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilMonday, 0, 10);
+    if (target <= now.getTime()) target += 7 * 86_400_000;
+
+    const minutes = Math.ceil((target - now.getTime()) / 60_000);
+    const days = Math.floor(minutes / 1440);
+    const hours = Math.floor(minutes / 60) % 24;
+    countdown.dateTime = new Date(target).toISOString();
+    countdown.textContent = `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes % 60).padStart(2, '0')}m`;
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+
+<style>
+  .queue-countdown {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .6rem 1.5rem;
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    margin-block: 1rem 0;
+    padding-block: .65rem;
+  }
+
+  .queue-countdown strong,
+  .queue-countdown small {
+    display: block;
+  }
+
+  .queue-countdown strong {
+    font-size: .875rem;
+  }
+
+  .queue-countdown small {
+    margin-block-start: .3rem;
+    font-size: .72rem;
+  }
+
+  .queue-countdown time {
+    font-size: clamp(1.35rem, 2.8vw, 2rem);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+</style>
