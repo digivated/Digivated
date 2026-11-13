@@ -62,3 +62,10 @@
  }
  @media(prefers-reduced-motion:reduce){html[data-ascii]{scroll-behavior:auto}html[data-ascii] .ascii-drift{animation:none!important}}
 }
+@layer ascii {
+ html[data-ascii] body .account-announcement{background:#111!important;color:#ddd!important;}
+ html[data-ascii] body .compact-site-header .header-inner{display:flex!important;gap:24px!important;justify-content:space-between!important;}
+ html[data-ascii] body .header-primary{display:flex!important;gap:22px!important;flex:0 1 auto!important;}
+ html[data-ascii] body .compact-header-actions{display:flex!important;gap:18px!important;flex:0 0 auto!important;}
+ @media(max-width:1100px){html[data-ascii] body .header-primary{display:none!important;}}
+}
