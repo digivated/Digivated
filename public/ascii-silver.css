@@ -602,3 +602,45 @@
   }
  }
 }
+
+
+/* The lead spotlight anchors two companion placements. */
+@layer ascii {
+ html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card {
+  justify-content: space-between;
+  min-height: 128px;
+ }
+ html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child {
+  border-color: #777 !important;
+ }
+ html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child .home-featured-copy strong {
+  font-size: clamp(20px, 2.5vw, 34px) !important;
+  line-height: 1.15;
+ }
+ html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child .home-featured-summary {
+  -webkit-line-clamp: 3;
+ }
+ @media (min-width: 901px) {
+  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-rail {
+   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) !important;
+  }
+  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child:not(:only-child) {
+   grid-row: span 2;
+  }
+  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:only-child {
+   grid-column: 1 / -1;
+  }
+  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child {
+   padding: 26px !important;
+  }
+  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child .home-featured-content {
+   grid-template-columns: minmax(0, 1fr) auto;
+   gap: 16px !important;
+  }
+  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child .home-featured-logo {
+   grid-column: 1 / -1;
+   width: 88px !important;
+   height: 88px !important;
+  }
+ }
+}
