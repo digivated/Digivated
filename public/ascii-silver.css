@@ -617,3 +617,34 @@
   }
  }
 }
+
+
+/* Keep search controls, results and keyboard selection in the ASCII palette. */
+@layer ascii {
+ html#digivated-root[data-ascii] #discovery-search {
+  background: #101010 !important;
+  color: #eee !important;
+  border: 1px solid #555 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+ }
+ html#digivated-root[data-ascii] #discovery-search :is(.search-header,.search-body,.search-footnote,.search-input-wrap,.unified-result,.search-shortcuts a,.search-scopes button,.search-result-type,.unified-result-mark,kbd) {
+  background: transparent !important;
+  color: #ddd !important;
+  border-color: #494949 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+ }
+ html#digivated-root[data-ascii] #discovery-search #unified-search-input {
+  background: #171717 !important;
+  color: #fff !important;
+  caret-color: #fff;
+ }
+ html#digivated-root[data-ascii] #discovery-search :is(.search-subtitle,.search-count,.unified-result-copy small,.search-empty p) { color: #bbb !important; }
+ html#digivated-root[data-ascii] #discovery-search :is(.unified-result,.search-shortcuts a):is(:hover,:focus-visible),
+ html#digivated-root[data-ascii] #discovery-search .search-scopes button[aria-pressed="true"] {
+  background: #252525 !important;
+  color: #fff !important;
+ }
+ html#digivated-root[data-ascii] #discovery-search :focus-visible { outline: 2px solid #aaa; outline-offset: -2px; }
+}
