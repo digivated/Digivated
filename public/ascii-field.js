@@ -40,7 +40,7 @@ if (!document.querySelector('.ascii-ambient')) {
     pieces[1].textContent = '   o          o\n  /|\\   .-.  /|\\\n  / \\  ( + ) / \\\n        \'-\'\n     making together';
     pieces[2].textContent = Array.from({length:8},(_,y)=>
       Array.from({length:42},(_,x)=>{
-        const v=Math.sin(x*.21+tick*.0125+y*.55);
+        const v=Math.sin(x*.21+tick*.035+y*.55);
         return Math.abs(v-y*.13+.45)<.23 ? '~' : Math.abs(v-y*.13+.45)<.42 ? '.' : ' ';
       }).join('')).join('\n');
     pieces[3].textContent = '      .\n   .     .\n     /\\\n    /++\\\n   /____\\\n   | [] |\n   | __ |\n   ||  ||\n  little ideas';
