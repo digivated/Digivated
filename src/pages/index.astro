@@ -12,6 +12,7 @@ import '../styles/home-about.css';
 <Platform title="Good projects deserve to be discovered" description="Discover independent projects on Digivated. Meet builders, give feedback, and submit your own work for review.">
   <SiteActivity/>
   <section class="home-editorial" aria-labelledby="home-title">
+    <div class="home-workshop-copy">
     <details class="home-whats-new">
       <summary><span>What’s New?</span><UiIcon name="chevron" size={14}/></summary>
       <ul>
@@ -25,6 +26,8 @@ import '../styles/home-about.css';
     <h1 id="home-title">Get your product<br/><em>in front of <span data-site-visits-headline>visitors.</span></em></h1>
     <p>Find indie projects, give feedback, and share what you’re building.</p>
     <div class="home-editorial-actions"><a class="button primary" href="#this-week">Explore this week <UiIcon name="arrow" size={16}/></a><a class="button" href="/submit-project">Share your project <UiIcon name="arrow" size={16}/></a></div>
+    </div>
+    <pre class="ascii-field home-workshop" data-ascii-field aria-hidden="true"></pre>
   </section>
   <div id="home-spotlights"><FeaturedProjects/></div>
   <HomeLaunches/>

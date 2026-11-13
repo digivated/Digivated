@@ -420,3 +420,67 @@
   }
  }
 }
+
+/* The workshop owns a real grid column so its art cannot overlap the copy. */
+@layer ascii {
+ html[data-ascii] body.home-refresh #main .home-editorial {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 64px);
+ }
+ html[data-ascii] body.home-refresh #main #home-title {
+  width: auto !important;
+  max-width: none !important;
+ }
+ html[data-ascii] body.home-refresh .home-workshop-copy > p {
+  text-align: left;
+  margin-inline: 0;
+ }
+ html[data-ascii] body.home-refresh .home-workshop-copy > p:not(.home-editorial-kicker) {
+  max-width: 46ch;
+  margin-block: 24px 0;
+  font-size: 14px;
+ }
+ html[data-ascii] body.home-refresh #main .home-workshop-copy > .home-whats-new {
+  position: static;
+  margin: 0 0 16px;
+ }
+ html[data-ascii] body.home-refresh #main .ascii-field.home-workshop {
+  position: static;
+  width: 100%;
+  margin: 0;
+  color: #c5c5c5 !important;
+  font-size: clamp(8px, 1vw, 14px) !important;
+  line-height: 1.5 !important;
+  text-align: left;
+  overflow: hidden;
+  min-height: 14lh;
+ }
+ html[data-ascii] .ascii-code-stream {
+  position: absolute;
+  margin: 0;
+  font: 11px/1.7 var(--ascii-mono) !important;
+  color: #ccc !important;
+  opacity: .095;
+ }
+ html[data-ascii] .ascii-code-stream[data-stream="0"] { right: 5%; top: 12%; }
+ html[data-ascii] .ascii-code-stream[data-stream="1"] { left: 4%; top: 53%; }
+ html[data-ascii] .ascii-code-stream[data-stream="2"] { right: 9%; bottom: 12%; }
+ @media (max-width: 900px) {
+  html[data-ascii] body.home-refresh #main .home-editorial {
+   grid-template-columns: minmax(0, 1fr);
+   padding-block: 44px 56px !important;
+  }
+  html[data-ascii] body.home-refresh #main .ascii-field.home-workshop {
+   grid-row: 1;
+   width: max-content;
+   max-width: 100% !important;
+   justify-self: center;
+   font-size: clamp(8px, 2.65vw, 12px) !important;
+  }
+ }
+ @media (max-width: 760px) {
+  html[data-ascii] body.home-refresh #main .home-editorial { padding-top: 120px !important; }
+ }
+}
