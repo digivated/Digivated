@@ -37,43 +37,27 @@ if (!document.querySelector('.ascii-ambient')) {
       stage[0] + '\n' +
       stages.map((_,i)=>i === Math.floor(tick / 40) % stages.length ? '[+]' : ' . ').join('  ');
 
-    // Re-rasterize a flowing ribbon and swimming forms into glyphs each frame.
-    // The contours, shading and tails change inside the text grid.
-    const ramp = ' .,:;+=x*#@';
+    // Four quiet signal fields. Pulses expand through glyphs instead of translating a static image.
+    const ramp = '  .·:+=*#';
     pieces.forEach((piece,index) => {
-      const w=54,h=19,t=tick/12+index*2.1;
+      const w=54,h=19,t=tick*.11+index*2.6;
       const lines=[];
       for(let y=0;y<h;y++){
         let line='';
         for(let x=0;x<w;x++){
           const px=(x-w/2)/w,py=(y-h/2)/h;
-          let value=0;
-          if(index===2){
-            const wave=Math.sin(px*8+t*.65)*.19+Math.sin(px*15-t*.4)*.06;
-            const d=Math.abs(py-wave);
-            value=Math.max(0,1-d/.19)*(.5+.5*Math.sin(px*13+py*8-t));
-          } else {
-            const cx=Math.sin(t*.35)*.12;
-            const cy=Math.sin(t*.65)*.07;
-            const u=(px-cx)*(index%2?-1:1),v=py-cy;
-            const bend=Math.sin(t*1.3-u*12)*.045;
-            const body=1-(u/.23)**2-((v-bend)/.19)**2;
-            if(body>0) value=Math.sqrt(body)*(.58+.3*Math.sin(u*18+v*10+t*.6));
-            if(u<-.18&&u>-.36){
-              const spread=(-u-.18)*1.25;
-              const tail=Math.abs(v-Math.sin(t*1.3)*.07);
-              if(tail<spread) value=Math.max(value,.38+.25*Math.sin(t+v*18));
-            }
-            // Fins ripple along the body rather than moving a static block.
-            if(Math.abs(u)<.13&&Math.abs(v-bend)<.30&&Math.abs(v-bend)>.17)
-              value=Math.max(value,Math.max(0,1-Math.abs(u)/.13)*.35*(.6+.4*Math.sin(t*1.3+u*20)));
-            if((u-.15)**2+(v+.035)**2<.0008)value=.95;
-          }
-          line+=ramp[Math.min(ramp.length-1,Math.max(0,Math.floor(value*(ramp.length-1))))];
+          const radius=Math.hypot(px*1.35,py*1.7);
+          const sweep=(t*.18)%1.1;
+          const ring=Math.max(0,1-Math.abs(radius-sweep)/.025);
+          const echo=Math.max(0,1-Math.abs(radius-((sweep+.36)%1.1))/.018)*.5;
+          const ray=Math.max(0,1-Math.abs(py-Math.sin(px*7-t*.55)*.035)/.018)*.28;
+          const center=Math.max(0,1-radius/.055)*(.45+.15*Math.sin(t));
+          const value=Math.max(ring,echo,ray,center);
+          line+=ramp[Math.min(ramp.length-1,Math.floor(value*(ramp.length-1)))];
         }
         lines.push(line);
       }
-      piece.textContent=lines.join('\n');
+      piece.textContent=lines.join('\\n');
     });
   }
   function sync() {
