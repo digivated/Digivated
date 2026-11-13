@@ -222,3 +222,57 @@
  html[data-ascii] body.wall-experience .project-wall .wall-page-controls .wall-action-icon{display:grid!important;place-items:center!important;width:20px!important;height:20px!important}
  @media(max-width:600px){html[data-ascii] body.wall-experience .project-wall .wall-page-controls button{flex-basis:36px!important;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important}}
 }
+
+/* Activity preferences use the same quiet, monochrome controls as the site. */
+@layer ascii {
+ html[data-ascii] body .notifications-page{width:min(100%,780px)!important;padding:48px 0 88px!important}
+ html[data-ascii] body .notifications-heading{margin-bottom:44px!important;align-items:end!important}
+ html[data-ascii] body .notifications-heading h1{font-size:clamp(32px,4vw,48px)!important}
+ html[data-ascii] body .notifications-heading>a{min-height:36px!important;display:inline-flex!important;align-items:center!important}
+ html[data-ascii] body .notifications-preferences{padding:0!important;gap:24px!important;min-height:88px!important;border:0!important;border-radius:0!important;background:transparent!important}
+ html[data-ascii] body .notifications-setting-icon{width:32px!important;height:32px!important;border:0!important;border-radius:0!important;color:#bdbdbd!important;background:transparent!important}
+ html[data-ascii] body .notifications-preferences-copy{gap:18px!important}
+ html[data-ascii] body .notifications-preferences h2{font-size:16px!important;color:#eee!important}
+ html[data-ascii] body .notifications-preferences p{font-size:12px!important;color:#aaa!important}
+ html[data-ascii] body .notifications-master{width:52px!important;height:44px!important}
+ html[data-ascii] body .notifications-switch{display:block!important;width:46px!important;height:26px!important;padding:3px!important;border:1px solid #777!important;border-radius:20px!important;background:#1b1b1b!important;box-sizing:border-box!important;transition:background-color .18s ease,border-color .18s ease!important}
+ html[data-ascii] body .notifications-switch::after{content:''!important;display:block!important;width:18px!important;height:18px!important;border-radius:50%!important;background:#a9a9a9!important;transform:translateX(0)!important;transition:transform .18s ease,background-color .18s ease!important}
+ html[data-ascii] body .notifications-master input:checked+.notifications-switch{background:#333!important;border-color:#ddd!important}
+ html[data-ascii] body .notifications-master input:checked+.notifications-switch::after{background:#eee!important;transform:translateX(20px)!important}
+ html[data-ascii] body .notifications-master input:focus-visible+.notifications-switch{outline:2px solid #ddd!important;outline-offset:4px!important}
+ html[data-ascii] body .notifications-master input:disabled+.notifications-switch,
+ html[data-ascii] body .notifications-choice-list input:disabled{opacity:.55!important;cursor:wait!important}
+ html[data-ascii] body .notifications-choices{margin:20px 0 0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important}
+ html[data-ascii] body .notifications-choices summary{min-height:44px!important;padding:0!important;font-size:12px!important;color:#ddd!important}
+ html[data-ascii] body .notifications-choices summary::after{color:#aaa!important}
+ html[data-ascii] body .notifications-choice-list{padding:4px 0 0!important}
+ html[data-ascii] body .notifications-choice-list label{min-height:70px!important;padding:14px 0!important;gap:24px!important;border:0!important}
+ html[data-ascii] body .notifications-choice-list label>span{min-width:0!important}
+ html[data-ascii] body .notifications-choice-list strong{font-size:13px!important;color:#eee!important}
+ html[data-ascii] body .notifications-choice-list small{font-size:11px!important;color:#aaa!important}
+ html[data-ascii] body .notifications-choice-list input[type=checkbox]{appearance:none!important;-webkit-appearance:none!important;display:grid!important;place-items:center!important;flex:0 0 22px!important;width:22px!important;height:22px!important;margin:0!important;border:1px solid #777!important;border-radius:2px!important;background:transparent!important;cursor:pointer!important;transition:background-color .16s ease,border-color .16s ease!important}
+ html[data-ascii] body .notifications-choice-list input[type=checkbox]:checked{border-color:#ddd!important;background:#ddd!important}
+ html[data-ascii] body .notifications-choice-list input[type=checkbox]:checked::after{content:'✓'!important;font-size:16px!important;line-height:1!important;font-weight:700!important;color:#101010!important}
+ html[data-ascii] body .notifications-choice-list input[type=checkbox]:focus-visible{outline:2px solid #eee!important;outline-offset:4px!important}
+ html[data-ascii] body .notifications-settings-status{margin:12px 0 32px!important;min-height:18px!important;color:#aaa!important}
+ html[data-ascii] body .notifications-feed{border:0!important}
+ html[data-ascii] body .notifications-feed>header{padding:16px 0!important}
+ html[data-ascii] body .notifications-feed-actions button{padding:4px 0!important;min-height:36px!important;border:0!important;border-radius:0!important;background:transparent!important;color:#ccc!important}
+ html[data-ascii] body .notification-item,
+ html[data-ascii] body .notification-item.unread{background:transparent!important;border:0!important;border-radius:0!important}
+ html[data-ascii] body .notification-item:is(:hover,:focus-visible){background:#141414!important}
+ html[data-ascii] body .notification-mark{border:0!important;border-radius:0!important;background:transparent!important;color:#bbb!important}
+ html[data-ascii] body .notifications-empty{padding:40px 0!important;border:0!important;border-radius:0!important;background:transparent!important}
+ @media(max-width:760px){
+  html[data-ascii] body .notifications-page{padding:28px 0 68px!important}
+  html[data-ascii] body .notifications-heading{align-items:start!important;margin-bottom:32px!important}
+  html[data-ascii] body .notifications-preferences{gap:16px!important}
+  html[data-ascii] body .notifications-preferences-copy{gap:12px!important}
+  html[data-ascii] body .notifications-choice-list label{min-height:64px!important}
+ }
+ @media(prefers-reduced-motion:reduce){
+  html[data-ascii] body .notifications-switch,
+  html[data-ascii] body .notifications-switch::after,
+  html[data-ascii] body .notifications-choice-list input[type=checkbox]{transition:none!important}
+ }
+}
