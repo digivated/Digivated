@@ -12,16 +12,25 @@ if (builder) {
   function draw() {
     builder.textContent = frame % 2 ? drawing.replace('build_', 'build ').replace('[======  ]', '[========]') : drawing;
     const width = Math.min(110, Math.max(32, Math.floor(innerWidth / 11)));
-    const lines = [];
-    for (let y = 0; y < 38; y++) {
-      let line = '';
-      for (let x = 0; x < width; x++) {
-        const wave = Math.sin(x * .13 + frame * .06) * 3 + Math.cos(x * .06 - frame * .025) * 2;
-        const distance = Math.abs((y % 13) - 6 - wave);
-        line += distance < .3 ? '.' : distance < .6 && x % 4 === 0 ? ':' : ' ';
-      }
-      lines.push(line);
+    const height = Math.max(36, Math.min(64, Math.ceil(innerHeight / 20)));
+    const grid = Array.from({ length: height }, () => Array(width).fill(' '));
+    const shapes = [
+      ['    .     ', '   / \\    ', '  /___\\   ', '  | + |   ', ' /|___|\\  ', '   : :    '],
+      ['   .----.   ', ' / .  .  \\ ', '|   --    | ', ' \\______/  ', '   /  \\    '],
+      ['      /| ', '  ___/ | ', ' <_____| ', '    /    '],
+      ['  .  +  .  ', ' +  .:.  + ', '  .: + :.  ', ' +  .:.  + ', '  .  +  .  ']
+    ];
+    for (let index = 0; index < shapes.length; index++) {
+      const shape = shapes[index];
+      const left = Math.round((width - 14) * (index % 2 ? .85 : .08) + Math.sin(frame * .018 + index) * 3);
+      const top = Math.round(4 + index * (height - 14) / shapes.length + Math.cos(frame * .014 + index * 2) * 2);
+      shape.forEach((line, y) => {
+        for (let x = 0; x < line.length; x++) {
+          if (grid[top + y] && left + x >= 0 && left + x < width) grid[top + y][left + x] = line[x];
+        }
+      });
     }
+    const lines = grid.map(row => row.join(''));
     backdrop.textContent = lines.join('\n');
   }
   function sync() {
