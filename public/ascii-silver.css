@@ -131,3 +131,8 @@
  html[data-ascii] body .project-reel-card:is(:hover,:focus-visible){background:#171717!important;}
  @media(max-width:600px){html[data-ascii] body .site-activity{padding-inline:24px!important;}html[data-ascii] body .project-reel-card{min-height:98px!important;}}
 }
+
+@layer ascii {
+ html[data-ascii] body.home-refresh .site-activity{position:absolute!important;top:96px!important;left:50%!important;transform:translateX(-50%)!important;width:min(100%,1200px)!important;max-width:100%!important;margin:0!important;padding-inline:clamp(24px,5vw,64px)!important;pointer-events:none!important;}
+ @media(max-width:760px){html[data-ascii] body.home-refresh .site-activity{top:78px!important;}}
+}
