@@ -313,3 +313,68 @@
     }
   }
 }
+
+/* Desktop pages share a content frame and consistent vertical spacing. */
+@layer ascii {
+ @media (min-width: 761px) {
+  html[data-ascii] body.platform:not(.owner) {
+   --desktop-frame: 1200px;
+   --desktop-gutter: clamp(28px, 4vw, 48px);
+  }
+  html[data-ascii] body.platform:not(.owner) #main,
+  html[data-ascii] body.platform .compact-site-header .header-inner,
+  html[data-ascii] body.platform .platform-footer .footer-inner {
+   box-sizing: border-box;
+   width: 100% !important;
+   max-width: var(--desktop-frame, 1200px) !important;
+   margin-inline: auto;
+   padding-inline: var(--desktop-gutter, 48px) !important;
+  }
+  html[data-ascii] body.platform:not(.owner) #main > :is(section, article) {
+   margin-block: clamp(44px, 5vw, 72px);
+  }
+  html[data-ascii] body.platform .site-breadcrumbs {
+   margin-inline: 0;
+   padding-inline: 0 !important;
+  }
+  html[data-ascii] body.home-refresh .home-editorial {
+   width: 100% !important;
+   min-height: 0 !important;
+   padding-block: clamp(56px, 8vh, 88px) clamp(72px, 11vh, 108px) !important;
+  }
+  html[data-ascii] body.home-refresh .home-editorial h1 {
+   width: 62% !important;
+   max-width: 24ch !important;
+   font-size: clamp(36px, 4.15vw, 58px) !important;
+   text-wrap: wrap !important;
+  }
+  html[data-ascii] body.home-refresh .ascii-field {
+   top: 210px;
+   width: 34%;
+   right: max(4vw, calc((100vw - 1104px) / 2));
+   font-size: clamp(8px, .85vw, 12px);
+  }
+ }
+ @media (min-width: 1101px) {
+  html[data-ascii] body.platform .compact-site-header .header-inner {
+   gap: clamp(18px, 2vw, 30px) !important;
+  }
+  html[data-ascii] body.platform .compact-site-header .platform-brand {
+   margin-right: 0 !important;
+  }
+  html[data-ascii] body.platform .compact-site-header .header-primary {
+   flex: 1 1 auto !important;
+   gap: clamp(12px, 1.55vw, 24px) !important;
+   margin-left: 0 !important;
+  }
+  html[data-ascii] body.platform .compact-site-header .header-primary a {
+   padding-inline: 0 !important;
+  }
+  html[data-ascii] body.platform .compact-site-header .compact-header-actions {
+   gap: clamp(8px, 1vw, 16px) !important;
+  }
+  html[data-ascii] body.platform .compact-header-actions :is(.header-login, .header-membership) {
+   padding-inline: 8px !important;
+  }
+ }
+}
