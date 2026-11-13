@@ -69,3 +69,22 @@
  html[data-ascii] body .compact-header-actions{display:flex!important;gap:18px!important;flex:0 0 auto!important;}
  @media(max-width:1100px){html[data-ascii] body .header-primary{display:none!important;}}
 }
+
+@layer ascii {
+ html[data-ascii] body .wall-navigation{align-items:center!important;gap:16px!important;}
+ html[data-ascii] body :is(.wall-search,.wall-category){margin:0!important;padding:0!important;align-self:center!important;}
+ html[data-ascii] body :is(.wall-search input,.wall-category select){height:44px!important;min-height:44px!important;margin:0!important;padding-block:10px!important;box-sizing:border-box!important;}
+ html[data-ascii] body .compact-site-header .platform-brand{flex:0 0 auto!important;margin-right:12px!important;}
+ html[data-ascii] body .header-primary{min-width:0!important;gap:18px!important;}
+ html[data-ascii] body [hidden]:not([hidden=until-found]){display:none!important;}
+ @media(max-width:1100px){
+ html[data-ascii] body .notebook-navigation{display:block!important;}
+ html[data-ascii] body .compact-site-header .header-inner{gap:12px!important;}
+ html[data-ascii] body .compact-header-actions{gap:10px!important;}
+ }
+ @media(max-width:600px){
+ html[data-ascii] body .header-membership{display:none!important;}
+ html[data-ascii] body .compact-site-header .platform-brand{margin-right:0!important;font-size:16px!important;}
+ html[data-ascii] body .compact-header-actions{gap:6px!important;}
+ }
+}
