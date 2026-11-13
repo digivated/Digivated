@@ -472,3 +472,19 @@
   html#digivated-root[data-ascii] .rankings-directory .launch-list {gap:36px!important;}
  }
 }
+
+@layer ascii {
+ html#digivated-root[data-ascii] body.home-refresh .home-workshop-copy .home-editorial-kicker {text-align:left!important;}
+ html#digivated-root[data-ascii] #main :is(.directory-launch-nav,.submission-layout,.submission-intro,.creator-inbox-page) {width:100%!important;max-width:none!important;margin-inline:0!important;padding-inline:0!important;}
+ html#digivated-root[data-ascii] #main .project-wall :is(.wall-intro,.wall-navigation,.wall-dom-grid) {width:100%!important;max-width:none!important;margin-inline:0!important;padding-inline:0!important;}
+ html#digivated-root[data-ascii] #main .directory-launch-nav {display:flex;flex-wrap:wrap;gap:16px 28px!important;}
+ html#digivated-root[data-ascii] #main :is(.article-body,.about-copy) {max-width:72ch!important;line-height:1.8!important;}
+ html#digivated-root[data-ascii] #main :is(.article-body,.about-copy) h2 {margin-top:48px!important;}
+ html#digivated-root[data-ascii] #main .submission-account-callout {padding:24px 0!important;}
+ html#digivated-root[data-ascii] body.owner .owner-workspace-grid {gap:32px!important;}
+ html#digivated-root[data-ascii] body.owner .owner-toolbar {gap:16px!important;}
+ html#digivated-root[data-ascii] body.owner .owner-section-heading {margin-bottom:32px!important;}
+ html#digivated-root[data-ascii] body:not(.platform) .shell {max-width:1440px;margin-inline:auto;gap:40px;}
+ html#digivated-root[data-ascii] body:not(.platform) #main {min-width:0;}
+ @media(min-width:901px){html#digivated-root[data-ascii] body:not(.platform) .shell {padding-inline:clamp(24px,4vw,64px);}}
+}
