@@ -18,6 +18,7 @@
       if (![data.visits, data.online].every(n => Number.isSafeInteger(n) && n >= 0)) throw new Error('Invalid counts');
       counted = true;
       document.querySelectorAll('[data-site-visits]').forEach(el => { el.textContent = format.format(data.visits); });
+      document.querySelectorAll('[data-site-visits-headline]').forEach(el => { el.textContent = `${format.format(data.visits)}+ visitors.`; });
       document.querySelectorAll('[data-site-online]').forEach(el => { el.textContent = format.format(data.online); });
     } catch {
       document.querySelectorAll('[data-site-visits], [data-site-online]').forEach(el => { el.textContent = '—'; });
