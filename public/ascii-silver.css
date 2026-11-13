@@ -295,3 +295,7 @@
  @media(max-width:380px){html[data-ascii] body.home-refresh .home-editorial{padding-top:385px!important}}
  @media(prefers-reduced-motion:reduce){html[data-ascii] body .brand-spinner{animation:none!important;will-change:auto}}
 }
+
+@layer ascii {
+ @media(min-width:1101px){html[data-ascii] body .compact-site-header .platform-brand{margin-right:28px!important}}
+}
