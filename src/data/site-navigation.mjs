@@ -1,18 +1,22 @@
 // Canonical public destinations shared by the header and footer.
-export const primaryLinks = [
-  ['/discover', 'Projects'],
+const exploreLinks = [
+  ['/discover', 'Browse projects'],
   ['/creators', 'Creators'],
   ['/news', 'News'],
   ['/resources', 'Resources'],
   ['/rankings', 'Rankings'],
 ];
+export const primaryLinks = [
+  exploreLinks[0],
+  ['/submit-project', 'Share a project'],
+];
 export const menuLinks = [
   ...primaryLinks,
+  ...exploreLinks.slice(1),
   ['/membership', 'Membership'],
-  ['/submit-project', 'Submit a project'],
 ];
 export const footerGroups = [
-  { title: 'Explore', links: primaryLinks },
+  { title: 'Explore', links: exploreLinks },
   { title: 'Your workspace', links: [
     ['/submit-project', 'Submit a project'], ['/account', 'Your projects'],
     ['/saved', 'Saved items'], ['/inbox', 'Inbox'], ['/notifications', 'Notifications'], ['/membership', 'Membership'],
