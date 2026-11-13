@@ -309,7 +309,7 @@
 
   @media (max-width: 760px) {
     html[data-ascii] body.owner #owner-editor .owner-editor-actions {
-      position: static;
+      position: static !important;
     }
   }
 }
