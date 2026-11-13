@@ -552,27 +552,37 @@
 }
 
 
-/* Dedicated homepage spotlight placements. */
+/* Equal ASCII slots with an independent, full-width text row. */
 @layer ascii {
  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-rail {
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 16px !important;
+  gap: 20px !important;
  }
  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card {
-  display: flex !important;
-  flex-direction: column;
+  display: block !important;
+  position: relative;
   min-width: 0 !important;
-  padding: 18px !important;
-  border: 1px solid #3d3d3d !important;
-  border-radius: 12px !important;
-  background: #121212 !important;
+  padding: 20px !important;
+  border: 1px dashed #606060 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
   text-decoration: none !important;
  }
  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:is(:hover,:focus-visible) {
-  border-color: #aaa !important;
-  background: #1a1a1a !important;
+  border-color: #ddd !important;
+  background: #151515 !important;
  }
+ html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card::before,
+ html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card::after {
+  content: "+" !important;
+  position: absolute;
+  color: #aaa;
+  line-height: 1;
+  pointer-events: none;
+ }
+ html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card::before { top: -.5em; left: -.3em; }
+ html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card::after { bottom: -.5em; right: -.3em; }
  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-ribbon {
   min-height: 0 !important;
   margin-bottom: 16px;
@@ -580,67 +590,31 @@
  }
  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-content {
   display: grid !important;
-  grid-template-columns: var(--project-thumbnail-size, 48px) minmax(0, 1fr) auto;
+  grid-template: "logo arrow" auto "copy copy" auto / minmax(0, 1fr) auto !important;
+  min-height: 0;
   align-items: start;
-  gap: 12px !important;
+  gap: 14px !important;
   padding: 0 !important;
  }
+ html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-logo { grid-area: logo; }
+ html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-arrow { grid-area: arrow; }
+ html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-copy { grid-area: copy; min-width: 0; }
  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-copy strong {
-  font-size: 16px !important;
+  font-size: 18px !important;
+  overflow-wrap: break-word;
+  word-break: normal;
  }
  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-summary {
   display: -webkit-box !important;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   overflow: hidden;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
  }
  @media (max-width: 900px) {
   html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-rail {
    grid-template-columns: minmax(0, 1fr) !important;
-  }
- }
-}
-
-
-/* The lead spotlight anchors two companion placements. */
-@layer ascii {
- html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card {
-  justify-content: space-between;
-  min-height: 128px;
- }
- html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child {
-  border-color: #777 !important;
- }
- html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child .home-featured-copy strong {
-  font-size: clamp(20px, 2.5vw, 34px) !important;
-  line-height: 1.15;
- }
- html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child .home-featured-summary {
-  -webkit-line-clamp: 3;
- }
- @media (min-width: 901px) {
-  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-rail {
-   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) !important;
-  }
-  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child:not(:only-child) {
-   grid-row: span 2;
-  }
-  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:only-child {
-   grid-column: 1 / -1;
-  }
-  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child {
-   padding: 26px !important;
-  }
-  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child .home-featured-content {
-   grid-template-columns: minmax(0, 1fr) auto;
-   gap: 16px !important;
-  }
-  html#digivated-root[data-ascii] body.home-refresh #main #home-spotlights .home-featured-card:first-child .home-featured-logo {
-   grid-column: 1 / -1;
-   width: 88px !important;
-   height: 88px !important;
   }
  }
 }
