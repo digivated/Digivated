@@ -95,9 +95,15 @@ for (const reel of document.querySelectorAll('[data-project-ticker]')) {
     reel.dataset.ready = 'true'; ready = projects.length > 1;
     sync();
   }
-  load().catch(() => {
-    reel.hidden = true;
-    motion?.cancel();
-    observer.disconnect();
-  });
+  // Keep the offscreen reel's catalog requests out of the initial page load.
+  const preload = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    preload.disconnect();
+    load().catch(() => {
+      reel.hidden = true;
+      motion?.cancel();
+      observer.disconnect();
+    });
+  }, { rootMargin: '600px 0px' });
+  preload.observe(reel);
 }

@@ -88,34 +88,44 @@ if (!document.querySelector('.ascii-ambient')) {
 
   let tick = 0;
   let timer;
+  let workshopVisible = true;
+  let workshopTick = 0;
+  if (builder && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(([entry]) => {
+      workshopVisible = entry.isIntersecting;
+    });
+    observer.observe(builder);
+  }
   function draw() {
     if (builder) {
-      const index = Math.floor(tick / 48) % stages.length;
-      const [name, caption, lines] = stages[index];
-      const step = reduced.matches ? 47 : tick % 48;
-      const lineIndex = Math.min(lines.length - 1, Math.floor(step / 4));
-      const screen = lines.map((line, i) => {
-        const visible = i > lineIndex ? '' : i === lineIndex && step < 28
-          ? line.slice(0, Math.ceil(line.length * (step % 4 + 1) / 4)) + (tick % 2 ? '_' : '')
-          : line;
-        return '| ' + visible.padEnd(33) + '|';
-      });
-      const figure = [
-        '          ', '   .---.  ', '   |o o|  ', "   '---'  ",
-        '    /|\\  ', step % 8 < 4 ? ' __/ |\\_ ' : ' __/ | \\_',
-        '|___/|____',
-      ];
-      builder.textContent = [
-        'DIGIVATED / BUILD LOG                     v0.2',
-        '             +----------------------------------+',
-        ...screen.map((line, i) => figure[i] + '   ' + line),
-        '             +-----------------+----------------+',
-        '       _________[ keyboard ]__|_|_____________',
-        '      /=======================================/',
-        '',
-        caption,
-        stages.map(([label], i) => i === index ? '[' + label + ']' : label).join(' '),
-      ].join('\n');
+      if (workshopVisible || reduced.matches) {
+        const index = Math.floor(workshopTick / 48) % stages.length;
+        const [name, caption, lines] = stages[index];
+        const step = reduced.matches ? 47 : workshopTick % 48;
+        const lineIndex = Math.min(lines.length - 1, Math.floor(step / 4));
+        const screen = lines.map((line, i) => {
+          const visible = i > lineIndex ? '' : i === lineIndex && step < 28
+            ? line.slice(0, Math.ceil(line.length * (step % 4 + 1) / 4)) + (workshopTick % 2 ? '_' : '')
+            : line;
+          return '| ' + visible.padEnd(33) + '|';
+        });
+        const figure = [
+          '          ', '   .---.  ', '   |o o|  ', "   '---'  ",
+          '    /|\\  ', step % 8 < 4 ? ' __/ |\\_ ' : ' __/ | \\_',
+          '|___/|____',
+        ];
+        builder.textContent = [
+          'DIGIVATED / BUILD LOG                     v0.2',
+          '             +----------------------------------+',
+          ...screen.map((line, i) => figure[i] + '   ' + line),
+          '             +-----------------+----------------+',
+          '       _________[ keyboard ]__|_|_____________',
+          '      /=======================================/',
+          '',
+          caption,
+          stages.map(([label], i) => i === index ? '[' + label + ']' : label).join(' '),
+        ].join('\n');
+      }
       pieces.forEach((piece, index) => {
         piece.textContent = signalFrame(tick, index);
       });
@@ -149,7 +159,11 @@ if (!document.querySelector('.ascii-ambient')) {
     clearInterval(timer);
     ambient.toggleAttribute('data-paused', document.hidden);
     draw();
-    if (!document.hidden && !reduced.matches) timer=setInterval(()=>{tick++;draw();},125);
+    if (!document.hidden && !reduced.matches) timer=setInterval(() => {
+      tick++;
+      if (workshopVisible) workshopTick++;
+      draw();
+    }, 125);
   }
   reduced.addEventListener('change',sync);
   document.addEventListener('visibilitychange',sync);
