@@ -8,7 +8,7 @@ for (const reel of document.querySelectorAll('[data-project-ticker]')) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let paused = false, hovering = false, focused = false, touching = false, visible = false;
   let groupWidth = 0, ready = false, motion = null;
-  const speed = 32;
+  const speed = 18;
   const canMove = () => ready && !paused && !hovering && !focused && !touching && visible && !document.hidden && !reduced.matches;
   function position() {
     if (!motion || !groupWidth) return rail.scrollLeft;
