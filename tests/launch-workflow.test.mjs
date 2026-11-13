@@ -48,3 +48,18 @@ test('admin instant purchase moderation fails clearly when unpaid and allows ver
  assert.equal(validateEdit('submission',{...paid,image:undefined,status:'approved',revision:0},paid).status,'approved');
  assert.equal(validateEdit('submission',{...unpaid,image:undefined,status:'pending',revision:0},unpaid).status,'pending');
 });
+
+test('a damaged queue entry does not block other due launches', async () => {
+ const due = {...record,launch:{...record.launch,scheduledAt:'2020-01-01T00:00:00Z',badgeVerifiedAt:'2020-01-01'}};
+ const redis = async ([command,key]) => {
+  if (command === 'ZRANGEBYSCORE') return ['damaged',record.id];
+  if (command === 'GET') return key.endsWith('damaged') ? '{' : JSON.stringify(due);
+  if (command === 'EVAL') return 1;
+  assert.fail('Unexpected command: '+command);
+ };
+ const handler = makeLaunchQueueHandler({env:{CRON_SECRET:'test-secret'},redis});
+ const res = {setHeader(){},end(body){this.body=JSON.parse(body);}};
+ await handler({method:'GET',headers:{authorization:'Bearer test-secret'}},res);
+ assert.equal(res.statusCode,503);
+ assert.deepEqual(res.body,{checked:2,published:1,failed:1});
+});

@@ -14,7 +14,7 @@ export async function publishQueued(redis,record,now=Date.now()){
  const projection=projectPublic(updated);if(!projection)return null;
  const saved=await redis(['EVAL',SAVE_EDIT,4,`digivated:submission:${record.id}`,'digivated:submissions',`digivated:public:submission:${record.id}`,'digivated:public:submissions',record.revision||0,JSON.stringify(updated),JSON.stringify(projection),Date.parse(record.date),'submission']);
  if(saved!==1)return null;
- await redis(['ZREM',QUEUE,record.id]);return projection;
+ return projection;
 }
 export async function verifyProjectBadge(redis,account,id,readSite=readProjectSite){
  if(!validId(id))throw Error('Choose one of your saved projects.');
@@ -36,12 +36,25 @@ export function makeLaunchQueueHandler(deps={}){
   if(req.method!=='GET'||!env.CRON_SECRET||actual.length!==expected.length||!timingSafeEqual(actual,expected))return send(401,{error:'Unauthorized.'});
   try{
    const redis=deps.redis||redisClient(env),now=Date.now();
-   const ids=await redis(['ZRANGEBYSCORE',QUEUE,'-inf',now,'LIMIT',0,200]);let published=0;
-   for(const id of ids){const record=JSON.parse(await redis(['GET',`digivated:submission:${id}`]));
-    if(!record||record.status!=='pending'||record.launch?.kind!=='free'){await redis(['ZREM',QUEUE,id]);continue;}
-    if(await publishQueued(redis,record,now))published++;
+   const ids = await redis(['ZRANGEBYSCORE', QUEUE, '-inf', now, 'LIMIT', 0, 200]);
+   let published = 0;
+   let failed = 0;
+   for (const id of ids) {
+    try {
+     const record = JSON.parse(await redis(['GET', `digivated:submission:${id}`]));
+     if (!record || record.status !== 'pending' || record.launch?.kind !== 'free') {
+      await redis(['ZREM', QUEUE, id]);
+      continue;
+     }
+     if (await publishQueued(redis, record, now)) published++;
+     else failed++;
+    } catch {
+     failed++;
+    }
    }
-   return send(200,{checked:ids.length,published});
+   const result = {checked: ids.length, published, failed};
+   console.info('Launch queue run', result);
+   return send(failed ? 503 : 200, result);
   }catch{return send(503,{error:'Launch queue could not finish. Pending projects are preserved.'});}
  };
 }
