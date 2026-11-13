@@ -101,3 +101,9 @@
  @media(max-width:760px){html[data-ascii] .ascii-drift{opacity:.16;}html[data-ascii] .ascii-drift:nth-child(3){opacity:.20;}}
  @media(prefers-reduced-motion:reduce){html[data-ascii] .ascii-drift{animation:none!important}}
 }
+
+@layer ascii {
+ html[data-ascii] .ascii-drift{animation:none!important;transform:none!important;font-size:9px!important;line-height:1.1!important;opacity:.25;}
+ html[data-ascii] .ascii-drift:nth-child(3){opacity:.24;}
+ @media(max-width:760px){html[data-ascii] .ascii-drift{font-size:6px!important;opacity:.18;}}
+}
