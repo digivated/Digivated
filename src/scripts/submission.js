@@ -42,6 +42,19 @@ if (form) {
       verify.disabled = false;
     }
   });
+  document.getElementById('project-import').onclick=async()=>{
+    const importButton=document.getElementById('project-import'),message=document.getElementById('project-import-status');
+    if(!form.elements.url.reportValidity())return;
+    importButton.disabled=true;message.textContent='Reading your website…';
+    try{
+      const {data:{session}}=await accountClient.auth.getSession();
+      if(!session)throw Error('Sign in before importing project details.');
+      const response=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${session.access_token}`},body:JSON.stringify({action:'read-site',url:form.elements.url.value}),signal:AbortSignal.timeout(30000)});
+      const data=await response.json();if(!response.ok)throw Error(data.error||'Could not read that website.');
+      let filled=0;for(const key of ['name','description'])if(!form.elements[key].value.trim()&&data[key]){form.elements[key].value=data[key];filled++;}
+      form.dispatchEvent(new Event('input',{bubbles:true}));message.textContent=filled?'Details imported. Review the text, choose a category, and upload your logo.':'Existing details were kept. You can edit them below.';
+    }catch(error){message.textContent=error.message||'Import unavailable. You can enter your details manually.';}finally{importButton.disabled=false;}
+  };
   const accountStatus=document.getElementById('submission-account-status');
   const details=document.getElementById('submission-details');
   fetch('/api/project-account?action=config',{cache:'no-store'}).then(r=>r.json()).then(async config=>{
@@ -79,6 +92,7 @@ if (form) {
   };
   imageInput?.addEventListener('change', updateImagePreview);
   const syncIntent = () => {
+    document.getElementById('free-launch-help').hidden = intent.value !== 'directory';
     document.getElementById('instant-launch-help').hidden = intent.value !== 'instant';
     if (membershipFields) membershipFields.hidden = intent.value !== 'founding-feature';
   };
@@ -89,7 +103,8 @@ if (form) {
     try {
       const response = await fetch('/api/submissions?action=launch-options', { cache: 'no-store' });
       if (!response.ok) return;
-      const { instant } = await response.json();
+      const { instant, nextFreeLaunch } = await response.json();
+      if(nextFreeLaunch)document.getElementById('free-launch-date').textContent='Next free launch: '+new Date(nextFreeLaunch).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})+' (UTC).';
       if (!instant) return;
       instantConfig = instant;
       const option = document.getElementById('submission-instant-option');
@@ -110,7 +125,7 @@ if (form) {
       // Free submissions remain available if the optional checkout is unavailable.
     }
   };
-  const updateButton = () => { button.disabled = !accountVerified; button.textContent=accountVerified?(intent.value==='instant'?'Save and continue to checkout':'Submit for review'):'Sign in to submit your project'; };
+  const updateButton = () => { button.disabled = !accountVerified; button.textContent=accountVerified?(intent.value==='instant'?'Save and continue to checkout':intent.value==='directory'?'Save and get your badge':'Submit for review'):'Sign in to submit your project'; };
   updateButton();
   form.addEventListener('submit', async event => {
     event.preventDefault();
@@ -141,6 +156,7 @@ if (form) {
       window.digivatedTrack?.('project_submit', {project_category:payload.category});
       const membership = intent.value === 'founding-feature';
       form.reset();form.dispatchEvent(new Event('input'));if(session?.user?.email_confirmed_at)form.elements.email.value=session.user.email;syncIntent();updateImagePreview();
+      if(data.launch){status.replaceChildren('Project saved. Add and verify your badge to secure your scheduled launch. ',Object.assign(document.createElement('a'),{href:'/account',textContent:'Continue in Your Projects →'}));status.focus();return;}
       status.textContent = (membership ? 'Your included feature request has been received. It is not public yet. Review is required, and a feature is not guaranteed.' : 'Thank you — your project has been received for review. It is not public yet. Submitting does not guarantee a feature or repost.') + (session ? ' View its status and private feedback in Your Projects.' : ' To track future submissions, sign in before submitting.');
       status.focus();
     } catch (error) {

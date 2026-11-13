@@ -26,8 +26,9 @@ import '../styles/submission-flow.css';
 
       <fieldset>
         <legend><span class="submission-step-label">01 · Project details</span>Tell us about your project</legend>
-        <label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
+        <p class="field-help">Start with your website. You can import its name and description, then review and edit them.</p><label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
         <label>Project URL<input name="url" type="url" placeholder="https://your-project.com" maxlength="500" required/></label>
+        <button type="button" id="project-import">[ Import website details ]</button><p id="project-import-status" role="status"></p>
         <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. Start with what it does, then who it helps. Avoid hashtags and promotional slogans.</span></label>
         <label>Category<select aria-describedby="project-category-help" name="category" required><option value="">Choose a category</option>{projectCategories.map(c=><option>{c}</option>)}</select></label><p id="project-category-help" class="field-help">Choose the main thing your project helps people do. Use Education for learning tools and Developer Tools for coding utilities.</p>
         <label>Pricing <span class="quiet">(optional)</span><select name="pricing"><option value="">Not specified</option>{projectPricingOptions.map(option => <option>{option}</option>)}</select></label>
@@ -56,13 +57,14 @@ import '../styles/submission-flow.css';
             <option value="founding-feature">Membership Spotlight</option>
           </select>
         </label>
+        <p id="free-launch-help" class="field-help">Free: add a Digivated text badge to your website, verify it in Your Projects, and join the scheduled launch queue. Your listing stays available after launch. <span id="free-launch-date"></span> An admin can also approve it manually.</p>
         <p id="instant-launch-help" class="field-help" hidden>Save your project, complete the one-time payment using your Digivated account email, then return to publish after we verify the payment.</p>
         <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/membership#member-sign-in">membership page</a> first. This uses your one included project spotlight, with no extra payment. Review is required; a feature is never guaranteed.</p></div>
       </fieldset>
 
       <div class="submission-review">
         <h2>Confirm and submit</h2>
-        <p>Track your project’s status in <a href="/account">Your Projects</a>. Free submissions go through review.</p>
+        <p>Track your project’s status in <a href="/account">Your Projects</a>. New free submissions need badge verification before their scheduled launch. Membership Spotlight stays subject to review.</p>
         <label class="honeypot" aria-hidden="true">Leave this empty<input name="company" tabindex="-1" autocomplete="off"/></label>
         <label class="consent"><input name="consent" type="checkbox" required/><span>I confirm that I own or am authorized to submit this project and allow Digivated to display the submitted information and project logo.</span></label>
         <label class="consent"><input name="emailOutreachConsent" type="checkbox"/><span>Send me one follow-up email about my submission, my account, and how to opt in to weekly updates. I will not be subscribed automatically.</span></label>

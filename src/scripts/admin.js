@@ -88,6 +88,7 @@ function renderList() {
     const mark=element('span',(record.name||record.title||'?').slice(0,2).toUpperCase(),'owner-row-mark');mark.setAttribute('aria-hidden','true');row.append(mark);
     copy.append(element('span', record.status, 'tag')); if (record.promotion?.requested) { const member=record.promotion.included==='founding-membership'; copy.append(element('span', record.promotion.verified ? (member ? 'Membership feature reviewed' : 'Promo purchase verified') : (member ? 'Membership feature, review required' : 'Promo — verify purchase'), 'tag')); } if (record.pick) copy.append(element('span','Digivated Pick','tag'));
     copy.append(element('h2', record.title || record.name)); copy.append(element('p', [record.creator,record.category,record.date?.slice(0,10)].filter(Boolean).join(' · '),'quiet'));
+    if(state.kind==='submission'&&record.status==='pending'&&record.launch?.kind==='free')copy.append(element('p',`${record.launch.badgeVerifiedAt?'Badge verified · Scheduled':'Awaiting badge · Planned'} ${new Date(record.launch.scheduledAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'})} (UTC)`,'quiet'));
     const edit = element('button', state.kind === 'submission' ? (record.status==='pending'?'Review & approve':'Review project') : 'Edit', 'button'); edit.type = 'button'; edit.addEventListener('click', () => openRecord(record.id));
     row.append(copy,edit); list.append(row);
   }

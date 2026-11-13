@@ -207,6 +207,10 @@
     {
       "path": "/api/news-ingest",
       "schedule": "0 8,20 * * *"
+    },
+    {
+      "path": "/api/launch-queue",
+      "schedule": "10 0 * * *"
     }
   ],
   "rewrites": [

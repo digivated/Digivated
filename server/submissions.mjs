@@ -1,3 +1,5 @@
+import { nextFreeLaunch, verifyProjectBadge } from './launch-queue.mjs';
+import { readProjectSite, siteDetails } from './project-site.mjs';
 // Isolated from purchase handlers, sessions, rate-limit rules, and environment names.
 // founding-access imports redisClient from this module. The membership helpers are
 // used only inside request handlers, after both modules have finished loading.
@@ -167,7 +169,7 @@ export function makeSubmissionHandler(deps={}) {
       const env=deps.env||process.env;
       if (req.method === 'GET' && new URL(req.url || '/api/submissions', 'https://digivated.invalid').searchParams.get('action') === 'launch-options') {
         const instant = await instantLaunchConfig(env, deps.fetcher || fetch);
-        return send(200, instant ? { instant: { price: instant.price, checkoutUrl: instant.checkoutUrl } } : { instant: null });
+        return send(200, instant ? { instant: { price: instant.price, checkoutUrl: instant.checkoutUrl }, nextFreeLaunch: nextFreeLaunch() } : { instant: null, nextFreeLaunch: nextFreeLaunch() });
       }
       if(req.method!=='POST'){res.setHeader('Allow','GET, POST');throw new SubmissionError(405,'Use the project submission form.');}
       const origin=env.SUBMISSIONS_ORIGIN||'https://digivated.com';
@@ -182,6 +184,18 @@ export function makeSubmissionHandler(deps={}) {
       if(Buffer.byteLength(JSON.stringify(body)||'')>max)throw new SubmissionError(413,'The submission is too large.');
       const account=req.headers.authorization?await (deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch):null;
       if(!account)throw new SubmissionError(401,'Create an account or sign in before submitting your project.');
+      if (['read-site','verify-badge'].includes(body?.action)) {
+        const redis=deps.redis||redisClient(env);
+        const key=`digivated:site-check:${account.id}`;
+        const attempts=Number(await redis(['INCR',key]));if(attempts===1)await redis(['EXPIRE',key,3600]);
+        if(!Number.isFinite(attempts)||attempts>20)throw new SubmissionError(429,'Too many website checks. Try again in an hour.');
+        try {
+          if(body.action==='verify-badge')return send(200,await verifyProjectBadge(redis,account,body.id,deps.readSite));
+          if(typeof body.url!=='string'||body.url.length>500)throw Error('Enter your public HTTPS project URL.');
+          const {html}=await (deps.readSite||readProjectSite)(body.url);
+          return send(200,siteDetails(html));
+        }catch(error){throw new SubmissionError(400,error.message||'Could not check that website. You can enter details manually.');}
+      }
       if (body?.action === 'publish-instant') {
         const instant = await instantLaunchConfig(env, deps.fetcher || fetch);
         if (!instant) throw new SubmissionError(403, 'Instant publishing is currently unavailable.');
@@ -198,7 +212,7 @@ export function makeSubmissionHandler(deps={}) {
       if(!deps.redis && (env.VERCEL!=='1'||typeof ip!=='string'||!ip))throw new SubmissionError(503,'Submissions are temporarily unavailable. Please try again later.');
       const hash=createHmac('sha256',env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only').update(String(ip||'fixture')).digest('hex');
       const id=randomUUID();const now=new Date();
-      const stored={...record,...(account?{accountId:account.id}:{}),id,date:now.toISOString(),consentedAt:now.toISOString(),...(record.emailOutreachConsent?{emailOutreachConsentedAt:now.toISOString(),emailOutreachConsentVersion:2}:{})};
+      const stored={...record,...(!record.promotion?{launch:{kind:'free',version:1,scheduledAt:nextFreeLaunch(now.getTime()),scheduledTimestamp:Date.parse(nextFreeLaunch(now.getTime()))}}:{}),...(account?{accountId:account.id}:{}),id,date:now.toISOString(),consentedAt:now.toISOString(),...(record.emailOutreachConsent?{emailOutreachConsentedAt:now.toISOString(),emailOutreachConsentVersion:2}:{})};
       const accountKey=accountIndex(record.email,env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only');
       const saved=record.promotion?.included==='founding-membership'
         ? await redis(['EVAL',SAVE_MEMBER_FEATURE,5,`digivated:limit:${hash}`,`digivated:submission:${id}`,'digivated:submissions',`digivated:founding-feature:${record.promotion.memberSaleId}`,accountKey,JSON.stringify(stored),now.getTime(),id])
@@ -206,7 +220,7 @@ export function makeSubmissionHandler(deps={}) {
       if(saved===-2)throw new SubmissionError(409,'You already have a project live or in review. Check Your Projects for its status.');
       if(saved===-1)throw new SubmissionError(409,MEMBER_FEATURE_USED);
       if(saved!==1){res.setHeader('Retry-After','3600');throw new SubmissionError(429,'You’ve reached the submission limit. Please try again in an hour.');}
-      send(201,{ok:true,id,status:'pending'});
+      send(201,{ok:true,id,status:'pending',...(stored.launch?{launch:stored.launch}:{})});
     }catch(error){send(error instanceof SubmissionError?error.status:503,{error:error instanceof SubmissionError?error.message:'Submissions are temporarily unavailable. Your details have not been cleared; please try again later.'});}
   };
 }
