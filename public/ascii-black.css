@@ -1,4 +1,7 @@
 /* Digivated / graphite terminal. Presentation only: existing routes and controls remain intact. */
+@font-face{font-family:'Digivated Grotesk';src:url('/fonts/space-grotesk-500.woff2') format('woff2');font-style:normal;font-weight:500;font-display:swap}
+@font-face{font-family:'Digivated Grotesk';src:url('/fonts/space-grotesk-700.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
+@font-face{font-family:'Digivated Mono';src:url('/fonts/ibm-plex-mono-500.woff2') format('woff2');font-style:normal;font-weight:500;font-display:swap}
 html#digivated-root body.platform {
   --dg-bg:#050505; --dg-panel:#0d0d0e; --dg-raised:#171719;
   --dg-ink:#f5f5f4; --dg-copy:#d0d0d0; --dg-muted:#99999d;
@@ -6,6 +9,8 @@ html#digivated-root body.platform {
   --dg-glass:#111113; --dg-control:#19191b; --dg-selected:#343436;
   background:#050505!important; color:#f5f5f4!important;
 }
+html#digivated-root body.platform :is(h1,h2,h3,.platform-brand,.home-featured-heading) { font-family:'Digivated Grotesk','Inter Variable',system-ui,sans-serif!important; }
+html#digivated-root body.platform :is(.home-editorial-kicker,.eyebrow,.wall-overline,.home-about-label,.project-reel-title,.submission-step-label,.account-announcement-tag,.site-breadcrumbs,.footer-columns h2,.home-featured-status,.launch-rank,.news-eyebrow,.rankings-section-label) { font-family:'Digivated Mono',ui-monospace,monospace!important; }
 html#digivated-root body.platform .site-atmosphere { opacity:.15!important; filter:grayscale(1)!important; }
 html#digivated-root body.platform :is(.platform-header,.platform-footer,#site-navigation,.home-featured-projects,.project-wall,.project-reel) {
   background:#080809!important; border-color:#ffffff24!important; box-shadow:none!important;
@@ -39,6 +44,25 @@ html#digivated-root body.platform .home-ascii-divider::before,html#digivated-roo
   content:''; display:block; width:clamp(18px,9vw,130px); height:1px;
   background:repeating-linear-gradient(90deg,#a0a0a4 0 4px,transparent 4px 8px);
 }
+html#digivated-root body.platform .home-ascii-scene {
+  box-sizing:border-box; width:min(760px,100%); margin:24px auto 0; padding:13px 17px 12px;
+  border:1px solid #ffffff29; border-radius:10px; background:#0b0b0c;
+  box-shadow:inset 0 1px 0 #ffffff0b,0 18px 48px #0008;
+}
+html#digivated-root body.platform :is(.home-ascii-scene-head,.home-ascii-scene-foot) {
+  display:flex; justify-content:space-between; gap:12px; color:#929297;
+  font:500 10px/1.4 'Digivated Mono',ui-monospace,monospace; letter-spacing:.1em;
+}
+html#digivated-root body.platform .home-ascii-scene-head { padding-bottom:10px; border-bottom:1px solid #ffffff19; }
+html#digivated-root body.platform .home-ascii-scene-head span:last-child { color:#dddde0; }
+html#digivated-root body.platform .home-ascii-scene-head span:last-child::first-letter { color:#fafafa; }
+html#digivated-root body.platform .home-ascii-scene-foot { padding-top:10px; border-top:1px solid #ffffff19; }
+html#digivated-root body.platform .home-ascii-scene pre {
+  box-sizing:border-box; overflow:hidden; margin:0; padding:10px 0; min-height:162px;
+  color:#d1d1d4; text-align:center; white-space:pre;
+  font:500 10px/8px 'Digivated Mono',ui-monospace,monospace;
+  letter-spacing:0; text-shadow:0 0 14px #ffffff20;
+}
 html#digivated-root body.platform :is(.home-featured-card,.wall-tile,.project-card,.resource-card,.project-reel-card,.panel,.submission-form,.submission-preview-panel,.login-panel,.founding-tier,.account-card,.community-surface,.community-post,.promotion-card,.gumroad-card) {
   background:#111112!important; border:1px solid #ffffff2a!important;
   border-radius:10px!important; box-shadow:inset 0 1px 0 #ffffff0c,0 18px 38px #0005!important;
@@ -61,6 +85,7 @@ html#digivated-root body.platform :is(.button.primary,.header-submit) {
 html#digivated-root body.platform :is(.home-editorial-actions .button.primary,.button.primary,.header-submit) { background-image:none!important; background-color:#d5d5d7!important; }
 html#digivated-root body.platform :is(.button.primary,.header-submit):hover:not(:disabled) { background:#fff!important; color:#050505!important; }
 html#digivated-root body.platform :is(.button.primary,.header-submit) :is(span,svg,strong) { color:inherit!important; }
+html#digivated-root body.platform .home-editorial-actions .button.primary { box-shadow:0 8px 24px #0008!important; }
 html#digivated-root body.platform :is(button[aria-pressed=true],button[aria-selected=true],.header-primary a[aria-current=page]) {
   background:#3a3a3d!important; border-color:#d1d1d466!important; color:#fff!important;
 }
@@ -89,5 +114,16 @@ html#digivated-root body.platform :is(.news-eyebrow,.rankings-section-label,.lau
   color:#b9b9bd!important; font-family:ui-monospace,SFMono-Regular,Consolas,monospace!important;
   letter-spacing:.13em!important;
 }
-@media(max-width:600px) { html#digivated-root body.platform .home-ascii-divider { margin-top:24px; font-size:8px; gap:8px; } }
+html#digivated-root body.platform .launch-periods button[aria-pressed=true] { border-color:#d1d1d4!important; box-shadow:inset 0 -2px 0 #d1d1d4!important; }
+@keyframes dg-ascii-enter { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+html#digivated-root body.platform :is(.page-intro,.rankings-hero,.news-masthead,.home-ascii-scene) { animation:dg-ascii-enter .65s cubic-bezier(.2,.7,.2,1) both; }
+html#digivated-root body.platform :is(.home-featured-card,.wall-tile,.project-card,.resource-card,.launch-row) { transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease; }
+html#digivated-root body.platform :is(.home-featured-card,.wall-tile,.project-card,.resource-card,.launch-row):hover { transform:translateY(-2px); }
+@media(max-width:600px) {
+  html#digivated-root body.platform .home-ascii-divider { margin-top:24px; font-size:8px; gap:8px; }
+  html#digivated-root body.platform .home-ascii-scene { padding:10px; margin-top:18px; }
+  html#digivated-root body.platform .home-ascii-scene pre { min-height:94px; font-size:7px; line-height:6px; }
+  html#digivated-root body.platform :is(.home-ascii-scene-head,.home-ascii-scene-foot) { font-size:7px; }
+}
 @media(prefers-reduced-motion:reduce) { html#digivated-root body.platform :is(.home-featured-card,.wall-tile,.project-card,.resource-card,.project-reel-card) { transition:none!important; } }
+@media(prefers-reduced-motion:reduce) { html#digivated-root body.platform :is(.page-intro,.rankings-hero,.news-masthead,.home-ascii-scene) { animation:none!important; } }
