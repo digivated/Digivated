@@ -457,25 +457,15 @@
   overflow: hidden;
   min-height: 14lh;
  }
- html[data-ascii] .ascii-code-stream {
-  position: absolute;
-  margin: 0;
-  font: 11px/1.7 var(--ascii-mono) !important;
-  color: #ccc !important;
-  opacity: .16;
-  animation: ascii-code-drift 32s ease-in-out infinite alternate;
+ html[data-ascii] .ascii-workshop-signals .ascii-drift {
+  animation: none;
+  opacity: .23;
+  font-size: clamp(7px, .75vw, 11px) !important;
  }
- html[data-ascii] .ascii-ambient[data-paused] .ascii-code-stream { animation-play-state: paused; }
- @keyframes ascii-code-drift {
-  from { transform: translate(-12px, 24px); }
-  to { transform: translate(20px, -42px); }
- }
- @media (prefers-reduced-motion: reduce) {
-  html[data-ascii] .ascii-code-stream { animation: none; }
- }
- html[data-ascii] .ascii-code-stream[data-stream="0"] { right: 5%; top: 12%; animation-delay: -9s; }
- html[data-ascii] .ascii-code-stream[data-stream="1"] { left: 4%; top: 53%; animation-direction: alternate-reverse; animation-duration: 39s; }
- html[data-ascii] .ascii-code-stream[data-stream="2"] { right: 9%; bottom: 12%; animation-delay: -17s; animation-duration: 44s; }
+ html[data-ascii] .ascii-workshop-signals .ascii-drift:nth-child(1) { left: 0; top: 16%; }
+ html[data-ascii] .ascii-workshop-signals .ascii-drift:nth-child(2) { right: 0; top: 42%; }
+ html[data-ascii] .ascii-workshop-signals .ascii-drift:nth-child(3) { left: 12%; bottom: 3%; }
+ html[data-ascii] .ascii-workshop-signals .ascii-drift:nth-child(4) { right: 22%; top: 4%; opacity: .14; }
  @media (max-width: 900px) {
   html[data-ascii] body.home-refresh #main .home-editorial {
    grid-template-columns: minmax(0, 1fr);

@@ -11,6 +11,7 @@ if (!document.querySelector('.ascii-ambient')) {
     ambient.append(pre);
     return pre;
   });
+  if (builder) ambient.classList.add('ascii-workshop-signals');
   document.body.prepend(ambient);
   const stages = [
     ['Sketch', 'Turn a rough idea into a plan', [
@@ -44,14 +45,47 @@ if (!document.querySelector('.ascii-ambient')) {
       '$ git commit -m "Add sorting"', 'v0.2.0 is live', 'next: see what people build',
     ]],
   ];
-  const code = ['git diff', 'await build()', 'test("save")', 'return next;', 'git push', 'if (ready) {', 'npm run build'];
-  const codeStreams = builder ? Array.from({length:3}, (_, index) => {
-    const stream = document.createElement('pre');
-    stream.className = 'ascii-code-stream';
-    stream.dataset.stream = index;
-    ambient.append(stream);
-    return stream;
-  }) : [];
+  // Each signal is sampled onto a fixed character grid. Its core contracts
+  // while the trailing paths bend and fade independently.
+  const glyphs = ' .:-=+*#%@';
+  const code = '{}<>/01';
+  function signalFrame(frame, index) {
+    const time = frame * .075 + index * 1.7;
+    const pulse = Math.sin(time * 1.5);
+    const cx = 26 + 8 * Math.sin(time * .33);
+    const cy = 8 + 3 * Math.cos(time * .47);
+    const rx = 9 + pulse * 1.8;
+    const ry = 4 - pulse * .65;
+    const rows = [];
+    for (let y = 0; y < 24; y++) {
+      let row = '';
+      for (let x = 0; x < 56; x++) {
+        const dx = x - cx;
+        const dy = y - cy;
+        const radius = Math.hypot(dx / rx, dy / ry);
+        const shell = Math.max(0, 1 - Math.abs(radius - 1) * 4);
+        const wave = 1.4 + (time * .42 % 1.2);
+        const echo = Math.max(0, 1 - Math.abs(radius - wave) * 8) * .27;
+        let trail = 0;
+        if (dy > 2 && dy < 14) {
+          for (const offset of [-6, -2, 2, 6]) {
+            const bend = Math.sin(dy * .37 - time * 1.2 + offset * .24) * (dy * .25);
+            const filament = Math.max(0, 1 - Math.abs(dx - offset - bend));
+            trail = Math.max(trail, filament * (1 - dy / 14) * .8);
+          }
+        }
+        if (radius < .66 && (x + y * 2 + Math.floor(time * 2)) % 4 === 0) {
+          row += code[(x + y + Math.floor(time * 3)) % code.length];
+        } else {
+          const light = Math.max(shell * .82, echo, trail);
+          row += glyphs[Math.round(light * (glyphs.length - 1))];
+        }
+      }
+      rows.push(row);
+    }
+    return rows.join('\n');
+  }
+
   let tick = 0;
   let timer;
   function draw() {
@@ -82,12 +116,10 @@ if (!document.querySelector('.ascii-ambient')) {
         caption,
         stages.map(([label], i) => i === index ? '[' + label + ']' : label).join(' '),
       ].join('\n');
-      if (tick % 4 === 0 || reduced.matches) codeStreams.forEach((stream, i) => {
-        const row = Math.floor(tick / 4) + i * 2;
-        stream.textContent = Array.from({length: 5}, (_, j) =>
-          ' '.repeat((j * 3 + i * 2) % 7) + code[(row + j) % code.length]
-        ).join('\n');
+      pieces.forEach((piece, index) => {
+        piece.textContent = signalFrame(tick, index);
       });
+      return;
     }
 
     // Four quiet signal fields. Pulses expand through glyphs instead of translating a static image.
