@@ -67,6 +67,7 @@ html#digivated-root body.platform :is(.home-featured-card,.wall-tile,.project-ca
   background:#111112!important; border:1px solid #ffffff2a!important;
   border-radius:10px!important; box-shadow:inset 0 1px 0 #ffffff0c,0 18px 38px #0005!important;
 }
+html#digivated-root body.platform :is(.home-featured-card,.wall-tile,.project-card,.resource-card,.project-reel-card) { background-image:none!important; background-color:#111112!important; }
 html#digivated-root body.platform :is(.home-featured-card,.wall-tile,.project-card,.resource-card,.project-reel-card):hover {
   border-color:#bcbcc080!important; box-shadow:inset 0 1px 0 #ffffff1a,0 22px 42px #0009!important;
 }
@@ -75,6 +76,7 @@ html#digivated-root body.platform :is(.button,button,.header-login,.header-submi
   box-shadow:inset 0 1px 0 #ffffff15!important; backdrop-filter:none!important;
   border-radius:9px!important;
 }
+html#digivated-root body.platform :is(.platform-header button,.platform-header .button,.platform-header .header-submit,.platform-header .header-sign-in) { background-image:none!important; background-color:#1b1b1d!important; }
 html#digivated-root body.platform :is(.button,button,.header-login,.header-submit,.header-sign-in,.explore-menu>summary):hover:not(:disabled) {
   background:#303033!important; border-color:#ffffff70!important; color:#fff!important;
 }
@@ -99,6 +101,7 @@ html#digivated-root body.platform :is(input,textarea,select,button,a,summary,[ta
 html#digivated-root body.platform .site-activity i { background:#d4d4d6!important; box-shadow:0 0 0 3px #ffffff20,0 0 10px #ffffff3c!important; }
 html#digivated-root body.platform .site-activity strong { color:#f0f0f1!important; }
 html#digivated-root body.platform :is(.account-announcement,.navigation-panel,.search-dialog,.comment-dialog) { background:#121214!important; border-color:#ffffff35!important; box-shadow:0 22px 50px #000b!important; }
+html#digivated-root body.platform :is(.account-announcement,.navigation-panel,.search-dialog,.comment-dialog) { background-image:none!important; background-color:#121214!important; }
 html#digivated-root body.platform :is(.x-brand-mark,.platform-brand img,.site-intro-mark img) { filter:grayscale(1)!important; }
 html#digivated-root body.platform :is(.home-featured-ribbon,.home-featured-card::before) { filter:grayscale(1)!important; }
 html#digivated-root body.platform :is(.home-featured-projects,.platform-footer) {
