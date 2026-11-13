@@ -462,11 +462,20 @@
   margin: 0;
   font: 11px/1.7 var(--ascii-mono) !important;
   color: #ccc !important;
-  opacity: .095;
+  opacity: .16;
+  animation: ascii-code-drift 32s ease-in-out infinite alternate;
  }
- html[data-ascii] .ascii-code-stream[data-stream="0"] { right: 5%; top: 12%; }
- html[data-ascii] .ascii-code-stream[data-stream="1"] { left: 4%; top: 53%; }
- html[data-ascii] .ascii-code-stream[data-stream="2"] { right: 9%; bottom: 12%; }
+ html[data-ascii] .ascii-ambient[data-paused] .ascii-code-stream { animation-play-state: paused; }
+ @keyframes ascii-code-drift {
+  from { transform: translate(-12px, 24px); }
+  to { transform: translate(20px, -42px); }
+ }
+ @media (prefers-reduced-motion: reduce) {
+  html[data-ascii] .ascii-code-stream { animation: none; }
+ }
+ html[data-ascii] .ascii-code-stream[data-stream="0"] { right: 5%; top: 12%; animation-delay: -9s; }
+ html[data-ascii] .ascii-code-stream[data-stream="1"] { left: 4%; top: 53%; animation-direction: alternate-reverse; animation-duration: 39s; }
+ html[data-ascii] .ascii-code-stream[data-stream="2"] { right: 9%; bottom: 12%; animation-delay: -17s; animation-duration: 44s; }
  @media (max-width: 900px) {
   html[data-ascii] body.home-refresh #main .home-editorial {
    grid-template-columns: minmax(0, 1fr);
