@@ -5,7 +5,7 @@ const { compact = false } = Astro.props;
 ---
 {compact ? <footer class="compact-home-footer"><span>© {new Date().getFullYear()} Digivated.</span><nav aria-label="Footer"><a href="/about">About</a><a href="https://x.com/digivatedx" target="_blank" rel="noopener noreferrer">Contact on X</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav></footer> : <footer class="platform-footer">
   <div class="footer-inner mx-auto px-6"><div class="footer-columns">
-    <div class="footer-intro"><a class="platform-brand" href="/"><span class="x-brand-mark" aria-hidden="true"></span>Digivated</a><p>Useful tools and independent projects, in one place.</p></div>
+    <div class="footer-intro"><a class="platform-brand" href="/"><span class="brand-spinner" aria-hidden="true"><img class="new-brand-mark brand-spinner-front" src="/digivated-ascii-icon-transparent.png" width="40" height="40" alt=""/><img class="new-brand-mark brand-spinner-back" src="/digivated-ascii-icon-transparent.png" width="40" height="40" alt=""/></span>Digivated</a><p>Useful tools and independent projects, in one place.</p></div>
     {footerGroups.map(group => <nav class={`footer-group-${group.title.toLowerCase().replaceAll(' ', '-')}`} aria-label={`${group.title} footer links`}><h2>{group.title}</h2><div class="footer-group-links">{group.links.map(([href, label]) => <a href={href} target={href.startsWith('https:') ? '_blank' : undefined} rel={href.startsWith('https:') ? 'noopener noreferrer' : undefined}>{label}</a>)}</div></nav>)}
   </div><div class="footer-bottom flex flex-wrap items-center justify-between gap-4"><span>© {new Date().getFullYear()} Digivated.</span><span>Keep looking forward.</span></div></div>
 </footer>}
