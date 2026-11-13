@@ -107,3 +107,5 @@
  html[data-ascii] .ascii-drift:nth-child(3){opacity:.24;}
  @media(max-width:760px){html[data-ascii] .ascii-drift{font-size:6px!important;opacity:.18;}}
 }
+
+@layer ascii {html[data-ascii] body .ascii-brand-art{width:min(100%,340px);margin:24px auto 64px!important}html[data-ascii] body .ascii-brand-art img{display:block;width:100%;height:auto;mix-blend-mode:screen}}
