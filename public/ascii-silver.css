@@ -299,3 +299,17 @@
 @layer ascii {
  @media(min-width:1101px){html[data-ascii] body .compact-site-header .platform-brand{margin-right:28px!important}}
 }
+
+/* Keep review fields from showing through the sticky editor chrome. */
+@layer ascii {
+  html[data-ascii] body.owner #owner-editor > .dialog-header,
+  html[data-ascii] body.owner #owner-editor .owner-editor-actions {
+    background-color: #111 !important;
+  }
+
+  @media (max-width: 760px) {
+    html[data-ascii] body.owner #owner-editor .owner-editor-actions {
+      position: static;
+    }
+  }
+}
