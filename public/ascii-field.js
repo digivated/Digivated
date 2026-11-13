@@ -1,70 +1,57 @@
-// Original ASCII artwork. One non-interactive ambient layer in every layout.
+// Original text artwork: a quiet community workshop, with no application state.
 if (!document.querySelector('.ascii-ambient')) {
-  const drawing = "\n       .------.        .----------------.\n       | .  . |        | > build_       |\n       |  __  |        |                |\n       '---.--'        |  [======  ]    |\n        __|__          '-------.--------'\n       /     \\                 |\n      / /   \\ \\___       ______|______\n     /_/     \\____)     /_____________/\n    (___   ______=====================.\n        | |      |                    |\n    .---| |      |                    |\n    |___|_|      |                    |\n       /   \\     |                    |\n      /_____\\    |                    |\n";
-
-  const builder = document.querySelector('[data-ascii-field]');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const builder = document.querySelector('[data-ascii-field]');
   const ambient = document.createElement('div');
   ambient.className = 'ascii-ambient';
   ambient.setAttribute('aria-hidden', 'true');
-  const art = [String.raw`
-       . . : : . .
-    . : + + + + : .
-   : + .       . + :
-  . +   .---.   + .
-   : + '     ' + :
-    ' : + + + : '
-        | : |
-        : | :
-       /  :  \
-      :   |   :
-       .  :  .`, String.raw`
-          .
-       .     .
-    .    /\    .
-       / /\ \
-  .   / /  \ \   .
-      \ \  / /
-       \ \/ /
-    .    \/    .
-       .     .
-          .`, String.raw`
-     .                  .
-        .  .      .  .
-      . : : : .. : : : .
-    . : : : : :: : : : : .
-  . : : : : : :: : : : : : .
-    ' : : : : :: : : : : '
-      ' : : : '' : : : '
-        '  '      '  '`, String.raw`
-       .----.
-    .-' .--. '-.
-   /  .'    '.  \
-  |  /   +    \  |
-   \  '.    .'  /
-    '-. '--' .-'
-       '----'`];
-  art.forEach(text => {
-    const piece = document.createElement('pre');
-    piece.className = 'ascii-drift';
-    piece.textContent = text;
-    ambient.append(piece);
+  const pieces = Array.from({length:4}, () => {
+    const pre = document.createElement('pre');
+    pre.className = 'ascii-drift';
+    ambient.append(pre);
+    return pre;
   });
   document.body.prepend(ambient);
-  let tick = false;
+  const stages = [
+    ['01 / a small idea', ['    .---.       ', '    | ? |       ', '    \'---\'       ', '  sketch / plan ']],
+    ['02 / shape the idea', [' +-----+ +---+  ', ' | ... | | . |  ', ' +-----+ +---+  ', '  a first draft ']],
+    ['03 / make it work', [' > build        ', '   {            ', '     hello();   ', '   }            ']],
+    ['04 / test & refine', [' [x] layout     ', ' [x] keyboard   ', ' [x] small screen', '     all clear  ']],
+    ['05 / send it out', ['       /\\       ', '      /  \\      ', '      | +|      ', '     /|__|\\     ']],
+    ['06 / build together', ['  o     o    o  ', ' /|\\   /|\\  /|\\ ', ' / \\   / \\  / \\ ', '  hello, world  ']]
+  ];
+  let tick = 0;
   let timer;
+  function draw() {
+    const stage = stages[Math.floor(tick / 5) % stages.length];
+    const screen = stage[1].map(line => '| ' + line.padEnd(17) + '|').join('\n');
+    if (builder) builder.textContent =
+      'a little workshop / always making\n\n' +
+      '                       .-------------------.\n' +
+      screen.split('\n').map((line,i)=> ['     .---.             ','     |o o|             ','     \'---\'             ','      /|\\              '][i]+line).join('\n') +
+      '\n     / | ' + (tick % 2 ? '\\__' : '\\_ ') + '          \'---------+---------\'\n' +
+      '    /__|____                 _|_\n' +
+      '   /  /    /========================\n' +
+      '  /__/____/    |               |\n' +
+      '     / \\       |               |\n\n' +
+      stage[0] + '\n' +
+      stages.map((_,i)=>i === Math.floor(tick / 5) % stages.length ? '[+]' : ' . ').join('  ');
+    pieces[0].textContent = '     .---.     .-------.\n     |o o|     | '+(tick%2?'code_':'code ')+' |\n     \'---\'     \'---+---\'\n      /|\\____     _|_\n   __/_|____/============\n      / \\       |     |';
+    pieces[1].textContent = '   o          o\n  /|\\   .-.  /|\\\n  / \\  ( + ) / \\\n        \'-\'\n     making together';
+    pieces[2].textContent = Array.from({length:8},(_,y)=>
+      Array.from({length:42},(_,x)=>{
+        const v=Math.sin(x*.21+tick*.10+y*.55);
+        return Math.abs(v-y*.13+.45)<.23 ? '~' : Math.abs(v-y*.13+.45)<.42 ? '.' : ' ';
+      }).join('')).join('\n');
+    pieces[3].textContent = '      .\n   .     .\n     /\\\n    /++\\\n   /____\\\n   | [] |\n   | __ |\n   ||  ||\n  little ideas';
+  }
   function sync() {
     clearInterval(timer);
     ambient.toggleAttribute('data-paused', document.hidden);
-    if (builder) builder.textContent = drawing;
-    if (!document.hidden && !reduced.matches && document.body.classList.contains('home-refresh')) {
-      timer = setInterval(() => {
-        tick = !tick;
-        builder.textContent = tick ? drawing.replace('build_', 'build ').replace('[======  ]', '[======= ]') : drawing;
-      }, 1400);
-    }
+    draw();
+    if (!document.hidden && !reduced.matches) timer=setInterval(()=>{tick++;draw();},1000);
   }
-  reduced.addEventListener('change', sync);
-  document.addEventListener('visibilitychange', sync);
+  reduced.addEventListener('change',sync);
+  document.addEventListener('visibilitychange',sync);
   sync();
 }
