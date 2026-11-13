@@ -54,9 +54,6 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
       ${listedDate ? `<div><dt>${item.publishedAt ? 'Published' : 'Submitted'}</dt><dd><time datetime="${listedDate.toISOString().slice(0,10)}">${e(listedDate.toLocaleDateString('en-US',{dateStyle:'medium',timeZone:'UTC'}))}</time></dd></div>` : ''}
     </dl>
     ${draft ? '' : `<button type="button" class="launch-details-vote" data-like-type="project" data-like-id="${e(item.id)}" data-show-zero aria-pressed="false" aria-label="Upvote this project"><span aria-hidden="true">↑</span><span data-like-count>–</span><span>Upvotes</span></button>`}
-  </section>
-  <section class="launch-info-panel" aria-labelledby="launch-categories-title">
-    <h2 id="launch-categories-title">Categories</h2><a class="launch-category-chip" href="${e(categoryHref)}">${e(item.category)}</a>
   </section>`;
   const comments = draft ? '' : `<section id="feedback" class="launch-comments" data-project-comments="${e(item.id)}" aria-labelledby="launch-comments-title" tabindex="-1">
     <h2 id="launch-comments-title">Comments <span data-project-comment-count hidden></span></h2>
