@@ -214,3 +214,11 @@
   html[data-ascii] body .launch-page .launch-creator{grid-column:auto!important}
  }
 }
+
+@layer ascii {
+ html[data-ascii] body.wall-experience .project-wall .wall-page-controls{display:flex!important;align-items:center!important;gap:8px!important;width:auto!important;min-width:0!important;padding:0!important}
+ html[data-ascii] body.wall-experience .project-wall .wall-page-controls button{display:grid!important;place-items:center!important;flex:0 0 40px!important;width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;padding:0!important;overflow:hidden!important}
+ html[data-ascii] body.wall-experience .project-wall .wall-page-controls button>span:not(.wall-action-icon){display:none!important}
+ html[data-ascii] body.wall-experience .project-wall .wall-page-controls .wall-action-icon{display:grid!important;place-items:center!important;width:20px!important;height:20px!important}
+ @media(max-width:600px){html[data-ascii] body.wall-experience .project-wall .wall-page-controls button{flex-basis:36px!important;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important}}
+}
