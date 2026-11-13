@@ -94,6 +94,21 @@ local old=redis.call('GET',KEYS[1]); local revision=0
 if old then revision=cjson.decode(old).revision or 0 end
 if revision~=tonumber(ARGV[1]) then return 0 end
 local record=cjson.decode(ARGV[2]); local id=record.id
+if ARGV[5]=='submission' and ARGV[3]~='' then
+ for _,otherId in ipairs(redis.call('ZRANGE',KEYS[4],0,-1)) do
+  if otherId~=id then
+   local raw=redis.call('GET','digivated:submission:'..otherId)
+   if raw then
+    local other=cjson.decode(raw)
+    if other.status=='approved' or other.status=='featured' then
+     local sameAccount=record.accountId and record.accountId~='' and record.accountId==other.accountId
+     local legacyEmail=(not record.accountId or not other.accountId) and record.email and record.email~='' and other.email and string.lower(record.email)==string.lower(other.email)
+     if sameAccount or legacyEmail then return -2 end
+    end
+   end
+  end
+ end
+end
 if ARGV[5]=='submission' and record.slug then
  local key='digivated:launch-slug:'..record.slug; local owner=redis.call('GET',key)
  if owner and owner~=id then return -1 end
@@ -109,6 +124,7 @@ export async function saveRecord(redis, kind, input) {
   const record = validateEdit(kind, input, raw ? JSON.parse(raw) : null);
   const projection = kind === 'submission' ? projectPublic(record) : contentPublic(kind, record);
   const result = await redis(['EVAL', SAVE_EDIT, 4, storageKey(kind, input.id), indexKey(kind), `digivated:public:${kind}:${input.id}`, `digivated:public:${kind}s`, input.revision, JSON.stringify(record), projection ? JSON.stringify(projection) : '', Date.parse(record.date), kind]);
+  if (result === -2) throw new AdminError(409, 'This owner already has a live project. Archive it before publishing another.');
   if (result !== 1) throw new AdminError(409, 'This item changed elsewhere. Reload it before saving.');
   return record;
 }
@@ -136,3 +152,43 @@ export async function publicRecords(redis, kind, offset = 0, limit = 100) {
   return (await redis(['MGET', ...ids.map(id => storageKey(kind,id))])).filter((raw,index)=>raw && projections[index]).map(JSON.parse).map(record => kind === 'submission' ? projectPublic(record) : contentPublic(kind,record)).filter(Boolean);
 }
 
+
+const ARCHIVE_DUPLICATE_PROJECTS = `
+local ids=redis.call('ZRANGE',KEYS[1],0,-1)
+local winners={}
+local duplicates={}
+for _,id in ipairs(ids) do
+ local raw=redis.call('GET','digivated:submission:'..id)
+ if raw then
+  local row=cjson.decode(raw)
+  if row.accountId and row.accountId~='' and (row.status=='approved' or row.status=='featured') then
+   local rank=0
+   if row.status=='featured' then rank=1 end
+   if row.promotion and row.promotion.verified then rank=rank+2 end
+   local winner=winners[row.accountId]
+   if not winner or rank>winner.rank then
+    if winner then table.insert(duplicates,winner.id) end
+    winners[row.accountId]={id=id,rank=rank}
+   else
+    table.insert(duplicates,id)
+   end
+  end
+ end
+end
+if ARGV[1]=='apply' then
+ for _,id in ipairs(duplicates) do
+  local key='digivated:submission:'..id
+  local row=cjson.decode(redis.call('GET',key))
+  row.status='archived'
+  row.pagePublished=false
+  row.revision=(row.revision or 0)+1
+  redis.call('SET',key,cjson.encode(row))
+  redis.call('DEL','digivated:public:submission:'..id)
+  redis.call('ZREM',KEYS[1],id)
+ end
+end
+return #duplicates`;
+
+export async function archiveDuplicateProjects(redis, apply = false) {
+  return Number(await redis(['EVAL', ARCHIVE_DUPLICATE_PROJECTS, 1, 'digivated:public:submissions', apply ? 'apply' : 'preview']));
+}

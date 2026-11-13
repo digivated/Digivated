@@ -14,6 +14,7 @@ async function api(path = '', body) {
 }
 function errorText(error) { return error.name === 'TimeoutError' ? 'The request timed out. Refresh to check whether your change was saved before trying again.' : error.message || 'Something went wrong. Please try again.'; }
 function filters() {
+  $('owner-duplicates').hidden = state.kind !== 'submission';
   const select = $('owner-filter'); select.replaceChildren(new Option('All statuses',''));
   statusOptions[state.kind].forEach(status => select.add(new Option(status[0].toUpperCase()+status.slice(1),status)));
   $('owner-create').hidden = state.kind === 'submission' || state.kind === 'comments' || state.kind === 'carousel' || state.kind === 'accounts';
@@ -107,7 +108,7 @@ async function load(more = false) {
   } catch (error) { message(errorText(error)); }
   finally { $('owner-more').disabled = false; }
 }
-function signedIn(csrf) { state.csrf = csrf; checkGumroadSetup(); $('owner-password').value = ''; $('owner-login').hidden = true; $('owner-dashboard').hidden = false; $('owner-logout').hidden = false; message('');if(location.hash==='#gumroad-setup'){panel('settings');$('gumroad-setup').open=true;return;}panel('overview');return refreshOverview(); }
+function signedIn(csrf) { state.csrf = csrf; checkGumroadSetup(); $('owner-password').value = ''; $('owner-login').hidden = true; $('owner-dashboard').hidden = false; $('owner-logout').hidden = false; message('');if(location.hash==='#gumroad-setup'){panel('settings');$('gumroad-setup').open=true;return;}return selectKind('submission','pending'); }
 const form = $('owner-login-form'); form.querySelector('button').disabled = false;
 form.addEventListener('submit', async event => {
   event.preventDefault(); const button = form.querySelector('button'); button.disabled = true; message('Signing in…');
@@ -284,4 +285,24 @@ if (gumroadForm) gumroadForm.addEventListener('submit', async event => {
     status.textContent = error.name === 'TimeoutError' ? 'The request timed out. Refresh this dashboard to check completion before retrying.' : error.message;
     await checkGumroadSetup();
   } finally { token = ''; field.value = ''; button.disabled = false; }
+});
+
+$('owner-duplicates').addEventListener('click', async () => {
+  const button = $('owner-duplicates');
+  button.disabled = true;
+  try {
+    const { count } = await api('', { action: 'archive-duplicate-projects' });
+    if (!count) {
+      message('No duplicate live projects tied to the same account.');
+      return;
+    }
+    if (!confirm(`Archive ${count} duplicate projects? This keeps one per verified account, prioritizing verified promotions, then featured status, then the oldest listing.`)) return;
+    const result = await api('', { action: 'archive-duplicate-projects', apply: true });
+    await selectKind('submission', 'archived');
+    message(`Archived ${result.count} duplicate projects.`);
+  } catch (error) {
+    message(errorText(error));
+  } finally {
+    button.disabled = false;
+  }
 });

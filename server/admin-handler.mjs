@@ -8,7 +8,7 @@ import { renderLaunch, launchPublic } from './launch-pages.mjs';
 import { createHmac } from 'node:crypto';
 import { redisClient } from './submissions.mjs';
 import { AdminError, adminConfig, verifyPassword, createSession, requireSession, jsonBody, cookie, tokenFrom, digest } from './admin-auth.mjs';
-import { isDigivatedPick, listRecords, saveRecord, storageKey, validId } from './admin-store.mjs';
+import { archiveDuplicateProjects, isDigivatedPick, listRecords, saveRecord, storageKey, validId } from './admin-store.mjs';
 import { listPendingComments, moderateComment } from './card-interactions.mjs';
 import { listAccounts, setAccountBan } from './admin-accounts.mjs';
 import { sendProjectUpdate } from './account-mail.mjs';
@@ -62,6 +62,7 @@ export function makeAdminHandler(deps = {}) {
           if(result!==1)throw new AdminError(result===-2?400:404,result===-2?'This item is no longer published.':'This comment is no longer pending. Refresh the list.');
           return send(200,{ok:true});
         }
+        if (body.action === 'archive-duplicate-projects') return send(200, { count: await archiveDuplicateProjects(redis, body.apply === true) });
         if (body.action === 'account-status') return send(200, await setAccountBan(env, body.id, body.operation, deps.accountClient));
         if (body.action !== 'save' || !['submission', 'resource', 'product'].includes(body.kind) || !body.record || typeof body.record !== 'object') throw new AdminError(400, 'Invalid dashboard action.');
         const previous = body.kind === 'submission' ? await redis(['GET',storageKey('submission',body.record.id)]) : null;
