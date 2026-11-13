@@ -57,7 +57,7 @@ if (!document.querySelector('.ascii-ambient')) {
         }
         lines.push(line);
       }
-      piece.textContent=lines.join('\\n');
+      piece.textContent=lines.join('\n');
     });
   }
   function sync() {
