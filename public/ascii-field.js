@@ -36,14 +36,45 @@ if (!document.querySelector('.ascii-ambient')) {
       '     / \\       |               |\n\n' +
       stage[0] + '\n' +
       stages.map((_,i)=>i === Math.floor(tick / 40) % stages.length ? '[+]' : ' . ').join('  ');
-    pieces[0].textContent = '     .---.     .-------.\n     |o o|     | '+(Math.floor(tick / 8)%2?'code_':'code ')+' |\n     \'---\'     \'---+---\'\n      /|\\____     _|_\n   __/_|____/============\n      / \\       |     |';
-    pieces[1].textContent = '   o          o\n  /|\\   .-.  /|\\\n  / \\  ( + ) / \\\n        \'-\'\n     making together';
-    pieces[2].textContent = Array.from({length:8},(_,y)=>
-      Array.from({length:42},(_,x)=>{
-        const v=Math.sin(x*.21+tick*.035+y*.55);
-        return Math.abs(v-y*.13+.45)<.23 ? '~' : Math.abs(v-y*.13+.45)<.42 ? '.' : ' ';
-      }).join('')).join('\n');
-    pieces[3].textContent = '      .\n   .     .\n     /\\\n    /++\\\n   /____\\\n   | [] |\n   | __ |\n   ||  ||\n  little ideas';
+
+    // Re-rasterize a flowing ribbon and swimming forms into glyphs each frame.
+    // The contours, shading and tails change inside the text grid.
+    const ramp = ' .,:;+=x*#@';
+    pieces.forEach((piece,index) => {
+      const w=54,h=19,t=tick/12+index*2.1;
+      const lines=[];
+      for(let y=0;y<h;y++){
+        let line='';
+        for(let x=0;x<w;x++){
+          const px=(x-w/2)/w,py=(y-h/2)/h;
+          let value=0;
+          if(index===2){
+            const wave=Math.sin(px*8+t*.65)*.19+Math.sin(px*15-t*.4)*.06;
+            const d=Math.abs(py-wave);
+            value=Math.max(0,1-d/.19)*(.5+.5*Math.sin(px*13+py*8-t));
+          } else {
+            const cx=Math.sin(t*.35)*.12;
+            const cy=Math.sin(t*.65)*.07;
+            const u=(px-cx)*(index%2?-1:1),v=py-cy;
+            const bend=Math.sin(t*1.3-u*12)*.045;
+            const body=1-(u/.23)**2-((v-bend)/.19)**2;
+            if(body>0) value=Math.sqrt(body)*(.58+.3*Math.sin(u*18+v*10+t*.6));
+            if(u<-.18&&u>-.36){
+              const spread=(-u-.18)*1.25;
+              const tail=Math.abs(v-Math.sin(t*1.3)*.07);
+              if(tail<spread) value=Math.max(value,.38+.25*Math.sin(t+v*18));
+            }
+            // Fins ripple along the body rather than moving a static block.
+            if(Math.abs(u)<.13&&Math.abs(v-bend)<.30&&Math.abs(v-bend)>.17)
+              value=Math.max(value,Math.max(0,1-Math.abs(u)/.13)*.35*(.6+.4*Math.sin(t*1.3+u*20)));
+            if((u-.15)**2+(v+.035)**2<.0008)value=.95;
+          }
+          line+=ramp[Math.min(ramp.length-1,Math.max(0,Math.floor(value*(ramp.length-1))))];
+        }
+        lines.push(line);
+      }
+      piece.textContent=lines.join('\n');
+    });
   }
   function sync() {
     clearInterval(timer);
