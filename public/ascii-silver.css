@@ -1,0 +1,121 @@
+/* Digivated's monochrome ASCII skin. Keep layout and interaction rules in their owning components. */
+html#digivated-root[data-ascii] {
+  --ascii-ink: #080808;
+  --ascii-panel: #111111;
+  --ascii-raised: #191919;
+  --ascii-line: #383838;
+  --ascii-text: #ededed;
+  --ascii-muted: #b6b6b6;
+  --ascii-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --glass-face: linear-gradient(155deg, #181818, #101010);
+  --glass-control: linear-gradient(155deg, #222, #151515);
+  --glass-rim: var(--ascii-line);
+  --glass-rim-hover: #777;
+  --glass-shadow: none;
+}
+
+html#digivated-root[data-ascii] body:is(.platform,.packet-workspace) {
+  background: var(--ascii-ink) !important;
+  color: var(--ascii-text);
+  --accent: #d5d5d5;
+  --muted: var(--ascii-muted);
+  --paper: var(--ascii-panel);
+  --line: var(--ascii-line);
+  --tint: var(--ascii-raised);
+  --color-brand-bg: var(--ascii-ink);
+  --color-brand-text: var(--ascii-text);
+  --color-brand-card: var(--ascii-panel);
+  accent-color: #ccc;
+}
+
+html#digivated-root[data-ascii] .site-atmosphere {
+  background: radial-gradient(ellipse at 50% 0%, #202020, transparent 62%), #080808 !important;
+}
+html#digivated-root[data-ascii] .site-atmosphere::before,
+html#digivated-root[data-ascii] .site-atmosphere::after,
+html#digivated-root[data-ascii] .home-kinetic { display: none; }
+
+html#digivated-root[data-ascii] body :is(.compact-site-header,.topbar,.platform-footer,.packet-workspace footer,.project-reel,.home-featured-projects,.home-about,.project-wall,.launch-page) {
+  background: #0b0b0b !important;
+  border-color: var(--ascii-line) !important;
+  box-shadow: none !important;
+}
+html#digivated-root[data-ascii] body :is(.home-featured-card,.project-reel-card,.wall-tile,.wall-list-item,.project-card,.resource-card,.news-card,.news-feature,.gumroad-card,.product-feature,.saved-card,.owner-card,.login-panel,.submission-form,.launch-info-panel,.launch-intro,.launch-overview,.launch-creator,.launch-featured-panel,.panel,.prompt-row,.membership-benefits > div,.community-post,.promotion-card,.creator-hub-panel,#explore-navigation,dialog) {
+  background: var(--glass-face) !important;
+  border-color: var(--ascii-line) !important;
+  box-shadow: none !important;
+}
+html#digivated-root[data-ascii] body :is(.home-featured-ribbon,.home-featured-logo,.project-reel-art,.pill,.tag,.launch-category-chip,.launch-labels > span) {
+  background: #222 !important;
+  color: #ddd !important;
+  border-color: #444 !important;
+}
+html#digivated-root[data-ascii] body .home-featured-ribbon::before,
+html#digivated-root[data-ascii] body .home-featured-ribbon::after { animation: none !important; }
+
+html#digivated-root[data-ascii] body :is(h1,h2,h3) {
+  color: var(--ascii-text) !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: currentColor;
+}
+html#digivated-root[data-ascii] body :is(.eyebrow,.tiny,.wall-overline,.home-editorial-kicker,.home-featured-ribbon-track,.home-featured-edition,.project-reel-title h2,.site-breadcrumbs,.home-about-label,.launch-labels,.home-ascii-scene pre) {
+  font-family: var(--ascii-mono) !important;
+  color: var(--ascii-muted) !important;
+}
+html#digivated-root[data-ascii] body .home-editorial h1 em {
+  background: none !important;
+  color: #b9b9b9 !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+html#digivated-root[data-ascii] body :is(.button,input:not([type=checkbox],[type=radio],[type=file]),textarea,select,.header-search,.header-inbox,.header-membership,.notebook-navigation > summary,.project-reel-controls button) {
+  background: var(--ascii-raised) !important;
+  color: var(--ascii-text) !important;
+  border-color: #494949 !important;
+  box-shadow: none !important;
+}
+html#digivated-root[data-ascii] body :is(.button.primary,.header-primary a[aria-current=page],button[aria-pressed=true]:not([data-like-id])) {
+  background: #dedede !important;
+  color: #141414 !important;
+  border-color: #dedede !important;
+}
+html#digivated-root[data-ascii] body :is(a,button,input,select,textarea,summary):focus-visible {
+  outline: 2px solid #e0e0e0 !important;
+  outline-offset: 3px;
+}
+
+html#digivated-root[data-ascii] body .home-ascii-scene {
+  width: min(680px, calc(100% - 32px));
+  margin: 32px auto 0;
+  overflow: hidden;
+  border: 1px solid var(--ascii-line) !important;
+  border-radius: 12px;
+  background: radial-gradient(ellipse, #242424, #0e0e0e 72%) !important;
+  box-shadow: none !important;
+}
+html#digivated-root[data-ascii] body .home-ascii-scene pre {
+  display: grid;
+  place-content: center;
+  width: 100%;
+  min-height: 165px;
+  margin: 0;
+  padding: 12px 0;
+  font-size: clamp(6px, 1.2vw, 11px);
+  line-height: 1.1;
+  text-shadow: none !important;
+}
+html#digivated-root[data-ascii] body .ascii-rule {
+  display: block;
+  margin: 0;
+  padding: 8px 12px;
+  overflow: hidden;
+  color: #898989;
+  background: #0b0b0b;
+  border-top: 1px solid #2c2c2c;
+  font: 11px/1.4 var(--ascii-mono);
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-ascii] .home-ascii-scene { animation: none !important; }
+}
