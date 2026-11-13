@@ -61,7 +61,6 @@ if (form) {
   const button = form.querySelector('button[type=submit]');
   const status = document.getElementById('submission-status');
   const intent = document.getElementById('submission-type');
-  const promotionFields = document.getElementById('promotion-fields');
   const membershipFields = document.getElementById('membership-fields');
   const imageInput = document.getElementById('project-image');
   const imagePreview = document.getElementById('project-image-preview');
@@ -80,14 +79,10 @@ if (form) {
   };
   imageInput?.addEventListener('change', updateImagePreview);
   const syncIntent = () => {
-    const promotion = intent.value === 'promotion';
-    promotionFields.hidden = !promotion;
     document.getElementById('instant-launch-help').hidden = intent.value !== 'instant';
     if (membershipFields) membershipFields.hidden = intent.value !== 'founding-feature';
-    for (const input of promotionFields.querySelectorAll('input')) { input.disabled = !promotion; input.required = promotion; }
   };
   const query = new URLSearchParams(location.search);
-  if (query.get('promotion') === '1') intent.value = 'promotion';
   if (query.get('membership') === '1') intent.value = 'founding-feature';
   intent.addEventListener('change',()=>{ syncIntent(); updateButton(); }); syncIntent();
   const configureLaunch = async account => {
@@ -100,8 +95,8 @@ if (form) {
       const option = document.getElementById('submission-instant-option');
       option.disabled = false;
       option.hidden = false;
-      const price = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(instant.price / 100);
-      option.textContent = `Instant publishing · ${price} once`;
+      const price = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }).format(instant.price / 100);
+      option.textContent = `Instant Publishing (${price})`;
       if (!account.mailboxVerified) {
         const help = document.getElementById('instant-launch-help');
         help.replaceChildren('To use instant publishing, first sign in using an emailed link. ', Object.assign(document.createElement('a'), { href: '/login', textContent: 'Open sign-in' }));
@@ -126,7 +121,6 @@ if (form) {
     try {
       const values = new FormData(form);
       const payload = Object.fromEntries([...values].filter(([key])=>key!=='image'));
-      payload.promotionPurchased = values.get('promotionPurchased') === 'on';
       payload.consent = values.get('consent') === 'on';
       payload.emailOutreachConsent = values.get('emailOutreachConsent') === 'on';
       const file = values.get('image');
@@ -145,10 +139,9 @@ if (form) {
         return;
       }
       window.digivatedTrack?.('project_submit', {project_category:payload.category});
-      const promotion = intent.value === 'promotion';
       const membership = intent.value === 'founding-feature';
       form.reset();form.dispatchEvent(new Event('input'));if(session?.user?.email_confirmed_at)form.elements.email.value=session.user.email;syncIntent();updateImagePreview();
-      status.textContent = (membership ? 'Your included feature request has been received. It is not public yet. Review is required, and a feature is not guaranteed.' : promotion ? 'Your promotion request has been received. We will check your Gumroad purchase and review your project before preparing a feature. Keep your receipt and watch your email for any questions. Your project is not public yet.' : 'Thank you — your project has been received for review. It is not public yet. Submitting does not guarantee a feature or repost.') + (session ? ' View its status and private feedback in Your Projects.' : ' To track future submissions, sign in before submitting.');
+      status.textContent = (membership ? 'Your included feature request has been received. It is not public yet. Review is required, and a feature is not guaranteed.' : 'Thank you — your project has been received for review. It is not public yet. Submitting does not guarantee a feature or repost.') + (session ? ' View its status and private feedback in Your Projects.' : ' To track future submissions, sign in before submitting.');
       status.focus();
     } catch (error) {
       status.textContent = error.name === 'TimeoutError' ? 'The response took too long. Your submission may have been received; please wait before trying again.' : (error.message || 'Unable to submit. Please try again.');
