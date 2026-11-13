@@ -85,15 +85,17 @@ import '../styles/home-about.css';
     gap: .75rem;
     min-height: 48px;
     padding: .8rem 1.1rem !important;
-    background: #eee !important;
-    color: #111 !important;
+    background: transparent !important;
+    color: #eee !important;
+    border: 1px solid #aaa !important;
     font-size: 1rem !important;
     font-weight: 700;
     text-decoration: none !important;
   }
 
   :global(html#digivated-root[data-ascii] body.home-refresh #main .home-editorial-actions .share-project-cta:hover) {
-    background: #fff !important;
+    background: rgb(255 255 255 / 8%) !important;
+    border-color: #eee !important;
     text-decoration: underline !important;
   }
 
