@@ -138,14 +138,32 @@ export async function saveRecord(redis, kind, input) {
   return record;
 }
 export const LIST = `local ids=redis.call('ZREVRANGE',KEYS[1],ARGV[1],ARGV[2]); local rows={}; for _,id in ipairs(ids) do local raw=redis.call('GET',ARGV[3]..id); if raw then local r=cjson.decode(raw); r.hasImage=(r.image and r.image~='') and true or false; r.image=nil; r.content=nil; r.notes=nil; r.email=nil; if r.promotion then r.promotion.receiptReference=nil end; r.consentedAt=nil; r.consentVersion=nil; r.emailOutreachConsentedAt=nil; r.emailOutreachConsentVersion=nil; table.insert(rows,cjson.encode(r)) end end; return rows`;
-export const LIST_FILTERED = `local ids=redis.call('ZREVRANGE',KEYS[1],ARGV[1],ARGV[1]+249); local rows={}; local scanned=0; for _,id in ipairs(ids) do scanned=scanned+1; local raw=redis.call('GET',ARGV[2]..id); if raw then local ok,r=pcall(cjson.decode,raw); if ok and type(r)=='table' and r.status==ARGV[3] then r.hasImage=(r.image and r.image~='') and true or false; r.image=nil; r.content=nil; r.notes=nil; r.email=nil; if r.promotion then r.promotion.receiptReference=nil end; r.consentedAt=nil; r.consentVersion=nil; r.emailOutreachConsentedAt=nil; r.emailOutreachConsentVersion=nil; table.insert(rows,cjson.encode(r)); if #rows==25 then break end end end end; if #rows==0 then return '{"rows":[],"scanned":'..scanned..'}' end; return cjson.encode({rows=rows,scanned=scanned})`;
-export async function listRecords(redis, kind, offset = 0, status = '') {
+export const launchStages = ['review', 'badge', 'scheduled', 'payment', 'spotlight'];
+
+// Used by the queue filter and overview so counts match the records they open.
+export const LAUNCH_STAGE_LUA = `
+local function launchStage(r)
+  if r.status ~= 'pending' then return '' end
+  local promotion = type(r.promotion) == 'table' and r.promotion or {}
+  if promotion.included == 'instant-launch' and promotion.verified ~= true then return 'payment' end
+  if promotion.included == 'founding-membership' then return 'spotlight' end
+  local launch = type(r.launch) == 'table' and r.launch or {}
+  if launch.kind == 'free' then
+    if type(launch.badgeVerifiedAt) == 'string' and launch.badgeVerifiedAt ~= '' then return 'scheduled' end
+    return 'badge'
+  end
+  return 'review'
+end
+`;
+
+export const LIST_FILTERED = `${LAUNCH_STAGE_LUA} local ids=redis.call('ZREVRANGE',KEYS[1],ARGV[1],ARGV[1]+249); local rows={}; local scanned=0; for _,id in ipairs(ids) do scanned=scanned+1; local raw=redis.call('GET',ARGV[2]..id); if raw then local ok,r=pcall(cjson.decode,raw); if ok and type(r)=='table' and (ARGV[3]=='' or r.status==ARGV[3]) and (not ARGV[4] or ARGV[4]=='' or launchStage(r)==ARGV[4]) then r.hasImage=(r.image and r.image~='') and true or false; r.image=nil; r.content=nil; r.notes=nil; r.email=nil; if r.promotion then r.promotion.receiptReference=nil end; r.consentedAt=nil; r.consentVersion=nil; r.emailOutreachConsentedAt=nil; r.emailOutreachConsentVersion=nil; table.insert(rows,cjson.encode(r)); if #rows==25 then break end end end end; if #rows==0 then return '{"rows":[],"scanned":'..scanned..'}' end; return cjson.encode({rows=rows,scanned=scanned})`;
+export async function listRecords(redis, kind, offset = 0, status = '', stage = '') {
   const prefix = kind === 'submission' ? 'digivated:submission:' : `digivated:${kind}:`;
-  if (status) {
+  if (status || stage) {
     const total=Number(await redis(['ZCARD',indexKey(kind)]));
     const items=[];let cursor=offset;
     while(cursor<total&&items.length<25){
-      const data=JSON.parse(await redis(['EVAL',LIST_FILTERED,1,indexKey(kind),cursor,prefix,status]));
+      const data=JSON.parse(await redis(['EVAL',LIST_FILTERED,1,indexKey(kind),cursor,prefix,status,stage]));
       if(!data.scanned)break;
       cursor+=data.scanned;items.push(...data.rows.map(JSON.parse));
     }

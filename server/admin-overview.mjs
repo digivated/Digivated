@@ -1,16 +1,17 @@
-import { indexKey, storageKey } from './admin-store.mjs';
+import { indexKey, LAUNCH_STAGE_LUA, storageKey } from './admin-store.mjs';
 
 // Aggregate inside Redis so images, contact information and notes never cross
 // this boundary. Bound each Lua execution to 250 records.
-export const OVERVIEW_BATCH = `local ids=redis.call('ZREVRANGE',KEYS[1],ARGV[1],ARGV[2]); local rows={}; for _,id in ipairs(ids) do local raw=redis.call('GET',ARGV[3]..id); if raw then local ok,r=pcall(cjson.decode,raw); if ok and type(r)=='table' then table.insert(rows,{status=r.status or 'unknown',date=r.date or ''}) end end end; return cjson.encode(rows)`;
+export const OVERVIEW_BATCH = `${LAUNCH_STAGE_LUA} local ids=redis.call('ZREVRANGE',KEYS[1],ARGV[1],ARGV[2]); local rows={}; for _,id in ipairs(ids) do local raw=redis.call('GET',ARGV[3]..id); if raw then local ok,r=pcall(cjson.decode,raw); if ok and type(r)=='table' then table.insert(rows,{status=r.status or 'unknown',date=r.date or '',stage=launchStage(r)}) end end end; return cjson.encode(rows)`;
 async function summary(redis, index, prefix, days) {
   const total=Number(await redis(['ZCARD',index]));
-  const result={total:0,statuses:Object.create(null),activity:days.map(date=>({date,count:0}))};
+  const result={total:0,statuses:Object.create(null),stages:Object.create(null),activity:days.map(date=>({date,count:0}))};
   for(let offset=0;offset<total;offset+=250){
     const raw=await redis(['EVAL',OVERVIEW_BATCH,1,index,offset,offset+249,prefix]);
     const rows=typeof raw==='string'?JSON.parse(raw):raw;
     for(const row of Array.isArray(rows)?rows:[]){
       result.total++;result.statuses[row.status]=(result.statuses[row.status]||0)+1;
+      if(row.stage)result.stages[row.stage]=(result.stages[row.stage]||0)+1;
       const day=result.activity.find(day=>day.date===String(row.date||'').slice(0,10));if(day)day.count++;
     }
   }

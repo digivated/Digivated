@@ -2,6 +2,25 @@ import { projectCategories, resourceCategories, normalizeResourceCategory } from
 const $ = id => document.getElementById(id);
 const state = { csrf: '', kind: 'submission', panel:'overview', items: [], next: null, record: null, dirty: false, busy: false, request: 0, editorRequest: 0, overviewRequest:0 };
 const labels = { submission: 'Submissions', resource: 'Articles', product: 'Products', comments: 'Comments', carousel: 'Full carousels', accounts: 'Accounts' };
+const stageLabels = {
+  review: 'Manual review',
+  badge: 'Waiting for badge',
+  scheduled: 'Badge verified',
+  payment: 'Waiting for payment',
+  spotlight: 'Spotlight review',
+};
+function launchDetails(record) {
+  if (record.promotion?.included === 'instant-launch') return record.promotion.verified ? 'Instant Publishing · Payment verified' : 'Instant Publishing · Waiting for payment';
+  if (record.promotion?.included === 'founding-membership') return 'Membership Spotlight';
+  if (record.launch?.kind !== 'free') return '';
+  if (record.status !== 'pending') return 'Free launch';
+  const time = Date.parse(record.launch.scheduledAt);
+  const date = Number.isFinite(time) ? new Date(time).toLocaleDateString(undefined, {dateStyle:'medium',timeZone:'UTC'}) + ' (UTC)' : 'No launch date';
+  return `Free launch · ${record.launch.badgeVerifiedAt ? 'Badge verified' : 'Waiting for badge'} · ${date}`;
+}
+function updatedLabel(date = new Date()) {
+  return 'Updated ' + date.toLocaleTimeString(undefined, {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
 const statusOptions = { submission: ['pending','approved','featured','rejected','archived'], resource: ['draft','published','archived'], product: ['draft','published','archived'], comments: ['pending','approved','rejected'], carousel: ['available'], accounts: ['verified','unverified','blocked'] };
 const element = (tag, text, className) => { const node = document.createElement(tag); if (text !== undefined) node.textContent = text; if (className) node.className = className; return node; };
 function message(text, editor = false) { const node = $(editor ? 'owner-editor-status' : 'owner-status'); node.textContent = text; }
@@ -15,6 +34,8 @@ async function api(path = '', body) {
 function errorText(error) { return error.name === 'TimeoutError' ? 'The request timed out. Refresh to check whether your change was saved before trying again.' : error.message || 'Something went wrong. Please try again.'; }
 function filters() {
   $('owner-duplicates').hidden = state.kind !== 'submission';
+  $('owner-stage-control').hidden = state.kind !== 'submission';
+  $('owner-stage').value = '';
   const select = $('owner-filter'); select.replaceChildren(new Option('All statuses',''));
   statusOptions[state.kind].forEach(status => select.add(new Option(status[0].toUpperCase()+status.slice(1),status)));
   $('owner-create').hidden = state.kind === 'submission' || state.kind === 'comments' || state.kind === 'carousel' || state.kind === 'accounts';
@@ -36,19 +57,19 @@ async function refreshOverview(){
  const request=++state.overviewRequest;const button=$('owner-overview-refresh');button.disabled=true;$('owner-overview-status').textContent='Loading workspace totals…';
  try{
   const data=await api('?action=overview');if(request!==state.overviewRequest||!state.csrf)return;
-  const s=data.submissions,values={pending:s.statuses.pending||0,published:(s.statuses.approved||0)+(s.statuses.featured||0),featured:s.statuses.featured||0,newsReview:data.news.review,total:s.total,comments:data.comments.statuses.pending||0,articles:data.articles.total,carousels:data.carousels,products:data.products.total};
-  document.querySelectorAll('[data-overview-number]').forEach(n=>n.textContent=Number(values[n.dataset.overviewNumber]).toLocaleString());
+  const s=data.submissions,values={...s.stages,pending:s.statuses.pending||0,published:(s.statuses.approved||0)+(s.statuses.featured||0),featured:s.statuses.featured||0,newsReview:data.news.review,total:s.total,comments:data.comments.statuses.pending||0,articles:data.articles.total,carousels:data.carousels,products:data.products.total};
+  document.querySelectorAll('[data-overview-number]').forEach(n=>n.textContent=Number(values[n.dataset.overviewNumber] ?? 0).toLocaleString());
   const activity=$('owner-activity-chart');activity.replaceChildren();const max=Math.max(1,...s.activity.map(day=>day.count));
   for(const day of s.activity){const li=element('li');const label=new Date(day.date+'T12:00:00Z').toLocaleDateString(undefined,{weekday:'short',timeZone:'UTC'});li.setAttribute('aria-label',`${day.date}: ${day.count} submissions`);const track=element('div',undefined,'owner-chart-track'),bar=element('span',undefined,'owner-chart-fill');bar.style.height=(day.count/max*100)+'%';track.append(bar);li.append(element('strong',String(day.count)),track,element('span',label));activity.append(li);}
   $('owner-activity-total').textContent=s.activity.reduce((sum,day)=>sum+day.count,0).toLocaleString();
   const pipeline=$('owner-pipeline');pipeline.replaceChildren();
   for(const status of statusOptions.submission){const count=s.statuses[status]||0;const item=element('div',undefined,'owner-pipeline-row');item.dataset.status=status;const label=element('span',status[0].toUpperCase()+status.slice(1));const progress=element('progress');progress.max=Math.max(1,s.total);progress.value=count;progress.setAttribute('aria-label',status+' submissions');item.append(label,progress,element('strong',count.toLocaleString()));pipeline.append(item);}
-  $('owner-overview-updated').textContent='Updated '+new Date(data.generatedAt).toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})+' · refresh for the latest totals';$('owner-overview-status').textContent='';
+  $('owner-overview-updated').textContent=updatedLabel(new Date(data.generatedAt));$('owner-overview-status').textContent='';
  }catch(error){if(request===state.overviewRequest)$('owner-overview-status').textContent=errorText(error);}
- finally{button.disabled=false;}
+ finally{if(request===state.overviewRequest)button.disabled=false;}
 }
-function selectKind(kind,status=''){
- state.kind=kind;state.items=[];state.next=null;$('owner-search').value='';panel('content');filters();$('owner-filter').value=status;renderList();return load();
+function selectKind(kind,status='',stage=''){
+ state.kind=kind;state.items=[];state.next=null;$('owner-list-updated').textContent='';$('owner-search').value='';panel('content');filters();$('owner-filter').value=status;$('owner-stage').value=stage;renderList();return load();
 }
 function accountStatus(record) { return record.bannedUntil && new Date(record.bannedUntil) > new Date() ? 'blocked' : record.confirmedAt ? 'verified' : 'unverified'; }
 function renderList() {
@@ -86,10 +107,11 @@ function renderList() {
       row.append(copy,actions);list.append(row);continue;
     }
     const mark=element('span',(record.name||record.title||'?').slice(0,2).toUpperCase(),'owner-row-mark');mark.setAttribute('aria-hidden','true');row.append(mark);
-    copy.append(element('span', record.status, 'tag')); if (record.promotion?.requested) { const member=record.promotion.included==='founding-membership'; copy.append(element('span', record.promotion.verified ? (member ? 'Membership feature reviewed' : 'Promo purchase verified') : (member ? 'Membership feature, review required' : 'Promo — verify purchase'), 'tag')); } if (record.pick) copy.append(element('span','Digivated Pick','tag'));
+    copy.append(element('span', record.status, 'tag')); if (record.promotion?.requested && record.promotion.included !== 'instant-launch') { const member=record.promotion.included==='founding-membership'; copy.append(element('span', record.promotion.verified ? (member ? 'Membership feature reviewed' : 'Promo purchase verified') : (member ? 'Membership feature, review required' : 'Promo — verify purchase'), 'tag')); } if (record.pick) copy.append(element('span','Digivated Pick','tag'));
     copy.append(element('h2', record.title || record.name)); copy.append(element('p', [record.creator,record.category,record.date?.slice(0,10)].filter(Boolean).join(' · '),'quiet'));
-    if(state.kind==='submission'&&record.status==='pending'&&record.launch?.kind==='free')copy.append(element('p',`${record.launch.badgeVerifiedAt?'Badge verified · Scheduled':'Awaiting badge · Planned'} ${new Date(record.launch.scheduledAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'})} (UTC)`,'quiet'));
-    const edit = element('button', state.kind === 'submission' ? (record.status==='pending'?'Review & approve':'Review project') : 'Edit', 'button'); edit.type = 'button'; edit.addEventListener('click', () => openRecord(record.id));
+    const launch = state.kind === 'submission' ? launchDetails(record) : '';
+    if (launch) copy.append(element('p', launch, 'quiet'));
+    const edit = element('button', state.kind === 'submission' ? (record.status==='pending'&&!launch?'Review & approve':'Open project') : 'Edit', 'button'); edit.type = 'button'; edit.addEventListener('click', () => openRecord(record.id));
     row.append(copy,edit); list.append(row);
   }
   const loadedLabel = state.kind === 'accounts' ? `account${state.items.length === 1 ? '' : 's'}` : labels[state.kind].toLowerCase();
@@ -98,18 +120,33 @@ function renderList() {
   $('owner-empty').querySelector('h2').textContent=state.kind==='carousel'?'No full carousels found.':state.kind==='accounts'?'No accounts found in this page.':'No items found.';
   $('owner-empty').querySelector('p').textContent=state.kind==='carousel'?'Published carousels will appear here automatically. If you just added one, choose Refresh.':state.kind==='accounts'?'Clear filters or load more accounts.':'New submissions and saved content will appear here.'; $('owner-more').hidden = state.next === null;
 }
-async function load(more = false) {
+async function load(more = false, quiet = false) {
   const request = ++state.request; const kind = state.kind;
-  message(kind==='accounts'?'Loading accounts…':'Loading your content…'); $('owner-more').disabled = true;
+  if (!quiet) message(kind==='accounts'?'Loading accounts…':'Loading your content…');
+  $('owner-more').disabled = true;
+  $('owner-refresh').disabled = true;
   try {
     const status=['submission','resource','product'].includes(kind)?$('owner-filter').value:'';
-    const data = await api(kind==='accounts'?`?action=accounts&page=${more ? state.next : 1}`:kind==='carousel'?`?action=carousels&offset=${more ? state.next : 0}`:kind==='comments'?`?action=comments&offset=${more ? state.next : 0}`:`?action=list&kind=${kind}&offset=${more ? state.next : 0}${status?'&status='+encodeURIComponent(status):''}`);
+    const stage = kind === 'submission' ? $('owner-stage').value : '';
+    const data = await api(kind==='accounts'?`?action=accounts&page=${more ? state.next : 1}`:kind==='carousel'?`?action=carousels&offset=${more ? state.next : 0}`:kind==='comments'?`?action=comments&offset=${more ? state.next : 0}`:`?action=list&kind=${kind}&offset=${more ? state.next : 0}${status?'&status='+encodeURIComponent(status):''}${stage?'&stage='+encodeURIComponent(stage):''}`);
     if (request !== state.request) return;
-    state.items = more ? [...state.items,...data.items] : data.items; state.next = data.next; renderList(); message('');
-  } catch (error) { message(errorText(error)); }
-  finally { $('owner-more').disabled = false; }
+    state.items = more ? [...new Map([...state.items,...data.items].map(item=>[item.id,item])).values()] : data.items;
+    state.next = data.next;
+    if (!more) state.extraPage = false;
+    else state.extraPage = true;
+    renderList();
+    $('owner-list-updated').textContent = updatedLabel();
+    message('');
+  } catch (error) {
+    if (request === state.request) message(`Couldn’t refresh. ${errorText(error)}`);
+  } finally {
+    if (request === state.request) {
+      $('owner-more').disabled = false;
+      $('owner-refresh').disabled = false;
+    }
+  }
 }
-function signedIn(csrf) { state.csrf = csrf; checkGumroadSetup(); $('owner-password').value = ''; $('owner-login').hidden = true; $('owner-dashboard').hidden = false; $('owner-logout').hidden = false; message('');if(location.hash==='#gumroad-setup'){panel('settings');$('gumroad-setup').open=true;return;}return selectKind('submission','pending'); }
+function signedIn(csrf) { state.csrf = csrf; checkGumroadSetup(); $('owner-password').value = ''; $('owner-login').hidden = true; $('owner-dashboard').hidden = false; $('owner-logout').hidden = false; message('');if(location.hash==='#gumroad-setup'){panel('settings');$('gumroad-setup').open=true;return;}panel('overview');return refreshOverview(); }
 const form = $('owner-login-form'); form.querySelector('button').disabled = false;
 form.addEventListener('submit', async event => {
   event.preventDefault(); const button = form.querySelector('button'); button.disabled = true; message('Signing in…');
@@ -121,10 +158,26 @@ $('owner-logout').addEventListener('click', async () => {
   try { await api('',{action:'logout'}); signedOut(); message('You have signed out.'); } catch (error) { message(errorText(error)); }
 });
 document.querySelectorAll('[data-kind]').forEach(button=>button.addEventListener('click',()=>selectKind(button.dataset.kind)));
-document.querySelectorAll('[data-open-kind]').forEach(button=>button.addEventListener('click',()=>selectKind(button.dataset.openKind,button.dataset.openStatus||'')));
+document.querySelectorAll('[data-open-kind]').forEach(button=>button.addEventListener('click',()=>selectKind(button.dataset.openKind,button.dataset.openStatus||'',button.dataset.openStage||'')));
 document.querySelectorAll('[data-owner-panel]').forEach(button=>button.addEventListener('click',()=>{panel(button.dataset.ownerPanel);if(state.panel==='overview')refreshOverview();}));
 $('owner-overview-refresh').addEventListener('click',refreshOverview);
-$('owner-search').addEventListener('input',renderList); $('owner-filter').addEventListener('change',()=>{if(['submission','resource','product'].includes(state.kind)){state.items=[];state.next=null;renderList();load();}else renderList();}); $('owner-refresh').addEventListener('click',()=>load()); $('owner-more').addEventListener('click',()=>load(true));
+for (const [value, label] of Object.entries(stageLabels)) $('owner-stage').add(new Option(label, value));
+$('owner-stage').addEventListener('change', () => {
+  if ($('owner-stage').value) $('owner-filter').value = 'pending';
+  state.items = [];
+  state.next = null;
+  renderList();
+  load();
+});
+function refreshVisiblePanel() {
+  if (!state.csrf || document.hidden || state.busy || $('owner-editor').open) return;
+  if (state.panel === 'overview' && !$('owner-overview-refresh').disabled) refreshOverview();
+  if (state.panel === 'content' && state.kind === 'submission' && !state.extraPage &&
+      !$('owner-refresh').disabled && !$('owner-list').contains(document.activeElement) && !$('owner-search').value) load(false, true);
+}
+setInterval(refreshVisiblePanel, 60000);
+document.addEventListener('visibilitychange', refreshVisiblePanel);
+$('owner-search').addEventListener('input',renderList); $('owner-filter').addEventListener('change',()=>{if(['submission','resource','product'].includes(state.kind)){if($('owner-filter').value!=='pending')$('owner-stage').value='';state.items=[];state.next=null;renderList();load();}else renderList();}); $('owner-refresh').addEventListener('click',()=>load()); $('owner-more').addEventListener('click',()=>load(true));
 function field(name,label,value,options={}) {
   const wrapper=element('label',label); let input;
   if(options.choices){input=element('select');options.choices.forEach(choice=>input.add(new Option(choice,choice)));}
@@ -143,16 +196,18 @@ function renderEditor(record) {
     const summary=element('section',undefined,'owner-review-summary');
     if(record.image){const preview=element('img',undefined,'owner-review-image');preview.src=record.image;preview.alt=`Submitted image for ${record.name}`;summary.append(preview);}
     const summaryCopy=element('div');summaryCopy.append(element('span',record.status,'tag'),element('h3',record.name),element('p',record.description),element('p',`${record.creator} · ${record.category}`,'quiet'));
+    const launch = launchDetails(record);
+    if (launch) summaryCopy.append(element('p', launch, 'quiet'));
     const projectLink=element('a','Open project ↗','button');projectLink.href=record.url;projectLink.target='_blank';projectLink.rel='noopener noreferrer';summaryCopy.append(projectLink);
-    if(record.status==='pending'&&!record.promotion?.requested){const approve=element('button','Approve & publish','button primary');approve.type='submit';approve.value='approved';summaryCopy.append(approve);summaryCopy.append(element('p','Publishes this project in Discover. Review its image, link, and description first.','quiet'));}
-    else if(record.status==='pending'&&record.promotion?.requested)summaryCopy.append(element('p','Review the membership or purchase details below before approving.','quiet'));
+    if(record.status==='pending'&&!record.promotion?.requested&&record.launch?.kind!=='free'){const approve=element('button','Approve & publish','button primary');approve.type='submit';approve.value='approved';summaryCopy.append(approve);summaryCopy.append(element('p','Publishes this project in Discover. Review its image, link, and description first.','quiet'));}
+    else if(record.status==='pending'&&record.promotion?.requested&&!record.promotion.included)summaryCopy.append(element('p','Review the membership or purchase details below before approving.','quiet'));
     summary.append(summaryCopy);$('owner-editor-form').prepend(summary);
     const details=element('section',undefined,'owner-private');details.append(element('p','Private review details','eyebrow'));
     for(const [label,value] of [['Email',record.email],['Social handle',record.social],['Notes',record.notes],['Promo order reference',record.promotion?.receiptReference],['Project display permission',record.consent?'Confirmed':'Not confirmed'],['One-time follow-up email permission',record.emailOutreachConsent===true&&record.emailOutreachConsentedAt?`Confirmed ${record.emailOutreachConsentedAt}`:'Not given'],['Submitted',record.date]])if(value)details.append(element('p',`${label}: ${value}`));
     const link=element('a','Visit submitted project →');link.href=record.url;link.target='_blank';link.rel='noopener noreferrer';details.append(link);$('owner-private-details').append(details);
     field('name','Project name',record.name,{max:120});field('creator','Creator name',record.creator,{max:100});field('url','Project URL',record.url,{type:'url',max:500});field('description','Public description',record.description,{rows:4,max:600});field('category','Category',record.category,{choices:projectCategories});field('socialUrl','Creator profile URL',record.socialUrl,{type:'url',max:500,required:false,help:'Use the complete profile link after verifying the submitted handle.'});
     field('reviewFeedback','Private feedback for this creator',record.reviewFeedback||'',{rows:4,max:1500,required:false,help:'Shown only in the verified submitter account after you save. Do not include internal notes.'});
-    if(record.promotion?.requested){
+    if(record.promotion?.requested && !['instant-launch','founding-membership'].includes(record.promotion.included)){
       $('owner-fields').append(element('h2','Paid promotion review'));
       $('owner-fields').append(element('p','In Gumroad, match this submission email and order reference to a completed Digivated promo purchase. Confirm it is not refunded or disputed and has not been used for another promotion. This checkbox records your manual verification; it does not contact Gumroad.','quiet'));
       field('promotionVerified','I verified the Digivated promo purchase in Gumroad',record.promotion.verified,{type:'checkbox'});
@@ -187,8 +242,8 @@ function renderEditor(record) {
     if(heading){const details=element('details',undefined,'owner-editor-section'),summary=element('summary','Launch page & screenshots'),fields=element('div',undefined,'owner-launch-fields');details.append(summary,fields);heading.before(details);let next=heading.nextSibling;heading.remove();const statusField=$('edit-status').closest('label');while(next&&next!==statusField){const current=next;next=current.nextSibling;fields.append(current);}}
   }
   const save=element('button','Save changes','button');save.type='submit';save.value='save';$('owner-editor-actions').append(save);
-  if(state.kind==='submission')for(const [status,label] of [['approved','Approve & publish'],['featured','Make Featured Build'],['rejected','Reject'],['archived','Archive']]){
-    const button=element('button',status==='approved'&&record.status==='pending'&&!record.promotion?.requested?'Approve with edits':label,status==='approved'?'button primary':'button');button.type='submit';button.value=status;button.disabled=status==='featured'&&!['approved','featured'].includes(record.status);$('owner-editor-actions').append(button);
+  if(state.kind==='submission')for(const [status,label] of [['approved',record.launch?.kind==='free'&&record.status==='pending'?'Publish now (override queue)':'Approve & publish'],['featured','Make Featured Build'],['rejected','Reject'],['archived','Archive']]){
+    const button=element('button',status==='approved'&&record.status==='pending'&&!record.promotion?.requested&&record.launch?.kind!=='free'?'Approve with edits':label,status==='approved'?'button primary':'button');button.type='submit';button.value=status;button.disabled=status==='featured'&&!['approved','featured'].includes(record.status);$('owner-editor-actions').append(button);
   }
   else {const button=element('button','Publish','button');button.type='submit';button.value='published';$('owner-editor-actions').append(button);}
   if(state.kind==='submission'){
@@ -205,14 +260,16 @@ function closeEditor(event){if(state.busy){event?.preventDefault();return;}if(st
 $('owner-close').addEventListener('click',closeEditor);$('owner-editor').addEventListener('cancel',event=>{event.preventDefault();closeEditor(event);});
 window.addEventListener('beforeunload',event=>{if(state.dirty){event.preventDefault();event.returnValue='';}});
 $('owner-editor-form').addEventListener('submit',async event=>{
-  event.preventDefault();if(state.busy)return;state.busy=true;const buttons=[...$('owner-editor-form').querySelectorAll('button[type=submit]')];buttons.forEach(b=>b.disabled=true);message('Saving…',true);
+  event.preventDefault();if(state.busy)return;
+  if((event.submitter?.value==='approved' || $('edit-status')?.value==='approved') && state.record?.status==='pending' && state.record.launch?.kind==='free' && !confirm('Publish this free launch now instead of using the badge and scheduled date?'))return;
+  state.busy=true;const buttons=[...$('owner-editor-form').querySelectorAll('button[type=submit]')];buttons.forEach(b=>b.disabled=true);message('Saving…',true);
   try{
     const formData=new FormData(event.currentTarget);const record=Object.fromEntries([...formData].filter(([name])=>name!=='upload'));
     record.id=state.kind==='submission'?state.record.id:record.id;record.revision=state.record.revision||0;record.pick=formData.get('pick')==='on';record.removeImage=formData.get('removeImage')==='on';
     if(event.submitter?.value?.startsWith('page-'))record.pageAction=event.submitter.value.slice(5);
     else if(event.submitter?.value&&event.submitter.value!=='save')record.status=event.submitter.value;
     if(state.kind==='submission'){
-      if(state.record.promotion?.requested)record.promotionVerified=formData.get('promotionVerified')==='on';
+      if($('owner-editor-form').elements.namedItem('promotionVerified')) record.promotionVerified=formData.get('promotionVerified')==='on';
       const gallery=formData.get('clearGallery')==='on'?[]:[...(state.record.page?.gallery||[])];
       for(let index=0;index<3;index++){
         const file=formData.get(`gallery${index}`);const alt=formData.get(`galleryAlt${index}`)||'';

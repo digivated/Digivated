@@ -8,7 +8,7 @@ import { renderLaunch, launchPublic } from './launch-pages.mjs';
 import { createHmac } from 'node:crypto';
 import { redisClient } from './submissions.mjs';
 import { AdminError, adminConfig, verifyPassword, createSession, requireSession, jsonBody, cookie, tokenFrom, digest } from './admin-auth.mjs';
-import { archiveDuplicateProjects, isDigivatedPick, listRecords, saveRecord, storageKey, validId } from './admin-store.mjs';
+import { archiveDuplicateProjects, isDigivatedPick, launchStages, listRecords, saveRecord, storageKey, validId } from './admin-store.mjs';
 import { listPendingComments, moderateComment } from './card-interactions.mjs';
 import { listAccounts, setAccountBan } from './admin-accounts.mjs';
 import { sendProjectUpdate } from './account-mail.mjs';
@@ -112,7 +112,9 @@ export function makeAdminHandler(deps = {}) {
         if (!Number.isInteger(offset) || offset < 0 || offset > 100000) throw new AdminError(400, 'Invalid page.');
         const status=url.searchParams.get('status')||'';
         if(status&&!(kind==='submission'?['pending','approved','featured','rejected','archived']:['draft','published','archived']).includes(status))throw new AdminError(400,'Invalid status.');
-        return send(200, await listRecords(redis, kind, offset, status));
+        const stage = url.searchParams.get('stage') || '';
+        if (stage && (kind !== 'submission' || !launchStages.includes(stage))) throw new AdminError(400, 'Invalid launch stage.');
+        return send(200, await listRecords(redis, kind, offset, status, stage));
       }
       if (action === 'detail' || (action === 'preview' && kind === 'submission')) {
         const id = url.searchParams.get('id');
