@@ -7,12 +7,15 @@ const exploreLinks = [
   ['/rankings', 'Rankings'],
 ];
 export const primaryLinks = [
-  ...exploreLinks.slice(0, 3),
-  ['/submit-project', 'Share a project'],
+  ['/discover', 'Browse Projects'],
+  ['/submit-project', 'Share a Project'],
+  ['/creators', 'Creator Hub'],
+  ['/news', 'News'],
+  ['/rankings', 'Rankings'],
 ];
 export const menuLinks = [
   ...primaryLinks,
-  ...exploreLinks.slice(3),
+  ['/resources', 'Resources'],
   ['/membership', 'Membership'],
 ];
 export const footerGroups = [
