@@ -655,7 +655,7 @@
  html#digivated-root[data-ascii] .compact-site-header .notebook-navigation {display:block!important;flex:none;}
  html#digivated-root[data-ascii] .compact-site-header .notebook-navigation > summary {width:44px;min-width:44px;padding:0;justify-content:center;}
  html#digivated-root[data-ascii] .compact-site-header .notebook-navigation:not([open]) .navigation-trigger-menu,
- html#digivated-root[data-ascii] .compact-site-header .notebook-navigation[open] .navigation-trigger-close {display:inline-flex;}
+ html#digivated-root[data-ascii] .compact-site-header .notebook-navigation[open] .navigation-trigger-close {display:inline-flex!important;}
  html#digivated-root[data-ascii] .compact-site-header .notebook-navigation[open] .navigation-trigger-menu,
- html#digivated-root[data-ascii] .compact-site-header .notebook-navigation:not([open]) .navigation-trigger-close {display:none;}
+ html#digivated-root[data-ascii] .compact-site-header .notebook-navigation:not([open]) .navigation-trigger-close {display:none!important;}
 }
