@@ -1,0 +1,18 @@
+/* ASCII black: visual styling only. */
+html#digivated-root body.platform{--dg-bg:#050506;--dg-panel:#0c0c0f;--dg-raised:#141318;--dg-ink:#f5f2fa;--dg-copy:#c9c4d2;--dg-muted:#9992a5;--dg-line:#ffffff1a;--dg-line-strong:#ffffff30;background:#050506!important;color:#f5f2fa!important}
+html#digivated-root body.platform :is(.platform-header,.platform-footer,#site-navigation){background:#09090c!important;border-color:#ffffff20!important;box-shadow:none!important}
+html#digivated-root body.platform .platform-header{border-bottom:1px solid #ffffff24!important}
+html#digivated-root body.platform .platform-footer{border-top:1px solid #ffffff24!important}
+html#digivated-root body.platform :is(.home-editorial-kicker,.eyebrow,.wall-overline,.page-intro .eyebrow,.home-about-label,.project-reel-title,.submission-step-label,.account-announcement-tag,.site-breadcrumbs,.footer-columns h2){font-family:ui-monospace,SFMono-Regular,Consolas,monospace!important;font-weight:650!important;letter-spacing:.13em!important;text-transform:uppercase;color:#b9a5db!important}
+html#digivated-root body.platform :is(.home-editorial-kicker,.home-about-label,.wall-overline,.page-intro .eyebrow)::before{content:'[ ';color:#8060b0}
+html#digivated-root body.platform :is(.home-editorial-kicker,.home-about-label,.wall-overline,.page-intro .eyebrow)::after{content:' ]';color:#8060b0}
+html#digivated-root body.platform :is(.home-featured-heading h2,.footer-columns h2)::before{content:'> ';font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#a77bdc;font-weight:500}
+html#digivated-root body.platform :is(.home-featured-projects,.platform-footer){background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px)!important;background-size:32px 32px!important}
+html#digivated-root body.platform :is(.home-editorial h1,.page-intro h1,.wall-heading h1,.home-featured-heading h2){text-shadow:none!important}
+html#digivated-root body.platform :is(.home-featured-card,.wall-tile,.project-card,.resource-card,.project-reel-card,.membership-card,.account-card,.community-surface,.community-post){background:#101014!important;border-color:#ffffff23!important;box-shadow:inset 0 1px 0 #ffffff0b,0 16px 40px #0005!important}
+html#digivated-root body.platform :is(.home-featured-card,.wall-tile,.project-card,.resource-card,.project-reel-card):hover{border-color:#bd9af477!important;box-shadow:inset 0 1px 0 #ffffff16,0 18px 44px #0009,0 0 0 1px #a784ce20!important}
+html#digivated-root body.platform :is(.button,button,.header-primary a,.header-submit,.header-sign-in,.wall-collection-controls,.wall-page-controls){box-shadow:none!important}
+html#digivated-root body.platform :is(.button.primary,.header-submit){background:#8b56cf!important;border-color:#b38ae9!important;color:#fff!important}
+html#digivated-root body.platform :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea){background:#0b0a0e!important;border-color:#ffffff2c!important}
+html#digivated-root body.platform :is(input,textarea,select,button,a,summary,[tabindex]):focus-visible{outline:2px solid #d1afff!important;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){html#digivated-root body.platform :is(.home-featured-card,.wall-tile,.project-card,.resource-card,.project-reel-card){transition:none!important}}
