@@ -96,22 +96,27 @@ if (!document.querySelector('.ascii-ambient')) {
     box(20,4,43,16,' ' + project.name + ' / workbench ');
     put(23,6,'o o o'); put(32,6,phase === 3 ? 'release / v1.0' : phase === 2 ? 'localhost / preview' : 'localhost / editor');
     put(22,7,'-'.repeat(39));
-    // The maker blinks, thinks, types, and reaches for the launch key.
+    // The maker wears headphones and leans in over the keyboard.
     const blink = !still && age % 39 < 3;
-    put(5,8,'  .------.');
-    put(5,9,' /        \\');
-    put(5,10,blink?' |  -  -  |':' |  o  o  |');
-    put(5,11,phase>=2?' |   \\_/  |':' |   __   |');
-    put(5,12," '--------'");
-    put(5,13,'    /||\\');
-    put(3,14,step%8<4?' __/ || \\____':' __/ ||  \\___');
-    put(3,15,step%8<4?'|____||___  _/':'|____||____/  ');
-    put(3,16,'     ||   [:::]');
-    put(3,17,'  ___||___');
-    put(3,18,' /   ||   \\');
-    put(3,19,'/____||____\\');
-    put(6,20,'   /  \\');
-    put(5,21,'__/    \\__');
+    const typing = !still && step % 8 < 4;
+    put(4, 8, "    .-----.");
+    put(4, 9, "  .' .---. `.");
+    put(4, 10, " /  /     \\  \\");
+    put(4, 11, "[=]|       |[=]");
+    put(4, 12, "   |       |");
+    put(4, 13, "   \\       /");
+    put(4, 14, "    `--.--'");
+    put(3, 15, " .--._/ \\_.--.");
+    put(3, 16, " |  /`---'\\   \\");
+    put(3, 20, " | \\_______/");
+    put(3, 21, " +---+  \\__ \\");
+    put(3, 22, "   |      | |");
+    put(3, 23, " --+--    |_|");
+    put(8, 11, blink ? " - -" : " o o");
+    put(8, 12, phase >= 2 ? "  \\_/" : "   _");
+    put(3, 17, phase === 0 ? " | |   |  /'J" : " | |   |  \\");
+    put(3, 18, phase === 0 ? " | |___|_/ /" : typing ? " | |___|   \\__." : " | |___|  \\___.");
+    put(3, 19, phase === 0 ? " |  \\_____/" : phase === 3 && step >= 16 ? " |  \\_________+" : typing ? " |  \\________:>" : " |  \\________>:");
     // Desk and keyboard anchor the scene while the screen changes.
     put(19,20,'___________|___|________________________');
     put(18,21,'/  [ '+(step%8<4?':::: :: :::':'::: :: ::::')+' ]     [_]        /');
