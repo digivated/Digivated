@@ -1,4 +1,4 @@
-import { nextFreeLaunch, verifyProjectBadge } from './launch-queue.mjs';
+import { badgeSnippet, nextFreeLaunch, verifyProjectBadge } from './launch-queue.mjs';
 import { readProjectSite, siteDetails } from './project-site.mjs';
 // Isolated from purchase handlers, sessions, rate-limit rules, and environment names.
 // founding-access imports redisClient from this module. The membership helpers are
@@ -220,7 +220,7 @@ export function makeSubmissionHandler(deps={}) {
       if(saved===-2)throw new SubmissionError(409,'You already have a project live or in review. Check Your Projects for its status.');
       if(saved===-1)throw new SubmissionError(409,MEMBER_FEATURE_USED);
       if(saved!==1){res.setHeader('Retry-After','3600');throw new SubmissionError(429,'You’ve reached the submission limit. Please try again in an hour.');}
-      send(201,{ok:true,id,status:'pending',...(stored.launch?{launch:stored.launch}:{})});
+      send(201,{ok:true,id,status:'pending',...(stored.launch?{launch:{...stored.launch,badge:badgeSnippet(id)}}:{})});
     }catch(error){send(error instanceof SubmissionError?error.status:503,{error:error instanceof SubmissionError?error.message:'Submissions are temporarily unavailable. Your details have not been cleared; please try again later.'});}
   };
 }

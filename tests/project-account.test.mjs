@@ -14,10 +14,14 @@ test('verified submissions are indexed by email and visible only to that account
  assert.equal(saved.status,201);
  const command=commands[0];assert.equal(command[6],accountIndex(account.email,env.SUBMISSIONS_REDIS_REST_TOKEN));
  const stored=JSON.parse(command[7]);assert.equal(stored.accountId,account.id);
+ assert.equal(saved.body.launch.kind,'free');
+ assert.equal(saved.body.launch.badge,`<a href="https://digivated.com/projects/listing/${stored.id}" data-digivated-project="${stored.id}">[ listed on Digivated ]</a>`);
+ assert.equal(stored.launch.badge,undefined);
  const redis=async c=>c[0]==='GET'?'1':c[0]==='ZREVRANGE'?[stored.id]:[JSON.stringify({...stored,notes:'private',promotion:{receiptReference:'secret'},reviewFeedback:'Please clarify your audience.'})];
  const handler=makeProjectAccountHandler({env,verifyAccount:async()=>account,redis});
  const result=await invoke(handler,{method:'GET',url:'/api/project-account?route=project-account',headers:{authorization:'Bearer fixture'}});
  assert.equal(result.status,200);assert.equal(result.body.submissions[0].feedback,'Please clarify your audience.');
+ assert.equal(result.body.submissions[0].launch.badge,saved.body.launch.badge);
  assert.equal(JSON.stringify(result.body).includes('private'),false);assert.equal(JSON.stringify(result.body).includes('secret'),false);
  const anonymous=await invoke(makeProjectAccountHandler({env,verifyAccount:async()=>null,redis}),{method:'GET',url:'/api/project-account',headers:{}});
  assert.equal(anonymous.status,401);

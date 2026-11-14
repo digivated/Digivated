@@ -73,6 +73,19 @@ if (form) {
   }).catch(()=>{accountStatus.hidden=false;accountStatus.textContent='Accounts are temporarily unavailable. Please try again shortly.';});
   const button = form.querySelector('button[type=submit]');
   const status = document.getElementById('submission-status');
+  const badgePanel = document.getElementById('submission-badge');
+  const badgeHtml = document.getElementById('submission-badge-html');
+  const badgeCopyStatus = document.getElementById('submission-badge-copy-status');
+  document.getElementById('submission-badge-copy').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(badgeHtml.value);
+      badgeCopyStatus.textContent = 'Badge copied.';
+    } catch {
+      badgeHtml.focus();
+      badgeHtml.select();
+      badgeCopyStatus.textContent = 'Badge selected. Copy the selected HTML.';
+    }
+  });
   const intent = document.getElementById('submission-type');
   const membershipFields = document.getElementById('membership-fields');
   const imageInput = document.getElementById('project-image');
@@ -156,9 +169,22 @@ if (form) {
         return;
       }
       window.digivatedTrack?.('project_submit', {project_category:payload.category});
-      const membership = intent.value === 'founding-feature';
+      const membership = payload.submissionType === 'founding-feature';
       form.reset();form.dispatchEvent(new Event('input'));if(session?.user?.email_confirmed_at)form.elements.email.value=session.user.email;syncIntent();updateImagePreview();
-      if(data.launch){status.replaceChildren('Project saved. Copy your badge from Your Projects, add it to your site, then verify it there. ',Object.assign(document.createElement('a'),{href:'/account#account-submissions',textContent:'Get your website badge →'}));status.focus();return;}
+      if (data.launch) {
+        if (data.launch.badge) {
+          status.textContent = 'Project saved.';
+          badgeHtml.value = data.launch.badge;
+          badgePanel.hidden = false;
+          document.getElementById('submission-badge-title').focus();
+        } else {
+          status.replaceChildren('Project saved. ', Object.assign(document.createElement('a'), {
+            href: '/account#account-submissions', textContent: 'Get your website badge in Your Projects →'
+          }));
+          status.focus();
+        }
+        return;
+      }
       status.textContent = (membership ? 'Your included feature request has been received. It is not public yet. Review is required, and a feature is not guaranteed.' : 'Thank you — your project has been received for review. It is not public yet. Submitting does not guarantee a feature or repost.') + (session ? ' View its status and private feedback in Your Projects.' : ' To track future submissions, sign in before submitting.');
       status.focus();
     } catch (error) {
