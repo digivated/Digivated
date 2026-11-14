@@ -451,6 +451,7 @@
   html#digivated-root[data-ascii] .compact-site-header .header-inner {
    grid-template-columns:max-content minmax(max-content,1fr) max-content!important;
    gap:16px!important;
+   padding-inline:clamp(16px,calc((100% - 1248px) / 2),var(--canvas-gutter))!important;
   }
   html#digivated-root[data-ascii] .compact-site-header .header-primary {
    --primary-link-gap:clamp(12px,1.1vw,16px);
