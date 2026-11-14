@@ -82,3 +82,72 @@ test('a damaged queue entry does not block other due launches', async () => {
  assert.equal(res.statusCode,503);
  assert.deepEqual(res.body,{checked:2,published:1,failed:1});
 });
+
+test('hidden and inert anchors do not count as a displayed badge',()=>{
+ const badge=badgeSnippet(record.id);
+ for(const extra of ['hidden','hidden="false"','inert','style="display:none"','style="visibility: hidden !important"']) {
+  assert.equal(hasProjectBadge(badge.replace('<a ',`<a ${extra} `),record.id),false,extra);
+ }
+ assert.equal(hasProjectBadge(badge.replace('<a ','<a title="hidden badge example" data-hidden="false" aria-hidden="false" '),record.id),true);
+});
+
+test('real Redis: badge verification queues a project and the cycle publishes it once', {skip:!process.env.DIGIVATED_TEST_REDIS_PORT},async()=>{
+ const {testRedis}=await import('./helpers/redis.mjs');
+ const redis=testRedis(12);await redis(['FLUSHDB']);
+ try{
+  const scheduledAt=nextFreeLaunch(),scheduled=Date.parse(scheduledAt);
+  const fixture={...record,launch:{kind:'free',scheduledAt,scheduledTimestamp:scheduled}};
+  await redis(['SET',`digivated:submission:${fixture.id}`,JSON.stringify(fixture)]);
+  const {makeSubmissionHandler}=await import('../server/submissions.mjs');
+  const submit=makeSubmissionHandler({redis,env:{SUBMISSIONS_ORIGIN:'https://digivated.test'},verifyAccount:async()=>({id:'owner',email:'owner@example.com'}),readSite:async()=>({html:badgeSnippet(fixture.id)})});
+  const verificationResponse={setHeader(){},end(body){this.body=JSON.parse(body);}};
+  await submit({method:'POST',url:'/api/submissions',headers:{origin:'https://digivated.test','content-type':'application/json',authorization:'Bearer fixture-session'},body:{action:'verify-badge',id:fixture.id}},verificationResponse);
+  assert.equal(verificationResponse.statusCode,200);
+  const verified=verificationResponse.body;
+  assert.equal(verified.verified,true);
+  assert.equal(verified.pageUrl,undefined);
+  assert.equal(Number(await redis(['ZSCORE','digivated:launch:free',fixture.id])),scheduled);
+  assert.equal(await redis(['GET',`digivated:public:submission:${fixture.id}`]),null);
+  let now=scheduled-1;
+  const handler=makeLaunchQueueHandler({redis,now:()=>now,env:{CRON_SECRET:'fixture-secret'}});
+  async function cycle(){const res={setHeader(){},end(body){this.body=JSON.parse(body);}};await handler({method:'GET',headers:{authorization:'Bearer fixture-secret'}},res);return res;}
+  assert.deepEqual((await cycle()).body,{checked:0,published:0,failed:0});
+  now=scheduled;
+  const published=await cycle();assert.equal(published.statusCode,200);assert.equal(published.body.published,1);
+  const saved=JSON.parse(await redis(['GET',`digivated:submission:${fixture.id}`]));
+  assert.equal(saved.status,'approved');assert.equal(saved.publishedAt,scheduledAt);
+  assert.equal(JSON.parse(await redis(['GET',`digivated:public:submission:${fixture.id}`])).pageUrl,`/projects/listing/${fixture.id}`);
+  assert.deepEqual(await redis(['ZRANGE','digivated:public:submissions',0,-1]),[fixture.id]);
+  assert.equal(await redis(['ZSCORE','digivated:launch:free',fixture.id]),null);
+  assert.deepEqual((await cycle()).body,{checked:0,published:0,failed:0});
+  assert.equal((await verifyProjectBadge(redis,{id:'owner'},fixture.id,()=>assert.fail('Already verified'))).pageUrl,`/projects/listing/${fixture.id}`);
+  // Two workers holding the same revision cannot publish twice.
+  await redis(['SET',`digivated:submission:${fixture.id}`,JSON.stringify({...fixture,launch:{...fixture.launch,badgeVerifiedAt:new Date().toISOString()}})]);
+  const concurrent=await Promise.all([1,2].map(()=>publishQueued(redis,{...fixture,launch:{...fixture.launch,badgeVerifiedAt:new Date().toISOString()}},now)));
+  assert.equal(concurrent.filter(Boolean).length,1);
+ }finally{await redis(['FLUSHDB']);}
+});
+
+test('verification runtime fits the website-check deadline and cycle has its own budget',async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const config=JSON.parse(await readFile(new URL('../vercel.json',import.meta.url),'utf8'));
+ assert.ok(config.functions['api/submissions.js'].maxDuration>=30);
+ assert.ok(config.functions['api/[route].js'].maxDuration>=60);
+ assert.ok(config.crons.some(c=>c.path==='/api/launch-queue'&&c.schedule==='10 0 * * *'));
+});
+
+test('website verification follows apex/www redirects but refuses unrelated domains',async()=>{
+ const {EventEmitter}=await import('node:events');let requests=0;
+ function transport(url,_options,onResponse){
+  const req=new EventEmitter();req.end=()=>queueMicrotask(()=>{
+   requests++;const res=new EventEmitter();res.statusCode=requests===1?301:200;
+   res.headers=requests===1?{location:'https://www.example.com/project'}:{'content-type':'text/html'};res.resume=()=>{};
+   onResponse(res);if(requests>1){res.emit('data',Buffer.from(badgeSnippet(record.id)));res.emit('end');}req.emit('close');
+  });req.destroy=error=>{if(error)req.emit('error',error);req.emit('close');};return req;
+ }
+ const options={resolve:async()=>[{address:'93.184.216.34'}],transport};
+ assert.equal((await readProjectSite('https://example.com',options)).url,'https://www.example.com/project');
+ requests=0;
+ const hostile=(url,options,callback)=>transport(url,options,res=>{res.headers.location='https://other.example.net/';callback(res);});
+ await assert.rejects(readProjectSite('https://example.com',{...options,transport:hostile}),/another site/);
+});

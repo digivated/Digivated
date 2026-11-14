@@ -30,6 +30,10 @@
       "includeFiles": "server/**",
       "maxDuration": 120
     },
+    "api/[route].js": {
+      "includeFiles": "server/**",
+      "maxDuration": 120
+    },
     "api/*.js": {
       "includeFiles": "server/**",
       "maxDuration": 15

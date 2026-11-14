@@ -8,9 +8,9 @@ export function publicIPv4(address) {
  return !(a===0||a===10||a===127||a>=224||a===169&&b===254||a===172&&b>=16&&b<=31||a===192&&(b===168||b===0||b===2)||a===100&&b>=64&&b<=127||a===198&&(b===18||b===19||b===51)||a===203&&b===0);
 }
 export async function readProjectSite(value, { resolve=lookup, transport=request }={}) {
- let url=new URL(value);const origin=url.origin,deadline=Date.now()+24000;
+ let url=new URL(value);const siteHost=url.hostname.replace(/^www\./i,'').toLowerCase(),deadline=Date.now()+24000;
  for(let hop=0;hop<4;hop++){
-  if(url.protocol!=='https:'||url.username||url.password||url.port&&url.port!=='443'||isIP(url.hostname)||url.origin!==origin)throw Error('Use a public HTTPS project URL without cross-domain redirects.');
+  if(url.protocol!=='https:'||url.username||url.password||url.port&&url.port!=='443'||isIP(url.hostname)||url.hostname.replace(/^www\./i,'').toLowerCase()!==siteHost)throw Error('Use a public HTTPS project URL without redirects to another site.');
   if(Date.now()>=deadline)throw Error('The website took too long to check. Try its final page URL.');
   let dnsTimer;let addresses;try{addresses=await Promise.race([resolve(url.hostname,{family:4,all:true}),new Promise((_,reject)=>{dnsTimer=setTimeout(()=>reject(Error('Website lookup timed out.')),Math.min(5000,deadline-Date.now()));})]);}finally{clearTimeout(dnsTimer);}
   if(!addresses.length||addresses.some(x=>!publicIPv4(x.address)))throw Error('This project URL cannot be checked.');
@@ -41,5 +41,13 @@ export function siteDetails(html){
 export function hasProjectBadge(html,id){
  // Ignore comments and inert script/style content. Require a real anchor to this listing.
  const source=html.replace(/<!--[\s\S]*?-->/g,'').replace(/<(script|style|textarea|template)\b[^>]*>[\s\S]*?<\/\1>/gi,'');
- return (source.match(/<a\b[^>]*>/gi)||[]).some(tag=>{const a=attributes(tag);return a.href===`https://digivated.com/projects/listing/${id}`&&a['data-digivated-project']===id&&!('hidden' in a);});
+ return (source.match(/<a\b[^>]*>/gi)||[]).some(tag=>{
+  const a=attributes(tag);
+  // Boolean HTML attributes are active even when their value is "false".
+  // Strip quoted values so words inside titles are not treated as attributes.
+  const unquoted=tag.replace(/"[^"]*"|'[^']*'/g,'');
+  const inactive=/(?:\s)(?:hidden|inert)(?:\s|=|>)/i.test(unquoted);
+  const concealed=/(?:^|;)\s*(?:display\s*:\s*none|visibility\s*:\s*(?:hidden|collapse))(?:\s*!important)?\s*(?:;|$)/i.test(a.style||'');
+  return !inactive&&!concealed&&a.href===`https://digivated.com/projects/listing/${id}`&&a['data-digivated-project']===id;
+ });
 }

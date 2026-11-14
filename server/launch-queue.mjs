@@ -46,7 +46,7 @@ export function makeLaunchQueueHandler(deps={}){
   const env=deps.env||process.env,expected=Buffer.from(`Bearer ${env.CRON_SECRET||''}`),actual=Buffer.from(req.headers.authorization||'');
   if(req.method!=='GET'||!env.CRON_SECRET||actual.length!==expected.length||!timingSafeEqual(actual,expected))return send(401,{error:'Unauthorized.'});
   try{
-   const redis=deps.redis||redisClient(env),now=Date.now();
+   const redis=deps.redis||redisClient(env),now=(deps.now||Date.now)();
    const ids = await redis(['ZRANGEBYSCORE', QUEUE, '-inf', now, 'LIMIT', 0, 200]);
    let published = 0;
    let failed = 0;
