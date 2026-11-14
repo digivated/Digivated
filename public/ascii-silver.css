@@ -452,7 +452,21 @@
    grid-template-columns:max-content minmax(max-content,1fr) max-content!important;
    gap:16px!important;
   }
-  html#digivated-root[data-ascii] .compact-site-header .header-primary {gap:clamp(12px,1.1vw,16px)!important;}
+  html#digivated-root[data-ascii] .compact-site-header .header-primary {
+   --primary-link-gap:clamp(12px,1.1vw,16px);
+   gap:var(--primary-link-gap)!important;
+  }
+  html#digivated-root[data-ascii] .compact-site-header .header-primary > a + a {position:relative;}
+  html#digivated-root[data-ascii] .compact-site-header .header-primary > a + a::before {
+   content:"|" / "";
+   position:absolute;
+   inset-inline-start:calc(var(--primary-link-gap) / -2);
+   top:50%;
+   margin-inline-start:-.5ch;
+   transform:translateY(-50%);
+   color:#737373;
+   pointer-events:none;
+  }
   html#digivated-root[data-ascii] .compact-site-header .compact-header-actions {gap:8px!important;}
   html#digivated-root[data-ascii] .compact-site-header :is(.header-login,.header-membership) {padding-inline:6px!important;}
   html#digivated-root[data-ascii] .compact-site-header .notebook-navigation > summary {width:44px!important;min-width:44px!important;padding-inline:0!important;}
