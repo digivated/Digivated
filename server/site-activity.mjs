@@ -11,7 +11,7 @@ redis.call('ZREMRANGEBYSCORE',KEYS[2],'-inf',now-90)
 if ARGV[2] ~= '' then
  local rate = redis.call('INCR',KEYS[4])
  if rate == 1 then redis.call('EXPIRE',KEYS[4],60) end
- if rate <= 120 then
+ if rate <= tonumber(ARGV[4]) then
   redis.call('ZADD',KEYS[2],now,ARGV[2])
   redis.call('EXPIRE',KEYS[2],180)
   if ARGV[3] ~= '' and redis.call('SET',KEYS[3],'1','NX','EX',86400) then
@@ -21,12 +21,20 @@ if ARGV[2] ~= '' then
 end
 return {tonumber(redis.call('GET',KEYS[1])),redis.call('ZCARD',KEYS[2])}`;
 
-export function makeSiteActivityHandler(deps = {}) {
+export function makeSiteActivityHandler(deps = {}, site = 'digivated') {
+  const invstr = site === 'invstr';
+  const prefix = invstr ? 'invstr:site' : 'digivated:site';
   return async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Vercel-CDN-Cache-Control', 'no-store');
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('X-Content-Type-Options', 'nosniff');
+    if (invstr) {
+      res.setHeader('Vary', 'Origin');
+      if (req.headers.origin === 'https://invstr.app') {
+        res.setHeader('Access-Control-Allow-Origin', 'https://invstr.app');
+      }
+    }
     const send = (status, body) => { res.statusCode = status; res.end(JSON.stringify(body)); };
     try {
       if (!['GET', 'POST'].includes(req.method)) {
@@ -34,8 +42,8 @@ export function makeSiteActivityHandler(deps = {}) {
         return send(405, { error: 'Method not allowed.' });
       }
       const env = deps.env || process.env;
-      const origin = env.SUBMISSIONS_ORIGIN || 'https://digivated.com';
-      if (req.method === 'POST' && (req.headers.origin !== origin || req.headers['sec-fetch-site'] === 'cross-site')) return send(403, { error: 'Use the Digivated website.' });
+      const origin = invstr ? 'https://invstr.app' : env.SUBMISSIONS_ORIGIN || 'https://digivated.com';
+      if (req.method === 'POST' && (req.headers.origin !== origin || (!invstr && req.headers['sec-fetch-site'] === 'cross-site'))) return send(403, { error: invstr ? 'Use the Invstr website.' : 'Use the Digivated website.' });
       if (!deps.redis && (env.VERCEL_ENV !== 'production' || env.VERCEL !== '1')) return send(503, { error: 'Activity unavailable.' });
       const view = new URL(req.url, origin).searchParams.get('view') || '';
       if (view && !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(view)) return send(400, { error: 'Invalid visit.' });
@@ -44,11 +52,11 @@ export function makeSiteActivityHandler(deps = {}) {
       const record = req.method === 'POST' && !/bot|crawler|spider|headless|preview/i.test(ua);
       if (record && ((!deps.redis && !env.SUBMISSIONS_REDIS_REST_TOKEN) || typeof ip !== 'string' || !ip)) return send(503, { error: 'Activity unavailable.' });
       // Daily rotating, keyed identity. Never retain IP addresses or user agents.
-      const visitor = record ? createHmac('sha256', env.SUBMISSIONS_REDIS_REST_TOKEN || 'test-only').update(`${new Date().toISOString().slice(0, 10)}:${ip}:${ua.slice(0, 500)}`).digest('hex') : '';
+      const visitor = record ? createHmac('sha256', env.SUBMISSIONS_REDIS_REST_TOKEN || 'test-only').update(`${invstr ? 'invstr:' : ''}${new Date().toISOString().slice(0, 10)}:${ip}:${ua.slice(0, 500)}`).digest('hex') : '';
       const redis = deps.redis || redisClient(env);
       const [visits, online] = await redis(['EVAL', SITE_ACTIVITY, 4,
-        'digivated:site:visits', 'digivated:site:online', `digivated:site:view:${visitor}:${view}`, `digivated:site:rate:${visitor}`,
-        HISTORICAL_VISITS, visitor, record ? view : '']);
+        `${prefix}:visits`, `${prefix}:online`, `${prefix}:view:${visitor}:${view}`, `${prefix}:rate:${visitor}`,
+        invstr ? 0 : HISTORICAL_VISITS, visitor, record ? view : '', invstr ? 12 : 120]);
       if (![visits, online].every(n => Number.isSafeInteger(n) && n >= 0)) throw new Error('Invalid counts');
       return send(200, { visits, online, activeWindowSeconds: 90 });
     } catch { return send(503, { error: 'Activity temporarily unavailable.' }); }

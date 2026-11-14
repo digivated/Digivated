@@ -23,6 +23,7 @@ export function defaultPublicHandlers(overrides = {}) {
     'launch-queue':makeLaunchQueueHandler(),
     news:makeNewsHandler(),
     'site-activity': makeSiteActivityHandler(),
+    'invstr-activity': makeSiteActivityHandler({}, 'invstr'),
     'membership-checkout': makeMembershipCheckoutHandler(),
     'member-status': makeMemberStatusHandler(),
     content: makePublicHandler('content'),
