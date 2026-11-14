@@ -7,7 +7,7 @@ const MEMBERS='digivated:weekly:members';
 const preference=id=>`digivated:weekly:preference:${id}`;
 const tokenKey=token=>`digivated:weekly:confirm:${token}`;
 const sign=(id,secret)=>createHmac('sha256',secret).update(`weekly-unsubscribe:${id}`).digest('hex');
-const valid=(a,b)=>typeof a==='string'&&a.length===b.length&&timingSafeEqual(Buffer.from(a),Buffer.from(b));
+const valid=(a,b)=>typeof a==='string'&&Buffer.byteLength(a)===Buffer.byteLength(b)&&timingSafeEqual(Buffer.from(a),Buffer.from(b));
 const json=(res,status,data)=>{res.statusCode=status;res.setHeader('Content-Type','application/json; charset=utf-8');res.setHeader('Cache-Control','private, no-store');res.setHeader('X-Content-Type-Options','nosniff');res.end(JSON.stringify(data));};
 const admin=env=>createClient(env.COMMUNITY_SUPABASE_URL,env.COMMUNITY_SUPABASE_SECRET_KEY,{auth:{autoRefreshToken:false,persistSession:false,detectSessionInUrl:false}});
 
@@ -65,27 +65,88 @@ export function makeReturnEmailHandler(deps={}){return async(req,res)=>{
  }catch{return json(res,503,{error:'Email preferences are temporarily unavailable.'});}
 };}
 
+const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({
+ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+})[char]);
+const directoryUrl = 'https://digivated.com/discover';
+
+function digestContent(projects, unsubscribe, address) {
+ const link = project => `https://digivated.com/projects/listing/${encodeURIComponent(project.id)}`;
+ const text = [
+  'New this week on Digivated',
+  'A few indie projects worth a look.',
+  ...projects.map(project => `${project.name}\n${link(project)}`),
+  `Browse all projects: ${directoryUrl}`,
+  `Unsubscribe: ${unsubscribe}\n\nDigivated\n${address}`
+ ].join('\n\n');
+ const items = projects.map(project => `<li style="margin:0 0 14px"><a style="color:#171717" href="${link(project)}">${escapeHtml(project.name)}</a></li>`).join('');
+ const html = `<!doctype html><html lang="en" dir="ltr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>New this week on Digivated</title><body style="margin:0;background:#fff;color:#171717;font:16px/1.6 Arial,sans-serif"><main style="max-width:560px;margin:auto;padding:32px 24px"><p style="font-family:monospace">DIGIVATED / WEEKLY</p><h1 style="font-size:28px;line-height:1.2">New this week on Digivated</h1><p>A few indie projects worth a look.</p><ul>${items}</ul><p><a style="color:#171717" href="${directoryUrl}">Browse all projects</a></p><p style="color:#555;font-size:13px;margin-top:32px">Digivated<br>${escapeHtml(address).replace(/\r?\n/g, '<br>')}<br><a style="color:#555" href="${escapeHtml(unsubscribe)}">Unsubscribe</a></p></main></body></html>`;
+ return { text, html };
+}
+
 export function makeWeeklyDigestHandler(deps={}){return async(req,res)=>{
  const env=deps.env||process.env;
  if(req.method!=='GET'||!env.CRON_SECRET||!valid(req.headers.authorization,`Bearer ${env.CRON_SECRET}`))return json(res,401,{error:'Unauthorized.'});
  if(!env.WEEKLY_EMAIL_POSTAL_ADDRESS||!env.RESEND_API_KEY||!env.ACCOUNT_EMAIL_FROM||!env.COMMUNITY_SUPABASE_SECRET_KEY)return json(res,503,{error:'Weekly emails are not configured.'});
- try{
-  const redis=deps.redis||redisClient(env),now=Date.now(),week=7*86400000;
-  const ids=await redis(['ZREVRANGE','digivated:submissions',0,199]);
-  const rows=ids.length?await redis(['MGET',...ids.map(id=>`digivated:submission:${id}`)]):[];
-  const projects=rows.filter(Boolean).map(raw=>{try{return JSON.parse(raw);}catch{return null;}}).filter(p=>p&&['approved','featured'].includes(p.status)&&Date.parse(p.reviewedAt)>now-week).sort((a,b)=>Date.parse(b.reviewedAt)-Date.parse(a.reviewedAt)).slice(0,3);
-  if(!projects.length)return json(res,200,{sent:0,reason:'no new projects'});
-  // A small fixed weekly cap leaves room for sign-in and project update mail on the free plan.
-  const members=await redis(['ZRANGEBYSCORE',MEMBERS,0,now-week,'LIMIT',0,10]);let sent=0;
-  for(const id of members){
-   const stored=await redis(['GET',preference(id)]);if(!stored){await redis(['ZREM',MEMBERS,id]);continue;}const email=JSON.parse(stored).email;
-   const {data,error}=await (deps.adminClient||admin(env)).auth.admin.getUserById(id);
-   if(error||data?.user?.email?.toLowerCase()!==email){await redis(['DEL',preference(id)]);await redis(['ZREM',MEMBERS,id]);continue;}
-   const unsubscribe=`https://digivated.com/api/return-emails?action=unsubscribe&id=${encodeURIComponent(id)}&signature=${sign(id,env.SUBMISSIONS_REDIS_REST_TOKEN)}`;
-   const text=`New on Digivated this week:\n\n${projects.map(p=>`${p.name} — ${p.url}`).join('\n\n')}\n\nBrowse more: https://digivated.com/discover?view=featured\n\nUnsubscribe: ${unsubscribe}\n\nDigivated\n${env.WEEKLY_EMAIL_POSTAL_ADDRESS}`;
-   const response=await (deps.fetcher||fetch)('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':`weekly-${id}-${new Date(now).toISOString().slice(0,10)}`},body:JSON.stringify({from:env.WEEKLY_EMAIL_FROM||env.ACCOUNT_EMAIL_FROM,to:[email],subject:'New projects on Digivated',text,headers:{'List-Unsubscribe':`<${unsubscribe}>`}}),signal:AbortSignal.timeout(8000),redirect:'error'});
-   if(response.ok){await redis(['ZADD',MEMBERS,now,id]);sent++;}
+ const logger = deps.logger || console;
+ try {
+  const redis = deps.redis || redisClient(env);
+  const now = Date.now(), week = 7 * 86400000;
+  const issue = new Date(now);
+  issue.setUTCDate(issue.getUTCDate() - issue.getUTCDay());
+  issue.setUTCHours(15, 0, 0, 0);
+  if (+issue > now) issue.setUTCDate(issue.getUTCDate() - 7);
+  const issueDate = issue.toISOString().slice(0, 10);
+  const finish = (status, summary) => {
+   logger.info('weekly-digest result', { issue: issueDate, ...summary });
+   return json(res, status, summary);
+  };
+  const ids = await redis(['ZREVRANGE','digivated:public:submissions',0,199]);
+  const rows = ids.length ? await redis(['MGET',...ids.map(id => `digivated:submission:${id}`)]) : [];
+  const projects = rows.flatMap((raw, index) => {
+   if (!raw) return [];
+   const project = JSON.parse(raw);
+   const published = Date.parse(project.publishedAt || project.reviewedAt);
+   return ['approved', 'featured'].includes(project.status) && published > +issue - week && published <= +issue
+    ? [{ id: ids[index], name: project.name, published }] : [];
+  }).sort((a,b) => b.published - a.published).slice(0,3);
+  if (!projects.length) return finish(200, { sent: 0, reason: 'no new projects' });
+  const members = await redis(['ZRANGEBYSCORE', MEMBERS, 0, +issue - 1, 'LIMIT', 0, 10]);
+  if (!members.length) return finish(200, { sent: 0, reason: 'no eligible subscribers' });
+  const accounts = (deps.adminClient || admin(env)).auth.admin;
+  let sent = 0, failed = 0, skipped = 0;
+  for (const id of members) {
+   try {
+    const stored = await redis(['GET',preference(id)]);
+    if (!stored) { await redis(['ZREM', MEMBERS, id]); skipped++; continue; }
+    const email = JSON.parse(stored).email;
+    const { data, error } = await accounts.getUserById(id);
+    if (error && error.status !== 404) throw error;
+    if (error || data?.user?.email?.toLowerCase() !== email) {
+     await redis(['DEL', preference(id)]); await redis(['ZREM', MEMBERS, id]); skipped++; continue;
+    }
+    const unsubscribe = `https://digivated.com/api/return-emails?action=unsubscribe&id=${encodeURIComponent(id)}&signature=${sign(id,env.SUBMISSIONS_REDIS_REST_TOKEN)}`;
+    const response = await (deps.fetcher || fetch)('https://api.resend.com/emails', {
+     method: 'POST',
+     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': `weekly-${id}-${issueDate}` },
+     body: JSON.stringify({
+      from: env.WEEKLY_EMAIL_FROM || env.ACCOUNT_EMAIL_FROM, to: [email], subject: 'New projects on Digivated',
+      ...digestContent(projects, unsubscribe, env.WEEKLY_EMAIL_POSTAL_ADDRESS),
+      headers: { 'List-Unsubscribe': `<${unsubscribe}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' }
+     }),
+     signal: AbortSignal.timeout(8000), redirect: 'error'
+    });
+    if (!response.ok) { logger.warn('weekly-digest provider rejected send', { status: response.status }); failed++; continue; }
+    await redis(['ZADD', MEMBERS, now, id]);
+    sent++;
+   } catch {
+    logger.warn('weekly-digest recipient processing failed');
+    failed++;
+   }
   }
-  return json(res,200,{sent});
- }catch{return json(res,503,{error:'Weekly email run failed.'});}
+  return finish(failed ? 503 : 200, { sent, failed, skipped });
+ } catch {
+  logger.error('weekly-digest run failed');
+  return json(res,503,{error:'Weekly email run failed.'});
+ }
 };}

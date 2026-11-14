@@ -26,6 +26,10 @@
       "includeFiles": "{server/**,src/data/resources.json}",
       "maxDuration": 15
     },
+    "api/weekly-digest.js": {
+      "includeFiles": "server/**",
+      "maxDuration": 120
+    },
     "api/*.js": {
       "includeFiles": "server/**",
       "maxDuration": 15

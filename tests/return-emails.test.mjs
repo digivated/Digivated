@@ -19,7 +19,7 @@ function fixture(){
   if(command==='MGET')return args.map(key=>entries.get(key)||null);
   throw Error(command);
  };
- const deps={env,redis,verifyAccount:async()=>({id,email}),adminClient:{auth:{admin:{getUserById:async()=>({data:{user:{email}}})}}},fetcher:async(_url,options)=>{sent.push(JSON.parse(options.body));return {ok:true};}};
+ const deps={env,redis,logger:{info(){},warn(){},error(){}},verifyAccount:async()=>({id,email}),adminClient:{auth:{admin:{getUserById:async()=>({data:{user:{email}}})}}},fetcher:async(_url,options)=>{sent.push(JSON.parse(options.body));return {ok:true};}};
  async function invoke(handler,method,url,body,headers={}){const req={method,url,headers:{origin:'https://digivated.com','content-type':'application/json',...headers},body};let raw;const res={setHeader(){},end(value){raw=value;}};await handler(req,res);return {status:res.statusCode,body:raw?.startsWith('{')?JSON.parse(raw):raw};}
  return {entries,members,sent,deps,invoke};
 }
@@ -48,14 +48,35 @@ test('digest requires the cron secret and configured mailing address',async()=>{
 });
 
 test('digest sends only recent published projects and stops at ten recipients',async()=>{
- const f=fixture(),handler=makeWeeklyDigestHandler(f.deps),now=Date.now();
- f.entries.set('digivated:submission:recent',JSON.stringify({status:'featured',name:'New tool',url:'https://example.com',reviewedAt:new Date(now).toISOString()}));
+ const f=fixture(),handler=makeWeeklyDigestHandler(f.deps),issue=new Date();
+ issue.setUTCDate(issue.getUTCDate()-issue.getUTCDay());issue.setUTCHours(15,0,0,0);if(+issue>Date.now())issue.setUTCDate(issue.getUTCDate()-7);
+ const now=+issue-1000;
+ f.entries.set('digivated:submission:recent',JSON.stringify({status:'featured',name:'New tool',url:'https://example.com',publishedAt:new Date(now).toISOString(),reviewedAt:new Date(now-14*86400000).toISOString()}));
  f.entries.set('digivated:submission:private',JSON.stringify({status:'pending',name:'Private project',url:'https://private.example',reviewedAt:new Date(now).toISOString()}));
  for(let n=0;n<12;n++){const member=`member-${n}`;f.entries.set(`digivated:weekly:preference:${member}`,JSON.stringify({email}));f.members.set(member,0);}
  const result=await f.invoke(handler,'GET','/api/weekly-digest',undefined,{authorization:`Bearer ${env.CRON_SECRET}`});
  assert.equal(result.body.sent,10);assert.equal(f.sent.length,10);
- assert.match(f.sent[0].text,/New tool/);assert.doesNotMatch(f.sent[0].text,/Private project/);
+ assert.match(f.sent[0].text,/New tool/);assert.match(f.sent[0].html,/projects\/listing\/recent/);
+ assert.equal(f.sent[0].headers['List-Unsubscribe-Post'],'List-Unsubscribe=One-Click');assert.doesNotMatch(f.sent[0].text,/Private project/);
  assert.match(f.sent[0].text,/Unsubscribe:/);assert.match(f.sent[0].text,/123 Example St/);
  assert.equal(f.sent[0].from,'Digivated <updates@digivated.com>');
  assert.equal([...f.members.values()].filter(score=>score>0).length,10);
+});
+
+test('temporary account and provider failures are visible and preserve subscriptions',async()=>{
+ const f=fixture();
+ const issue=new Date();
+ issue.setUTCDate(issue.getUTCDate()-issue.getUTCDay());issue.setUTCHours(15,0,0,0);if(+issue>Date.now())issue.setUTCDate(issue.getUTCDate()-7);
+ f.entries.set('digivated:submission:recent',JSON.stringify({status:'approved',name:'<A & B>',publishedAt:new Date(+issue-1000).toISOString()}));
+ f.entries.set(`digivated:weekly:preference:${id}`,JSON.stringify({email}));f.members.set(id,0);
+ const call=deps=>f.invoke(makeWeeklyDigestHandler(deps),'GET','/api/weekly-digest',undefined,{authorization:`Bearer ${env.CRON_SECRET}`});
+ const unavailable={auth:{admin:{getUserById:async()=>({error:{status:503}})}}};
+ assert.equal((await call({...f.deps,adminClient:unavailable})).status,503);
+ const rejected=await call({...f.deps,fetcher:async()=>({ok:false,status:429})});
+ assert.deepEqual(rejected.body,{sent:0,failed:1,skipped:0});
+ assert.equal(f.members.get(id),0);
+ assert.equal((await call(f.deps)).body.sent,1);
+ assert.match(f.sent[0].html,/&lt;A &amp; B&gt;/);
+ assert.equal((await call(f.deps)).body.sent,0);
+ assert.equal(f.sent.length,1);
 });
