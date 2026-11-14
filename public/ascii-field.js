@@ -16,10 +16,67 @@ if (!document.querySelector('.ascii-ambient')) {
   // A fixed glyph canvas keeps every frame the same size: no layout shifts.
   const workshopWidth = 64;
   const workshopHeight = 32;
-  const workshopStages = ['IDEA', 'DESIGN', 'CODE', 'TEST', 'LAUNCH', 'FEEDBACK'];
+  const projectFrames = 144;
+  const workshopStages = ['SKETCH', 'BUILD', 'TRY', 'SHIP'];
+  // Each project has its own source, interface and visible interaction.
+  const workshopProjects = [
+    {
+      name: 'Pocket Timer', task: 'A tiny focus timer', command: 'pocket-timer',
+      sketch: ['[ 05:00 ]', '[ start ] [ reset ]'],
+      source: ['let seconds = 5;', 'start.onclick = tick;', 'function tick() {', '  show(seconds--);', '  if (seconds >= 0)', '    setTimeout(tick, 1000);', '}'],
+      preview(step) {
+        const elapsed = Math.min(5, Math.floor(step / 4));
+        return ['      P O C K E T   T I M E R', '', '               00:0' + (5 - elapsed), '',
+          '          [' + '='.repeat(elapsed) + '.'.repeat(5 - elapsed) + ']',
+          '', elapsed === 5 ? '       * focus sprint complete *' : '          [ pause ] [ reset ]'];
+      },
+      result: 'Timer finishes a focus sprint.'
+    },
+    {
+      name: 'Raincheck', task: 'A rainy-day pixel game', command: 'raincheck',
+      sketch: ['. . .   falling rain', '  @     move the player', '[ ]     try to reach shelter'],
+      source: ['function move(dx) {', '  player.x += dx;', '  draw(player, rain);', '  if (underRoof(player))', '    show("sheltered!");', '}'],
+      preview(step) {
+        const x = Math.min(24, Math.floor(step / 2) * 2);
+        const rain = '.    /   .    /    .    /';
+        return ['    R A I N C H E C K', '', ' '.repeat(step % 3) + rain,
+          ' /   .    /        +-------+', '                   |       |',
+          ' '.repeat(x) + '@', '----------------------------',
+          x >= 20 ? '     [ok] reached shelter' : '     [ > ] move right'];
+      },
+      result: 'Player reaches shelter.'
+    },
+    {
+      name: 'Tiny Ledger', task: 'A one-screen expense tracker', command: 'tiny-ledger',
+      sketch: ['item __________  $ ___ [ + ]', 'list: show what I spent', 'total: add every row'],
+      source: ['function addExpense(item, cents) {', '  entries.push({ item, cents });', '  total = entries.reduce(', '    (sum, row) => sum + row.cents,', '    0', '  );', '  render(entries, total);', '}'],
+      preview(step) {
+        return ['          T I N Y   L E D G E R', '', '  ITEM                        COST',
+          '  coffee                     $3.50', '  train                      $2.25',
+          step >= 12 ? '  notebook                   $4.00' : '  [ notebook ] [ 4.00 ] [ + ]',
+          '  --------------------------------', step >= 12 ? '  TOTAL                      $9.75' : '  TOTAL                      $5.75'];
+      },
+      result: 'New expense updates the total.'
+    },
+    {
+      name: 'Desk Garden', task: 'Water a tiny virtual plant', command: 'desk-garden',
+      sketch: ['    .      seed', '  [___]    pot', '  [water]  grow one stage'],
+      source: ['function water() {', '  stage = Math.min(stage + 1, 3);', '  draw(plantFrames[stage]);', '}', 'button.onclick = water;'],
+      preview(step) {
+        const stage = Math.min(3, Math.floor(step / 7));
+        return ['          D E S K   G A R D E N', '', stage === 3 ? '                *' : '',
+          stage >= 2 ? '              \\ | /' : '',
+          stage >= 1 ? '                |' : '                .',
+          '              [===]', '               |_|', stage === 3 ? '        [ok] plant in bloom' : '          [ water plant ]'];
+      },
+      result: 'Three taps grow a flower.'
+    }
+  ];
   function workshopFrame(frame, still = false) {
-    const phase = still ? 2 : Math.floor(frame / 64) % 6;
-    const step = still ? 55 : frame % 64;
+    const project = workshopProjects[Math.floor(frame / projectFrames) % workshopProjects.length];
+    const age = frame % projectFrames;
+    const phase = still ? 2 : age < 22 ? 0 : age < 76 ? 1 : age < 120 ? 2 : 3;
+    const step = still ? 43 : age - [0, 22, 76, 120][phase];
     const grid = Array.from({length:workshopHeight},()=>Array(workshopWidth).fill(' '));
     const put = (x,y,text) => {
       if(y<0||y>=workshopHeight)return;
@@ -32,19 +89,19 @@ if (!document.querySelector('.ascii-ambient')) {
       if(label)put(x+2,y,label);
     };
     const type = (x,y,text,delay=0) => put(x,y,text.slice(0,Math.max(0,Math.floor((step-delay)*1.7))));
-    const spark = ['.','+','*','+'][Math.floor(frame/3)%4];
+    const spark = ['.','+','*','+'][Math.floor(age / 3) % 4];
     put(0,0,'[ independent studio ]');
     put(47,0,workshopStages[phase].padStart(14));
-    put(0,2,'one small idea. made real.');
-    box(20,4,43,16,' pocket / workbench ');
-    put(23,6,'o o o'); put(32,6,'localhost:3000');
+    put(0,2,project.name + ' / ' + project.task);
+    box(20,4,43,16,' ' + project.name + ' / workbench ');
+    put(23,6,'o o o'); put(32,6,phase === 3 ? 'release / v1.0' : phase === 2 ? 'localhost / preview' : 'localhost / editor');
     put(22,7,'-'.repeat(39));
     // The maker blinks, thinks, types, and reaches for the launch key.
-    const blink = frame%39<3;
+    const blink = !still && age % 39 < 3;
     put(5,8,'  .------.');
     put(5,9,' /        \\');
     put(5,10,blink?' |  -  -  |':' |  o  o  |');
-    put(5,11,phase===4?' |   \\_/  |':' |   __   |');
+    put(5,11,phase>=2?' |   \\_/  |':' |   __   |');
     put(5,12," '--------'");
     put(5,13,'    /||\\');
     put(3,14,step%8<4?' __/ || \\____':' __/ ||  \\___');
@@ -60,51 +117,35 @@ if (!document.querySelector('.ascii-ambient')) {
     put(18,21,'/  [ '+(step%8<4?':::: :: :::':'::: :: ::::')+' ]     [_]        /');
     put(17,22,'+---------------------------------------+');
     put(20,23,'|');put(55,23,'|');
-    if(phase===0){
-      put(9,5,step%12<6?' . ! .':'   !');put(9,6," '---'");
-      type(23,9,'problem: too many open tabs');
-      type(23,11,'idea: keep the good ones',8);
-      box(24,13,12,4,' save ');box(44,13,14,4,' find ');
-      put(37,15,step%10<5?'..>   ':'   ..>');
-      type(23,18,'scope: save / search / share',18);
-    } else if(phase===1){
-      box(23,9,37,3,' search ');put(33,10,'[____________________]');
-      box(23,13,17,5,' links ');box(43,13,17,5,' notes ');
-      for(let y=14;y<17;y++){put(25,y,'- '+'.'.repeat(5+(y%3)*2));put(45,y,'- '+'.'.repeat(8-y%3));}
-      put(27+(Math.floor(step/5)%26),18,'^');
-    } else if(phase===2){
-      const codeLines=['function save(link) {','  const item = parse(link);','  if (!item) return;','  store.add(item);','  render(collection);','}','> build --watch'];
-      codeLines.forEach((l,i)=>type(23,9+i,l,i*5));
-      put(23,18,step>42?'[ok] saved. preview updated.':'[ '+spark+' ] compiling changes');
-    } else if(phase===3){
-      put(23,9,'> test / small screens first');
-      ['save a link','search collection','phone layout','keyboard navigation'].forEach((l,i)=>put(23,11+i,(step>i*10+9?'[ok] ':'[..] ')+l));
-      put(23,17,step<38?'fix -> wrap long titles':'4 / 4 checks passed');
-      put(23,18,step<38?'rebuilding '+spark:'ready to ship _');
-    } else if(phase===4){
-      type(23,9,'> deploy pocket.app');
-      const n=Math.min(20,Math.floor(step/2));
-      put(23,11,'['+'='.repeat(n)+' '.repeat(20-n)+']');
-      put(23,13,step<42?'uploading / '+spark:'[live] pocket.app');
-      const ry=18-Math.floor((step%32)/5);
-      put(53,ry-2,' /\\ ');put(53,ry-1,'|==|');put(53,ry,'/||\\');
-      put(53,ry+1,step%4<2?' :: ':' .. ');
-      put(24,17,step>42?'hello, world.':'one last check...');
+    const screen = (row, value) => put(23, row, value.slice(0, 38));
+    if (phase === 0) {
+      put(9,5,step%12<6?' . ! .':'   !');
+      type(23,9,'> new ' + project.command);
+      project.sketch.forEach((line, index) => {
+        if (step >= 5 + index * 2) screen(12 + index, line);
+      });
+      screen(18, step >= 14 ? 'sketch saved' : 'sketching ' + spark);
+    } else if (phase === 1) {
+      screen(9, '> edit main.js');
+      project.source.forEach((line, index) => type(23, 10 + index, line, index * 3));
+      screen(18, step >= 39 ? '[ok] build ready' : '[ ' + spark + ' ] writing code');
+    } else if (phase === 2) {
+      project.preview(step).forEach((line, index) => screen(9 + index, line));
+      if (step >= 31) screen(18, '[ok] ' + project.result);
     } else {
-      type(23,9,'maya: can I sort my links?');
-      type(23,11,'dev: on it. newest first.',10);
-      type(23,13,'+ sort: newest / oldest',20);
-      put(23,16,step>40?'[ok] feedback -> v0.2':'listening '+spark);
-      put(23,18,step>48?'back to the next good idea.':'small improvements, every day.');
+      type(23, 9, '> ship ' + project.command);
+      const completed = Math.min(step, 16);
+      screen(12, '[' + '='.repeat(completed) + '.'.repeat(16 - completed) + ']');
+      if (step >= 16) {
+        screen(15, '[ live ] ' + project.name + ' v1.0');
+        screen(18, 'next project loading ' + spark);
+      }
     }
-    // A working delivery line: packets travel through the current stage.
-    put(1,25,'idea ---- design ---- code ---- test ---- ship ---- learn');
-    const stops=[2,12,24,34,44,55];
-    put(stops[phase],26,'^');
-    const packet=1+Math.floor((frame%64)*58/64);
-    put(1,28,'.'.repeat(60));put(packet,28,'[+]');
-    const captions=['Notice a problem. Sketch a small solution.','Give the idea a shape you can try.','Make the parts work together.','Break it here. Make it better.','A little launch. A real beginning.','Listen, improve, and build again.'];
-    put(1,30,captions[phase]);
+    put(1,25,'sketch -------- build -------- try -------- ship');
+    put([2,17,32,45][phase],26,'^');
+    put(1,28,'.'.repeat(60));
+    put(1 + Math.floor((still ? 119 : age) * 57 / (projectFrames - 1)),28,'[+]');
+    put(1,30,phase >= 2 ? project.result : project.task + '.');
     return grid.map(row=>row.join('')).join('\n');
   }
   if(builder && 'ResizeObserver' in window){
