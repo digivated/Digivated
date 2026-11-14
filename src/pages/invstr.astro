@@ -1,0 +1,25 @@
+---
+import Platform from '../layouts/Platform.astro';
+---
+<Platform title="Invstr" description="Research stocks, ETFs, futures, and crypto with the Invstr market dashboard." canonicalPath="/invstr">
+  <section class="invstr-page" aria-labelledby="invstr-title">
+    <header class="invstr-heading">
+      <h1 id="invstr-title">Invstr</h1>
+      <a href="https://invstr.app/" target="_blank" rel="noopener noreferrer">Open Invstr in a new tab ↗</a>
+    </header>
+    <iframe
+      title="Invstr market dashboard"
+      src="https://invstr.app/"
+      referrerpolicy="no-referrer"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+    ></iframe>
+  </section>
+</Platform>
+
+<style>
+  .invstr-page { width: min(100% - 2rem, 80rem); margin: 2rem auto 4rem; }
+  .invstr-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .75rem 1.5rem; margin-bottom: 1rem; }
+  .invstr-heading h1 { margin: 0; font-size: clamp(1.75rem, 4vw, 2.75rem); }
+  .invstr-heading a { font-size: .875rem; text-underline-offset: .25em; }
+  iframe { display: block; width: 100%; height: 82vh; height: max(38rem, 82svh); border: 0; background: #08090a; }
+</style>
