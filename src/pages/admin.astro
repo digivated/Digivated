@@ -25,12 +25,12 @@ import UiIcon from '../components/UiIcon.astro';
         <p id="owner-overview-status" role="status" aria-live="polite"></p>
         <div class="owner-metrics">
           <button type="button" data-open-kind="submission" data-open-status="pending" class="owner-metric"><span>Pending launches</span><strong data-overview-number="pending">—</strong><small>View all pending</small></button>
-          <button type="button" data-open-kind="submission" class="owner-metric"><span>Approved projects</span><strong data-overview-number="published">—</strong><small>Approved + featured</small></button>
+          <button type="button" data-open-kind="submission" data-open-status="live" class="owner-metric"><span>Live projects</span><strong data-overview-number="published">—</strong><small>Approved + featured</small></button>
           <button type="button" data-open-kind="submission" data-open-status="featured" class="owner-metric"><span>Featured projects</span><strong data-overview-number="featured">—</strong><small>Manage the spotlight</small></button>
           <a href="/admin/news" class="owner-metric"><span>News to review</span><strong data-overview-number="newsReview">—</strong><small>Open News desk</small></a>
         </div>
         <section aria-labelledby="owner-queue-title">
-          <h3 id="owner-queue-title">Launch queue</h3>
+          <h3 id="owner-queue-title">Launch queue</h3><p class="quiet">Free submissions move from Waiting for badge to Badge verified. The queue publishes verified projects when their launch date arrives.</p>
           <div class="owner-metrics">
             <button type="button" data-open-kind="submission" data-open-stage="review" class="owner-metric"><span>Manual review</span><strong data-overview-number="review">—</strong></button>
             <button type="button" data-open-kind="submission" data-open-stage="badge" class="owner-metric"><span>Waiting for badge</span><strong data-overview-number="badge">—</strong></button>

@@ -30,6 +30,25 @@ test('verification isolates accounts, rejects missing badges and detects revisio
  await assert.rejects(verifyProjectBadge(redis,{id:'owner'},record.id,async()=>({html:''})),/Badge not found/);
  await assert.rejects(verifyProjectBadge(redis,{id:'owner'},record.id,async()=>({html:badgeSnippet(record.id)})),/changed/);
 });
+test('a verified badge saves a queue timestamp and retries preserve verification',async()=>{
+ const scheduledAt=nextFreeLaunch();
+ let stored={...record,launch:{kind:'free',scheduledAt}};
+ const redis=async command=>{
+  if(command[0]==='GET')return JSON.stringify(stored);
+  assert.equal(command[0],'EVAL');
+  stored=JSON.parse(command[8]);
+  return 1;
+ };
+ const owner={id:'owner'};
+ assert.deepEqual(await verifyProjectBadge(redis,owner,record.id,async()=>({html:badgeSnippet(record.id)})),{verified:true,scheduledAt});
+ assert.equal(stored.launch.scheduledTimestamp,Date.parse(scheduledAt));
+ const previous=stored;
+ const noFurtherRead=async()=>assert.fail('A verified project should not need another website fetch');
+ assert.deepEqual(await verifyProjectBadge(redis,owner,record.id,noFurtherRead),{verified:true,scheduledAt});
+ assert.equal(stored,previous);
+ stored={...previous,status:'approved'};
+ assert.equal((await verifyProjectBadge(redis,owner,record.id,noFurtherRead)).pageUrl,'/projects/listing/fixture-project');
+});
 test('only verified, due, pending free projects publish; legacy and paid remain untouched',async()=>{
  let calls=0;const redis=async()=>{calls++;return 1;};
  for(const candidate of [record,{...record,launch:undefined},{...record,status:'archived',launch:{...record.launch,badgeVerifiedAt:'2026-11-13'}},{...record,launch:{...record.launch,kind:'instant',badgeVerifiedAt:'2026-11-13'}}])assert.equal(await publishQueued(redis,candidate,Date.parse('2026-11-24')),null);

@@ -11,7 +11,7 @@ if(state){
  const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  async function boot(){
   const {state:authState,client,session,email}=await accountSession();
-  if(location.hash)history.replaceState(null,'',location.pathname+location.search);
+  if(location.hash&&location.hash!=='#account-submissions')history.replaceState(null,'',location.pathname+location.search);
   if(recovering){
    document.querySelector('h1').textContent='Choose a new password.';
    document.querySelector('.page-intro .lede').textContent='Save a new password to get back to your Digivated account.';
@@ -45,6 +45,40 @@ if(state){
   if(authState==='unavailable'){show('You have a session, but we could not verify your account right now. Please try again shortly.');list.textContent='Your submissions could not be loaded.';return;}
   if(arrivingFromEmail){location.replace('/discover?view=featured&signed_in=1');return;}
   show(`You're logged in as ${email}.`);
+  void loadSubmissions();
+  async function loadSubmissions(){
+   try{
+    const response=await fetch('/api/project-account',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store',signal:AbortSignal.timeout(20000)});
+    const data=await response.json();
+    if(!response.ok){list.textContent=data.error||'Your submissions could not be loaded. Try again shortly.';return;}
+    list.innerHTML=data.submissions.length?data.submissions.map(item=>`<article class="account-item"><h3>${escape(item.name)}</h3><p class="quiet">Submitted ${escape(new Date(item.date).toLocaleDateString())} · <span data-submission-state>${escape(item.awaitingInstantPayment?'Awaiting payment':item.status==='featured'?'Featured':item.status==='approved'?'Published':item.status==='rejected'?'Not selected':item.status==='archived'?'Archived':item.launch?.badgeVerifiedAt?'Scheduled':item.launch?'Awaiting badge':'In review')}</span></p>${['approved','featured'].includes(item.status)?`<p><a class="button" href="${escape(item.pageUrl||'/projects/listing/'+encodeURIComponent(item.id))}">View project and feedback</a></p>`:''}${item.awaitingInstantPayment?`<p><a class="button" href="/submit-project?resume=${encodeURIComponent(item.id)}">Finish publishing</a></p>`:''}${item.launch&&item.status==='pending'?`<div class="account-launch"><p>Launch date: ${escape(new Date(item.launch.scheduledAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))} (UTC). ${item.launch.badgeVerifiedAt?'Badge verified. Your project publishes automatically on or after this date.':'Copy the badge, paste it into the HTML of your public project page, and publish the change. Then verify it here.'}</p>${!item.launch.badgeVerifiedAt?`<label>Website badge HTML<textarea readonly rows="4" aria-label="Website badge for ${escape(item.name)}">${escape(item.launch.badge)}</textarea></label><button type="button" data-copy-badge>Copy badge</button> <button type="button" data-verify-badge="${escape(item.id)}">[ Verify website badge ]</button><p role="status" data-badge-status></p>`:''}</div>`:''}${item.feedback?`<p class="review-feedback"><strong>Review feedback</strong><br>${escape(item.feedback)}</p>`:'<p>There is no review feedback yet.</p>'}</article>`).join(''):'<p>No submissions are linked to this account yet. Browse featured projects or submit with this verified email to track your work here.</p>';
+    if(location.hash==='#account-submissions')list.scrollIntoView({block:'start'});
+    list.querySelectorAll('[data-copy-badge]').forEach(button=>button.onclick=async()=>{
+     const badge=button.parentElement.querySelector('textarea');
+     const message=button.parentElement.querySelector('[data-badge-status]');
+     try{await navigator.clipboard.writeText(badge.value);message.textContent='Badge copied.';}
+     catch{badge.focus();badge.select();message.textContent='Badge selected. Copy the selected HTML.';}
+    });
+    list.querySelectorAll('[data-verify-badge]').forEach(button=>button.onclick=async()=>{
+     const message=button.parentElement.querySelector('[data-badge-status]');button.disabled=true;message.textContent='Checking your website…';
+     try{
+       const {data:{session:current}}=await client.auth.getSession();if(!current)throw Error('Sign in again to verify your badge.');
+       const response=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${current.access_token}`},body:JSON.stringify({action:'verify-badge',id:button.dataset.verifyBadge}),signal:AbortSignal.timeout(30000)});
+       const result=await response.json();if(!response.ok)throw Error(result.error||'Badge could not be verified.');
+       const launch=button.closest('.account-launch');
+       const item=launch.closest('.account-item');
+       item.querySelector('[data-submission-state]').textContent=result.pageUrl?'Published':'Scheduled';
+       launch.querySelector('label').remove();
+       launch.querySelector('[data-copy-badge]').remove();
+       button.hidden=true;
+       const date=new Date(result.scheduledAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'});
+       launch.querySelector('p').textContent=result.pageUrl?'Your project is live.':`Launch date: ${date} (UTC). Your project publishes automatically on or after this date.`;
+       message.textContent='Badge verified.';
+       if(result.pageUrl)message.append(' ',Object.assign(document.createElement('a'),{href:result.pageUrl,textContent:'View project →'}));
+     }catch(error){message.textContent=error.message||'Verification failed. Try again.';}finally{button.disabled=false;}
+    });
+   }catch{list.textContent='Your submissions could not be loaded. Try again shortly.';}
+  }
   const profileForm=document.getElementById('creator-profile-form'),profileStatus=document.getElementById('creator-profile-status'),profileLink=document.getElementById('creator-profile-link');
   const logoInput=document.getElementById('creator-logo-input'),logoPreview=document.getElementById('creator-logo-preview');let profileSaved=false;
   const profileHeaders={Authorization:`Bearer ${session.access_token}`};
@@ -61,22 +95,7 @@ if(state){
    const response=await fetch('/api/return-emails?action=status',{headers,cache:'no-store'});
    if(response.ok){const preference=await response.json();let subscribed=preference.subscribed;weekly.hidden=false;if(!preference.available){toggle.hidden=true;weeklyStatus.textContent='Weekly emails are being set up. Check back soon.';}const update=()=>{toggle.textContent=subscribed?'Stop weekly emails':'Get weekly emails';};update();toggle.onclick=async()=>{toggle.disabled=true;weeklyStatus.textContent='Saving…';try{const result=await fetch(`/api/return-emails?action=${subscribed?'off':'on'}`,{method:'POST',headers:{...headers,'Content-Type':'application/json'},body:'{}'}),data=await result.json();if(!result.ok)throw Error(data.error||'Try again.');subscribed=data.subscribed;update();weeklyStatus.textContent=data.pending?'Check your inbox and confirm your subscription.':subscribed?'Weekly emails are on.':'Weekly emails are off.';}catch(error){weeklyStatus.textContent=error.message;}finally{toggle.disabled=false;}};}
   }catch{}
-  try{
-   const response=await fetch('/api/project-account',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'});
-   const data=await response.json();
-   if(!response.ok){list.textContent=data.error||'Your submissions could not be loaded. Try again shortly.';return;}
-   list.innerHTML=data.submissions.length?data.submissions.map(item=>`<article class="account-item"><h3>${escape(item.name)}</h3><p class="quiet">Submitted ${escape(new Date(item.date).toLocaleDateString())} · ${escape(item.awaitingInstantPayment?'Awaiting payment':item.status==='featured'?'Featured':item.status==='approved'?'Published':item.status==='rejected'?'Not selected':item.status==='archived'?'Archived':item.launch?.badgeVerifiedAt?'Scheduled':item.launch?'Awaiting badge':'In review')}</p>${['approved','featured'].includes(item.status)?`<p><a class="button" href="${escape(item.pageUrl||'/projects/listing/'+encodeURIComponent(item.id))}">View project and feedback</a></p>`:''}${item.awaitingInstantPayment?`<p><a class="button" href="/submit-project?resume=${encodeURIComponent(item.id)}">Finish publishing</a></p>`:''}${item.launch&&item.status==='pending'?`<div class="account-launch"><p>Scheduled launch: ${escape(new Date(item.launch.scheduledAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))} (UTC). ${item.launch.badgeVerifiedAt?'Badge verified. Your project publishes automatically on or after this date.':'Add this text badge to your project website, publish it, then verify below.'}</p>${!item.launch.badgeVerifiedAt?`<label>Website badge<textarea readonly rows="4" aria-label="Website badge for ${escape(item.name)}">${escape(item.launch.badge)}</textarea></label><button type="button" data-verify-badge="${escape(item.id)}">[ Verify website badge ]</button><p role="status" data-badge-status></p>`:''}</div>`:''}${item.feedback?`<p class="review-feedback"><strong>Review feedback</strong><br>${escape(item.feedback)}</p>`:'<p>There is no review feedback yet.</p>'}</article>`).join(''):'<p>No submissions are linked to this account yet. Browse featured projects or submit with this verified email to track your work here.</p>';
-   list.querySelectorAll('[data-verify-badge]').forEach(button=>button.onclick=async()=>{
-    const message=button.parentElement.querySelector('[data-badge-status]');button.disabled=true;message.textContent='Checking your website…';
-    try{
-      const {data:{session:current}}=await client.auth.getSession();if(!current)throw Error('Sign in again to verify your badge.');
-      const response=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${current.access_token}`},body:JSON.stringify({action:'verify-badge',id:button.dataset.verifyBadge}),signal:AbortSignal.timeout(30000)});
-      const result=await response.json();if(!response.ok)throw Error(result.error||'Badge could not be verified.');
-      message.textContent=result.pageUrl?'Badge verified. Your project is live.':'Badge verified. Your scheduled launch is confirmed.';button.hidden=true;
-      if(result.pageUrl)message.append(' ',Object.assign(document.createElement('a'),{href:result.pageUrl,textContent:'View project →'}));
-    }catch(error){message.textContent=error.message||'Verification failed. Try again.';}finally{button.disabled=false;}
-   });
-  }catch{list.textContent='Your submissions could not be loaded. Try again shortly.';}
+
  }
- boot().catch(error=>{if(location.hash)history.replaceState(null,'',location.pathname+location.search);form.hidden=false;show(error.message||'Accounts are temporarily unavailable.');});
+ boot().catch(error=>{if(location.hash&&location.hash!=='#account-submissions')history.replaceState(null,'',location.pathname+location.search);form.hidden=false;show(error.message||'Accounts are temporarily unavailable.');});
 }

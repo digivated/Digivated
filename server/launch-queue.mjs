@@ -19,10 +19,21 @@ export async function publishQueued(redis,record,now=Date.now()){
 export async function verifyProjectBadge(redis,account,id,readSite=readProjectSite){
  if(!validId(id))throw Error('Choose one of your saved projects.');
  const record=JSON.parse(await redis(['GET',`digivated:submission:${id}`]));
- if(record?.accountId!==account.id||record?.launch?.kind!=='free'||record.status!=='pending')throw Error('This project is not awaiting badge verification.');
+ if(record?.accountId!==account.id||record?.launch?.kind!=='free')throw Error('This project is not awaiting badge verification.');
+ const {scheduledAt,badgeVerifiedAt}=record.launch;
+ if(badgeVerifiedAt&&['approved','featured'].includes(record.status)){
+  return {verified:true,scheduledAt,pageUrl:projectPublic(record)?.pageUrl};
+ }
+ if(record.status!=='pending')throw Error('This project is not awaiting badge verification.');
+ const scheduledTimestamp=Date.parse(scheduledAt);
+ if(!Number.isFinite(scheduledTimestamp))throw Error('This project has no valid launch date. Contact Digivated for help.');
+ if(badgeVerifiedAt&&record.launch.scheduledTimestamp===scheduledTimestamp){
+  const project=await publishQueued(redis,record);
+  return {verified:true,scheduledAt,...(project?{pageUrl:project.pageUrl}:{})};
+ }
  const {html}=await readSite(record.url);
  if(!hasProjectBadge(html,id))throw Error('Badge not found. Add the exact snippet to your project’s public page, publish it, then try again.');
- const updated={...record,revision:(record.revision||0)+1,launch:{...record.launch,badgeVerifiedAt:new Date().toISOString()}};
+ const updated={...record,revision:(record.revision||0)+1,launch:{...record.launch,scheduledTimestamp,badgeVerifiedAt:new Date().toISOString()}};
  const saved=await redis(['EVAL',SAVE_EDIT,4,`digivated:submission:${id}`,'digivated:submissions',`digivated:public:submission:${id}`,'digivated:public:submissions',record.revision||0,JSON.stringify(updated),'',Date.parse(record.date),'submission']);
  if(saved!==1)throw Error('The project changed. Refresh Your Projects and try again.');
  const project=await publishQueued(redis,updated);

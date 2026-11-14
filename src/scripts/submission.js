@@ -92,6 +92,8 @@ if (form) {
   };
   imageInput?.addEventListener('change', updateImagePreview);
   const syncIntent = () => {
+    const help = {directory:'free-launch-help',instant:'instant-launch-help','founding-feature':'membership-fields'};
+    intent.setAttribute('aria-describedby', help[intent.value] || help.directory);
     document.getElementById('free-launch-help').hidden = intent.value !== 'directory';
     document.getElementById('instant-launch-help').hidden = intent.value !== 'instant';
     if (membershipFields) membershipFields.hidden = intent.value !== 'founding-feature';
@@ -132,7 +134,7 @@ if (form) {
     if (!accountVerified) { status.innerHTML='Please <a href="/login">sign in or create an account</a> before submitting.'; return; }
     if (!form.reportValidity()) return;
     button.disabled = true;
-    status.textContent = 'Sending your project for review…';
+    status.textContent = intent.value === 'directory' ? 'Saving your project…' : 'Submitting your project…';
     try {
       const values = new FormData(form);
       const payload = Object.fromEntries([...values].filter(([key])=>key!=='image'));
@@ -156,7 +158,7 @@ if (form) {
       window.digivatedTrack?.('project_submit', {project_category:payload.category});
       const membership = intent.value === 'founding-feature';
       form.reset();form.dispatchEvent(new Event('input'));if(session?.user?.email_confirmed_at)form.elements.email.value=session.user.email;syncIntent();updateImagePreview();
-      if(data.launch){status.replaceChildren('Project saved. Add and verify your badge to secure your scheduled launch. ',Object.assign(document.createElement('a'),{href:'/account',textContent:'Continue in Your Projects →'}));status.focus();return;}
+      if(data.launch){status.replaceChildren('Project saved. Copy your badge from Your Projects, add it to your site, then verify it there. ',Object.assign(document.createElement('a'),{href:'/account#account-submissions',textContent:'Get your website badge →'}));status.focus();return;}
       status.textContent = (membership ? 'Your included feature request has been received. It is not public yet. Review is required, and a feature is not guaranteed.' : 'Thank you — your project has been received for review. It is not public yet. Submitting does not guarantee a feature or repost.') + (session ? ' View its status and private feedback in Your Projects.' : ' To track future submissions, sign in before submitting.');
       status.focus();
     } catch (error) {

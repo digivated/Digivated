@@ -37,6 +37,7 @@ function filters() {
   $('owner-stage-control').hidden = state.kind !== 'submission';
   $('owner-stage').value = '';
   const select = $('owner-filter'); select.replaceChildren(new Option('All statuses',''));
+  if (state.kind === 'submission') select.add(new Option('Live (approved or featured)', 'live'));
   statusOptions[state.kind].forEach(status => select.add(new Option(status[0].toUpperCase()+status.slice(1),status)));
   $('owner-create').hidden = state.kind === 'submission' || state.kind === 'comments' || state.kind === 'carousel' || state.kind === 'accounts';
   $('owner-create').textContent = state.kind === 'resource' ? 'New article' : 'New product';
@@ -74,7 +75,10 @@ function selectKind(kind,status='',stage=''){
 function accountStatus(record) { return record.bannedUntil && new Date(record.bannedUntil) > new Date() ? 'blocked' : record.confirmedAt ? 'verified' : 'unverified'; }
 function renderList() {
   const query = $('owner-search').value.trim().toLowerCase(); const status = $('owner-filter').value;
-  const items = state.items.filter(r => (!status || (state.kind === 'accounts' ? accountStatus(r) : r.status) === status) && `${r.title || r.name || ''} ${r.creator || ''} ${r.body || ''} ${r.itemId || ''} ${r.email || ''} ${r.id || ''}`.toLowerCase().includes(query));
+  const matchesStatus = r => !status || (status === 'live'
+    ? ['approved', 'featured'].includes(r.status)
+    : (state.kind === 'accounts' ? accountStatus(r) : r.status) === status);
+  const items = state.items.filter(r => matchesStatus(r) && `${r.title || r.name || ''} ${r.creator || ''} ${r.body || ''} ${r.itemId || ''} ${r.email || ''} ${r.id || ''}`.toLowerCase().includes(query));
   if(state.kind==='submission')items.sort((a,b)=>(b.status==='pending')-(a.status==='pending'));
   const list = $('owner-list'); list.replaceChildren();
   for (const record of items) {

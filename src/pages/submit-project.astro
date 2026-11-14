@@ -4,11 +4,11 @@ import { projectPricingOptions } from '../lib/project-pricing.mjs';
 import { projectCategories } from '../data/community.mjs';
 import '../styles/submission-flow.css';
 ---
-<Platform title="Submit Your Project" description="Share what you built. Digivated reviews projects before they appear in the directory.">
+<Platform title="Submit Your Project" description="Share what you built. Choose a free launch with a website badge, Instant Publishing, or a Membership Spotlight.">
   <header class="page-intro submission-intro">
 
     <h1>Submit a project.</h1>
-    <p class="lede">Add your details and choose how to launch.</p>
+    <p class="lede">Add your details and choose how to launch. Free launches require a badge on your website.</p>
   </header>
 
   <div class="submission-layout submission-workspace">
@@ -51,13 +51,13 @@ import '../styles/submission-flow.css';
       <fieldset class="submission-intent">
         <legend><span class="submission-step-label">03 · Launch options</span>Choose how to launch</legend>
         <label>Launch option
-          <select name="submissionType" id="submission-type">
+          <select name="submissionType" id="submission-type" aria-describedby="free-launch-help">
             <option value="directory">Free</option>
             <option value="instant" id="submission-instant-option" hidden disabled>Instant Publishing ($5)</option>
             <option value="founding-feature">Membership Spotlight</option>
           </select>
         </label>
-        <p id="free-launch-help" class="field-help">Add the Digivated badge to your site and verify it in Your Projects to schedule your free launch. <span id="free-launch-date"></span></p>
+        <p id="free-launch-help" class="field-help">After saving, copy your badge from Your Projects. Paste it into your public project page as HTML, publish the change, then click Verify website badge in Your Projects. Your listing can publish once the badge is verified and the launch date arrives. <span id="free-launch-date"></span></p>
         <p id="instant-launch-help" class="field-help" hidden>Pay $5 once with your account email, then return to verify payment and publish.</p>
         <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/membership#member-sign-in">membership page</a> first to request your included spotlight. We review each request.</p></div>
       </fieldset>

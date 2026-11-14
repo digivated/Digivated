@@ -111,7 +111,7 @@ export function makeAdminHandler(deps = {}) {
         const offset = Number(url.searchParams.get('offset') || 0);
         if (!Number.isInteger(offset) || offset < 0 || offset > 100000) throw new AdminError(400, 'Invalid page.');
         const status=url.searchParams.get('status')||'';
-        if(status&&!(kind==='submission'?['pending','approved','featured','rejected','archived']:['draft','published','archived']).includes(status))throw new AdminError(400,'Invalid status.');
+        if(status&&!(kind==='submission'?['pending','approved','featured','rejected','archived','live']:['draft','published','archived']).includes(status))throw new AdminError(400,'Invalid status.');
         const stage = url.searchParams.get('stage') || '';
         if (stage && (kind !== 'submission' || !launchStages.includes(stage))) throw new AdminError(400, 'Invalid launch stage.');
         return send(200, await listRecords(redis, kind, offset, status, stage));
