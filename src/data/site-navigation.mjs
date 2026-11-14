@@ -12,6 +12,7 @@ export const primaryLinks = [
   ['/creators', 'Creator Hub'],
   ['/news', 'News'],
   ['/rankings', 'Rankings'],
+  ['/invstr', 'Market Scanner'],
 ];
 export const menuLinks = [
   ...primaryLinks,
