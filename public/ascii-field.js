@@ -90,7 +90,6 @@ if (!document.querySelector('.ascii-ambient')) {
     };
     const type = (x,y,text,delay=0) => put(x,y,text.slice(0,Math.max(0,Math.floor((step-delay)*1.7))));
     const spark = ['.','+','*','+'][Math.floor(age / 3) % 4];
-    put(0,0,'[ independent studio ]');
     put(47,0,workshopStages[phase].padStart(14));
     put(0,2,project.name + ' / ' + project.task);
     box(20,4,43,16,' ' + project.name + ' / workbench ');
