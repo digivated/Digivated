@@ -704,3 +704,12 @@ html#digivated-root[data-ascii] .submission-form .submission-pricing-options lab
   cursor: progress;
   opacity: .65;
 }
+
+/* Keep the notification bell and menu reachable on narrow phones. */
+@layer ascii {
+ @media (max-width:480px) {
+  html#digivated-root[data-ascii] .compact-site-header .platform-brand > span:not(.brand-spinner) {display:none!important;}
+  html#digivated-root[data-ascii] .compact-site-header .header-inner {padding-inline:12px!important;gap:8px!important;}
+  html#digivated-root[data-ascii] .compact-site-header .compact-header-actions {gap:4px!important;}
+ }
+}
