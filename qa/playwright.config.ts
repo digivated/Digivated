@@ -16,6 +16,7 @@ export default defineConfig({
     headless: true,
     reducedMotion: 'reduce',
     userAgent: 'Digivated-monitor-bot',
+    ...(process.env.QA_STORAGE_STATE ? { storageState: process.env.QA_STORAGE_STATE } : {}),
     extraHTTPHeaders: bypass ? { 'x-vercel-protection-bypass': bypass } : {},
     launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
       ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE }
