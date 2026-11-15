@@ -1,4 +1,4 @@
-import { notifyProjectApproval } from './notifications.mjs';
+import { defaultNotificationPreferences, notificationPreferencesKey, notifyProjectApproval } from './notifications.mjs';
 import { badgeSnippet, nextFreeLaunch, verifyProjectBadge } from './launch-queue.mjs';
 import { readProjectSite, siteDetails } from './project-site.mjs';
 // Isolated from purchase handlers, sessions, rate-limit rules, and environment names.
@@ -135,7 +135,7 @@ export function redisClient(env=process.env,fetcher=fetch) {
   return async command=>{const response=await fetcher(url,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(command),signal:AbortSignal.timeout(8000),redirect:'error'});if(!response.ok)throw new Error('Storage unavailable');const result=await response.json();if(result.error)throw new Error('Storage unavailable');return result.result;};
 }
 const ONE_ACTIVE_SUBMISSION = `
-local accountKey=KEYS[#KEYS]
+local accountKey=KEYS[#KEYS-(ARGV[4] and 1 or 0)]
 local incoming=cjson.decode(ARGV[1])
 for _,id in ipairs(redis.call('ZRANGE',accountKey,0,-1)) do
  local raw=redis.call('GET','digivated:submission:'..id)
@@ -146,8 +146,25 @@ for _,id in ipairs(redis.call('ZRANGE',accountKey,0,-1)) do
  end
 end
 `;
-const SAVE = ONE_ACTIVE_SUBMISSION + `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],3600) end; if n>5 then return 0 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); redis.call('ZADD',KEYS[4],ARGV[2],ARGV[3]); return 1`;
-const SAVE_MEMBER_FEATURE = ONE_ACTIVE_SUBMISSION + `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],3600) end; if n>5 then return 0 end; if redis.call('SET',KEYS[4],ARGV[3],'NX') then redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); redis.call('ZADD',KEYS[5],ARGV[2],ARGV[3]); return 1 end; return -1`;
+// Commit the explicit in-app choice alongside the submission. Older clients
+// omit it. Turning the master switch off preserves individual preferences.
+const SAVE_ACTIVITY_CHOICE = `
+if ARGV[4] then
+ local preferences=cjson.decode(ARGV[4])
+ if not preferences.enabled then
+  local raw=redis.call('GET',KEYS[#KEYS])
+  local ok,stored=pcall(cjson.decode,raw or '')
+  if ok and type(stored)=='table' then
+   for key,_ in pairs(preferences) do
+    if key~='enabled' and type(stored[key])=='boolean' then preferences[key]=stored[key] end
+   end
+  end
+ end
+ redis.call('SET',KEYS[#KEYS],cjson.encode(preferences))
+end
+return 1`;
+const SAVE = ONE_ACTIVE_SUBMISSION + `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],3600) end; if n>5 then return 0 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); redis.call('ZADD',KEYS[4],ARGV[2],ARGV[3]); ` + SAVE_ACTIVITY_CHOICE;
+const SAVE_MEMBER_FEATURE = ONE_ACTIVE_SUBMISSION + `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],3600) end; if n>5 then return 0 end; if not redis.call('SET',KEYS[4],ARGV[3],'NX') then return -1 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); redis.call('ZADD',KEYS[5],ARGV[2],ARGV[3]); ` + SAVE_ACTIVITY_CHOICE;
 const MEMBER_FEATURE_MESSAGE = 'Sign in with your Founding Membership before using the included feature.';
 const MEMBER_FEATURE_USED = 'This membership already includes one featured submission. It stays in review, and a feature is not guaranteed.';
 
@@ -216,13 +233,22 @@ export function makeSubmissionHandler(deps={}) {
       const id=randomUUID();const now=new Date();
       const stored={...record,...(!record.promotion?{launch:{kind:'free',version:1,scheduledAt:nextFreeLaunch(now.getTime()),scheduledTimestamp:Date.parse(nextFreeLaunch(now.getTime()))}}:{}),...(account?{accountId:account.id}:{}),id,date:now.toISOString(),consentedAt:now.toISOString(),...(record.emailOutreachConsent?{emailOutreachConsentedAt:now.toISOString(),emailOutreachConsentVersion:2}:{})};
       const accountKey=accountIndex(record.email,env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only');
-      const saved=record.promotion?.included==='founding-membership'
-        ? await redis(['EVAL',SAVE_MEMBER_FEATURE,5,`digivated:limit:${hash}`,`digivated:submission:${id}`,'digivated:submissions',`digivated:founding-feature:${record.promotion.memberSaleId}`,accountKey,JSON.stringify(stored),now.getTime(),id])
-        : await redis(['EVAL',SAVE,4,`digivated:limit:${hash}`,`digivated:submission:${id}`,'digivated:submissions',accountKey,JSON.stringify(stored),now.getTime(),id]);
+      const activityNotifications = body.activityNotifications;
+      if (activityNotifications !== undefined && typeof activityNotifications !== 'boolean') throw new SubmissionError(400, 'Choose a valid activity notification setting.');
+      const isMemberFeature = record.promotion?.included === 'founding-membership';
+      const keys = [`digivated:limit:${hash}`, `digivated:submission:${id}`, 'digivated:submissions'];
+      if (isMemberFeature) keys.push(`digivated:founding-feature:${record.promotion.memberSaleId}`);
+      keys.push(accountKey);
+      const args = [JSON.stringify(stored), now.getTime(), id];
+      if (typeof activityNotifications === 'boolean') {
+        keys.push(notificationPreferencesKey(account.id));
+        args.push(JSON.stringify({...defaultNotificationPreferences,enabled:activityNotifications}));
+      }
+      const saved = await redis(['EVAL', isMemberFeature ? SAVE_MEMBER_FEATURE : SAVE, keys.length, ...keys, ...args]);
       if(saved===-2)throw new SubmissionError(409,'You already have a project live or in review. Check Your Projects for its status.');
       if(saved===-1)throw new SubmissionError(409,MEMBER_FEATURE_USED);
       if(saved!==1){res.setHeader('Retry-After','3600');throw new SubmissionError(429,'You’ve reached the submission limit. Please try again in an hour.');}
-      send(201,{ok:true,id,status:'pending',...(stored.launch?{launch:{...stored.launch,badge:badgeSnippet(id)}}:{})});
+      send(201,{ok:true,id,status:'pending',...(typeof activityNotifications === 'boolean' ? {activityNotifications} : {}),...(stored.launch?{launch:{...stored.launch,badge:badgeSnippet(id)}}:{})});
     }catch(error){send(error instanceof SubmissionError?error.status:503,{error:error instanceof SubmissionError?error.message:'Submissions are temporarily unavailable. Your details have not been cleared; please try again later.'});}
   };
 }
