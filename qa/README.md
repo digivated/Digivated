@@ -12,7 +12,7 @@ npx playwright test --config=qa/playwright.config.ts
 
 Set `QA_BASE_URL` to check a specific deployment. For protected previews, the workflow accepts an existing `VERCEL_AUTOMATION_BYPASS_SECRET`; a Vercel sign-in page fails the test. The monitor never prints or stores the secret. Do not turn off Vercel protection for this test.
 
-The first protected-preview run for [PR #111](https://github.com/digivated/Digivated/pull/111) exposed [issue #112](https://github.com/digivated/Digivated/issues/112): the preview project API returns an empty directory, while production returns public listings. Preview checks must stay blocking until this is resolved or a reviewed, safe preview fixture is provided.
+The Preview Redis configuration gap in [issue #112](https://github.com/digivated/Digivated/issues/112) was corrected and verified after approval. Preview now returns 54 public projects. The full release gate remains blocked by [issue #113](https://github.com/digivated/Digivated/issues/113): Preview has no membership checkout entry. Payment configuration was not changed. GitHub also rejected the QA mode variable update with HTTP 403, so scheduled monitoring remains inactive and the live STOP path has not been verified.
 
 Screenshots are stored in `qa/monitor.spec.ts-snapshots/`. Only update them after checking an intentional visual change, using `npx playwright test --config=qa/playwright.config.ts --update-snapshots`. The run artifact includes the actual screenshots and is retained for seven days. The baseline stays in Git.
 
