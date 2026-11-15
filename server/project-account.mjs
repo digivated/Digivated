@@ -29,6 +29,20 @@ async function indexLegacySubmissions(redis, account, key) {
   await redis(['SET',`${key}:legacy-scanned`,'1']);
 }
 
+// Keep notifications and Your Projects on the same ownership rules.
+export async function ownedSubmissions(redis, account, secret) {
+  const key = accountIndex(account.email, secret);
+  if (account.mailboxVerified !== false) await indexLegacySubmissions(redis, account, key);
+  const ids = await redis(['ZREVRANGE', key, 0, 99]);
+  const rows = ids.length ? await redis(['MGET', ...ids.map(id => `digivated:submission:${id}`)]) : [];
+  return rows.flatMap(raw => {
+    let row;
+    try { row = JSON.parse(raw); } catch { return []; }
+    if (row?.email?.trim().toLowerCase() !== account.email) return [];
+    return row.accountId === account.id || (account.mailboxVerified !== false && !row.accountId) ? [row] : [];
+  });
+}
+
 export async function verifiedAccount(req, env, fetcher = fetch) {
   const cfg = memberConfig(env);
   if (!cfg) return null;
@@ -85,11 +99,8 @@ export function makeProjectAccountHandler(deps={}) {
       if(accountStatus)return send(200,{email:account.email});
       if(!env.SUBMISSIONS_REDIS_REST_TOKEN)return send(503,{error:'Your submissions could not be loaded. Try again shortly.'});
       const redis=deps.redis||redisClient(env);
-      const key=accountIndex(account.email,env.SUBMISSIONS_REDIS_REST_TOKEN);
-      if(account.mailboxVerified!==false)await indexLegacySubmissions(redis,account,key);
-      const ids=await redis(['ZREVRANGE',key,0,99]);
-      const rows=ids.length?await redis(['MGET',...ids.map(id=>`digivated:submission:${id}`)]):[];
-      const submissions=rows.filter(Boolean).map(raw=>JSON.parse(raw)).filter(row=>row.email?.trim().toLowerCase()===account.email&&(row.accountId===account.id||account.mailboxVerified!==false&&!row.accountId)).map(row=>({id:row.id,name:row.name,url:row.url,date:row.date,status:row.status,...(projectPublic(row)?{pageUrl:projectPublic(row).pageUrl}:{}),...(row.launch?.kind==='free'&&row.accountId===account.id?{launch:{...row.launch,badge:badgeSnippet(row.id)}}:{}),feedback:row.reviewFeedback||'',reviewedAt:row.reviewedAt||null,...(row.accountId===account.id && row.status==='pending' && row.promotion?.included==='instant-launch' && !row.promotion.verified ? { awaitingInstantPayment:true } : {})}));
+      const rows = await ownedSubmissions(redis, account, env.SUBMISSIONS_REDIS_REST_TOKEN);
+      const submissions = rows.map(row=>({id:row.id,name:row.name,url:row.url,date:row.date,status:row.status,...(projectPublic(row)?{pageUrl:projectPublic(row).pageUrl}:{}),...(row.launch?.kind==='free'&&row.accountId===account.id?{launch:{...row.launch,badge:badgeSnippet(row.id)}}:{}),feedback:row.reviewFeedback||'',reviewedAt:row.reviewedAt||null,...(row.accountId===account.id && row.status==='pending' && row.promotion?.included==='instant-launch' && !row.promotion.verified ? { awaitingInstantPayment:true } : {})}));
       return send(200,{email:account.email,submissions,mailboxVerified:account.mailboxVerified!==false});
     } catch {return send(503,{error:'Your submissions could not be loaded. Try again shortly.'});}
   };

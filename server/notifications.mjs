@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { projectPublic, validId } from './admin-store.mjs';
 
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 const TYPES = ['reply', 'follow', 'message', 'feedback', 'approved'];
@@ -113,6 +114,13 @@ export async function clearNotifications(redis, userId) {
 // The marker and feed write commit together, so concurrent retries cannot duplicate it.
 export const APPROVAL_NOTICE = `
 if redis.call('EXISTS',KEYS[1]) == 1 then return 0 end
+-- Respect notices already written by the previous revision-based implementation.
+for revision=0,tonumber(ARGV[5]) do
+ if redis.call('EXISTS',ARGV[6]..revision) == 1 then
+  redis.call('SET',KEYS[1],'1')
+  return 0
+ end
+end
 redis.call('SET',KEYS[2],ARGV[1],'EX',ARGV[4])
 redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3])
 redis.call('SADD',KEYS[4],ARGV[3])
@@ -127,16 +135,43 @@ if excess>0 then
   redis.call('DEL','digivated:notifications:item:'..old)
  end
 end
-redis.call('SET',KEYS[1],'1','EX',ARGV[4])
+redis.call('SET',KEYS[1],'1')
 return 1`;
+function publicApproval(record) {
+  if (!validId(record?.id)) return null;
+  return projectPublic(record);
+}
+
+async function writeApproval(redis, userId, record, project, publishedAt) {
+  if (!UUID.test(userId || '')) return false;
+  const id = randomUUID();
+  const item = { id, recipientId:userId, type:'approved', title:TITLES.approved,
+    href:project.pageUrl, createdAt:new Date(publishedAt).toISOString() };
+  const marker = `digivated:notifications:approval:${userId}:${record.id}`;
+  return await redis(['EVAL',APPROVAL_NOTICE,4,marker,
+    itemKey(id),indexKey(userId),unreadKey(userId),
+    JSON.stringify(item),publishedAt,id,RETENTION_SECONDS,
+    Math.min(Number.isSafeInteger(record.revision) ? record.revision : 0, 1000),`${marker}:`]) === 1;
+}
+
 export async function notifyProjectApproval(redis, previous, record) {
-  if (!UUID.test(record?.accountId || '') || !/^[a-zA-Z0-9_-]{1,100}$/.test(record?.id || '') ||
-      !['approved','featured'].includes(record.status) || ['approved','featured'].includes(previous?.status)) return false;
-  const id = randomUUID(), now = Date.now();
-  const item = { id, recipientId:record.accountId, type:'approved', title:TITLES.approved,
-    href:'/account', createdAt:new Date(now).toISOString() };
-  return await redis(['EVAL',APPROVAL_NOTICE,4,
-    `digivated:notifications:approval:${record.accountId}:${record.id}:${record.revision || 0}`,
-    itemKey(id),indexKey(record.accountId),unreadKey(record.accountId),
-    JSON.stringify(item),now,id,RETENTION_SECONDS]) === 1;
+  const project = publicApproval(record);
+  if (!project || publicApproval(previous)) return false;
+  return writeApproval(redis, record.accountId, record, project, Date.now());
+}
+
+// Rebuild missed recent events from the same live projects the owner can see
+// in Your Projects. Older approvals remain visible as status, without new alerts.
+export async function reconcileProjectApprovals(redis, userId, submissions, now = Date.now()) {
+  const approvals = [];
+  for (const record of submissions) {
+    const project = publicApproval(record);
+    if (!project) continue;
+    approvals.push({ name:project.name, href:project.pageUrl });
+    const publishedAt = Date.parse(record.publishedAt || record.reviewedAt || record.date);
+    if (publishedAt > now - RETENTION_SECONDS * 1000 && publishedAt <= now) {
+      await writeApproval(redis, userId, record, project, publishedAt);
+    }
+  }
+  return approvals;
 }

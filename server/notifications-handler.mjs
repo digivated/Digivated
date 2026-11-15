@@ -1,7 +1,7 @@
 import { redisClient } from './submissions.mjs';
-import { verifiedAccount } from './project-account.mjs';
+import { ownedSubmissions, verifiedAccount } from './project-account.mjs';
 import {
-  notificationSummary, listNotifications, saveNotificationPreferences,
+  notificationSummary, listNotifications, saveNotificationPreferences, reconcileProjectApprovals,
   markNotificationRead, markAllNotificationsRead, clearNotifications,
 } from './notifications.mjs';
 
@@ -22,7 +22,15 @@ export function makeNotificationsHandler(deps = {}) {
       const action = new URL(req.url, 'https://digivated.com').searchParams.get('action') || 'list';
       if (req.method === 'GET') {
         if (action === 'summary') return send(200, await notificationSummary(redis, account.id));
-        if (action === 'list') return send(200, await listNotifications(redis, account.id));
+        if (action === 'list') {
+          let approvals = null;
+          try {
+            const submissions = account.email && env.SUBMISSIONS_REDIS_REST_TOKEN
+              ? await ownedSubmissions(redis, account, env.SUBMISSIONS_REDIS_REST_TOKEN) : [];
+            approvals = await reconcileProjectApprovals(redis, account.id, submissions);
+          } catch { console.warn('Project approval history could not be loaded.'); }
+          return send(200, { ...await listNotifications(redis, account.id), approvals });
+        }
         return send(400, {error:'Unknown notification action.'});
       }
       if (req.method !== 'POST') return send(405, {error:'Method not allowed.'});
