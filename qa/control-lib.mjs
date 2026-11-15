@@ -8,39 +8,36 @@ export async function setQaMode({ mode, repo, token, fetcher = fetch, apiRoot = 
     const response = await fetcher(base + path, { method, headers: {
       ...headers, ...(body ? { 'Content-Type': 'application/json' } : {}),
     }, ...(body ? { body: JSON.stringify(body) } : {}) });
+    // A run can finish between listing it and canceling it.
+    if (method === 'POST' && path.endsWith('/cancel') && response.status === 409) return null;
     if (!response.ok) throw new Error(`QA control rejected ${method} ${path}: HTTP ${response.status}`);
     return response.status === 204 ? null : response.json();
   }
-  async function setVariable(value) {
-    const path = '/actions/variables/DIGIVATED_QA_MODE';
-    const body = { name: 'DIGIVATED_QA_MODE', value };
-    const response = await fetcher(base + path, { method: 'PATCH', headers: {
-      ...headers, 'Content-Type': 'application/json',
-    }, body: JSON.stringify(body) });
-    if (response.status === 404) return api('/actions/variables', 'POST', body);
-    if (!response.ok) throw new Error(`QA control could not set its repository gate: HTTP ${response.status}`);
-  }
   const workflow = '/actions/workflows/qa-monitor.yml';
   if (mode === 'RESUME') {
-    // Enable only after the mode is active; a failed call leaves the monitor off.
-    await setVariable('ACTIVE');
+    // Workflow state is the gate: GITHUB_TOKEN has actions:write, but cannot
+    // edit repository variables. Keep this control independent of those settings.
     await api(`${workflow}/enable`, 'PUT');
     const state = await api(workflow);
     if (state.state !== 'active') throw new Error('Monitor did not become active.');
     return { mode: 'ACTIVE', canceled: 0 };
   }
-  // Disable the schedule first. Cancel any run already in progress, then set
-  // the repository gate so even an already queued event cannot start a job.
+  // Disable new events first, then cancel runs already in progress or queued.
   await api(`${workflow}/disable`, 'PUT');
   let canceled = 0;
   for (const status of ['in_progress', 'queued']) {
-    const runs = await api(`${workflow}/runs?status=${status}&per_page=100`);
-    for (const run of runs.workflow_runs || []) {
-      await api(`/actions/runs/${run.id}/cancel`, 'POST');
+    // Collect every page before cancellation changes the result list.
+    const ids = [];
+    for (let page = 1; ; page++) {
+      const runs = await api(`${workflow}/runs?status=${status}&per_page=100&page=${page}`);
+      ids.push(...(runs.workflow_runs || []).map(run => run.id));
+      if ((runs.workflow_runs || []).length < 100) break;
+    }
+    for (const id of ids) {
+      await api(`/actions/runs/${id}/cancel`, 'POST');
       canceled++;
     }
   }
-  await setVariable(mode);
   const state = await api(workflow);
   if (state.state === 'active') throw new Error('Monitor is still active.');
   return { mode, canceled };

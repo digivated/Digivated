@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   issues: write
 
 concurrency:
@@ -17,34 +18,45 @@ concurrency:
 jobs:
   public-checks:
     if: >-
-      vars.DIGIVATED_QA_MODE == 'ACTIVE' &&
       (github.event_name != 'deployment_status' ||
        (github.event.deployment_status.state == 'success' &&
         (github.event.deployment.environment == 'Preview' || github.event.deployment.environment == 'Production')))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Check the live monitor switch
+        id: switch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          state=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/qa-monitor.yml" --jq '.state')
+          echo "active=$([ "$state" = active ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
+        if: steps.switch.outputs.active == 'true'
       - uses: actions/setup-node@v4
+        if: steps.switch.outputs.active == 'true'
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - if: steps.switch.outputs.active == 'true'
+        run: npm ci
+      - if: steps.switch.outputs.active == 'true'
+        run: npx playwright install --with-deps chromium
       - name: Check public pages, flows, assets, and screenshots
+        if: steps.switch.outputs.active == 'true'
         id: browser
         env:
           QA_BASE_URL: ${{ github.event_name == 'deployment_status' && github.event.deployment.environment == 'Preview' && github.event.deployment_status.environment_url || 'https://digivated.com' }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: npx playwright test --config=qa/playwright.config.ts
       - name: Open deduplicated issues for repeated production failures
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.deployment.environment == 'Production')
+        if: always() && steps.browser.outcome == 'failure' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.deployment.environment == 'Production')
         env:
           GITHUB_TOKEN: ${{ github.token }}
           QA_ISSUES_ENABLED: 'true'
         run: node qa/triage.mjs
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.switch.outputs.active == 'true'
         with:
           name: digivated-qa-evidence
           path: |
