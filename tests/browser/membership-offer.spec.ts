@@ -42,3 +42,15 @@ test('membership sign-in preserves the verified member spotlight flow',async({pa
  await expect(page.locator('#founding-access-form')).toBeHidden();
  await expect(page.locator('#membership-verified a')).toHaveAttribute('href','/submit-project?membership=1#project-form');
 });
+
+test('checkout readiness preserves same-origin preview access cookies', async ({ page, context }) => {
+ await context.addCookies([{ name: 'preview-access', value: 'authorized', url: base }]);
+ await page.route('**/api/membership-checkout', route => {
+  const authorized = /preview-access=authorized/.test(route.request().headers().cookie || '');
+  return route.fulfill({ json: authorized
+   ? { ready:true, checkoutUrl:'https://digivated.gumroad.com/l/founding-member-pass', priceUSD:5, billing:'one-time' }
+   : { ready:false } });
+ });
+ await page.goto(base+'/membership');
+ await expect(page.getByRole('link', { name: /Get membership · \$5 once/ })).toBeVisible();
+});

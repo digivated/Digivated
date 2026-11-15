@@ -3,7 +3,7 @@ import { membership } from '../data/membership.mjs';
 const button = document.querySelector('button.membership-checkout');
 if (button) (async () => {
   try {
-    const response = await fetch('/api/membership-checkout', {credentials:'omit',cache:'no-store',signal:AbortSignal.timeout(8000)});
+    const response = await fetch('/api/membership-checkout', {credentials:'same-origin',cache:'no-store',signal:AbortSignal.timeout(8000)});
     const state = response.ok ? await response.json() : null;
     if (!state?.ready || state.priceUSD !== 5 || state.billing !== 'one-time' || state.checkoutUrl !== membership.checkoutUrl) {
       if (button.isConnected) button.textContent = 'Checkout unavailable';
