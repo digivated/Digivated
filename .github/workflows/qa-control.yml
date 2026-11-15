@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       command:
-        description: STOP or PAUSE immediately disables and cancels QA runs; RESUME reactivates them.
+        description: STOP or PAUSE closes the QA gate and cancels runs; RESUME reopens it.
         required: true
         type: choice
         options:
@@ -14,7 +14,11 @@ on:
 
 permissions:
   actions: write
-  contents: read
+  contents: write
+
+concurrency:
+  group: digivated-qa-control
+  cancel-in-progress: false
 
 jobs:
   control:

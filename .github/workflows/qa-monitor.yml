@@ -24,13 +24,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Check the live monitor switch
+      - name: Check the live monitor gate
         id: switch
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          state=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/qa-monitor.yml" --jq '.state')
-          echo "active=$([ "$state" = active ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          mode=$(gh api "repos/$GITHUB_REPOSITORY/contents/qa/mode.json?ref=main" --jq '.content' | base64 --decode | jq -r '.mode')
+          echo "active=$([ "$mode" = ACTIVE ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
         if: steps.switch.outputs.active == 'true'
       - uses: actions/setup-node@v4

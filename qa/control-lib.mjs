@@ -14,19 +14,26 @@ export async function setQaMode({ mode, repo, token, fetcher = fetch, apiRoot = 
     return response.status === 204 ? null : response.json();
   }
   const workflow = '/actions/workflows/qa-monitor.yml';
+  const gate = '/contents/qa/mode.json';
+  const value = mode === 'RESUME' ? 'ACTIVE' : mode;
+  const previous = await api(`${gate}?ref=main`);
+  await api(gate, 'PUT', {
+    message: `QA monitor: ${value}`,
+    content: Buffer.from(JSON.stringify({ mode: value }) + '\n').toString('base64'),
+    sha: previous.sha, branch: 'main',
+  });
+  const saved = await api(`${gate}?ref=main`);
+  if (JSON.parse(Buffer.from(saved.content, 'base64').toString()).mode !== value) {
+    throw new Error('QA mode did not persist.');
+  }
   if (mode === 'RESUME') {
-    // Workflow state is the gate: GITHUB_TOKEN has actions:write, but cannot
-    // edit repository variables. Keep this control independent of those settings.
-    await api(`${workflow}/enable`, 'PUT');
     const state = await api(workflow);
-    if (state.state !== 'active') throw new Error('Monitor did not become active.');
+    if (state.state !== 'active') throw new Error('Enable the QA monitor workflow in GitHub before resuming.');
     return { mode: 'ACTIVE', canceled: 0 };
   }
-  // Disable new events first, then cancel runs already in progress or queued.
-  await api(`${workflow}/disable`, 'PUT');
+  // Persist the stop gate before canceling runs already in progress or queued.
   let canceled = 0;
   for (const status of ['in_progress', 'queued']) {
-    // Collect every page before cancellation changes the result list.
     const ids = [];
     for (let page = 1; ; page++) {
       const runs = await api(`${workflow}/runs?status=${status}&per_page=100&page=${page}`);
@@ -38,7 +45,5 @@ export async function setQaMode({ mode, repo, token, fetcher = fetch, apiRoot = 
       canceled++;
     }
   }
-  const state = await api(workflow);
-  if (state.state === 'active') throw new Error('Monitor is still active.');
   return { mode, canceled };
 }
