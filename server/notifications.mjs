@@ -11,7 +11,7 @@ const TITLES = {
   feedback: 'Your project received feedback',
 };
 const RETENTION_SECONDS = 90 * 86400;
-const preferencesKey = id => `digivated:notifications:preferences:${id}`;
+export const notificationPreferencesKey = id => `digivated:notifications:preferences:${id}`;
 const indexKey = id => `digivated:notifications:index:${id}`;
 const unreadKey = id => `digivated:notifications:unread:${id}`;
 const itemKey = id => `digivated:notifications:item:${id}`;
@@ -28,7 +28,7 @@ export const defaultNotificationPreferences = Object.freeze({ enabled: false, re
 
 export async function getNotificationPreferences(redis, userId) {
   if (!UUID.test(userId)) throw new Error('Invalid account');
-  let saved; try { saved = JSON.parse(await redis(['GET', preferencesKey(userId)])); } catch {}
+  let saved; try { saved = JSON.parse(await redis(['GET', notificationPreferencesKey(userId)])); } catch {}
   return Object.fromEntries(Object.entries(defaultNotificationPreferences).map(([key, fallback]) => [key, typeof saved?.[key] === 'boolean' ? saved[key] : fallback]));
 }
 
@@ -37,7 +37,7 @@ export async function saveNotificationPreferences(redis, userId, input) {
   const keys = Object.keys(defaultNotificationPreferences);
   if (Object.keys(input).some(key => !keys.includes(key)) || keys.some(key => typeof input[key] !== 'boolean')) throw new Error('Invalid preferences');
   const preferences = Object.fromEntries(keys.map(key => [key, input[key]]));
-  await redis(['SET', preferencesKey(userId), JSON.stringify(preferences)]);
+  await redis(['SET', notificationPreferencesKey(userId), JSON.stringify(preferences)]);
   return preferences;
 }
 

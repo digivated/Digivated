@@ -2,6 +2,7 @@ import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { verifiedAccount } from './project-account.mjs';
 import { redisClient } from './submissions.mjs';
+import { getNotificationPreferences } from './notifications.mjs';
 
 const MEMBERS='digivated:weekly:members';
 const preference=id=>`digivated:weekly:preference:${id}`;
@@ -70,11 +71,15 @@ const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({
 })[char]);
 const directoryUrl = 'https://digivated.com/discover';
 
-function digestContent(projects, unsubscribe, address) {
+const notificationsUrl = 'https://digivated.com/notifications';
+const announcementIssue = '2026-11-15';
+const announcementTitle = 'What’s new on Digivated';
+const announcementCopy = 'Hey, it’s Langston. When your project goes live, you’ll now see its approval in Notifications, with a link straight to your listing. You can also choose which replies, follows, messages, and project feedback you want to hear about. Thanks for sharing what you’re building.';
+function digestContent(projects, unsubscribe, address, announce = false) {
  const link = project => `https://digivated.com/projects/listing/${encodeURIComponent(project.id)}`;
  const text = [
-  'New this week on Digivated',
-  'A short list of indie projects that went live this week.',
+  ...(announce ? [announcementTitle, announcementCopy, `Open Notifications: ${notificationsUrl}`] : []),
+  ...(projects.length ? ['New this week on Digivated', 'A short list of indie projects that went live this week.'] : []),
   ...projects.map(project => `${project.name}\n${link(project)}`),
   `Browse all projects: ${directoryUrl}`,
   `Unsubscribe: ${unsubscribe}\n\nDigivated\n${address}`
@@ -82,6 +87,13 @@ function digestContent(projects, unsubscribe, address) {
  const items = projects.map(project =>
   `<li style="margin:0 0 14px"><a style="color:#f1f1f1;text-decoration:underline;overflow-wrap:anywhere" href="${link(project)}">${escapeHtml(project.name)}</a></li>`
  ).join('');
+ const announcement = announce ? `<h1 style="margin:0 0 12px;color:#f1f1f1;font:700 23px/1.3 'Courier New',monospace">${announcementTitle}</h1>
+<p style="margin:0 0 14px;color:#c8c8c8">${announcementCopy}</p>
+<p style="margin:0 0 30px"><a href="${notificationsUrl}" style="color:#f1f1f1;text-decoration:underline">Open Notifications &rarr;</a></p>` : '';
+ const projectHeading = announce ? 'h2' : 'h1';
+ const projectList = projects.length ? `<${projectHeading} style="margin:0 0 12px;color:#f1f1f1;font:700 25px/1.2 'Courier New',monospace">New this week</${projectHeading}>
+<p style="margin:0 0 24px;color:#c8c8c8">A short list of indie projects that went live this week.</p>
+<ul style="margin:0 0 24px;padding-left:24px;color:#bfc2c5">${items}</ul>` : '';
  const html = `<!doctype html>
 <html lang="en" dir="ltr">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -94,9 +106,7 @@ function digestContent(projects, unsubscribe, address) {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;text-align:left;background-color:#0b0b0b">
 <tr><td style="padding:36px 24px 32px;color:#e7e7e7;font:16px/1.65 Arial,sans-serif">
 <p style="margin:0 0 22px;color:#bfc2c5;font:700 13px/1.5 'Courier New',monospace;letter-spacing:1px">[ DIGIVATED / WEEKLY ]</p>
-<h1 style="margin:0 0 12px;color:#f1f1f1;font:700 29px/1.2 'Courier New',monospace">New this week</h1>
-<p style="margin:0 0 24px;color:#c8c8c8">A short list of indie projects that went live this week.</p>
-<ul style="margin:0 0 24px;padding-left:24px;color:#bfc2c5">${items}</ul>
+${announcement}${projectList}
 <p style="margin:0 0 32px;font:700 15px/1.5 'Courier New',monospace"><a href="${directoryUrl}" style="color:#f1f1f1;text-decoration:underline">Browse all projects &rarr;</a></p>
 <p style="margin:0;color:#a9a9a9;font-size:13px;line-height:1.6">Digivated<br>${escapeHtml(address).replace(/\r?\n/g, '<br>')}<br><a style="color:#c8c8c8;text-decoration:underline" href="${escapeHtml(unsubscribe)}">Unsubscribe</a></p>
 </td></tr></table>
@@ -113,7 +123,7 @@ export function makeWeeklyDigestHandler(deps={}){return async(req,res)=>{
  const logger = deps.logger || console;
  try {
   const redis = deps.redis || redisClient(env);
-  const now = Date.now(), week = 7 * 86400000;
+  const now = (deps.now || Date.now)(), week = 7 * 86400000;
   const issue = new Date(now);
   issue.setUTCDate(issue.getUTCDate() - issue.getUTCDay());
   issue.setUTCHours(15, 0, 0, 0);
@@ -132,12 +142,19 @@ export function makeWeeklyDigestHandler(deps={}){return async(req,res)=>{
    return ['approved', 'featured'].includes(project.status) && published > +issue - week && published <= +issue
     ? [{ id: ids[index], name: project.name, published }] : [];
   }).sort((a,b) => b.published - a.published).slice(0,3);
-  if (!projects.length) return finish(200, { sent: 0, reason: 'no new projects' });
-  const members = await redis(['ZRANGEBYSCORE', MEMBERS, 0, +issue - 1, 'LIMIT', 0, 10]);
+  const announcementWeek = issueDate === announcementIssue;
+  if (!projects.length && !announcementWeek) return finish(200, { sent: 0, reason: 'no new projects' });
+  const candidates = await redis(['ZRANGEBYSCORE', MEMBERS, 0, +issue - 1, 'LIMIT', 0, projects.length ? 10 : 100]);
+  const members = [];
+  for (const id of candidates) {
+   const announce = announcementWeek && (await getNotificationPreferences(redis, id).catch(() => null))?.enabled === true;
+   if (projects.length || announce) members.push({id, announce});
+   if (members.length === 10) break;
+  }
   if (!members.length) return finish(200, { sent: 0, reason: 'no eligible subscribers' });
   const accounts = (deps.adminClient || admin(env)).auth.admin;
   let sent = 0, failed = 0, skipped = 0;
-  for (const id of members) {
+  for (const {id, announce} of members) {
    try {
     const stored = await redis(['GET',preference(id)]);
     if (!stored) { await redis(['ZREM', MEMBERS, id]); skipped++; continue; }
@@ -152,8 +169,8 @@ export function makeWeeklyDigestHandler(deps={}){return async(req,res)=>{
      method: 'POST',
      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': `weekly-${id}-${issueDate}` },
      body: JSON.stringify({
-      from: env.WEEKLY_EMAIL_FROM || env.ACCOUNT_EMAIL_FROM, to: [email], subject: 'New projects on Digivated',
-      ...digestContent(projects, unsubscribe, env.WEEKLY_EMAIL_POSTAL_ADDRESS),
+      from: env.WEEKLY_EMAIL_FROM || env.ACCOUNT_EMAIL_FROM, to: [email], subject: announce ? announcementTitle : 'New projects on Digivated',
+      ...digestContent(projects, unsubscribe, env.WEEKLY_EMAIL_POSTAL_ADDRESS, announce),
       headers: { 'List-Unsubscribe': `<${unsubscribe}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' }
      }),
      signal: AbortSignal.timeout(8000), redirect: 'error'

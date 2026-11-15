@@ -152,6 +152,7 @@ if (form) {
       const values = new FormData(form);
       const payload = Object.fromEntries([...values].filter(([key])=>key!=='image'));
       payload.consent = values.get('consent') === 'on';
+      payload.activityNotifications = values.get('activityNotifications') === 'on';
       payload.emailOutreachConsent = values.get('emailOutreachConsent') === 'on';
       const file = values.get('image');
       if (!file?.size) throw new Error('Add your project logo.');
@@ -164,6 +165,7 @@ if (form) {
       const response = await fetch('/api/submissions', {method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json',...(session?.user?.email_confirmed_at?{Authorization:`Bearer ${session.access_token}`}:{})},body:JSON.stringify(payload),signal:AbortSignal.timeout(20000)});
       const data = await response.json().catch(()=>({}));
       if (!response.ok) throw new Error(data.error || 'Your project could not be submitted. Your details are still here; please try again.');
+      document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
       if (payload.submissionType === 'instant') {
         showCheckout(data.id);
         return;

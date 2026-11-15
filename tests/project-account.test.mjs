@@ -99,3 +99,34 @@ test('owner feedback stays private through review and public projection',()=>{
  assert.equal(edit.reviewFeedback,'Please clarify the audience.');
  assert.equal('reviewFeedback' in projectPublic(edit),false);
 });
+
+import {testRedis} from './helpers/redis.mjs';
+import {defaultNotificationPreferences, getNotificationPreferences, saveNotificationPreferences} from '../server/notifications.mjs';
+
+test('Redis saves the submitter’s explicit activity choice only with a successful submission', {skip:!process.env.DIGIVATED_TEST_REDIS_PORT}, async () => {
+ const redis = testRedis(11);
+ await redis(['FLUSHDB']);
+ try {
+  const handler = makeSubmissionHandler({env,redis,verifyAccount:async()=>account});
+  const submit = activityNotifications => invoke(handler,{
+   method:'POST',url:'/api/submissions',
+   headers:{origin:env.SUBMISSIONS_ORIGIN,authorization:'Bearer fixture','content-type':'application/json'},
+   body:{...submission,activityNotifications},
+  });
+  await saveNotificationPreferences(redis,account.id,{...defaultNotificationPreferences,message:false});
+  const first = await submit(true);
+  assert.equal(first.status,201);
+  assert.equal(first.body.activityNotifications,true);
+  assert.deepEqual(await getNotificationPreferences(redis,account.id),{...defaultNotificationPreferences,enabled:true});
+  assert.equal((await submit(false)).status,409);
+  assert.equal((await getNotificationPreferences(redis,account.id)).enabled,true);
+  assert.equal(await redis(['ZCARD','digivated:weekly:members']),0);
+
+  const key = `digivated:submission:${first.body.id}`;
+  const record = JSON.parse(await redis(['GET',key]));
+  await redis(['SET',key,JSON.stringify({...record,status:'archived'})]);
+  await saveNotificationPreferences(redis,account.id,{...defaultNotificationPreferences,enabled:true,message:false});
+  assert.equal((await submit(false)).status,201);
+  assert.deepEqual(await getNotificationPreferences(redis,account.id),{...defaultNotificationPreferences,message:false});
+ } finally { await redis(['FLUSHDB']); }
+});

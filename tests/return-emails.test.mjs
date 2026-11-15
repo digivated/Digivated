@@ -80,3 +80,26 @@ test('temporary account and provider failures are visible and preserve subscript
  assert.equal((await call(f.deps)).body.sent,0);
  assert.equal(f.sent.length,1);
 });
+
+test('the November update reaches confirmed weekly readers with activity on, once, even without new projects',async()=>{
+ const f=fixture();
+ const disabled='a5b2b29e-1aa2-4000-8000-63cfcc6be726';
+ const noEmailOptIn='a5b2b29e-1aa2-4000-8000-63cfcc6be727';
+ for (const member of [id,disabled]) {
+  f.entries.set(`digivated:weekly:preference:${member}`,JSON.stringify({email}));
+  f.members.set(member,0);
+ }
+ for (const member of [id,noEmailOptIn]) {
+  f.entries.set(`digivated:notifications:preferences:${member}`,JSON.stringify({enabled:true}));
+ }
+ const handler=makeWeeklyDigestHandler({...f.deps,now:()=>Date.parse('2026-11-15T15:01:00Z')});
+ const send=()=>f.invoke(handler,'GET','/api/weekly-digest',undefined,{authorization:`Bearer ${env.CRON_SECRET}`});
+ assert.equal((await send()).body.sent,1);
+ assert.equal(f.sent.length,1);
+ assert.match(f.sent[0].subject,/What’s new on Digivated/);
+ assert.match(f.sent[0].html,/Open Notifications/);
+ assert.match(f.sent[0].text,/Unsubscribe:/);
+ assert.equal((await send()).body.sent,0);
+ const nextWeek=makeWeeklyDigestHandler({...f.deps,now:()=>Date.parse('2026-11-22T15:01:00Z')});
+ assert.equal((await f.invoke(nextWeek,'GET','/api/weekly-digest',undefined,{authorization:`Bearer ${env.CRON_SECRET}`})).body.sent,0);
+});

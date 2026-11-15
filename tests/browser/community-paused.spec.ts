@@ -45,3 +45,37 @@ for (const width of [390, 1440]) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
  });
 }
+
+test('Share a Product offers all activity alerts and submits the exact checkbox choice on mobile', async ({page}) => {
+ await page.setViewportSize({width:390,height:900});
+ await page.addInitScript(() => {
+  localStorage.setItem('sb-fixture-auth-token', JSON.stringify({
+   access_token:'fixture-token', refresh_token:'fixture-refresh',
+   expires_at:Math.floor(Date.now()/1000)+3600,
+   user:{id:'fixture-owner',email:'fixture@example.com',email_confirmed_at:'2026-11-01T00:00:00Z'},
+  }));
+ });
+ await page.route('**/api/project-account**', route => route.fulfill({
+  json:route.request().url().includes('action=config')
+   ? {ready:true,url:'https://fixture.supabase.co',key:'fixture-key'}
+   : {email:'fixture@example.com',submissions:[],mailboxVerified:true},
+ }));
+ await page.route('**/api/submissions**', route => route.fulfill({json:route.request().method()==='POST'
+  ? {ok:true,id:'test-project',activityNotifications:false}
+  : {instant:null}}));
+ await page.goto('http://127.0.0.1:4321/submit-project');
+ const checkbox=page.getByRole('checkbox',{name:/Turn on all activity notifications/});
+ await expect(checkbox).toBeVisible();
+ await expect(checkbox).toBeChecked();
+ await checkbox.uncheck();
+ await page.locator('#project-form [name=name]').fill('Studio Notes');
+ await page.locator('#project-form [name=url]').fill('https://example.com');
+ await page.locator('#project-form [name=description]').fill('Simple project notes for independent developers.');
+ await page.getByRole('combobox',{name:'Category',exact:true}).selectOption('Other');
+ await page.locator('#project-form [name=creator]').fill('Test Creator');
+ await page.locator('#project-image').setInputFiles({name:'logo.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aFJkAAAAASUVORK5CYII=','base64')});
+ const request=page.waitForRequest(req=>req.method()==='POST' && req.url().endsWith('/api/submissions'));
+ await page.getByRole('button',{name:'Save and get your badge'}).click();
+ expect((await request).postDataJSON().activityNotifications).toBe(false);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
