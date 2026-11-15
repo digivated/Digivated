@@ -74,13 +74,35 @@ function digestContent(projects, unsubscribe, address) {
  const link = project => `https://digivated.com/projects/listing/${encodeURIComponent(project.id)}`;
  const text = [
   'New this week on Digivated',
-  'A few indie projects worth a look.',
+  'A short list of indie projects that went live this week.',
   ...projects.map(project => `${project.name}\n${link(project)}`),
   `Browse all projects: ${directoryUrl}`,
   `Unsubscribe: ${unsubscribe}\n\nDigivated\n${address}`
  ].join('\n\n');
- const items = projects.map(project => `<li style="margin:0 0 14px"><a style="color:#171717" href="${link(project)}">${escapeHtml(project.name)}</a></li>`).join('');
- const html = `<!doctype html><html lang="en" dir="ltr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>New this week on Digivated</title><body style="margin:0;background:#fff;color:#171717;font:16px/1.6 Arial,sans-serif"><main style="max-width:560px;margin:auto;padding:32px 24px"><p style="font-family:monospace">DIGIVATED / WEEKLY</p><h1 style="font-size:28px;line-height:1.2">New this week on Digivated</h1><p>A few indie projects worth a look.</p><ul>${items}</ul><p><a style="color:#171717" href="${directoryUrl}">Browse all projects</a></p><p style="color:#555;font-size:13px;margin-top:32px">Digivated<br>${escapeHtml(address).replace(/\r?\n/g, '<br>')}<br><a style="color:#555" href="${escapeHtml(unsubscribe)}">Unsubscribe</a></p></main></body></html>`;
+ const items = projects.map(project =>
+  `<li style="margin:0 0 14px"><a style="color:#f1f1f1;text-decoration:underline;overflow-wrap:anywhere" href="${link(project)}">${escapeHtml(project.name)}</a></li>`
+ ).join('');
+ const html = `<!doctype html>
+<html lang="en" dir="ltr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark">
+<title>New this week on Digivated</title></head>
+<body bgcolor="#0b0b0b" style="margin:0;background-color:#0b0b0b;color:#e7e7e7">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#0b0b0b" style="background-color:#0b0b0b">
+<tr><td align="center">
+<!--[if mso]><table role="presentation" width="560" cellpadding="0" cellspacing="0"><tr><td><![endif]-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;text-align:left;background-color:#0b0b0b">
+<tr><td style="padding:36px 24px 32px;color:#e7e7e7;font:16px/1.65 Arial,sans-serif">
+<p style="margin:0 0 22px;color:#bfc2c5;font:700 13px/1.5 'Courier New',monospace;letter-spacing:1px">[ DIGIVATED / WEEKLY ]</p>
+<h1 style="margin:0 0 12px;color:#f1f1f1;font:700 29px/1.2 'Courier New',monospace">New this week</h1>
+<p style="margin:0 0 24px;color:#c8c8c8">A short list of indie projects that went live this week.</p>
+<ul style="margin:0 0 24px;padding-left:24px;color:#bfc2c5">${items}</ul>
+<p style="margin:0 0 32px;font:700 15px/1.5 'Courier New',monospace"><a href="${directoryUrl}" style="color:#f1f1f1;text-decoration:underline">Browse all projects &rarr;</a></p>
+<p style="margin:0;color:#a9a9a9;font-size:13px;line-height:1.6">Digivated<br>${escapeHtml(address).replace(/\r?\n/g, '<br>')}<br><a style="color:#c8c8c8;text-decoration:underline" href="${escapeHtml(unsubscribe)}">Unsubscribe</a></p>
+</td></tr></table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td></tr></table>
+</body></html>`;
  return { text, html };
 }
 
