@@ -60,10 +60,32 @@ function render() {
     list.append(link);
   }
 }
+function renderApprovals(approvals) {
+  const list = $('notifications-approvals');
+  list.replaceChildren();
+  $('notifications-approval-status').textContent = !Array.isArray(approvals)
+    ? 'Live projects couldn’t be checked. Try refreshing.'
+    : approvals.length ? 'Your approved projects on Digivated.' : 'Your project will appear here when it goes live.';
+  for (const project of approvals || []) {
+    if (!project.href?.startsWith('/projects/')) continue;
+    const link = document.createElement('a');
+    link.href = project.href;
+    link.className = 'notification-item';
+    const content = document.createElement('span');
+    content.className = 'notification-copy';
+    const state = document.createElement('small');
+    state.textContent = 'Approved and live';
+    const title = document.createElement('strong');
+    title.textContent = project.name;
+    content.append(state, title);
+    link.append(content);
+    list.append(link);
+  }
+}
 async function load() {
   const data = await api();
   preferences = data.preferences; items = data.items || [];
-  syncPreferences(); render(); status('');
+  syncPreferences(); renderApprovals(data.approvals); render(); status('');
 }
 async function savePreferences() {
   if (busy || !preferences) return;

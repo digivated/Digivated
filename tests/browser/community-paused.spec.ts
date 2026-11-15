@@ -14,3 +14,34 @@ for(const width of [390,1440])test(`Public site remains usable with Community pa
  await page.goto('http://127.0.0.1:4321/community');await expect(page).toHaveURL('http://127.0.0.1:4321/');
  expect(errors).toEqual([]);
 });
+
+for (const width of [390, 1440]) {
+ test(`A signed-in owner can see an approval and open the listing at ${width}px`, async ({page}) => {
+  const href = '/projects/listing/approved-fixture';
+  await page.setViewportSize({width,height:900});
+  await page.addInitScript(() => {
+   localStorage.setItem('sb-fixture-auth-token', JSON.stringify({
+    access_token:'fixture-token', refresh_token:'fixture-refresh',
+    expires_at:Math.floor(Date.now()/1000)+3600, user:{id:'fixture-owner'},
+   }));
+  });
+  await page.route('**/api/project-account?*', route => route.fulfill({
+   json:route.request().url().includes('action=config')
+    ? {ready:true,url:'https://fixture.supabase.co',key:'fixture-key'}
+    : {email:'fixture@example.com'},
+  }));
+  await page.route('**/api/notifications?*', route => route.fulfill({json:{
+   preferences:{enabled:false,reply:true,follow:true,message:true,feedback:true},
+   approvals:[{name:'Studio Notes',href}],
+   items:[{id:'fixture-alert',type:'approved',title:'Your project is approved and live',href,createdAt:new Date().toISOString(),unread:true}],
+   unread:1,
+  }}));
+  await page.goto('http://127.0.0.1:4321/notifications');
+  const approvals = page.getByRole('region',{name:'Project approvals'});
+  await expect(approvals.getByText('Approved and live',{exact:true})).toBeVisible();
+  await expect(approvals.getByRole('link',{name:/Studio Notes/})).toHaveAttribute('href',href);
+  await expect(page.getByRole('region',{name:'Recent activity'}).getByRole('link',{name:/Your project is approved and live/})).toHaveAttribute('href',href);
+  await expect(page.getByText('1 unread · 1 recent')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+ });
+}

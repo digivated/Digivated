@@ -127,14 +127,53 @@ import {testRedis} from './helpers/redis.mjs';
 test('real Redis: approval appears with social alerts off, is private, and retries do not duplicate it', {skip:!process.env.DIGIVATED_TEST_REDIS_PORT},async()=>{
  const redis=testRedis(10);await redis(['FLUSHDB']);
  try {
-  const record={id:'approval-fixture',accountId:alice,status:'approved',revision:1};
+  const record={id:'approval-fixture',accountId:alice,status:'approved',revision:1,consent:true,image:'fixture',url:'https://example.com'};
   const results=await Promise.all(Array.from({length:5},()=>notifyProjectApproval(redis,{status:'pending'},record)));
   assert.equal(results.filter(Boolean).length,1);
   const feed=await listNotifications(redis,alice);
   assert.equal(feed.preferences.enabled,false);assert.equal(feed.unread,1);assert.equal(feed.items[0].type,'approved');
-  assert.equal(feed.items[0].href,'/account');assert.equal((await listNotifications(redis,bob)).items.length,0);
+  assert.equal(feed.items[0].href,'/projects/listing/approval-fixture');assert.equal((await listNotifications(redis,bob)).items.length,0);
   assert.equal(await notifyProjectApproval(redis,record,{...record,status:'featured',revision:2}),false);
   assert.equal(await notifyProjectApproval(redis,record,{...record,status:'rejected',revision:2}),false);
   await markNotificationRead(redis,alice,feed.items[0].id);assert.equal((await notificationSummary(redis,alice)).unread,0);
  } finally {await redis(['FLUSHDB']);}
+});
+
+test('real Redis: the signed-in feed restores a missing approval without exposing other projects or reviving cleared alerts', {skip:!process.env.DIGIVATED_TEST_REDIS_PORT}, async () => {
+  const redis = testRedis(10);
+  await redis(['FLUSHDB']);
+  try {
+    const email = 'owner@example.com';
+    const secret = 'test-token';
+    const {accountIndex} = await import('../server/project-account.mjs');
+    const key = accountIndex(email, secret);
+    const record = {id:'already-live',name:'Live project',email,accountId:alice,status:'approved',revision:3,consent:true,image:'fixture',url:'https://example.com',publishedAt:new Date(Date.now()-60000).toISOString()};
+    for (const row of [
+      record,
+      {...record,id:'old-live',publishedAt:new Date(Date.now()-91*86400000).toISOString()},
+      {...record,id:'already-notified',revision:4},
+      {...record,id:'private',image:''},
+      {...record,id:'other-owner',accountId:bob},
+    ]) {
+      await redis(['SET',`digivated:submission:${row.id}`,JSON.stringify(row)]);
+      await redis(['ZADD',key,1,row.id]);
+    }
+    // The original notice was cleared, and the project was subsequently edited.
+    await redis(['SET',`digivated:notifications:approval:${alice}:already-notified:2`,'1']);
+    const handler = makeNotificationsHandler({redis,env:{SUBMISSIONS_REDIS_REST_TOKEN:secret},verifyAccount:async () => ({id:alice,email,mailboxVerified:false})});
+    const load = async () => {
+      let raw;
+      const res = {setHeader(){},end(value){raw=value;}};
+      await handler({method:'GET',url:'/api/notifications',headers:{}},res);
+      assert.equal(res.statusCode,200);
+      return JSON.parse(raw);
+    };
+    const feed = await load();
+    assert.deepEqual(feed.approvals.map(project => project.href).sort(), ['already-live','already-notified','old-live'].map(id => `/projects/listing/${id}`));
+    assert.equal(feed.unread,1);
+    assert.equal(feed.items[0].href,'/projects/listing/already-live');
+    await clearNotifications(redis,alice);
+    assert.equal((await load()).unread,0);
+    assert.equal((await load()).approvals.length,3);
+  } finally { await redis(['FLUSHDB']); }
 });

@@ -61,3 +61,6 @@ html#digivated-root body.platform .notifications-empty p { margin:10px auto 0; m
  html#digivated-root body.platform :is(.notification-item,.notifications-switch) { transition:none; }
  html#digivated-root body.platform .notifications-switch::after { transition:none; }
 }
+
+html#digivated-root body.platform .notifications-approvals { margin-bottom:24px; }
+html#digivated-root body.platform .notifications-approvals .notification-copy strong { overflow-wrap:anywhere; }
