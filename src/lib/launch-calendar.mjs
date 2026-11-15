@@ -23,3 +23,10 @@ export function launchBatchLabel(batch,now=Date.now()) {
   const format=value=>new Date(value).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});
   return `${batch==='previous'?'Last week’s':'This week’s'} launches · ${format(start)} – ${format(end-DAY)} (UTC)`;
 }
+
+
+export function rankingPeriodStarts(now) {
+  const date = new Date(now);
+  const day = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+  return [day, launchBounds('current', now).start, Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)];
+}

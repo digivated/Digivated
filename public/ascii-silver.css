@@ -680,3 +680,17 @@
  html#digivated-root[data-ascii] .compact-site-header .notebook-navigation[open] .navigation-trigger-menu,
  html#digivated-root[data-ascii] .compact-site-header .notebook-navigation:not([open]) .navigation-trigger-close {display:none!important;}
 }
+
+
+/* Keep the compact pricing control out of the page-wide form spacing. */
+html#digivated-root[data-ascii] .submission-form fieldset.submission-pricing {
+  margin-block: 0 !important;
+}
+html#digivated-root[data-ascii] .submission-form .submission-pricing-options label {
+  margin-block: 0 !important;
+}
+
+:is(.home-launch-vote, .launch-vote, button[data-like-id])[aria-busy="true"] {
+  cursor: progress;
+  opacity: .65;
+}

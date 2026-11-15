@@ -1,3 +1,4 @@
+import { rankingPeriodStarts } from '../src/lib/launch-calendar.mjs';
 import { resourceArticlesVisible } from '../src/data/resource-publication.mjs';
 import { withProjectViews } from './project-views.mjs';
 import { withResourceViews } from './resource-views.mjs';
@@ -55,12 +56,12 @@ export function makePublicHandler(type, deps = {}) {
       let items = await publicRecords(redis, kind, offset);
       if (kind === 'submission') items = await withProjectViews(redis, items);
       if (kind === 'submission' && url.searchParams.get('ranking') === '1') {
-        const now=new Date(), day=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());
-        const week=day-((now.getUTCDay()+6)%7)*86400000, month=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1);
+        const now = Date.now();
+        const starts = rankingPeriodStarts(now);
         items=await Promise.all(items.map(async item=>{
           const [total,daily,weekly,monthly]=await Promise.all([
             redis(['GET','digivated:card:likes:project:'+item.id]),
-            ...[day,week,month].map(start=>redis(['ZCOUNT','digivated:card:votes:project:'+item.id,start,Date.now()]))
+            ...starts.map(start=>redis(['ZCOUNT','digivated:card:votes:project:'+item.id,start,now]))
           ]);
           return {...item,votes:{all:Number(total||0),daily:Number(daily||0),weekly:Number(weekly||0),monthly:Number(monthly||0)}};
         }));

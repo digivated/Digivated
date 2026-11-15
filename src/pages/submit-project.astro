@@ -71,11 +71,11 @@ const submissionCategoryGroups = [
         </label>
         <fieldset class="submission-pricing" aria-describedby="project-pricing-help">
           <legend>Project pricing <span class="quiet">(optional)</span></legend>
-          <p id="project-pricing-help" class="field-help">How do customers pay for your project?</p>
+          <p id="project-pricing-help" class="field-help">Choose how people pay to use your project.</p>
           <div class="submission-pricing-options">
-            <label><input type="radio" name="pricing" value="" checked/><span>Not specified</span></label>
-            {projectPricingOptions.map(option => (
-              <label><input type="radio" name="pricing" value={option}/><span>{option}</span></label>
+            <label><input type="radio" name="pricing" value="" checked/><span>Skip for now</span></label>
+            {projectPricingOptions.filter(option => option !== 'Open source').map(option => (
+              <label><input type="radio" name="pricing" value={option}/><span>{option === 'Freemium' ? 'Free + paid plans' : option}</span></label>
             ))}
           </div>
         </fieldset>

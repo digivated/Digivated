@@ -1,3 +1,4 @@
+import { requestCardInteraction } from './card-actions.js';
 import { inLaunchBatch, launchTimestamp, launchBatchLabel, readRankingPeriod } from '../lib/launch-calendar.mjs';
 import { aiGroups, aiTopics } from '../lib/project-taxonomy.mjs';
 import { cardIconMarkup } from '../lib/card-icons.mjs';
@@ -24,7 +25,8 @@ if(root){
  const groups=aiGroups;
  const text=(tag,value,cls)=>{const e=document.createElement(tag);e.textContent=value;if(cls)e.className=cls;return e;};
  const safe=value=>{try{const u=new URL(value,location.origin);return /^https?:$/.test(u.protocol)?u.href:'/discover';}catch{return '/discover';}};
- const liked=p=>{try{return localStorage.getItem('digivated:liked:project:'+p.id)==='1';}catch{return false;}};
+ const pendingVotes=new Set();
+ const liked=p=>{if(p.liked!==undefined)return p.liked;try{return localStorage.getItem('digivated:liked:project:'+p.id)==='1';}catch{return false;}};
  function renderPicks(){
   if(ai)return;
   const host=root.querySelector('[data-ranking-picks]'),count=root.querySelector('[data-ranking-picks-count]');
@@ -71,16 +73,31 @@ if(root){
    if(ai)row.append(image);else{const artwork=text('a','','ranking-artwork');artwork.href=safe(p.pageUrl||'/discover#project-'+p.id);artwork.setAttribute('aria-label','Explore '+p.name);artwork.append(image,text('span',p.name.slice(0,1).toUpperCase(),'ranking-image-fallback'));row.append(artwork);}
    const copy=text('div','','launch-copy'),heading=text('h3',''),link=text('a',p.name);link.href=safe(p.pageUrl||'/discover#project-'+p.id);heading.append(link);copy.append(heading,text('p',p.description||''));
    const meta=text('div','','launch-meta');meta.append(text('span',p.category||'Project'));if(!ai&&Number.isFinite(launchTimestamp(p))){const date=text('time',(p.publishedAt?'Published ':'Listed ')+new Date(launchTimestamp(p)).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}));date.dateTime=new Date(launchTimestamp(p)).toISOString();meta.append(date);}const visit=text('a',ai?'Visit website ↗':'Visit website');if(!ai){const icon=text('span','');icon.innerHTML=cardIconMarkup('external');visit.append(icon);}visit.href=safe(p.url);visit.target='_blank';visit.rel='noopener noreferrer';meta.append(visit);copy.append(meta);row.append(copy);
-   const vote=text('button','','launch-vote');vote.type='button';vote.setAttribute('aria-pressed',String(liked(p)));vote.setAttribute('aria-label','Upvote '+p.name);const voteIcon=text('span','');voteIcon.innerHTML=cardIconMarkup('like');vote.append(voteIcon,text('span',String(p.votes?.[period]||0)));
+   const vote=text('button','','launch-vote');vote.type='button';vote.setAttribute('aria-pressed',String(liked(p)));vote.setAttribute('aria-label',(liked(p)?'Remove upvote for ':'Upvote ')+p.name);if(pendingVotes.has(p.id))vote.setAttribute('aria-busy','true');const voteIcon=text('span','');voteIcon.innerHTML=cardIconMarkup('like');vote.append(voteIcon,text('span',String(p.votes?.[period]||0)));
    if(!ai)vote.append(text('span','Upvote','ranking-vote-label'));
    vote.onclick=async()=>{
-    vote.disabled=true;const was=liked(p);
-    try{const response=await fetch('/api/card-interactions',{method:'POST',credentials:'omit',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'project',id:p.id,action:was?'remove-upvote':'upvote'}),signal:AbortSignal.timeout(12000)});const data=await response.json();if(!response.ok)throw Error(data.error||'Unable to vote. Please try again.');
-     try{localStorage.setItem('digivated:liked:project:'+p.id,data.liked?'1':'0');}catch{}
-     // Reload authoritative period totals; legacy votes may have no timestamp.
-     await load();status.textContent=data.liked?'Upvote saved.':'Upvote removed.';
-     if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const updated=[...list.children].find(item=>item.dataset.projectId===p.id);updated?.classList.add('ranking-vote-confirmed');}
-    }catch(error){status.textContent=error.message;}finally{vote.disabled=false;}
+    if(pendingVotes.has(p.id))return;
+    pendingVotes.add(p.id);
+    vote.setAttribute('aria-busy','true');
+    let result,message;
+    try{
+     result=await requestCardInteraction('project',p.id,{action:liked(p)?'remove-upvote':'upvote',includePeriods:true});
+     p.liked=result.liked;
+     p.votes=result.votes;
+     try{localStorage.setItem('digivated:liked:project:'+p.id,result.liked?'1':'0');}catch{}
+     message=result.liked?'Upvote saved.':'Upvote removed.';
+    }catch(error){
+     message=error.message||'Unable to save your upvote. Try again.';
+    }finally{
+     const focused=document.activeElement?.matches('.launch-vote') ? document.activeElement.closest('[data-project-id]')?.dataset.projectId : null;
+     pendingVotes.delete(p.id);
+     render();
+     if(focused)list.querySelector(`[data-project-id="${CSS.escape(focused)}"] .launch-vote`)?.focus({preventScroll:true});
+     status.textContent=message;
+     if(result&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+      list.querySelector(`[data-project-id="${CSS.escape(p.id)}"]`)?.classList.add('ranking-vote-confirmed');
+     }
+    }
    };row.append(vote);list.append(row);
   }more.hidden=overview||matches.length<=limit;
   renderPicks();

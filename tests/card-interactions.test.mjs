@@ -14,7 +14,18 @@ function fixtureRedis(){
   if(command==='ZREVRANGE')return [...members(args[0])].sort((a,b)=>b[1]-a[1]).slice(Number(args[1]),Number(args[2])+1).map(([id])=>id);
   if(command==='EVAL'){
    const [script,n,...rest]=args,keys=rest.slice(0,Number(n)),argv=rest.slice(Number(n));
-   if(script.includes("ARGV[1]=='like'")){let count=Number(values.get(keys[1])||0),liked=values.has(keys[0]);if(argv[0]==='like'&&!liked){values.set(keys[0],'1');count++;values.set(keys[1],String(count));liked=true;}else if(argv[0]==='unlike'&&liked){values.delete(keys[0]);count=Math.max(0,count-1);values.set(keys[1],String(count));liked=false;}return [count,liked?1:0];}
+   if(script.includes("ARGV[1]=='like'")){
+    const votes=members(keys[2]);
+    let count=Number(values.get(keys[1])||0),liked=values.has(keys[0]);
+    if(argv[0]==='like'&&!liked){
+     values.set(keys[0],'1');values.set(keys[1],String(++count));liked=true;
+     votes.set(argv[2],Number(argv[1]));sorted.set(keys[2],votes);
+    }else if(argv[0]==='unlike'&&liked){
+     values.delete(keys[0]);count=Math.max(0,count-1);values.set(keys[1],String(count));liked=false;
+     votes.delete(argv[2]);
+    }
+    return [count,liked?1:0,...argv.slice(3).map(start=>[...votes.values()].filter(time=>time>=start&&time<=argv[1]).length)];
+   }
    if(script.includes('comment-limit')){throw Error('unexpected script');}
    if(script.includes('local n=redis.call')){const count=Number(values.get(keys[0])||0)+1;values.set(keys[0],String(count));if(count>3)return 0;values.set(keys[1],argv[0]);const set=members(keys[2]);set.set(argv[2],Number(argv[1]));sorted.set(keys[2],set);if(argv[3]==='approved'){const publicSet=members(keys[3]);publicSet.set(argv[2],Number(argv[1]));sorted.set(keys[3],publicSet);}return 1;}
    const record=JSON.parse(values.get(keys[0]));if(record.status!=='pending'&&!(record.status==='approved'&&record.purpose==='project-feedback'&&argv[0]==='rejected'))return 0;record.status=argv[0];values.set(keys[0],JSON.stringify(record));const set=members(keys[1]);if(argv[0]==='approved')set.set(record.id,Number(argv[1]));else set.delete(record.id);sorted.set(keys[1],set);return 1;
@@ -49,6 +60,18 @@ test('project interactions require a published project and moderate comments wit
  values.set('digivated:submission:project-one',JSON.stringify({...project,status:'archived'}));
  assert.equal((await call(handler,'GET','project-one')).status,404);
  assert.equal((await call(handler,'POST','project-one',{action:'like'})).status,404);
+});
+test('project upvotes return accurate period totals without reloading rankings',async()=>{
+ const id='project-one', {redis,values}=fixtureRedis(), handler=makeCardInteractionHandler({redis,env:{SUBMISSIONS_ORIGIN:origin}});
+ values.set('digivated:submission:'+id,JSON.stringify({id,status:'approved',consent:true,image:'fixture-image',url:'https://fixture.test/'}));
+ // Imported votes may contribute to the all-time count without a period timestamp.
+ values.set('digivated:card:likes:project:'+id,'2');
+ const vote={action:'upvote',includePeriods:true};
+ const added={liked:true,likes:3,votes:{all:3,daily:1,weekly:1,monthly:1}};
+ assert.deepEqual((await call(handler,'POST',id,vote)).data,added);
+ assert.deepEqual((await call(handler,'POST',id,vote)).data,added);
+ assert.deepEqual((await call(handler,'POST',id,{...vote,action:'remove-upvote'})).data,
+  {liked:false,likes:2,votes:{all:2,daily:0,weekly:0,monthly:0}});
 });
 test('cross-site writes and invalid requests fail before any interaction is stored',async()=>{
  const {redis,values}=fixtureRedis(),handler=makeCardInteractionHandler({redis,env:{SUBMISSIONS_ORIGIN:origin}});
