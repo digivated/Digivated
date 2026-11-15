@@ -173,8 +173,12 @@ if (form) {
       form.reset();form.dispatchEvent(new Event('input'));if(session?.user?.email_confirmed_at)form.elements.email.value=session.user.email;syncIntent();updateImagePreview();
       if (data.launch) {
         if (data.launch.badge) {
-          status.textContent = 'Project saved.';
+          status.textContent = 'Project saved. Add and verify your website badge to join the launch cycle.';
           badgeHtml.value = data.launch.badge;
+          const scheduledDate = new Date(data.launch.scheduledAt);
+          document.getElementById('submission-badge-launch').textContent = Number.isFinite(scheduledDate.getTime())
+            ? `Launch date: ${scheduledDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})} (UTC). Publishing runs daily at 00:10 UTC.`
+            : 'Your scheduled launch date is shown in Your Projects.';
           badgePanel.hidden = false;
           document.getElementById('submission-badge-title').focus();
         } else {

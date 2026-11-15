@@ -1,0 +1,51 @@
+import {test,expect} from '@playwright/test';
+const base='http://127.0.0.1:4321';
+const scheduledAt='2026-11-23T00:00:00.000Z';
+const badge='<a href="https://digivated.com/projects/listing/badge-fixture" data-digivated-project="badge-fixture">[ listed on Digivated ]</a>';
+async function signedIn(page){
+ const user={id:'badge-owner',email:'builder@example.com',email_confirmed_at:new Date().toISOString()};
+ const expires=Math.floor(Date.now()/1000)+3600;
+ const token=['eyJhbGciOiJIUzI1NiJ9',Buffer.from(JSON.stringify({sub:user.id,email:user.email,exp:expires})).toString('base64url'),'fixture'].join('.');
+ await page.addInitScript(({token,user,expires})=>localStorage.setItem('sb-fixture-auth-token',JSON.stringify({access_token:token,refresh_token:'fixture',expires_at:expires,expires_in:3600,token_type:'bearer',user})),{token,user,expires});
+ await page.route('https://fixture.supabase.co/**',route=>route.fulfill({json:user}));
+ await page.route('**/api/**',route=>{
+  const url=new URL(route.request().url());
+  if(url.pathname==='/api/project-account')return route.fulfill({json:url.searchParams.get('action')==='config'?{ready:true,url:'https://fixture.supabase.co',key:'sb_publishable_fixture'}:{id:user.id,email:user.email,mailboxVerified:true,submissions:[{id:'badge-fixture',name:'Orbit',date:'2026-11-14',status:'pending',launch:{kind:'free',scheduledAt,badge}}]}});
+  if(url.pathname==='/api/submissions'){
+   if(route.request().method()==='GET')return route.fulfill({json:{instant:null,nextFreeLaunch:scheduledAt}});
+   const body=route.request().postDataJSON();
+   return route.fulfill({status:body.action==='verify-badge'?200:201,json:body.action==='verify-badge'?{verified:true,scheduledAt}:{ok:true,id:'badge-fixture',status:'pending',launch:{kind:'free',scheduledAt,badge}}});
+  }
+  return route.fulfill({json:{ready:false,items:[],counts:{}}});
+ });
+}
+for(const width of [390,1440])test(`free launch instructions, saved badge and verified state at ${width}px`,async({page})=>{
+ await page.setViewportSize({width,height:900});await signedIn(page);
+ await page.goto(base+'/submit-project');
+ await expect(page.locator('.free-launch-guide ol>li')).toHaveCount(4);
+ await expect(page.locator('.free-launch-guide')).toContainText('Verification is required.');
+ await expect(page.locator('.free-launch-guide')).toContainText('00:10 UTC');
+ await expect(page.locator('#submission-details')).toBeVisible();
+ for(const [name,value] of Object.entries({name:'Orbit',url:'https://example.com',description:'A useful workspace for independent builders to organize projects.',creator:'Builder'}))await page.locator(`#project-form [name=${name}]`).fill(value);
+ await page.locator('#project-form [name=category]').selectOption('Websites');
+ const image=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=64;c.getContext('2d')!.fillRect(0,0,64,64);return c.toDataURL('image/png').split(',')[1];});
+ await page.locator('#project-image').setInputFiles({name:'logo.png',mimeType:'image/png',buffer:Buffer.from(image,'base64')});
+ await page.locator('#project-form [name=consent]').check();
+ await page.locator('#project-form button[type=submit]').click();
+ await expect(page.locator('#submission-badge')).toBeVisible();
+ await expect(page.locator('#submission-badge-html')).toHaveValue(badge);
+ await expect(page.locator('#submission-badge-launch')).toContainText('November 23, 2026');
+ await expect(page.locator('#submission-badge')).toContainText('Verification is required.');
+ await page.goto(base+'/account#account-submissions');
+ await expect(page.locator('.account-launch')).toContainText('Verification is required before automatic publication.');
+ await page.locator('[data-verify-badge]').click();
+ await expect(page.locator('[data-submission-state]')).toHaveText('Scheduled');
+ await expect(page.locator('.account-launch')).toContainText('daily 00:10 UTC cycle');
+ await expect(page.locator('.account-launch')).toContainText('No admin approval needed.');
+ await expect(page.locator('[data-copy-badge]')).toHaveCount(0);
+ for(const selector of ['.free-launch-guide','.account-launch']){
+  const bounds=await page.locator(selector).boundingBox();
+  expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(width+1);
+ }
+ await page.locator('.free-launch-guide').screenshot({path:`/tmp/digivated-free-guide-${width}.png`});
+});

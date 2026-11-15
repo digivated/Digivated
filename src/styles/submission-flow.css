@@ -126,3 +126,5 @@ html#digivated-root .submission-image-preview img { width:112px; height:112px; a
 html#digivated-root .listing-preview-cover { width:80px; height:80px; aspect-ratio:1; margin:20px 20px 0; border:1px solid var(--dg-line); border-radius:16px; }
 html#digivated-root .listing-preview-cover img { object-fit:contain; }
 html#digivated-root .listing-preview-cover>span { padding:8px; text-align:center; font-size:11px; }
+
+html#digivated-root .badge-next-steps{padding-left:20px;margin:14px 0;font-size:13px;line-height:1.9}

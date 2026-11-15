@@ -1,5 +1,6 @@
 ---
 import Platform from '../layouts/Platform.astro';
+import FreeLaunchGuide from '../components/FreeLaunchGuide.astro';
 import { projectPricingOptions } from '../lib/project-pricing.mjs';
 import { projectCategories } from '../data/community.mjs';
 import '../styles/submission-flow.css';
@@ -10,6 +11,8 @@ import '../styles/submission-flow.css';
     <h1>Submit a project.</h1>
     <p class="lede">Add your details and choose how to launch. Free launches require a badge on your website.</p>
   </header>
+
+  <FreeLaunchGuide />
 
   <div class="submission-layout submission-workspace">
     <form class="submission-form" id="project-form" action="/api/submissions" method="post">
@@ -57,7 +60,7 @@ import '../styles/submission-flow.css';
             <option value="founding-feature">Membership Spotlight</option>
           </select>
         </label>
-        <p id="free-launch-help" class="field-help">Save to get your badge. Add it to your public project page as HTML, publish the change, then verify it in Your Projects. Your listing can publish once the badge is verified and the launch date arrives. <span id="free-launch-date"></span></p>
+        <p id="free-launch-help" class="field-help">Save your project, add the badge to your website, then verify it in Your Projects. Verified projects launch automatically on or after their scheduled date. <span id="free-launch-date"></span></p>
         <p id="instant-launch-help" class="field-help" hidden>Pay $5 once with your account email, then return to verify payment and publish.</p>
         <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/membership#member-sign-in">membership page</a> first to request your included spotlight. We review each request.</p></div>
       </fieldset>
@@ -72,8 +75,8 @@ import '../styles/submission-flow.css';
         <noscript>Enable JavaScript to submit your project securely.</noscript>
         <p class="form-status" id="submission-status" role="status" aria-live="polite" tabindex="-1"></p>
         <section id="submission-badge" class="submission-option-detail" aria-labelledby="submission-badge-title" hidden>
-          <h3 id="submission-badge-title" tabindex="-1">Your website badge</h3>
-          <p>Paste this HTML into your public project page and publish the change. Then verify the badge in Your Projects.</p>
+          <h3 id="submission-badge-title" tabindex="-1">Project saved. Next: add and verify your badge.</h3>
+          <ol class="badge-next-steps"><li>Add this HTML to your public project page.</li><li>Publish your website changes.</li><li>Open Your Projects and select <strong>Verify website badge</strong>.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help"><strong>Verification is required.</strong> Once verified, the daily cycle publishes your project when its launch date arrives. No admin approval needed.</p>
           <label>Badge HTML<textarea id="submission-badge-html" rows="3" readonly></textarea></label>
           <div class="submission-account-actions">
             <button class="button" type="button" id="submission-badge-copy">Copy badge</button>
