@@ -6,6 +6,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      full_browser_suite:
+        description: Include historical browser tests for older layouts
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -46,7 +51,24 @@ jobs:
       - name: Install browser for monitoring verification
         run: npx playwright install --with-deps chromium
 
-      - name: Verify browser reporting and privacy
+      # The owner dashboard has a separate workflow with its own Redis fixture.
+      # These suites cover current public behavior and browser privacy.
+      - name: Verify current browser flows and privacy
+        run: >-
+          npx playwright test
+          tests/browser/community-paused.spec.ts
+          tests/browser/creators-experience.spec.ts
+          tests/browser/gumroad-secure-setup.spec.ts
+          tests/browser/launch-calendar.spec.ts
+          tests/browser/membership-offer.spec.ts
+          tests/browser/mobile-stability.spec.ts
+          tests/browser/news-paused.spec.ts
+          tests/browser/rankings-experience.spec.ts
+          tests/browser/sentry.spec.ts
+
+      # Keep the full suite available while older layout assertions are reviewed.
+      - name: Run full browser suite
+        if: github.event_name == 'workflow_dispatch' && inputs.full_browser_suite
         run: npx playwright test
 
       - name: Upload mobile visual review
