@@ -33,8 +33,25 @@ import '../styles/submission-flow.css';
         <label>Project URL<input name="url" type="url" placeholder="https://your-project.com" maxlength="500" required/></label>
         <button type="button" id="project-import">[ Import website details ]</button><p id="project-import-status" role="status"></p>
         <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. Start with what it does, then who it helps. Avoid hashtags and promotional slogans.</span></label>
-        <label>Category<select aria-describedby="project-category-help" name="category" required><option value="">Choose a category</option>{projectCategories.map(c=><option>{c}</option>)}</select></label><p id="project-category-help" class="field-help">Pick the category that best fits your project.</p>
-        <label>Pricing <span class="quiet">(optional)</span><select name="pricing"><option value="">Not specified</option>{projectPricingOptions.map(option => <option>{option}</option>)}</select></label>
+        <label>
+          <span>Category</span>
+          <span class="submission-category-control">
+            <select name="category" required>
+              <option value="">Choose a category</option>
+              {projectCategories.map(category => <option>{category}</option>)}
+            </select>
+          </span>
+        </label>
+        <fieldset class="submission-pricing" aria-describedby="project-pricing-help">
+          <legend>Project pricing <span class="quiet">(optional)</span></legend>
+          <p id="project-pricing-help" class="field-help">How do customers pay for your project?</p>
+          <div class="submission-pricing-options">
+            <label><input type="radio" name="pricing" value="" checked/><span>Not specified</span></label>
+            {projectPricingOptions.map(option => (
+              <label><input type="radio" name="pricing" value={option}/><span>{option}</span></label>
+            ))}
+          </div>
+        </fieldset>
       </fieldset>
 
       <fieldset>
