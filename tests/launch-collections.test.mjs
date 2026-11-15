@@ -8,7 +8,7 @@ import { createCollectionStore, initialCollections, mergeCollections, validateCo
 import { testRedis } from './helpers/redis.mjs';
 const template='<html><head><title>LAUNCH_TITLE</title><meta name="description" content="LAUNCH_DESCRIPTION"><link rel="canonical" href="https://digivated.com/launch-template"></head><body><!--LAUNCH_BODY--></body></html>';
 const png='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aFJkAAAAASUVORK5CYII=';
-const record=id=>({id,name:'Same name',creator:'Creator',email:'SECRET_EMAIL',notes:'SECRET_NOTES',description:'An independent project to help creators build.',url:'https://example.com',category:'Apps',status:'pending',consent:true,date:new Date().toISOString(),image:png});
+const record=id=>({id,name:'Same name',creator:'Creator',email:'SECRET_EMAIL_'+id,notes:'SECRET_NOTES',description:'An independent project to help creators build.',url:'https://example.com',category:'Apps',status:'pending',consent:true,date:new Date().toISOString(),image:png});
 const page={bio:'An approved bio.',alt:'Project dashboard',ctaLabel:'Try the app',ctaUrl:'https://example.com/app',consent:true,gallery:[{image:png,alt:'Settings screen'}]};
 test('published project pages lead to feedback and further discovery', async () => {
  const item={id:'project-one',slug:'same-name-project-one',name:'Same name',description:'A useful project.',creator:'Creator',category:'Apps',sponsored:false,bio:'',ctaLabel:'Visit project',ctaUrl:'https://example.com',socialUrl:'',image:'',gallery:[]};

@@ -30,7 +30,10 @@ export async function listAccounts(env, page, injected) {
   if (!Number.isInteger(page) || page < 1 || page > 2000) throw new AdminError(400, 'Invalid account page.');
   const { data, error } = await authClient(env, injected).auth.admin.listUsers({ page, perPage: PAGE_SIZE });
   if (error || !Array.isArray(data?.users)) throw new AdminError(503, 'Accounts could not be loaded. Try again shortly.');
-  return { items: data.users.map(safeUser), next: data.users.length === PAGE_SIZE ? page + 1 : null };
+  const minimum = (page - 1) * PAGE_SIZE + data.users.length;
+  const reported = Number(data.total);
+  const total = Number.isSafeInteger(reported) && reported >= minimum ? reported : data.users.length < PAGE_SIZE ? minimum : null;
+  return { items: data.users.map(safeUser), total, next: total !== null ? (page * PAGE_SIZE < total ? page + 1 : null) : (data.users.length === PAGE_SIZE ? page + 1 : null) };
 }
 
 export async function setAccountBan(env, id, operation, injected) {

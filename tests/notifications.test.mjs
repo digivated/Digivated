@@ -121,3 +121,20 @@ test('a delivered creator message adds a notification only for an opted-in recip
   assert.equal(activity.items[0].href,`/inbox?id=${alice}`);
   assert(!JSON.stringify(activity).includes('How is your project going?'));
 });
+
+import {notifyProjectApproval} from '../server/notifications.mjs';
+import {testRedis} from './helpers/redis.mjs';
+test('real Redis: approval appears with social alerts off, is private, and retries do not duplicate it', {skip:!process.env.DIGIVATED_TEST_REDIS_PORT},async()=>{
+ const redis=testRedis(10);await redis(['FLUSHDB']);
+ try {
+  const record={id:'approval-fixture',accountId:alice,status:'approved',revision:1};
+  const results=await Promise.all(Array.from({length:5},()=>notifyProjectApproval(redis,{status:'pending'},record)));
+  assert.equal(results.filter(Boolean).length,1);
+  const feed=await listNotifications(redis,alice);
+  assert.equal(feed.preferences.enabled,false);assert.equal(feed.unread,1);assert.equal(feed.items[0].type,'approved');
+  assert.equal(feed.items[0].href,'/account');assert.equal((await listNotifications(redis,bob)).items.length,0);
+  assert.equal(await notifyProjectApproval(redis,record,{...record,status:'featured',revision:2}),false);
+  assert.equal(await notifyProjectApproval(redis,record,{...record,status:'rejected',revision:2}),false);
+  await markNotificationRead(redis,alice,feed.items[0].id);assert.equal((await notificationSummary(redis,alice)).unread,0);
+ } finally {await redis(['FLUSHDB']);}
+});

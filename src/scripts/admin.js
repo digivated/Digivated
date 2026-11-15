@@ -119,7 +119,7 @@ function renderList() {
     row.append(copy,edit); list.append(row);
   }
   const loadedLabel = state.kind === 'accounts' ? `account${state.items.length === 1 ? '' : 's'}` : labels[state.kind].toLowerCase();
-  $('owner-count').textContent = state.kind==='submission' ? `${state.items.filter(item=>item.status==='pending').length} pending · ${items.length} shown · ${state.items.length} submissions loaded` : `${items.length} shown · ${state.items.length} ${loadedLabel} loaded`;
+  $('owner-count').textContent = state.kind==='accounts' ? `${Number.isSafeInteger(state.accountTotal) ? state.accountTotal.toLocaleString() + ' total accounts · ' : ''}${items.length} shown · ${state.items.length} loaded` : state.kind==='submission' ? `${state.items.filter(item=>item.status==='pending').length} pending · ${items.length} shown · ${state.items.length} submissions loaded` : `${items.length} shown · ${state.items.length} ${loadedLabel} loaded`;
   $('owner-empty').hidden = items.length > 0;
   $('owner-empty').querySelector('h2').textContent=state.kind==='carousel'?'No full carousels found.':state.kind==='accounts'?'No accounts found in this page.':'No items found.';
   $('owner-empty').querySelector('p').textContent=state.kind==='carousel'?'Published carousels will appear here automatically. If you just added one, choose Refresh.':state.kind==='accounts'?'Clear filters or load more accounts.':'New submissions and saved content will appear here.'; $('owner-more').hidden = state.next === null;
@@ -136,6 +136,7 @@ async function load(more = false, quiet = false) {
     if (request !== state.request) return;
     state.items = more ? [...new Map([...state.items,...data.items].map(item=>[item.id,item])).values()] : data.items;
     state.next = data.next;
+    state.accountTotal = kind === 'accounts' ? data.total : null;
     if (!more) state.extraPage = false;
     else state.extraPage = true;
     renderList();

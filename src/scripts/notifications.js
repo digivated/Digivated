@@ -3,7 +3,7 @@ import { cardIconMarkup } from '../lib/card-icons.mjs';
 
 const $ = id => document.getElementById(id);
 const prefInputs = [...document.querySelectorAll('[data-notification-pref]')];
-const label = { reply:'Reply', follow:'Follower', message:'Message', feedback:'Project feedback' };
+const label = { approved:'Project approved', reply:'Reply', follow:'Follower', message:'Message', feedback:'Project feedback' };
 let token = '', preferences = null, items = [], busy = false;
 
 async function api(action = 'list', body) {
@@ -32,14 +32,15 @@ function relativeTime(value) {
 }
 function render() {
   const list = $('notifications-items'); list.replaceChildren();
+  document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
   const unread = items.filter(item => item.unread).length;
-  $('notifications-count').textContent = items.length ? `${unread} unread · ${items.length} recent` : preferences.enabled ? 'You’re all caught up.' : 'Turn on notifications to see new activity here.';
+  $('notifications-count').textContent = items.length ? `${unread} unread · ${items.length} recent` : preferences.enabled ? 'You’re all caught up.' : 'Project approvals appear here. Turn on activity notifications for more updates.';
   $('notifications-read-all').hidden = !unread;
   $('notifications-clear').hidden = !items.length;
   if (!items.length) {
     const empty = document.createElement('div'); empty.className = 'notifications-empty';
     const title = document.createElement('strong'); title.textContent = preferences.enabled ? 'Nothing new right now.' : 'Your activity, when you want it.';
-    const copy = document.createElement('p'); copy.textContent = preferences.enabled ? 'Replies, follows, messages, and feedback will appear here.' : 'Turn on notifications above to keep up with your projects and conversations.';
+    const copy = document.createElement('p'); copy.textContent = preferences.enabled ? 'Replies, follows, messages, and feedback will appear here.' : 'Project approval updates appear here automatically. Turn on activity notifications for replies, follows, and messages.';
     empty.append(title,copy); list.append(empty); return;
   }
   for (const item of items) {

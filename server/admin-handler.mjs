@@ -11,6 +11,7 @@ import { AdminError, adminConfig, verifyPassword, createSession, requireSession,
 import { archiveDuplicateProjects, isDigivatedPick, launchStages, listRecords, saveRecord, storageKey, validId } from './admin-store.mjs';
 import { listPendingComments, moderateComment } from './card-interactions.mjs';
 import { listAccounts, setAccountBan } from './admin-accounts.mjs';
+import { notifyProjectApproval } from './notifications.mjs';
 import { sendProjectUpdate } from './account-mail.mjs';
 const LIMIT = `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],900) end; return n`;
 export function makeAdminHandler(deps = {}) {
@@ -69,6 +70,7 @@ export function makeAdminHandler(deps = {}) {
         const record = await saveRecord(redis, body.kind, body.record);
         let notification = 'skipped';
         if (body.kind === 'submission') {
+          try { await notifyProjectApproval(redis, previous ? JSON.parse(previous) : null, record); } catch { /* Saving the project must not depend on the activity feed. */ }
           try { notification = await (deps.notifyProjectUpdate || sendProjectUpdate)(previous ? JSON.parse(previous) : null,record,env,deps.fetcher||fetch,deps.accountClient); }
           catch { notification = 'failed'; }
         }

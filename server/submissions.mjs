@@ -1,3 +1,4 @@
+import { notifyProjectApproval } from './notifications.mjs';
 import { badgeSnippet, nextFreeLaunch, verifyProjectBadge } from './launch-queue.mjs';
 import { readProjectSite, siteDetails } from './project-site.mjs';
 // Isolated from purchase handlers, sessions, rate-limit rules, and environment names.
@@ -84,6 +85,7 @@ async function publishInstantProject(redis, account, id, config, fetcher) {
     if (saved === -2) throw new SubmissionError(409, 'This account already has a live project.');
     throw new SubmissionError(409, 'The project changed. Refresh and try again.');
   }
+  try { await notifyProjectApproval(redis, record, updated); } catch { /* Publication already succeeded. */ }
   return projection;
 }
 

@@ -31,6 +31,7 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
    // Keep the visible sign-in route available during a temporary outage.
   }
  };
+ document.addEventListener('digivated:notifications-updated',()=>update());
  update();
  window.addEventListener('pageshow',event=>{if(event.persisted)update(true);});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)update(true);});
