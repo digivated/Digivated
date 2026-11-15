@@ -74,7 +74,7 @@ const directoryUrl = 'https://digivated.com/discover';
 const notificationsUrl = 'https://digivated.com/notifications';
 const announcementIssue = '2026-11-15';
 const announcementTitle = 'What’s new on Digivated';
-const announcementCopy = 'Hey, it’s Langston. When your project goes live, you’ll now see its approval in Notifications, with a link straight to your listing. You can also choose which replies, follows, messages, and project feedback you want to hear about. Thanks for sharing what you’re building.';
+const announcementCopy = 'When your project goes live, you’ll now see its approval in Notifications, with a link straight to your listing. You can also choose which replies, follows, messages, and project feedback you want to hear about. Thanks for sharing what you’re building.';
 function digestContent(projects, unsubscribe, address, announce = false) {
  const link = project => `https://digivated.com/projects/listing/${encodeURIComponent(project.id)}`;
  const text = [
