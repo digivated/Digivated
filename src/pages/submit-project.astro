@@ -2,12 +2,28 @@
 import Platform from '../layouts/Platform.astro';
 import FreeLaunchGuide from '../components/FreeLaunchGuide.astro';
 import { projectPricingOptions } from '../lib/project-pricing.mjs';
-import { projectCategories } from '../data/community.mjs';
 import '../styles/submission-flow.css';
 
-// Apps, Websites, and SaaS remain valid for existing listings and moderation.
-const projectFormats = new Set(['Apps', 'Websites', 'SaaS']);
-const submissionCategories = projectCategories.filter(category => !projectFormats.has(category));
+// Labels are for the submission form. Values are the existing directory categories.
+const submissionCategoryGroups = [
+  {
+    label: 'Build & create',
+    options: [
+      ['Developer Tools', 'Coding & Dev Tools'],
+      ['Design', 'Design & UX'],
+      ['Creator Tools', 'Content Creation'],
+      ['Digital Products', 'Templates & Downloads'],
+    ],
+  },
+  {
+    label: 'Work & learn',
+    options: [
+      ['Business', 'Business & Marketing'],
+      ['Productivity', 'Productivity & Tasks'],
+      ['Education', 'Education & Learning'],
+    ],
+  },
+];
 ---
 <Platform title="Submit Your Project" description="Share what you built. Choose a free launch with a website badge, Instant Publishing, or a Membership Spotlight.">
   <header class="page-intro submission-intro">
@@ -42,9 +58,13 @@ const submissionCategories = projectCategories.filter(category => !projectFormat
           <span class="submission-category-control">
             <select name="category" aria-labelledby="project-category-label" aria-describedby="project-category-help" required>
               <option value="">Choose a category</option>
-              {submissionCategories.map(category => (
-                <option value={category}>{category === 'Digital Products' ? 'Templates & Downloads' : category}</option>
+              <option value="AI">AI Tools</option>
+              {submissionCategoryGroups.map(({ label, options }) => (
+                <optgroup label={label}>
+                  {options.map(([value, text]) => <option value={value}>{text}</option>)}
+                </optgroup>
               ))}
+              <option value="Other">Other</option>
             </select>
           </span>
           <span id="project-category-help" class="field-help">Choose what your project mainly helps people do.</span>
