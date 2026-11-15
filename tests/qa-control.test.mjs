@@ -2,61 +2,62 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { setQaMode } from '../qa/control-lib.mjs';
 
-function fixture() {
+function fixture({ many = false, rejectWrite = false } = {}) {
   const calls = [];
-  const fetcher = async (url, options) => {
-    calls.push([options.method, new URL(url).pathname]);
-    const pathname = new URL(url).pathname;
-    const body = pathname.endsWith('/runs') ? { workflow_runs: [{ id: 123 }] }
-      : pathname.endsWith('/qa-monitor.yml') ? { state: calls.some(([method, path]) => method === 'PUT' && path.endsWith('/enable')) ? 'active' : 'disabled_manually' }
-      : {};
-    return { ok: true, status: options.method === 'GET' ? 200 : 204, json: async () => body };
-  };
-  return { calls, fetcher };
-}
-
-test('STOP disables and cancels runs without repository-variable permission', async () => {
-  const { calls, fetcher } = fixture();
-  const result = await setQaMode({ mode: 'STOP', repo: 'digivated/Digivated', token: 'test', fetcher });
-  assert.equal(result.mode, 'STOP');
-  assert.equal(calls[0][0], 'PUT');
-  assert.match(calls[0][1], /qa-monitor\.yml\/disable$/);
-  assert(calls.some(([method, path]) => method === 'POST' && /\/runs\/123\/cancel$/.test(path)));
-  assert(!calls.some(([, path]) => path.includes('/variables')));
-});
-
-test('RESUME enables and verifies the workflow without repository-variable permission', async () => {
-  const { calls, fetcher } = fixture();
-  const result = await setQaMode({ mode: 'RESUME', repo: 'digivated/Digivated', token: 'test', fetcher });
-  assert.equal(result.mode, 'ACTIVE');
-  assert.equal(calls[0][0], 'PUT');
-  assert.match(calls[0][1], /qa-monitor\.yml\/enable$/);
-  assert(!calls.some(([, path]) => path.includes('/variables')));
-});
-
-for (const mode of ['STOP', 'RESUME']) test(`${mode} fails visibly if GitHub rejects the switch`, async () => {
-  await assert.rejects(setQaMode({ mode, repo: 'digivated/Digivated', token: 'test',
-    fetcher: async () => ({ ok: false, status: 403 }) }), /HTTP 403/);
-});
-
-test('PAUSE cancels every page and tolerates a run finishing during cancellation', async () => {
-  const canceled = [];
+  let mode = 'STOP';
   const fetcher = async (url, options) => {
     const parsed = new URL(url);
-    let body = { state: 'disabled_manually' };
-    if (parsed.pathname.endsWith('/runs')) {
+    const path = parsed.pathname;
+    calls.push([options.method, path]);
+    let body = {};
+    if (path.endsWith('/contents/qa/mode.json')) {
+      if (options.method === 'PUT') {
+        if (rejectWrite) return { ok: false, status: 403 };
+        const input = JSON.parse(options.body);
+        assert.equal(input.branch, 'main');
+        assert.equal(input.sha, 'previous');
+        mode = JSON.parse(Buffer.from(input.content, 'base64').toString()).mode;
+      }
+      body = { sha: 'previous', content: Buffer.from(JSON.stringify({ mode })).toString('base64') };
+    } else if (path.endsWith('/runs')) {
       const page = Number(parsed.searchParams.get('page'));
-      body = { workflow_runs: parsed.searchParams.get('status') === 'queued'
-        ? [] : page === 1 ? Array.from({ length: 100 }, (_, id) => ({ id })) : [{ id: 100 }] };
-    }
-    if (parsed.pathname.endsWith('/cancel')) {
-      canceled.push(Number(parsed.pathname.split('/').at(-2)));
-      if (canceled.at(-1) === 100) return { ok: false, status: 409 };
-    }
+      body = { workflow_runs: parsed.searchParams.get('status') === 'queued' ? []
+        : many && page === 1 ? Array.from({ length: 100 }, (_, id) => ({ id })) : [{ id: 100 }] };
+    } else if (path.endsWith('/qa-monitor.yml')) body = { state: 'active' };
+    if (path.endsWith('/100/cancel')) return { ok: false, status: 409 };
     return { ok: true, status: options.method === 'GET' ? 200 : 204, json: async () => body };
   };
-  const result = await setQaMode({ mode: 'PAUSE', repo: 'digivated/Digivated', token: 'test', fetcher });
-  assert.equal(result.mode, 'PAUSE');
-  assert.equal(canceled.length, 101);
-  assert.equal(new Set(canceled).size, 101);
+  return { calls, fetcher, mode: () => mode };
+}
+
+for (const mode of ['STOP', 'PAUSE']) test(`${mode} persists the gate before canceling checks`, async () => {
+  const f = fixture();
+  const result = await setQaMode({ mode, repo: 'digivated/Digivated', token: 'test', fetcher: f.fetcher });
+  assert.equal(result.mode, mode);
+  assert.equal(f.mode(), mode);
+  const write = f.calls.findIndex(([method, path]) => method === 'PUT' && path.endsWith('/mode.json'));
+  const cancel = f.calls.findIndex(([, path]) => path.endsWith('/cancel'));
+  assert(write >= 0 && cancel > write);
+  assert(!f.calls.some(([, path]) => /variables|enable|disable/.test(path)));
+});
+
+test('RESUME persists and verifies ACTIVE without administrative APIs', async () => {
+  const f = fixture();
+  const result = await setQaMode({ mode: 'RESUME', repo: 'digivated/Digivated', token: 'test', fetcher: f.fetcher });
+  assert.equal(result.mode, 'ACTIVE');
+  assert.equal(f.mode(), 'ACTIVE');
+  assert(!f.calls.some(([, path]) => /variables|enable|disable|cancel/.test(path)));
+});
+
+test('rejected gate writes fail visibly and do not cancel runs or activate monitoring', async () => {
+  const f = fixture({ rejectWrite: true });
+  await assert.rejects(setQaMode({ mode: 'RESUME', repo: 'digivated/Digivated', token: 'test', fetcher: f.fetcher }), /HTTP 403/);
+  assert.equal(f.mode(), 'STOP');
+});
+
+test('STOP handles all pages and a run finishing during cancellation', async () => {
+  const f = fixture({ many: true });
+  const result = await setQaMode({ mode: 'STOP', repo: 'digivated/Digivated', token: 'test', fetcher: f.fetcher });
+  assert.equal(result.canceled, 101);
+  assert.equal(f.calls.filter(([, path]) => path.endsWith('/cancel')).length, 101);
 });
