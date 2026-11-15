@@ -25,7 +25,7 @@
  html[data-ascii] body :is(.home-editorial,.home-featured-card,.home-featured-ribbon,.platform-section,.platform-footer,.project-wall,.project-reel)::after{content:none!important}
  html[data-ascii] body .home-featured-ribbon-track::before{content:none!important}
  /* Opaque overlays preserve legibility; they are never glass. */
- html[data-ascii] body :is(dialog,#explore-navigation,.navigation-panel,.wall-focus-panel,.owner-editor,.home-whats-new[open],.notebook-navigation[open],.explore-menu[open]){background:#111!important;color:#ddd!important;border:0!important;border-radius:0!important}
+ html[data-ascii] body :is(dialog,#explore-navigation,.navigation-panel,.wall-focus-panel,.owner-editor,.notebook-navigation[open],.explore-menu[open]){background:#111!important;color:#ddd!important;border:0!important;border-radius:0!important}
  html[data-ascii] dialog::backdrop{background:#090909e8!important;backdrop-filter:none!important}
  html[data-ascii] body :is(.compact-site-header,.platform-header,.topbar){background:#090909!important;backdrop-filter:none!important;}
  html[data-ascii] body main{position:relative;z-index:1;}
@@ -334,10 +334,6 @@
   max-width: 46ch;
   margin-block: 24px 0;
   font-size: 14px;
- }
- html[data-ascii] body.home-refresh #main .home-workshop-copy > .home-whats-new {
-  position: static;
-  margin: 0 0 16px;
  }
  html[data-ascii] body.home-refresh #main .ascii-field.home-workshop {
   position: static;

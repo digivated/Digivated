@@ -18,6 +18,14 @@ import '../styles/home-about.css';
     </div>
     <time id="queue-countdown" role="timer" aria-live="off"></time>
   </aside>
+  <details class="home-updates">
+    <summary>What’s new <UiIcon name="chevron" size={14}/></summary>
+    <ul>
+      <li><a href="/submit-project">Free launches</a> now publish on schedule after you verify your website badge.</li>
+      <li><a href="/creators">Creators</a> can share updates and media, follow builders, and send messages.</li>
+      <li><a href="/invstr">Market Scanner</a> works without API keys; optional connections add more data.</li>
+    </ul>
+  </details>
   <section class="home-editorial" aria-labelledby="home-title">
     <div class="home-workshop-copy">
     <p class="home-editorial-kicker">A HOME FOR WHAT YOU'RE BUILDING</p>
@@ -124,4 +132,32 @@ import '../styles/home-about.css';
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
+
+  .home-updates {
+    width: min(100%, 640px);
+    margin: 22px 0 0;
+    border-block: 1px solid #ffffff29;
+    color: #d5d5d5;
+  }
+
+  .home-updates summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 48px;
+    cursor: pointer;
+    list-style: none;
+    font-size: 13px;
+    font-weight: 650;
+  }
+
+  .home-updates summary::-webkit-details-marker { display: none; }
+  .home-updates summary svg { flex: none; transition: transform .2s ease; }
+  .home-updates[open] summary svg { transform: rotate(180deg); }
+  .home-updates summary:focus-visible, .home-updates a:focus-visible { outline: 2px solid #d2b5ff; outline-offset: 3px; }
+  .home-updates ul { display: grid; gap: 14px; margin: 0; padding: 2px 0 20px 20px; font-size: 12px; line-height: 1.6; }
+  .home-updates li::marker { color: #a98ac7; }
+  .home-updates a { color: #f3e5ff; text-underline-offset: .25em; }
+  @media(prefers-reduced-motion:reduce) { .home-updates summary svg { transition: none; } }
 </style>
