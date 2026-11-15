@@ -68,11 +68,11 @@ test('Share a Product offers all activity alerts and submits the exact checkbox 
  await expect(checkbox).toBeVisible();
  await expect(checkbox).toBeChecked();
  await checkbox.uncheck();
- await page.locator('[name=name]').fill('Studio Notes');
- await page.locator('[name=url]').fill('https://example.com');
- await page.locator('[name=description]').fill('Simple project notes for independent developers.');
+ await page.locator('#project-form [name=name]').fill('Studio Notes');
+ await page.locator('#project-form [name=url]').fill('https://example.com');
+ await page.locator('#project-form [name=description]').fill('Simple project notes for independent developers.');
  await page.getByRole('combobox',{name:'Category',exact:true}).selectOption('Other');
- await page.locator('[name=creator]').fill('Test Creator');
+ await page.locator('#project-form [name=creator]').fill('Test Creator');
  await page.locator('#project-image').setInputFiles({name:'logo.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aFJkAAAAASUVORK5CYII=','base64')});
  const request=page.waitForRequest(req=>req.method()==='POST' && req.url().endsWith('/api/submissions'));
  await page.getByRole('button',{name:'Save and get your badge'}).click();
