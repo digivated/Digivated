@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: '9 * * * *'
   workflow_dispatch:
+    inputs:
+      preview_url:
+        description: Optional Digivated Vercel preview origin; leave empty for production.
+        required: false
+        type: string
   deployment_status:
 
 permissions:
@@ -38,6 +43,22 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - name: Validate QA target
+        if: steps.switch.outputs.active == 'true'
+        id: target
+        env:
+          INPUT_URL: ${{ inputs.preview_url }}
+          DEPLOYMENT_URL: ${{ github.event.deployment_status.environment_url }}
+          IS_PREVIEW_EVENT: ${{ github.event_name == 'deployment_status' && github.event.deployment.environment == 'Preview' }}
+        run: |
+          node --input-type=module <<'JS'
+          import { appendFileSync } from 'node:fs';
+          import { qaTarget } from './qa/preview-access.mjs';
+          if (process.env.IS_PREVIEW_EVENT === 'true' && !process.env.DEPLOYMENT_URL) throw new Error('Preview deployment URL is missing.');
+          const { baseURL, preview } = qaTarget(process.env.INPUT_URL ||
+            (process.env.IS_PREVIEW_EVENT === 'true' ? process.env.DEPLOYMENT_URL : 'https://digivated.com'));
+          appendFileSync(process.env.GITHUB_OUTPUT, `url=${baseURL}\npreview=${preview}\n`);
+          JS
       - if: steps.switch.outputs.active == 'true'
         run: npm ci
       - if: steps.switch.outputs.active == 'true'
@@ -46,11 +67,16 @@ jobs:
         if: steps.switch.outputs.active == 'true'
         id: browser
         env:
-          QA_BASE_URL: ${{ github.event_name == 'deployment_status' && github.event.deployment.environment == 'Preview' && github.event.deployment_status.environment_url || 'https://digivated.com' }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-        run: npx playwright test --config=qa/playwright.config.ts
+          QA_BASE_URL: ${{ steps.target.outputs.url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ steps.target.outputs.preview == 'true' && secrets.VERCEL_AUTOMATION_BYPASS_SECRET || '' }}
+        run: |
+          if [ '${{ steps.target.outputs.preview }}' = true ] && [ -z "$VERCEL_AUTOMATION_BYPASS_SECRET" ]; then
+            echo '::error::Protected preview QA requires VERCEL_AUTOMATION_BYPASS_SECRET in GitHub Actions secrets.'
+            exit 1
+          fi
+          npx playwright test --config=qa/playwright.config.ts
       - name: Open deduplicated issues for repeated production failures
-        if: always() && steps.browser.outcome == 'failure' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.deployment.environment == 'Production')
+        if: always() && steps.browser.outcome == 'failure' && steps.target.outputs.preview == 'false'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           QA_ISSUES_ENABLED: 'true'

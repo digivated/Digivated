@@ -1,5 +1,15 @@
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
+import { previewHeaders, qaTarget } from './preview-access.mjs';
+
+test.beforeEach(async ({ context, baseURL }) => {
+  const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  const target = qaTarget(baseURL);
+  if (!secret || !target.preview) return;
+  await context.route('**/*', route => route.continue({
+    headers: previewHeaders(route.request().url(), target.baseURL, secret, route.request().headers()),
+  }));
+});
 
 // Read-only public checks. Do not submit forms, cast votes, verify purchases, or
 // call authenticated endpoints from the monitor.

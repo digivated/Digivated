@@ -10,7 +10,7 @@ npx playwright install chromium
 npx playwright test --config=qa/playwright.config.ts
 ```
 
-Set `QA_BASE_URL` to check a specific deployment. For protected previews, the workflow accepts an existing `VERCEL_AUTOMATION_BYPASS_SECRET`; a Vercel sign-in page fails the test. The monitor never prints or stores the secret. Do not turn off Vercel protection for this test.
+Set `QA_BASE_URL` to check a specific deployment. In GitHub Actions, dispatch `Digivated QA monitor` with `preview_url` set to a Digivated Vercel preview origin; leave it empty for production. The target is validated before the credential is passed to the browser, and the bypass header is attached only to requests to that preview origin. Preview failures never open production incident issues. For protected previews, the workflow accepts an existing `VERCEL_AUTOMATION_BYPASS_SECRET`; a Vercel sign-in page fails the test. The monitor never prints or stores the secret. Do not turn off Vercel protection for this test.
 
 Preview Redis configuration was corrected in #112. Issue #113 exposed a separate preview-access problem: the public membership readiness fetch used `credentials: 'omit'`, dropping Vercel's same-origin access cookie. It now uses `same-origin`; checkout validation, prices, product IDs, and payment settings are unchanged. A browser regression test verifies that readiness requests preserve the access cookie.
 
