@@ -3,6 +3,9 @@ on:
   pull_request:
   push:
     branches: [main]
+concurrency:
+  group: owner-dashboard-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -23,10 +26,10 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: node --test tests/admin.test.mjs tests/project-views.test.mjs tests/launch-collections.test.mjs
+      - run: node --test --test-concurrency=1 tests/admin.test.mjs tests/admin-accounts.test.mjs tests/admin-overview.test.mjs tests/notifications.test.mjs tests/project-views.test.mjs tests/launch-collections.test.mjs
       - run: npm run build
       - run: npx playwright install --with-deps chromium
-      - run: npx playwright test tests/browser/admin.spec.ts tests/browser/project-views.spec.ts tests/browser/refinement.spec.ts tests/browser/launch-collections.spec.ts tests/browser/home-refresh.spec.ts
+      - run: npx playwright test tests/browser/admin-workspace.spec.ts --workers=1
       - uses: actions/upload-artifact@v4
         if: always()
         with:

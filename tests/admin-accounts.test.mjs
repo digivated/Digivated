@@ -37,3 +37,11 @@ test('owner-only account list and status change expose limited user fields',asyn
   const restored=await invoke({method:'POST',url:'/api/admin',cookieHeader:signed,body:{action:'account-status',id,operation:'unblock'},csrf:session.csrf});
   assert.equal(restored.status,200);assert.deepEqual(calls.at(-1),{ban_duration:'none'});
 });
+
+import {listAccounts} from '../server/admin-accounts.mjs';
+test('account totals cover every page without confusing a page of 50 with the total',async()=>{
+ const client={auth:{admin:{listUsers:async({page})=>({data:{users:Array.from({length:page===1?50:23},(_,i)=>({id:String(i)})),total:73}})}}};
+ const first=await listAccounts({},1,client),second=await listAccounts({},2,client);
+ assert.equal(first.items.length,50);assert.equal(first.total,73);assert.equal(first.next,2);
+ assert.equal(second.items.length,23);assert.equal(second.total,73);assert.equal(second.next,null);
+});

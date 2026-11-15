@@ -1,8 +1,9 @@
 import { randomUUID } from 'node:crypto';
 
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
-const TYPES = ['reply', 'follow', 'message', 'feedback'];
+const TYPES = ['reply', 'follow', 'message', 'feedback', 'approved'];
 const TITLES = {
+  approved: 'Your project is approved and live',
   reply: 'Someone replied to your post',
   follow: 'A creator followed you',
   message: 'You have a new message',
@@ -106,4 +107,36 @@ export async function clearNotifications(redis, userId) {
   const ids = await redis(['ZRANGE', indexKey(userId), 0, -1]);
   if (ids.length) await redis(['DEL', ...ids.map(itemKey)]);
   await Promise.all([redis(['DEL', indexKey(userId)]), redis(['DEL', unreadKey(userId)])]);
+}
+
+// Approval is a service update, independent of optional social notifications.
+// The marker and feed write commit together, so concurrent retries cannot duplicate it.
+export const APPROVAL_NOTICE = `
+if redis.call('EXISTS',KEYS[1]) == 1 then return 0 end
+redis.call('SET',KEYS[2],ARGV[1],'EX',ARGV[4])
+redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3])
+redis.call('SADD',KEYS[4],ARGV[3])
+redis.call('EXPIRE',KEYS[3],ARGV[4])
+redis.call('EXPIRE',KEYS[4],ARGV[4])
+local excess=redis.call('ZCARD',KEYS[3])-100
+if excess>0 then
+ local removed=redis.call('ZRANGE',KEYS[3],0,excess-1)
+ for _,old in ipairs(removed) do
+  redis.call('ZREM',KEYS[3],old)
+  redis.call('SREM',KEYS[4],old)
+  redis.call('DEL','digivated:notifications:item:'..old)
+ end
+end
+redis.call('SET',KEYS[1],'1','EX',ARGV[4])
+return 1`;
+export async function notifyProjectApproval(redis, previous, record) {
+  if (!UUID.test(record?.accountId || '') || !/^[a-zA-Z0-9_-]{1,100}$/.test(record?.id || '') ||
+      !['approved','featured'].includes(record.status) || ['approved','featured'].includes(previous?.status)) return false;
+  const id = randomUUID(), now = Date.now();
+  const item = { id, recipientId:record.accountId, type:'approved', title:TITLES.approved,
+    href:'/account', createdAt:new Date(now).toISOString() };
+  return await redis(['EVAL',APPROVAL_NOTICE,4,
+    `digivated:notifications:approval:${record.accountId}:${record.id}:${record.revision || 0}`,
+    itemKey(id),indexKey(record.accountId),unreadKey(record.accountId),
+    JSON.stringify(item),now,id,RETENTION_SECONDS]) === 1;
 }
