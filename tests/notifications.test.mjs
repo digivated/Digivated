@@ -40,9 +40,12 @@ function memoryRedis() {
   return {redis,values};
 }
 
-test('notifications are opt-in, private, and controllable per activity type', async () => {
+test('notifications are on by default, private, and controllable per activity type', async () => {
   const {redis,values} = memoryRedis();
   assert.deepEqual(await getNotificationPreferences(redis,alice),defaultNotificationPreferences);
+  assert.equal(defaultNotificationPreferences.enabled,true);
+  // An explicit opt-out is respected.
+  await saveNotificationPreferences(redis,alice,{...defaultNotificationPreferences,enabled:false});
   assert.equal(await addNotification(redis,{recipientId:alice,type:'reply',actorId:bob,targetId:post}),false);
   assert.equal((await listNotifications(redis,alice)).items.length,0);
   const preferences = {...defaultNotificationPreferences,enabled:true,message:false};
@@ -102,7 +105,7 @@ test('notification API requires sign-in, same-site writes, and ownership', async
   assert.equal((await call('Alice','GET','summary')).unread,0);
 });
 
-test('a delivered creator message adds a notification only for an opted-in recipient', async () => {
+test('a delivered creator message notifies by default and respects an opt-out', async () => {
   const {redis,values} = memoryRedis();
   values.set(`digivated:creator:profile:${alice}`,JSON.stringify({name:'Alice',public:true}));
   values.set(`digivated:creator:profile:${bob}`,JSON.stringify({name:'Bob',public:true}));
@@ -112,6 +115,7 @@ test('a delivered creator message adds a notification only for an opted-in recip
     await handler({method:'POST',url:'/api/creator-inbox?action=send',body:{to:bob,body:'How is your project going?'},headers:{authorization:'Alice',origin:'https://digivated.com','content-type':'application/json'}},res);
     return {status:res.statusCode,...JSON.parse(raw)};
   };
+  await saveNotificationPreferences(redis,bob,{...defaultNotificationPreferences,enabled:false});
   assert.equal((await send()).status,201);
   assert.equal((await listNotifications(redis,bob)).items.length,0);
   await saveNotificationPreferences(redis,bob,{...defaultNotificationPreferences,enabled:true});
@@ -127,6 +131,7 @@ import {testRedis} from './helpers/redis.mjs';
 test('real Redis: approval appears with social alerts off, is private, and retries do not duplicate it', {skip:!process.env.DIGIVATED_TEST_REDIS_PORT},async()=>{
  const redis=testRedis(10);await redis(['FLUSHDB']);
  try {
+  await saveNotificationPreferences(redis,alice,{...defaultNotificationPreferences,enabled:false});
   const record={id:'approval-fixture',accountId:alice,status:'approved',revision:1,consent:true,image:'fixture',url:'https://example.com'};
   const results=await Promise.all(Array.from({length:5},()=>notifyProjectApproval(redis,{status:'pending'},record)));
   assert.equal(results.filter(Boolean).length,1);
@@ -175,5 +180,29 @@ test('real Redis: the signed-in feed restores a missing approval without exposin
     await clearNotifications(redis,alice);
     assert.equal((await load()).unread,0);
     assert.equal((await load()).approvals.length,3);
+  } finally { await redis(['FLUSHDB']); }
+});
+
+test('real Redis: verifying a badge sends one private launch-scheduled notice', {skip:!process.env.DIGIVATED_TEST_REDIS_PORT}, async () => {
+  const redis = testRedis(10);
+  await redis(['FLUSHDB']);
+  try {
+    const {verifyProjectBadge} = await import('../server/launch-queue.mjs');
+    const id = '0f4d3a52-9b51-4c7e-8a2f-6d2e7b1c9a10';
+    const scheduledAt = new Date(Date.now() + 9 * 86400000).toISOString();
+    const record = {id,name:'Badge project',email:'owner@example.com',accountId:alice,status:'pending',revision:1,consent:true,image:'fixture',url:'https://example.com',date:new Date().toISOString(),launch:{kind:'free',version:1,scheduledAt,scheduledTimestamp:Date.parse(scheduledAt)}};
+    await redis(['SET',`digivated:submission:${id}`,JSON.stringify(record)]);
+    await redis(['ZADD','digivated:submissions',Date.now(),id]);
+    const readSite = async () => ({html:`<footer><a href="https://digivated.com/projects/listing/${id}" data-digivated-project="${id}">[ listed on Digivated ]</a></footer>`});
+    const result = await verifyProjectBadge(redis,{id:alice},id,readSite);
+    assert.equal(result.verified,true);
+    assert.equal(result.pageUrl,undefined);
+    // Re-checking an already verified badge does not repeat the notice.
+    await verifyProjectBadge(redis,{id:alice},id,readSite);
+    const feed = await listNotifications(redis,alice);
+    const scheduled = feed.items.filter(item => item.type === 'scheduled');
+    assert.equal(scheduled.length,1);
+    assert.equal(scheduled[0].href,`/account#project-${id}`);
+    assert.equal((await listNotifications(redis,bob)).items.length,0);
   } finally { await redis(['FLUSHDB']); }
 });
