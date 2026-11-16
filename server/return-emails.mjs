@@ -2,7 +2,7 @@ import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { verifiedAccount } from './project-account.mjs';
 import { redisClient } from './submissions.mjs';
-import { getNotificationPreferences } from './notifications.mjs';
+import { notificationPreferencesKey } from './notifications.mjs';
 
 const MEMBERS='digivated:weekly:members';
 const preference=id=>`digivated:weekly:preference:${id}`;
@@ -147,7 +147,9 @@ export function makeWeeklyDigestHandler(deps={}){return async(req,res)=>{
   const candidates = await redis(['ZRANGEBYSCORE', MEMBERS, 0, +issue - 1, 'LIMIT', 0, projects.length ? 10 : 100]);
   const members = [];
   for (const id of candidates) {
-   const announce = announcementWeek && (await getNotificationPreferences(redis, id).catch(() => null))?.enabled === true;
+   // Email announcements need an explicit, saved opt-in; the in-app default does not count.
+   const saved = announcementWeek ? await redis(['GET', notificationPreferencesKey(id)]).then(raw => JSON.parse(raw || 'null')).catch(() => null) : null;
+   const announce = announcementWeek && saved?.enabled === true;
    if (projects.length || announce) members.push({id, announce});
    if (members.length === 10) break;
   }

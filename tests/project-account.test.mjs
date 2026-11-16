@@ -127,6 +127,6 @@ test('Redis saves the submitter’s explicit activity choice only with a success
   await redis(['SET',key,JSON.stringify({...record,status:'archived'})]);
   await saveNotificationPreferences(redis,account.id,{...defaultNotificationPreferences,enabled:true,message:false});
   assert.equal((await submit(false)).status,201);
-  assert.deepEqual(await getNotificationPreferences(redis,account.id),{...defaultNotificationPreferences,message:false});
+  assert.deepEqual(await getNotificationPreferences(redis,account.id),{...defaultNotificationPreferences,enabled:false,message:false});
  } finally { await redis(['FLUSHDB']); }
 });
