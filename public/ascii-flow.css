@@ -440,3 +440,44 @@ html#digivated-root[data-ascii] body .compact-site-header .navigation-panel [hid
 @media (max-width:639px){html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation .navigation-panel{inset:var(--navigation-top,64px) 8px auto 8px!important;width:auto!important}}
 @media (prefers-reduced-motion:reduce){html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation .navigation-panel{animation:none}}
 }
+
+@layer flow {
+/* Creator profile: a framed card with a visible banner, avatar that sits on the
+   banner edge (never on its label), ruled tabs and status under the tabs. */
+html#digivated-root[data-ascii] body #main .creator-public{display:flex!important;flex-direction:column;width:min(860px,calc(100% - 40px))!important;margin:24px auto 96px!important}
+html#digivated-root[data-ascii] body #main .creator-public>*{order:5;min-width:0}
+html#digivated-root[data-ascii] body #main .creator-public :is(h1,p,a){overflow-wrap:anywhere}
+html#digivated-root[data-ascii] body #main .creator-public [hidden]:not([hidden=until-found]){display:none!important}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-back{order:0;align-self:flex-start;margin:0 0 16px!important;color:#9a9a9a!important;font-family:var(--fl-mono)!important;font-size:11px!important;letter-spacing:.08em;text-transform:uppercase}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-back:hover{color:#fff!important}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-cover{order:1;box-sizing:border-box;height:140px!important;min-height:140px!important;padding:14px 18px!important;display:flex!important;align-items:flex-start;justify-content:flex-end;border:1px solid #232323!important;border-bottom:0!important;border-radius:4px 4px 0 0!important;background:repeating-linear-gradient(135deg,transparent 0 7px,#171717 7px 8px),#0b0b0b!important;color:#6f6f6f!important;font-family:var(--fl-mono)!important;font-size:10.5px!important;font-weight:500!important;letter-spacing:.14em!important}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-public-intro{order:2;display:block!important;margin:0!important;padding:0 28px 28px!important;border:1px solid #232323!important;border-top:0!important;border-radius:0 0 4px 4px!important;background:#0a0a0a!important}
+html#digivated-root[data-ascii] body #main .creator-public-intro .creator-avatar{display:grid!important;place-items:center;width:84px!important;height:84px!important;margin:-42px 0 16px!important;border:4px solid #0a0a0a!important;border-radius:14px!important;background:#161616!important;overflow:hidden;position:relative;z-index:1}
+html#digivated-root[data-ascii] body #main .creator-public-intro .creator-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+html#digivated-root[data-ascii] body #main .creator-public-intro .eyebrow{margin:0 0 6px!important}
+html#digivated-root[data-ascii] body #main .creator-public-intro h1{margin:0 0 8px!important}
+html#digivated-root[data-ascii] body #main .creator-public .creator-profile-links{display:flex;flex-wrap:wrap;gap:6px 18px;margin:14px 0 6px!important}
+html#digivated-root[data-ascii] body #main .creator-public .creator-profile-links a{color:#d0d0d0!important;text-decoration-color:#555!important;text-underline-offset:4px}
+html#digivated-root[data-ascii] body #main .creator-public .creator-profile-links a:hover{color:#fff!important}
+html#digivated-root[data-ascii] body #main .creator-public .creator-followers{margin:8px 0 18px!important;color:#8a8a8a!important;font-size:13px!important}
+html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions{display:flex;flex-wrap:wrap;gap:10px!important;margin-top:0!important}
+html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions :is(a,button):not([hidden]){display:inline-flex!important;align-items:center;justify-content:center;min-height:40px!important;padding:0 18px!important;font-size:13px!important;font-weight:550!important;text-decoration:none!important}
+html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions a.button.primary{color:#0a0a0a!important;background:#f0f0f0!important;border-color:#f0f0f0!important}
+html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions a.button.primary:hover{background:#fff!important}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-tabs{order:3;display:flex!important;margin:28px 0 0!important;padding:0!important;border:0!important;border-bottom:1px solid #232323!important;background:none!important}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-tabs button{flex:0 0 auto;min-width:0!important;min-height:44px!important;padding:0 20px!important;margin:0 0 -1px!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0!important;background:none!important;color:#8a8a8a!important;font-family:var(--fl-sans)!important;font-size:14px!important;font-weight:500!important;cursor:pointer}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-tabs button:hover{color:#fff!important}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-tabs button.active{color:#fff!important;border-bottom-color:#fff!important}
+html#digivated-root[data-ascii] body #main .creator-public>#creator-public-status{order:4;margin:0!important;padding:22px 2px 0;color:#8a8a8a!important;font-size:14px!important}
+html#digivated-root[data-ascii] body #main .creator-public>#creator-public-status:empty{display:none}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-timeline,html#digivated-root[data-ascii] body #main .creator-public>.creator-projects{order:6}
+@media (max-width:720px){
+html#digivated-root[data-ascii] body #main .creator-public{width:calc(100% - 24px)!important;margin-top:16px!important}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-cover{height:104px!important;min-height:104px!important;padding:12px 14px!important;border-radius:4px 4px 0 0!important}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-public-intro{padding:0 18px 22px!important;border-inline:1px solid #232323!important}
+html#digivated-root[data-ascii] body #main .creator-public-intro .creator-avatar{width:72px!important;height:72px!important;margin-top:-36px!important}
+html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions :is(a,button):not([hidden]){flex:1 1 auto}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-cover>span{display:none!important}
+html#digivated-root[data-ascii] body #main .creator-public>.creator-tabs button{flex:1 1 0;padding:0 8px!important}
+}
+}

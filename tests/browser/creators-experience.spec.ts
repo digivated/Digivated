@@ -106,6 +106,32 @@ test('a public creator profile keeps post actions and projects in one place',asy
  await expect(page.locator('#creator-posts').getByRole('button',{name:'Save'})).toBeVisible();
 });
 
+for (const width of [1100, 390]) {
+ test(`creator profile header is ordered and nothing overlaps at ${width}px`,async({page})=>{
+  await page.setViewportSize({width,height:900});
+  const person=people[0];
+  await page.route('**/api/creator-profile*',route=>{
+   const url=new URL(route.request().url());
+   if(url.searchParams.get('action')==='posts')return route.fulfill({json:{posts:[],next:null}});
+   return route.fulfill({json:{profile:{name:person.name,bio:person.bio,website:'',social:'',logoUrl:''},projects:[],followers:0,following:false,ownProfile:false}});
+  });
+  await page.goto(base+'/creator?id='+person.id);
+  await expect(page.getByRole('heading',{name:person.name})).toBeVisible();
+  await expect(page.locator('#creator-public-status')).toBeVisible();
+  const box=async(selector:string)=>page.locator(selector).first().evaluate(el=>{const r=el.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,visible:getComputedStyle(el).display!=='none'};});
+  const avatar=await box('#creator-avatar'),label=await box('.creator-cover>span'),tabs=await box('.creator-public>.creator-tabs'),status=await box('#creator-public-status'),cover=await box('.creator-cover');
+  expect(cover.bottom-cover.top).toBeGreaterThan(80);
+  if(label.visible){
+   const overlaps=!(avatar.right<=label.left||avatar.left>=label.right||avatar.bottom<=label.top||avatar.top>=label.bottom);
+   expect(overlaps,'avatar must not cover the banner label').toBe(false);
+  }
+  expect(status.top,'status text sits under the tabs').toBeGreaterThanOrEqual(tabs.bottom-1);
+  const message=page.getByRole('link',{name:'Message'});
+  expect(await message.evaluate(el=>getComputedStyle(el).color)).toBe('rgb(10, 10, 10)');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ });
+}
+
 test('creator profile and inbox fit a narrow phone viewport',async({page})=>{
  await page.setViewportSize({width:375,height:812});
  const person=people[0];
@@ -118,4 +144,31 @@ test('creator profile and inbox fit a narrow phone viewport',async({page})=>{
   await page.goto(base+path);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),path).toBe(true);
  }
+});
+
+for(const width of [320, 768, 1440])for(const ownProfile of [false,true])test(`all profile variants preserve visibility and tabs at ${width}px (own=${ownProfile})`,async({page})=>{
+ await page.setViewportSize({width,height:900});
+ const person=people[ownProfile?1:0];
+ const name=ownProfile?'Builder'+ 'WithALongName'.repeat(8):person.name;
+ await page.route('**/api/creator-profile*',route=>{
+  const url=new URL(route.request().url());
+  if(url.searchParams.get('action')==='posts')return route.fulfill({json:{posts:[],next:null}});
+  return route.fulfill({json:{profile:{name,bio:'Building '+ 'software'.repeat(60),website:'',social:'',logoUrl:ownProfile?'/digivated-ascii-icon-transparent.png':''},projects:[{id:'example',name:'A published project',description:'Useful software',url:'https://example.com'}],followers:1,ownProfile}});
+ });
+ await page.goto(base+'/creator?id='+person.id);
+ await expect(page.locator('#creator-title')).toHaveText(name);
+ await expect(page.locator('#creator-public-status')).toHaveText('No posts yet.');
+ for(const selector of ['#creator-website','#creator-social','#creator-projects','#creator-projects-title'])await expect(page.locator(selector)).toBeHidden();
+ for(const selector of ['#creator-follow','#creator-message']){
+  if(ownProfile)await expect(page.locator(selector)).toBeHidden();
+  else await expect(page.locator(selector)).toBeVisible();
+ }
+ await page.getByRole('button',{name:'Projects',exact:true}).click();
+ await expect(page.locator('#creator-projects')).toBeVisible();
+ await expect(page.locator('#creator-projects')).toContainText('A published project');
+ await expect(page.locator('#creator-posts')).toBeHidden();
+ await page.getByRole('button',{name:'Posts',exact:true}).click();
+ await expect(page.locator('#creator-projects')).toBeHidden();
+ await expect(page.locator('#creator-posts')).not.toHaveAttribute('hidden');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
