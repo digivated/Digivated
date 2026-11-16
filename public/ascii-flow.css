@@ -445,7 +445,9 @@ html#digivated-root[data-ascii] body .compact-site-header .navigation-panel [hid
 /* Creator profile: a framed card with a visible banner, avatar that sits on the
    banner edge (never on its label), ruled tabs and status under the tabs. */
 html#digivated-root[data-ascii] body #main .creator-public{display:flex!important;flex-direction:column;width:min(860px,calc(100% - 40px))!important;margin:24px auto 96px!important}
-html#digivated-root[data-ascii] body #main .creator-public>*{order:5}
+html#digivated-root[data-ascii] body #main .creator-public>*{order:5;min-width:0}
+html#digivated-root[data-ascii] body #main .creator-public :is(h1,p,a){overflow-wrap:anywhere}
+html#digivated-root[data-ascii] body #main .creator-public [hidden]:not([hidden=until-found]){display:none!important}
 html#digivated-root[data-ascii] body #main .creator-public>.creator-back{order:0;align-self:flex-start;margin:0 0 16px!important;color:#9a9a9a!important;font-family:var(--fl-mono)!important;font-size:11px!important;letter-spacing:.08em;text-transform:uppercase}
 html#digivated-root[data-ascii] body #main .creator-public>.creator-back:hover{color:#fff!important}
 html#digivated-root[data-ascii] body #main .creator-public>.creator-cover{order:1;box-sizing:border-box;height:140px!important;min-height:140px!important;padding:14px 18px!important;display:flex!important;align-items:flex-start;justify-content:flex-end;border:1px solid #232323!important;border-bottom:0!important;border-radius:4px 4px 0 0!important;background:repeating-linear-gradient(135deg,transparent 0 7px,#171717 7px 8px),#0b0b0b!important;color:#6f6f6f!important;font-family:var(--fl-mono)!important;font-size:10.5px!important;font-weight:500!important;letter-spacing:.14em!important}
@@ -459,7 +461,7 @@ html#digivated-root[data-ascii] body #main .creator-public .creator-profile-link
 html#digivated-root[data-ascii] body #main .creator-public .creator-profile-links a:hover{color:#fff!important}
 html#digivated-root[data-ascii] body #main .creator-public .creator-followers{margin:8px 0 18px!important;color:#8a8a8a!important;font-size:13px!important}
 html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions{display:flex;flex-wrap:wrap;gap:10px!important;margin-top:0!important}
-html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions :is(a,button){display:inline-flex!important;align-items:center;justify-content:center;min-height:40px!important;padding:0 18px!important;font-size:13px!important;font-weight:550!important;text-decoration:none!important}
+html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions :is(a,button):not([hidden]){display:inline-flex!important;align-items:center;justify-content:center;min-height:40px!important;padding:0 18px!important;font-size:13px!important;font-weight:550!important;text-decoration:none!important}
 html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions a.button.primary{color:#0a0a0a!important;background:#f0f0f0!important;border-color:#f0f0f0!important}
 html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions a.button.primary:hover{background:#fff!important}
 html#digivated-root[data-ascii] body #main .creator-public>.creator-tabs{order:3;display:flex!important;margin:28px 0 0!important;padding:0!important;border:0!important;border-bottom:1px solid #232323!important;background:none!important}
@@ -474,7 +476,7 @@ html#digivated-root[data-ascii] body #main .creator-public{width:calc(100% - 24p
 html#digivated-root[data-ascii] body #main .creator-public>.creator-cover{height:104px!important;min-height:104px!important;padding:12px 14px!important;border-radius:4px 4px 0 0!important}
 html#digivated-root[data-ascii] body #main .creator-public>.creator-public-intro{padding:0 18px 22px!important;border-inline:1px solid #232323!important}
 html#digivated-root[data-ascii] body #main .creator-public-intro .creator-avatar{width:72px!important;height:72px!important;margin-top:-36px!important}
-html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions :is(a,button){flex:1 1 auto}
+html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions :is(a,button):not([hidden]){flex:1 1 auto}
 html#digivated-root[data-ascii] body #main .creator-public>.creator-cover>span{display:none!important}
 html#digivated-root[data-ascii] body #main .creator-public>.creator-tabs button{flex:1 1 0;padding:0 8px!important}
 }

@@ -145,3 +145,30 @@ test('creator profile and inbox fit a narrow phone viewport',async({page})=>{
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),path).toBe(true);
  }
 });
+
+for(const width of [320, 768, 1440])for(const ownProfile of [false,true])test(`all profile variants preserve visibility and tabs at ${width}px (own=${ownProfile})`,async({page})=>{
+ await page.setViewportSize({width,height:900});
+ const person=people[ownProfile?1:0];
+ const name=ownProfile?'Builder'+ 'WithALongName'.repeat(8):person.name;
+ await page.route('**/api/creator-profile*',route=>{
+  const url=new URL(route.request().url());
+  if(url.searchParams.get('action')==='posts')return route.fulfill({json:{posts:[],next:null}});
+  return route.fulfill({json:{profile:{name,bio:'Building '+ 'software'.repeat(60),website:'',social:'',logoUrl:ownProfile?'/digivated-ascii-icon-transparent.png':''},projects:[{id:'example',name:'A published project',description:'Useful software',url:'https://example.com'}],followers:1,ownProfile}});
+ });
+ await page.goto(base+'/creator?id='+person.id);
+ await expect(page.locator('#creator-title')).toHaveText(name);
+ await expect(page.locator('#creator-public-status')).toHaveText('No posts yet.');
+ for(const selector of ['#creator-website','#creator-social','#creator-projects','#creator-projects-title'])await expect(page.locator(selector)).toBeHidden();
+ for(const selector of ['#creator-follow','#creator-message']){
+  if(ownProfile)await expect(page.locator(selector)).toBeHidden();
+  else await expect(page.locator(selector)).toBeVisible();
+ }
+ await page.getByRole('button',{name:'Projects',exact:true}).click();
+ await expect(page.locator('#creator-projects')).toBeVisible();
+ await expect(page.locator('#creator-projects')).toContainText('A published project');
+ await expect(page.locator('#creator-posts')).toBeHidden();
+ await page.getByRole('button',{name:'Posts',exact:true}).click();
+ await expect(page.locator('#creator-projects')).toBeHidden();
+ await expect(page.locator('#creator-posts')).not.toHaveAttribute('hidden');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
