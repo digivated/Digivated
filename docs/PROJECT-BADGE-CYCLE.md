@@ -15,3 +15,7 @@ Run `DIGIVATED_TEST_REDIS_PORT=<isolated-loopback-port> node --test tests/launch
 The 27 focused checks pass, including the authenticated submission-handler badge action, real Redis queue persistence, pre-date privacy, scheduled publication, public projection/index, queue removal, repeat-run safety, concurrent revision protection, owner isolation and redirect validation. The production build passes.
 
 The full suite has three pre-existing failures, reproduced on unmodified commit `edebcac`: two tests expect 15 API files but the repository now has 16; one still expects the earlier anti-framing route pattern. These are unrelated to the badge-cycle changes.
+
+## What creators see (November 16, 2026)
+
+The cycle is shown in plain language on the submit page (four-step guide and progress bar), on the post-save screen, and in the dashboard launch tracker: Saved → Badge verified → Launch day → Live. Each project card shows its current step and the exact next action (copy badge, paste it into the submitted URL, publish, press “Check my website”), troubleshooting tips, and the launch time in UTC and local time. Verifying a badge sends a “launch scheduled” notification. `src/scripts/launch-tracker.js` holds the shared status model.

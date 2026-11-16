@@ -103,3 +103,11 @@ Source evidence: live `/rankings` screenshot and source inspected November 9; Fi
 Use a single horizontal row with the approved logo, plain desktop destination links, icon search, account text, one restrained Membership outline, and a three-line menu icon. Remove the surrounding navigation capsule and utility button shadows. Active desktop destinations use a thin violet underline and readable mixed-case labels. Keep native menu disclosure and its open/close accessible labels, Escape/outside dismissal, keyboard entry, account hooks, and all destinations.
 
 At tablet widths the primary destinations live in the menu. On phones account links remain in that menu, while Membership, search and the menu stay visible; at the narrowest width use the approved brand mark without the wordmark to fit whole controls. The header follows existing black/violet tokens and supports reduced motion. Browser checks cover 320, 390, 768, 1024 and 1440px, menu bounds, separate targets, keyboard focus, search, active destination, and existing footer/access/collection flows.
+
+## Flow layer — November 16, 2026
+
+`public/ascii-flow.css` loads before `ascii-silver.css` in every layout and declares `@layer flow, ascii;`. Important declarations in earlier layers win, so it restores structure the ASCII theme strips (borders, panel backgrounds, solid primary buttons) without editing that theme. It only adds framing and states; it never hides content or renames script hooks.
+
+Shared pieces: `.fl-card` panels, `.fl-btn` and `.fl-btn-primary` buttons, `.fl-tabs`, `.fl-pill` status tones (ok, info, warn, bad, muted), `.fl-status` messages, and `.fl-tracker` steps drawn as `[✓] [•] [ ]`. Form fields site-wide get visible borders and a clear focus state.
+
+Flows using it: the single-card sign-in (tabs, optional Google, show password, inline forgot link, friendly errors), the header account menu (avatar, unread counts, sign out; signed-out visitors see Log in and Sign up), the tabbed dashboard (Projects, Profile, Following, Settings) with a per-project launch tracker and next step, the submit page progress bar and post-save screen, and the notifications feed.
