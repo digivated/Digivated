@@ -1,4 +1,4 @@
-import { notifyProjectApproval } from './notifications.mjs';
+import { notifyLaunchScheduled, notifyProjectApproval } from './notifications.mjs';
 import { timingSafeEqual } from 'node:crypto';
 import { projectPublic, SAVE_EDIT, validId } from './admin-store.mjs';
 import { redisClient } from './submissions.mjs';
@@ -39,6 +39,7 @@ export async function verifyProjectBadge(redis,account,id,readSite=readProjectSi
  const saved=await redis(['EVAL',SAVE_EDIT,4,`digivated:submission:${id}`,'digivated:submissions',`digivated:public:submission:${id}`,'digivated:public:submissions',record.revision||0,JSON.stringify(updated),'',Date.parse(record.date),'submission']);
  if(saved!==1)throw Error('The project changed. Refresh Your Projects and try again.');
  const project=await publishQueued(redis,updated);
+ if(!project){try{await notifyLaunchScheduled(redis,updated);}catch{/* Verification already succeeded. */}}
  return {verified:true,scheduledAt:updated.launch.scheduledAt,...(project?{pageUrl:project.pageUrl}:{})};
 }
 export function makeLaunchQueueHandler(deps={}){

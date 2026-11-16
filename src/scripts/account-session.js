@@ -12,12 +12,12 @@ export function accountSession({fresh=false}={}){
   const client=createClient(config.url,config.key,{auth:communityAuthOptions});
   const {data:{session},error}=await client.auth.getSession();
   if(error)throw error;
-  if(!session?.access_token)return {state:'signed-out',client,session:null};
+  if(!session?.access_token)return {state:'signed-out',client,session:null,config};
   try{
    const check=await fetch('/api/project-account?action=me',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'});
-   if(check.ok){const data=await check.json();return {state:'signed-in',client,session,email:data.email};}
-   return {state:check.status===401?'unverified':'unavailable',client,session};
-  }catch{return {state:'unavailable',client,session};}
+   if(check.ok){const data=await check.json();return {state:'signed-in',client,session,email:data.email,config};}
+   return {state:check.status===401?'unverified':'unavailable',client,session,config};
+  }catch{return {state:'unavailable',client,session,config};}
  })().catch(error=>{pending=null;throw error;});
  return pending;
 }

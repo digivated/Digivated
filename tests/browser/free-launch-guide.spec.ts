@@ -26,8 +26,9 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await expect(page.locator('.free-launch-guide')).toContainText('Verification is required.');
  await expect(page.locator('.free-launch-guide')).toContainText('00:10 UTC');
  await expect(page.locator('#submission-details')).toBeVisible();
+ await expect(page.locator('#submission-progress li.is-current')).toContainText('Project');
  for(const [name,value] of Object.entries({name:'Orbit',url:'https://example.com',description:'A useful workspace for independent builders to organize projects.',creator:'Builder'}))await page.locator(`#project-form [name=${name}]`).fill(value);
- await page.locator('#project-form [name=category]').selectOption('Websites');
+ await page.locator('#project-form [name=category]').selectOption('Developer Tools');
  const image=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=64;c.getContext('2d')!.fillRect(0,0,64,64);return c.toDataURL('image/png').split(',')[1];});
  await page.locator('#project-image').setInputFiles({name:'logo.png',mimeType:'image/png',buffer:Buffer.from(image,'base64')});
  await page.locator('#project-form [name=consent]').check();
@@ -36,16 +37,18 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await expect(page.locator('#submission-badge-html')).toHaveValue(badge);
  await expect(page.locator('#submission-badge-launch')).toContainText('November 23, 2026');
  await expect(page.locator('#submission-badge')).toContainText('Verification is required.');
+ await expect(page.locator('#sub-step-details')).toBeHidden();
+ await expect(page.locator('#submission-badge .fl-tracker [aria-current=step]')).toContainText('Badge verified');
  await page.goto(base+'/account#account-submissions');
+ await expect(page.locator('[data-submission-state]')).toHaveText('Action needed');
  await expect(page.locator('.account-launch')).toContainText('Verification is required before automatic publication.');
  await page.locator('[data-verify-badge]').click();
  await expect(page.locator('[data-submission-state]')).toHaveText('Scheduled');
  await expect(page.locator('.account-launch')).toContainText('daily 00:10 UTC cycle');
  await expect(page.locator('.account-launch')).toContainText('No admin approval needed.');
  await expect(page.locator('[data-copy-badge]')).toHaveCount(0);
- for(const selector of ['.free-launch-guide','.account-launch']){
-  const bounds=await page.locator(selector).boundingBox();
-  expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(width+1);
- }
- await page.locator('.free-launch-guide').screenshot({path:`/tmp/digivated-free-guide-${width}.png`});
+ await expect(page.locator('.fl-tracker [aria-current=step]')).toContainText('Launch day');
+ const bounds=await page.locator('.account-launch').boundingBox();
+ expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(width+1);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
 });

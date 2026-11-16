@@ -10,22 +10,6 @@ import '../styles/home-refinement.css';
 import '../styles/home-about.css';
 ---
 <Platform title="Indie Project Directory & Weekly Launches" description="Discover indie software and tools, upvote weekly launches, and give builders feedback. Submit your own project to Digivated for free.">
-  <SiteActivity/>
-  <aside class="queue-countdown" aria-label="Weekly project queue">
-    <div>
-      <strong>Next free project launch</strong>
-      <small>Weekly · Monday at 00:10 UTC</small>
-    </div>
-    <time id="queue-countdown" role="timer" aria-live="off"></time>
-  </aside>
-  <details class="home-updates">
-    <summary>What’s new <UiIcon name="chevron" size={14}/></summary>
-    <ul>
-      <li><a href="/submit-project">Free launches</a> now publish on schedule after you verify your website badge.</li>
-      <li><a href="/creators">Creators</a> can share updates and media, follow builders, and send messages.</li>
-      <li><a href="/invstr">Market Scanner</a> works without API keys; optional connections add more data.</li>
-    </ul>
-  </details>
   <section class="home-editorial" aria-labelledby="home-title">
     <div class="home-workshop-copy">
     <p class="home-editorial-kicker">A HOME FOR WHAT YOU'RE BUILDING</p>
@@ -36,7 +20,28 @@ import '../styles/home-about.css';
       <a class="button" href="#this-week">Explore this week <UiIcon name="arrow" size={16}/></a>
     </div>
     </div>
-    <pre class="ascii-field home-workshop" data-ascii-field aria-hidden="true"></pre>
+    <div class="fl-window" aria-hidden="true">
+      <div class="fl-window-bar"><span class="fl-window-dots">● ● ●</span><span class="fl-hud">digivated / workbench</span><span class="fl-hud fl-live">● live</span></div>
+      <pre class="ascii-field home-workshop" data-ascii-field></pre>
+    </div>
+  </section>
+  <section class="fl-home-stats" aria-label="Digivated right now">
+    <div class="fl-stat"><SiteActivity/></div>
+      <div class="fl-stat"><aside class="queue-countdown" aria-label="Weekly project queue">
+        <div>
+          <strong>Next free project launch</strong>
+          <small>Weekly · Monday at 00:10 UTC</small>
+        </div>
+        <time id="queue-countdown" role="timer" aria-live="off"></time>
+      </aside></div>
+      <div class="fl-stat"><details class="home-updates">
+        <summary>What’s new <UiIcon name="chevron" size={14}/></summary>
+        <ul>
+          <li><a href="/submit-project">Free launches</a> now publish on schedule after you verify your website badge.</li>
+          <li><a href="/creators">Creators</a> can share updates and media, follow builders, and send messages.</li>
+          <li><a href="/invstr">Market Scanner</a> works without API keys; optional connections add more data.</li>
+        </ul>
+      </details></div>
   </section>
   <div id="home-spotlights"><FeaturedProjects/></div>
   <HomeLaunches/>

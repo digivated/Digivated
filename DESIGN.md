@@ -103,3 +103,21 @@ Source evidence: live `/rankings` screenshot and source inspected November 9; Fi
 Use a single horizontal row with the approved logo, plain desktop destination links, icon search, account text, one restrained Membership outline, and a three-line menu icon. Remove the surrounding navigation capsule and utility button shadows. Active desktop destinations use a thin violet underline and readable mixed-case labels. Keep native menu disclosure and its open/close accessible labels, Escape/outside dismissal, keyboard entry, account hooks, and all destinations.
 
 At tablet widths the primary destinations live in the menu. On phones account links remain in that menu, while Membership, search and the menu stay visible; at the narrowest width use the approved brand mark without the wordmark to fit whole controls. The header follows existing black/violet tokens and supports reduced motion. Browser checks cover 320, 390, 768, 1024 and 1440px, menu bounds, separate targets, keyboard focus, search, active destination, and existing footer/access/collection flows.
+
+## Flow layer — November 16, 2026
+
+`public/ascii-flow.css` loads before `ascii-silver.css` in every layout and declares `@layer flow, ascii;`. Important declarations in earlier layers win, so it restores structure the ASCII theme strips (borders, panel backgrounds, solid primary buttons) without editing that theme. It only adds framing and states; it never hides content or renames script hooks.
+
+Shared pieces: `.fl-card` panels, `.fl-btn` and `.fl-btn-primary` buttons, `.fl-tabs`, `.fl-pill` status tones (ok, info, warn, bad, muted), `.fl-status` messages, and `.fl-tracker` steps drawn as `[✓] [•] [ ]`. Form fields site-wide get visible borders and a clear focus state.
+
+Flows using it: the single-card sign-in (tabs, optional Google, show password, inline forgot link, friendly errors), the header account menu (avatar, unread counts, sign out; signed-out visitors see Log in and Sign up), the tabbed dashboard (Projects, Profile, Following, Settings) with a per-project launch tracker and next step, the submit page progress bar and post-save screen, and the notifications feed.
+
+## Grid and motion v2 — November 16, 2026
+
+References from the owner: a ruled ASCII library/advertise site (frame lines, `+` crosshairs, hatched spacer bands, numbered mono labels, white rectangular buttons), a developer portfolio (big clean headline, one focal ASCII image, mono section labels, ruled project index), an ASCII video landing page (HUD readouts, restrained colour), and asciicn (ASCII text and background effects).
+
+- **Frame:** thin vertical rules run through the header, page and footer at the content edges, with `+` marks where they meet the header rule. Page intros end in a ruled, hatched band. Hidden under 760px.
+- **Type:** Inter (self-hosted `inter-latin-variable.woff2`) for headings and reading text; IBM Plex Mono for eyebrows, form labels, meta, pills, breadcrumbs, timers and all ASCII art. Headings weight 500 with tight tracking.
+- **Controls:** white 2px-radius primary buttons, dark bordered secondary buttons, square fields, chip-style tabs (active chip is white).
+- **Home:** hero copy left, the ASCII workbench in a framed window with a `digivated / workbench` HUD bar and a live badge; a ruled three-cell strip (active now, next free launch countdown, what's new) sits under the hero. The scattered ambient ASCII drift is turned off site-wide so the one focal animation reads clearly.
+- **Motion (`public/ascii-motion.js`):** the page headline and its label decode from glyph noise once on load (label keeps a blinking cursor), primary nav links re-decode on hover, and cards rise in as they enter the viewport. Screen readers get the real text via `aria-label`; live regions and the visits headline are never scrambled; everything is skipped under reduced motion; a safety timer reveals anything still hidden.

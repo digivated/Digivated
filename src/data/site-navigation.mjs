@@ -7,10 +7,10 @@ const exploreLinks = [
   ['/rankings', 'Rankings'],
 ];
 export const primaryLinks = [
-  ['/discover', 'Browse Products'],
-  ['/submit-project', 'Share a Product'],
-  ['/rankings', 'Product Rankings'],
-  ['/creators', 'Creator Hub'],
+  ['/discover', 'Discover'],
+  ['/submit-project', 'Submit'],
+  ['/rankings', 'Rankings'],
+  ['/creators', 'Creators'],
   ['/news', 'News'],
   ['/invstr', 'Market Scanner'],
 ];

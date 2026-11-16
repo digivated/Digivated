@@ -53,12 +53,15 @@ export async function verifiedAccount(req, env, fetcher = fetch) {
   let claims;
   try { claims=JSON.parse(Buffer.from(token.slice(7).split('.')[1],'base64url').toString('utf8')); }
   catch { return null; }
-  if(!Array.isArray(claims.amr)||!claims.amr.some(entry=>['magiclink','otp','password'].includes(entry?.method)))return null;
+  if(!Array.isArray(claims.amr)||!claims.amr.some(entry=>['magiclink','otp','password','oauth'].includes(entry?.method)))return null;
   const response = await fetcher(`${cfg.url}/auth/v1/user`, {headers:{apikey:cfg.key,Authorization:token},redirect:'error',signal:AbortSignal.timeout(8000)});
   if (!response.ok) return null;
   const user = await response.json();
   if (!UUID.test(user.id) || claims.sub!==user.id || !user.email_confirmed_at || user.is_anonymous || typeof user.email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email) || claims.email?.toLowerCase()!==user.email.toLowerCase()) return null;
-  const mailboxVerified=claims.amr.some(entry=>['magiclink','otp'].includes(entry?.method));
+  // Google confirms ownership of the address it signs in, like an emailed link.
+  const googleVerified=claims.amr.some(entry=>entry?.method==='oauth')&&Array.isArray(user.identities)&&user.identities.some(identity=>identity?.provider==='google'&&identity?.identity_data?.email_verified===true&&String(identity.identity_data.email||'').toLowerCase()===user.email.toLowerCase());
+  if(claims.amr.every(entry=>entry?.method==='oauth')&&!googleVerified)return null;
+  const mailboxVerified=googleVerified||claims.amr.some(entry=>['magiclink','otp'].includes(entry?.method));
   return {id:user.id,email:user.email.trim().toLowerCase(),...(mailboxVerified?{}:{mailboxVerified:false})};
 }
 
@@ -90,7 +93,7 @@ export function makeProjectAccountHandler(deps={}) {
         return send(201,{ok:!!data?.user?.id});
       }
       if(req.method!=='GET'){res.setHeader('Allow','GET, POST');return send(405,{error:'Method not allowed.'});}
-      if(url.searchParams.get('action')==='config')return send(200,{ready:!!cfg,...(cfg?{url:cfg.url,key:cfg.key}:{})});
+      if(url.searchParams.get('action')==='config')return send(200,{ready:!!cfg,...(cfg?{url:cfg.url,key:cfg.key,...(env.COMMUNITY_GOOGLE_ENABLED==='true'?{google:true}:{})}:{})});
       const accountStatus=url.searchParams.get('action')==='me';
       if([...url.searchParams.keys()].some(key=>key!=='route'&&!(accountStatus&&key==='action')))return send(400,{error:'Invalid request.'});
       if(!cfg)return send(503,{error:'Accounts are temporarily unavailable.'});

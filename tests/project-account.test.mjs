@@ -87,6 +87,16 @@ test('account tokens require provider verification and confirmed email',async()=
  assert.equal(await verifiedAccount(req,env,async()=>({ok:false})),null);
  assert.equal(await verifiedAccount(req,env,async()=>({ok:true,json:async()=>({...account,email_confirmed_at:null})})),null);
 });
+test('Google sign-in counts only when Google verified the same email',async()=>{
+ const oauth=['e30',Buffer.from(JSON.stringify({sub:account.id,email:account.email,amr:[{method:'oauth'}]})).toString('base64url'),'signature'].join('.');
+ const req={headers:{authorization:`Bearer ${oauth}`}};
+ const user=identities=>async()=>({ok:true,json:async()=>({...account,email_confirmed_at:'2026-10-23T00:00:00Z',identities})});
+ assert.deepEqual(await verifiedAccount(req,env,user([{provider:'google',identity_data:{email:account.email,email_verified:true}}])),account);
+ assert.equal(await verifiedAccount(req,env,user([{provider:'google',identity_data:{email:account.email,email_verified:false}}])),null);
+ assert.equal(await verifiedAccount(req,env,user([{provider:'google',identity_data:{email:'someone-else@example.com',email_verified:true}}])),null);
+ assert.equal(await verifiedAccount(req,env,user([{provider:'github',identity_data:{email:account.email,email_verified:true}}])),null);
+ assert.equal(await verifiedAccount(req,env,user(undefined)),null);
+});
 test('immediate signup creates a confirmed account with a rate limit',async()=>{
  const commands=[];let created;
  const handler=makeProjectAccountHandler({env:{...env,COMMUNITY_SUPABASE_SECRET_KEY:'test-secret',VERCEL:'1'},redis:async c=>{commands.push(c);return c[0]==='INCR'?1:1;},adminClient:{auth:{admin:{createUser:async input=>{created=input;return {data:{user:{id:account.id}},error:null};}}}}});
@@ -127,6 +137,6 @@ test('Redis saves the submitter’s explicit activity choice only with a success
   await redis(['SET',key,JSON.stringify({...record,status:'archived'})]);
   await saveNotificationPreferences(redis,account.id,{...defaultNotificationPreferences,enabled:true,message:false});
   assert.equal((await submit(false)).status,201);
-  assert.deepEqual(await getNotificationPreferences(redis,account.id),{...defaultNotificationPreferences,message:false});
+  assert.deepEqual(await getNotificationPreferences(redis,account.id),{...defaultNotificationPreferences,enabled:false,message:false});
  } finally { await redis(['FLUSHDB']); }
 });

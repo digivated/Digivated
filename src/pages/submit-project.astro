@@ -29,7 +29,7 @@ const submissionCategoryGroups = [
   <header class="page-intro submission-intro">
 
     <h1>Submit a project.</h1>
-    <p class="lede">Add your details and choose how to launch. Free launches require a badge on your website.</p>
+    <p class="lede">Add your details, pick how to launch, and track every step from your dashboard.</p>
   </header>
 
   <FreeLaunchGuide />
@@ -45,9 +45,15 @@ const submissionCategoryGroups = [
 
       <div id="instant-launch-resume" class="submission-review" hidden><h2>Finish publishing</h2><p>Use the same email at checkout as on your Digivated account. After paying, return here and verify your purchase.</p><div class="submission-account-actions"><a id="instant-launch-checkout" class="button primary" target="_blank" rel="noopener">Open checkout ↗</a><button id="instant-launch-verify" class="button" type="button">Verify payment and publish</button></div><p id="instant-launch-status" role="status" aria-live="polite"></p><a id="instant-launch-listing" hidden>View your live project →</a></div>
       <div id="submission-details" hidden>
+      <ol class="fl-progress" id="submission-progress" aria-label="Form progress">
+        <li data-progress="sub-step-details"><a href="#sub-step-details"><span class="fl-progress-mark" aria-hidden="true">[1]</span> Project</a></li>
+        <li data-progress="sub-step-logo"><a href="#sub-step-logo"><span class="fl-progress-mark" aria-hidden="true">[2]</span> Logo</a></li>
+        <li data-progress="sub-step-you"><a href="#sub-step-you"><span class="fl-progress-mark" aria-hidden="true">[3]</span> About you</a></li>
+        <li data-progress="sub-step-launch"><a href="#sub-step-launch"><span class="fl-progress-mark" aria-hidden="true">[4]</span> Launch</a></li>
+      </ol>
 
 
-      <fieldset>
+      <fieldset id="sub-step-details">
         <legend><span class="submission-step-label">01 · Project details</span>Tell us about your project</legend>
         <p class="field-help">Import a name and description from your website. You can edit both.</p><label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
         <label>Project URL<input name="url" type="url" placeholder="https://your-project.com" maxlength="500" required/></label>
@@ -81,30 +87,30 @@ const submissionCategoryGroups = [
         </fieldset>
       </fieldset>
 
-      <fieldset>
-        <legend>Project logo</legend>
+      <fieldset id="sub-step-logo">
+        <legend><span class="submission-step-label">02 · Logo</span>Project logo</legend>
         <label class="submission-upload">Project logo<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Required. Upload your project’s logo, not a website screenshot. JPG, PNG, or WebP, up to 10 MB. A square PNG or WebP with a transparent background works best. We preserve the full logo in a consistent square frame.</span></label>
         <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project logo preview"/><span id="project-image-name"></span></div>
       </fieldset>
 
-      <fieldset>
-        <legend><span class="submission-step-label">02 · Creator details</span>About you</legend>
+      <fieldset id="sub-step-you">
+        <legend><span class="submission-step-label">03 · Creator details</span>About you</legend>
         <p class="submission-section-help">We’ll use these details to review your submission. Your email stays private.</p>
         <div class="form-row"><label>Creator name<input name="creator" placeholder="Your name" autocomplete="name" maxlength="100" required/></label><label>Email<input name="email" placeholder="you@example.com" type="email" autocomplete="email" maxlength="254" required/><span class="field-help">Use the email linked to your account.</span></label></div>
         <label>Social handle <span class="quiet">(optional)</span><input name="social" maxlength="200" placeholder="@yourhandle — include the platform"/></label>
         <label>Notes for the review <span class="quiet">(optional)</span><textarea name="notes" rows="3" maxlength="2000" placeholder="Anything else you’d like us to know?"></textarea><span class="field-help">Only the review team sees these notes.</span></label>
       </fieldset>
 
-      <fieldset class="submission-intent">
-        <legend><span class="submission-step-label">03 · Launch options</span>Choose how to launch</legend>
+      <fieldset class="submission-intent" id="sub-step-launch">
+        <legend><span class="submission-step-label">04 · Launch options</span>Choose how to launch</legend>
         <label>Launch option
           <select name="submissionType" id="submission-type" aria-describedby="free-launch-help">
-            <option value="directory">Free</option>
+            <option value="directory">Free launch (add a badge to your site)</option>
             <option value="instant" id="submission-instant-option" hidden disabled>Instant Publishing</option>
             <option value="founding-feature">Membership Spotlight</option>
           </select>
         </label>
-        <p id="free-launch-help" class="field-help">Save your project, add the badge to your website, then verify it in Your Projects. Verified projects launch automatically on or after their scheduled date. <span id="free-launch-date"></span></p>
+        <p id="free-launch-help" class="field-help">After saving you’ll get a badge to add to your website. Verify it from your dashboard and your project launches automatically on its scheduled date. <span id="free-launch-date"></span></p>
         <p id="instant-launch-help" class="field-help" hidden>Pay once with your account email, then return to verify payment and publish.</p>
         <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/membership#member-sign-in">membership page</a> first to request your included spotlight. We review each request.</p></div>
       </fieldset>
@@ -121,12 +127,14 @@ const submissionCategoryGroups = [
         <noscript>Enable JavaScript to submit your project securely.</noscript>
         <p class="form-status" id="submission-status" role="status" aria-live="polite" tabindex="-1"></p>
         <section id="submission-badge" class="submission-option-detail" aria-labelledby="submission-badge-title" hidden>
-          <h3 id="submission-badge-title" tabindex="-1">Project saved. Next: add and verify your badge.</h3>
-          <ol class="badge-next-steps"><li>Add this HTML to your public project page.</li><li>Publish your website changes.</li><li>Open Your Projects and select <strong>Verify website badge</strong>.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help"><strong>Verification is required.</strong> Once verified, the daily cycle publishes your project when its launch date arrives. No admin approval needed.</p>
-          <label>Badge HTML<textarea id="submission-badge-html" rows="3" readonly></textarea></label>
-          <div class="submission-account-actions">
-            <button class="button" type="button" id="submission-badge-copy">Copy badge</button>
-            <a href="/account#account-submissions">Open Your Projects →</a>
+          <p class="eyebrow">STEP 1 OF 4 DONE</p>
+          <h3 id="submission-badge-title" tabindex="-1">Project saved. Next: add your badge.</h3>
+          <div id="submission-badge-tracker"></div>
+          <ol class="badge-next-steps fl-howto"><li><strong>Copy the badge code</strong> below. It shows as a small <span class="fl-badge-preview">[ listed on Digivated ]</span> link.</li><li><strong>Paste it into your website’s HTML</strong> (for example the footer) and publish the change.</li><li><strong>Open your dashboard and press “Check my website”.</strong> That’s it, your project then launches automatically.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help"><strong>Verification is required.</strong> Once verified, the daily cycle publishes your project when its launch date arrives. No admin approval needed.</p>
+          <label class="fl-code">Badge code<textarea id="submission-badge-html" rows="3" readonly></textarea></label>
+          <div class="submission-account-actions fl-actions">
+            <button class="fl-btn" type="button" id="submission-badge-copy">Copy badge code</button>
+            <a class="button primary" id="submission-badge-dashboard" href="/account#account-submissions">Go to my dashboard →</a>
           </div>
           <p id="submission-badge-copy-status" role="status"></p>
         </section>

@@ -2,40 +2,93 @@ import { accountSession } from './account-session.js';
 
 const form=document.getElementById('login-email-form');
 if(form){
- const tabs=[document.getElementById('login-tab-signin'),document.getElementById('login-tab-signup')];
- const status=document.getElementById('login-status'),submit=document.getElementById('login-submit'),explanation=document.getElementById('login-explanation'),password=form.elements.password;
- const next=new URLSearchParams(location.search).get('next');const destination=next&&(/\/creator\?id=[a-f0-9-]{36}$/i.test(next)||/^\/inbox(?:\?id=[a-f0-9-]{36})?$/i.test(next))?next:'/account';
- let mode=new URLSearchParams(location.search).get('mode')==='signup'?'signup':'signin';
- const render=()=>{
-  tabs.forEach((tab,index)=>{const selected=(index===0?'signin':'signup')===mode;tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1;});
-  document.getElementById('login-form-panel').setAttribute('aria-labelledby',mode==='signin'?'login-tab-signin':'login-tab-signup');
-  explanation.textContent=mode==='signin'?'Sign in with your email and password.':'Create your account with an email and password.';
-  submit.textContent=mode==='signin'?'Sign in':'Create account';
-  document.getElementById('login-reset').hidden=mode!=='signin';document.getElementById('login-alternative').hidden=mode!=='signin';
-  password.autocomplete=mode==='signin'?'current-password':'new-password';password.minLength=mode==='signin'?1:10;
-  status.textContent='';
+ const $=id=>document.getElementById(id);
+ const tabs=[$('login-tab-signin'),$('login-tab-signup')];
+ const status=$('login-status'),submit=$('login-submit'),explanation=$('login-explanation'),password=form.elements.password,email=form.elements.email;
+ const params=new URLSearchParams(location.search);
+ const next=params.get('next');
+ const safeNext=next&&(/^\/creator\?id=[a-f0-9-]{36}$/i.test(next)||/^\/inbox(?:\?id=[a-f0-9-]{36})?$/i.test(next)||/^\/(?:submit-project|notifications|account|saved|creators)$/.test(next));
+ const destination=safeNext?next:'/account';
+ let mode=params.get('mode')==='signup'?'signup':'signin';
+ let client=null,busy=false,unavailable='';
+ const copy={
+  signin:{title:'Welcome back.',subtitle:'Sign in to track your launches and read feedback.',explain:'Sign in with your email and password.',submit:'Sign in',switchText:'New to Digivated? ',switchAction:'Create an account'},
+  signup:{title:'Join Digivated.',subtitle:'Launch your project for free and get real feedback from builders.',explain:'Create your account with an email and password.',submit:'Create account',switchText:'Already have an account? ',switchAction:'Sign in'}
  };
- tabs.forEach((tab,index)=>{tab.onclick=()=>{mode=index===0?'signin':'signup';render();};tab.onkeydown=event=>{if(!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();const next=tabs[index===0?1:0];next.click();next.focus();};});
+ const say=(message,tone='')=>{status.textContent=message;status.dataset.tone=tone;};
+ const render=()=>{
+  const c=copy[mode];
+  tabs.forEach((tab,index)=>{const selected=(index===0?'signin':'signup')===mode;tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1;});
+  $('login-form-panel').setAttribute('aria-labelledby',mode==='signin'?'login-tab-signin':'login-tab-signup');
+  $('login-title').textContent=c.title;$('login-subtitle').textContent=c.subtitle;
+  explanation.textContent=c.explain;submit.textContent=c.submit;
+  $('login-reset').hidden=mode!=='signin';$('login-alternative').hidden=mode!=='signin';
+  $('login-password-hint').hidden=mode!=='signup';$('login-terms').hidden=mode!=='signup';
+  $('login-switch').firstChild.textContent=c.switchText;$('login-switch-button').textContent=c.switchAction;
+  password.autocomplete=mode==='signin'?'current-password':'new-password';password.minLength=mode==='signin'?1:10;
+  document.title=(mode==='signin'?'Log in':'Create account')+' · Digivated';
+  if(unavailable)say(unavailable,'error');else say('');
+ };
+ const setMode=value=>{mode=value;render();const url=new URL(location.href);if(mode==='signup')url.searchParams.set('mode','signup');else url.searchParams.delete('mode');history.replaceState(null,'',url);};
+ tabs.forEach((tab,index)=>{tab.onclick=()=>setMode(index===0?'signin':'signup');tab.onkeydown=event=>{if(!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();const other=tabs[index===0?1:0];other.click();other.focus();};});
+ $('login-switch-button').onclick=()=>{setMode(mode==='signin'?'signup':'signin');email.focus();};
+ const toggle=$('login-show-password');
+ toggle.onclick=()=>{const show=password.type==='password';password.type=show?'text':'password';toggle.textContent=show?'Hide':'Show';toggle.setAttribute('aria-pressed',String(show));password.focus();};
  render();
- async function boot(){
-  const {state:authState,client}=await accountSession();
-  if(authState==='signed-in'){location.replace(destination);return;}
-  if(authState==='unverified')status.textContent='Finish verifying your email with the link we sent.';
-  if(authState==='unavailable')status.textContent='Account verification is temporarily unavailable. Please try again.';
-  async function action(button,work){const email=form.elements.email.value.trim();if(!form.elements.email.reportValidity())return;button.disabled=true;status.textContent='Working…';try{await work(email);}catch(error){status.textContent=error.code==='invalid_credentials'?'Email or password is incorrect. Use Forgot password if you need to set one.':error.code==='email_not_confirmed'?'Confirm your email with the verification link first.':error.message||'Please try again.';}finally{button.disabled=false;}}
-  form.onsubmit=async event=>{
-   event.preventDefault();await action(submit,async email=>{
-   try{
-    if(mode==='signup'){const response=await fetch('/api/project-account?action=signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:password.value})});if(!response.ok){const result=await response.json();throw Error(result.error||'Account could not be created.');}}
-    const {data,error}=await client.auth.signInWithPassword({email,password:password.value});
-    if(error)throw error;
-    if(data.session){password.value='';location.replace(destination);return;}
-    status.textContent='Please try signing in again.';
-   }catch(error){throw error;}
-   });
-  };
-  document.getElementById('login-email-link').onclick=event=>action(event.currentTarget,async email=>{const {error}=await client.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:`${location.origin}/account`}});if(error)throw error;status.textContent=`If ${email} has an account, a sign-in link is on its way.`;});
-  document.getElementById('login-reset').onclick=event=>action(event.currentTarget,async email=>{const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:`${location.origin}/account`});if(error)throw error;status.textContent=`If ${email} has an account, a password setup link is on its way.`;});
+
+ const friendly=error=>{
+  const code=error?.code||'';
+  if(code==='invalid_credentials')return 'That email and password don’t match. Check them, or use “Forgot password?”.';
+  if(code==='email_not_confirmed')return 'Confirm your email with the verification link we sent first.';
+  if(code==='over_request_rate_limit'||code==='over_email_send_rate_limit'||error?.status===429)return 'Too many attempts. Wait a minute, then try again.';
+  if(error?.name==='TimeoutError'||error?.name==='TypeError')return 'We couldn’t reach Digivated. Check your connection and try again.';
+  return error?.message||'Something went wrong. Please try again.';
+ };
+ const validEmail=()=>{const value=email.value.trim();if(!value){say('Enter your email address.','error');email.focus();return '';}if(!email.checkValidity()){say('Enter a valid email address, like you@example.com.','error');email.focus();return '';}return value;};
+ async function action(button,work,{needsPassword=false}={}){
+  if(busy)return;
+  const address=validEmail();if(!address)return;
+  if(needsPassword){
+   if(!password.value){say('Enter your password.','error');password.focus();return;}
+   if(mode==='signup'&&password.value.length<10){say('Use at least 10 characters for your password.','error');password.focus();return;}
+  }
+  if(!client){say('Account sign-in is temporarily unavailable. Please try again shortly.','error');return;}
+  busy=true;button.disabled=true;button.setAttribute('aria-busy','true');
+  const label=button.textContent;button.textContent=button===submit?(mode==='signup'?'Creating your account…':'Signing in…'):'Sending…';
+  say('');
+  try{await work(address);}catch(error){say(friendly(error),'error');}
+  finally{busy=false;button.disabled=false;button.removeAttribute('aria-busy');button.textContent=button===submit?copy[mode].submit:label;}
  }
- boot().catch(error=>{status.textContent=error.message||'Account sign-in is temporarily unavailable.';submit.disabled=true;});
+ form.onsubmit=event=>{
+  event.preventDefault();
+  action(submit,async address=>{
+   if(mode==='signup'){
+    const response=await fetch('/api/project-account?action=signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:address,password:password.value}),signal:AbortSignal.timeout(20000)});
+    if(!response.ok){const result=await response.json().catch(()=>({}));if(response.status===409){setMode('signin');email.value=address;}throw Error(result.error||'Your account could not be created. Please try again.');}
+   }
+   const {data,error}=await client.auth.signInWithPassword({email:address,password:password.value});
+   if(error)throw error;
+   if(data.session){password.value='';say(mode==='signup'?'Account created. Taking you to your dashboard…':'Signed in. Taking you to your dashboard…','ok');location.replace(destination);return;}
+   say('Please try signing in again.','error');
+  },{needsPassword:true});
+ };
+ $('login-email-link').onclick=event=>action(event.currentTarget,async address=>{const {error}=await client.auth.signInWithOtp({email:address,options:{shouldCreateUser:false,emailRedirectTo:`${location.origin}/account`}});if(error)throw error;say(`If ${address} has an account, a sign-in link is on its way. Check your inbox.`,'ok');});
+ $('login-reset').onclick=event=>action(event.currentTarget,async address=>{const {error}=await client.auth.resetPasswordForEmail(address,{redirectTo:`${location.origin}/account`});if(error)throw error;say(`If ${address} has an account, a password reset link is on its way. Check your inbox.`,'ok');});
+ $('login-google').onclick=async event=>{
+  if(busy||!client)return;busy=true;event.currentTarget.disabled=true;say('Opening Google…');
+  try{const redirectTo=`${location.origin}/login${safeNext?'?next='+encodeURIComponent(next):''}`;const {error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo}});if(error)throw error;}
+  catch(error){say(friendly(error),'error');busy=false;event.currentTarget.disabled=false;}
+ };
+
+ async function boot(){
+  const result=await accountSession();
+  client=result.client;
+  if(result.config?.google)$('login-google-group').hidden=false;
+  const callback=new URLSearchParams(location.hash.slice(1));
+  if(callback.get('error_description')){say('Google sign-in didn’t finish. Please try again or use your email.','error');history.replaceState(null,'',location.pathname+location.search);}
+  if(result.state==='signed-in'){say('You’re already signed in. Taking you to your dashboard…','ok');location.replace(destination);return;}
+  if(result.state==='unverified')say('Finish verifying your email with the link we sent, then sign in.','error');
+  if(result.state==='unavailable')say('Account verification is temporarily unavailable. Please try again.','error');
+ }
+ boot().catch(error=>{unavailable=error.message||'Account sign-in is temporarily unavailable.';say(unavailable,'error');});
 }

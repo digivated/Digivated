@@ -1,22 +1,47 @@
 ---
 import Platform from '../layouts/Platform.astro';
-import FreeLaunchGuide from '../components/FreeLaunchGuide.astro';
 import '../styles/project-account.css';
 ---
-<Platform title="Your Projects" description="Sign in to follow your Digivated project submissions and read private review feedback.">
-  <header class="page-intro"><p class="eyebrow">YOUR DIGIVATED ACCOUNT</p><h1>Your projects</h1><p class="lede">Track submissions and read private review feedback.</p></header>
-  <section class="project-account-card" aria-label="Project account">
-    <p id="account-state" role="status" aria-live="polite">Connecting to account sign-in…</p>
-    <form id="account-password-reset" class="login-panel" hidden>
+<Platform title="Your Projects" description="Your Digivated dashboard: track launches, read feedback, and manage your profile.">
+  <header class="page-intro fl-dash-intro"><div><p class="eyebrow">YOUR DASHBOARD</p><h1>Your projects</h1><p class="lede">Track your launch, see what to do next, and read feedback.</p></div><a class="button primary fl-btn-primary fl-dash-cta" id="account-submit-cta" href="/submit-project" hidden>+ Submit a project</a></header>
+  <section class="project-account-card fl-dash" aria-label="Project account">
+    <p id="account-state" class="fl-status" role="status" aria-live="polite">Connecting to account sign-in…</p>
+    <form id="account-password-reset" class="login-panel fl-card fl-form fl-panel-pad" hidden>
       <label for="account-new-password">New password</label>
       <input id="account-new-password" name="password" type="password" autocomplete="new-password" minlength="10" required aria-describedby="account-password-help"/>
-      <p id="account-password-help">Use at least 10 characters.</p>
+      <p id="account-password-help" class="fl-hint">Use at least 10 characters.</p>
       <label for="account-confirm-password">Confirm new password</label>
       <input id="account-confirm-password" name="confirmation" type="password" autocomplete="new-password" minlength="10" required/>
       <button class="button primary" type="submit">Save new password</button>
     </form>
-    <div id="account-sign-in" class="account-actions" hidden><a class="button primary" href="/login">Log in or sign up</a><a class="button" href="/discover?view=featured">Browse featured projects</a></div>
-    <div id="account-signed-in" hidden><p>Signed in as <strong id="account-email"></strong></p><div class="account-actions"><a class="button primary" href="/submit-project">Submit a project</a><a class="button" href="/creators">Explore creators</a><a class="button" href="/inbox">Inbox</a><a class="button" href="/notifications">Notifications</a><button class="button" id="account-sign-out" type="button">Sign out</button></div><FreeLaunchGuide /><section aria-labelledby="account-submissions-title"><h2 id="account-submissions-title">My submissions</h2><div id="account-submissions" aria-live="polite"><p>Loading your submissions…</p></div></section><section class="creator-profile-editor" aria-labelledby="creator-profile-title"><p class="eyebrow">YOUR CREATOR SPACE</p><h2 id="creator-profile-title">Your profile</h2><p>Help builders find you and your projects. Your email and review notes stay private.</p><form id="creator-profile-form"><div class="creator-logo-editor"><span class="creator-avatar" id="creator-logo-preview" aria-hidden="true">D</span><label>Profile logo <span class="quiet">(PNG, JPG or WebP)</span><input id="creator-logo-input" type="file" accept="image/png,image/jpeg,image/webp"/><small>Square images work best. Your logo appears on your creator profile.</small></label></div><label>Display name<input name="name" maxlength="60" required placeholder="Your name or studio"/></label><label>Short bio<textarea name="bio" maxlength="240" rows="3" placeholder="What are you building?"></textarea></label><label>Website <span class="quiet">(optional)</span><input name="website" type="url" maxlength="300" placeholder="https://your-site.com"/></label><label>Social profile <span class="quiet">(optional)</span><input name="social" type="url" maxlength="300" placeholder="https://x.com/yourname"/></label><label class="creator-profile-visibility"><input name="public" type="checkbox"/> Show my profile publicly</label><div class="creator-profile-actions"><button class="button primary" type="submit">Save profile</button><a id="creator-profile-link" class="button" href="/creator" hidden>View public profile</a></div><p id="creator-profile-status" role="status" aria-live="polite"></p></form></section><section class="creator-following-feed"><h2>From creators you follow</h2><p id="creator-feed-status" class="quiet">Loading recent projects…</p><div id="creator-feed" class="creator-projects"></div><a href="/creators">Explore creators →</a></section><section id="weekly-email" hidden><h2>Weekly email</h2><p>Get new projects by email. Unsubscribe anytime.</p><button class="button" id="weekly-toggle" type="button">Get weekly emails</button><p id="weekly-status" role="status" aria-live="polite"></p></section></div>
+    <div id="account-sign-in" class="account-actions fl-card fl-panel-pad fl-empty" hidden><p><strong>Sign in to see your projects.</strong> Track launches, read feedback, and manage your profile.</p><div class="fl-actions"><a class="button primary" href="/login">Log in or sign up</a><a class="fl-btn" href="/discover?view=featured">Browse featured projects</a></div></div>
+    <div id="account-signed-in" hidden>
+      <div class="fl-dash-bar"><p>Signed in as <strong id="account-email"></strong></p><button class="fl-link" id="account-sign-out" type="button">Sign out</button></div>
+      <div class="fl-tabs" role="tablist" aria-label="Dashboard sections">
+        <button type="button" role="tab" id="account-tab-projects" aria-controls="account-panel-projects" aria-selected="true" data-account-tab="projects">Projects</button>
+        <button type="button" role="tab" id="account-tab-profile" aria-controls="account-panel-profile" aria-selected="false" tabindex="-1" data-account-tab="profile">Profile</button>
+        <button type="button" role="tab" id="account-tab-following" aria-controls="account-panel-following" aria-selected="false" tabindex="-1" data-account-tab="following">Following</button>
+        <button type="button" role="tab" id="account-tab-settings" aria-controls="account-panel-settings" aria-selected="false" tabindex="-1" data-account-tab="settings">Settings</button>
+      </div>
+      <section id="account-panel-projects" role="tabpanel" aria-labelledby="account-tab-projects" class="fl-tabpanel">
+        <h2 id="account-submissions-title" class="sr-only">My submissions</h2>
+        <div id="account-submissions" aria-live="polite"><p class="fl-status">Loading your projects…</p></div>
+      </section>
+      <section id="account-panel-profile" role="tabpanel" aria-labelledby="account-tab-profile" class="fl-tabpanel" hidden>
+        <section class="creator-profile-editor fl-card fl-panel-pad" aria-labelledby="creator-profile-title"><h2 id="creator-profile-title">Your profile</h2><p>Help builders find you and your projects. Your email and review notes stay private.</p><form id="creator-profile-form" class="fl-form"><div class="creator-logo-editor"><span class="creator-avatar" id="creator-logo-preview" aria-hidden="true">D</span><label>Profile logo <span class="quiet">(PNG, JPG or WebP)</span><input id="creator-logo-input" type="file" accept="image/png,image/jpeg,image/webp"/><small>Square images work best. Your logo appears on your creator profile.</small></label></div><label>Display name<input name="name" maxlength="60" required placeholder="Your name or studio"/></label><label>Short bio<textarea name="bio" maxlength="240" rows="3" placeholder="What are you building?"></textarea></label><label>Website <span class="quiet">(optional)</span><input name="website" type="url" maxlength="300" placeholder="https://your-site.com"/></label><label>Social profile <span class="quiet">(optional)</span><input name="social" type="url" maxlength="300" placeholder="https://x.com/yourname"/></label><label class="creator-profile-visibility"><input name="public" type="checkbox"/> Show my profile publicly</label><div class="creator-profile-actions fl-actions"><button class="button primary" type="submit">Save profile</button><a id="creator-profile-link" class="fl-btn" href="/creator" hidden>View public profile</a></div><p id="creator-profile-status" class="fl-status" role="status" aria-live="polite"></p></form></section>
+      </section>
+      <section id="account-panel-following" role="tabpanel" aria-labelledby="account-tab-following" class="fl-tabpanel" hidden>
+        <section class="creator-following-feed fl-card fl-panel-pad"><h2>From creators you follow</h2><p id="creator-feed-status" class="quiet">Loading recent projects…</p><div id="creator-feed" class="creator-projects"></div><a href="/creators">Explore creators →</a></section>
+      </section>
+      <section id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" class="fl-tabpanel" hidden>
+        <div class="fl-settings">
+          <div class="fl-card fl-panel-pad fl-setting"><div><h3>Notifications</h3><p>Choose alerts for launches, replies, follows, messages, and feedback.</p></div><a class="fl-btn" href="/notifications">Manage notifications</a></div>
+          <div class="fl-card fl-panel-pad fl-setting"><div><h3>Inbox</h3><p>Messages from other creators.</p></div><a class="fl-btn" href="/inbox">Open inbox</a></div>
+          <section id="weekly-email" class="fl-card fl-panel-pad fl-setting" hidden><div><h3>Weekly email</h3><p>Get new projects by email. Unsubscribe anytime.</p><p id="weekly-status" class="fl-status" role="status" aria-live="polite"></p></div><button class="fl-btn" id="weekly-toggle" type="button">Get weekly emails</button></section>
+          <div class="fl-card fl-panel-pad fl-setting"><div><h3>Password</h3><p>Forgot it or want a new one? We’ll email you a reset link.</p><p id="account-reset-status" class="fl-status" role="status" aria-live="polite"></p></div><button class="fl-btn" id="account-reset-link" type="button">Email me a reset link</button></div>
+        </div>
+      </section>
+    </div>
   </section>
   <script>import '../scripts/project-account.js';</script>
 </Platform>
