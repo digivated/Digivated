@@ -212,9 +212,11 @@ if (form) {
     return fields.length ? fields.every(field => field.type === 'file' ? !!field.files?.length : field.checkValidity()) : !!intent.value;
   };
   const updateProgress = () => {
-    let current = false;
+    let current = false, previousDone = true;
     for (const item of progressItems) {
-      const done = sectionDone(item.dataset.progress);
+      // A step only counts once every step before it is complete.
+      const done = previousDone && sectionDone(item.dataset.progress);
+      previousDone = done;
       item.classList.toggle('is-done', done);
       const isCurrent = !done && !current;
       item.classList.toggle('is-current', isCurrent);
