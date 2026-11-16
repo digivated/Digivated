@@ -48,7 +48,8 @@ export function defaultPublicHandlers(overrides = {}) {
 export function makePublicRouter(handlers = defaultPublicHandlers()) {
   return (req, res) => {
     const path = new URL(req.url, 'https://digivated.invalid').pathname;
-    const route = /^\/api\/([^/]+)$/.exec(path)?.[1];
+    // Vercel preserves the original URL for rewritten requests.
+    const route = /^\/creator\/?$/.test(path) ? 'creator-page' : /^\/api\/([^/]+)$/.exec(path)?.[1];
     if (route && Object.hasOwn(handlers, route)) return handlers[route](req, res);
     res.statusCode = 404;
     res.setHeader('Content-Type', 'application/json; charset=utf-8');

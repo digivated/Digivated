@@ -1,3 +1,4 @@
+import { makePublicRouter } from '../server/public-router.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { renderCreatorPage, makeCreatorPageHandler } from '../server/creator-page.mjs';
@@ -47,4 +48,13 @@ test('preview HTML uses only the published profile API when storage is not confi
  }});
  const res=response();await handler({method:'GET',url:`/creator?id=${id}`},res);
  assert.equal(res.statusCode,200);assert.ok(res.body.includes('Published maker'));assert.equal(res.body.includes('private@example.com'),false);
+});
+
+test('Vercel creator rewrites dispatch with either the original or destination URL',async()=>{
+ const handler=makeCreatorPageHandler({template,redis:async()=>JSON.stringify({public:true,name:'Maker',bio:'Building'})});
+ const router=makePublicRouter({'creator-page':handler});
+ for(const path of ['/creator','/creator/','/api/creator-page']){
+  const res=response();await router({method:'GET',url:`${path}?id=${id}`},res);
+  assert.equal(res.statusCode,200,path);assert.ok(res.body.includes('<title>Maker · Digivated</title>'));
+ }
 });
