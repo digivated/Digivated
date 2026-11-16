@@ -15,7 +15,7 @@ test('verified submissions are indexed by email and visible only to that account
  const command=commands[0];assert.equal(command[6],accountIndex(account.email,env.SUBMISSIONS_REDIS_REST_TOKEN));
  const stored=JSON.parse(command[7]);assert.equal(stored.accountId,account.id);
  assert.equal(saved.body.launch.kind,'free');
- assert.equal(saved.body.launch.badge,`<a href="https://digivated.com/projects/listing/${stored.id}" data-digivated-project="${stored.id}">[ listed on Digivated ]</a>`);
+ assert.equal(saved.body.launch.badge,`<a href="https://digivated.com/projects/listing/${stored.id}" data-digivated-project="${stored.id}" target="_blank" rel="noopener">\n  <img src="https://digivated.com/badge/${stored.id}?theme=dark" alt="Featured on Digivated" width="250" height="54">\n</a>`);
  assert.equal(stored.launch.badge,undefined);
  const redis=async c=>c[0]==='GET'?'1':c[0]==='ZREVRANGE'?[stored.id]:[JSON.stringify({...stored,notes:'private',promotion:{receiptReference:'secret'},reviewFeedback:'Please clarify your audience.'})];
  const handler=makeProjectAccountHandler({env,verifyAccount:async()=>account,redis});

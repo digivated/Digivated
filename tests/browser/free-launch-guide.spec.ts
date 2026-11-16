@@ -34,7 +34,14 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await page.locator('#project-form [name=consent]').check();
  await page.locator('#project-form button[type=submit]').click();
  await expect(page.locator('#submission-badge')).toBeVisible();
- await expect(page.locator('#submission-badge-html')).toHaveValue(badge);
+ const picker=page.locator('#submission-badge [data-badge-picker]');
+ await expect(picker.locator('[data-badge-style]')).toHaveCount(4);
+ await expect(picker.locator('[data-badge-style=dark] img')).toBeVisible();
+ await expect(picker.locator('[data-badge-style=dark] code')).toContainText('data-digivated-project="badge-fixture"');
+ await expect(picker.locator('[data-badge-style=text] code')).toHaveText(badge);
+ await page.context().grantPermissions(['clipboard-read','clipboard-write']);
+ await picker.locator('[data-copy-badge=light]').click();
+ await expect(picker.locator('[data-copy-badge=light]')).toHaveText('Copied ✓');
  await expect(page.locator('#submission-badge-launch')).toContainText('November 23, 2026');
  await expect(page.locator('#submission-badge')).toContainText('Verification is required.');
  await expect(page.locator('#sub-step-details')).toBeHidden();
@@ -42,6 +49,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await page.goto(base+'/account#account-submissions');
  await expect(page.locator('[data-submission-state]')).toHaveText('Action needed');
  await expect(page.locator('.account-launch')).toContainText('Verification is required before automatic publication.');
+ await expect(page.locator('.account-launch [data-badge-style]')).toHaveCount(4);
  await page.locator('[data-verify-badge]').click();
  await expect(page.locator('[data-submission-state]')).toHaveText('Scheduled');
  await expect(page.locator('.account-launch')).toContainText('daily 00:10 UTC cycle');

@@ -23,7 +23,7 @@ export const footerGroups = [
   { title: 'Explore', links: exploreLinks },
   { title: 'Your workspace', links: [
     ['/submit-project', 'Submit a project'], ['/account', 'Your projects'],
-    ['/saved', 'Saved items'], ['/inbox', 'Inbox'], ['/notifications', 'Notifications'], ['/membership', 'Membership'],
+    ['/saved', 'Saved items'], ['/inbox', 'Inbox'], ['/notifications', 'Notifications'], ['/badges', 'Embed badges'], ['/membership', 'Membership'],
   ] },
   { title: 'Digivated', links: [
     ['/about', 'About'], ['/privacy', 'Privacy & Data'], ['/terms', 'Terms of Use'],

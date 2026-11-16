@@ -2,6 +2,7 @@ import { prepareProjectImage } from './submission-image.js';
 import { createClient } from '@supabase/supabase-js';
 import { communityAuthOptions } from './community-auth.js';
 import { projectStage, trackerElement } from './launch-tracker.js';
+import { badgePicker } from './badge-picker.js';
 const form = document.getElementById('project-form');
 if (form) {
   let accountClient, accountVerified = false, instantConfig, pendingInstantId;
@@ -75,18 +76,7 @@ if (form) {
   const button = form.querySelector('button[type=submit]');
   const status = document.getElementById('submission-status');
   const badgePanel = document.getElementById('submission-badge');
-  const badgeHtml = document.getElementById('submission-badge-html');
-  const badgeCopyStatus = document.getElementById('submission-badge-copy-status');
-  document.getElementById('submission-badge-copy').addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(badgeHtml.value);
-      badgeCopyStatus.textContent = 'Badge copied.';
-    } catch {
-      badgeHtml.focus();
-      badgeHtml.select();
-      badgeCopyStatus.textContent = 'Badge selected. Copy the selected HTML.';
-    }
-  });
+  const badgePickerSlot = document.getElementById('submission-badge-picker');
   const intent = document.getElementById('submission-type');
   const membershipFields = document.getElementById('membership-fields');
   const imageInput = document.getElementById('project-image');
@@ -177,7 +167,7 @@ if (form) {
       if (data.launch) {
         if (data.launch.badge) {
           status.textContent = 'Project saved. Add and verify your website badge to join the launch cycle.';
-          badgeHtml.value = data.launch.badge;
+          badgePickerSlot.replaceChildren(badgePicker(data.id, { label: `Badge styles for ${payload.name}` }));
           const scheduledDate = new Date(data.launch.scheduledAt);
           document.getElementById('submission-badge-launch').textContent = Number.isFinite(scheduledDate.getTime())
             ? `Launch date: ${scheduledDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})} (UTC). Publishing runs daily at 00:10 UTC.`

@@ -16,6 +16,7 @@ import { makeNotificationsHandler } from './notifications-handler.mjs';
 import { makeReturnEmailHandler } from './return-emails.mjs';
 import { makeSiteActivityHandler } from './site-activity.mjs';
 import { makeMemberStatusHandler } from './member-status.mjs';
+import { makeBadgeHandler } from './badge.mjs';
 
 // Share one deployment entry point; each handler retains its validation and response.
 // Carousel routes stay on this router so the deployment does not add a serverless function.
@@ -42,6 +43,7 @@ export function defaultPublicHandlers(overrides = {}) {
     'creator-inbox': makeCreatorInboxHandler(),
     notifications: makeNotificationsHandler(),
     'return-emails': makeReturnEmailHandler(),
+    badge: makeBadgeHandler(),
     ...overrides,
   };
 }

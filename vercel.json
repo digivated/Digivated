@@ -239,6 +239,7 @@
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/googlef8b001e22ee0d4b9.html", "destination": "/api/google-site-verification" },
     { "source": "/projects/listing/:id", "destination": "/api/project-page?listing=:id" },
+    { "source": "/badge/:id", "destination": "/api/badge?id=:id" },
     {
       "source": "/projects/:slug",
       "destination": "/api/project-page?slug=:slug"

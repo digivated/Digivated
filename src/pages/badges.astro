@@ -1,0 +1,38 @@
+---
+import Platform from '../layouts/Platform.astro';
+import { BADGE_STYLES } from '../../server/badge-snippets.mjs';
+import { renderBadge } from '../../server/badge-render.mjs';
+const example = 'YOUR_PROJECT_ID';
+const src = (style: string) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(renderBadge(style, 482));
+const code = (style: string) => style === 'text'
+  ? `<a href="https://digivated.com/projects/listing/${example}" data-digivated-project="${example}">[ listed on Digivated ]</a>`
+  : `<a href="https://digivated.com/projects/listing/${example}" data-digivated-project="${example}" target="_blank" rel="noopener">\n  <img src="https://digivated.com/badge/${example}?theme=${style}" alt="Featured on Digivated" width="250" height="54">\n</a>`;
+---
+<Platform title="Embed badges" description="Add a Featured on Digivated badge to your website. It shows your live upvotes and links to your project listing.">
+  <header class="page-intro"><p class="eyebrow">EMBED BADGES</p><h1>Show it off.</h1><p class="lede">A badge on your website shows your live upvote count and links back to your Digivated listing. On a free launch it’s how you go live: add it, press “Check my website”, and your project publishes on launch day.</p></header>
+  <section class="fl-badges-page" aria-label="Badge styles">
+    <p class="fl-badges-intro">Your real code, with your project ID already filled in, is in <a href="/account">your dashboard</a> and on the screen after you <a href="/submit-project">submit a project</a>. The examples below use a placeholder ID.</p>
+    <div class="fl-badges" data-badge-examples>
+      {BADGE_STYLES.map(style => (
+        <article class="fl-badge-card" data-badge-style={style.key}>
+          <div class={`fl-badge-stage is-${style.key}`}>
+            {style.key === 'text'
+              ? <span class="fl-badge-preview">[ listed on Digivated ]</span>
+              : <img src={src(style.key)} width="250" height="54" alt={`${style.label} badge example`} />}
+          </div>
+          <div class="fl-badge-bar"><div><strong>{style.label}</strong><span>{style.note}</span></div><a class="fl-btn fl-btn-small" href="/account">Get your code →</a></div>
+          <pre class="fl-badge-code"><code>{code(style.key)}</code></pre>
+        </article>
+      ))}
+    </div>
+    <div class="fl-badges-notes">
+      <h2>Good to know</h2>
+      <ul>
+        <li>Every style counts for verification. Pick the one that suits your site.</li>
+        <li>The count updates on its own, every few minutes. No script to add.</li>
+        <li>Keep the badge visible on the page you submitted, for example in the footer.</li>
+        <li>Already added the old text link? It still works. Switch styles any time.</li>
+      </ul>
+    </div>
+  </section>
+</Platform>
