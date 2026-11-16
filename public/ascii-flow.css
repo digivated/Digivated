@@ -397,4 +397,7 @@ html[data-ascii] body .wall-dom-grid .wall-tile:last-child{border-bottom:1px sol
 html[data-ascii] body .wall-dom-grid .wall-tile:hover{background-color:#0e0e0e!important}
 html[data-ascii] body .wall-tile-caption small,html[data-ascii] body .home-launch-meta,html[data-ascii] body .home-launch-meta *{font-family:var(--fl-mono)!important;font-size:10.5px!important;letter-spacing:.08em!important;text-transform:uppercase}
 html[data-ascii] body .home-launch-row{border-top:1px solid var(--fl-rule)!important}
+
+html[data-ascii] body .compact-site-header .header-membership{font-family:var(--fl-sans)!important;font-size:13px!important;font-weight:450!important;color:#a8a8a8!important;text-decoration:none!important}
+html[data-ascii] body .compact-site-header .header-membership:hover{color:#fff!important}
 }
