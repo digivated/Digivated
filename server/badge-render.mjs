@@ -1,9 +1,10 @@
 import { BADGE_WIDTH as W, BADGE_HEIGHT as H } from './badge-snippets.mjs';
+import { BADGE_LOGO } from './badge-logo.mjs';
 
 // Pure SVG drawing for embed badges. No Node APIs, so the browser picker can
 // draw exact previews without a network request.
-// The Digivated mark, drawn into a dark tile so it reads on any badge background.
-const mark = tile => `<g transform="translate(12 11)"><rect x=".5" y=".5" width="31" height="31" rx="6" fill="#111" stroke="${tile}"/><g transform="translate(4 4) scale(.3)"><path fill="#8398ac" d="M5 25c0-3 2-5 5-4l12 5v41c0 3-2 5-5 4L5 66z"/><path fill="#b1c4d5" d="M25 17c0-3 2-5 5-4l16 6v51c0 3-2 5-5 4l-16-6z"/><path fill="#edf3fc" d="M50 6c0-3 3-5 6-4l18 7c2 1 3 3 3 5v51c0 2-1 4-3 5l-18 8c-3 1-6-1-6-4z"/><path fill="#0a111c" d="M62 23c1.5 6 4 8.5 10 10-6 1.5-8.5 4-10 10-1.5-6-4-8.5-10-10 6-1.5 8.5-4 10-10z"/></g></g>`;
+// The current Digivated logo in a dark tile, so its light glyphs read on any badge background.
+const mark = tile => `<g transform="translate(11 10)"><rect x=".5" y=".5" width="33" height="33" rx="7" fill="#0d0d0d" stroke="${tile}"/><image href="${BADGE_LOGO}" x="1" y="1" width="32" height="32"/></g>`;
 const SANS = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 const MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace";
 export const BADGE_THEMES = {

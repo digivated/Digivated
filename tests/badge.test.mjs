@@ -33,7 +33,8 @@ test('badge SVG shows the live count, falls back cleanly and is safe to embed', 
     const svg = renderBadge(theme, 482);
     assert.match(svg, /^<svg[^>]+width="250" height="54"/);
     assert.match(svg, />482</);
-    assert.doesNotMatch(svg, /<script|on\w+=/i);
+    assert.doesNotMatch(svg, /<script|\son\w+=/i);
+    assert.match(svg, /<image href="data:image\/png;base64,/);
   }
   assert.doesNotMatch(renderBadge('dark', 0), />0</);
   const ok = await call(makeBadgeHandler({ redis: async c => (assert.deepEqual(c, ['GET', `digivated:card:likes:project:${id}`]), '37') }), `/api/badge?id=${id}&theme=light`);
