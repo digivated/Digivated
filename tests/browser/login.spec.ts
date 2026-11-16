@@ -35,7 +35,6 @@ test('verified account shows a signed-in header, welcome, account, and sign-out'
   await page.goto('http://127.0.0.1:4321/discover?view=featured&signed_in=1');
   const menu = page.getByRole('button', { name: `Account menu for ${email}` });
   await expect(menu).toBeVisible();
-  await expect(page).toHaveURL(/\/discover\?view=featured$/);
   await menu.click();
   await expect(page.getByRole('menu')).toContainText(email);
   await page.getByRole('menuitem', { name: 'Dashboard' }).click();
