@@ -510,3 +510,21 @@ html[data-ascii] body .fl-badges-notes h2{margin:0 0 12px!important;font-size:18
 html[data-ascii] body .fl-badges-notes ul{margin:0;padding-left:18px;color:#a9a9a9;font-size:14px;line-height:1.9}
 @media (max-width:520px){html[data-ascii] body .fl-badge-stage{min-height:96px;padding:20px 12px}html[data-ascii] body .fl-badge-bar{padding:10px 12px}html[data-ascii] body .fl-badge-code{padding:12px!important;font-size:11px!important}}
 }
+
+@layer flow {
+/* Badge flow v2: recommended tag, folded text-link option, "Your badge" drawer. */
+html[data-ascii] body .fl-badge-tag{display:inline-block;margin-right:2px;padding:2px 7px;border:1px solid #f0f0f0;border-radius:2px;background:#f0f0f0;color:#0a0a0a!important;font-family:var(--fl-mono)!important;font-size:9.5px!important;font-style:normal;font-weight:600;letter-spacing:.1em;text-transform:uppercase;line-height:1.4}
+html[data-ascii] body .fl-badges>.fl-badge-more{grid-column:1/-1;min-width:0}
+html[data-ascii] body :is(.fl-badge-more,.fl-badge-later)>summary{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none;color:#a9a9a9;font-size:13px;padding:6px 0}
+html[data-ascii] body :is(.fl-badge-more,.fl-badge-later)>summary::-webkit-details-marker{display:none}
+html[data-ascii] body :is(.fl-badge-more,.fl-badge-later)>summary::before{content:"+";display:inline-grid;place-items:center;width:18px;height:18px;border:1px solid #3a3a3a;border-radius:2px;color:#d0d0d0;font-family:var(--fl-mono);font-size:12px;line-height:1}
+html[data-ascii] body :is(.fl-badge-more,.fl-badge-later)[open]>summary::before{content:"−"}
+html[data-ascii] body :is(.fl-badge-more,.fl-badge-later)>summary:hover{color:#fff}
+html[data-ascii] body .fl-badge-more>.fl-badge-card{margin-top:10px;max-width:640px}
+html[data-ascii] body .fl-badge-later{margin:14px 0 0;padding:12px 14px;border:1px solid #232323;border-radius:4px;background:#0a0a0a}
+html[data-ascii] body .fl-badge-later>summary{padding:0;color:#f2f2f2;font-size:14px;font-weight:550}
+html[data-ascii] body .fl-badge-later>summary small{margin-left:auto;color:#7d7d7d;font-family:var(--fl-mono);font-size:11px;font-weight:400;letter-spacing:.04em}
+html[data-ascii] body .fl-badge-later-body{padding-top:10px}
+html[data-ascii] body .fl-badge-later-body>.fl-hint{margin:0!important}
+html[data-ascii] body #submission-badge-status:empty{display:none}
+}

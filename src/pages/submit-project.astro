@@ -130,11 +130,13 @@ const submissionCategoryGroups = [
           <p class="eyebrow">STEP 1 OF 4 DONE</p>
           <h3 id="submission-badge-title" tabindex="-1">Project saved. Next: add your badge.</h3>
           <div id="submission-badge-tracker"></div>
-          <ol class="badge-next-steps fl-howto"><li><strong>Pick a badge style below and copy its code.</strong> Every style shows your live upvotes and links to your listing.</li><li><strong>Paste it into your website’s HTML</strong> (for example the footer) and publish the change.</li><li><strong>Open your dashboard and press “Check my website”.</strong> That’s it, your project then launches automatically.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help"><strong>Verification is required.</strong> Once verified, the daily cycle publishes your project when its launch date arrives. No admin approval needed.</p>
+          <ol class="badge-next-steps fl-howto"><li><strong>Pick a badge style below and copy its code.</strong> Every style shows your live upvotes and links to your listing.</li><li><strong>Paste it into your website’s HTML</strong> (for example the footer) and publish the change.</li><li><strong>Press “Check my website” below.</strong> Once we find the badge, your launch is locked in. You can also do this later from your dashboard.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help"><strong>Verification is required.</strong> Once verified, the daily cycle publishes your project when its launch date arrives. No admin approval needed.</p>
           <div id="submission-badge-picker"></div>
           <div class="submission-account-actions fl-actions">
-            <a class="button primary" id="submission-badge-dashboard" href="/account#account-submissions">Go to my dashboard →</a>
+            <button class="button primary fl-btn-primary" id="submission-badge-verify" type="button" hidden>Check my website</button>
+            <a class="button" id="submission-badge-dashboard" href="/account#account-submissions">Go to my dashboard →</a>
           </div>
+          <p class="fl-status" id="submission-badge-status" role="status" aria-live="polite"></p>
         </section>
       </div>
       </div>

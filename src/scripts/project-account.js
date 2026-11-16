@@ -1,5 +1,5 @@
 import { accountSession } from './account-session.js';
-import { projectStage, trackerElement, badgeSteps, nextStepCopy } from './launch-tracker.js';
+import { projectStage, trackerElement, badgeSteps, nextStepCopy, badgeLater } from './launch-tracker.js';
 
 const state=document.getElementById('account-state');
 if(state){
@@ -93,6 +93,7 @@ if(state){
    if(['approved','featured'].includes(item.status)){const view=Object.assign(document.createElement('a'),{className:'button primary',href:item.pageUrl||'/projects/listing/'+encodeURIComponent(item.id),textContent:'View project and feedback'});actions.append(view);}
    if(item.awaitingInstantPayment){const finish=Object.assign(document.createElement('a'),{className:'button primary',href:'/submit-project?resume='+encodeURIComponent(item.id),textContent:'Finish publishing'});actions.append(finish);}
    if(actions.childElementCount)card.append(actions);
+   const later=badgeLater(item,stage);if(later)card.append(later);
    const feedback=document.createElement('div');feedback.className='review-feedback fl-feedback';
    if(item.feedback){const label=document.createElement('strong');label.textContent='Review feedback';const body=document.createElement('p');body.textContent=item.feedback;feedback.append(label,body);}
    else{feedback.classList.add('is-empty');feedback.textContent='There is no review feedback yet.';}

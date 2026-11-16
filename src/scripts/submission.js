@@ -77,6 +77,42 @@ if (form) {
   const status = document.getElementById('submission-status');
   const badgePanel = document.getElementById('submission-badge');
   const badgePickerSlot = document.getElementById('submission-badge-picker');
+  // "Check my website" right on the saved screen, using the same verify call as the dashboard.
+  function setupBadgeCheck(item, signedIn) {
+    const button = document.getElementById('submission-badge-verify');
+    const note = document.getElementById('submission-badge-status');
+    const dashboard = document.getElementById('submission-badge-dashboard');
+    note.textContent = ''; note.dataset.tone = '';
+    button.hidden = !signedIn;
+    dashboard.classList.toggle('primary', !signedIn);
+    if (!signedIn) { note.textContent = 'Confirm your email and sign in, then press “Check my website” in your dashboard.'; return; }
+    let host = 'your website';
+    try { host = new URL(item.url).hostname.replace(/^www\./, ''); } catch {}
+    button.onclick = async () => {
+      button.disabled = true; button.textContent = 'Checking your website…'; note.dataset.tone = '';
+      note.textContent = `Looking for your badge on ${host}. This can take up to 30 seconds.`;
+      try {
+        const { data: { session: current } } = await accountClient.auth.getSession();
+        if (!current) throw Error('Your session expired. Sign in again, then check from your dashboard.');
+        const response = await fetch('/api/submissions', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${current.access_token}` }, body: JSON.stringify({ action: 'verify-badge', id: item.id }), signal: AbortSignal.timeout(30000) });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw Error(result.error || 'Badge could not be verified. Try again.');
+        const verified = { ...item, status: result.pageUrl ? 'approved' : item.status, launch: { ...item.launch, scheduledAt: result.scheduledAt || item.launch.scheduledAt, badgeVerifiedAt: new Date().toISOString() } };
+        document.getElementById('submission-badge-tracker').replaceChildren(trackerElement(projectStage(verified)));
+        const when = new Date(verified.launch.scheduledAt);
+        note.dataset.tone = 'ok';
+        note.textContent = result.pageUrl ? 'Badge verified. Your project is live!'
+          : `Badge verified. Your launch is scheduled${Number.isFinite(when.getTime()) ? ' for ' + when.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : ''}. Keep the badge on your site.`;
+        document.getElementById('submission-badge-title').textContent = result.pageUrl ? 'You’re live.' : 'Badge verified. You’re all set.';
+        button.hidden = true; dashboard.classList.add('primary');
+        if (result.pageUrl) { dashboard.href = result.pageUrl; dashboard.textContent = 'View your project →'; }
+        document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
+      } catch (error) {
+        note.dataset.tone = 'error';
+        note.textContent = error.name === 'TimeoutError' ? 'Your website took too long to respond. Make sure it is published, then try again.' : error.message;
+      } finally { button.disabled = false; if (!button.hidden) button.textContent = 'Check my website'; }
+    };
+  }
   const intent = document.getElementById('submission-type');
   const membershipFields = document.getElementById('membership-fields');
   const imageInput = document.getElementById('project-image');
@@ -177,6 +213,7 @@ if (form) {
           const savedItem = { id: data.id, name: payload.name, url: payload.url, date: new Date().toISOString(), status: 'pending', launch: data.launch };
           document.getElementById('submission-badge-tracker').replaceChildren(trackerElement(projectStage(savedItem)));
           document.getElementById('submission-badge-dashboard').href = '/account#project-' + encodeURIComponent(data.id);
+          setupBadgeCheck(savedItem, Boolean(session?.user?.email_confirmed_at));
           badgePanel.scrollIntoView({ block: 'start' });
           document.getElementById('submission-badge-title').focus();
         } else {

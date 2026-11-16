@@ -35,7 +35,9 @@ export function badgePicker(id, { copy = true, count = null, onCopy, label = '' 
     if (style.key === 'text') stage.append(el('span', { className: 'fl-badge-preview', textContent: '[ listed on Digivated ]' }));
     else stage.append(el('img', { src: badgePreviewSrc(style.key, count), width: BADGE_WIDTH, height: BADGE_HEIGHT, alt: `${style.label} badge preview`, decoding: 'async' }));
     const codeNode = el('code', { textContent: code });
-    const bar = el('div', { className: 'fl-badge-bar' }, el('div', {}, el('strong', { textContent: style.label }), el('span', { textContent: style.note })));
+    const name = el('div', {}, el('strong', { textContent: style.label }), el('span', { textContent: style.note }));
+    if (style.key === 'dark') name.prepend(el('em', { className: 'fl-badge-tag', textContent: 'Recommended' }));
+    const bar = el('div', { className: 'fl-badge-bar' }, name);
     if (copy) {
       const button = el('button', { type: 'button', className: 'fl-btn fl-btn-small fl-badge-copy', textContent: 'Copy' });
       button.setAttribute('data-copy-badge', style.key);
@@ -52,7 +54,10 @@ export function badgePicker(id, { copy = true, count = null, onCopy, label = '' 
     }
     const card = el('article', { className: 'fl-badge-card' }, stage, bar, el('pre', { className: 'fl-badge-code' }, codeNode));
     card.setAttribute('data-badge-style', style.key);
-    root.append(card);
+    if (style.key === 'text') {
+      const more = el('details', { className: 'fl-badge-more' }, el('summary', { textContent: 'Prefer a plain text link instead of an image?' }), card);
+      root.append(more);
+    } else root.append(card);
   }
   if (copy) root.append(status);
   return root;

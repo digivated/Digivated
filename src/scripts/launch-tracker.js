@@ -108,6 +108,23 @@ export function badgeSteps(item, { onVerify } = {}) {
   return panel;
 }
 
+// After the badge step: keep the embed code one click away (switch styles, re-add
+// after a redesign, or add one to a paid launch). Cards render on first open.
+export function badgeLater(item, stage) {
+  if (!['scheduled', 'live', 'review'].includes(stage.key)) return null;
+  const copy = stage.key === 'scheduled'
+    ? 'Keep it on your site until launch day. You can switch styles any time.'
+    : stage.key === 'live' ? 'Your badge shows live upvotes. Switch styles any time.'
+    : 'Add a badge to your site to show off your listing and its upvotes.';
+  const body = el('div', { className: 'fl-badge-later-body' }, el('p', { className: 'fl-hint', textContent: copy }));
+  const details = el('details', { className: 'fl-badge-later' }, el('summary', {}, el('span', { textContent: 'Your badge' }), el('small', { textContent: 'Get the embed code' })), body);
+  details.setAttribute('data-badge-later', item.id);
+  details.addEventListener('toggle', () => {
+    if (details.open && !body.querySelector('[data-badge-picker]')) body.append(badgePicker(item.id, { label: `Badge styles for ${item.name}` }));
+  });
+  return details;
+}
+
 export function nextStepCopy(stage, item) {
   if (stage.key === 'scheduled') {
     const days = daysUntil(item.launch.scheduledAt);
