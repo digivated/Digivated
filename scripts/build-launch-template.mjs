@@ -2,6 +2,8 @@ import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 await mkdir('server/generated',{recursive:true});
 await writeFile('server/generated/project.html',await readFile('dist/launch-template/index.html'));
 await rm('dist/launch-template',{recursive:true});
+await writeFile('server/generated/creator.html',await readFile('dist/creator/index.html'));
+if (process.env.VERCEL === '1') await rm('dist/creator',{recursive:true});
 // Vercel serves /sitemap.xml from the runtime function so it can include live public URLs.
 // Local preview and CI keep the static file generated from the public page list.
 if (process.env.VERCEL === '1') {

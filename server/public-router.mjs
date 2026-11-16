@@ -1,3 +1,4 @@
+import { makeCreatorPageHandler } from './creator-page.mjs';
 import { makeLaunchQueueHandler } from './launch-queue.mjs';
 import {makeNewsHandler} from './news-handler.mjs';
 import { makeMembershipCheckoutHandler } from './membership-checkout.mjs';
@@ -37,6 +38,7 @@ export function defaultPublicHandlers(overrides = {}) {
     'founding-logout': makeFoundingLogoutHandler(),
     'project-account': makeProjectAccountHandler(),
     'creator-profile': makeCreatorProfileHandler(),
+    'creator-page': makeCreatorPageHandler(),
     'creator-inbox': makeCreatorInboxHandler(),
     notifications: makeNotificationsHandler(),
     'return-emails': makeReturnEmailHandler(),
