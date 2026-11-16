@@ -87,7 +87,7 @@ if(state){
    head.append(titleWrap,pill);card.append(head,trackerElement(stage));
    const message=nextStepCopy(stage,item);
    if(stage.key==='badge')card.append(badgeSteps(item,{onVerify:verifyBadge}));
-   else if(message){const next=document.createElement('p');next.className='fl-next-copy';next.textContent=message;card.append(next);}
+   else if(message){const next=document.createElement('p');next.className='fl-next-copy'+(stage.key==='scheduled'?' account-launch':'');next.textContent=message;card.append(next);}
    const actions=document.createElement('div');actions.className='fl-actions';
    if(['approved','featured'].includes(item.status)){const view=Object.assign(document.createElement('a'),{className:'button primary',href:item.pageUrl||'/projects/listing/'+encodeURIComponent(item.id),textContent:'View project and feedback'});actions.append(view);}
    if(item.awaitingInstantPayment){const finish=Object.assign(document.createElement('a'),{className:'button primary',href:'/submit-project?resume='+encodeURIComponent(item.id),textContent:'Finish publishing'});actions.append(finish);}

@@ -117,9 +117,9 @@ test('reset request uses the current account route, without sending any email',a
  let redirect='';
  await page.route('https://fixture.supabase.co/auth/v1/**',route=>{const url=new URL(route.request().url());if(url.pathname.endsWith('/recover'))redirect=url.searchParams.get('redirect_to')||'';return route.fulfill({json:{}})});
  await page.goto(base+'/login');
- await page.getByLabel('Email address',{exact:true}).fill('fixture@example.invalid');
+ await page.getByLabel('Email',{exact:true}).fill('fixture@example.invalid');
  await page.getByRole('button',{name:'Forgot password?'}).click();
- await expect(page.locator('#login-status')).toContainText('password setup link');
+ await expect(page.locator('#login-status')).toContainText('password reset link');
  expect(redirect).toBe(base+'/account');
 });
 test('an unverified recovery callback never exposes the password form or writes an account',async({page})=>{

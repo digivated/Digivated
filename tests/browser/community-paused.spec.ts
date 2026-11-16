@@ -37,7 +37,7 @@ for (const width of [390, 1440]) {
    unread:1,
   }}));
   await page.goto('http://127.0.0.1:4321/notifications');
-  const approvals = page.getByRole('region',{name:'Project approvals'});
+  const approvals = page.getByRole('region',{name:'Your live projects'});
   await expect(approvals.getByText('Approved and live',{exact:true})).toBeVisible();
   await expect(approvals.getByRole('link',{name:/Studio Notes/})).toHaveAttribute('href',href);
   await expect(page.getByRole('region',{name:'Recent activity'}).getByRole('link',{name:/Your project is approved and live/})).toHaveAttribute('href',href);
