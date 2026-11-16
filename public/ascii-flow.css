@@ -295,7 +295,7 @@ html[data-ascii] body .site-breadcrumbs [aria-current=page]{color:#bdbdbd!import
 html[data-ascii] body .ascii-ambient{display:none!important}
 
 /* Dashboard alignment: one measure under the heading. */
-html[data-ascii] body #main .fl-dash-intro{max-width:900px!important;margin-inline:auto!important}
+html[data-ascii] body #main .fl-dash-intro,html[data-ascii] body #main:has(.fl-dash-intro)>.site-breadcrumbs{max-width:900px!important;margin-inline:auto!important}
 html[data-ascii] body #main .fl-dash>#account-state[hidden]{display:none!important}
 
 /* Numbered rows and HUD readouts used by flows. */
@@ -401,3 +401,6 @@ html[data-ascii] body .home-launch-row{border-top:1px solid var(--fl-rule)!impor
 html[data-ascii] body .compact-site-header .header-membership{font-family:var(--fl-sans)!important;font-size:13px!important;font-weight:450!important;color:#a8a8a8!important;text-decoration:none!important}
 html[data-ascii] body .compact-site-header .header-membership:hover{color:#fff!important}
 }
+
+/* iOS: fields stay at 16px on phones so focusing never zooms the page. */
+@media (max-width:767px){html[data-ascii] body :is(input:not([type=checkbox],[type=radio],[type=range],[type=file],[type=hidden]),select,textarea:not([readonly])){font-size:16px!important}}

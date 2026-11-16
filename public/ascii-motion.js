@@ -13,14 +13,16 @@
     const target = node.nodeValue;
     if (!target.trim() || running.get(node)) return;
     const start = performance.now();
+    let written = target;
     running.set(node, true);
     const frame = now => {
+      // If the page's own script changed this text meanwhile, stop and keep theirs.
+      if (!node.isConnected || node.nodeValue !== written) { running.delete(node); return; }
       const progress = Math.min(1, (now - start) / duration);
       const settled = Math.floor(progress * target.length);
       let out = target.slice(0, settled);
       for (let i = settled; i < target.length; i++) out += /\s/.test(target[i]) ? target[i] : random();
-      node.nodeValue = out;
-      if (progress < 1) requestAnimationFrame(frame);
+      if (progress < 1) { node.nodeValue = written = out; requestAnimationFrame(frame); }
       else { node.nodeValue = target; running.delete(node); }
     };
     requestAnimationFrame(frame);
@@ -31,7 +33,6 @@
   };
   const decodeElement = (el, duration) => {
     if (!el || el.closest('[data-no-scramble]')) return;
-    if (!el.hasAttribute('aria-label')) el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
     textNodes(el).forEach(node => decode(node, duration));
   };
 
