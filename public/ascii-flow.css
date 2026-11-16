@@ -415,6 +415,11 @@ html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation .
 html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation .navigation-panel::-webkit-scrollbar{display:none}
 html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation[open] .navigation-panel{display:flex!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div{display:flex!important;flex-direction:column!important;gap:0!important;margin:0!important;padding:4px 0!important;border:0!important;background:none!important;grid-template-columns:none!important}
+/* Open menu sits above page popups, and every section reads left-aligned. */
+html:has(.notebook-navigation[open]) .compact-site-header{z-index:400!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div{align-items:stretch!important;justify-content:flex-start!important;text-align:left!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div::before{text-align:left!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a{justify-content:flex-start!important;text-align:left!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div+div{border-top:1px solid #1f1f1f!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div::before{display:block;padding:10px 18px 6px;font-family:var(--fl-mono)!important;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#6f6f6f}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-destinations::before{content:'Navigate'}
