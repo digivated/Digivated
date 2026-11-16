@@ -528,3 +528,8 @@ html[data-ascii] body .fl-badge-later-body{padding-top:10px}
 html[data-ascii] body .fl-badge-later-body>.fl-hint{margin:0!important}
 html[data-ascii] body #submission-badge-status:empty{display:none}
 }
+
+@layer flow {
+/* Buttons and links marked hidden stay hidden, whatever their button styling. */
+html[data-ascii] body #main :is(.button,.fl-btn,button,a)[hidden]{display:none!important}
+}
