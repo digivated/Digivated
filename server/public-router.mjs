@@ -16,6 +16,7 @@ import { makeNotificationsHandler } from './notifications-handler.mjs';
 import { makeReturnEmailHandler } from './return-emails.mjs';
 import { makeSiteActivityHandler } from './site-activity.mjs';
 import { makeMemberStatusHandler } from './member-status.mjs';
+import { makeBadgeHandler } from './badge.mjs';
 
 // Share one deployment entry point; each handler retains its validation and response.
 // Carousel routes stay on this router so the deployment does not add a serverless function.
@@ -42,6 +43,7 @@ export function defaultPublicHandlers(overrides = {}) {
     'creator-inbox': makeCreatorInboxHandler(),
     notifications: makeNotificationsHandler(),
     'return-emails': makeReturnEmailHandler(),
+    badge: makeBadgeHandler(),
     ...overrides,
   };
 }
@@ -49,7 +51,7 @@ export function makePublicRouter(handlers = defaultPublicHandlers()) {
   return (req, res) => {
     const path = new URL(req.url, 'https://digivated.invalid').pathname;
     // Vercel preserves the original URL for rewritten requests.
-    const route = /^\/creator\/?$/.test(path) ? 'creator-page' : /^\/api\/([^/]+)$/.exec(path)?.[1];
+    const route = /^\/creator\/?$/.test(path) ? 'creator-page' : /^\/badge\/[^/]+\/?$/.test(path) ? 'badge' : /^\/api\/([^/]+)$/.exec(path)?.[1];
     if (route && Object.hasOwn(handlers, route)) return handlers[route](req, res);
     res.statusCode = 404;
     res.setHeader('Content-Type', 'application/json; charset=utf-8');

@@ -8,7 +8,7 @@ export function nextFreeLaunch(now=Date.now()){
  const d=new Date(now),day=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate());
  return new Date(day+((8-d.getUTCDay())%7||7)*86400000+7*86400000).toISOString();
 }
-export function badgeSnippet(id){return `<a href="https://digivated.com/projects/listing/${id}" data-digivated-project="${id}">[ listed on Digivated ]</a>`;}
+export { badgeSnippet, badgeSnippets } from './badge-snippets.mjs';
 export async function publishQueued(redis,record,now=Date.now()){
  if(record.status!=='pending'||record.launch?.kind!=='free'||!record.launch.badgeVerifiedAt||!Number.isFinite(Date.parse(record.launch.scheduledAt))||Date.parse(record.launch.scheduledAt)>now)return null;
  const updated={...record,status:'approved',publishedAt:new Date(now).toISOString(),revision:(record.revision||0)+1};

@@ -1,3 +1,4 @@
+import { badgePicker } from './badge-picker.js';
 // Shared, plain-language status model for a creator's project.
 // Used by Your Projects (dashboard) and the submission success screen.
 
@@ -71,17 +72,10 @@ export function trackerElement(stage) {
 export function badgeSteps(item, { onVerify } = {}) {
   const site = domain(item.url);
   const panel = el('div', { className: 'fl-next account-launch' });
-  const code = el('textarea', { readOnly: true, rows: 3, value: item.launch.badge || '' });
-  code.setAttribute('aria-label', `Badge code for ${item.name}`);
   const status = el('p', { className: 'fl-status', role: 'status' });
   status.setAttribute('data-badge-status', '');
   status.setAttribute('aria-live', 'polite');
-  const copy = el('button', { type: 'button', className: 'fl-btn fl-btn-small', textContent: 'Copy badge code' });
-  copy.setAttribute('data-copy-badge', '');
-  copy.onclick = async () => {
-    try { await navigator.clipboard.writeText(code.value); status.textContent = 'Badge code copied. Paste it into your site, publish, then check.'; status.dataset.tone = 'ok'; }
-    catch { code.focus(); code.select(); status.textContent = 'Code selected. Press Ctrl+C (or ⌘C) to copy it.'; status.dataset.tone = ''; }
-  };
+  const picker = badgePicker(item.id, { label: `Badge styles for ${item.name}` });
   const verify = el('button', { type: 'button', className: 'button primary fl-btn-primary', textContent: 'Check my website' });
   verify.setAttribute('data-verify-badge', item.id);
   verify.onclick = async () => {
@@ -94,13 +88,13 @@ export function badgeSteps(item, { onVerify } = {}) {
   const days = daysUntil(item.launch.scheduledAt);
   panel.append(
     el('h4', { textContent: `Next: add your badge to ${site}` }),
-    el('p', { className: 'fl-next-lede', textContent: 'Free launches need a small “listed on Digivated” link on your site. It takes about two minutes. Verification is required before automatic publication.' }),
+    el('p', { className: 'fl-next-lede', textContent: 'Free launches need a small “Featured on Digivated” badge on your site. It takes about two minutes, and the badge shows your live upvotes. Verification is required before automatic publication.' }),
     el('ol', { className: 'fl-howto' },
-      el('li', {}, el('strong', { textContent: 'Copy the badge code. ' }), 'It renders as a small text link: ', el('span', { className: 'fl-badge-preview', textContent: '[ listed on Digivated ]' })),
+      el('li', {}, el('strong', { textContent: 'Pick a style and copy its code. ' }), 'Every style links to your listing and counts for verification.'),
       el('li', {}, el('strong', { textContent: 'Paste it into your page. ' }), 'Add it to the HTML of ', el('a', { href: item.url, target: '_blank', rel: 'noopener noreferrer', textContent: item.url }), ', for example in the footer. Keep it visible.'),
       el('li', {}, el('strong', { textContent: 'Publish, then check. ' }), 'Deploy your site, then press “Check my website”.')),
-    el('label', { className: 'fl-code' }, el('span', { textContent: 'Badge code' }), code),
-    el('div', { className: 'fl-actions' }, copy, verify),
+    picker,
+    el('div', { className: 'fl-actions' }, verify),
     status,
     el('p', { className: 'fl-hint', textContent: days !== null && days > 0 ? `Your launch day is ${formatDate(item.launch.scheduledAt)} (${relativeDays(days)}). Verify any time before then.` : 'Your launch date has arrived. Verify now and your project goes live right away.' }),
     el('details', { className: 'fl-help' }, el('summary', { textContent: 'Badge not found? Common fixes' }),
@@ -112,6 +106,23 @@ export function badgeSteps(item, { onVerify } = {}) {
         el('li', { textContent: 'Still stuck? Use Report a bug or contact Digivated and include your project URL.' }))),
   );
   return panel;
+}
+
+// After the badge step: keep the embed code one click away (switch styles, re-add
+// after a redesign, or add one to a paid launch). Cards render on first open.
+export function badgeLater(item, stage) {
+  if (!['scheduled', 'live', 'review'].includes(stage.key)) return null;
+  const copy = stage.key === 'scheduled'
+    ? 'Keep it on your site until launch day. You can switch styles any time.'
+    : stage.key === 'live' ? 'Your badge shows live upvotes. Switch styles any time.'
+    : 'Add a badge to your site to show off your listing and its upvotes.';
+  const body = el('div', { className: 'fl-badge-later-body' }, el('p', { className: 'fl-hint', textContent: copy }));
+  const details = el('details', { className: 'fl-badge-later' }, el('summary', {}, el('span', { textContent: 'Your badge' }), el('small', { textContent: 'Get the embed code' })), body);
+  details.setAttribute('data-badge-later', item.id);
+  details.addEventListener('toggle', () => {
+    if (details.open && !body.querySelector('[data-badge-picker]')) body.append(badgePicker(item.id, { label: `Badge styles for ${item.name}` }));
+  });
+  return details;
 }
 
 export function nextStepCopy(stage, item) {
