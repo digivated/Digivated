@@ -111,3 +111,13 @@ At tablet widths the primary destinations live in the menu. On phones account li
 Shared pieces: `.fl-card` panels, `.fl-btn` and `.fl-btn-primary` buttons, `.fl-tabs`, `.fl-pill` status tones (ok, info, warn, bad, muted), `.fl-status` messages, and `.fl-tracker` steps drawn as `[✓] [•] [ ]`. Form fields site-wide get visible borders and a clear focus state.
 
 Flows using it: the single-card sign-in (tabs, optional Google, show password, inline forgot link, friendly errors), the header account menu (avatar, unread counts, sign out; signed-out visitors see Log in and Sign up), the tabbed dashboard (Projects, Profile, Following, Settings) with a per-project launch tracker and next step, the submit page progress bar and post-save screen, and the notifications feed.
+
+## Grid and motion v2 — November 16, 2026
+
+References from the owner: a ruled ASCII library/advertise site (frame lines, `+` crosshairs, hatched spacer bands, numbered mono labels, white rectangular buttons), a developer portfolio (big clean headline, one focal ASCII image, mono section labels, ruled project index), an ASCII video landing page (HUD readouts, restrained colour), and asciicn (ASCII text and background effects).
+
+- **Frame:** thin vertical rules run through the header, page and footer at the content edges, with `+` marks where they meet the header rule. Page intros end in a ruled, hatched band. Hidden under 760px.
+- **Type:** Inter (self-hosted `inter-latin-variable.woff2`) for headings and reading text; IBM Plex Mono for eyebrows, form labels, meta, pills, breadcrumbs, timers and all ASCII art. Headings weight 500 with tight tracking.
+- **Controls:** white 2px-radius primary buttons, dark bordered secondary buttons, square fields, chip-style tabs (active chip is white).
+- **Home:** hero copy left, the ASCII workbench in a framed window with a `digivated / workbench` HUD bar and a live badge; a ruled three-cell strip (active now, next free launch countdown, what's new) sits under the hero. The scattered ambient ASCII drift is turned off site-wide so the one focal animation reads clearly.
+- **Motion (`public/ascii-motion.js`):** the page headline and its label decode from glyph noise once on load (label keeps a blinking cursor), primary nav links re-decode on hover, and cards rise in as they enter the viewport. Screen readers get the real text via `aria-label`; live regions and the visits headline are never scrambled; everything is skipped under reduced motion; a safety timer reveals anything still hidden.
