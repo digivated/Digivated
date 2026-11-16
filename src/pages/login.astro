@@ -2,23 +2,41 @@
 import Platform from '../layouts/Platform.astro';
 import '../styles/project-account.css';
 ---
-<Platform title="Log in" description="Sign in or create a Digivated account to track project submissions and feedback.">
-  <section class="login-page" aria-labelledby="login-title">
-    <header class="login-heading"><img class="login-brand-mark" src="/digivated-ascii-icon-transparent.png" width="52" height="52" alt=""/><p class="eyebrow">DIGIVATED ACCOUNT</p><h1 id="login-title">Welcome to Digivated.</h1><p>Sign in to track projects and read private review feedback.</p></header>
-    <div class="login-panel">
-      <div class="login-tabs" role="tablist" aria-label="Account access">
+<Platform title="Log in" description="Sign in or create a Digivated account to launch projects and get feedback.">
+  <section class="login-page fl-auth" aria-labelledby="login-title">
+    <header class="login-heading fl-auth-heading">
+      <img class="login-brand-mark" src="/digivated-ascii-icon-transparent.png" width="52" height="52" alt=""/>
+      <h1 id="login-title">Welcome back.</h1>
+      <p id="login-subtitle">Sign in to track your launches and read feedback.</p>
+    </header>
+    <div class="login-panel fl-card fl-auth-card">
+      <div class="login-tabs fl-tabs" role="tablist" aria-label="Account access">
         <button id="login-tab-signin" role="tab" type="button" aria-selected="true" aria-controls="login-form-panel">Sign in</button>
-        <button id="login-tab-signup" role="tab" type="button" aria-selected="false" aria-controls="login-form-panel">Sign up</button>
+        <button id="login-tab-signup" role="tab" type="button" aria-selected="false" aria-controls="login-form-panel">Create account</button>
       </div>
       <div id="login-form-panel" role="tabpanel" aria-labelledby="login-tab-signin">
-        <p class="login-explanation" id="login-explanation">Enter your email and password to sign in.</p>
-        <form id="login-email-form"><label for="login-email">Email address</label><input id="login-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required/><label for="login-password" id="login-password-label">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" minlength="1" required/><button class="button primary" id="login-submit" type="submit">Sign in</button></form>
-        <p class="login-help"><button type="button" id="login-reset" class="button">Forgot password?</button></p>
-        <details id="login-alternative"><summary>Need an email sign-in link?</summary><button type="button" id="login-email-link" class="button">Send a sign-in link</button></details>
-        <p id="login-status" role="status" aria-live="polite"></p>
-
+        <div id="login-google-group" class="fl-auth-oauth" hidden>
+          <button type="button" id="login-google" class="fl-btn fl-btn-oauth"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg><span>Continue with Google</span></button>
+          <p class="fl-divider" aria-hidden="true"><span>or use email</span></p>
+        </div>
+        <p class="login-explanation" id="login-explanation">Sign in with your email and password.</p>
+        <form id="login-email-form" class="fl-form" novalidate>
+          <label for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required/>
+          <div class="fl-label-row"><label for="login-password" id="login-password-label">Password</label><button type="button" id="login-reset" class="fl-link">Forgot password?</button></div>
+          <div class="fl-password">
+            <input id="login-password" name="password" type="password" autocomplete="current-password" minlength="1" maxlength="128" required aria-describedby="login-password-hint"/>
+            <button type="button" id="login-show-password" class="fl-link" aria-controls="login-password" aria-pressed="false">Show</button>
+          </div>
+          <p id="login-password-hint" class="fl-hint" hidden>At least 10 characters.</p>
+          <button class="button primary fl-btn fl-btn-primary" id="login-submit" type="submit">Sign in</button>
+        </form>
+        <p id="login-status" class="fl-status" role="status" aria-live="polite"></p>
+        <details id="login-alternative" class="fl-alt"><summary>Email me a sign-in link instead</summary><p>We’ll send a one-time link to the email above. It also verifies your inbox for paid launches.</p><button type="button" id="login-email-link" class="fl-btn">Send sign-in link</button></details>
+        <p id="login-terms" class="fl-fineprint" hidden>By creating an account you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy policy</a>.</p>
       </div>
     </div>
+    <p class="fl-switch" id="login-switch">New to Digivated? <button type="button" class="fl-link" id="login-switch-button">Create an account</button></p>
     <p class="login-browse">Just looking around? <a href="/discover?view=featured">Browse featured projects</a> without signing in.</p>
   </section>
   <script>import '../scripts/login.js';</script>

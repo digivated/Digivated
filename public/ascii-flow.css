@@ -1,0 +1,98 @@
+/* Digivated flow layer.
+   Declared before the `ascii` layer so its !important rules take precedence over
+   the theme's blanket resets (transparent borders, borderless buttons). It only
+   adds structure: framed cards, readable fields, clear primary actions, status
+   pills and step trackers. It never hides content or changes script hooks. */
+@layer flow, ascii;
+@layer flow {
+:root{--fl-bg:#090909;--fl-panel:#0f0f0f;--fl-raised:#141414;--fl-line:#2a2a2a;--fl-line-hi:#4a4a4a;--fl-ink:#f0f0f0;--fl-copy:#c4c4c4;--fl-muted:#8f8f8f;--fl-ok:#8fd6a4;--fl-warn:#e8c47a;--fl-bad:#ef8f8f;--fl-accent:#c3a0ff;--fl-radius:6px}
+
+/* ---- Site-wide form fields: visible, consistent, accessible ---- */
+html[data-ascii] body :is(input:not([type=checkbox],[type=radio],[type=range],[type=file],[type=hidden]),select,textarea){border:1px solid var(--fl-line-hi)!important;border-radius:var(--fl-radius)!important;background-color:#0c0c0c!important;color:var(--fl-ink)!important;padding:10px 12px!important;min-height:44px}
+html[data-ascii] body :is(input:not([type=checkbox],[type=radio],[type=range],[type=file],[type=hidden]),select,textarea):focus{border-color:#d8d8d8!important;outline:none!important}
+html[data-ascii] body :is(input,textarea)::placeholder{color:#6f6f6f!important}
+html[data-ascii] body :is(input,select,textarea)[aria-invalid=true]{border-color:var(--fl-bad)!important}
+
+/* ---- Buttons ---- */
+html[data-ascii] body :is(.button.primary,.fl-btn-primary){display:inline-flex!important;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px!important;border:1px solid #e8e8e8!important;border-radius:var(--fl-radius)!important;background-color:#ececec!important;color:#0a0a0a!important;font-weight:600!important;text-decoration:none!important;cursor:pointer}
+html[data-ascii] body :is(.button.primary,.fl-btn-primary):hover{background-color:#fff!important;color:#000!important;text-decoration:none!important}
+html[data-ascii] body :is(.button.primary,.fl-btn-primary):disabled{opacity:.55!important}
+html[data-ascii] body .fl-btn{display:inline-flex!important;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:9px 16px!important;border:1px solid var(--fl-line-hi)!important;border-radius:var(--fl-radius)!important;background-color:transparent!important;color:var(--fl-ink)!important;text-decoration:none!important;cursor:pointer}
+html[data-ascii] body .fl-btn:hover{border-color:#bdbdbd!important;color:#fff!important;text-decoration:none!important}
+html[data-ascii] body .fl-btn-primary{border-color:#e8e8e8!important}
+html[data-ascii] body .fl-btn-small{min-height:34px;padding:6px 12px!important;font-size:12px!important}
+html[data-ascii] body .fl-link{display:inline;min-height:0!important;padding:0!important;border:0!important;background:none!important;color:var(--fl-copy)!important;text-decoration:underline!important;text-underline-offset:3px;cursor:pointer;font-size:inherit}
+html[data-ascii] body .fl-link:hover{color:#fff!important}
+
+/* ---- Cards, tabs, pills ---- */
+html[data-ascii] body .fl-card{border:1px solid var(--fl-line)!important;border-radius:10px!important;background-color:var(--fl-panel)!important}
+html[data-ascii] body .fl-tabs{display:flex!important;gap:0;margin:0 0 20px!important;padding:0!important;border:0!important;border-bottom:1px solid var(--fl-line)!important;border-radius:0!important;background:none!important}
+html[data-ascii] body .fl-tabs>:is(button,a){flex:1 1 0;min-height:44px!important;margin:0 0 -1px!important;padding:10px 12px!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0!important;background:none!important;color:var(--fl-muted)!important;text-decoration:none!important;font-weight:500!important;box-shadow:none!important}
+html[data-ascii] body .fl-tabs>:is(button,a):hover{color:#fff!important}
+html[data-ascii] body .fl-tabs>:is([aria-selected=true],[aria-current=page],.active){border-bottom-color:#e8e8e8!important;color:#fff!important;text-decoration:none!important}
+html[data-ascii] body .fl-pill{display:inline-flex;align-items:center;gap:6px;padding:2px 9px!important;border:1px solid currentColor!important;border-radius:999px!important;font-size:11px!important;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;line-height:1.7}
+html[data-ascii] body .fl-pill[data-tone=ok]{color:var(--fl-ok)!important}
+html[data-ascii] body .fl-pill[data-tone=warn]{color:var(--fl-warn)!important}
+html[data-ascii] body .fl-pill[data-tone=info]{color:var(--fl-accent)!important}
+html[data-ascii] body .fl-pill[data-tone=muted]{color:var(--fl-muted)!important}
+html[data-ascii] body .fl-pill[data-tone=bad]{color:var(--fl-bad)!important}
+html[data-ascii] body .fl-status{min-height:1.4em;margin:14px 0 0!important;font-size:13px!important;line-height:1.6}
+html[data-ascii] body .fl-status[data-tone=error]{color:var(--fl-bad)!important}
+html[data-ascii] body .fl-status[data-tone=ok]{color:var(--fl-ok)!important}
+html[data-ascii] body .fl-hint,html[data-ascii] body .fl-fineprint{margin:4px 0 0!important;color:var(--fl-muted)!important;font-size:12px!important;line-height:1.6}
+html[data-ascii] body .fl-fineprint a{color:var(--fl-copy)!important}
+html[data-ascii] body [hidden]:is(.fl-card,.fl-auth-oauth,.fl-hint,.fl-fineprint,.fl-alt,.fl-panel,.fl-menu-panel,.fl-tracker,.fl-next){display:none!important}
+
+/* ---- Auth (login / sign up) ---- */
+html[data-ascii] body .fl-auth{max-width:460px!important;margin:clamp(20px,6vw,64px) auto 80px!important}
+html[data-ascii] body .fl-auth-heading{text-align:center;margin:0 auto 24px!important}
+html[data-ascii] body .fl-auth-heading h1{margin:14px 0 8px!important;font-size:clamp(26px,4vw,34px)!important}
+html[data-ascii] body .fl-auth-heading p{margin:0!important;color:var(--fl-muted)!important;font-size:14px}
+html[data-ascii] body .fl-auth-card{max-width:none!important;padding:clamp(20px,4vw,30px)!important}
+html[data-ascii] body .fl-auth .login-tabs{display:flex!important;grid-template-columns:none!important}
+html[data-ascii] body .fl-auth .login-explanation{margin:0 0 14px!important;color:var(--fl-muted)!important;font-size:13px}
+html[data-ascii] body .fl-form{display:grid!important;gap:8px!important}
+html[data-ascii] body .fl-form label{font-size:13px!important;color:var(--fl-copy)!important;margin-top:6px}
+html[data-ascii] body .fl-form>.button.primary,html[data-ascii] body .fl-form>.fl-btn-primary{width:100%;margin-top:14px!important;min-height:48px}
+html[data-ascii] body .fl-label-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:6px}
+html[data-ascii] body .fl-label-row label{margin:0!important}
+html[data-ascii] body .fl-label-row .fl-link{font-size:12px!important}
+html[data-ascii] body .fl-password{position:relative}
+html[data-ascii] body .fl-password input{width:100%;padding-right:64px!important}
+html[data-ascii] body .fl-password .fl-link{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px!important;text-decoration:none!important}
+html[data-ascii] body .fl-btn-oauth{width:100%;min-height:48px;background-color:#f2f2f2!important;border-color:#f2f2f2!important;color:#111!important;font-weight:600!important}
+html[data-ascii] body .fl-btn-oauth:hover{background-color:#fff!important;color:#000!important}
+html[data-ascii] body .fl-divider{display:flex;align-items:center;gap:12px;margin:18px 0!important;color:var(--fl-muted)!important;font-size:12px}
+html[data-ascii] body .fl-divider::before,html[data-ascii] body .fl-divider::after{content:'';flex:1;height:1px;background:var(--fl-line)!important}
+html[data-ascii] body .fl-alt{margin-top:18px!important;padding-top:14px!important;border-top:1px solid var(--fl-line)!important}
+html[data-ascii] body .fl-alt summary{min-height:0!important;color:var(--fl-copy)!important;font-size:13px;cursor:pointer}
+html[data-ascii] body .fl-alt p{color:var(--fl-muted)!important;font-size:12px;margin:10px 0!important}
+html[data-ascii] body .fl-switch{margin:20px 0 0!important;text-align:center;color:var(--fl-muted)!important;font-size:14px}
+html[data-ascii] body .fl-switch .fl-link{color:#fff!important}
+html[data-ascii] body .fl-auth .login-browse{margin-top:10px!important;text-align:center;font-size:12px;color:var(--fl-muted)!important}
+
+/* ---- Header account area ---- */
+html[data-ascii] body .fl-header-signup{display:inline-flex!important;align-items:center;min-height:36px!important;padding:6px 14px!important;border:1px solid #e8e8e8!important;border-radius:var(--fl-radius)!important;background-color:#ececec!important;color:#0a0a0a!important;font-size:13px!important;font-weight:600!important;text-decoration:none!important;white-space:nowrap}
+html[data-ascii] body .fl-header-signup:hover{background-color:#fff!important;color:#000!important;text-decoration:none!important}
+html[data-ascii] body .fl-menu{position:relative}
+html[data-ascii] body .fl-menu[hidden]{display:none!important}
+html[data-ascii] body .fl-menu-trigger{display:inline-flex!important;align-items:center;gap:8px;min-height:40px!important;padding:3px 8px 3px 3px!important;border:1px solid var(--fl-line-hi)!important;border-radius:999px!important;background:none!important;color:var(--fl-ink)!important;text-decoration:none!important;cursor:pointer}
+html[data-ascii] body .fl-menu-trigger:hover,html[data-ascii] body .fl-menu-trigger[aria-expanded=true]{border-color:#cfcfcf!important;text-decoration:none!important}
+html[data-ascii] body .fl-avatar{display:grid;place-items:center;width:30px;height:30px;border-radius:50%!important;background-color:#e8e8e8!important;color:#0a0a0a!important;font-size:13px!important;font-weight:700!important;text-transform:uppercase;overflow:hidden}
+html[data-ascii] body .fl-avatar img{width:100%;height:100%;object-fit:cover}
+html[data-ascii] body .fl-menu-caret{font-size:10px;color:var(--fl-muted)}
+html[data-ascii] body .fl-menu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:60;width:260px;padding:6px!important;border:1px solid var(--fl-line-hi)!important;border-radius:10px!important;background-color:#0d0d0d!important;box-shadow:0 18px 50px #000c!important}
+html[data-ascii] body .fl-menu-panel .fl-menu-who{display:block;padding:10px 12px 12px!important;margin-bottom:4px;border-bottom:1px solid var(--fl-line)!important;color:var(--fl-muted)!important;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html[data-ascii] body .fl-menu-panel .fl-menu-who strong{display:block;color:var(--fl-ink)!important;font-size:13px;font-weight:600}
+html[data-ascii] body .fl-menu-panel :is(a,button){display:flex!important;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:40px!important;padding:8px 12px!important;border:0!important;border-radius:6px!important;background:none!important;color:var(--fl-copy)!important;font-size:13px!important;text-align:left;text-decoration:none!important;cursor:pointer}
+html[data-ascii] body .fl-menu-panel :is(a,button):is(:hover,:focus-visible){background-color:#1a1a1a!important;color:#fff!important}
+html[data-ascii] body .fl-menu-panel hr{height:1px;margin:4px 0!important;border:0!important;background:var(--fl-line)!important}
+html[data-ascii] body .fl-menu-count{min-width:20px;padding:0 6px!important;border-radius:999px!important;background-color:#e8e8e8!important;color:#0a0a0a!important;font-size:11px!important;font-weight:700;text-align:center;line-height:20px}
+html[data-ascii] body .fl-menu-count[hidden]{display:none!important}
+@media (prefers-reduced-motion:no-preference){html[data-ascii] body .fl-menu-panel:not([hidden]){animation:fl-menu-in .16s ease-out}}
+@keyframes fl-menu-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+html[data-ascii] body .compact-site-header[data-account=signed-out] :is(#header-inbox-link,#header-notifications-link){display:none!important}
+html[data-ascii] body .fl-menu-trigger{position:relative}
+html[data-ascii] body .fl-menu-trigger #header-account-dot{position:absolute;top:-4px;right:-4px}
+@media (max-width:560px){html[data-ascii] body .fl-menu-name,html[data-ascii] body .fl-menu-caret{display:none!important}html[data-ascii] body .fl-menu-trigger{padding:3px!important}html[data-ascii] body .fl-header-signup{display:none!important}}
+}

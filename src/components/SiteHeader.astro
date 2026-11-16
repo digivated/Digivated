@@ -4,7 +4,7 @@ import UiIcon from './UiIcon.astro';
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const active = (href: string) => path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/')) || (href === '/membership' && ['/shop','/products','/promote','/founding-members'].includes(path));
 ---
-<header class="platform-header compact-site-header">
+<header class="platform-header compact-site-header" data-account="signed-out">
   <div class="header-inner">
     <a class="platform-brand" href="/" aria-label="Digivated home"><span class="brand-spinner" aria-hidden="true"><img class="new-brand-mark brand-spinner-front" src="/digivated-ascii-icon-transparent.png" width="40" height="40" alt=""/><img class="new-brand-mark brand-spinner-back" src="/digivated-ascii-icon-transparent.png" width="40" height="40" alt=""/></span><span>Digivated</span></a>
     <nav class="header-primary" aria-label="Primary navigation">{primaryLinks.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</nav>
@@ -13,6 +13,22 @@ const active = (href: string) => path === href || path.startsWith(href + '/') ||
       <a class="header-inbox" id="header-inbox-link" href="/inbox" aria-label="Inbox" aria-current={active('/inbox')?'page':undefined}><UiIcon name="message" size={20}/><span id="header-inbox-badge" class="header-inbox-badge" hidden></span></a>
       <a class="header-inbox header-notifications" id="header-notifications-link" href="/notifications" aria-label="Notifications" aria-current={active('/notifications')?'page':undefined}><UiIcon name="bell" size={20}/><span id="header-notifications-badge" class="header-inbox-badge" hidden></span></a>
       <a class="header-login" id="header-account-link" href="/login" aria-current={active('/login')?'page':undefined}>Log In</a>
+      <a class="fl-header-signup" id="header-signup-link" href="/login?mode=signup">Sign up</a>
+      <div class="fl-menu" id="header-account-menu" hidden>
+        <button type="button" class="fl-menu-trigger" id="header-account-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="header-account-panel"><span class="fl-avatar" id="header-account-avatar" aria-hidden="true">D</span><span class="fl-menu-name sr-only" id="header-account-label">Account menu</span><span class="fl-menu-caret" aria-hidden="true">▾</span><span id="header-account-dot" class="header-inbox-badge" hidden></span></button>
+        <div class="fl-menu-panel" id="header-account-panel" role="menu" aria-labelledby="header-account-trigger" hidden>
+          <span class="fl-menu-who" role="presentation"><strong>Signed in</strong><span id="header-account-email"></span></span>
+          <a role="menuitem" href="/account">Dashboard</a>
+          <a role="menuitem" href="/submit-project">Submit a project</a>
+          <a role="menuitem" href="/notifications">Notifications <span class="fl-menu-count" id="header-menu-notifications" hidden></span></a>
+          <a role="menuitem" href="/inbox">Inbox <span class="fl-menu-count" id="header-menu-inbox" hidden></span></a>
+          <a role="menuitem" href="/saved">Saved items</a>
+          <a role="menuitem" href="/account?tab=profile">Profile</a>
+          <a role="menuitem" href="/account?tab=settings">Settings</a>
+          <hr/>
+          <button role="menuitem" type="button" id="header-sign-out">Sign out</button>
+        </div>
+      </div>
       <a class="header-membership" href="/membership" aria-current={active('/membership')?'page':undefined}>Membership</a>
       <details class="explore-menu notebook-navigation" data-navigation>
         <summary aria-controls="explore-navigation" aria-label="Open navigation menu" aria-expanded="false"><span class="navigation-trigger-menu"><UiIcon name="menu" size={21}/></span><span class="navigation-trigger-close"><UiIcon name="close" size={21}/></span></summary>
