@@ -21,7 +21,9 @@ const dynamic = new Map([
 async function ready(page: Page, route: string) {
   const started = Date.now();
   const response = await page.goto(route, { waitUntil: 'domcontentloaded', timeout: 15000 });
-  expect(response?.status(), `${route} must return 200`).toBe(200);
+  const expectedStatus = route === '/creator' ? 404 : 200;
+  expect(response?.status(), `${route} must return ${expectedStatus}`).toBe(expectedStatus);
+  if (route === '/creator') expect(response?.headers()['x-robots-tag']).toContain('noindex');
   expect(new URL(page.url()).hostname, `${route} must not become a Vercel login page`)
     .toBe(new URL(test.info().project.use.baseURL as string).hostname);
   await expect(page.locator('main').first()).toBeVisible({ timeout: 4000 });
@@ -114,6 +116,12 @@ test('all public sitemap pages respond without redirecting to an error', async (
         });
         if (result.status !== 200 || new URL(result.url).hostname !== 'digivated.com')
           failures.push(`${result.status} ${url} -> ${result.url}`);
+        if (result.status === 200) {
+          const html = await result.text();
+          const canonical = html.match(/<link\b[^>]*rel="canonical"[^>]*href="([^"]+)"[^>]*>/i)?.[1];
+          if (canonical !== url) failures.push(`Canonical mismatch: ${url} -> ${canonical}`);
+          if (/<meta\b[^>]*name="robots"[^>]*content="[^"]*noindex/i.test(html)) failures.push(`Sitemap URL is noindex: ${url}`);
+        }
       } catch (error) { failures.push(`${url}: ${String(error)}`); }
     }));
   }

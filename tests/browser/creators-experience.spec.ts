@@ -118,8 +118,13 @@ for (const width of [1100, 390]) {
   await page.goto(base+'/creator?id='+person.id);
   await expect(page.getByRole('heading',{name:person.name})).toBeVisible();
   await expect(page.locator('#creator-public-status')).toBeVisible();
-  const box=async(selector:string)=>page.locator(selector).first().evaluate(el=>{const r=el.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,visible:getComputedStyle(el).display!=='none'};});
-  const avatar=await box('#creator-avatar'),label=await box('.creator-cover>span'),tabs=await box('.creator-public>.creator-tabs'),status=await box('#creator-public-status'),cover=await box('.creator-cover');
+  // Sample the layout in one frame so entrance motion cannot skew comparisons.
+  await page.evaluate(()=>document.fonts.ready);
+  const [avatar,label,tabs,status,cover]=await page.evaluate(()=>
+   ['#creator-avatar','.creator-cover>span','.creator-public>.creator-tabs','#creator-public-status','.creator-cover'].map(selector=>{
+    const el=document.querySelector(selector)!;const r=el.getBoundingClientRect();
+    return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,visible:getComputedStyle(el).display!=='none'};
+   }));
   expect(cover.bottom-cover.top).toBeGreaterThan(80);
   if(label.visible){
    const overlaps=!(avatar.right<=label.left||avatar.left>=label.right||avatar.bottom<=label.top||avatar.top>=label.bottom);
