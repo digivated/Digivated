@@ -426,7 +426,7 @@ html#digivated-root[data-ascii] body .compact-site-header .navigation-destinatio
 html#digivated-root[data-ascii] body .compact-site-header .navigation-account-row::before{content:'Your space'}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-bottom-row::before{content:none!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a{display:flex!important;align-items:center!important;gap:12px!important;min-height:38px!important;width:auto!important;margin:0 6px!important;padding:8px 12px!important;border:0!important;border-radius:3px!important;background:none!important;color:#cfcfcf!important;font-family:var(--fl-sans)!important;font-size:14px!important;font-weight:450!important;letter-spacing:0!important;text-transform:none!important;text-decoration:none!important;box-shadow:none!important;outline-offset:-2px}
-html#digivated-root[data-ascii] body .compact-site-header .navigation-destinations a::before{counter-increment:fl-nav;content:counter(fl-nav,decimal-leading-zero);font-family:var(--fl-mono);font-size:10.5px;color:#5c5c5c;min-width:18px}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-destinations a::before{content:none!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a::after{content:'→';margin-left:auto;font-family:var(--fl-mono);font-size:12px;color:#fff;opacity:0;transform:translateX(-4px);transition:opacity .12s,transform .12s}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a:is(:hover,:focus-visible){background:#161616!important;color:#fff!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a:is(:hover,:focus-visible)::after{opacity:1;transform:none}
