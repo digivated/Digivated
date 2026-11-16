@@ -2,9 +2,10 @@ import { randomUUID } from 'node:crypto';
 import { projectPublic, validId } from './admin-store.mjs';
 
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
-const TYPES = ['reply', 'follow', 'message', 'feedback', 'approved'];
+const TYPES = ['reply', 'follow', 'message', 'feedback', 'approved', 'scheduled'];
 const TITLES = {
   approved: 'Your project is approved and live',
+  scheduled: 'Badge verified. Your launch is scheduled',
   reply: 'Someone replied to your post',
   follow: 'A creator followed you',
   message: 'You have a new message',
@@ -24,7 +25,8 @@ async function pruneExpired(redis, userId) {
   await redis(['DEL', ...expired.map(itemKey)]);
 }
 
-export const defaultNotificationPreferences = Object.freeze({ enabled: false, reply: true, follow: true, message: true, feedback: true });
+// Activity alerts are on unless a member has saved a different choice.
+export const defaultNotificationPreferences = Object.freeze({ enabled: true, reply: true, follow: true, message: true, feedback: true });
 
 export async function getNotificationPreferences(redis, userId) {
   if (!UUID.test(userId)) throw new Error('Invalid account');
@@ -174,4 +176,17 @@ export async function reconcileProjectApprovals(redis, userId, submissions, now 
     }
   }
   return approvals;
+}
+
+// Badge verification is a service update, like approval: always delivered once per project.
+export async function notifyLaunchScheduled(redis, record) {
+  const userId = record?.accountId;
+  if (!UUID.test(userId || '') || !validId(record?.id) || !record.launch?.badgeVerifiedAt) return false;
+  const id = randomUUID(), now = Date.now();
+  const item = { id, recipientId:userId, type:'scheduled', title:TITLES.scheduled,
+    href:`/account#project-${record.id}`, createdAt:new Date(now).toISOString() };
+  const marker = `digivated:notifications:scheduled:${userId}:${record.id}`;
+  return await redis(['EVAL',APPROVAL_NOTICE,4,marker,
+    itemKey(id),indexKey(userId),unreadKey(userId),
+    JSON.stringify(item),now,id,RETENTION_SECONDS,0,`${marker}:`]) === 1;
 }

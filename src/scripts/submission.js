@@ -1,6 +1,7 @@
 import { prepareProjectImage } from './submission-image.js';
 import { createClient } from '@supabase/supabase-js';
 import { communityAuthOptions } from './community-auth.js';
+import { projectStage, trackerElement } from './launch-tracker.js';
 const form = document.getElementById('project-form');
 if (form) {
   let accountClient, accountVerified = false, instantConfig, pendingInstantId;
@@ -182,6 +183,11 @@ if (form) {
             ? `Launch date: ${scheduledDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})} (UTC). Publishing runs daily at 00:10 UTC.`
             : 'Your scheduled launch date is shown in Your Projects.';
           badgePanel.hidden = false;
+          form.classList.add('is-saved');
+          const savedItem = { id: data.id, name: payload.name, url: payload.url, date: new Date().toISOString(), status: 'pending', launch: data.launch };
+          document.getElementById('submission-badge-tracker').replaceChildren(trackerElement(projectStage(savedItem)));
+          document.getElementById('submission-badge-dashboard').href = '/account#project-' + encodeURIComponent(data.id);
+          badgePanel.scrollIntoView({ block: 'start' });
           document.getElementById('submission-badge-title').focus();
         } else {
           status.replaceChildren('Project saved. ', Object.assign(document.createElement('a'), {
@@ -197,4 +203,26 @@ if (form) {
       status.textContent = error.name === 'TimeoutError' ? 'The response took too long. Your submission may have been received; please wait before trying again.' : (error.message || 'Unable to submit. Please try again.');
     } finally { updateButton(); }
   });
+  // Live progress: each section is marked done once its required fields are valid.
+  const progressItems = [...document.querySelectorAll('#submission-progress [data-progress]')];
+  const sectionDone = id => {
+    const section = document.getElementById(id);
+    if (!section) return false;
+    const fields = [...section.querySelectorAll('input,select,textarea')].filter(field => field.required && field.type !== 'checkbox');
+    return fields.length ? fields.every(field => field.type === 'file' ? !!field.files?.length : field.checkValidity()) : !!intent.value;
+  };
+  const updateProgress = () => {
+    let current = false;
+    for (const item of progressItems) {
+      const done = sectionDone(item.dataset.progress);
+      item.classList.toggle('is-done', done);
+      const isCurrent = !done && !current;
+      item.classList.toggle('is-current', isCurrent);
+      if (isCurrent) current = true;
+      item.querySelector('.fl-progress-mark').textContent = done ? '[✓]' : `[${progressItems.indexOf(item) + 1}]`;
+    }
+  };
+  form.addEventListener('input', updateProgress);
+  form.addEventListener('change', updateProgress);
+  updateProgress();
 }

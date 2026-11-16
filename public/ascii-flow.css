@@ -71,6 +71,114 @@ html[data-ascii] body .fl-switch{margin:20px 0 0!important;text-align:center;col
 html[data-ascii] body .fl-switch .fl-link{color:#fff!important}
 html[data-ascii] body .fl-auth .login-browse{margin-top:10px!important;text-align:center;font-size:12px;color:var(--fl-muted)!important}
 
+/* ---- Dashboard ---- */
+html[data-ascii] body .fl-dash-intro{display:flex!important;align-items:flex-end;justify-content:space-between;gap:16px 24px;flex-wrap:wrap}
+html[data-ascii] body .fl-dash-intro[hidden],html[data-ascii] body .fl-dash-cta[hidden]{display:none!important}
+html[data-ascii] body .fl-dash{max-width:900px!important;margin:0 auto!important;padding:0!important;border:0!important;background:none!important}
+html[data-ascii] body .fl-dash>#account-state{margin:0 0 16px!important;color:var(--fl-muted)!important}
+html[data-ascii] body .fl-dash-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 8px;color:var(--fl-muted)!important;font-size:13px}
+html[data-ascii] body .fl-dash-bar p{margin:0!important}
+html[data-ascii] body .fl-dash-bar strong{color:var(--fl-ink)!important;font-weight:500}
+html[data-ascii] body .fl-panel-pad{padding:clamp(18px,3vw,26px)!important}
+html[data-ascii] body .fl-tabpanel{display:grid;gap:16px}
+html[data-ascii] body .fl-tabpanel[hidden]{display:none!important}
+html[data-ascii] body .fl-empty p{margin:0 0 16px!important;color:var(--fl-copy)!important}
+html[data-ascii] body .fl-empty strong{display:block;margin-bottom:4px;color:var(--fl-ink)!important;font-size:16px}
+html[data-ascii] body .fl-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:4px}
+html[data-ascii] body .fl-project{display:grid;gap:18px;padding:clamp(18px,3vw,26px)!important;margin:0 0 16px!important}
+html[data-ascii] body .fl-project-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+html[data-ascii] body .fl-project-head h3{margin:0 0 4px!important;font-size:20px!important}
+html[data-ascii] body .fl-project-meta{margin:0!important;font-size:12px!important}
+html[data-ascii] body .fl-project-meta a{color:var(--fl-copy)!important}
+html[data-ascii] body .fl-next-copy{margin:0!important;padding:14px 16px!important;border:1px solid var(--fl-line)!important;border-radius:var(--fl-radius)!important;background-color:var(--fl-raised)!important;color:var(--fl-copy)!important;font-size:14px}
+html[data-ascii] body .fl-project[data-stage=scheduled] .fl-next-copy{border-color:#c3a0ff55!important}
+html[data-ascii] body .fl-feedback{padding:12px 14px!important;border-left:2px solid var(--fl-line-hi)!important;color:var(--fl-copy)!important;font-size:13px;white-space:pre-wrap}
+html[data-ascii] body .fl-feedback.is-empty{color:var(--fl-muted)!important;border-left-color:var(--fl-line)!important}
+html[data-ascii] body .fl-feedback strong{display:block;color:var(--fl-ink)!important;margin-bottom:4px}
+html[data-ascii] body .fl-feedback p{margin:0!important}
+html[data-ascii] body .fl-settings{display:grid;gap:12px}
+html[data-ascii] body .fl-setting{display:flex!important;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+html[data-ascii] body .fl-setting h3{margin:0 0 4px!important;font-size:15px!important}
+html[data-ascii] body .fl-setting p{margin:0!important;color:var(--fl-muted)!important;font-size:13px}
+html[data-ascii] body .fl-setting[hidden]{display:none!important}
+html[data-ascii] body .fl-dash .creator-profile-editor{margin:0!important}
+html[data-ascii] body .fl-dash .creator-following-feed{margin:0!important}
+
+/* ---- Launch tracker ---- */
+html[data-ascii] body .fl-tracker{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0;margin:0!important;padding:0!important;list-style:none!important;counter-reset:none}
+html[data-ascii] body .fl-step{position:relative;display:flex;gap:8px;align-items:flex-start;padding:10px 12px 10px 0!important;border-top:2px solid var(--fl-line)!important;line-height:1.45}
+html[data-ascii] body .fl-step.is-done{border-top-color:var(--fl-ok)!important}
+html[data-ascii] body .fl-step.is-current{border-top-color:#e8e8e8!important}
+html[data-ascii] body .fl-step.is-stopped{border-top-color:var(--fl-bad)!important}
+html[data-ascii] body .fl-step-mark{flex:none;color:var(--fl-muted)!important;font-size:12px}
+html[data-ascii] body .fl-step.is-done .fl-step-mark{color:var(--fl-ok)!important}
+html[data-ascii] body .fl-step.is-current .fl-step-mark{color:#fff!important}
+html[data-ascii] body .fl-step.is-stopped .fl-step-mark{color:var(--fl-bad)!important}
+html[data-ascii] body .fl-step-copy strong{display:block;color:var(--fl-copy)!important;font-size:13px;font-weight:500}
+html[data-ascii] body .fl-step.is-current .fl-step-copy strong{color:#fff!important}
+html[data-ascii] body .fl-step.is-todo .fl-step-copy strong{color:var(--fl-muted)!important}
+html[data-ascii] body .fl-step-copy small{display:block;color:var(--fl-muted)!important;font-size:11px}
+@media (max-width:560px){html[data-ascii] body .fl-tracker{grid-template-columns:1fr 1fr}}
+
+/* ---- Badge next-step panel ---- */
+html[data-ascii] body .fl-next{display:grid;gap:12px;padding:clamp(16px,3vw,22px)!important;border:1px solid #e8c47a66!important;border-radius:8px!important;background-color:#12110d!important}
+html[data-ascii] body .fl-next h4{margin:0!important;font-size:16px!important;color:var(--fl-ink)!important}
+html[data-ascii] body .fl-next-lede{margin:0!important;color:var(--fl-copy)!important;font-size:13px}
+html[data-ascii] body .fl-howto{display:grid;gap:8px;margin:0!important;padding-left:20px!important;color:var(--fl-copy)!important;font-size:13px}
+html[data-ascii] body .fl-howto li{line-height:1.6}
+html[data-ascii] body .fl-howto strong{color:var(--fl-ink)!important;font-weight:600}
+html[data-ascii] body .fl-howto a{color:var(--fl-ink)!important;word-break:break-all}
+html[data-ascii] body .fl-badge-preview{display:inline-block;padding:0 6px!important;border:1px dashed var(--fl-line-hi)!important;color:var(--fl-ink)!important;white-space:nowrap}
+html[data-ascii] body .fl-code{display:grid;gap:6px;font-size:12px;color:var(--fl-muted)!important}
+html[data-ascii] body .fl-code textarea{width:100%;min-height:72px;font-size:12px!important;resize:vertical}
+html[data-ascii] body .fl-help summary{min-height:0!important;color:var(--fl-copy)!important;font-size:13px;cursor:pointer}
+html[data-ascii] body .fl-help ul{margin:10px 0 0!important;padding-left:20px!important;color:var(--fl-muted)!important;font-size:12px;display:grid;gap:4px}
+
+/* ---- Submit flow ---- */
+html[data-ascii] body .fl-progress{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0 0 24px!important;padding:0!important;list-style:none!important;background-color:var(--fl-bg)!important}
+html[data-ascii] body .fl-progress li{border-bottom:2px solid var(--fl-line)!important}
+html[data-ascii] body .fl-progress li.is-done{border-bottom-color:var(--fl-ok)!important}
+html[data-ascii] body .fl-progress li.is-current{border-bottom-color:#e8e8e8!important}
+html[data-ascii] body .fl-progress a{display:block;min-height:0!important;padding:12px 6px!important;color:var(--fl-muted)!important;font-size:12px;text-decoration:none!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-ascii] body .fl-progress li.is-done a{color:var(--fl-ok)!important}
+html[data-ascii] body .fl-progress li.is-current a{color:#fff!important}
+html[data-ascii] body .submission-form fieldset[id^=sub-step]{scroll-margin-top:64px}
+html[data-ascii] body #project-form.is-saved :is(fieldset,#submission-progress,.submission-review>h2,.submission-review>p:not(#submission-status),.submission-review>label,.submission-review>button[type=submit]){display:none!important}
+html[data-ascii] body #submission-badge:not([hidden]){display:grid!important;gap:12px;padding:clamp(18px,3vw,26px)!important;border:1px solid var(--fl-line)!important;border-radius:10px!important;background-color:var(--fl-panel)!important}
+html[data-ascii] body #submission-badge h3{margin:0!important;font-size:20px!important}
+html[data-ascii] body #submission-badge .eyebrow{margin:0!important;color:var(--fl-ok)!important}
+html[data-ascii] body .submission-account-callout{padding:20px!important;border:1px solid var(--fl-line)!important;border-radius:10px!important;background-color:var(--fl-panel)!important}
+@media (max-width:560px){html[data-ascii] body .fl-progress a{font-size:11px;padding:10px 2px!important}}
+
+/* ---- Notifications ---- */
+html[data-ascii] body .fl-notify{max-width:820px!important;margin-inline:auto!important}
+html[data-ascii] body .fl-notify-main{display:grid;gap:16px}
+html[data-ascii] body .fl-notify-main[hidden]{display:none!important}
+html[data-ascii] body .fl-notify .notifications-feed{padding:0!important;overflow:hidden}
+html[data-ascii] body .fl-notify-head{display:flex!important;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:18px 20px 12px!important;border:0!important}
+html[data-ascii] body .fl-notify-head h2{margin:0 0 4px!important;font-size:17px!important}
+html[data-ascii] body .fl-notify-head p{margin:0!important;color:var(--fl-muted)!important;font-size:13px}
+html[data-ascii] body .fl-notify .notifications-feed-actions{display:flex;align-items:center;gap:12px}
+html[data-ascii] body .fl-notify-filter{margin:0 20px!important;width:auto}
+html[data-ascii] body .fl-notify-filter>button{flex:0 0 auto!important;padding:8px 14px!important}
+html[data-ascii] body .fl-notify .notifications-items{display:grid;padding:4px 8px 10px!important}
+html[data-ascii] body .fl-notify-group{margin:12px 12px 4px!important;color:var(--fl-muted)!important;font-size:11px!important;letter-spacing:.1em;text-transform:uppercase;font-weight:500!important}
+html[data-ascii] body .fl-notify .notification-item{display:flex!important;align-items:center;gap:12px;padding:12px!important;border:0!important;border-radius:8px!important;text-decoration:none!important}
+html[data-ascii] body .fl-notify .notification-item:is(:hover,:focus-visible){background-color:#161616!important;text-decoration:none!important}
+html[data-ascii] body .fl-notify .notification-item.unread{background-color:#131313!important}
+html[data-ascii] body .fl-notify .notification-copy{flex:1;min-width:0;display:grid;gap:2px}
+html[data-ascii] body .fl-notify .notification-copy small{color:var(--fl-muted)!important;font-size:11px;letter-spacing:.04em}
+html[data-ascii] body .fl-notify .notification-copy strong{color:var(--fl-ink)!important;font-weight:500;font-size:14px}
+html[data-ascii] body .fl-notify .notification-item:not(.unread) .notification-copy strong{color:var(--fl-copy)!important}
+html[data-ascii] body .fl-notify .notification-copy time{color:var(--fl-muted)!important;font-size:11px}
+html[data-ascii] body .fl-notify .notification-item[data-type=scheduled] .notification-mark{color:var(--fl-accent)!important}
+html[data-ascii] body .fl-notify .notification-item[data-type=approved] .notification-mark{color:var(--fl-ok)!important}
+html[data-ascii] body .fl-unread-dot{flex:none;padding:1px 8px!important;border-radius:999px!important;background-color:#e8e8e8!important;color:#0a0a0a!important;font-size:10px!important;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+html[data-ascii] body .fl-notify .notifications-empty{padding:28px 12px!important;text-align:center;color:var(--fl-muted)!important}
+html[data-ascii] body .fl-notify .notifications-empty strong{display:block;color:var(--fl-ink)!important;margin-bottom:4px}
+html[data-ascii] body .fl-notify-settings{display:grid;gap:12px}
+html[data-ascii] body .fl-notify .notifications-auth{text-align:center}
+
 /* ---- Header account area ---- */
 html[data-ascii] body .fl-header-signup{display:inline-flex!important;align-items:center;min-height:36px!important;padding:6px 14px!important;border:1px solid #e8e8e8!important;border-radius:var(--fl-radius)!important;background-color:#ececec!important;color:#0a0a0a!important;font-size:13px!important;font-weight:600!important;text-decoration:none!important;white-space:nowrap}
 html[data-ascii] body .fl-header-signup:hover{background-color:#fff!important;color:#000!important;text-decoration:none!important}
