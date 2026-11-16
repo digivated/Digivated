@@ -303,7 +303,7 @@ html[data-ascii] body .fl-num{color:var(--fl-accent)!important;margin-right:8px}
 html[data-ascii] body .fl-hud{font-size:10px!important;letter-spacing:.12em!important;text-transform:uppercase!important;color:#6a6a6a!important}
 
 /* Motion (enabled by /ascii-motion.js only when motion is allowed). */
-html.fl-motion [data-fl-reveal]{opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1)}
+html.fl-motion [data-fl-reveal]{opacity:0;transform:translateY(10px);transition:opacity .35s ease,transform .35s cubic-bezier(.2,.7,.2,1)}
 html.fl-motion [data-fl-reveal].is-in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){html.fl-motion [data-fl-reveal]{opacity:1!important;transform:none!important;transition:none!important}}
 html[data-ascii] body .fl-cursor::after{content:'_';margin-left:2px;animation:fl-blink 1.1s steps(1) infinite}
@@ -405,4 +405,33 @@ html[data-ascii] body .compact-site-header .header-membership:hover{color:#fff!i
 @layer flow {
 /* iOS: fields stay at 16px on phones so focusing never zooms the page. */
 @media (max-width:767px){html[data-ascii] body :is(input:not([type=checkbox],[type=radio],[type=range],[type=file],[type=hidden]),select,textarea:not([readonly])){font-size:16px!important}}
+}
+
+@layer flow {
+/* Site menu (hamburger): one compact, anchored panel. The page behind stops
+   scrolling while it is open, so there is only ever one scroll area. */
+html:has(.notebook-navigation[open]),html:has(.notebook-navigation[open]) body{overflow:hidden!important}
+html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation .navigation-panel{counter-reset:fl-nav;position:fixed!important;inset:var(--navigation-top,72px) max(12px,calc(var(--canvas-gutter,24px) - 24px)) auto auto!important;width:min(340px,calc(100vw - 24px))!important;max-width:none!important;height:auto!important;max-height:calc(100dvh - var(--navigation-top,72px) - 12px)!important;overflow-y:auto!important;overscroll-behavior:contain;scrollbar-width:none;display:none;flex-direction:column;gap:0!important;padding:6px 0!important;margin:0!important;background:#0b0b0b!important;border:1px solid #2a2a2a!important;border-radius:4px!important;box-shadow:0 24px 60px -20px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.02)!important;z-index:60;animation:fl-menu-in .14s ease-out;font-family:var(--fl-sans)!important}
+html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation .navigation-panel::-webkit-scrollbar{display:none}
+html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation[open] .navigation-panel{display:flex!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div{display:flex!important;flex-direction:column!important;gap:0!important;margin:0!important;padding:4px 0!important;border:0!important;background:none!important;grid-template-columns:none!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div+div{border-top:1px solid #1f1f1f!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div::before{display:block;padding:10px 18px 6px;font-family:var(--fl-mono)!important;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#6f6f6f}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-destinations::before{content:'Navigate'}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-account-row::before{content:'Your space'}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-bottom-row::before{content:none!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a{display:flex!important;align-items:center!important;gap:12px!important;min-height:38px!important;width:auto!important;margin:0 6px!important;padding:8px 12px!important;border:0!important;border-radius:3px!important;background:none!important;color:#cfcfcf!important;font-family:var(--fl-sans)!important;font-size:14px!important;font-weight:450!important;letter-spacing:0!important;text-transform:none!important;text-decoration:none!important;box-shadow:none!important;outline-offset:-2px}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-destinations a::before{counter-increment:fl-nav;content:counter(fl-nav,decimal-leading-zero);font-family:var(--fl-mono);font-size:10.5px;color:#5c5c5c;min-width:18px}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a::after{content:'→';margin-left:auto;font-family:var(--fl-mono);font-size:12px;color:#fff;opacity:0;transform:translateX(-4px);transition:opacity .12s,transform .12s}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a:is(:hover,:focus-visible){background:#161616!important;color:#fff!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a:is(:hover,:focus-visible)::after{opacity:1;transform:none}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a[aria-current=page]{color:#fff!important;background:#141414!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a[aria-current=page]::before{color:#fff}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel a span{color:inherit!important;font:inherit!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-bottom-row{flex-direction:row!important;flex-wrap:wrap!important;gap:0!important;padding:6px 0!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-bottom-row a{flex:1 1 auto;min-height:34px!important;font-size:13px!important;color:#8d8d8d!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel #menu-notifications-badge:not([hidden]){display:inline-grid!important;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#fff!important;color:#000!important;font:600 10.5px/1 var(--fl-mono)!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel [hidden]{display:none!important}
+@media (max-width:639px){html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation .navigation-panel{inset:var(--navigation-top,64px) 8px auto 8px!important;width:auto!important}}
+@media (prefers-reduced-motion:reduce){html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation .navigation-panel{animation:none}}
 }

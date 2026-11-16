@@ -9,21 +9,29 @@
   const running = new WeakMap();
 
   // Decode one text node from glyph noise into its real text.
-  function decode(node, duration = 700) {
+  // Glyphs refresh on a fixed tick (not every frame) so the effect reads as a
+  // calm terminal re-render rather than flicker, and it settles quickly.
+  const TICK = 55;
+  function decode(node, duration = 450) {
     const target = node.nodeValue;
     if (!target.trim() || running.get(node)) return;
     const start = performance.now();
-    let written = target;
+    let written = target, last = -Infinity;
     running.set(node, true);
     const frame = now => {
       // If the page's own script changed this text meanwhile, stop and keep theirs.
       if (!node.isConnected || node.nodeValue !== written) { running.delete(node); return; }
       const progress = Math.min(1, (now - start) / duration);
-      const settled = Math.floor(progress * target.length);
-      let out = target.slice(0, settled);
-      for (let i = settled; i < target.length; i++) out += /\s/.test(target[i]) ? target[i] : random();
-      if (progress < 1) { node.nodeValue = written = out; requestAnimationFrame(frame); }
-      else { node.nodeValue = target; running.delete(node); }
+      if (progress >= 1) { node.nodeValue = target; running.delete(node); return; }
+      if (now - last >= TICK) {
+        last = now;
+        const eased = 1 - Math.pow(1 - progress, 2);
+        const settled = Math.floor(eased * target.length);
+        let out = target.slice(0, settled);
+        for (let i = settled; i < target.length; i++) out += /\s/.test(target[i]) ? target[i] : random();
+        node.nodeValue = written = out;
+      }
+      requestAnimationFrame(frame);
     };
     requestAnimationFrame(frame);
   }
@@ -39,12 +47,12 @@
   // 1. Page headline and its label decode once on load.
   const h1 = document.querySelector('#main h1');
   const label = h1?.closest('header, section, div')?.querySelector('.eyebrow, .home-editorial-kicker');
-  requestAnimationFrame(() => { decodeElement(label, 500); decodeElement(h1, 800); });
+  requestAnimationFrame(() => { decodeElement(label, 320); decodeElement(h1, 520); });
   label?.classList.add('fl-cursor');
 
   // 2. Primary navigation re-decodes on hover, like a terminal re-render.
   document.querySelectorAll('.header-primary > a').forEach(link => {
-    link.addEventListener('mouseenter', () => textNodes(link).forEach(node => decode(node, 280)));
+    link.addEventListener('mouseenter', () => textNodes(link).forEach(node => decode(node, 220)));
   });
 
   // 3. Cards and section blocks rise in as they enter the viewport.
