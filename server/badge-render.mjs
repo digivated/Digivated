@@ -23,7 +23,8 @@ export function compactCount(n) {
 export function renderBadge(theme = 'dark', count = null) {
   const t = BADGE_THEMES[theme] || BADGE_THEMES.dark;
   const terminal = theme === 'terminal';
-  const shown = compactCount(count);
+  // A brand-new project shows an arrow rather than a lonely zero.
+  const shown = count > 0 ? compactCount(count) : null;
   const title = `Featured on Digivated${shown ? ` · ${shown} upvotes` : ''}`;
   const label = terminal ? '$ featured on' : 'FEATURED ON';
   const name = terminal
