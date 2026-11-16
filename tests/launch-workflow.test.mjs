@@ -133,7 +133,7 @@ test('verification runtime fits the website-check deadline and cycle has its own
  const config=JSON.parse(await readFile(new URL('../vercel.json',import.meta.url),'utf8'));
  assert.ok(config.functions['api/submissions.js'].maxDuration>=30);
  assert.ok(config.functions['api/[route].js'].maxDuration>=60);
- assert.ok(config.crons.some(c=>c.path==='/api/launch-queue'&&c.schedule==='10 0 * * *'));
+ assert.ok(config.crons.some(c=>c.path==='/api/launch-queue'&&c.schedule==='0 14 * * 1'));
 });
 
 test('website verification follows apex/www redirects but refuses unrelated domains',async()=>{

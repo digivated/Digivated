@@ -231,7 +231,7 @@
     },
     {
       "path": "/api/launch-queue",
-      "schedule": "10 0 * * *"
+      "schedule": "0 14 * * 1"
     }
   ],
   "rewrites": [

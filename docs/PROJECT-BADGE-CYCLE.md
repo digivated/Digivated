@@ -4,7 +4,7 @@
 2. The creator adds the badge as HTML on the saved public project URL, publishes that page, then chooses Verify website badge in Your Projects.
 3. Verification checks project ownership and the exact listing link/project ID. Comments, scripts, inert markup and directly hidden anchors do not qualify. Normal apex/www redirects are allowed; redirects to another site and private-network destinations are refused.
 4. Verification atomically saves the badge timestamp and inserts the project into the scheduled Redis queue. Future listings stay private.
-5. `/api/launch-queue` runs daily at 00:10 UTC. Pending, verified free projects publish once their launch date arrives. Publication atomically updates the public listing/index and removes the queue entry. Repeated runs cannot publish a stale revision again.
+5. `/api/launch-queue` runs every Monday at 14:00 UTC (9:00 AM Eastern in winter, 10:00 AM during daylight time). Pending, verified free projects publish once their launch date arrives. Publication atomically updates the public listing/index and removes the queue entry. Repeated runs cannot publish a stale revision again.
 
 The verification endpoint retains its existing 35-second runtime. The shared endpoint that handles the cycle has a 120-second budget for processing due projects. `CRON_SECRET` protects scheduled runs; production was checked for the presence of the credential without reading its value. Production jobs are not invoked as test fixtures.
 

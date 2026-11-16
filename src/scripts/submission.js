@@ -206,7 +206,7 @@ if (form) {
           badgePickerSlot.replaceChildren(badgePicker(data.id, { label: `Badge styles for ${payload.name}` }));
           const scheduledDate = new Date(data.launch.scheduledAt);
           document.getElementById('submission-badge-launch').textContent = Number.isFinite(scheduledDate.getTime())
-            ? `Launch date: ${scheduledDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})} (UTC). Publishing runs daily at 00:10 UTC.`
+            ? `Launch date: ${scheduledDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})}. Projects publish every Monday at 9:00 AM Eastern.`
             : 'Your scheduled launch date is shown in Your Projects.';
           badgePanel.hidden = false;
           form.classList.add('is-saved');

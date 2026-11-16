@@ -7,11 +7,11 @@ export const formatDate = value => {
   const date = new Date(value);
   return Number.isFinite(date.getTime()) ? date.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : '';
 };
-// Publication runs daily at 00:10 UTC; show what that means locally too.
+// Publication runs Mondays at 14:00 UTC (9:00 AM Eastern); show that locally too.
 export const localLaunchTime = value => {
   const time = Date.parse(value);
   if (!Number.isFinite(time)) return '';
-  return new Date(time + 10 * 60000).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  return new Date(Date.UTC(new Date(time).getUTCFullYear(), new Date(time).getUTCMonth(), new Date(time).getUTCDate(), 14)).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 };
 export const daysUntil = (value, now = Date.now()) => {
   const time = Date.parse(value);
@@ -128,7 +128,7 @@ export function badgeLater(item, stage) {
 export function nextStepCopy(stage, item) {
   if (stage.key === 'scheduled') {
     const days = daysUntil(item.launch.scheduledAt);
-    return `You’re all set. ${item.name} goes live automatically on ${formatDate(item.launch.scheduledAt)}${days > 0 ? ` (${relativeDays(days)})` : ''} at 00:10 UTC, which is ${localLaunchTime(item.launch.scheduledAt)} your time. Keep the badge on your site. The daily 00:10 UTC cycle will publish your project. No admin approval needed.`;
+    return `You’re all set. ${item.name} goes live automatically on ${formatDate(item.launch.scheduledAt)}${days > 0 ? ` (${relativeDays(days)})` : ''} at 9:00 AM Eastern, which is ${localLaunchTime(item.launch.scheduledAt)} your time. Keep the badge on your site. The Monday 9:00 AM Eastern publish will publish your project. No admin approval needed.`;
   }
   if (stage.key === 'review') return 'Your submission is waiting for review. We’ll notify you when it’s published.';
   if (stage.key === 'rejected') return 'This project wasn’t selected. Review the feedback below. You can submit an improved version later.';

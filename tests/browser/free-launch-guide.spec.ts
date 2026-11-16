@@ -24,7 +24,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await page.goto(base+'/submit-project');
  await expect(page.locator('.free-launch-guide ol>li')).toHaveCount(4);
  await expect(page.locator('.free-launch-guide')).toContainText('Verification is required.');
- await expect(page.locator('.free-launch-guide')).toContainText('00:10 UTC');
+ await expect(page.locator('.free-launch-guide')).toContainText('Monday at 9:00 AM Eastern');
  await expect(page.locator('#submission-details')).toBeVisible();
  await expect(page.locator('#submission-progress li.is-current')).toContainText('Project');
  for(const [name,value] of Object.entries({name:'Orbit',url:'https://example.com',description:'A useful workspace for independent builders to organize projects.',creator:'Builder'}))await page.locator(`#project-form [name=${name}]`).fill(value);
@@ -52,7 +52,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await expect(page.locator('.account-launch [data-badge-style]')).toHaveCount(4);
  await page.locator('[data-verify-badge]').click();
  await expect(page.locator('[data-submission-state]')).toHaveText('Scheduled');
- await expect(page.locator('.account-launch')).toContainText('daily 00:10 UTC cycle');
+ await expect(page.locator('.account-launch')).toContainText('Monday 9:00 AM Eastern publish');
  await expect(page.locator('.account-launch')).toContainText('No admin approval needed.');
  await expect(page.locator('[data-copy-badge]')).toHaveCount(0);
  await expect(page.locator('.fl-tracker [aria-current=step]')).toContainText('Launch day');

@@ -30,7 +30,7 @@ import '../styles/home-about.css';
       <div class="fl-stat"><aside class="queue-countdown" aria-label="Weekly project queue">
         <div>
           <strong>Next free project launch</strong>
-          <small>Weekly · Monday at 00:10 UTC</small>
+          <small>Weekly · Mondays at 9:00 AM Eastern</small>
         </div>
         <time id="queue-countdown" role="timer" aria-live="off"></time>
       </aside></div>
@@ -65,10 +65,10 @@ import '../styles/home-about.css';
   function updateCountdown() {
     if (!countdown) return;
     const now = new Date();
-    // Free launches become eligible on Monday at midnight UTC.
-    // The scheduled queue job runs daily at 00:10 UTC.
+    // Free launches become eligible on Monday; the scheduled queue job
+    // publishes them on Mondays at 14:00 UTC (9:00 AM Eastern).
     const daysUntilMonday = (8 - now.getUTCDay()) % 7;
-    let target = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilMonday, 0, 10);
+    let target = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilMonday, 14, 0);
     if (target <= now.getTime()) target += 7 * 86_400_000;
 
     const minutes = Math.ceil((target - now.getTime()) / 60_000);
