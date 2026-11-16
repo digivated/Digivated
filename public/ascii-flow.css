@@ -385,4 +385,16 @@ html[data-ascii] body #main{padding-bottom:64px!important}
 html[data-ascii] body .fl-notify .notifications-choice-list{display:grid!important;gap:0!important}
 html[data-ascii] body .fl-notify .notifications-choice-list label{display:flex!important;align-items:center;justify-content:space-between;margin:0!important;padding:12px 0!important;border-top:1px solid var(--fl-rule)!important;font-family:var(--fl-sans)!important;text-transform:none!important;letter-spacing:normal!important}
 html[data-ascii] body .fl-notify .notifications-choice-list label *{text-transform:none!important;letter-spacing:normal!important}
+
+/* ---- Directory, rankings and other intros share the ruled band ---- */
+html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.creator-social-heading,.membership-heading,.rankings-hero,.creator-directory-intro){position:relative;padding-bottom:56px!important;margin-bottom:32px!important}
+html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.creator-social-heading,.membership-heading,.rankings-hero,.creator-directory-intro)::after{content:'';position:absolute;left:0;right:0;bottom:0;height:22px;border-top:1px solid var(--fl-rule)!important;border-bottom:1px solid var(--fl-rule)!important;background-image:repeating-linear-gradient(135deg,transparent 0 6px,#191919 6px 7px)!important}
+html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.membership-heading,.rankings-hero) h1{font-size:clamp(36px,5vw,60px)!important}
+
+/* Directory rows: ruled list, like the reference project index. */
+html[data-ascii] body .wall-dom-grid .wall-tile{border-top:1px solid var(--fl-rule)!important;padding-block:18px!important;margin:0!important}
+html[data-ascii] body .wall-dom-grid .wall-tile:last-child{border-bottom:1px solid var(--fl-rule)!important}
+html[data-ascii] body .wall-dom-grid .wall-tile:hover{background-color:#0e0e0e!important}
+html[data-ascii] body .wall-tile-caption small,html[data-ascii] body .home-launch-meta,html[data-ascii] body .home-launch-meta *{font-family:var(--fl-mono)!important;font-size:10.5px!important;letter-spacing:.08em!important;text-transform:uppercase}
+html[data-ascii] body .home-launch-row{border-top:1px solid var(--fl-rule)!important}
 }
