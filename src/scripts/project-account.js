@@ -64,6 +64,7 @@ if(state){
   if(authState==='unavailable'){show('You have a session, but we could not verify your account right now. Please try again shortly.');list.textContent='Your submissions could not be loaded.';return;}
   if(arrivingFromEmail){location.replace('/discover?view=featured&signed_in=1');return;}
   show(`You're logged in as ${email}.`);
+  state.hidden=true; // The dashboard bar already shows who is signed in.
   void loadSubmissions();
   function renderSubmissions(submissions){
    list.replaceChildren();
