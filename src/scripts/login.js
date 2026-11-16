@@ -10,7 +10,7 @@ if(form){
  const safeNext=next&&(/^\/creator\?id=[a-f0-9-]{36}$/i.test(next)||/^\/inbox(?:\?id=[a-f0-9-]{36})?$/i.test(next)||/^\/(?:submit-project|notifications|account|saved|creators)$/.test(next));
  const destination=safeNext?next:'/account';
  let mode=params.get('mode')==='signup'?'signup':'signin';
- let client=null,busy=false;
+ let client=null,busy=false,unavailable='';
  const copy={
   signin:{title:'Welcome back.',subtitle:'Sign in to track your launches and read feedback.',explain:'Sign in with your email and password.',submit:'Sign in',switchText:'New to Digivated? ',switchAction:'Create an account'},
   signup:{title:'Join Digivated.',subtitle:'Launch your project for free and get real feedback from builders.',explain:'Create your account with an email and password.',submit:'Create account',switchText:'Already have an account? ',switchAction:'Sign in'}
@@ -27,7 +27,7 @@ if(form){
   $('login-switch').firstChild.textContent=c.switchText;$('login-switch-button').textContent=c.switchAction;
   password.autocomplete=mode==='signin'?'current-password':'new-password';password.minLength=mode==='signin'?1:10;
   document.title=(mode==='signin'?'Log in':'Create account')+' · Digivated';
-  say('');
+  if(unavailable)say(unavailable,'error');else say('');
  };
  const setMode=value=>{mode=value;render();const url=new URL(location.href);if(mode==='signup')url.searchParams.set('mode','signup');else url.searchParams.delete('mode');history.replaceState(null,'',url);};
  tabs.forEach((tab,index)=>{tab.onclick=()=>setMode(index===0?'signin':'signup');tab.onkeydown=event=>{if(!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();const other=tabs[index===0?1:0];other.click();other.focus();};});
@@ -90,5 +90,5 @@ if(form){
   if(result.state==='unverified')say('Finish verifying your email with the link we sent, then sign in.','error');
   if(result.state==='unavailable')say('Account verification is temporarily unavailable. Please try again.','error');
  }
- boot().catch(error=>{say(error.message||'Account sign-in is temporarily unavailable.','error');});
+ boot().catch(error=>{unavailable=error.message||'Account sign-in is temporarily unavailable.';say(unavailable,'error');});
 }

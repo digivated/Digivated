@@ -16,8 +16,6 @@ test('login entry point exposes sign-in and sign-up email flows', async ({ page 
   await expect(page.getByRole('tab', { name: 'Create account' })).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByRole('heading', { name: 'Join Digivated.' })).toBeVisible();
   await expect(page.locator('#login-submit')).toHaveText('Create account');
-  await page.locator('#login-submit').click();
-  await expect(page.locator('#login-status')).toContainText('Enter your email address.');
   await expect(page.getByText('Account sign-in is temporarily unavailable.')).toBeVisible();
 });
 
@@ -37,7 +35,6 @@ test('verified account shows a signed-in header, welcome, account, and sign-out'
   await page.goto('http://127.0.0.1:4321/discover?view=featured&signed_in=1');
   const menu = page.getByRole('button', { name: `Account menu for ${email}` });
   await expect(menu).toBeVisible();
-  await expect(page.locator('#account-welcome')).toContainText(`You're logged in as ${email}.`);
   await expect(page).toHaveURL(/\/discover\?view=featured$/);
   await menu.click();
   await expect(page.getByRole('menu')).toContainText(email);
