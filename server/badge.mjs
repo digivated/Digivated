@@ -24,7 +24,7 @@ export function makeBadgeHandler(deps = {}) {
     res.setHeader('Cache-Control', 'public, max-age=300');
     res.setHeader('Vercel-CDN-Cache-Control', 'public, max-age=300, stale-while-revalidate=3600');
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-    res.setHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'");
+    res.setHeader('Content-Security-Policy', "default-src 'none'; img-src data:; style-src 'unsafe-inline'");
     res.end(req.method === 'HEAD' ? undefined : renderBadge(theme, count));
   };
 }

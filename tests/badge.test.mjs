@@ -41,6 +41,7 @@ test('badge SVG shows the live count, falls back cleanly and is safe to embed', 
   assert.equal(ok.status, 200);
   assert.equal(ok.headers['content-type'], 'image/svg+xml; charset=utf-8');
   assert.equal(ok.headers['cross-origin-resource-policy'], 'cross-origin');
+  assert.match(ok.headers['content-security-policy'], /img-src data:/, 'the embedded logo must be allowed');
   assert.match(ok.headers['cache-control'], /max-age=300/);
   assert.match(ok.body, />37</);
   assert.match(ok.body, /fill="#ffffff"/);
