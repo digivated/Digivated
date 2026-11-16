@@ -52,7 +52,11 @@ test('badge SVG shows the live count, falls back cleanly and is safe to embed', 
 
 test('the public router serves badges without adding a serverless function', async () => {
   const router = makePublicRouter(defaultPublicHandlers({ badge: makeBadgeHandler({ redis: async () => '5' }) }));
-  const res = await call(router, `/api/badge?id=${id}&theme=terminal`);
-  assert.equal(res.status, 200);
-  assert.match(res.body, /DIGIVATED/);
+  for (const url of [`/api/badge?id=${id}&theme=terminal`, `/badge/${id}?theme=terminal`, `/badge/${id}.svg?theme=terminal`]) {
+    const res = await call(router, url);
+    assert.equal(res.status, 200, url);
+    assert.equal(res.headers['content-type'], 'image/svg+xml; charset=utf-8', url);
+    assert.match(res.body, /DIGIVATED/, url);
+  }
+  assert.equal((await call(router, '/badge/a/b')).status, 404);
 });

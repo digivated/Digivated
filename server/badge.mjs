@@ -7,7 +7,8 @@ export { renderBadge, compactCount } from './badge-render.mjs';
 export function makeBadgeHandler(deps = {}) {
   return async (req, res) => {
     const url = new URL(req.url, 'https://digivated.invalid');
-    const id = url.searchParams.get('id') || '';
+    // Vercel keeps the original /badge/<id> URL on rewritten requests.
+    const id = url.searchParams.get('id') || /^\/badge\/([^/]+?)(?:\.svg)?\/?$/.exec(url.pathname)?.[1] || '';
     const theme = THEMES[url.searchParams.get('theme')] ? url.searchParams.get('theme') : 'dark';
     res.setHeader('X-Content-Type-Options', 'nosniff');
     if (req.method !== 'GET' && req.method !== 'HEAD') { res.statusCode = 405; res.setHeader('Allow', 'GET, HEAD'); return res.end(); }
