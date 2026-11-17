@@ -60,11 +60,12 @@ export function makePublicHandler(type, deps = {}) {
         const now = Date.now();
         const starts = rankingPeriodStarts(now);
         items=await Promise.all(items.map(async item=>{
-          const [total,daily,weekly,monthly]=await Promise.all([
+          const [total,daily,weekly,monthly,comments]=await Promise.all([
             redis(['GET','digivated:card:likes:project:'+item.id]),
-            ...starts.map(start=>redis(['ZCOUNT','digivated:card:votes:project:'+item.id,start,now]))
+            ...starts.map(start=>redis(['ZCOUNT','digivated:card:votes:project:'+item.id,start,now])),
+            redis(['ZCARD','digivated:card:comments:project:'+item.id]).catch(()=>0)
           ]);
-          return {...item,votes:{all:Number(total||0),daily:Number(daily||0),weekly:Number(weekly||0),monthly:Number(monthly||0)}};
+          return {...item,comments:Number(comments||0),votes:{all:Number(total||0),daily:Number(daily||0),weekly:Number(weekly||0),monthly:Number(monthly||0)}};
         }));
         items=await withProjectBoosts(redis,items,now);
       }

@@ -4,19 +4,24 @@ import { homeLaunchGroups } from '../lib/home-launches.mjs';
 import { launchBounds, launchTimestamp } from '../lib/launch-calendar.mjs';
 import { boostVotes } from '../lib/feedback-score.mjs';
 import { safeSearchHref } from '../lib/discovery-search.mjs';
+import { cardIconMarkup } from '../lib/card-icons.mjs';
 
-// Homepage launch board and spot strip. One catalogue request feeds both.
+// Homepage: spot cards (side rails on wide screens, a grid elsewhere) and three
+// stacked launch lists. One catalogue request feeds everything.
 const board = document.querySelector('[data-board]');
-const spots = document.querySelector('[data-spots]');
+const home = document.querySelector('[data-spots]');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const WEEK = 7 * 86_400_000;
-const MIN_SPOTS = 8;
+const SPOTS = 8;
+const PAGE = 10;
 
 const el = (tag, text, className) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node; };
+const icon = name => { const t = document.createElement('template'); t.innerHTML = cardIconMarkup(name); return t.content.firstElementChild; };
 const local = value => { const href = safeSearchHref(value); return href && href.startsWith('/') ? href : ''; };
 const outbound = value => { try { const url = new URL(safeSearchHref(value)); if (!/^https?:$/.test(url.protocol)) return ''; if (!url.searchParams.has('ref')) url.searchParams.set('ref', 'digivated'); return url.href; } catch { return ''; } };
 const liked = p => { if (p.liked !== undefined) return p.liked; try { return localStorage.getItem('digivated:liked:project:' + p.id) === '1'; } catch { return false; } };
 const shortDate = value => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+const number = new Intl.NumberFormat('en-US');
 
 function logo(p, className) {
   const wrap = el('span', null, className);
@@ -25,198 +30,164 @@ function logo(p, className) {
   if (src) {
     const img = el('img'); img.src = src; img.alt = ''; img.width = 44; img.height = 44; img.loading = 'lazy'; img.decoding = 'async';
     img.addEventListener('error', () => img.remove(), { once: true });
-    img.addEventListener('load', () => wrap.classList.add('has-image'), { once: true });
     wrap.append(img);
   }
   return wrap;
 }
 
-function visitLink(p, label, className) {
-  const href = outbound(p.url);
-  if (!href) return null;
-  const link = el('a', null, className);
-  link.href = href; link.target = '_blank'; link.rel = 'noopener';
+function visitAttrs(link, p) {
+  link.href = outbound(p.url); link.target = '_blank'; link.rel = 'noopener';
   link.dataset.visitProject = p.id; link.dataset.visitName = p.name;
   if (local(p.image)) link.dataset.visitImage = local(p.image);
-  link.append(el('span', label), el('span', '↗', 'dg-visit-arrow'));
-  link.setAttribute('aria-label', `Visit ${p.name} (opens in a new tab). You can leave feedback when you return.`);
   return link;
 }
 
-/* ---------- Spot strip ---------- */
+/* ---------- Spots ---------- */
+function spotCard(item, price) {
+  const card = el('a', null, 'dg-spot' + (item ? '' : ' is-open'));
+  if (!item) {
+    card.href = price ? '/submit-project?spot=1#project-form' : '/submit-project#project-form';
+    card.append(el('span', '+', 'dg-spot-plus'), el('strong', 'Your product here'), el('small', price ? `Claim this spot · ${price}` : 'Launch to claim a spot'));
+    card.setAttribute('aria-label', price ? `Claim an open homepage spot for ${price}, live for 7 days` : 'Submit a project to claim a spot');
+    return card;
+  }
+  if (outbound(item.url)) visitAttrs(card, item); else card.href = local(item.pageUrl) || '/discover';
+  card.dataset.projectId = item.id;
+  const top = el('span', null, 'dg-spot-top');
+  top.append(logo(item, 'dg-spot-logo'), el('strong', item.name), el('em', item.spot, 'dg-spot-tag'));
+  card.append(top, el('span', item.description || item.category || 'Independent project', 'dg-spot-copy'));
+  card.setAttribute('aria-label', `${item.name}, ${item.spot.toLowerCase()} spot. Opens in a new tab.`);
+  return card;
+}
+
 function renderSpots(featured, sponsored, instant) {
-  if (!spots) return;
-  const track = spots.querySelector('[data-spots-track]');
-  const viewport = spots.querySelector('[data-spots-viewport]');
+  if (!home) return;
   const seen = new Set();
-  const filled = [...featured.map(p => ({ ...p, spot: 'Featured' })), ...sponsored.map(p => ({ ...p, spot: 'Spot' }))].filter(p => !seen.has(p.id) && seen.add(p.id));
-  const open = Math.max(2, MIN_SPOTS - filled.length);
+  const filled = [...featured.map(p => ({ ...p, spot: 'Featured' })), ...sponsored.map(p => ({ ...p, spot: 'Spot' }))]
+    .filter(p => !seen.has(p.id) && seen.add(p.id)).slice(0, SPOTS - 2);
   const price = instant ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }).format(instant.price / 100) : '';
-  const tile = (item, duplicate) => {
-    const li = el('li', null, 'dg-spot' + (item ? '' : ' is-open'));
-    let link;
-    if (item) {
-      link = visitLink(item, '', 'dg-spot-link') || Object.assign(el('a', null, 'dg-spot-link'), { href: local(item.pageUrl) || '/discover' });
-      link.replaceChildren();
-      if (!duplicate) li.dataset.projectId = item.id;
-      const copy = el('span', null, 'dg-spot-copy');
-      copy.append(el('strong', item.name), el('small', item.description || item.category || 'Independent project'));
-      link.append(logo(item, 'dg-spot-logo'), copy, el('em', item.spot, 'dg-spot-tag'));
-    } else {
-      link = el('a', null, 'dg-spot-link');
-      link.href = instant ? '/submit-project?spot=1#project-form' : '/submit-project#project-form';
-      const copy = el('span', null, 'dg-spot-copy');
-      copy.append(el('strong', 'Your product here'), el('small', instant ? `${price} · instant · 7 days` : 'Launch to claim a spot'));
-      const plus = el('span', null, 'dg-spot-logo dg-spot-plus'); plus.append(el('span', '+'));
-      link.append(plus, copy, el('em', instant ? 'Claim' : 'Launch', 'dg-spot-tag'));
-      link.setAttribute('aria-label', instant ? `Claim an open homepage spot for ${price}` : 'Submit a project to claim a spot');
-    }
-    if (duplicate) { link.tabIndex = -1; li.setAttribute('aria-hidden', 'true'); }
-    li.append(link);
-    return li;
-  };
-  const items = [...filled, ...Array(open).fill(null)];
-  // Interleave open spots so they are seen as the strip moves.
-  const ordered = [];
-  const people = items.filter(Boolean), blanks = items.filter(item => !item);
-  const gap = Math.max(1, Math.floor(people.length / Math.max(1, blanks.length)));
-  people.forEach((p, i) => { ordered.push(p); if ((i + 1) % gap === 0 && blanks.length) ordered.push(blanks.pop()); });
-  ordered.push(...blanks);
-  track.replaceChildren(...ordered.map(item => tile(item, false)));
-  track.setAttribute('aria-busy', 'false');
-  // Duplicate once for a seamless loop; the copy is hidden from assistive tech and focus order.
-  track.append(...ordered.map(item => tile(item, true)));
-  track.style.setProperty('--dg-spot-duration', `${Math.max(28, ordered.length * 5)}s`);
-  spots.dataset.ready = 'true';
-  const toggle = spots.querySelector('[data-spots-toggle]');
-  const setPaused = paused => { spots.classList.toggle('is-paused', paused); toggle.setAttribute('aria-pressed', String(paused)); toggle.setAttribute('aria-label', paused ? 'Play moving spots' : 'Pause moving spots'); toggle.firstElementChild.textContent = paused ? '▶' : '❚❚'; };
-  toggle.onclick = () => setPaused(!spots.classList.contains('is-paused'));
-  viewport.addEventListener('focusin', () => spots.classList.add('is-holding'));
-  viewport.addEventListener('focusout', event => { if (!viewport.contains(event.relatedTarget)) spots.classList.remove('is-holding'); });
+  const half = Math.ceil(filled.length / 2);
+  const rails = [[...filled.slice(0, half)], [...filled.slice(half)]];
+  // Fill both rails to four cards, ending with open spots.
+  for (const rail of rails) while (rail.length < SPOTS / 2) rail.push(null);
+  home.querySelectorAll('[data-spot-rail]').forEach((rail, index) => rail.replaceChildren(...rails[index].map(item => spotCard(item, price))));
+  const grid = home.querySelector('[data-spot-grid]');
+  // Grid: always full rows of four (two on phones), with at least one open spot.
+  const total = Math.ceil((filled.length + 1) / 4) * 4;
+  grid?.replaceChildren(...[...filled, ...Array(total - filled.length).fill(null)].map(item => spotCard(item, price)));
+  home.dataset.ready = 'true';
   observeProjectViews();
 }
 
-/* ---------- Board ---------- */
-const state = { projects: [], tab: 'current', limit: 10, animate: true };
+/* ---------- Launch lists ---------- */
+const state = { projects: [], limits: { current: PAGE, previous: PAGE, archive: PAGE }, animate: true };
 const pendingVotes = new Set();
 
-function groupsFor(projects) {
-  const groups = homeLaunchGroups(projects);
-  // This week: feedback points lift the reviewer's own launch (10 points = 1 vote).
+function groups() {
+  const g = homeLaunchGroups(state.projects);
+  // This week: feedback points lift the reviewer's own launch (10 points = 1 upvote).
   const score = p => (Number(p.votes?.weekly) || 0) + boostVotes(p.boost);
-  groups.current = groups.current.map((p, i) => [p, i]).sort((a, b) => score(b[0]) - score(a[0]) || a[1] - b[1]).map(([p]) => p);
-  return groups;
+  g.current = g.current.map((p, i) => [p, i]).sort((a, b) => score(b[0]) - score(a[0]) || a[1] - b[1]).map(([p]) => p);
+  return g;
 }
 
-function row(p, index, period) {
+function row(p, key, index) {
+  const period = key === 'current' ? 'weekly' : 'all';
   const li = el('li', null, 'dg-row');
-  li.dataset.launchId = p.id;
+  li.dataset.launchId = p.id; li.dataset.project = ''; li.dataset.projectName = p.name;
   li.style.setProperty('--i', String(Math.min(index, 12)));
-  if (index < 3) li.dataset.podium = String(index + 1);
-  li.append(el('span', String(index + 1).padStart(2, '0'), 'dg-rank'));
   const page = local(p.pageUrl) || '/discover';
   const art = el('a', null, 'dg-logo-link'); art.href = page; art.tabIndex = -1; art.setAttribute('aria-hidden', 'true'); art.append(logo(p, 'dg-logo'));
-  li.append(art);
   const main = el('div', null, 'dg-main');
   const title = el('h3'); const name = el('a', p.name); name.href = page; title.append(name);
+  const votes = Number(p.votes?.[period]) || 0;
+  if (key === 'previous' && index === 0 && votes > 0) title.append(el('span', '★ Top launch', 'dg-badge dg-badge-top'));
   if (p.status === 'featured') title.append(el('span', 'Featured', 'dg-badge'));
   else if (p.sponsored) title.append(el('span', 'Spot', 'dg-badge'));
   const lift = period === 'weekly' ? boostVotes(p.boost) : 0;
-  if (lift) { const b = el('span', `⚡ +${lift}`, 'dg-badge dg-badge-boost'); b.title = `Boosted by ${p.boost} feedback points this week`; title.append(b); }
+  if (lift) { const b = el('span', '⚡ Boosted', 'dg-badge dg-badge-boost'); b.title = `+${lift} from ${p.boost} feedback points this week`; title.append(b); }
   main.append(title, el('p', p.description || 'Explore this project and meet its maker.', 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
-  meta.append(el('span', p.category || 'Project'));
   if (p.pricing) meta.append(el('span', p.pricing));
+  meta.append(el('span', p.category || 'Project'));
   if (p.creator) meta.append(el('span', 'by ' + p.creator));
-  if (Number.isFinite(launchTimestamp(p)) && period !== 'weekly') meta.append(el('span', shortDate(launchTimestamp(p))));
+  if (key === 'archive' && Number.isFinite(launchTimestamp(p))) meta.append(el('span', shortDate(launchTimestamp(p))));
   main.append(meta);
-  li.append(main);
   const actions = el('div', null, 'dg-actions');
-  const visit = visitLink(p, 'Visit', 'dg-visit');
-  if (visit) actions.append(visit);
+  if (outbound(p.url)) {
+    const visit = visitAttrs(el('a', null, 'dg-visit'), p);
+    visit.append(el('span', 'Visit'), el('span', '↗', 'dg-visit-arrow'));
+    visit.setAttribute('aria-label', `Visit ${p.name} (opens in a new tab)`);
+    actions.append(visit);
+  }
+  const comments = el('button', null, 'dg-comments'); comments.type = 'button';
+  comments.dataset.commentType = 'project'; comments.dataset.commentId = p.id;
+  const count = Number(p.comments) || 0;
+  comments.setAttribute('aria-label', `Feedback for ${p.name}, ${count} comment${count === 1 ? '' : 's'}`);
+  comments.append(icon('comment'), el('span', String(count), 'card-feedback-count'));
+  actions.append(comments);
   const vote = el('button', null, 'dg-vote'); vote.type = 'button';
-  const count = Number(p.votes?.[period]) || 0;
   vote.setAttribute('aria-pressed', String(liked(p)));
-  vote.setAttribute('aria-label', `${liked(p) ? 'Remove upvote for' : 'Upvote'} ${p.name}, ${count} ${period === 'weekly' ? 'this week' : 'total'}`);
+  vote.setAttribute('aria-label', `${liked(p) ? 'Remove upvote for' : 'Upvote'} ${p.name}, ${votes} upvote${votes === 1 ? '' : 's'}${period === 'weekly' ? ' this week' : ''}`);
   if (pendingVotes.has(p.id)) vote.setAttribute('aria-busy', 'true');
-  vote.append(el('span', '▲', 'dg-vote-caret'), el('strong', String(count)));
-  vote.addEventListener('click', () => toggleVote(p, vote));
+  vote.append(el('span', '▲', 'dg-vote-caret'), el('strong', String(votes)));
+  vote.addEventListener('click', () => toggleVote(p, vote, li));
   actions.append(vote);
-  li.append(actions);
+  li.append(art, main, actions);
   return li;
 }
 
-async function toggleVote(p, button) {
+async function toggleVote(p, button, li) {
   if (pendingVotes.has(p.id)) return;
   pendingVotes.add(p.id); button.setAttribute('aria-busy', 'true');
-  const status = board.querySelector('[data-board-summary]');
+  const section = li.closest('[data-board-section]');
+  let failure = '';
   try {
     const result = await requestCardInteraction('project', p.id, { action: liked(p) ? 'remove-upvote' : 'upvote', includePeriods: true });
     p.liked = result.liked; p.votes = result.votes;
     try { localStorage.setItem('digivated:liked:project:' + p.id, result.liked ? '1' : '0'); } catch { /* optional */ }
-    if (result.liked && !reduced.matches) button.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-4px) scale(1.06)' }, { transform: 'translateY(0)' }], { duration: 360, easing: 'cubic-bezier(.2,.9,.3,1.4)' });
   } catch (error) {
-    status.textContent = error.message || 'Unable to save your upvote. Try again.';
+    failure = error.message || 'Unable to save your upvote. Try again.';
   } finally {
     pendingVotes.delete(p.id);
     const focused = document.activeElement === button;
     state.animate = false; render();
-    if (focused) board.querySelector(`[data-launch-id="${CSS.escape(p.id)}"] .dg-vote`)?.focus({ preventScroll: true });
+    if (failure) section.querySelector('[data-section-note]').textContent = failure;
+    const next = section.querySelector(`[data-launch-id="${CSS.escape(p.id)}"] .dg-vote`);
+    if (focused) next?.focus({ preventScroll: true });
+    if (!failure && p.liked && next && !reduced.matches) next.animate([{ transform: 'none' }, { transform: 'translateY(-4px) scale(1.06)' }, { transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.2,.9,.3,1.4)' });
   }
 }
 
 function render() {
-  const groups = groupsFor(state.projects);
-  const items = groups[state.tab] || [];
-  const period = state.tab === 'current' ? 'weekly' : 'all';
-  board.querySelectorAll('[data-board-tab]').forEach(tab => {
-    const selected = tab.dataset.boardTab === state.tab;
-    tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1;
-    tab.querySelector('[data-tab-count]').textContent = String(groups[tab.dataset.boardTab]?.length || 0);
-  });
-  moveInk();
-  const range = board.querySelector('[data-board-range]');
-  if (state.tab === 'archive') range.textContent = 'All-time collection';
-  else { const bounds = launchBounds(state.tab); range.textContent = `${shortDate(bounds.start)} – ${shortDate(bounds.end - 86_400_000)} · UTC`; }
-  const summary = board.querySelector('[data-board-summary]');
-  summary.textContent = items.length
-    ? `${items.length} ${items.length === 1 ? 'launch' : 'launches'} · ranked by ${period === 'weekly' ? 'this week’s upvotes plus feedback boosts' : 'all-time upvotes'}`
-    : state.tab === 'current' ? 'A fresh week starts here. Be the first to launch.' : 'No launches in this period yet.';
-  const list = board.querySelector('[data-board-list]');
-  list.setAttribute('aria-labelledby', `dg-tab-${state.tab}`);
-  list.classList.toggle('is-entering', state.animate && !reduced.matches);
-  list.replaceChildren(...items.slice(0, state.limit).map((p, i) => row(p, i, period)));
-  if (!items.length && state.tab === 'current') {
-    const empty = el('li', null, 'dg-row dg-row-empty');
-    const cta = el('a', 'Launch the first project of the week →'); cta.href = '/submit-project';
-    empty.append(cta); list.append(empty);
+  const g = groups();
+  for (const section of board.querySelectorAll('[data-board-section]')) {
+    const key = section.dataset.boardSection, items = g[key] || [], limit = state.limits[key];
+    const count = section.querySelector('[data-section-count]');
+    const note = section.querySelector('[data-section-note]');
+    if (key === 'archive') { count.textContent = `${items.length} ${items.length === 1 ? 'project' : 'projects'}`; note.textContent = 'Sorted by all-time upvotes.'; }
+    else {
+      const bounds = launchBounds(key);
+      count.textContent = `${items.length} ${items.length === 1 ? 'launch' : 'launches'}`;
+      note.textContent = `${shortDate(bounds.start)} – ${shortDate(bounds.end - 86_400_000)} · sorted by ${key === 'current' ? 'upvotes this week' : 'upvotes'}`;
+    }
+    const list = section.querySelector('[data-section-list]');
+    list.classList.toggle('is-entering', state.animate && !reduced.matches);
+    list.replaceChildren(...items.slice(0, limit).map((p, i) => row(p, key, i)));
+    if (!items.length) {
+      const empty = el('li', null, 'dg-row dg-row-empty');
+      if (key === 'current') { const cta = el('a', 'Be the first launch this week →'); cta.href = '/submit-project'; empty.append(cta); }
+      else empty.textContent = 'No launches here yet.';
+      list.append(empty);
+    }
+    const more = section.querySelector('[data-section-more]');
+    more.hidden = items.length <= limit;
+    more.onclick = () => { state.limits[key] += PAGE; state.animate = false; render(); };
   }
-  const more = board.querySelector('[data-board-more]');
-  more.hidden = items.length <= state.limit;
-  more.textContent = `Show ${Math.min(10, items.length - state.limit)} more`;
+  const upvotes = state.projects.reduce((sum, p) => sum + (Number(p.votes?.all) || 0), 0);
+  document.querySelectorAll('[data-stat-upvotes]').forEach(node => { node.textContent = number.format(upvotes); });
+  document.querySelectorAll('[data-stat-products]').forEach(node => { node.textContent = number.format(state.projects.length); });
   state.animate = true;
-}
-
-function moveInk() {
-  const tabs = board.querySelector('.dg-tabs'), active = board.querySelector('[data-board-tab][aria-selected=true]'), ink = board.querySelector('.dg-tab-ink');
-  if (!tabs || !active || !ink) return;
-  ink.style.transform = `translateX(${active.offsetLeft}px)`; ink.style.width = `${active.offsetWidth}px`;
-}
-
-function wireTabs() {
-  const tabs = [...board.querySelectorAll('[data-board-tab]')];
-  tabs.forEach((tab, index) => {
-    tab.addEventListener('click', () => { if (state.tab === tab.dataset.boardTab) return; state.tab = tab.dataset.boardTab; state.limit = 10; render(); });
-    tab.addEventListener('keydown', event => {
-      const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
-      if (!step) return;
-      event.preventDefault();
-      const next = tabs[(index + step + tabs.length) % tabs.length];
-      next.focus(); next.click();
-    });
-  });
-  board.querySelector('[data-board-more]').addEventListener('click', () => { state.limit += 10; state.animate = false; render(); });
-  addEventListener('resize', moveInk, { passive: true });
 }
 
 async function loadCatalogue() {
@@ -259,14 +230,15 @@ function pointsChip() {
 }
 
 if (board) {
-  wireTabs(); pointsChip();
+  pointsChip();
   const catalogue = loadCatalogue();
   catalogue.then(projects => { state.projects = projects; render(); }).catch(error => {
-    const summary = board.querySelector('[data-board-summary]');
-    summary.replaceChildren(error.message + ' ', Object.assign(el('a', 'Browse the directory →'), { href: '/discover' }));
-    board.querySelector('[data-board-list]').replaceChildren();
+    board.querySelectorAll('[data-board-section]').forEach(section => {
+      section.querySelector('[data-section-list]').replaceChildren();
+      section.querySelector('[data-section-note]').replaceChildren(error.message + ' ', Object.assign(el('a', 'Browse the directory →'), { href: '/discover' }));
+    });
   });
-  if (spots) {
+  if (home) {
     Promise.all([loadFeatured(), catalogue.catch(() => []), loadInstant()]).then(([featured, projects, instant]) => {
       const now = Date.now();
       const sponsored = projects.filter(p => p.sponsored && p.status !== 'featured' && now - launchTimestamp(p) < WEEK).sort((a, b) => launchTimestamp(b) - launchTimestamp(a));

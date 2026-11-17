@@ -1,55 +1,47 @@
 ---
 import Platform from '../layouts/Platform.astro';
 import UiIcon from '../components/UiIcon.astro';
-import SiteActivity from '../components/SiteActivity.astro';
-import SpotStrip from '../components/SpotStrip.astro';
 import LaunchBoard from '../components/LaunchBoard.astro';
 import '../styles/project-wall.css';
 import '../styles/home-refinement.css';
 import '../styles/home-about.css';
 ---
 <Platform title="Indie Project Directory & Weekly Launches" description="Discover indie software and tools, upvote weekly launches, and give builders feedback. Submit your own project to Digivated for free.">
-  <SpotStrip/>
-  <section class="dg-hero" aria-labelledby="dg-home-title">
-    <div class="dg-hero-copy">
-      <p class="dg-label dg-reveal">Weekly indie launches</p>
-      <h1 id="dg-home-title" class="dg-reveal">Get your product in front of <span class="dg-hero-accent" data-site-visits-headline>visitors.</span></h1>
-      <p class="dg-hero-lede dg-reveal">Launch free. Review other builders’ products. Every useful review earns points that push your own launch up the board.</p>
-      <div class="dg-hero-actions dg-reveal">
-        <a class="dg-btn dg-btn-primary" href="/submit-project">Submit your product <UiIcon name="arrow" size={16}/></a>
-        <a class="dg-btn" href="#this-week">See this week</a>
-      </div>
-      <div class="dg-live dg-reveal" aria-label="Digivated right now">
-        <SiteActivity/>
-        <div class="dg-live-cell" title="Free launches publish every Monday at 9:00 AM Eastern">
-          <span class="dg-live-label">Next free launch</span>
-          <time id="queue-countdown" role="timer" aria-live="off"></time>
+  <div class="dg-home" data-spots>
+    <aside class="dg-rail" data-spot-rail="0" aria-label="Featured spots"></aside>
+    <div class="dg-center">
+      <section class="dg-hero" aria-labelledby="dg-home-title">
+        <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>Weekly indie product launches</p>
+        <h1 id="dg-home-title">Get your product in front of <span class="dg-hero-accent" data-site-visits-headline>visitors.</span></h1>
+        <p class="dg-hero-lede">Free to submit. Every launch gets its own page, upvotes and real feedback from other builders.</p>
+        <div class="dg-hero-actions">
+          <a class="dg-btn dg-btn-primary" href="/submit-project">Submit your product <UiIcon name="arrow" size={16}/></a>
+          <a class="dg-btn" href="#this-week">Browse launches</a>
         </div>
-        <details class="dg-live-cell dg-updates">
-          <summary>What’s new <UiIcon name="chevron" size={12}/></summary>
-          <ul>
-            <li><a href="#how-points-work">Feedback points</a>: review a product after visiting it and lift your own launch.</li>
-            <li><a href="/submit-project?spot=1">Instant spots</a>: publish now and take an open homepage spot for 7 days.</li>
-            <li><a href="/invstr">Market Scanner</a> works without API keys.</li>
-          </ul>
-        </details>
-      </div>
+        <ul class="dg-hero-facts">
+          <li>Free forever</li>
+          <li>Next free launch in <time id="queue-countdown" role="timer" aria-live="off"></time></li>
+          <li><strong data-site-online>—</strong> browsing now</li>
+        </ul>
+        <dl class="dg-stats">
+          <div><dt>Upvotes</dt><dd data-stat-upvotes>—</dd></div>
+          <div><dt>Visitors</dt><dd data-site-visits>—</dd></div>
+          <div><dt>Products listed</dt><dd data-stat-products>—</dd></div>
+        </dl>
+      </section>
+      <div class="dg-spot-grid" data-spot-grid aria-label="Featured spots"></div>
+      <LaunchBoard/>
+      <section id="how-points-work" class="dg-how" aria-labelledby="dg-how-title">
+        <h2 id="dg-how-title">Give feedback, get seen</h2>
+        <ul class="dg-how-steps">
+          <li><UiIcon name="external" size={18}/><strong>Visit a launch</strong><span>Click Visit and try the product for at least 20 seconds.</span></li>
+          <li><UiIcon name="comment" size={18}/><strong>Leave a useful review</strong><span>Come back and say what works and what to improve.</span></li>
+          <li><UiIcon name="like" size={18}/><strong>Climb the board</strong><span>Signed in? Every 10 points you earn adds an upvote to your own launch this week.</span></li>
+        </ul>
+      </section>
     </div>
-    <div class="fl-window dg-hero-art" aria-hidden="true">
-      <div class="fl-window-bar"><span class="fl-window-dots">● ● ●</span><span class="fl-hud">digivated / workbench</span><span class="fl-hud fl-live">● live</span></div>
-      <pre class="ascii-field home-workshop" data-ascii-field></pre>
-    </div>
-  </section>
-  <LaunchBoard/>
-  <section id="how-points-work" class="dg-how" aria-labelledby="dg-how-title">
-    <header><p class="dg-label">How it works</p><h2 id="dg-how-title">Give feedback. Get seen.</h2></header>
-    <ol class="dg-how-steps">
-      <li class="dg-step"><span class="dg-step-num">01</span><h3>Visit a launch</h3><p>Open any product from the board or a spot. Spend at least 20 seconds actually trying it.</p></li>
-      <li class="dg-step"><span class="dg-step-num">02</span><h3>Leave a useful review</h3><p>When you come back, say what works and what to improve. Specific, two-sided reviews earn up to 14 points.</p></li>
-      <li class="dg-step"><span class="dg-step-num">03</span><h3>Climb the board</h3><p>Every 10 points you earn this week counts as one extra upvote for your own launch. Sign in to collect them.</p></li>
-    </ol>
-    <p class="dg-how-note">One reward per product, up to 60 points a day. Reviews on your own project don’t earn points. Every review is visible to the maker.</p>
-  </section>
+    <aside class="dg-rail" data-spot-rail="1" aria-label="More spots"></aside>
+  </div>
   <section class="dg-about" aria-labelledby="dg-about-title">
     <h2 id="dg-about-title">Discover and launch indie projects</h2>
     <p>Digivated is an indie project directory and launch community. Browse <a href="/discover">independent software and tools</a>, see <a href="/rankings">community rankings</a>, or <a href="/submit-project">submit your project</a>. Verify a badge for a free Monday launch, or publish instantly for $3 and take an open spot. <a href="/about">How Digivated works →</a></p>
