@@ -65,8 +65,9 @@ html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.
 
 /* Notifications preview under the bell */
 html[data-ascii] body .dg-bell{position:relative}
-html[data-ascii] body .dg-bell-panel{position:fixed!important;z-index:60;top:var(--navigation-top,72px);right:max(12px,calc((100vw - 1360px) / 2 + 12px));display:grid;width:min(380px,calc(100vw - 24px));max-height:min(70vh,560px);margin:0!important;padding:0!important;overflow:auto;border:1px solid var(--dgb-line-hi)!important;border-radius:2px!important;background-color:#0f0f0f!important;box-shadow:0 24px 70px #000c!important;animation:dg-menu-in .2s var(--dgb-ease)}
+html[data-ascii] body .dg-bell-panel{position:fixed!important;z-index:60;top:var(--navigation-top,72px);right:max(12px,calc((100vw - 1360px) / 2 + 12px));display:grid;width:min(380px,calc(100vw - 24px));grid-template-rows:auto minmax(0,1fr) auto;max-height:min(70vh,560px);margin:0!important;padding:0!important;overflow:hidden;border:1px solid var(--dgb-line-hi)!important;border-radius:2px!important;background-color:#0f0f0f!important;box-shadow:0 24px 70px #000c!important;animation:dg-menu-in .2s var(--dgb-ease)}
 html[data-ascii] body .dg-bell-panel[hidden]{display:none!important}
+html[data-ascii] body .dg-bell-list{min-height:0;overflow:auto;overscroll-behavior:contain}
 html[data-ascii] body .dg-bell-head{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px!important;border-bottom:1px solid var(--dgb-line)!important;background-color:#0f0f0f!important}
 html[data-ascii] body .dg-bell-head strong{font-family:var(--fl-mono)!important;font-size:11px!important;letter-spacing:.12em;text-transform:uppercase;color:#ddd!important}
 html[data-ascii] body .dg-bell-head button{min-height:28px!important;padding:2px 6px!important;font-family:var(--fl-mono)!important;font-size:11px!important;color:var(--dgb-copy)!important;cursor:pointer}
