@@ -46,16 +46,17 @@ function visitAttrs(link, p) {
 function spotCard(item, price) {
   const card = el('a', null, 'dg-spot' + (item ? '' : ' is-open'));
   if (!item) {
-    card.href = price ? '/submit-project?spot=1#project-form' : '/submit-project#project-form';
-    card.append(el('span', '+', 'dg-spot-plus'), el('strong', 'Your product here'), el('small', price ? `Claim this spot · ${price}` : 'Launch to claim a spot'));
-    card.setAttribute('aria-label', price ? `Claim an open homepage spot for ${price}, live for 7 days` : 'Submit a project to claim a spot');
+    // Open cards are paid spots only: they always lead to $3 Instant Publishing.
+    card.href = '/submit-project?spot=1#project-form';
+    card.append(el('span', '[ + ]', 'dg-spot-plus'), el('strong', 'Your product here'), el('small', price ? `Claim this spot · ${price}` : 'Claim this paid spot'));
+    card.setAttribute('aria-label', `Claim a paid homepage spot${price ? ` for ${price}` : ''}, live for 7 days`);
     return card;
   }
   if (outbound(item.url)) visitAttrs(card, item); else card.href = local(item.pageUrl) || '/discover';
   card.dataset.projectId = item.id;
   const top = el('span', null, 'dg-spot-top');
-  top.append(logo(item, 'dg-spot-logo'), el('strong', item.name), el('em', item.spot, 'dg-spot-tag'));
-  card.append(top, el('span', item.description || item.category || 'Independent project', 'dg-spot-copy'));
+  top.append(logo(item, 'dg-spot-logo'), el('strong', item.name, 'dg-decode'));
+  card.append(top, el('span', item.description || item.category || 'Independent project', 'dg-spot-copy'), el('em', item.spot, 'dg-spot-tag'));
   card.setAttribute('aria-label', `${item.name}, ${item.spot.toLowerCase()} spot. Opens in a new tab.`);
   return card;
 }
@@ -63,21 +64,40 @@ function spotCard(item, price) {
 function renderSpots(featured, sponsored, instant) {
   if (!home) return;
   const seen = new Set();
-  const filled = [...featured.map(p => ({ ...p, spot: 'Featured' })), ...sponsored.map(p => ({ ...p, spot: 'Spot' }))]
-    .filter(p => !seen.has(p.id) && seen.add(p.id)).slice(0, SPOTS - 2);
+  // Every featured project always appears, then paid spots from the last 7 days.
+  const filled = [...featured.map(p => ({ ...p, spot: 'Featured' })), ...sponsored.map(p => ({ ...p, spot: 'Paid spot' }))]
+    .filter(p => !seen.has(p.id) && seen.add(p.id));
   const price = instant ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }).format(instant.price / 100) : '';
+  // Rails: split evenly, each at least four cards and always ending with a paid open spot.
   const half = Math.ceil(filled.length / 2);
-  const rails = [[...filled.slice(0, half)], [...filled.slice(half)]];
-  // Fill both rails to four cards, ending with open spots.
-  for (const rail of rails) while (rail.length < SPOTS / 2) rail.push(null);
+  const perRail = Math.max(SPOTS / 2, half + 1);
+  const rails = [filled.slice(0, half), filled.slice(half)].map(items => [...items, ...Array(perRail - items.length).fill(null)]);
   home.querySelectorAll('[data-spot-rail]').forEach((rail, index) => rail.replaceChildren(...rails[index].map(item => spotCard(item, price))));
-  const grid = home.querySelector('[data-spot-grid]');
-  // Grid: always full rows of four (two on phones), with at least one open spot.
+  // Grid (narrow screens): full rows of four (two on phones) with at least one paid open spot.
   const total = Math.ceil((filled.length + 1) / 4) * 4;
-  grid?.replaceChildren(...[...filled, ...Array(total - filled.length).fill(null)].map(item => spotCard(item, price)));
+  home.querySelector('[data-spot-grid]')?.replaceChildren(...[...filled, ...Array(total - filled.length).fill(null)].map(item => spotCard(item, price)));
   home.dataset.ready = 'true';
   observeProjectViews();
+  decodeIn(home);
 }
+
+/* ---------- ASCII decode: text resolves from glyph noise as it enters view ---------- */
+const GLYPHS = '#%&*+=-:./\\|<>[]{}01';
+function decode(node) {
+  const final = node.textContent;
+  if (!final || reduced.matches) return;
+  node.setAttribute('aria-label', final);
+  const start = performance.now(), duration = Math.min(700, 260 + final.length * 22);
+  const tick = now => {
+    const progress = Math.min(1, (now - start) / duration);
+    const shown = Math.floor(progress * final.length);
+    node.textContent = final.slice(0, shown) + [...final.slice(shown)].map(ch => ch === ' ' ? ' ' : GLYPHS[Math.floor(Math.random() * GLYPHS.length)]).join('');
+    if (progress < 1) requestAnimationFrame(tick); else { node.textContent = final; node.removeAttribute('aria-label'); }
+  };
+  requestAnimationFrame(tick);
+}
+const decoder = 'IntersectionObserver' in window ? new IntersectionObserver(entries => entries.forEach(entry => { if (!entry.isIntersecting) return; decoder.unobserve(entry.target); decode(entry.target); }), { rootMargin: '-40px' }) : null;
+function decodeIn(root) { if (!decoder || reduced.matches) return; root.querySelectorAll('.dg-decode:not([data-decoded])').forEach(node => { node.dataset.decoded = ''; decoder.observe(node); }); }
 
 /* ---------- Launch lists ---------- */
 const state = { projects: [], limits: { current: PAGE, previous: PAGE, archive: PAGE }, animate: true };
@@ -231,6 +251,8 @@ function pointsChip() {
 
 if (board) {
   pointsChip();
+  board.querySelectorAll('.dg-list-head h2 .dg-list-title').forEach(node => node.classList.add('dg-decode'));
+  decodeIn(board);
   const catalogue = loadCatalogue();
   catalogue.then(projects => { state.projects = projects; render(); }).catch(error => {
     board.querySelectorAll('[data-board-section]').forEach(section => {

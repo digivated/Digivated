@@ -11,24 +11,31 @@ import '../styles/home-about.css';
     <aside class="dg-rail" data-spot-rail="0" aria-label="Featured spots"></aside>
     <div class="dg-center">
       <section class="dg-hero" aria-labelledby="dg-home-title">
-        <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>Weekly indie product launches</p>
-        <h1 id="dg-home-title">Get your product in front of <span class="dg-hero-accent" data-site-visits-headline>visitors.</span></h1>
-        <p class="dg-hero-lede">Free to submit. Every launch gets its own page, upvotes and real feedback from other builders.</p>
-        <div class="dg-hero-actions">
-          <a class="dg-btn dg-btn-primary" href="/submit-project">Submit your product <UiIcon name="arrow" size={16}/></a>
-          <a class="dg-btn" href="#this-week">Browse launches</a>
+        <div class="dg-hero-copy">
+          <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>Weekly indie product launches</p>
+          <h1 id="dg-home-title">Get your product in front of <span class="dg-hero-accent" data-site-visits-headline>visitors.</span></h1>
+          <p class="dg-hero-lede">Free to submit. Every launch gets its own page, upvotes and a real discussion with other builders.</p>
+          <div class="dg-hero-actions">
+            <a class="dg-btn dg-btn-primary" href="/submit-project">Submit your product <UiIcon name="arrow" size={16}/></a>
+            <a class="dg-btn" href="#this-week">Browse launches</a>
+          </div>
+          <ul class="dg-hero-facts">
+            <li>Free forever</li>
+            <li>Next free launch in <time id="queue-countdown" role="timer" aria-live="off"></time></li>
+            <li><strong data-site-online>—</strong> browsing now</li>
+          </ul>
         </div>
-        <ul class="dg-hero-facts">
-          <li>Free forever</li>
-          <li>Next free launch in <time id="queue-countdown" role="timer" aria-live="off"></time></li>
-          <li><strong data-site-online>—</strong> browsing now</li>
-        </ul>
+        <div class="fl-window dg-hero-art" aria-hidden="true">
+          <div class="fl-window-bar"><span class="fl-window-dots">● ● ●</span><span class="fl-hud">digivated / workbench</span><span class="fl-hud fl-live">● live</span></div>
+          <pre class="ascii-field home-workshop" data-ascii-field></pre>
+        </div>
         <dl class="dg-stats">
           <div><dt>Upvotes</dt><dd data-stat-upvotes>—</dd></div>
           <div><dt>Visitors</dt><dd data-site-visits>—</dd></div>
           <div><dt>Products listed</dt><dd data-stat-products>—</dd></div>
         </dl>
       </section>
+      <div class="dg-hatch" aria-hidden="true"></div>
       <div class="dg-spot-grid" data-spot-grid aria-label="Featured spots"></div>
       <LaunchBoard/>
       <section id="how-points-work" class="dg-how" aria-labelledby="dg-how-title">
