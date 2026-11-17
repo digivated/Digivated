@@ -6,6 +6,7 @@ import { notifyUpvoteDigest } from './notifications.mjs';
 import { storageKey, projectPublic } from './admin-store.mjs';
 import { DiscussionError, ensureIdentity, guardPost, memberIdentity, readJson, threadKey } from './discussions.mjs';
 import { forumBySlug, threadSlug, THREAD_BODY_MAX, THREAD_TITLE_MAX, THREAD_TITLE_MIN } from '../src/data/forums.mjs';
+import { notePost } from './launch-score.mjs';
 
 // Product Hunt-style forums: topic forums, threads with a title and body,
 // upvotes, comments (via /api/discussions), trending and newest sorting.
@@ -166,6 +167,7 @@ export function makeThreadsHandler(deps = {}) {
         if (saved === 0) { res.setHeader('Retry-After', '86400'); return send(429, { error: 'You can start up to 5 threads a day. Please come back tomorrow.' }); }
         if (saved !== 1) return send(409, { error: 'Please try again.' });
         await redis(['ZADD', 'digivated:threads:log', now, id]);
+        await notePost(redis, account.id, now).catch(() => {});
         return send(201, { thread: card(thread, 0, 0, false, account.id) });
       }
 

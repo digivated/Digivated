@@ -12,7 +12,7 @@ for(const width of [320,390,768,1024,1440])test(`compact menu fits and keeps all
  await page.screenshot({path:test.info().outputPath(`header-${width}.png`)});
  await trigger.click();await expect(trigger.locator('.navigation-trigger-close')).toBeVisible();
  const menu=page.locator('#explore-navigation');await expect(menu).toBeVisible();
- await expect(menu.locator('.dg-menu-group>a')).toHaveText(['Launches','Products','Threads','News','Rankings','Resources','Market Scanner','Submit a project','Claim a $3 spot','Membership','Embed badges']);
+ await expect(menu.locator('.dg-menu-group>a')).toHaveText(['Launches','Products','Threads','News','Rankings','Weekly winners','Resources','Market Scanner','Submit a project','Claim a $3 spot','Membership','Embed badges']);
  await expect(menu.locator('small,.navigation-icon,.navigation-builder,.navigation-products')).toHaveCount(0);
  await expect(menu.locator('a[href="/membership"]')).toHaveCount(1);await expect(menu.locator('a[href="/submit-project"]')).toHaveCount(1);
  const rect=await menu.boundingBox();expect(rect!.height).toBeLessThan(530);expect(rect!.x).toBeGreaterThanOrEqual(0);expect(rect!.x+rect!.width).toBeLessThanOrEqual(width);

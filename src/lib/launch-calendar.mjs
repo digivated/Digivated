@@ -30,3 +30,19 @@ export function rankingPeriodStarts(now) {
   const day = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
   return [day, launchBounds('current', now).start, Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)];
 }
+
+// Fair start: from Monday 00:00 UTC until Tuesday 14:00 UTC (24 hours after the
+// free batch goes live), this week's launches show in an hourly-shuffled order
+// with upvote counts hidden, so an early burst can't lock in the top spots.
+export const FAIR_START_HOURS = 38;
+export function fairStart(now = Date.now()) {
+  const { start } = launchBounds('current', now);
+  const endsAt = start + FAIR_START_HOURS * 3_600_000;
+  return { active: now >= start && now < endsAt, endsAt };
+}
+// Same order for everyone within an hour; it rotates every hour.
+export function fairOrder(id, now = Date.now()) {
+  let hash = 2166136261;
+  for (const ch of `${Math.floor(now / 3_600_000)}:${id}`) { hash ^= ch.codePointAt(0); hash = Math.imul(hash, 16777619) >>> 0; }
+  return hash;
+}

@@ -93,12 +93,56 @@ if(state){
    if(['approved','featured'].includes(item.status)){const view=Object.assign(document.createElement('a'),{className:'button primary',href:item.pageUrl||'/projects/listing/'+encodeURIComponent(item.id),textContent:'View project and feedback'});actions.append(view);}
    if(item.awaitingInstantPayment){const finish=Object.assign(document.createElement('a'),{className:'button primary',href:'/submit-project?resume='+encodeURIComponent(item.id),textContent:'Finish publishing'});actions.append(finish);}
    if(actions.childElementCount)card.append(actions);
+   if(['approved','featured'].includes(item.status))card.append(statsPanel(item));
    const later=badgeLater(item,stage);if(later)card.append(later);
    const feedback=document.createElement('div');feedback.className='review-feedback fl-feedback';
    if(item.feedback){const label=document.createElement('strong');label.textContent='Review feedback';const body=document.createElement('p');body.textContent=item.feedback;feedback.append(label,body);}
    else{feedback.classList.add('is-empty');feedback.textContent='There is no review feedback yet.';}
    card.append(feedback);
    return card;
+  }
+  // Launch stats: 14 days of views, visits, upvotes and comments as ASCII sparklines,
+  // this week's launch score and rank, and any weekly podium places with the award badge.
+  function statsPanel(item){
+   const el=(tag,text,cls)=>{const node=document.createElement(tag);if(text!=null)node.textContent=text;if(cls)node.className=cls;return node;};
+   const box=el('section',null,'dg-stats');box.setAttribute('aria-label',`Launch stats for ${item.name}`);
+   const head=el('h4',null,'dg-stats-head');head.append(el('span','Launch stats'),el('small','last 14 days'));
+   const status=el('p','Loading stats…','dg-stats-status');status.setAttribute('role','status');
+   box.append(head,status);
+   const BARS='▁▂▃▄▅▆▇█';
+   const spark=values=>{const max=Math.max(...values);return values.map(v=>max?BARS[Math.min(7,Math.round(v/max*7))]:BARS[0]).join('');};
+   fetch('/api/maker-stats?id='+encodeURIComponent(item.id),{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store',signal:AbortSignal.timeout(20000)}).then(async response=>{
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw Error(data.error||'Stats are temporarily unavailable.');
+    status.remove();
+    const grid=el('div',null,'dg-stats-grid');
+    for(const [key,label] of [['views','Views'],['visits','Visits'],['upvotes','Upvotes'],['comments','Comments']]){
+     const tile=el('div',null,'dg-stat');const values=data.days.map(day=>day[key]);
+     tile.append(el('span',label,'dg-stat-label'),el('strong',String(data.totals[key])),Object.assign(el('span',spark(values),'dg-stat-spark'),{title:`${label} per day, oldest first`}));
+     tile.lastChild.setAttribute('aria-hidden','true');grid.append(tile);
+    }
+    box.append(grid);
+    const week=el('p',null,'dg-stats-week');
+    if(data.week?.fresh)week.textContent=`This week: fresh start. Your rank shows ${new Date(data.week.endsAt).toLocaleString(undefined,{weekday:'short',hour:'numeric',minute:'2-digit'})}.`;
+    else if(data.week){week.append('This week: ',el('b',`#${data.week.rank} of ${data.week.of}`),` · launch score ${data.week.score} (${data.week.upvotes} upvote${data.week.upvotes===1?'':'s'}, ${data.week.commenters} commenter${data.week.commenters===1?'':'s'}${data.week.points?`, ${data.week.points} feedback pts`:''}) · `);const how=el('a','How ranking works');how.href='/winners#how-ranking-works';week.append(how);}
+    if(week.childNodes.length)box.append(week);
+    if(data.places?.length){
+     const places=el('p',null,'dg-stats-places');
+     for(const place of data.places)places.append(el('span',`★ #${place.rank} · week of ${new Date(place.week).toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'})}`,'dg-badge dg-badge-medal is-'+({1:'gold',2:'silver',3:'bronze'}[place.rank])));
+     box.append(places);
+    }
+    if(data.award){
+     const award=el('div',null,'dg-stats-award');let theme='dark';
+     const preview=el('img');preview.width=250;preview.height=54;preview.alt=`#${data.award.rank} launch of the week badge`;
+     const code=el('pre',null,'dg-stats-code');const copy=el('button','Copy badge code','dg-btn');copy.type='button';
+     const picker=el('div',null,'dg-stats-themes');picker.setAttribute('role','group');picker.setAttribute('aria-label','Badge style');
+     const show=()=>{preview.src=`/badge/${encodeURIComponent(item.id)}?theme=${theme}&award=week`;code.textContent=data.award.snippets[theme];picker.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.theme===theme)));};
+     for(const key of ['dark','light','terminal']){const b=el('button',key[0].toUpperCase()+key.slice(1));b.type='button';b.dataset.theme=key;b.onclick=()=>{theme=key;show();};picker.append(b);}
+     copy.onclick=async()=>{try{await navigator.clipboard.writeText(data.award.snippets[theme]);copy.textContent='Copied';setTimeout(()=>{copy.textContent='Copy badge code';},1600);}catch{copy.textContent='Select the code to copy';}};
+     award.append(el('p','Show your podium place on your site:','dg-stats-award-title'),preview,picker,code,copy);show();box.append(award);
+    }
+   }).catch(error=>{status.textContent=error.message||'Stats are temporarily unavailable.';});
+   return box;
   }
   async function verifyBadge(item,message){
    const {data:{session:current}}=await client.auth.getSession();if(!current)throw Error('Your session expired. Sign in again to verify your badge.');

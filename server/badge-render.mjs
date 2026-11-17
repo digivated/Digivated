@@ -21,6 +21,31 @@ export function compactCount(n) {
   return (Math.floor(n / 1e5) / 10).toFixed(1).replace(/\.0$/, '') + 'm';
 }
 
+export const MEDALS = { 1: '#e3c26b', 2: '#c3c9d1', 3: '#cf9a6b' };
+const short = iso => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }).toUpperCase();
+
+// Award variant: "#1 LAUNCH OF THE WEEK" with a medal star and the week's date.
+export function renderAwardBadge(theme = 'dark', award) {
+  const t = BADGE_THEMES[theme] || BADGE_THEMES.dark;
+  const terminal = theme === 'terminal';
+  const rank = [1, 2, 3].includes(award?.rank) ? award.rank : 1;
+  const week = Number.isFinite(Date.parse(award?.week)) ? short(award.week) : '';
+  const title = `#${rank} launch of the week on Digivated${week ? ` · week of ${week}` : ''}`;
+  const label = terminal ? `$ #${rank} of the week` : `#${rank} LAUNCH OF THE WEEK`;
+  const name = terminal
+    ? `<text x="54" y="39" fill="${t.name}" font-family="${MONO}" font-size="14" font-weight="700">[ DIGIVATED ]</text>`
+    : `<text x="54" y="39" fill="${t.name}" font-family="${SANS}" font-size="17" font-weight="600" letter-spacing="-.3">Digivated</text>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${title}"><title>${title}</title>`
+    + `<rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" rx="6" fill="${t.bg}" stroke="${t.line}"${t.dash ? ` stroke-dasharray="${t.dash}"` : ''}/>`
+    + mark(theme === 'light' ? '#111' : t.line)
+    + `<text x="54" y="22" fill="${t.label}" font-family="${MONO}" font-size="9" letter-spacing="1.1">${label}</text>`
+    + name
+    + `<line x1="190.5" y1="12" x2="190.5" y2="42" stroke="${t.rule}"/>`
+    + `<text x="218" y="29" text-anchor="middle" fill="${MEDALS[rank]}" font-family="${MONO}" font-size="16">★</text>`
+    + (week ? `<text x="218" y="42" text-anchor="middle" fill="${t.label}" font-family="${MONO}" font-size="8.5" letter-spacing=".6">${week}</text>` : '')
+    + `</svg>`;
+}
+
 export function renderBadge(theme = 'dark', count = null) {
   const t = BADGE_THEMES[theme] || BADGE_THEMES.dark;
   const terminal = theme === 'terminal';

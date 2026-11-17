@@ -1,5 +1,6 @@
 import { createHmac } from 'node:crypto';
 import { redisClient } from './submissions.mjs';
+import { statsKey } from './launch-score.mjs';
 
 export const viewKey = id => `digivated:project-views:${id}`;
 // Check publication and deduplicate/increment atomically, including concurrent tabs.
@@ -10,6 +11,7 @@ local ok, record = pcall(cjson.decode,raw)
 if not ok or type(record) ~= 'table' or record.consent ~= true or (record.status ~= 'approved' and record.status ~= 'featured') then return -1 end
 if type(record.promotion) == 'table' and record.promotion.requested == true and record.promotion.verified ~= true then return -1 end
 if redis.call('SET',KEYS[3],'1','NX','EX',86400) then
+ if KEYS[4] then redis.call('HINCRBY',KEYS[4],'views',1); redis.call('EXPIRE',KEYS[4],8640000) end
  return redis.call('INCR',KEYS[2])
 end
 return tonumber(redis.call('GET',KEYS[2]) or '0')`;
@@ -44,7 +46,7 @@ export function makeProjectViewHandler(deps = {}) {
       // A project-scoped hash; raw network addresses are never stored.
       const visitor = createHmac('sha256', env.SUBMISSIONS_REDIS_REST_TOKEN || 'test-only').update(`${id}:${ip || 'fixture'}`).digest('hex');
       const redis = deps.redis || redisClient(env);
-      const views = await redis(['EVAL', RECORD_VIEW, 3, `digivated:submission:${id}`, viewKey(id), `digivated:project-view-seen:${visitor}`]);
+      const views = await redis(['EVAL', RECORD_VIEW, 4, `digivated:submission:${id}`, viewKey(id), `digivated:project-view-seen:${visitor}`, statsKey(id)]);
       if (views === -1) return send(404, { error: 'Project not found.' });
       return send(200, { views });
     } catch { return send(503, { error: 'Views temporarily unavailable.' }); }

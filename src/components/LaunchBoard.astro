@@ -1,23 +1,31 @@
 ---
-// LaunchKiwi-style stacked launch lists. Rows are rendered by home-board.js from /api/projects?ranking=1.
+// LaunchKiwi-style stacked launch lists. Rows are rendered by home-board.js from
+// /api/projects?ranking=1 (this week, earlier), /api/launches?view=podium (last
+// week's final results) and /api/launches?view=upcoming (launching next).
 const sections = [
   { key: 'current', id: 'this-week', title: 'This week’s launches', live: true, more: '/rankings?launch=current&period=weekly', moreLabel: 'See this week’s rankings' },
-  { key: 'previous', id: 'last-week', title: 'Last week’s launches', live: false, more: '/rankings?launch=previous', moreLabel: 'See last week’s rankings' },
+  { key: 'upcoming', id: 'launching-next', title: 'Launching next', live: false, more: '/submit-project', moreLabel: 'Get a free launch date' },
+  { key: 'previous', id: 'last-week', title: 'Last week’s launches', live: false, more: '/winners', moreLabel: 'See every weekly podium' },
   { key: 'archive', id: 'earlier', title: 'Earlier launches', live: false, more: '/discover', moreLabel: 'View all projects' },
 ];
 ---
 <div class="dg-board" data-board>
+  <section class="dg-rising" data-rising hidden aria-labelledby="dg-rising-title">
+    <h2 id="dg-rising-title"><span aria-hidden="true">[</span> <span class="dg-rising-arrow" aria-hidden="true">↗</span> Rising now <span aria-hidden="true">]</span></h2>
+    <ol class="dg-rising-list" data-rising-list></ol>
+    <a class="dg-quiet-link dg-rising-how" href="/winners#how-ranking-works">How ranking works</a>
+  </section>
   {sections.map(section => (
-    <section id={section.id} class="dg-list" data-board-section={section.key} aria-labelledby={`dg-list-${section.key}`}>
+    <section id={section.id} class="dg-list" data-board-section={section.key} aria-labelledby={`dg-list-${section.key}`} hidden={section.key === 'upcoming'}>
       <header class="dg-list-head">
         <h2 id={`dg-list-${section.key}`}>{section.live && <span class="dg-dot" aria-hidden="true"></span>}<span class="dg-list-title">{section.title}</span></h2>
         <span class="dg-list-rule" aria-hidden="true"></span>
         <span class="dg-list-count" data-section-count></span>
         {section.live && <a class="dg-points" href="/#how-points-work" data-points-chip hidden><span aria-hidden="true">✦</span> <strong data-points-total>0</strong> pts<span class="sr-only"> earned from feedback. How points work.</span></a>}
       </header>
-      <p class="dg-list-note" data-section-note>Loading launches…</p>
+      <p class="dg-list-note" data-section-note>{section.key === 'upcoming' ? '' : 'Loading launches…'}</p>
       <ul class="dg-list-rows" data-section-list>
-        {Array.from({ length: section.key === 'current' ? 4 : 2 }, () => <li class="dg-row is-loading" aria-hidden="true"><span class="dg-logo"></span><span class="dg-main"></span></li>)}
+        {section.key !== 'upcoming' && Array.from({ length: section.key === 'current' ? 4 : 2 }, () => <li class="dg-row is-loading" aria-hidden="true"><span class="dg-logo"></span><span class="dg-main"></span></li>)}
       </ul>
       <div class="dg-list-foot">
         <button type="button" class="dg-more" data-section-more hidden>View more</button>

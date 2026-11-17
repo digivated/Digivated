@@ -1,5 +1,5 @@
 // One notification row, shared by the header preview and the Notifications page.
-const GLYPH = { reply: '>', feedback: '#', upvote: '▲', follow: '+', message: '@', approved: '✓', scheduled: '◷' };
+const GLYPH = { reply: '>', feedback: '#', upvote: '▲', follow: '+', message: '@', launch: '↗', award: '★', approved: '✓', scheduled: '◷' };
 const el = (tag, text, className) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node; };
 
 export function relativeTime(value) {

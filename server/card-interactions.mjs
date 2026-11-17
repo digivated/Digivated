@@ -4,6 +4,8 @@ import resources from '../src/data/resources.json' with { type: 'json' };
 import { redisClient } from './submissions.mjs';
 import { validId, storageKey, projectPublic, contentPublic } from './admin-store.mjs';
 import { addNotification, notifyUpvoteDigest } from './notifications.mjs';
+import { verifiedAccount } from './project-account.mjs';
+import { bumpStat, forgetVoteWeight, isFresh, recordVoteWeight } from './launch-score.mjs';
 
 const builtinResources = new Set(['builtin-ui-ux-prompt-packet', ...resources.filter(item => item.status === 'published').map(item => item.slug)]);
 const itemKey = (type,id) => `${type}:${id}`;
@@ -92,8 +94,9 @@ export function makeCardInteractionHandler(deps={}) {
       const redis=deps.redis||redisClient(env);
       if(!await isPublicItem(redis,type,id))return send(404,{error:'This item is not available.'});
       if(req.method==='GET'){
-        const [likes,comments,count]=await Promise.all([redis(['GET',likeKey(type,id)]),listComments(redis,type,id),redis(['ZCARD',commentIndex(type,id)])]);
-        return send(200,{likes:Number(likes||0),comments,commentCount:Number(count||0)});
+        const [likes,comments,count,fresh]=await Promise.all([redis(['GET',likeKey(type,id)]),listComments(redis,type,id),redis(['ZCARD',commentIndex(type,id)]),type==='project'?isFresh(redis,id):false]);
+        // Fair start: this week's counts stay hidden until Tuesday 14:00 UTC.
+        return send(200,{likes:fresh?null:Number(likes||0),...(fresh?{fresh:true}:{}),comments,commentCount:Number(count||0)});
       }
       const ip=req.headers['x-real-ip'];
       if(!deps.redis&&(env.VERCEL!=='1'||typeof ip!=='string'||!ip))return send(503,{error:'This action is temporarily unavailable.'});
@@ -101,15 +104,22 @@ export function makeCardInteractionHandler(deps={}) {
       const visitor=createHmac('sha256',env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only').update(`${type}:${id}:${ip||'fixture'}`).digest('hex');
       if(body.action==='like'||body.action==='unlike'){
         const now = Date.now();
-        const wasLiked = body.action==='like' && type==='project' ? await redis(['GET', `digivated:card:liked:${visitor}`]) : '1';
+        const wasLiked = type==='project' ? await redis(['GET', `digivated:card:liked:${visitor}`]) : '1';
+        // Signed-in upvotes weigh more in the launch score (see launch-score.mjs).
+        let account=null;
+        if(type==='project'&&req.headers.authorization){try{account=await (deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch);}catch{account=null;}}
         const includePeriods = type === 'project' && body.includePeriods === true;
         const [likes, liked, daily, weekly, monthly] = await redis(['EVAL', LIKE, 3,
           `digivated:card:liked:${visitor}`, likeKey(type,id), `digivated:card:votes:${type}:${id}`,
           body.action, now, visitor, ...(includePeriods ? rankingPeriodStarts(now) : [])]);
-        if(!wasLiked && Number(liked)===1){
+        if(type==='project'&&body.action==='like'&&!wasLiked&&Number(liked)===1){try{await recordVoteWeight(redis,{id,visitor,account,now});await bumpStat(redis,id,'upvotes',now);}catch{}}
+        if(type==='project'&&body.action==='unlike'&&wasLiked&&Number(liked)===0){try{await forgetVoteWeight(redis,{id,visitor,account});}catch{}}
+        const fresh=type==='project'&&await isFresh(redis,id,now);
+        if(body.action==='like'&&type==='project'&&!wasLiked && Number(liked)===1){
           // Makers get one upvote digest per project per day.
           try{const record=JSON.parse(await redis(['GET',storageKey('submission',id)]));const project=record&&projectPublic(record);if(project&&record.accountId)await notifyUpvoteDigest(redis,{recipientId:record.accountId,subjectKey:`project:${id}`,subject:project.name,link:project.pageUrl,noun:'project'});}catch{}
         }
+        if(fresh)return send(200,{liked:Boolean(Number(liked)),likes:null,fresh:true,...(includePeriods?{votes:{all:null,daily:null,weekly:null,monthly:null}}:{})});
         return send(200, {liked: Boolean(Number(liked)), likes: Number(likes),
           ...(includePeriods ? {votes: {all: Number(likes), daily: Number(daily), weekly: Number(weekly), monthly: Number(monthly)}} : {})});
       }

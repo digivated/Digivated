@@ -10,6 +10,8 @@ import { makeCardInteractionHandler } from './card-interactions.mjs';
 import { makeFeedbackPointsHandler } from './feedback-points.mjs';
 import { makeDiscussionHandler } from './discussions.mjs';
 import { makeThreadsHandler } from './threads.mjs';
+import { makeLaunchesHandler } from './launches.mjs';
+import { makeMakerStatsHandler } from './maker-stats.mjs';
 import { makeCarouselHandler, makeCarouselPublishHandler } from './carousels.mjs';
 import { makeFoundingAccessHandler, makeFoundingLogoutHandler } from './founding-access.mjs';
 import { makeProjectAccountHandler } from './project-account.mjs';
@@ -38,6 +40,8 @@ export function defaultPublicHandlers(overrides = {}) {
     'card-interactions': makeCardInteractionHandler(),
     'feedback-points': makeFeedbackPointsHandler(),
     discussions: makeDiscussionHandler(),
+    launches: makeLaunchesHandler(),
+    'maker-stats': makeMakerStatsHandler(),
     threads: makeThreadsHandler(),
     carousels: makeCarouselHandler(),
     'carousel-publish': makeCarouselPublishHandler(),

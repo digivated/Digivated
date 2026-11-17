@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { projectPublic, validId } from './admin-store.mjs';
 
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
-const TYPES = ['reply', 'follow', 'message', 'feedback', 'upvote', 'approved', 'scheduled'];
+const TYPES = ['reply', 'follow', 'message', 'feedback', 'upvote', 'launch', 'award', 'approved', 'scheduled'];
 const TITLES = {
   approved: 'Your project is approved and live',
   scheduled: 'Badge verified. Your launch is scheduled',
@@ -11,6 +11,8 @@ const TITLES = {
   message: 'You have a new message',
   feedback: 'Your project received feedback',
   upvote: 'You received new upvotes',
+  launch: 'A launch you follow is live',
+  award: 'Your launch made the weekly podium',
 };
 const RETENTION_SECONDS = 90 * 86400;
 export const notificationPreferencesKey = id => `digivated:notifications:preferences:${id}`;
@@ -27,7 +29,7 @@ async function pruneExpired(redis, userId) {
 }
 
 // Activity alerts are on unless a member has saved a different choice.
-export const defaultNotificationPreferences = Object.freeze({ enabled: true, reply: true, follow: true, message: true, feedback: true, upvote: true });
+export const defaultNotificationPreferences = Object.freeze({ enabled: true, reply: true, follow: true, message: true, feedback: true, upvote: true, launch: true, award: true });
 
 export async function getNotificationPreferences(redis, userId) {
   if (!UUID.test(userId)) throw new Error('Invalid account');
@@ -60,7 +62,8 @@ export async function addNotification(redis, { recipientId, type, actorId, targe
   const preferences = await getNotificationPreferences(redis, recipientId);
   if (!preferences.enabled || !preferences[type]) return false;
   let href;
-  if (['reply', 'feedback'].includes(type) && typeof link === 'string' && SAFE_LINK.test(link)) href = link;
+  if (['reply', 'feedback', 'launch'].includes(type) && typeof link === 'string' && SAFE_LINK.test(link)) href = link;
+  else if (type === 'award' && link === '/winners') href = link;
   else if (type === 'reply' && UUID.test(targetId)) href = `/creators?post=${encodeURIComponent(targetId)}`;
   else if (type === 'follow' && UUID.test(actorId)) href = `/creator?id=${encodeURIComponent(actorId)}`;
   else if (type === 'message' && UUID.test(actorId)) href = `/inbox?id=${encodeURIComponent(actorId)}`;
@@ -200,7 +203,26 @@ async function writeApproval(redis, userId, record, project, publishedAt) {
 export async function notifyProjectApproval(redis, previous, record) {
   const project = publicApproval(record);
   if (!project || publicApproval(previous)) return false;
-  return writeApproval(redis, record.accountId, record, project, Date.now());
+  const written = await writeApproval(redis, record.accountId, record, project, Date.now());
+  try { await notifyLaunchAudience(redis, record, project); } catch { /* The launch is live either way. */ }
+  return written;
+}
+
+// "Notify me" on an upcoming launch, plus the maker's followers: one alert each
+// when the project goes live, sent once per project.
+export const launchWatchersKey = id => `digivated:launch:watchers:${id}`;
+export const launchWatchingKey = account => `digivated:launch:watching:${account}`;
+const AUDIENCE_LIMIT = 200;
+async function notifyLaunchAudience(redis, record, project) {
+  if (!SAFE_LINK.test(project.pageUrl || '')) return 0;
+  if (await redis(['SET', `digivated:launch:announced:${record.id}`, '1', 'NX', 'EX', RETENTION_SECONDS]) !== 'OK') return 0;
+  const watchers = await redis(['SMEMBERS', launchWatchersKey(record.id)]);
+  const followers = UUID.test(record.accountId || '') ? await redis(['SRANDMEMBER', `digivated:creator:followers:${record.accountId}`, AUDIENCE_LIMIT]) : [];
+  const recipients = [...new Set([...(watchers || []), ...(followers || [])])].filter(id => UUID.test(id) && id !== record.accountId).slice(0, AUDIENCE_LIMIT);
+  for (let i = 0; i < recipients.length; i += 10) {
+    await Promise.all(recipients.slice(i, i + 10).map(recipientId => addNotification(redis, { recipientId, type: 'launch', link: project.pageUrl, actorName: project.name, verb: 'is live on Digivated' }).catch(() => false)));
+  }
+  return recipients.length;
 }
 
 // Rebuild missed recent events from the same live projects the owner can see

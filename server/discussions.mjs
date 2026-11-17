@@ -4,6 +4,7 @@ import { validId, storageKey, projectPublic } from './admin-store.mjs';
 import { commentIndex, commentKey } from './card-interactions.mjs';
 import { addNotification, notifyUpvoteDigest } from './notifications.mjs';
 import { verifiedAccount } from './project-account.mjs';
+import { bumpStat, notePost } from './launch-score.mjs';
 import { COMMENT_MAX } from '../src/data/forums.mjs';
 
 // Product Hunt-style discussions shared by project pages and forum threads.
@@ -104,6 +105,8 @@ export async function postComment(redis, { subject, account, identity, body, par
   const saved = await redis(['EVAL', POST, 4, `digivated:discussion:limit:${account.id}:${subject.type}:${subject.id}`, commentKey(entry.id), 'digivated:card:comments:all', commentIndex(subject.type, subject.id), JSON.stringify(entry), now, entry.id, DAILY_COMMENTS]);
   if (saved !== 1) throw new DiscussionError(429, 'You’ve reached today’s limit for this discussion. Please come back tomorrow.');
   await notifyComment(redis, subject, entry, parent).catch(() => {});
+  await notePost(redis, account.id, now).catch(() => {});
+  if (subject.type === 'project') await bumpStat(redis, subject.id, 'comments', now).catch(() => {});
   return entry;
 }
 

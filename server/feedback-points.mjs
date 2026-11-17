@@ -4,6 +4,7 @@ import { validId, storageKey } from './admin-store.mjs';
 import { verifiedAccount } from './project-account.mjs';
 import { DAILY_POINT_CAP, scoreReview } from '../src/lib/feedback-score.mjs';
 import { DiscussionError, ensureIdentity, guardPost, postComment, readJson, resolveSubject } from './discussions.mjs';
+import { bumpStat } from './launch-score.mjs';
 
 // Visit → comment → points.
 // 1. "Visit" asks for a signed, stateless token bound to the project and visitor.
@@ -108,7 +109,11 @@ export function makeFeedbackPointsHandler(deps = {}) {
       const secret = env.SUBMISSIONS_REDIS_REST_TOKEN || 'test-only';
       const visitor = createHmac('sha256', secret).update(`project:${id}:${ip || 'fixture'}`).digest('hex');
 
-      if (body.action === 'visit') return send(200, { token: visitToken(secret, id, visitor, now) });
+      if (body.action === 'visit') {
+        // Maker stats: one counted visit per visitor per project per day.
+        try { if (await redis(['SET', `digivated:stats:visit-seen:${visitor}:${new Date(now).toISOString().slice(0, 10)}`, '1', 'NX', 'EX', 86400]) === 'OK') await bumpStat(redis, id, 'visits', now); } catch { /* Stats are optional. */ }
+        return send(200, { token: visitToken(secret, id, visitor, now) });
+      }
       if (body.action !== 'review') return send(400, { error: 'Unknown action.' });
       if (!account) return send(401, { error: 'Sign in to leave a comment.' });
       if (body.company) return send(400, { error: 'Check the form and try again.' });
