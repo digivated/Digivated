@@ -29,7 +29,7 @@ test('glass search stays usable at desktop and narrow widths',async({page})=>{
 
 test('reduced motion keeps the glass surfaces and readable controls',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:844});await page.goto(base+'/');
- await expect(page.locator('.home-editorial-actions .button').first()).toBeVisible();
+ await expect(page.locator('.dg-hero-actions .dg-btn').first()).toBeVisible();
  await page.locator('.notebook-navigation>summary').click();
  await expect(page.locator('#explore-navigation')).toBeVisible();
  expect(await page.locator('#explore-navigation').evaluate(element=>getComputedStyle(element).animationName)).toBe('none');

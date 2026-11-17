@@ -4,35 +4,35 @@ test.beforeEach(async({page})=>{
  await page.addInitScript(()=>sessionStorage.setItem('digivated-announcement-seen-v2','1'));
  await page.route('**/api/**',r=>r.fulfill({json:{ready:false,items:[{id:'motion-fixture',name:'Motion project',creator:'Builder',category:'Apps',status:'featured',url:'https://example.invalid',image:'/digivated-dark-mark.svg',description:'An independent project.'}],next:null,views:{},counts:{}}}));
 });
-test('project cards stay lightweight while the reel and controls remain usable',async({page})=>{
+test('spot cards and launch rows stay lightweight and calm under reduced motion',async({page})=>{
  await page.setViewportSize({width:1440,height:950});await page.goto(base+'/');
- const card=page.locator('.home-featured-card').first();await card.scrollIntoViewIfNeeded();await card.hover();
- await expect(card).not.toHaveAttribute('data-glass-active');
- const costs=await page.locator('.home-featured-card,.project-reel-card,.project-reel-controls button,.project-reel-category').evaluateAll(elements=>elements.map(e=>({blur:getComputedStyle(e).backdropFilter,animation:getComputedStyle(e).animationName})));
+ const spot=page.locator('[data-spot-rail] .dg-spot').first();await expect(spot).toBeVisible();await spot.hover();
+ const costs=await page.locator('.dg-spot,.dg-row,.dg-vote').evaluateAll(elements=>elements.map(e=>getComputedStyle(e).backdropFilter));
  expect(costs.length).toBeGreaterThan(0);
- expect(costs.every(c=>c.blur==='none'&&c.animation==='none')).toBe(true);
- await page.emulateMedia({reducedMotion:'reduce'});await expect(card).toBeVisible();
- await page.locator('[data-reel-next]').click();await expect(page.locator('[data-project-ticker]')).toHaveAttribute('data-moving','false');
+ expect(costs.every(blur=>blur==='none')).toBe(true);
+ await page.emulateMedia({reducedMotion:'reduce'});
+ expect(await spot.evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
+ await expect(spot).toBeVisible();
 });
 test('reduced motion keeps all content visible and native search focus working',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:900});await page.goto(base+'/');
- await expect(page.locator('#home-title')).toBeVisible();
+ await expect(page.locator('#dg-home-title')).toBeVisible();
  expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.id==='digivated-content-entrance').length)).toBe(0);
- expect(await page.locator('.home-editorial').evaluate(e=>getComputedStyle(e,'::before').animationName)).toBe('none');
+ expect(await page.locator('.dg-hero').evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
  await page.locator('.header-search').click();await expect(page.locator('#unified-search-input')).toBeFocused();
  await page.keyboard.press('Escape');await expect(page.locator('.header-search')).toBeFocused();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 test('section entrances never leave content hidden and stop after completion',async({page})=>{
- await page.goto(base+'/');await expect(page.locator('#home-title')).toBeVisible();
- await expect.poll(()=>page.locator('#home-title').evaluate(e=>Number(getComputedStyle(e).opacity))).toBe(1);
- await page.locator('.project-reel-heading').scrollIntoViewIfNeeded();
- await expect.poll(()=>page.locator('.project-reel-heading').evaluate(e=>Number(getComputedStyle(e).opacity))).toBe(1);
+ await page.goto(base+'/');await expect(page.locator('#dg-home-title')).toBeVisible();
+ await expect.poll(()=>page.locator('#dg-home-title').evaluate(e=>Number(getComputedStyle(e).opacity))).toBe(1);
+ await page.locator('#this-week .dg-list-head').scrollIntoViewIfNeeded();
+ await expect.poll(()=>page.locator('#this-week .dg-list-head').evaluate(e=>Number(getComputedStyle(e).opacity))).toBe(1);
  await expect.poll(()=>page.evaluate(()=>document.getAnimations().filter(a=>a.id==='digivated-content-entrance').length)).toBe(0);
 });
 test('hero stays readable when JavaScript is disabled',async({browser})=>{
  const c=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});const p=await c.newPage();await p.goto(base+'/');
- await expect(p.locator('#home-title')).toBeVisible();await expect(p.locator('.home-editorial-actions a').first()).toHaveAttribute('href','/discover#project-wall');
+ await expect(p.locator('#dg-home-title')).toBeVisible();await expect(p.locator('.dg-hero-actions a').first()).toHaveAttribute('href','/submit-project');
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
 });
 test('site atmosphere moves without covering controls or widening mobile pages',async({page})=>{

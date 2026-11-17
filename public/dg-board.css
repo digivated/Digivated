@@ -51,6 +51,8 @@ html[data-ascii] body.home-refresh #main>.dg-home{display:grid!important;grid-te
 html[data-ascii] body .dg-rail{position:sticky;top:88px;display:grid;gap:10px;margin:0!important;padding:0!important}
 html[data-ascii] body .dg-center{display:grid;gap:28px;min-width:0}
 html[data-ascii] body .dg-spot-grid{display:none}
+html[data-ascii] body .dg-spots-status{margin:0!important;font-family:var(--fl-mono)!important;font-size:11.5px!important;color:var(--dgb-muted)!important}
+html[data-ascii] body .dg-spots-status[hidden]{display:none!important}
 @media (max-width:1180px){
  html[data-ascii] body.home-refresh #main>.dg-home{grid-template-columns:minmax(0,1fr)}
  html[data-ascii] body .dg-rail{display:none!important}

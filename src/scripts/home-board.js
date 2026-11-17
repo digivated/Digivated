@@ -224,12 +224,18 @@ async function loadCatalogue() {
   return [...new Map(items.filter(p => p?.id && p.name).map(p => [p.id, p])).values()];
 }
 async function loadFeatured() {
+  const status = home?.querySelector('[data-featured-status]');
   try {
     const response = await fetch('/api/projects?view=featured&offset=0', { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(15000) });
-    if (!response.ok) return [];
+    if (!response.ok) throw Error('unavailable');
     const page = await response.json();
+    if (status) status.hidden = true;
     return (page.items || []).filter(p => p?.id && p.name && p.status === 'featured').sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
-  } catch { return []; }
+  } catch {
+    // Say so honestly; open paid spots still show.
+    if (status) { status.textContent = 'Featured projects are temporarily unavailable. Browse the directory instead.'; status.hidden = false; }
+    return [];
+  }
 }
 async function loadInstant() {
   try {
