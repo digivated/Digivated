@@ -13,7 +13,8 @@ import '../styles/creator-hub.css';
         <div class="creator-social-heading-copy">
           <p class="eyebrow">DIGIVATED COMMUNITY</p>
           <h1 id="creators-title">Creators</h1>
-          <p>Share your progress, ask for feedback, and meet other builders.</p>
+          <p>Start a thread, join a discussion, stay in the loop.</p>
+          <button id="creator-start-thread" class="button primary creator-start-thread" type="button">Start new thread</button>
         </div>
         <nav class="creator-quicknav" aria-label="Creator shortcuts">
           <a href="/discover">Explore projects</a>
@@ -26,15 +27,6 @@ import '../styles/creator-hub.css';
         <aside class="creator-hub-rail" aria-label="Creator navigation">
           <p>YOUR SPACE</p>
           <a class="active" href="/creators" aria-current="page">Conversation</a>
-          <p class="creator-rail-label">TOPICS</p>
-          <div class="creator-topics" role="group" aria-label="Topics">
-            <button class="active" type="button" data-creator-topic="">All threads</button>
-            <button type="button" data-creator-topic="feedback">Feedback requests</button>
-            <button type="button" data-creator-topic="show">Show your build</button>
-            <button type="button" data-creator-topic="intro">Introduce yourself</button>
-            <button type="button" data-creator-topic="ama">Ask me anything</button>
-            <button type="button" data-creator-topic="general">General</button>
-          </div>
           <a href="/discover">Explore projects</a>
           <a href="/inbox">Messages</a>
           <a id="creator-rail-profile" href="/account">Your profile</a>
@@ -48,11 +40,19 @@ import '../styles/creator-hub.css';
             <button type="button" data-creator-filter="saved">Saved</button>
             <button type="button" data-creator-filter="people">People</button>
           </nav>
+          <div class="creator-topics" role="group" aria-label="Topics">
+            <button class="active" type="button" data-creator-topic="">All</button>
+            <button type="button" data-creator-topic="feedback">Feedback requests</button>
+            <button type="button" data-creator-topic="show">Show your build</button>
+            <button type="button" data-creator-topic="intro">Introduce yourself</button>
+            <button type="button" data-creator-topic="ama">Ask me anything</button>
+            <button type="button" data-creator-topic="general">General</button>
+          </div>
           <div id="creator-people-strip" class="creator-people-strip" hidden aria-label="People to know"></div>
 
-          <section id="creator-composer" class="creator-composer" hidden aria-label="Write a post">
-            <label for="creator-post-title">Start a thread</label>
-            <input id="creator-post-title" class="creator-post-title" maxlength="90" placeholder="Title (optional) — e.g. Roast my landing page" autocomplete="off" />
+          <section id="creator-composer" class="creator-composer is-closed" hidden aria-label="Start a thread">
+            <label for="creator-post-title">New thread</label>
+            <input id="creator-post-title" class="creator-post-title" maxlength="90" placeholder="Title — e.g. Roast my landing page" autocomplete="off" />
             <select id="creator-post-topic" aria-label="Topic">
               <option value="general">General</option>
               <option value="feedback">Feedback requests</option>
@@ -64,7 +64,7 @@ import '../styles/creator-hub.css';
               id="creator-post-body"
               maxlength="280"
               rows="3"
-              placeholder="Share progress, ask a question, or start a conversation…"
+              placeholder="What do you want to discuss?"
             ></textarea>
             <div id="creator-media-preview" class="creator-media-preview" hidden></div>
             <div class="creator-composer-tools">
@@ -73,7 +73,7 @@ import '../styles/creator-hub.css';
             </div>
             <div class="creator-composer-bottom">
               <span>Keep links on your project profile · <span id="creator-post-count">0</span>/280</span>
-              <button id="creator-post-submit" class="button primary" type="button">Post</button>
+              <button id="creator-post-submit" class="button primary" type="button">Post thread</button>
             </div>
           </section>
 
