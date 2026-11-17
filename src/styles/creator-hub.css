@@ -124,4 +124,5 @@ html#digivated-root body.platform .creator-thread-row:hover { background:#ffffff
 .creator-composer .creator-post-title { width:100%; min-height:44px; margin:0 0 8px; padding:10px 12px; border:1px solid #ffffff22; border-radius:10px; background:#ffffff08; color:#f6edff; font:inherit; font-size:16px; }
 .creator-composer .creator-post-title:focus-visible,.creator-composer select:focus-visible { outline:2px solid #b995eb; outline-offset:2px; }
 .creator-composer select { min-height:40px; margin:0 0 8px; padding:8px 10px; border:1px solid #ffffff22; border-radius:10px; background:#1b1422; color:#f6edff; font:inherit; font-size:14px; }
-@media(max-width:760px) { html#digivated-root body.platform .creator-social-main .creator-thread-row { padding:18px 2px; } }
+@media(max-width:760px) { html#digivated-root body.platform .creator-social-heading,html#digivated-root body.platform .creator-social-heading-copy { justify-items:start; text-align:left; }
+ html#digivated-root body.platform .creator-social-main .creator-thread-row { padding:18px 2px; } }
