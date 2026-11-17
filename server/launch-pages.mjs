@@ -56,23 +56,15 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
     ${draft ? '' : `<button type="button" class="launch-details-vote" data-like-type="project" data-like-id="${e(item.id)}" data-show-zero aria-pressed="false" aria-label="Upvote this project"><span aria-hidden="true">↑</span><span data-like-count>–</span><span>Upvotes</span></button>`}
   </section>`;
   const comments = draft ? '' : `<section id="feedback" class="launch-comments" data-project-comments="${e(item.id)}" aria-labelledby="launch-comments-title" tabindex="-1">
-    <h2 id="launch-comments-title">Comments <span data-project-comment-count hidden></span></h2>
-    <form method="post" class="launch-comment-form">
-      <label for="launch-comment-name">Your name <span>(optional)</span></label>
-      <input id="launch-comment-name" name="name" maxlength="40" placeholder="Guest">
-      <label for="launch-comment-body">Your comment</label>
-      <textarea id="launch-comment-body" name="comment" required minlength="4" maxlength="500" rows="3" placeholder="Share your thoughts on this project…" aria-describedby="launch-comment-length"></textarea>
-      <div class="launch-comment-actions"><span id="launch-comment-length">0 / 500</span><button class="button primary" type="submit" disabled>Post comment</button></div>
-      <p data-project-comment-status role="status"></p>
-    </form>
-    <p data-project-comments-message role="status">Loading comments…</p>
-    <ul class="launch-comment-list" aria-label="Project comments" hidden></ul>
+    <h2 id="launch-comments-title">Discussion</h2>
+    <p data-project-comments-message role="status">Loading the discussion…</p>
+    <noscript><p>Turn on JavaScript to read and join the discussion.</p></noscript>
   </section>`;
   const body = `${draft?'<p class="launch-draft" role="status">Private draft preview · Only an explicit Publish launch page action makes this public.</p>':''}<article class="launch-page"><a class="launch-back" href="/discover">← Explore projects</a>
 <div class="launch-layout"><div class="launch-content-column"><header class="launch-intro">
 <div class="launch-hero">${item.logo ? `<div class="launch-identity"><span aria-hidden="true">${e(item.name.slice(0,2).toUpperCase())}</span><img src="${e(item.logo)}" alt="" width="96" height="96"></div>` : ''}
 <div class="launch-hero-copy"><p class="launch-labels"><span>${e(item.category)}</span>${item.featured ? '<span class="launch-spotlight">Spotlight</span>' : ''}${item.sponsored ? '<span>Sponsored</span>' : ''}</p>
-<h1>${e(item.name)}</h1><p class="launch-byline">By ${e(item.creator)}</p><div class="actions">${item.ctaUrl?`<a class="button primary" href="${e(item.ctaUrl)}" target="_blank" rel="noopener noreferrer">${e(item.ctaLabel)} <span aria-hidden="true">↗</span></a>`:'<p>Project link currently unavailable.</p>'}${draft?'':`<a class="button" href="#feedback">Give feedback</a><button class="button" type="button" data-save-type="project" data-save-id="${e(item.id)}">Save</button><button class="button" type="button" data-copy-link>Copy link</button><button class="button" type="button" data-native-share hidden>Share</button>`}</div><p role="status" data-share-status></p></div></div></header>
+<h1>${e(item.name)}</h1><p class="launch-byline">By ${e(item.creator)}</p><div class="actions">${item.ctaUrl?`<a class="button primary" href="${e(item.ctaUrl)}" target="_blank" rel="noopener noreferrer">${e(item.ctaLabel)} <span aria-hidden="true">↗</span></a>`:'<p>Project link currently unavailable.</p>'}${draft?'':`<a class="button" href="#feedback">Join the discussion</a><button class="button" type="button" data-save-type="project" data-save-id="${e(item.id)}">Save</button><button class="button" type="button" data-copy-link>Copy link</button><button class="button" type="button" data-native-share hidden>Share</button>`}</div><p role="status" data-share-status></p></div></div></header>
 ${item.image || item.gallery.length ? `<section class="launch-media" aria-label="Project screenshots">${item.image ? screenshot(item.image,item.alt,true) : ''}${item.gallery.map(s=>screenshot(s.image,s.alt)).join('')}</section>` : ''}
 <section class="launch-overview" aria-labelledby="launch-about"><h2 id="launch-about">About the project</h2><p>${e(item.description)}</p>${!item.logo && !item.image && !item.gallery.length ? '<p class="launch-no-media">For a closer look, visit the project website.</p>' : ''}</section>${comments}</div><div class="launch-maker-column" role="complementary" aria-label="Project information"><aside class="launch-creator"><h2>Meet the creator</h2><p class="creator-name">${e(item.creator)}</p>${item.bio?`<p>${e(item.bio)}</p>`:''}${item.socialUrl?`<a href="${e(item.socialUrl)}" target="_blank" rel="noopener noreferrer">Creator profile ↗</a>`:''}</aside>${details}${draft ? '' : `<section class="launch-featured-panel" data-launch-featured="${e(item.id)}" aria-labelledby="launch-featured-title" hidden>
   <h2 id="launch-featured-title">Featured projects</h2>

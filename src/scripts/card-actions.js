@@ -1,5 +1,6 @@
 import { cardFeedback } from './motion.js';
 import { cardIconMarkup } from '../lib/card-icons.mjs';
+import { projectFeedbackHref } from '../lib/project-links.mjs';
 
 export function cardIcon(name){const template=document.createElement('template');template.innerHTML=cardIconMarkup(name);return template.content.firstElementChild;}
 const el=(tag,text,className)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(className)node.className=className;return node;};
@@ -22,7 +23,6 @@ function loadCount(button){const type=button.dataset.likeType,id=button.dataset.
 const observer=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{for(const entry of entries){if(!entry.isIntersecting)continue;observer.unobserve(entry.target);loadCount(entry.target);}}, {rootMargin:'160px'}):null;
 export function scanCardActions(root=document){root?.querySelectorAll('[data-like-id]').forEach(button=>{const type=button.dataset.likeType,id=button.dataset.likeId,item=key(type,id);button.setAttribute('aria-pressed',String(localLiked(type,id)));if(pendingVotes.has(item))button.setAttribute('aria-busy','true');if(likeCounts.has(item))button.querySelector('[data-like-count]').textContent=likeCounts.get(item)>0 || button.hasAttribute('data-show-zero') ? String(likeCounts.get(item)) : '';if(!button.dataset.observed){button.dataset.observed='true';if(observer)observer.observe(button);else loadCount(button);}});root?.querySelectorAll('[data-comment-id]').forEach(button=>{const item=key(button.dataset.commentType,button.dataset.commentId);if(feedbackCounts.has(item)){const count=feedbackCounts.get(item);const badge=button.querySelector('.card-feedback-count');if(badge)badge.textContent=String(count);}});}
 scanCardActions();document.addEventListener('digivated:collection-updated',()=>scanCardActions());
-document.addEventListener('digivated:thread-count',event=>{const {id,count}=event.detail||{};if(id&&Number.isFinite(count))refreshFeedbackCount('project',id,count);});
 
 const dialog=el('dialog',undefined,'comment-dialog');dialog.setAttribute('aria-labelledby','comment-dialog-title');
 const head=el('div',undefined,'comment-dialog-header');const heading=el('div',undefined,'feedback-heading');const eyebrow=el('span','PROJECT FEEDBACK','feedback-eyebrow');const title=el('h2','Share feedback');title.id='comment-dialog-title';const introduction=el('p','What worked well? What could be clearer?','feedback-intro');heading.append(eyebrow,title,introduction);
@@ -47,11 +47,10 @@ document.addEventListener('click',async event=>{
  if(target.matches('[data-comment-id]')){
   event.preventDefault();
   if(target.dataset.commentType==='project'){
-   // Projects use full discussion threads; resources keep the comment dialog.
+   // Project discussions live on the project page, like Product Hunt.
    const card=target.closest('[data-project],article,li');
-   const name=card?.dataset.projectName||card?.querySelector('h1,h2,h3')?.textContent?.trim();
    const pageUrl=card?.querySelector('a[href^="/projects/"]')?.getAttribute('href')||'';
-   import('./project-thread.js').then(m=>m.openThreadDrawer(target.dataset.commentId,{name,pageUrl,trigger:target})).catch(()=>openComments('project',target.dataset.commentId,target));
+   location.href=projectFeedbackHref(target.dataset.commentId,pageUrl.split('#')[0]);
    return;
   }
   openComments(target.dataset.commentType,target.dataset.commentId,target);return;}

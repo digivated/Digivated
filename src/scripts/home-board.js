@@ -100,7 +100,7 @@ const decoder = 'IntersectionObserver' in window ? new IntersectionObserver(entr
 function decodeIn(root) { if (!decoder || reduced.matches) return; root.querySelectorAll('.dg-decode:not([data-decoded])').forEach(node => { node.dataset.decoded = ''; decoder.observe(node); }); }
 
 /* ---------- Launch lists ---------- */
-const state = { projects: [], limits: { current: PAGE, previous: PAGE, archive: PAGE }, animate: true };
+const state = { projects: [], limits: { current: PAGE, previous: 5, archive: 5 }, animate: true };
 const pendingVotes = new Set();
 
 function groups() {
@@ -140,11 +140,11 @@ function row(p, key, index) {
     visit.setAttribute('aria-label', `Visit ${p.name} (opens in a new tab)`);
     actions.append(visit);
   }
-  const comments = el('button', null, 'dg-comments'); comments.type = 'button';
-  comments.dataset.commentType = 'project'; comments.dataset.commentId = p.id;
+  // Comments open the project's discussion, like Product Hunt.
+  const comments = el('a', null, 'dg-comments'); comments.href = `${page}#feedback`;
   const count = Number(p.comments) || 0;
-  comments.setAttribute('aria-label', `Feedback for ${p.name}, ${count} comment${count === 1 ? '' : 's'}`);
-  comments.append(icon('comment'), el('span', String(count), 'card-feedback-count'));
+  comments.setAttribute('aria-label', `Discussion for ${p.name}, ${count} comment${count === 1 ? '' : 's'}`);
+  comments.append(icon('comment'), el('span', String(count)));
   actions.append(comments);
   const vote = el('button', null, 'dg-vote'); vote.type = 'button';
   vote.setAttribute('aria-pressed', String(liked(p)));
@@ -203,6 +203,7 @@ function render() {
     const more = section.querySelector('[data-section-more]');
     more.hidden = items.length <= limit;
     more.onclick = () => { state.limits[key] += PAGE; state.animate = false; render(); };
+    more.textContent = `View ${Math.min(PAGE, items.length - limit)} more`;
   }
   const upvotes = state.projects.reduce((sum, p) => sum + (Number(p.votes?.all) || 0), 0);
   document.querySelectorAll('[data-stat-upvotes]').forEach(node => { node.textContent = number.format(upvotes); });
@@ -255,8 +256,27 @@ function pointsChip() {
   });
 }
 
+async function railThreads() {
+  const box = document.querySelector('[data-rail-threads]');
+  if (!box) return;
+  try {
+    const response = await fetch('/api/threads?sort=trending', { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(10000) });
+    if (!response.ok) return;
+    const { threads = [] } = await response.json();
+    if (!threads.length) return;
+    box.querySelector('[data-rail-thread-list]').replaceChildren(...threads.slice(0, 4).map(thread => {
+      const li = el('li'); const a = el('a', thread.title, 'dg-decode'); a.href = `/threads/${thread.slug}`;
+      li.append(a, el('small', `▲ ${thread.votes} · ${thread.comments} ${thread.comments === 1 ? 'reply' : 'replies'}`));
+      return li;
+    }));
+    box.hidden = false;
+    decodeIn(box);
+  } catch { /* The box stays hidden. */ }
+}
+
 if (board) {
   pointsChip();
+  railThreads();
   board.querySelectorAll('.dg-list-head h2 .dg-list-title').forEach(node => node.classList.add('dg-decode'));
   decodeIn(board);
   const catalogue = loadCatalogue();

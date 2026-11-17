@@ -11,48 +11,38 @@ import '../styles/home-about.css';
     <aside class="dg-rail" data-spot-rail="0" aria-label="Featured spots"></aside>
     <div class="dg-center">
       <section class="dg-hero" aria-labelledby="dg-home-title">
+        <pre class="ascii-field home-workshop dg-hero-ascii" data-ascii-field aria-hidden="true"></pre>
         <div class="dg-hero-copy">
           <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>Weekly indie product launches</p>
           <h1 id="dg-home-title">Get your product in front of <span class="dg-hero-accent" data-site-visits-headline>visitors.</span></h1>
-          <p class="dg-hero-lede">Free to submit. Every launch gets its own page, upvotes and a real discussion with other builders.</p>
+          <p class="dg-hero-lede">Launch free, get upvotes and real feedback from other builders.</p>
           <div class="dg-hero-actions">
             <a class="dg-btn dg-btn-primary" href="/submit-project">Submit your product <UiIcon name="arrow" size={16}/></a>
             <a class="dg-btn" href="#this-week">Browse launches</a>
           </div>
           <ul class="dg-hero-facts">
-            <li>Free forever</li>
             <li>Next free launch in <time id="queue-countdown" role="timer" aria-live="off"></time></li>
+            <li><strong data-stat-products>—</strong> products</li>
             <li><strong data-site-online>—</strong> browsing now</li>
           </ul>
         </div>
-        <div class="fl-window dg-hero-art" aria-hidden="true">
-          <div class="fl-window-bar"><span class="fl-window-dots">● ● ●</span><span class="fl-hud">digivated / workbench</span><span class="fl-hud fl-live">● live</span></div>
-          <pre class="ascii-field home-workshop" data-ascii-field></pre>
-        </div>
-        <dl class="dg-stats">
-          <div><dt>Upvotes</dt><dd data-stat-upvotes>—</dd></div>
-          <div><dt>Visitors</dt><dd data-site-visits>—</dd></div>
-          <div><dt>Products listed</dt><dd data-stat-products>—</dd></div>
-        </dl>
       </section>
-      <div class="dg-hatch" aria-hidden="true"></div>
       <p class="dg-spots-status" data-featured-status role="status" hidden></p>
       <div class="dg-spot-grid" data-spot-grid aria-label="Featured spots"></div>
       <LaunchBoard/>
-      <section id="how-points-work" class="dg-how" aria-labelledby="dg-how-title">
-        <h2 id="dg-how-title">Give feedback, get seen</h2>
-        <ul class="dg-how-steps">
-          <li><UiIcon name="external" size={18}/><strong>Visit a launch</strong><span>Click Visit and try the product for at least 20 seconds.</span></li>
-          <li><UiIcon name="comment" size={18}/><strong>Leave a useful review</strong><span>Come back and say what works and what to improve.</span></li>
-          <li><UiIcon name="like" size={18}/><strong>Climb the board</strong><span>Signed in? Every 10 points you earn adds an upvote to your own launch this week.</span></li>
-        </ul>
-      </section>
     </div>
-    <aside class="dg-rail" data-spot-rail="1" aria-label="More spots"></aside>
+    <aside class="dg-rail" aria-label="More spots and threads">
+      <div class="dg-rail-stack" data-spot-rail="1"></div>
+      <section class="dg-rail-threads" data-rail-threads aria-labelledby="dg-rail-threads-title" hidden>
+        <h2 id="dg-rail-threads-title"><a href="/threads">Trending threads</a></h2>
+        <ol data-rail-thread-list></ol>
+        <a class="dg-quiet-link" href="/threads">All threads →</a>
+      </section>
+    </aside>
   </div>
   <section class="dg-about" aria-labelledby="dg-about-title">
     <h2 id="dg-about-title">Discover and launch indie projects</h2>
-    <p>Digivated is an indie project directory and launch community. Browse <a href="/discover">independent software and tools</a>, see <a href="/rankings">community rankings</a>, or <a href="/submit-project">submit your project</a>. Verify a badge for a free Monday launch, or publish instantly for $3 and take an open spot. <a href="/about">How Digivated works →</a></p>
+    <p>Digivated is an indie project directory and launch community. Browse <a href="/discover">independent software and tools</a>, join the conversation in <a href="/threads">Threads</a>, or <a href="/submit-project">submit your project</a>. Verify a badge for a free Monday launch, or publish instantly for $3 and take an open spot. <a href="/about">How Digivated works →</a></p>
   </section>
 </Platform>
 

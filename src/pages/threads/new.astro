@@ -1,0 +1,32 @@
+---
+import Platform from '../../layouts/Platform.astro';
+import ThreadsSidebar from '../../components/ThreadsSidebar.astro';
+import { forums, THREAD_BODY_MAX, THREAD_TITLE_MAX } from '../../data/forums.mjs';
+---
+<Platform title="Start a thread" description="Start a new discussion on Digivated Threads." noindex>
+  <div class="dg-forum" data-threads-page="new">
+    <ThreadsSidebar active=""/>
+    <section class="dg-forum-main" aria-labelledby="dg-new-title">
+      <header class="dg-forum-header dg-forum-header-plain">
+        <div>
+          <h1 id="dg-new-title">Start a new thread</h1>
+          <p>Ask a question, share what you learned or get feedback. One topic per thread.</p>
+        </div>
+      </header>
+      <div data-new-gate><p class="dg-forum-status">Checking your account…</p></div>
+      <form class="dg-new-thread" data-new-thread hidden>
+        <fieldset class="dg-new-forums">
+          <legend>Forum</legend>
+          {forums.map((forum, index) => <label><input type="radio" name="forum" value={forum.slug} checked={index === 0}/><span><b aria-hidden="true">{forum.glyph}</b>{forum.name}<small>{forum.description}</small></span></label>)}
+        </fieldset>
+        <label class="dg-new-field" data-new-name hidden><span>Display name <small>Shown with your posts</small></span><input name="displayName" maxlength="40" autocomplete="nickname"/></label>
+        <label class="dg-new-field"><span>Title <small data-count-for="title">0 / {THREAD_TITLE_MAX}</small></span><input name="title" required minlength="8" maxlength={THREAD_TITLE_MAX} placeholder="What do you want to talk about?"/></label>
+        <label class="dg-new-field"><span>Details <small data-count-for="body">0 / {THREAD_BODY_MAX}</small></span><textarea name="body" required minlength="10" maxlength={THREAD_BODY_MAX} rows="9" placeholder="Give people enough context to give a useful answer."></textarea></label>
+        <input class="sr-only" name="company" tabindex="-1" autocomplete="off" aria-hidden="true"/>
+        <div class="dg-new-actions"><a class="dg-btn" href="/threads">Cancel</a><button class="dg-btn dg-btn-primary" type="submit">Post thread</button></div>
+        <p class="dg-forum-status" data-new-status role="status"></p>
+      </form>
+    </section>
+  </div>
+  <script>import '../../scripts/threads.js';</script>
+</Platform>

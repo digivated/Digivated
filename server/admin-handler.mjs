@@ -1,3 +1,4 @@
+import { moderateThread, listThreadsForAdmin } from './threads.mjs';
 import {listNewsRecords,getNewsRecord,saveNewsRecord,newsStatus,setNewsPaused} from './news-store.mjs';
 import {adminOverview} from './admin-overview.mjs';
 import {adminAnalytics} from './admin-analytics.mjs';
@@ -63,6 +64,12 @@ export function makeAdminHandler(deps = {}) {
           if(result!==1)throw new AdminError(result===-2?400:404,result===-2?'This item is no longer published.':'This comment is no longer pending. Refresh the list.');
           return send(200,{ok:true});
         }
+        if (body.action === 'moderate-thread') {
+          const change={};if(['published','removed'].includes(body.status))change.status=body.status;if(typeof body.pinned==='boolean')change.pinned=body.pinned;
+          if(!Object.keys(change).length)throw new AdminError(400,'Choose a thread change.');
+          if(!await moderateThread(redis,body.id,change))throw new AdminError(404,'This thread could not be found.');
+          return send(200,{ok:true});
+        }
         if (body.action === 'archive-duplicate-projects') return send(200, { count: await archiveDuplicateProjects(redis, body.apply === true) });
         if (body.action === 'account-status') return send(200, await setAccountBan(env, body.id, body.operation, deps.accountClient));
         if (body.action !== 'save' || !['submission', 'resource', 'product'].includes(body.kind) || !body.record || typeof body.record !== 'object') throw new AdminError(400, 'Invalid dashboard action.');
@@ -88,6 +95,11 @@ export function makeAdminHandler(deps = {}) {
       if (action === 'gumroad-status') {
         let lastAttempt=null;try{lastAttempt=JSON.parse(await redis(['GET',SETUP_DIAGNOSTIC_KEY]));}catch{}
         return send(200,{...await checkoutStatus(redis),lastAttempt});
+      }
+      if (action === 'threads') {
+        const offset=Number(url.searchParams.get('offset')||0);
+        if(!Number.isInteger(offset)||offset<0||offset>100000)throw new AdminError(400,'Invalid page.');
+        return send(200,await listThreadsForAdmin(redis,offset));
       }
       if (action === 'comments') {
         const offset=Number(url.searchParams.get('offset')||0);

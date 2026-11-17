@@ -13,9 +13,10 @@ const page={bio:'An approved bio.',alt:'Project dashboard',ctaLabel:'Try the app
 test('published project pages lead to feedback and further discovery', async () => {
  const item={id:'project-one',slug:'same-name-project-one',name:'Same name',description:'A useful project.',creator:'Creator',category:'Apps',sponsored:false,bio:'',ctaLabel:'Visit project',ctaUrl:'https://example.com',socialUrl:'',image:'',gallery:[]};
  const html=await renderLaunch(item,{template});
- assert.match(html,/href="#feedback">Give feedback<\/a>/);
+ assert.match(html,/href="#feedback">Join the discussion<\/a>/);
  assert.match(html,/id="feedback" class="launch-comments" data-project-comments="project-one"/);
- assert.match(html,/<button class="button primary" type="submit" disabled>Post comment<\/button>/);
+ assert.match(html,/<h2 id="launch-comments-title">Discussion<\/h2>/);
+ assert.doesNotMatch(html,/launch-comment-form/,'guests no longer get a posting form; the signed-in discussion replaces it');
  const draft = await renderLaunch(item,{template,draft:true});
  assert.doesNotMatch(draft,/data-project-comments|href="#feedback"/);
  assert.match(html,/class="launch-next"/);

@@ -8,7 +8,8 @@ import { makeProjectViewHandler } from './project-views.mjs';
 import { makeResourceViewHandler } from './resource-views.mjs';
 import { makeCardInteractionHandler } from './card-interactions.mjs';
 import { makeFeedbackPointsHandler } from './feedback-points.mjs';
-import { makeProjectThreadHandler } from './project-threads.mjs';
+import { makeDiscussionHandler } from './discussions.mjs';
+import { makeThreadsHandler } from './threads.mjs';
 import { makeCarouselHandler, makeCarouselPublishHandler } from './carousels.mjs';
 import { makeFoundingAccessHandler, makeFoundingLogoutHandler } from './founding-access.mjs';
 import { makeProjectAccountHandler } from './project-account.mjs';
@@ -36,7 +37,8 @@ export function defaultPublicHandlers(overrides = {}) {
     'resource-views': makeResourceViewHandler(),
     'card-interactions': makeCardInteractionHandler(),
     'feedback-points': makeFeedbackPointsHandler(),
-    'project-threads': makeProjectThreadHandler(),
+    discussions: makeDiscussionHandler(),
+    threads: makeThreadsHandler(),
     carousels: makeCarouselHandler(),
     'carousel-publish': makeCarouselPublishHandler(),
     'founding-access': makeFoundingAccessHandler(),

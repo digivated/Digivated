@@ -1,9 +1,8 @@
-import { mountThread } from './project-thread.js';
+import { mountDiscussion } from './discussion.js';
 
 const comments = document.querySelector('[data-project-comments]');
-// The server renders a plain comment form as a no-JavaScript fallback; the
-// discussion thread replaces it once scripts run.
-if (comments) mountThread(comments, { projectId: comments.dataset.projectComments });
+// The server renders a placeholder; the discussion replaces it once scripts run.
+if (comments) mountDiscussion(comments, { type: 'project', id: comments.dataset.projectComments });
 
 const status = document.querySelector('[data-share-status]');
 const url = location.origin + location.pathname;

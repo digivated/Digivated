@@ -81,20 +81,18 @@ test('cross-site writes and invalid requests fail before any interaction is stor
  assert.equal((await call(handler,'POST','../private',{action:'like'})).status,404);
  assert.equal((await call(handler,'GET','project-one')).data.likes,0);
 });
-test('project feedback appears immediately and cannot be sent to resources',async()=>{
- const {redis,values}=fixtureRedis(),handler=makeCardInteractionHandler({redis,env:{SUBMISSIONS_ORIGIN:origin}});
+test('guest project feedback is refused; existing project comments can still be hidden by moderation',async()=>{
+ const {redis,values,sorted}=fixtureRedis(),handler=makeCardInteractionHandler({redis,env:{SUBMISSIONS_ORIGIN:origin}});
  values.set('digivated:submission:project-one',JSON.stringify({id:'project-one',status:'approved',consent:true,image:'fixture-image',url:'https://fixture.test/'}));
  const sent=await call(handler,'POST','project-one',{action:'project-feedback',name:'Visitor',comment:'The onboarding is clear; a pricing example would help.'});
- assert.equal(sent.status,201);assert.match(sent.data.message,/now visible/);
- const publicResult=(await call(handler,'GET','project-one')).data;
- assert.equal(publicResult.commentCount,1);
- assert.equal(publicResult.comments[0].body,'The onboarding is clear; a pricing example would help.');
- const entry=(await listPendingComments(redis)).items[0];assert.equal(JSON.parse(values.get(`digivated:card:comment:${entry.id}`)).purpose,'project-feedback');
- assert.equal(entry.status,'approved');
+ assert.equal(sent.status,401);assert.match(sent.data.error,/Sign in/);
+ const entry={id:'11111111-1111-4111-8111-111111111111',type:'project',itemId:'project-one',name:'Member',body:'Existing comment',date:new Date().toISOString(),status:'approved',purpose:'project-feedback'};
+ values.set(`digivated:card:comment:${entry.id}`,JSON.stringify(entry));
+ sorted.set('digivated:card:comments:all',new Map([[entry.id,1]]));sorted.set('digivated:card:comments:project:project-one',new Map([[entry.id,1]]));
+ assert.equal((await call(handler,'GET','project-one')).data.commentCount,1);
  assert.equal(await moderateComment(redis,entry.id,'approved'),0);
  assert.equal(await moderateComment(redis,entry.id,'rejected'),1);
  assert.equal((await call(handler,'GET','project-one')).data.commentCount,0);
- assert.deepEqual((await call(handler,'GET','project-one')).data.comments,[]);
  assert.equal((await call(handler,'POST','builtin-ui-ux-prompt-packet',{action:'project-feedback',comment:'A useful note'},{},'resource')).status,400);
 });
 
