@@ -16,12 +16,8 @@ for(const width of [375,1440])test(`Creators feed starts cleanly and stays usabl
  await page.goto(base+'/creators');
  await expect(page.locator('#creator-people-strip')).toBeVisible();
  await expect(page.getByRole('link',{name:/Ada Maker/}).first()).toBeVisible();
- if(width>1000){
-  await expect(page.locator('.creator-hub-rail')).toBeVisible();
-  await expect(page.locator('#creator-suggestions')).toContainText('Noah Builder');
-  await page.locator('#creator-see-people').click();
-  await expect(page.locator('#creators-grid')).toContainText('Ada Maker');
- }
+ await expect(page.locator('.creator-hub-rail')).toBeHidden();
+ await expect(page.locator('#creator-start-thread')).toBeVisible();
  await expect(page.locator('#creators-status')).not.toContainText('Loading');
  await page.getByRole('button',{name:'People',exact:true}).click();
  await expect(page.locator('#creators-grid')).toContainText('Ada Maker');
