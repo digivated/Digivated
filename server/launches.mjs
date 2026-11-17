@@ -67,7 +67,8 @@ export function makeLaunchesHandler(deps = {}) {
 
       const view = url.searchParams.get('view');
       if (view === 'upcoming') {
-        const ids = await redis(['ZRANGEBYSCORE', QUEUE, now, '+inf', 'LIMIT', 0, UPCOMING_LIMIT]);
+        // Launch day starts at 00:00 UTC and the batch publishes later that morning; keep it listed until then.
+        const ids = await redis(['ZRANGEBYSCORE', QUEUE, now - 2 * 86_400_000, '+inf', 'LIMIT', 0, UPCOMING_LIMIT]);
         const items = (await Promise.all((ids || []).map(id => upcomingRecord(redis, id)))).filter(Boolean);
         const [counts, watching] = await Promise.all([
           Promise.all(items.map(item => redis(['SCARD', launchWatchersKey(item.id)]))),
