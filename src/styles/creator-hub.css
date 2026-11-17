@@ -82,40 +82,52 @@ html#digivated-root body.platform .creator-empty h2 { font-size:clamp(20px,2.3vw
   .creator-hub-rail>a,.creator-new-posts { transition:none!important; }
 }
 
-/* Forum threads, in the style of Product Hunt's discussions: one centered list of thread cards. */
-html#digivated-root body.platform .creator-feed-shell { width:min(780px,100%); }
+/* Forum threads, in the style of Product Hunt's discussions: a header card, then a single list of thread cards. */
+html#digivated-root body.platform .creator-feed-shell { width:min(720px,100%); }
 html#digivated-root body.platform .creator-social-layout { display:block; }
 .creator-hub-rail,.creator-hub-sidebar { display:none!important; }
-html#digivated-root body.platform .creator-social-heading { display:grid; justify-items:center; gap:14px; padding:6px 0 22px; text-align:center; }
-html#digivated-root body.platform .creator-social-heading-copy { display:grid; justify-items:center; gap:8px; }
-html#digivated-root body.platform .creator-social-heading-copy p { margin:0; }
-.creator-start-thread { margin-top:8px; }
+html#digivated-root body.platform .creator-social-heading { display:grid; grid-template-columns:auto minmax(0,1fr); gap:14px 16px; align-items:center; margin:0 0 22px; padding:20px; border:1px solid #ffffff1f; border-radius:18px; background:linear-gradient(160deg,#ffffff0b,transparent 60%),#100d16; text-align:left; }
+.creator-heading-logo { width:52px; height:52px; padding:8px; border:1px solid #ffffff1f; border-radius:14px; background:#0b090f; object-fit:contain; }
+html#digivated-root body.platform .creator-social-heading-copy { display:grid; gap:6px; min-width:0; }
+html#digivated-root body.platform .creator-social-heading h1 { margin:0; font-size:clamp(22px,4.6vw,30px); line-height:1.2; letter-spacing:-.02em; }
+html#digivated-root body.platform .creator-social-heading-copy p { margin:0; max-width:none; color:#b9aec2; font-size:15px; line-height:1.5; }
+.creator-start-thread { grid-column:1/-1; width:100%; min-height:48px; justify-content:center; text-align:center; }
+html#digivated-root body.platform .creator-social-heading .creator-quicknav { grid-column:1/-1; justify-content:flex-start; margin:0; }
 html#digivated-root body.platform .creator-social-main { border:0; border-radius:0; background:transparent!important; overflow:visible; min-height:0; }
-html#digivated-root body.platform .creator-social-main>.creator-tabs { position:static; margin:0 0 4px; background:transparent!important; border-bottom:1px solid #ffffff1c; }
-html#digivated-root body.platform .creator-social-main>.creator-tabs button { min-height:46px; }
-.creator-topics { display:flex; gap:8px; overflow-x:auto; padding:12px 0; scrollbar-width:none; }
-.creator-topics::-webkit-scrollbar { display:none; }
-.creator-topics button { flex:none; min-height:34px; padding:6px 14px; border:1px solid #ffffff22; border-radius:999px; background:transparent; color:#c7bbd0; font:inherit; font-size:13px; white-space:nowrap; cursor:pointer; }
-.creator-topics button:is(:hover,:focus-visible) { border-color:#c49afa88; color:#f6edff; }
-.creator-topics button.active { border-color:#c49afa; background:#ac74e52c; color:#f6edff; }
+html#digivated-root body.platform .creator-social-main>.creator-tabs { position:static; margin:0; background:transparent!important; border:0; gap:4px; overflow-x:auto; }
+html#digivated-root body.platform .creator-social-main>.creator-tabs button { min-height:40px; padding:6px 12px; border:0; border-radius:999px; background:transparent; color:#a99db1; font-size:14px; font-weight:600; }
+html#digivated-root body.platform .creator-social-main>.creator-tabs button.active { background:#ac74e52c; color:#f1e4ff; }
+.creator-topics { padding:6px 0 10px; }
+.creator-topics select { min-height:38px; padding:6px 30px 6px 12px; border:1px solid #ffffff24; border-radius:999px; background:#14101b; color:#e6dcee; font:inherit; font-size:13px; }
+.creator-topics select:focus-visible { outline:2px solid #b995eb; outline-offset:2px; }
+.visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 .creator-composer.is-closed { display:none!important; }
-html#digivated-root body.platform .creator-social-main>.creator-composer { margin:8px 0 14px; padding:20px; border:1px solid #ffffff22; border-radius:16px; background:#12101a; }
+html#digivated-root body.platform .creator-social-main>.creator-composer { margin:6px 0 16px; padding:20px; border:1px solid #ffffff22; border-radius:16px; background:#12101a; }
 .creator-composer>label { display:block; margin-bottom:8px; color:#f6edff; font-weight:650; }
 html#digivated-root body.platform .creator-social-main>.creator-composer textarea { border:1px solid #ffffff1f!important; border-radius:10px; background:#ffffff08!important; padding:10px 12px; }
-html#digivated-root body.platform .creator-thread-row { display:block; padding:20px 4px; border-bottom:1px solid #ffffff16; cursor:pointer; }
-html#digivated-root body.platform .creator-thread-row:hover { background:#ffffff06; }
-.creator-thread-meta { display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin-bottom:9px; color:#9f94a8; font-size:13px; }
-.creator-thread-meta .creator-avatar { width:22px; height:22px; border-radius:50%; font-size:11px; display:inline-grid; place-items:center; flex:none; }
-.creator-thread-meta a { color:#d8cde0; font-weight:600; text-decoration:none; }
+html#digivated-root body.platform .creator-feed-shell #creators-feed { display:grid; gap:12px; }
+html#digivated-root body.platform .creator-thread-row { display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:14px; align-items:start; padding:18px; border:1px solid #ffffff1a; border-bottom:1px solid #ffffff1a; border-radius:16px; background:#100d16; cursor:pointer; }
+html#digivated-root body.platform .creator-thread-row:hover { border-color:#c49afa55; background:#14101b; }
+.creator-thread-meta { grid-column:1; grid-row:1; display:flex; align-items:center; flex-wrap:wrap; gap:7px; min-width:0; color:#9f94a8; font-size:13px; }
+.creator-community { padding:0; border:0; background:none; color:#e6dcee; font:inherit; font-weight:650; cursor:pointer; }
+.creator-community:hover { color:#dcb8ff; text-decoration:underline; }
+.creator-thread-meta .creator-avatar { width:20px; height:20px; border-radius:50%; font-size:10px; display:inline-grid; place-items:center; flex:none; }
+.creator-thread-meta a { min-width:0; overflow:hidden; color:#d8cde0; text-overflow:ellipsis; white-space:nowrap; text-decoration:none; }
 .creator-thread-meta a:hover { color:#dcb8ff; }
-.creator-thread-meta .creator-topic-chip { margin-left:4px; }
-.creator-thread-title { margin:0 0 6px; font:700 clamp(18px,2.4vw,22px)/1.3 'Inter Variable',sans-serif; letter-spacing:-.015em; }
+.creator-upvote { grid-column:2; grid-row:1/span 2; display:grid; justify-items:center; align-content:center; gap:2px; width:52px; min-height:52px; padding:6px 0; border:1px solid #ffffff2a; border-radius:12px; background:transparent; color:#d8cde0; font:600 14px/1.1 'Inter Variable',sans-serif; cursor:pointer; }
+.creator-upvote svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linejoin:round; }
+.creator-upvote:hover { border-color:#c49afa; color:#f1e4ff; }
+.creator-upvote.active { border-color:#c49afa; background:#ac74e52c; color:#f1e4ff; }
+.creator-upvote.active svg { fill:currentColor; }
+.creator-upvote:disabled { opacity:.6; cursor:wait; }
+.creator-thread-title { grid-column:1; margin:10px 0 0; font:700 clamp(17px,4.2vw,20px)/1.35 'Inter Variable',sans-serif; letter-spacing:-.01em; overflow-wrap:anywhere; }
 .creator-thread-title a { color:#f6edff; text-decoration:none; }
 .creator-thread-row:hover .creator-thread-title a { color:#e4c9ff; }
-.creator-thread-excerpt { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; margin:0 0 12px; color:#b9aec2; font-size:15px; line-height:1.55; overflow-wrap:anywhere; white-space:pre-line; }
-.creator-thread-stats { display:flex; gap:18px; margin-top:10px; color:#a99db1; font-size:13px; }
+.creator-thread-excerpt { grid-column:1/-1; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; margin:12px 0 0; color:#c4b9cc; font-size:15px; line-height:1.55; overflow-wrap:anywhere; white-space:pre-line; }
+.creator-thread-media { grid-column:1/-1; width:100%; max-height:240px; margin-top:12px; border-radius:12px; object-fit:cover; }
+.creator-thread-stats { grid-column:1/-1; display:flex; align-items:center; gap:12px; margin-top:12px; color:#a99db1; font-size:13px; }
 .creator-thread-stats span { display:inline-flex; align-items:center; gap:6px; }
-.creator-thread-stats svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.creator-thread-stats svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .creator-back { display:inline-block; margin:6px 0 14px; color:#d7b8f7; font-size:14px; text-decoration:none; }
 .creator-back:hover { color:#fff; }
 .creator-post-title-line { margin:2px 0 6px; font:700 clamp(20px,3vw,26px)/1.3 'Inter Variable',sans-serif; letter-spacing:-.015em; }
@@ -124,5 +136,4 @@ html#digivated-root body.platform .creator-thread-row:hover { background:#ffffff
 .creator-composer .creator-post-title { width:100%; min-height:44px; margin:0 0 8px; padding:10px 12px; border:1px solid #ffffff22; border-radius:10px; background:#ffffff08; color:#f6edff; font:inherit; font-size:16px; }
 .creator-composer .creator-post-title:focus-visible,.creator-composer select:focus-visible { outline:2px solid #b995eb; outline-offset:2px; }
 .creator-composer select { min-height:40px; margin:0 0 8px; padding:8px 10px; border:1px solid #ffffff22; border-radius:10px; background:#1b1422; color:#f6edff; font:inherit; font-size:14px; }
-@media(max-width:760px) { html#digivated-root body.platform .creator-social-heading,html#digivated-root body.platform .creator-social-heading-copy { justify-items:start; text-align:left; }
- html#digivated-root body.platform .creator-social-main .creator-thread-row { padding:18px 2px; } }
+@media(max-width:760px) { html#digivated-root body.platform .creator-social-main .creator-thread-row { padding:16px; } html#digivated-root body.platform .creator-social-heading { padding:16px; } }

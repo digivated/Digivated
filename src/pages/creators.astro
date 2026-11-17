@@ -10,12 +10,12 @@ import '../styles/creator-hub.css';
   <section class="creator-social" aria-labelledby="creators-title">
     <div class="creator-feed-shell">
       <header class="creator-social-heading">
+        <img class="creator-heading-logo" src="/digivated-ascii-icon-transparent.png" alt="" width="52" height="52" />
         <div class="creator-social-heading-copy">
-          <p class="eyebrow">DIGIVATED COMMUNITY</p>
-          <h1 id="creators-title">Creators</h1>
+          <h1 id="creators-title">Connect with the Digivated community</h1>
           <p>Start a thread, join a discussion, stay in the loop.</p>
-          <button id="creator-start-thread" class="button primary creator-start-thread" type="button">Start new thread</button>
         </div>
+        <button id="creator-start-thread" class="button primary creator-start-thread" type="button">Start new thread</button>
         <nav class="creator-quicknav" aria-label="Creator shortcuts">
           <a href="/discover">Explore projects</a>
           <a href="/inbox">Inbox <span id="creator-inbox-count" aria-live="polite"></span></a>
@@ -40,13 +40,16 @@ import '../styles/creator-hub.css';
             <button type="button" data-creator-filter="saved">Saved</button>
             <button type="button" data-creator-filter="people">People</button>
           </nav>
-          <div class="creator-topics" role="group" aria-label="Topics">
-            <button class="active" type="button" data-creator-topic="">All</button>
-            <button type="button" data-creator-topic="feedback">Feedback requests</button>
-            <button type="button" data-creator-topic="show">Show your build</button>
-            <button type="button" data-creator-topic="intro">Introduce yourself</button>
-            <button type="button" data-creator-topic="ama">Ask me anything</button>
-            <button type="button" data-creator-topic="general">General</button>
+          <div class="creator-topics">
+            <label for="creator-topic-select" class="visually-hidden">Topic</label>
+            <select id="creator-topic-select" aria-label="Topic">
+              <option value="">All topics</option>
+              <option value="feedback">Feedback requests</option>
+              <option value="show">Show your build</option>
+              <option value="intro">Introduce yourself</option>
+              <option value="ama">Ask me anything</option>
+              <option value="general">General</option>
+            </select>
           </div>
           <div id="creator-people-strip" class="creator-people-strip" hidden aria-label="People to know"></div>
 
