@@ -226,6 +226,8 @@ html[data-ascii] body.home-refresh #main>.dg-about{margin:56px 0 0!important;pad
 html[data-ascii] body .dg-about h2{margin:0 0 8px!important;font-size:15px!important;letter-spacing:-.01em!important}
 html[data-ascii] body .dg-about p{max-width:80ch;margin:0!important;font-family:var(--fl-sans)!important;font-size:13px!important;line-height:1.7!important;color:var(--dgb-muted)!important}
 html[data-ascii] body .dg-about a{color:var(--dgb-copy)!important}
+html[data-ascii] body .dg-about .dg-about-points{margin-top:10px!important;scroll-margin-top:96px}
+html[data-ascii] body .dg-about .dg-about-points:target{color:var(--dgb-copy)!important}
 
 /* ---------- Discussion (project pages and threads) ---------- */
 html[data-ascii] body .dg-discussion{display:grid;gap:16px;margin:0!important}
