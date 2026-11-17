@@ -26,6 +26,15 @@ import '../styles/creator-hub.css';
         <aside class="creator-hub-rail" aria-label="Creator navigation">
           <p>YOUR SPACE</p>
           <a class="active" href="/creators" aria-current="page">Conversation</a>
+          <p class="creator-rail-label">TOPICS</p>
+          <div class="creator-topics" role="group" aria-label="Topics">
+            <button class="active" type="button" data-creator-topic="">All threads</button>
+            <button type="button" data-creator-topic="feedback">Feedback requests</button>
+            <button type="button" data-creator-topic="show">Show your build</button>
+            <button type="button" data-creator-topic="intro">Introduce yourself</button>
+            <button type="button" data-creator-topic="ama">Ask me anything</button>
+            <button type="button" data-creator-topic="general">General</button>
+          </div>
           <a href="/discover">Explore projects</a>
           <a href="/inbox">Messages</a>
           <a id="creator-rail-profile" href="/account">Your profile</a>
@@ -34,6 +43,7 @@ import '../styles/creator-hub.css';
         <main class="creator-social-main">
           <nav class="creator-tabs" aria-label="Creator feed">
             <button class="active" type="button" data-creator-filter="latest">Latest</button>
+            <button type="button" data-creator-filter="trending">Trending</button>
             <button type="button" data-creator-filter="following">Following</button>
             <button type="button" data-creator-filter="saved">Saved</button>
             <button type="button" data-creator-filter="people">People</button>
@@ -41,7 +51,15 @@ import '../styles/creator-hub.css';
           <div id="creator-people-strip" class="creator-people-strip" hidden aria-label="People to know"></div>
 
           <section id="creator-composer" class="creator-composer" hidden aria-label="Write a post">
-            <label for="creator-post-body">What are you building?</label>
+            <label for="creator-post-title">Start a thread</label>
+            <input id="creator-post-title" class="creator-post-title" maxlength="90" placeholder="Title (optional) — e.g. Roast my landing page" autocomplete="off" />
+            <select id="creator-post-topic" aria-label="Topic">
+              <option value="general">General</option>
+              <option value="feedback">Feedback requests</option>
+              <option value="show">Show your build</option>
+              <option value="intro">Introduce yourself</option>
+              <option value="ama">Ask me anything</option>
+            </select>
             <textarea
               id="creator-post-body"
               maxlength="280"

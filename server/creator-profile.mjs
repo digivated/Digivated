@@ -26,6 +26,8 @@ local daily=redis.call('INCR',KEYS[2]);if daily==1 then redis.call('EXPIRE',KEYS
 if daily>30 then return 2 end
 if redis.call('EXISTS',KEYS[3])==1 then return 3 end
 redis.call('SET',KEYS[1],'1','EX',30);redis.call('SET',KEYS[3],'1','EX',86400);return 0`;
+const TOPICS=['general','feedback','show','intro','ama'];
+const trendScore=(post,likes)=>(likes*2+(post.replies||0)*3+1)/Math.pow((Date.now()-Date.parse(post.createdAt))/3600000+2,1.3);
 const hasLink=text=>/(?:https?:\/\/|www\.|\b[a-z0-9-]+\.(?:com|org|net|io|ai|app|dev|co|xyz|gg|link|site|me|sh|ly|to)\b)/i.test(text);
 const FOLLOW=`if redis.call('EXISTS',KEYS[3])==0 then return -1 end
 local profile=cjson.decode(redis.call('GET',KEYS[3]));if profile.public~=true then return -1 end
@@ -53,11 +55,12 @@ export function makeCreatorProfileHandler(deps={}){
     return send(200,{creators:rows.flatMap((raw,index)=>{try{const p=JSON.parse(raw);return p.public?[{id:ids[index],name:p.name,bio:p.bio,logoUrl:p.hasLogo?`/api/creator-profile?logo=${ids[index]}`:''}]:[];}catch{return[];}})});
    }
    if(req.method==='GET'&&url.searchParams.get('action')==='posts'){
-    const parent=url.searchParams.get('parent'),author=url.searchParams.get('author'),single=url.searchParams.get('post'),saved=url.searchParams.get('saved')==='1',followingOnly=url.searchParams.get('following')==='1',offset=Number(url.searchParams.get('offset')||0);
-    if(parent&&!UUID.test(parent)||author&&!UUID.test(author)||single&&!UUID.test(single)||!Number.isInteger(offset)||offset<0||offset>1000)return send(400,{error:'Invalid feed request.'});
+    const parent=url.searchParams.get('parent'),author=url.searchParams.get('author'),single=url.searchParams.get('post'),saved=url.searchParams.get('saved')==='1',followingOnly=url.searchParams.get('following')==='1',topic=url.searchParams.get('topic')||'',trending=url.searchParams.get('sort')==='trending',offset=Number(url.searchParams.get('offset')||0);
+    if(parent&&!UUID.test(parent)||author&&!UUID.test(author)||single&&!UUID.test(single)||topic&&!TOPICS.includes(topic)||!Number.isInteger(offset)||offset<0||offset>1000)return send(400,{error:'Invalid feed request.'});
     const viewer=req.headers.authorization?await(deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch):null;
     if((saved||followingOnly)&&!viewer)return send(401,{error:'Sign in to see your feed.'});
     if(followingOnly&&(saved||parent||author||single))return send(400,{error:'Choose one feed view.'});
+    if((topic||trending)&&(saved||followingOnly||parent||author||single))return send(400,{error:'Choose one feed view.'});
     const index=parent?`digivated:creator:replies:${parent}`:author?`digivated:creator:author:${author}`:postIndex;
     const savedIds=saved?await redis(['SMEMBERS',savedKey(viewer.id)]):null;
     let ids,nextOffset=null;
@@ -76,6 +79,11 @@ export function makeCreatorProfileHandler(deps={}){
       if(exhausted)break;
      }
      nextOffset=exhausted||cursor>1000?null:cursor;
+    }else if(topic||trending){
+     const batch=await redis(['ZREVRANGE',postIndex,0,199]),raws=batch.length?await redis(['MGET',...batch.map(postKey)]):[],found=[];
+     for(let i=0;i<batch.length;i++){try{const post=JSON.parse(raws[i]);if(!post.hidden&&(!topic||(post.topic||'general')===topic))found.push(post);}catch{}}
+     if(trending){const counts=await Promise.all(found.map(post=>redis(['SCARD',likeKey(post.id)])));found.forEach((post,i)=>{post.score=trendScore(post,Number(counts[i])||0);});found.sort((a,b)=>b.score-a.score);}
+     const slice=found.slice(offset,offset+20);ids=slice.map(post=>post.id);nextOffset=offset+20<found.length?offset+20:null;
     }else{
      ids=single?[single]:saved?(savedIds||[]).slice(offset,offset+50):await redis(['ZREVRANGE',index,offset,offset+49]);
      nextOffset=ids.length===50?offset+50:null;
@@ -87,7 +95,7 @@ export function makeCreatorProfileHandler(deps={}){
     const people=new Map(authorIds.map((id,i)=>{try{return[id,JSON.parse(profiles[i])];}catch{return[id,null];}}));
     const viewerSaved=viewer?new Set(savedIds||await redis(['SMEMBERS',savedKey(viewer.id)])):new Set();
     const publicPosts=posts.filter(post=>people.get(post.authorId)?.public);
-    const enriched=await Promise.all(publicPosts.map(async post=>({id:post.id,body:post.body,media:post.media&&env.COMMUNITY_SUPABASE_URL?{type:post.media.type,url:mediaUrl(env,post.media.path)}:null,createdAt:post.createdAt,parentId:post.parentId||null,replies:post.replies||0,likes:Number(await redis(['SCARD',likeKey(post.id)]))||0,liked:viewer?Number(await redis(['SISMEMBER',likeKey(post.id),viewer.id]))===1:false,saved:viewerSaved.has(post.id),author:{id:post.authorId,name:people.get(post.authorId).name,logoUrl:people.get(post.authorId).hasLogo?`/api/creator-profile?logo=${post.authorId}`:''}})));
+    const enriched=await Promise.all(publicPosts.map(async post=>({id:post.id,title:post.title||'',topic:post.topic||'general',body:post.body,media:post.media&&env.COMMUNITY_SUPABASE_URL?{type:post.media.type,url:mediaUrl(env,post.media.path)}:null,createdAt:post.createdAt,parentId:post.parentId||null,replies:post.replies||0,likes:Number(await redis(['SCARD',likeKey(post.id)]))||0,liked:viewer?Number(await redis(['SISMEMBER',likeKey(post.id),viewer.id]))===1:false,saved:viewerSaved.has(post.id),author:{id:post.authorId,name:people.get(post.authorId).name,logoUrl:people.get(post.authorId).hasLogo?`/api/creator-profile?logo=${post.authorId}`:''}})));
     return send(200,{posts:saved?enriched.sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt)):enriched,next:nextOffset});
    }
    if(req.method==='GET'&&url.searchParams.get('id')){
@@ -146,7 +154,8 @@ export function makeCreatorProfileHandler(deps={}){
    if(url.searchParams.get('action')==='post'){
     const profileRaw=await redis(['GET',key(account.id)]),profile=profileRaw?JSON.parse(profileRaw):null;
     if(!profile?.public)return send(403,{error:'Make your creator profile public before posting.'});
-    const content=String(body?.body||'').trim(),parentId=body?.parentId||null;
+    const content=String(body?.body||'').trim(),parentId=body?.parentId||null,title=parentId?'':String(body?.title||'').trim(),topic=parentId?'':String(body?.topic||'general');
+    if(!TOPICS.includes(topic)||title&&(title.length<3||title.length>90||/[\u0000-\u001f\u007f]/.test(title)||hasLink(title)))return send(400,{error:'Use a 3–90 character title without links and choose a listed topic.'});
     if(content.length<2||content.length>280||/[\u0000-\u001f\u007f]/.test(content)||hasLink(content))return send(400,{error:'Write 2–280 characters without links. Share project links through your profile.'});
     if(parentId){if(!UUID.test(parentId))return send(400,{error:'This conversation is unavailable.'});const parentRaw=await redis(['GET',postKey(parentId)]),parent=parentRaw?JSON.parse(parentRaw):null,parentProfile=parent?await redis(['GET',key(parent.authorId)]):null;if(!parent||parent.hidden||parent.parentId||!parentProfile||!JSON.parse(parentProfile).public)return send(400,{error:'This conversation is unavailable.'});}
     let media=null;
@@ -154,7 +163,7 @@ export function makeCreatorProfileHandler(deps={}){
     const hash=createHash('sha256').update(content.toLowerCase()).digest('hex');
     const rate=Number(await redis(['EVAL',postRate,3,`digivated:creator:rate:${account.id}`,`digivated:creator:daily:${account.id}`,`digivated:creator:duplicate:${account.id}:${hash}`]));
     if(rate)return send(429,{error:rate===1?'Wait a moment before posting again.':rate===2?'You reached today’s posting limit.':'You already shared this recently.'});
-    const id=randomUUID(),createdAt=new Date().toISOString(),post={id,authorId:account.id,body:content,media,createdAt,parentId,replies:0};
+    const id=randomUUID(),createdAt=new Date().toISOString(),post={id,authorId:account.id,body:content,media,createdAt,parentId,replies:0,...(parentId?{}:{title,topic})};
     await redis(['SET',postKey(id),JSON.stringify(post)]);
     if(media)await redis(['DEL',`digivated:creator:pending-media:${media.path}`]);
     await redis(['ZADD',parentId?`digivated:creator:replies:${parentId}`:postIndex,Date.now(),id]);

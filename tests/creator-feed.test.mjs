@@ -97,3 +97,23 @@ test('post media uses signed upload ticket and verifies file before publishing',
  uploaded=true;const created=await call('POST','/?action=post',{body:'My latest work',mediaPath:ticket.path},'Alice');assert.equal(created.status,201);assert.match(created.post.media.url,/creator-media/);
  assert.equal((await call('POST','/?action=post',{body:'Another work',mediaPath:ticket.path},'Bob')).status,403);
 });
+
+test('threads carry an optional title and topic, filter by topic and sort by trending, and old posts stay General',async()=>{
+ const {call,values,members}=fixture();
+ await call('POST','/',{name:'Alice',public:true},'Alice');
+ const reset=()=>{values.delete('digivated:creator:rate:'+alice);for(const k of [...values.keys()])if(k.startsWith('digivated:creator:daily:')||k.startsWith('digivated:creator:duplicate:'))values.delete(k);};
+ assert.equal((await call('POST','/?action=post',{body:'Needs a bad topic',topic:'nope'},'Alice')).status,400);
+ assert.equal((await call('POST','/?action=post',{body:'Title with link',title:'See https://spam.example'},'Alice')).status,400);
+ assert.equal((await call('POST','/?action=post',{body:'Title too short',title:'Hi'},'Alice')).status,400);
+ const plain=await call('POST','/?action=post',{body:'An older style post'},'Alice');assert.equal(plain.status,201);assert.equal(plain.post.topic,'general');reset();
+ const feedback=await call('POST','/?action=post',{body:'Please tell me what is unclear',title:'Roast my landing page',topic:'feedback'},'Alice');assert.equal(feedback.status,201);assert.equal(feedback.post.title,'Roast my landing page');reset();
+ const legacy={id:'123e4567-e89b-42d3-a456-426614174099',authorId:alice,body:'Legacy post without topic',createdAt:new Date(Date.now()-3600000).toISOString(),replies:0};
+ values.set('digivated:creator:post:'+legacy.id,JSON.stringify(legacy));
+ const all=await call('GET','/?action=posts');assert.equal(all.posts.length,2);
+ const onlyFeedback=await call('GET','/?action=posts&topic=feedback');assert.deepEqual(onlyFeedback.posts.map(p=>p.id),[feedback.post.id]);assert.equal(onlyFeedback.posts[0].title,'Roast my landing page');
+ const general=await call('GET','/?action=posts&topic=general');assert.equal(general.posts.length,1);assert.equal(general.posts[0].topic,'general');
+ assert.equal((await call('GET','/?action=posts&topic=nope')).status,400);
+ members.set('digivated:creator:likes:'+plain.post.id,new Set([alice,bob,'x','y','z']));
+ const trending=await call('GET','/?action=posts&sort=trending');assert.equal(trending.posts[0].id,plain.post.id);
+ assert.equal((await call('GET','/?action=posts&sort=trending&saved=1','',  'Alice')).status,400);
+});
