@@ -154,7 +154,7 @@ export function makeCreatorProfileHandler(deps={}){
    if(url.searchParams.get('action')==='post'){
     const profileRaw=await redis(['GET',key(account.id)]),profile=profileRaw?JSON.parse(profileRaw):null;
     if(!profile?.public)return send(403,{error:'Make your creator profile public before posting.'});
-    const content=String(body?.body||'').trim(),parentId=body?.parentId||null,title=parentId?'':String(body?.title||'').trim(),topic=parentId?'':String(body?.topic||'general');
+    const content=String(body?.body||'').trim(),parentId=body?.parentId||null,title=parentId?'':String(body?.title||'').trim(),topic=parentId?'general':String(body?.topic||'general');
     if(!TOPICS.includes(topic)||title&&(title.length<3||title.length>90||/[\u0000-\u001f\u007f]/.test(title)||hasLink(title)))return send(400,{error:'Use a 3–90 character title without links and choose a listed topic.'});
     if(content.length<2||content.length>280||/[\u0000-\u001f\u007f]/.test(content)||hasLink(content))return send(400,{error:'Write 2–280 characters without links. Share project links through your profile.'});
     if(parentId){if(!UUID.test(parentId))return send(400,{error:'This conversation is unavailable.'});const parentRaw=await redis(['GET',postKey(parentId)]),parent=parentRaw?JSON.parse(parentRaw):null,parentProfile=parent?await redis(['GET',key(parent.authorId)]):null;if(!parent||parent.hidden||parent.parentId||!parentProfile||!JSON.parse(parentProfile).public)return send(400,{error:'This conversation is unavailable.'});}
