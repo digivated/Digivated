@@ -24,10 +24,11 @@ async function upcomingRecord(redis, id) {
 }
 
 // Current public projection for podium rows; removed projects drop out.
+// Same rule as the public directory: indexed as public and still public by its record.
 async function publicProjects(redis, ids) {
   if (!ids.length) return new Map();
-  const raws = await redis(['MGET', ...ids.map(id => `digivated:public:submission:${id}`)]);
-  return new Map(ids.flatMap((id, i) => { try { const p = JSON.parse(raws[i]); return p?.id ? [[id, p]] : []; } catch { return []; } }));
+  const [indexed, records] = await Promise.all([redis(['MGET', ...ids.map(id => `digivated:public:submission:${id}`)]), redis(['MGET', ...ids.map(id => storageKey('submission', id))])]);
+  return new Map(ids.flatMap((id, i) => { if (!indexed[i] || !records[i]) return []; try { const p = projectPublic(JSON.parse(records[i])); return p ? [[id, p]] : []; } catch { return []; } }));
 }
 const card = p => ({ id: p.id, name: p.name, description: p.description || '', category: p.category || '', pricing: p.pricing || '', creator: p.creator || '', pageUrl: p.pageUrl, image: p.image || '', url: p.url || '' });
 

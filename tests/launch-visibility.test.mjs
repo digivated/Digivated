@@ -10,7 +10,6 @@ import { makeMakerStatsHandler } from '../server/maker-stats.mjs';
 import { makeBadgeHandler, renderAwardBadge } from '../server/badge.mjs';
 import { listNotifications, notifyProjectApproval } from '../server/notifications.mjs';
 import { awardBadgeSnippet } from '../server/badge-snippets.mjs';
-import { projectPublic } from '../server/admin-store.mjs';
 import {
   VOTE_WEIGHT, bumpStat, finalizeLastWeek, forgetVoteWeight, isFresh, launchScores, notePost, readStats,
   recordVoteWeight, voteWeightKey, withLaunchScores, trustFirstKey, bestPlace,
@@ -45,7 +44,7 @@ async function seedProject(redis, { id, name, accountId, email = 'maker@fixture.
   const record = { id, name, creator: name + ' team', description: name + ' does one thing well.', status, consent: true, image: 'data:image/png;base64,AA==', url: `https://${id}.test/`, accountId, email, date: publishedAt, publishedAt, revision: 1 };
   await redis(['SET', `digivated:submission:${id}`, JSON.stringify(record)]);
   if (status === 'approved' || status === 'featured') {
-    await redis(['SET', `digivated:public:submission:${id}`, JSON.stringify(projectPublic(record))]);
+    await redis(['SET', `digivated:public:submission:${id}`, JSON.stringify({ id, name })]); // production projections are partial
     await redis(['ZADD', 'digivated:public:submissions', Date.parse(publishedAt), id]);
   }
   return record;
@@ -135,7 +134,7 @@ test('real Redis: last week freezes once, the podium is notified and badges only
     const launches = caller(makeLaunchesHandler({ redis, verifyAccount, now: () => now }));
     const podium = await launches('GET', '/api/launches?view=podium');
     assert.equal(podium.status, 200);
-    assert.deepEqual(podium.data.week.podium.map(p => [p.id, p.rank, p.name]), [['beta', 1, 'Beta'], ['alpha', 2, 'Alpha'], ['gamma', 3, 'Gamma']]);
+    assert.deepEqual(podium.data.week.podium.map(p => [p.id, p.rank, p.name, p.pageUrl]), [['beta', 1, 'Beta', '/projects/listing/beta'], ['alpha', 2, 'Alpha', '/projects/listing/alpha'], ['gamma', 3, 'Gamma', '/projects/listing/gamma']]);
     assert.deepEqual(podium.data.order, ['beta', 'alpha', 'gamma', 'delta']);
     await redis(['DEL', 'digivated:public:submission:alpha']);
     const winners = await launches('GET', '/api/launches?view=winners');
