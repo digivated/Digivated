@@ -7,6 +7,7 @@ import { makeSavedItemHandler } from './saved-items.mjs';
 import { makeProjectViewHandler } from './project-views.mjs';
 import { makeResourceViewHandler } from './resource-views.mjs';
 import { makeCardInteractionHandler } from './card-interactions.mjs';
+import { makeFeedbackPointsHandler } from './feedback-points.mjs';
 import { makeCarouselHandler, makeCarouselPublishHandler } from './carousels.mjs';
 import { makeFoundingAccessHandler, makeFoundingLogoutHandler } from './founding-access.mjs';
 import { makeProjectAccountHandler } from './project-account.mjs';
@@ -33,6 +34,7 @@ export function defaultPublicHandlers(overrides = {}) {
     'project-views': makeProjectViewHandler(),
     'resource-views': makeResourceViewHandler(),
     'card-interactions': makeCardInteractionHandler(),
+    'feedback-points': makeFeedbackPointsHandler(),
     carousels: makeCarouselHandler(),
     'carousel-publish': makeCarouselPublishHandler(),
     'founding-access': makeFoundingAccessHandler(),

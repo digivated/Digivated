@@ -5,8 +5,9 @@ import {primaryLinks,menuLinks,footerGroups} from '../src/data/site-navigation.m
 test('shared public destinations use canonical current routes without repeated footer links',async()=>{
  const footer=footerGroups.flatMap(group=>group.links);
  assert.equal(new Set(footer.map(([href])=>href)).size,footer.length);
- for(const [href] of [...primaryLinks,...menuLinks,...footer]){
-  if(!href.startsWith('/'))continue;
+ for(const [link] of [...primaryLinks,...menuLinks,...footer]){
+  if(!link.startsWith('/'))continue;
+  const href=link.split('?')[0];
   assert.ok(!['/shop','/products','/promote','/founding-members','/community'].includes(href));
   await readFile(new URL('../src/pages'+href+(href==='/resources'?'/index':'')+'.astro',import.meta.url));
  }

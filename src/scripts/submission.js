@@ -161,6 +161,7 @@ if (form) {
       const pending = account.submissions?.find(item => item.awaitingInstantPayment);
       if (pending && account.mailboxVerified) showCheckout(pending.id);
       if (pending && !account.mailboxVerified) intent.value = 'instant';
+      if (!pending && query.get('spot') === '1') intent.value = 'instant';
       syncIntent();
       updateButton();
     } catch {

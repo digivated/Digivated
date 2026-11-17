@@ -1,0 +1,32 @@
+---
+// Compact, tabbed launch board. Rows are rendered by home-board.js from /api/projects?ranking=1.
+const tabs = [
+  { key: 'current', label: 'This week' },
+  { key: 'previous', label: 'Last week' },
+  { key: 'archive', label: 'All time' },
+];
+---
+<section id="this-week" class="dg-board" data-board aria-labelledby="dg-board-title">
+  <header class="dg-board-head">
+    <div>
+      <p class="dg-label" data-board-range>Weekly launches</p>
+      <h2 id="dg-board-title">Launch board</h2>
+    </div>
+    <a class="dg-points" href="#how-points-work" data-points-chip hidden><span aria-hidden="true">✦</span> <strong data-points-total>0</strong> pts<span class="sr-only"> earned from feedback. How points work.</span></a>
+    <div class="dg-tabs" role="tablist" aria-label="Launch period">
+      {tabs.map((tab, index) => <button type="button" role="tab" id={`dg-tab-${tab.key}`} aria-controls="dg-board-list" aria-selected={index === 0 ? 'true' : 'false'} tabindex={index === 0 ? 0 : -1} data-board-tab={tab.key}>{tab.label}<span class="dg-tab-count" data-tab-count></span></button>)}
+      <span class="dg-tab-ink" aria-hidden="true"></span>
+    </div>
+  </header>
+  <p class="dg-board-summary" data-board-summary role="status">Loading launches…</p>
+  <ol id="dg-board-list" class="dg-board-list" role="tabpanel" aria-labelledby="dg-tab-current" data-board-list>
+    {Array.from({ length: 5 }, () => <li class="dg-row is-loading" aria-hidden="true"><span class="dg-rank"></span><span class="dg-logo"></span><span class="dg-main"><strong></strong><small></small></span></li>)}
+  </ol>
+  <div class="dg-board-foot">
+    <button type="button" class="dg-more" data-board-more hidden>Show more</button>
+    <a href="/rankings" class="dg-quiet-link">Full rankings <span aria-hidden="true">→</span></a>
+    <a href="/discover" class="dg-quiet-link">All projects <span aria-hidden="true">→</span></a>
+  </div>
+  <noscript><p><a href="/discover">Open the project directory.</a></p></noscript>
+</section>
+<script>import '../scripts/home-board.js'; import '../scripts/visit-feedback.js';</script>

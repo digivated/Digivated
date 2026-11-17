@@ -6,13 +6,13 @@ for(const width of [320,390,768,1024,1440])test(`compact menu fits and keeps all
  await page.goto('http://127.0.0.1:4321/');
  const trigger=page.locator('.notebook-navigation>summary');
  await expect(trigger).toHaveText('');await expect(trigger.locator('.navigation-trigger-menu')).toBeVisible();
- await expect(page.locator('.header-membership')).toBeVisible();await expect(page.locator('.header-membership')).toHaveAttribute('href','/membership');
+ await expect(page.locator('.dg-header-submit')).toBeVisible();await expect(page.locator('.dg-header-submit')).toHaveAttribute('href','/submit-project');
  const controls=await page.locator('.compact-header-actions>button,.compact-header-actions>a,.notebook-navigation>summary').evaluateAll(es=>es.filter(e=>e.getBoundingClientRect().width>0).map(e=>e.getBoundingClientRect().toJSON()));
  for(let i=0;i<controls.length;i++){expect(controls[i].x).toBeGreaterThanOrEqual(0);expect(controls[i].right).toBeLessThanOrEqual(width);if(i)expect(controls[i].left).toBeGreaterThanOrEqual(controls[i-1].right);}
  await page.screenshot({path:test.info().outputPath(`header-${width}.png`)});
  await trigger.click();await expect(trigger.locator('.navigation-trigger-close')).toBeVisible();
  const menu=page.locator('#explore-navigation');await expect(menu).toBeVisible();
- await expect(menu.locator('.navigation-destinations>a')).toHaveText(['Projects','Creators','News','Resources','Rankings','Membership','Submit a project']);
+ await expect(menu.locator('.dg-menu-group>a')).toHaveText(['Discover','Rankings','Creators','News','Resources','Market Scanner','Submit a project','Claim a $3 spot','Membership','Embed badges']);
  await expect(menu.locator('small,.navigation-icon,.navigation-builder,.navigation-products')).toHaveCount(0);
  await expect(menu.locator('a[href="/membership"]')).toHaveCount(1);await expect(menu.locator('a[href="/submit-project"]')).toHaveCount(1);
  const rect=await menu.boundingBox();expect(rect!.height).toBeLessThan(530);expect(rect!.x).toBeGreaterThanOrEqual(0);expect(rect!.x+rect!.width).toBeLessThanOrEqual(width);

@@ -74,6 +74,8 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
    if(menuLogin)menuLogin.hidden=hasAccount;
    if(inboxBadge){inboxBadge.hidden=true;counts.inbox=0;if(state==='signed-in'){fetch('/api/creator-inbox?action=list',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'}).then(response=>response.ok?response.json():null).then(data=>{if(current!==request)return;const unread=(data?.conversations||[]).reduce((sum,item)=>sum+Number(item.unread||0),0);counts.inbox=unread;inboxBadge.textContent=label(unread);inboxBadge.hidden=!unread;showCounts();}).catch(()=>{});}}
    if(notificationBadge){notificationBadge.hidden=true;counts.notifications=0;if(menuNotificationBadge)menuNotificationBadge.hidden=true;if(state==='signed-in'){fetch('/api/notifications?action=summary',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'}).then(response=>response.ok?response.json():null).then(data=>{if(current!==request)return;const unread=Math.max(0,Number(data?.unread)||0);counts.notifications=unread;notificationBadge.textContent=label(unread);notificationBadge.hidden=!unread;if(menuNotificationBadge){menuNotificationBadge.textContent=unread>9?'9+ new':`${unread} new`;menuNotificationBadge.hidden=!unread;}showCounts();}).catch(()=>{});}}
+   const points=document.getElementById('header-menu-points');
+   if(points){points.hidden=true;if(state==='signed-in'){fetch('/api/feedback-points?action=me',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'}).then(response=>response.ok?response.json():null).then(data=>{if(current!==request||!data)return;points.textContent=String(data.total);points.hidden=false;document.dispatchEvent(new CustomEvent('digivated:points',{detail:data}));}).catch(()=>{});}}
    showCounts();
   }catch{
    // Keep the visible sign-in route available during a temporary outage.
@@ -85,3 +87,5 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)update(true);});
  setInterval(()=>{if(!document.hidden&&signedIn)update();},90000);
 }
+
+document.addEventListener('digivated:points-awarded',event=>{const points=document.getElementById('header-menu-points');if(points&&Number.isFinite(event.detail?.total)){points.textContent=String(event.detail.total);points.hidden=false;}});

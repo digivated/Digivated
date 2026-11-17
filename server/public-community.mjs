@@ -2,6 +2,7 @@ import { rankingPeriodStarts } from '../src/lib/launch-calendar.mjs';
 import { resourceArticlesVisible } from '../src/data/resource-publication.mjs';
 import { withProjectViews } from './project-views.mjs';
 import { withResourceViews } from './resource-views.mjs';
+import { withProjectBoosts } from './feedback-points.mjs';
 import { redisClient } from './submissions.mjs';
 import { publicRecords, validId, storageKey, projectPublic, contentPublic } from './admin-store.mjs';
 export function makePublicHandler(type, deps = {}) {
@@ -65,6 +66,7 @@ export function makePublicHandler(type, deps = {}) {
           ]);
           return {...item,votes:{all:Number(total||0),daily:Number(daily||0),weekly:Number(weekly||0),monthly:Number(monthly||0)}};
         }));
+        items=await withProjectBoosts(redis,items,now);
       }
       if (kind === 'resource') items = await withResourceViews(redis, items);
       // Article bodies are fetched only on the detail page.

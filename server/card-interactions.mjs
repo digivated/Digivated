@@ -8,7 +8,7 @@ import { addNotification } from './notifications.mjs';
 const builtinResources = new Set(['builtin-ui-ux-prompt-packet', ...resources.filter(item => item.status === 'published').map(item => item.slug)]);
 const itemKey = (type,id) => `${type}:${id}`;
 const likeKey = (type,id) => `digivated:card:likes:${itemKey(type,id)}`;
-const commentIndex = (type,id) => `digivated:card:comments:${itemKey(type,id)}`;
+export const commentIndex = (type,id) => `digivated:card:comments:${itemKey(type,id)}`;
 export const commentKey = id => `digivated:card:comment:${id}`;
 const LIKE = `
 local liked = redis.call('GET', KEYS[1])
@@ -31,7 +31,7 @@ for i = 4, #ARGV do
   result[#result + 1] = redis.call('ZCOUNT', KEYS[3], ARGV[i], ARGV[2])
 end
 return result`;
-const COMMENT = `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],86400) end; if n>3 then return 0 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); if ARGV[4]=='approved' then redis.call('ZADD',KEYS[4],ARGV[2],ARGV[3]) end; return 1`;
+export const COMMENT = `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],86400) end; if n>3 then return 0 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); if ARGV[4]=='approved' then redis.call('ZADD',KEYS[4],ARGV[2],ARGV[3]) end; return 1`;
 const MODERATE = `local raw=redis.call('GET',KEYS[1]); if not raw then return -1 end; local entry=cjson.decode(raw); if entry.status~='pending' and not (entry.status=='approved' and entry.purpose=='project-feedback' and ARGV[1]=='rejected') then return 0 end; if ARGV[1]=='approved' and entry.purpose=='packet-feedback' and entry.quoteConsent~=true then return -3 end; entry.status=ARGV[1]; redis.call('SET',KEYS[1],cjson.encode(entry)); if ARGV[1]=='approved' then redis.call('ZADD',KEYS[2],ARGV[2],entry.id) else redis.call('ZREM',KEYS[2],entry.id) end; return 1`;
 
 export async function isPublicItem(redis,type,id) {

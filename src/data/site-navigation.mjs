@@ -6,19 +6,18 @@ const exploreLinks = [
   ['/resources', 'Resources'],
   ['/rankings', 'Rankings'],
 ];
+// The header bar keeps four destinations; everything else lives in the compact menu.
 export const primaryLinks = [
   ['/discover', 'Discover'],
-  ['/submit-project', 'Submit'],
   ['/rankings', 'Rankings'],
   ['/creators', 'Creators'],
   ['/news', 'News'],
-  ['/invstr', 'Market Scanner'],
 ];
-export const menuLinks = [
-  ...primaryLinks,
-  ['/resources', 'Resources'],
-  ['/membership', 'Membership'],
+export const menuGroups = [
+  { title: 'Explore', links: [...primaryLinks, ['/resources', 'Resources'], ['/invstr', 'Market Scanner']] },
+  { title: 'Build', links: [['/submit-project', 'Submit a project'], ['/submit-project?spot=1', 'Claim a $3 spot'], ['/membership', 'Membership'], ['/badges', 'Embed badges']] },
 ];
+export const menuLinks = menuGroups.flatMap(group => group.links);
 export const footerGroups = [
   { title: 'Explore', links: exploreLinks },
   { title: 'Your workspace', links: [

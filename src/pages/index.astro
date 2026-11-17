@@ -1,61 +1,58 @@
 ---
 import Platform from '../layouts/Platform.astro';
 import UiIcon from '../components/UiIcon.astro';
-import HomeLaunches from '../components/HomeLaunches.astro';
-import FeaturedProjects from '../components/FeaturedProjects.astro';
 import SiteActivity from '../components/SiteActivity.astro';
-import ProjectTicker from '../components/ProjectTicker.astro';
+import SpotStrip from '../components/SpotStrip.astro';
+import LaunchBoard from '../components/LaunchBoard.astro';
 import '../styles/project-wall.css';
 import '../styles/home-refinement.css';
 import '../styles/home-about.css';
 ---
 <Platform title="Indie Project Directory & Weekly Launches" description="Discover indie software and tools, upvote weekly launches, and give builders feedback. Submit your own project to Digivated for free.">
-  <section class="home-editorial" aria-labelledby="home-title">
-    <div class="home-workshop-copy">
-    <p class="home-editorial-kicker">A HOME FOR WHAT YOU'RE BUILDING</p>
-    <h1 id="home-title">Get your product<br/><em>in front of <span data-site-visits-headline>visitors.</span></em></h1>
-    <p>Find indie projects, give feedback, and share what you’re building.</p>
-    <div class="home-editorial-actions">
-      <a class="button primary share-project-cta" href="/submit-project">Share your project <UiIcon name="arrow" size={18}/></a>
-      <a class="button" href="#this-week">Explore this week <UiIcon name="arrow" size={16}/></a>
+  <SpotStrip/>
+  <section class="dg-hero" aria-labelledby="dg-home-title">
+    <div class="dg-hero-copy">
+      <p class="dg-label dg-reveal">Weekly indie launches</p>
+      <h1 id="dg-home-title" class="dg-reveal">Get your product in front of <span class="dg-hero-accent" data-site-visits-headline>visitors.</span></h1>
+      <p class="dg-hero-lede dg-reveal">Launch free. Review other builders’ products. Every useful review earns points that push your own launch up the board.</p>
+      <div class="dg-hero-actions dg-reveal">
+        <a class="dg-btn dg-btn-primary" href="/submit-project">Submit your product <UiIcon name="arrow" size={16}/></a>
+        <a class="dg-btn" href="#this-week">See this week</a>
+      </div>
+      <div class="dg-live dg-reveal" aria-label="Digivated right now">
+        <SiteActivity/>
+        <div class="dg-live-cell" title="Free launches publish every Monday at 9:00 AM Eastern">
+          <span class="dg-live-label">Next free launch</span>
+          <time id="queue-countdown" role="timer" aria-live="off"></time>
+        </div>
+        <details class="dg-live-cell dg-updates">
+          <summary>What’s new <UiIcon name="chevron" size={12}/></summary>
+          <ul>
+            <li><a href="#how-points-work">Feedback points</a>: review a product after visiting it and lift your own launch.</li>
+            <li><a href="/submit-project?spot=1">Instant spots</a>: publish now and take an open homepage spot for 7 days.</li>
+            <li><a href="/invstr">Market Scanner</a> works without API keys.</li>
+          </ul>
+        </details>
+      </div>
     </div>
-    </div>
-    <div class="fl-window" aria-hidden="true">
+    <div class="fl-window dg-hero-art" aria-hidden="true">
       <div class="fl-window-bar"><span class="fl-window-dots">● ● ●</span><span class="fl-hud">digivated / workbench</span><span class="fl-hud fl-live">● live</span></div>
       <pre class="ascii-field home-workshop" data-ascii-field></pre>
     </div>
   </section>
-  <section class="fl-home-stats" aria-label="Digivated right now">
-    <div class="fl-stat"><SiteActivity/></div>
-      <div class="fl-stat"><aside class="queue-countdown" aria-label="Weekly project queue">
-        <div>
-          <strong>Next free project launch</strong>
-          <small>Weekly · Mondays at 9:00 AM Eastern</small>
-        </div>
-        <time id="queue-countdown" role="timer" aria-live="off"></time>
-      </aside></div>
-      <div class="fl-stat"><details class="home-updates">
-        <summary>What’s new <UiIcon name="chevron" size={14}/></summary>
-        <ul>
-          <li><a href="/submit-project">Free launches</a> now publish on schedule after you verify your website badge.</li>
-          <li><a href="/creators">Creators</a> can share updates and media, follow builders, and send messages.</li>
-          <li><a href="/invstr">Market Scanner</a> works without API keys; optional connections add more data.</li>
-        </ul>
-      </details></div>
+  <LaunchBoard/>
+  <section id="how-points-work" class="dg-how" aria-labelledby="dg-how-title">
+    <header><p class="dg-label">How it works</p><h2 id="dg-how-title">Give feedback. Get seen.</h2></header>
+    <ol class="dg-how-steps">
+      <li class="dg-step"><span class="dg-step-num">01</span><h3>Visit a launch</h3><p>Open any product from the board or a spot. Spend at least 20 seconds actually trying it.</p></li>
+      <li class="dg-step"><span class="dg-step-num">02</span><h3>Leave a useful review</h3><p>When you come back, say what works and what to improve. Specific, two-sided reviews earn up to 14 points.</p></li>
+      <li class="dg-step"><span class="dg-step-num">03</span><h3>Climb the board</h3><p>Every 10 points you earn this week counts as one extra upvote for your own launch. Sign in to collect them.</p></li>
+    </ol>
+    <p class="dg-how-note">One reward per product, up to 60 points a day. Reviews on your own project don’t earn points. Every review is visible to the maker.</p>
   </section>
-  <div id="home-spotlights"><FeaturedProjects/></div>
-  <HomeLaunches/>
-  <ProjectTicker/>
-  <section class="home-about" aria-labelledby="home-about-title">
-    <p class="home-about-label">ABOUT DIGIVATED</p>
-    <h2 id="home-about-title">Discover and launch indie projects</h2>
-    <p>Digivated is an indie project directory and launch community. Browse <a href="/discover">independent software and tools</a>, see <a href="/rankings">community upvote rankings</a>, or <a href="/submit-project">submit your project</a> for a free launch.</p>
-
-    <div class="home-about-details">
-      <div><h3>How are projects listed?</h3><p>Verify a badge to schedule a free launch, pay $3 to publish right away, or request a Membership Spotlight. Every launch gets a permanent page.</p></div>
-      <div><h3>How are projects featured?</h3><p>We review projects for Spotlight and sort featured picks by views. A spotlight doesn’t guarantee traffic or engagement.</p></div>
-    </div>
-    <a href="/about">Read how Digivated works <UiIcon name="arrow" size={15}/></a>
+  <section class="dg-about" aria-labelledby="dg-about-title">
+    <h2 id="dg-about-title">Discover and launch indie projects</h2>
+    <p>Digivated is an indie project directory and launch community. Browse <a href="/discover">independent software and tools</a>, see <a href="/rankings">community rankings</a>, or <a href="/submit-project">submit your project</a>. Verify a badge for a free Monday launch, or publish instantly for $3 and take an open spot. <a href="/about">How Digivated works →</a></p>
   </section>
 </Platform>
 
@@ -82,87 +79,3 @@ import '../styles/home-about.css';
   setInterval(updateCountdown, 1000);
 </script>
 
-<style>
-  @layer ascii {
-  :global(html#digivated-root[data-ascii] body.home-refresh #main .home-editorial-actions .share-project-cta) {
-    display: inline-flex;
-    align-items: center;
-    gap: .75rem;
-    min-height: 48px;
-    padding: .8rem 1.1rem !important;
-    background: transparent !important;
-    color: #eee !important;
-    border: 1px solid #aaa !important;
-    font-size: 1rem !important;
-    font-weight: 700;
-    text-decoration: none !important;
-  }
-
-  :global(html#digivated-root[data-ascii] body.home-refresh #main .home-editorial-actions .share-project-cta:hover) {
-    background: rgb(255 255 255 / 8%) !important;
-    border-color: #eee !important;
-    text-decoration: underline !important;
-  }
-
-  }
-
-  .queue-countdown {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: .6rem 1.5rem;
-    inline-size: fit-content;
-    max-inline-size: 100%;
-    margin-block: 1rem 0;
-    padding-block: .65rem;
-  }
-
-  .queue-countdown strong,
-  .queue-countdown small {
-    display: block;
-  }
-
-  .queue-countdown strong {
-    font-size: .875rem;
-  }
-
-  .queue-countdown small {
-    margin-block-start: .3rem;
-    font-size: .72rem;
-  }
-
-  .queue-countdown time {
-    font-size: clamp(1.35rem, 2.8vw, 2rem);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
-  .home-updates {
-    width: min(100%, 640px);
-    margin: 22px 0 0;
-    border-block: 1px solid #ffffff29;
-    color: #d5d5d5;
-  }
-
-  .home-updates summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    min-height: 48px;
-    cursor: pointer;
-    list-style: none;
-    font-size: 13px;
-    font-weight: 650;
-  }
-
-  .home-updates summary::-webkit-details-marker { display: none; }
-  .home-updates summary svg { flex: none; transition: transform .2s ease; }
-  .home-updates[open] summary svg { transform: rotate(180deg); }
-  .home-updates summary:focus-visible, .home-updates a:focus-visible { outline: 2px solid #d2b5ff; outline-offset: 3px; }
-  .home-updates ul { display: grid; gap: 14px; margin: 0; padding: 2px 0 20px 20px; font-size: 12px; line-height: 1.6; }
-  .home-updates li::marker { color: #a98ac7; }
-  .home-updates a { color: #f3e5ff; text-underline-offset: .25em; }
-  @media(prefers-reduced-motion:reduce) { .home-updates summary svg { transition: none; } }
-</style>
