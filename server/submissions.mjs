@@ -94,6 +94,35 @@ async function publishInstantProject(redis, account, id, config, fetcher) {
   return projection;
 }
 
+// Backing out of an unpaid Instant checkout. If the payment already went
+// through, publish instead so nobody loses a purchase; otherwise remove the
+// unpaid draft so the maker can pick another launch option straight away.
+const CANCEL_INSTANT = `local raw=redis.call('GET',KEYS[1]); if not raw then return 0 end
+local row=cjson.decode(raw)
+if row.accountId~=ARGV[1] or row.status~='pending' or type(row.promotion)~='table' or row.promotion.included~='instant-launch' or row.promotion.verified then return -1 end
+redis.call('DEL',KEYS[1]); redis.call('ZREM',KEYS[2],ARGV[2]); redis.call('ZREM',KEYS[3],ARGV[2]); return 1`;
+async function cancelInstantProject(redis, account, id, config, fetcher, secret) {
+  if (!validId(id)) throw new SubmissionError(400, 'Choose a saved project.');
+  const key = `digivated:submission:${id}`;
+  const record = JSON.parse(await redis(['GET', key]));
+  if (!record) return { cancelled: true };
+  if (record.accountId !== account.id || record.promotion?.included !== 'instant-launch') throw new SubmissionError(404, 'Saved project not found.');
+  if (record.promotion.verified || record.status !== 'pending') throw new SubmissionError(409, 'This project is already paid for and can’t be cancelled here.');
+  if (config) {
+    try {
+      const project = await publishInstantProject(redis, account, id, config, fetcher);
+      return { published: true, pageUrl: project.pageUrl };
+    } catch (error) {
+      if (!(error instanceof SubmissionError && error.status === 409 && /could not find an eligible payment/i.test(error.message))) {
+        throw new SubmissionError(503, 'We couldn’t confirm whether you paid, so nothing was cancelled. Try again in a moment.');
+      }
+    }
+  }
+  const removed = await redis(['EVAL', CANCEL_INSTANT, 3, key, 'digivated:submissions', accountIndex(record.email, secret), account.id, id]);
+  if (removed === -1) throw new SubmissionError(409, 'This project changed. Refresh Your Projects.');
+  return { cancelled: true };
+}
+
 export class SubmissionError extends Error { constructor(status,message) { super(message); this.status=status; } }
 export function validateSubmission(body) {
   const fail = message => {throw new SubmissionError(400,message);};
@@ -219,6 +248,10 @@ export function makeSubmissionHandler(deps={}) {
           const {html}=await (deps.readSite||readProjectSite)(body.url);
           return send(200,siteDetails(html));
         }catch(error){throw new SubmissionError(400,error.message||'Could not check that website. You can enter details manually.');}
+      }
+      if (body?.action === 'cancel-instant') {
+        const instant = await instantLaunchConfig(env, deps.fetcher || fetch);
+        return send(200, await cancelInstantProject(deps.redis || redisClient(env), account, body.id, instant, deps.fetcher || fetch, env.SUBMISSIONS_REDIS_REST_TOKEN || 'test-only'));
       }
       if (body?.action === 'publish-instant') {
         const instant = await instantLaunchConfig(env, deps.fetcher || fetch);

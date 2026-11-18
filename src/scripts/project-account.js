@@ -91,7 +91,7 @@ if(state){
    else if(message){const next=document.createElement('p');next.className='fl-next-copy'+(stage.key==='scheduled'?' account-launch':'');next.textContent=message;card.append(next);}
    const actions=document.createElement('div');actions.className='fl-actions';
    if(['approved','featured'].includes(item.status)){const view=Object.assign(document.createElement('a'),{className:'button primary',href:item.pageUrl||'/projects/listing/'+encodeURIComponent(item.id),textContent:'View project and feedback'});actions.append(view);}
-   if(item.awaitingInstantPayment){const finish=Object.assign(document.createElement('a'),{className:'button primary',href:'/submit-project?resume='+encodeURIComponent(item.id),textContent:'Finish publishing'});actions.append(finish);}
+   if(item.awaitingInstantPayment){const finish=Object.assign(document.createElement('a'),{className:'button primary',href:'/submit-project?resume='+encodeURIComponent(item.id),textContent:'Finish publishing'});const cancel=Object.assign(document.createElement('button'),{type:'button',className:'button',textContent:'Cancel — not charged'});cancel.dataset.cancelInstant=item.id;cancel.onclick=()=>cancelInstant(item,cancel);actions.append(finish,cancel);}
    if(actions.childElementCount)card.append(actions);
    if(['approved','featured'].includes(item.status))card.append(statsPanel(item));
    const later=badgeLater(item,stage);if(later)card.append(later);
@@ -155,6 +155,23 @@ if(state){
    replacement.querySelector('.fl-tracker').after(note);
    card.replaceWith(replacement);note.focus?.();
    document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
+  }
+  // Unpaid Instant checkout: remove the draft (or publish it if the payment did go through).
+  async function cancelInstant(item,button){
+   const card=document.getElementById('project-'+item.id);
+   let note=card.querySelector('[data-cancel-note]');
+   if(!note){note=document.createElement('p');note.className='fl-status';note.dataset.cancelNote='';note.setAttribute('role','status');button.parentElement.after(note);}
+   button.disabled=true;note.textContent='Cancelling…';
+   try{
+    const {data:{session:current}}=await client.auth.getSession();if(!current)throw Error('Your session expired. Sign in again to cancel.');
+    const response=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${current.access_token}`},body:JSON.stringify({action:'cancel-instant',id:item.id}),signal:AbortSignal.timeout(30000)});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw Error(result.error||'Could not cancel. Try again.');
+    if(result.published){const replacement=projectCard({...item,status:'approved',pageUrl:result.pageUrl,awaitingInstantPayment:false});card.replaceWith(replacement);return;}
+    const done=document.createElement('p');done.className='fl-status';done.dataset.tone='ok';done.setAttribute('role','status');done.tabIndex=-1;done.textContent=`Cancelled “${item.name}”. You weren’t charged, and you can submit it again any time.`;
+    card.replaceWith(done);done.focus();
+    document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
+   }catch(error){note.textContent=error.message||'Could not cancel. Try again.';button.disabled=false;}
   }
   async function loadSubmissions(){
    try{
