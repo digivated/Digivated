@@ -1,9 +1,8 @@
 import { accountSession } from './account-session.js';
-import { cardIconMarkup } from '../lib/card-icons.mjs';
+import { notificationRow } from './notification-item.js';
 
 const $ = id => document.getElementById(id);
 const prefInputs = [...document.querySelectorAll('[data-notification-pref]')];
-const label = { approved:'Project live', scheduled:'Launch scheduled', reply:'Reply', follow:'Follower', message:'Message', feedback:'Project feedback' };
 let token = '', preferences = null, items = [], busy = false, filter = 'all';
 const filterTabs = [...document.querySelectorAll('[data-notification-filter]')];
 filterTabs.forEach((tab, index) => {
@@ -26,33 +25,12 @@ function syncPreferences() {
   $('notifications-enabled').checked = preferences.enabled;
   for (const input of prefInputs) input.checked = preferences[input.dataset.notificationPref];
 }
-function relativeTime(value) {
-  const elapsed = Date.now() - Date.parse(value);
-  if (!Number.isFinite(elapsed) || elapsed < 0) return 'Recently';
-  const formatter = new Intl.RelativeTimeFormat(undefined,{numeric:'auto'});
-  if (elapsed < 3600000) return formatter.format(-Math.max(1,Math.floor(elapsed/60000)),'minute');
-  if (elapsed < 86400000) return formatter.format(-Math.floor(elapsed/3600000),'hour');
-  if (elapsed < 604800000) return formatter.format(-Math.floor(elapsed/86400000),'day');
-  return new Date(value).toLocaleDateString(undefined,{month:'short',day:'numeric'});
-}
 function itemLink(item) {
-  const link = document.createElement('a'); link.href = item.href; link.className = 'notification-item';
-  link.dataset.type = item.type;
-  if (item.unread) link.classList.add('unread');
-  const mark = document.createElement('span'); mark.className = 'notification-mark'; mark.setAttribute('aria-hidden','true'); mark.innerHTML = cardIconMarkup({reply:'comment',follow:'profile',message:'message',feedback:'sparkle',approved:'check',scheduled:'calendar'}[item.type] || 'bell');
-  const content = document.createElement('span'); content.className = 'notification-copy';
-  const kind = document.createElement('small'); kind.textContent = label[item.type] || 'Activity';
-  const title = document.createElement('strong'); title.textContent = item.title;
-  const time = document.createElement('time'); time.dateTime = item.createdAt; time.textContent = relativeTime(item.createdAt);
-  content.append(kind,title,time); link.append(mark,content);
-  if (item.unread) {
-    const dot = document.createElement('span'); dot.className = 'fl-unread-dot'; dot.textContent = 'New'; link.append(dot);
-    link.addEventListener('click', () => {
-      item.unread = false;
-      fetch('/api/notifications?action=read', {method:'POST',credentials:'same-origin',keepalive:true,headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({id:item.id})}).catch(()=>{});
-    });
-  }
-  return link;
+  return notificationRow(item, { onOpen: opened => {
+    if (!opened.unread) return;
+    opened.unread = false;
+    fetch('/api/notifications?action=read', {method:'POST',credentials:'same-origin',keepalive:true,headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({id:opened.id})}).catch(()=>{});
+  } });
 }
 function render() {
   const list = $('notifications-items'); list.replaceChildren();
@@ -68,7 +46,7 @@ function render() {
     const title = document.createElement('strong');
     const copy = document.createElement('p');
     if (filter === 'unread' && safe.length) { title.textContent = 'No unread notifications.'; copy.textContent = 'You’re all caught up.'; }
-    else { title.textContent = 'Nothing new right now.'; copy.textContent = preferences.enabled ? 'Launch updates, replies, follows, messages, and feedback will appear here.' : 'Launch updates appear here automatically. Turn on activity notifications below for replies, follows, and messages.'; }
+    else { title.textContent = 'Nothing new right now.'; copy.textContent = preferences.enabled ? 'Comments, replies, upvotes and launch updates will appear here.' : 'Launch updates appear here automatically. Turn on activity notifications below for replies, follows, and messages.'; }
     empty.append(title,copy); list.append(empty); return;
   }
   const groups = filter === 'unread' ? [['', shown]] : [['New', shown.filter(item => item.unread)], ['Earlier', shown.filter(item => !item.unread)]];

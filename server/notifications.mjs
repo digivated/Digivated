@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { projectPublic, validId } from './admin-store.mjs';
 
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
-const TYPES = ['reply', 'follow', 'message', 'feedback', 'approved', 'scheduled'];
+const TYPES = ['reply', 'follow', 'message', 'feedback', 'upvote', 'launch', 'award', 'approved', 'scheduled'];
 const TITLES = {
   approved: 'Your project is approved and live',
   scheduled: 'Badge verified. Your launch is scheduled',
@@ -10,6 +10,9 @@ const TITLES = {
   follow: 'A creator followed you',
   message: 'You have a new message',
   feedback: 'Your project received feedback',
+  upvote: 'You received new upvotes',
+  launch: 'A launch you follow is live',
+  award: 'Your launch made the weekly podium',
 };
 const RETENTION_SECONDS = 90 * 86400;
 export const notificationPreferencesKey = id => `digivated:notifications:preferences:${id}`;
@@ -26,7 +29,7 @@ async function pruneExpired(redis, userId) {
 }
 
 // Activity alerts are on unless a member has saved a different choice.
-export const defaultNotificationPreferences = Object.freeze({ enabled: true, reply: true, follow: true, message: true, feedback: true });
+export const defaultNotificationPreferences = Object.freeze({ enabled: true, reply: true, follow: true, message: true, feedback: true, upvote: true, launch: true, award: true });
 
 export async function getNotificationPreferences(redis, userId) {
   if (!UUID.test(userId)) throw new Error('Invalid account');
@@ -37,18 +40,31 @@ export async function getNotificationPreferences(redis, userId) {
 export async function saveNotificationPreferences(redis, userId, input) {
   if (!UUID.test(userId) || !input || typeof input !== 'object' || Array.isArray(input)) throw new Error('Invalid preferences');
   const keys = Object.keys(defaultNotificationPreferences);
-  if (Object.keys(input).some(key => !keys.includes(key)) || keys.some(key => typeof input[key] !== 'boolean')) throw new Error('Invalid preferences');
-  const preferences = Object.fromEntries(keys.map(key => [key, input[key]]));
+  // Unknown keys are rejected; settings a client does not know yet keep their current value.
+  if (Object.keys(input).some(key => !keys.includes(key)) || Object.values(input).some(value => typeof value !== 'boolean') || typeof input.enabled !== 'boolean') throw new Error('Invalid preferences');
+  const current = await getNotificationPreferences(redis, userId);
+  const preferences = Object.fromEntries(keys.map(key => [key, typeof input[key] === 'boolean' ? input[key] : current[key]]));
   await redis(['SET', notificationPreferencesKey(userId), JSON.stringify(preferences)]);
   return preferences;
 }
 
-export async function addNotification(redis, { recipientId, type, actorId, targetId } = {}) {
+// Links into a project or thread discussion, optionally to one comment.
+export const SAFE_LINK = /^\/(?:projects\/(?:listing\/)?[a-z0-9][a-z0-9-]{0,99}|threads\/[a-z0-9][a-z0-9-]{0,99})(?:#comment-[a-f0-9-]{36})?$/;
+const clip = (value, max) => typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, max) : '';
+function detail({ actorName, verb, subject, excerpt, count } = {}) {
+  const text = { actor: clip(actorName, 60), verb: clip(verb, 60), subject: clip(subject, 120), excerpt: clip(excerpt, 160) };
+  if (Number.isSafeInteger(count) && count > 0) text.count = count;
+  return Object.fromEntries(Object.entries(text).filter(([, value]) => value !== ''));
+}
+
+export async function addNotification(redis, { recipientId, type, actorId, targetId, link, ...text } = {}) {
   if (!UUID.test(recipientId) || !TYPES.includes(type) || (actorId && !UUID.test(actorId)) || actorId === recipientId) return false;
   const preferences = await getNotificationPreferences(redis, recipientId);
   if (!preferences.enabled || !preferences[type]) return false;
   let href;
-  if (type === 'reply' && UUID.test(targetId)) href = `/creators?post=${encodeURIComponent(targetId)}`;
+  if (['reply', 'feedback', 'launch'].includes(type) && typeof link === 'string' && SAFE_LINK.test(link)) href = link;
+  else if (type === 'award' && link === '/winners') href = link;
+  else if (type === 'reply' && UUID.test(targetId)) href = `/creators?post=${encodeURIComponent(targetId)}`;
   else if (type === 'follow' && UUID.test(actorId)) href = `/creator?id=${encodeURIComponent(actorId)}`;
   else if (type === 'message' && UUID.test(actorId)) href = `/inbox?id=${encodeURIComponent(actorId)}`;
   else if (type === 'feedback' && typeof targetId === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(targetId)) href = `/discover#project-${encodeURIComponent(targetId)}`;
@@ -56,10 +72,38 @@ export async function addNotification(redis, { recipientId, type, actorId, targe
   // Repeated follow requests should never fill somebody else's activity feed.
   if (type === 'follow' && await redis(['SET', `digivated:notifications:follow:${recipientId}:${actorId}`, '1', 'EX', 86400, 'NX']) !== 'OK') return false;
   const id = randomUUID(), createdAt = new Date().toISOString();
-  const item = { id, recipientId, type, title: TITLES[type], href, createdAt };
+  const item = { id, recipientId, type, title: TITLES[type], href, createdAt, ...detail(text) };
   await redis(['SET', itemKey(id), JSON.stringify(item), 'EX', RETENTION_SECONDS]);
   await redis(['ZADD', indexKey(recipientId), Date.now(), id]);
   await redis(['SADD', unreadKey(recipientId), id]);
+  await trimFeed(redis, recipientId);
+  return true;
+}
+
+// Upvotes arrive as one daily digest per item ("Pocketlog got 3 upvotes today"),
+// moved to the top and marked unread as more arrive. Never sent for your own votes.
+export async function notifyUpvoteDigest(redis, { recipientId, actorId, subjectKey, subject, link, noun = 'project' } = {}) {
+  if (!UUID.test(recipientId || '') || (actorId && actorId === recipientId) || typeof subjectKey !== 'string' || !/^[a-z0-9:-]{1,140}$/.test(subjectKey) || !SAFE_LINK.test(link || '')) return false;
+  const preferences = await getNotificationPreferences(redis, recipientId);
+  if (!preferences.enabled || !preferences.upvote) return false;
+  const day = new Date().toISOString().slice(0, 10);
+  const digestKey = `digivated:notifications:digest:${recipientId}:${subjectKey}:${day}`;
+  const count = Number(await redis(['INCR', digestKey])) || 1;
+  if (count === 1) await redis(['EXPIRE', digestKey, 2 * 86400]);
+  const pointer = `${digestKey}:item`;
+  let id = await redis(['GET', pointer]);
+  let item = null;
+  if (id) { try { item = JSON.parse(await redis(['GET', itemKey(id)])); } catch { item = null; } }
+  if (!item || item.recipientId !== recipientId) { id = randomUUID(); item = { id, recipientId, type: 'upvote', title: TITLES.upvote, href: link, createdAt: new Date().toISOString() }; await redis(['SET', pointer, id, 'EX', 2 * 86400]); }
+  Object.assign(item, detail({ verb: `${count === 1 ? 'upvote' : 'upvotes'} today on your ${noun}`, subject, count }), { createdAt: new Date().toISOString() });
+  await redis(['SET', itemKey(id), JSON.stringify(item), 'EX', RETENTION_SECONDS]);
+  await redis(['ZADD', indexKey(recipientId), Date.now(), id]);
+  await redis(['SADD', unreadKey(recipientId), id]);
+  await trimFeed(redis, recipientId);
+  return true;
+}
+
+async function trimFeed(redis, recipientId) {
   await Promise.all([redis(['EXPIRE', indexKey(recipientId), RETENTION_SECONDS]), redis(['EXPIRE', unreadKey(recipientId), RETENTION_SECONDS])]);
   const size = Number(await redis(['ZCARD', indexKey(recipientId)])) || 0;
   if (size > 100) {
@@ -86,7 +130,7 @@ export async function listNotifications(redis, userId) {
   const raws = ids.length ? await redis(['MGET', ...ids.map(itemKey)]) : [];
   const unread = new Set(await redis(['SMEMBERS', unreadKey(userId)]));
   const items = raws.flatMap(raw => {
-    try { const item = JSON.parse(raw); return item.recipientId === userId && UUID.test(item.id) && TYPES.includes(item.type) ? [{ id:item.id, type:item.type, title:TITLES[item.type], href:item.href, createdAt:item.createdAt, unread:unread.has(item.id) }] : []; }
+    try { const item = JSON.parse(raw); return item.recipientId === userId && UUID.test(item.id) && TYPES.includes(item.type) ? [{ id:item.id, type:item.type, title:TITLES[item.type], href:item.href, createdAt:item.createdAt, unread:unread.has(item.id), ...detail({ actorName:item.actor, verb:item.verb, subject:item.subject, excerpt:item.excerpt, count:item.count }) }] : []; }
     catch { return []; }
   });
   return { preferences, items, unread: Number(await redis(['SCARD', unreadKey(userId)])) || 0 };
@@ -159,7 +203,26 @@ async function writeApproval(redis, userId, record, project, publishedAt) {
 export async function notifyProjectApproval(redis, previous, record) {
   const project = publicApproval(record);
   if (!project || publicApproval(previous)) return false;
-  return writeApproval(redis, record.accountId, record, project, Date.now());
+  const written = await writeApproval(redis, record.accountId, record, project, Date.now());
+  try { await notifyLaunchAudience(redis, record, project); } catch { /* The launch is live either way. */ }
+  return written;
+}
+
+// "Notify me" on an upcoming launch, plus the maker's followers: one alert each
+// when the project goes live, sent once per project.
+export const launchWatchersKey = id => `digivated:launch:watchers:${id}`;
+export const launchWatchingKey = account => `digivated:launch:watching:${account}`;
+const AUDIENCE_LIMIT = 200;
+async function notifyLaunchAudience(redis, record, project) {
+  if (!SAFE_LINK.test(project.pageUrl || '')) return 0;
+  if (await redis(['SET', `digivated:launch:announced:${record.id}`, '1', 'NX', 'EX', RETENTION_SECONDS]) !== 'OK') return 0;
+  const watchers = await redis(['SMEMBERS', launchWatchersKey(record.id)]);
+  const followers = UUID.test(record.accountId || '') ? await redis(['SRANDMEMBER', `digivated:creator:followers:${record.accountId}`, AUDIENCE_LIMIT]) : [];
+  const recipients = [...new Set([...(watchers || []), ...(followers || [])])].filter(id => UUID.test(id) && id !== record.accountId).slice(0, AUDIENCE_LIMIT);
+  for (let i = 0; i < recipients.length; i += 10) {
+    await Promise.all(recipients.slice(i, i + 10).map(recipientId => addNotification(redis, { recipientId, type: 'launch', link: project.pageUrl, actorName: project.name, verb: 'is live on Digivated' }).catch(() => false)));
+  }
+  return recipients.length;
 }
 
 // Rebuild missed recent events from the same live projects the owner can see

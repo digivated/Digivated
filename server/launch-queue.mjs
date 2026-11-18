@@ -3,6 +3,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { projectPublic, SAVE_EDIT, validId } from './admin-store.mjs';
 import { redisClient } from './submissions.mjs';
 import { readProjectSite, hasProjectBadge } from './project-site.mjs';
+import { finalizeLastWeek } from './launch-score.mjs';
 export const QUEUE='digivated:launch:free';
 export function nextFreeLaunch(now=Date.now()){
  const d=new Date(now),day=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate());
@@ -66,6 +67,8 @@ export function makeLaunchQueueHandler(deps={}){
      failed++;
     }
    }
+   // Monday is also when last week's podium is frozen (also done lazily on first read).
+   try { await finalizeLastWeek(redis, now); } catch { /* Retried on the next read. */ }
    const result = {checked: ids.length, published, failed};
    console.info('Launch queue run', result);
    return send(failed ? 503 : 200, result);

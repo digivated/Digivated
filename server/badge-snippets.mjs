@@ -21,3 +21,12 @@ export function badgeSnippet(id, style = 'dark') {
 }
 
 export const badgeSnippets = id => Object.fromEntries(BADGE_STYLES.map(s => [s.key, badgeSnippet(id, s.key)]));
+
+// Weekly podium badge: same anchor (so it also verifies), award image. The
+// server only draws the award for a place the project really earned.
+export const awardImageUrl = (id, style = 'dark', origin = 'https://digivated.com') =>
+  `${origin}/badge/${encodeURIComponent(id)}?theme=${style}&award=week`;
+export function awardBadgeSnippet(id, style = 'dark') {
+  const theme = BADGE_STYLES.some(s => s.key === style && s.key !== 'text') ? style : 'dark';
+  return `<a href="${listingUrl(id)}" data-digivated-project="${id}" target="_blank" rel="noopener">\n  <img src="${awardImageUrl(id, theme)}" alt="Top launch of the week on Digivated" width="${BADGE_WIDTH}" height="${BADGE_HEIGHT}">\n</a>`;
+}

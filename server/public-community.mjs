@@ -2,6 +2,7 @@ import { rankingPeriodStarts } from '../src/lib/launch-calendar.mjs';
 import { resourceArticlesVisible } from '../src/data/resource-publication.mjs';
 import { withProjectViews } from './project-views.mjs';
 import { withResourceViews } from './resource-views.mjs';
+import { withLaunchScores } from './launch-score.mjs';
 import { redisClient } from './submissions.mjs';
 import { publicRecords, validId, storageKey, projectPublic, contentPublic } from './admin-store.mjs';
 export function makePublicHandler(type, deps = {}) {
@@ -54,24 +55,27 @@ export function makePublicHandler(type, deps = {}) {
       const offset = Number(url.searchParams.get('offset') || 0);
       if (!Number.isInteger(offset) || offset < 0 || offset > 100000) return send(400, { error: 'Invalid page.' });
       let items = await publicRecords(redis, kind, offset);
+      let fair = null;
       if (kind === 'submission') items = await withProjectViews(redis, items);
       if (kind === 'submission' && url.searchParams.get('ranking') === '1') {
         const now = Date.now();
         const starts = rankingPeriodStarts(now);
         items=await Promise.all(items.map(async item=>{
-          const [total,daily,weekly,monthly]=await Promise.all([
+          const [total,daily,weekly,monthly,comments]=await Promise.all([
             redis(['GET','digivated:card:likes:project:'+item.id]),
-            ...starts.map(start=>redis(['ZCOUNT','digivated:card:votes:project:'+item.id,start,now]))
+            ...starts.map(start=>redis(['ZCOUNT','digivated:card:votes:project:'+item.id,start,now])),
+            redis(['ZCARD','digivated:card:comments:project:'+item.id]).catch(()=>0)
           ]);
-          return {...item,votes:{all:Number(total||0),daily:Number(daily||0),weekly:Number(weekly||0),monthly:Number(monthly||0)}};
+          return {...item,comments:Number(comments||0),votes:{all:Number(total||0),daily:Number(daily||0),weekly:Number(weekly||0),monthly:Number(monthly||0)}};
         }));
+        ({ items, fair } = await withLaunchScores(redis, items, now));
       }
       if (kind === 'resource') items = await withResourceViews(redis, items);
       // Article bodies are fetched only on the detail page.
       // Filtering incomplete records can make a raw page shorter than 100. Page by
       // the index position so older valid projects are still reachable.
       const next = kind === 'submission' ? offset + 100 < await redis(['ZCARD', 'digivated:public:submissions']) ? offset + 100 : null : items.length === 100 ? offset + 100 : null;
-      return send(200, { items: items.map(({ content, ...item }) => item), next });
+      return send(200, { items: items.map(({ content, ...item }) => item), next, ...(fair ? { fairStart: fair } : {}) });
     } catch { return send(503, { error: 'This collection is temporarily unavailable. Please try again shortly.' }); }
   };
 }

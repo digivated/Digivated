@@ -3,7 +3,9 @@ import { test, expect } from '@playwright/test';
 test('login entry point exposes sign-in and sign-up email flows', async ({ page }) => {
   await page.route('**/api/project-account?action=config', route => route.fulfill({ json: { ready: false } }));
   await page.goto('http://127.0.0.1:4321/');
-  await expect(page.getByRole('link', { name: 'Sign up', exact: true })).toHaveAttribute('href', '/login?mode=signup');
+  await page.locator('.notebook-navigation>summary').click();
+  await expect(page.getByRole('link', { name: 'Log in or sign up', exact: true })).toHaveAttribute('href', '/login');
+  await page.keyboard.press('Escape');
   await page.getByRole('link', { name: 'Log In', exact: true }).click();
   await expect(page).toHaveURL(/\/login\/?$/);
   await expect(page.getByRole('heading', { name: 'Welcome back.' })).toBeVisible();

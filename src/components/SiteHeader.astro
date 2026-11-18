@@ -1,8 +1,8 @@
 ---
-import { primaryLinks, menuLinks } from '../data/site-navigation.mjs';
+import { primaryLinks, menuGroups } from '../data/site-navigation.mjs';
 import UiIcon from './UiIcon.astro';
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const active = (href: string) => path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/')) || (href === '/membership' && ['/shop','/products','/promote','/founding-members'].includes(path));
+const active = (link: string) => { const href = link.split('?')[0]; if (link.includes('?')) return false; return path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/')) || (href === '/membership' && ['/shop','/products','/promote','/founding-members'].includes(path)); };
 ---
 <header class="platform-header compact-site-header" data-account="signed-out">
   <div class="header-inner">
@@ -13,7 +13,6 @@ const active = (href: string) => path === href || path.startsWith(href + '/') ||
       <a class="header-inbox" id="header-inbox-link" href="/inbox" aria-label="Inbox" aria-current={active('/inbox')?'page':undefined}><UiIcon name="message" size={20}/><span id="header-inbox-badge" class="header-inbox-badge" hidden></span></a>
       <a class="header-inbox header-notifications" id="header-notifications-link" href="/notifications" aria-label="Notifications" aria-current={active('/notifications')?'page':undefined}><UiIcon name="bell" size={20}/><span id="header-notifications-badge" class="header-inbox-badge" hidden></span></a>
       <a class="header-login" id="header-account-link" href="/login" aria-current={active('/login')?'page':undefined}>Log In</a>
-      <a class="fl-header-signup" id="header-signup-link" href="/login?mode=signup">Sign up</a>
       <div class="fl-menu" id="header-account-menu" hidden>
         <button type="button" class="fl-menu-trigger" id="header-account-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="header-account-panel"><span class="fl-avatar" id="header-account-avatar" aria-hidden="true">D</span><span class="fl-menu-name sr-only" id="header-account-label">Account menu</span><span class="fl-menu-caret" aria-hidden="true">▾</span><span id="header-account-dot" class="header-inbox-badge" hidden></span></button>
         <div class="fl-menu-panel" id="header-account-panel" role="menu" aria-labelledby="header-account-trigger" hidden>
@@ -23,22 +22,22 @@ const active = (href: string) => path === href || path.startsWith(href + '/') ||
           <a role="menuitem" href="/notifications">Notifications <span class="fl-menu-count" id="header-menu-notifications" hidden></span></a>
           <a role="menuitem" href="/inbox">Inbox <span class="fl-menu-count" id="header-menu-inbox" hidden></span></a>
           <a role="menuitem" href="/saved">Saved items</a>
+          <a role="menuitem" href="/#how-points-work">Feedback points <span class="fl-menu-count" id="header-menu-points" hidden></span></a>
           <a role="menuitem" href="/account?tab=profile">Profile</a>
           <a role="menuitem" href="/account?tab=settings">Settings</a>
           <hr/>
           <button role="menuitem" type="button" id="header-sign-out">Sign out</button>
         </div>
       </div>
-      <a class="header-membership" href="/membership" aria-current={active('/membership')?'page':undefined}>Membership</a>
+      <a class="dg-header-submit" href="/submit-project" aria-current={active('/submit-project')?'page':undefined}><span>Submit</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <details class="explore-menu notebook-navigation" data-navigation>
         <summary aria-controls="explore-navigation" aria-label="Open navigation menu" aria-expanded="false"><span class="navigation-trigger-menu"><UiIcon name="menu" size={21}/></span><span class="navigation-trigger-close"><UiIcon name="close" size={21}/></span></summary>
         <nav id="explore-navigation" class="navigation-panel" aria-label="Explore Digivated">
-          <div class="navigation-destinations">{menuLinks.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</div>
-          <div class="navigation-account-row"><a id="menu-account-link" href="/account"><span>Your projects</span></a><a href="/inbox">Inbox</a><a href="/notifications">Notifications <span id="menu-notifications-badge" hidden></span></a><a href="/saved">Saved items</a></div>
-          <div class="navigation-bottom-row"><a href="/about">About</a><a id="menu-login-link" href="/login">Log in or sign up</a></div>
+          <div class="dg-menu-grid">{menuGroups.map(group=><div class="dg-menu-group"><p class="dg-menu-title">{group.title}</p>{group.links.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</div>)}</div>
+          <div class="navigation-bottom-row"><a id="menu-account-link" href="/account"><span>Your projects</span></a><a href="/about">About</a><a id="menu-login-link" href="/login">Log in or sign up</a></div>
         </nav>
       </details>
     </div>
   </div>
 </header>
-<script>import '../scripts/account-header.js';</script>
+<script>import '../scripts/account-header.js'; import '../scripts/notification-bell.js';</script>

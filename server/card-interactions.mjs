@@ -3,12 +3,14 @@ import { createHmac, randomUUID } from 'node:crypto';
 import resources from '../src/data/resources.json' with { type: 'json' };
 import { redisClient } from './submissions.mjs';
 import { validId, storageKey, projectPublic, contentPublic } from './admin-store.mjs';
-import { addNotification } from './notifications.mjs';
+import { addNotification, notifyUpvoteDigest } from './notifications.mjs';
+import { verifiedAccount } from './project-account.mjs';
+import { bumpStat, forgetVoteWeight, isFresh, recordVoteWeight } from './launch-score.mjs';
 
 const builtinResources = new Set(['builtin-ui-ux-prompt-packet', ...resources.filter(item => item.status === 'published').map(item => item.slug)]);
 const itemKey = (type,id) => `${type}:${id}`;
 const likeKey = (type,id) => `digivated:card:likes:${itemKey(type,id)}`;
-const commentIndex = (type,id) => `digivated:card:comments:${itemKey(type,id)}`;
+export const commentIndex = (type,id) => `digivated:card:comments:${itemKey(type,id)}`;
 export const commentKey = id => `digivated:card:comment:${id}`;
 const LIKE = `
 local liked = redis.call('GET', KEYS[1])
@@ -31,11 +33,12 @@ for i = 4, #ARGV do
   result[#result + 1] = redis.call('ZCOUNT', KEYS[3], ARGV[i], ARGV[2])
 end
 return result`;
-const COMMENT = `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],86400) end; if n>3 then return 0 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); if ARGV[4]=='approved' then redis.call('ZADD',KEYS[4],ARGV[2],ARGV[3]) end; return 1`;
+export const COMMENT = `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],86400) end; if n>3 then return 0 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); if ARGV[4]=='approved' then redis.call('ZADD',KEYS[4],ARGV[2],ARGV[3]) end; return 1`;
 const MODERATE = `local raw=redis.call('GET',KEYS[1]); if not raw then return -1 end; local entry=cjson.decode(raw); if entry.status~='pending' and not (entry.status=='approved' and entry.purpose=='project-feedback' and ARGV[1]=='rejected') then return 0 end; if ARGV[1]=='approved' and entry.purpose=='packet-feedback' and entry.quoteConsent~=true then return -3 end; entry.status=ARGV[1]; redis.call('SET',KEYS[1],cjson.encode(entry)); if ARGV[1]=='approved' then redis.call('ZADD',KEYS[2],ARGV[2],entry.id) else redis.call('ZREM',KEYS[2],entry.id) end; return 1`;
 
 export async function isPublicItem(redis,type,id) {
   if (type === 'resource' && builtinResources.has(id)) return true;
+  if (type === 'thread') { if(!validId(id))return false; try { return JSON.parse(await redis(['GET',`digivated:thread:${id}`]))?.status === 'published'; } catch { return false; } }
   const kind=type === 'project' ? 'submission' : 'resource';
   const raw=await redis(['GET',storageKey(kind,id)]);
   const record=raw ? JSON.parse(raw) : null;
@@ -91,8 +94,9 @@ export function makeCardInteractionHandler(deps={}) {
       const redis=deps.redis||redisClient(env);
       if(!await isPublicItem(redis,type,id))return send(404,{error:'This item is not available.'});
       if(req.method==='GET'){
-        const [likes,comments,count]=await Promise.all([redis(['GET',likeKey(type,id)]),listComments(redis,type,id),redis(['ZCARD',commentIndex(type,id)])]);
-        return send(200,{likes:Number(likes||0),comments,commentCount:Number(count||0)});
+        const [likes,comments,count,fresh]=await Promise.all([redis(['GET',likeKey(type,id)]),listComments(redis,type,id),redis(['ZCARD',commentIndex(type,id)]),type==='project'?isFresh(redis,id):false]);
+        // Fair start: this week's counts stay hidden until Tuesday 14:00 UTC.
+        return send(200,{likes:fresh?null:Number(likes||0),...(fresh?{fresh:true}:{}),comments,commentCount:Number(count||0)});
       }
       const ip=req.headers['x-real-ip'];
       if(!deps.redis&&(env.VERCEL!=='1'||typeof ip!=='string'||!ip))return send(503,{error:'This action is temporarily unavailable.'});
@@ -100,10 +104,22 @@ export function makeCardInteractionHandler(deps={}) {
       const visitor=createHmac('sha256',env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only').update(`${type}:${id}:${ip||'fixture'}`).digest('hex');
       if(body.action==='like'||body.action==='unlike'){
         const now = Date.now();
+        const wasLiked = type==='project' ? await redis(['GET', `digivated:card:liked:${visitor}`]) : '1';
+        // Signed-in upvotes weigh more in the launch score (see launch-score.mjs).
+        let account=null;
+        if(type==='project'&&req.headers.authorization){try{account=await (deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch);}catch{account=null;}}
         const includePeriods = type === 'project' && body.includePeriods === true;
         const [likes, liked, daily, weekly, monthly] = await redis(['EVAL', LIKE, 3,
           `digivated:card:liked:${visitor}`, likeKey(type,id), `digivated:card:votes:${type}:${id}`,
           body.action, now, visitor, ...(includePeriods ? rankingPeriodStarts(now) : [])]);
+        if(type==='project'&&body.action==='like'&&!wasLiked&&Number(liked)===1){try{await recordVoteWeight(redis,{id,visitor,account,now});await bumpStat(redis,id,'upvotes',now);}catch{}}
+        if(type==='project'&&body.action==='unlike'&&wasLiked&&Number(liked)===0){try{await forgetVoteWeight(redis,{id,visitor,account});}catch{}}
+        const fresh=type==='project'&&await isFresh(redis,id,now);
+        if(body.action==='like'&&type==='project'&&!wasLiked && Number(liked)===1){
+          // Makers get one upvote digest per project per day.
+          try{const record=JSON.parse(await redis(['GET',storageKey('submission',id)]));const project=record&&projectPublic(record);if(project&&record.accountId)await notifyUpvoteDigest(redis,{recipientId:record.accountId,subjectKey:`project:${id}`,subject:project.name,link:project.pageUrl,noun:'project'});}catch{}
+        }
+        if(fresh)return send(200,{liked:Boolean(Number(liked)),likes:null,fresh:true,...(includePeriods?{votes:{all:null,daily:null,weekly:null,monthly:null}}:{})});
         return send(200, {liked: Boolean(Number(liked)), likes: Number(likes),
           ...(includePeriods ? {votes: {all: Number(likes), daily: Number(daily), weekly: Number(weekly), monthly: Number(monthly)}} : {})});
       }
@@ -111,6 +127,8 @@ export function makeCardInteractionHandler(deps={}) {
       const isProjectFeedback=body.action==='project-feedback';
       if(body.action!=='comment'&&!isFeedback&&!isProjectFeedback)return send(400,{error:'Unknown action.'});
       if(isProjectFeedback&&type!=='project')return send(400,{error:'Choose a project to give feedback.'});
+      // Project discussions need an account (see /api/discussions), so replies can be notified.
+      if(isProjectFeedback)return send(401,{error:'Sign in on the project page to join the discussion.'});
       if(isFeedback && (type!=='resource'||id!=='builtin-ui-ux-prompt-packet'))return send(400,{error:'Use the packet feedback form.'});
       if(isFeedback && typeof body.quoteConsent!=='boolean')return send(400,{error:'Choose whether your feedback may be quoted.'});
       if(body.company)return send(400,{error:'Check the form and try again.'});

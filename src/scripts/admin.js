@@ -1,7 +1,7 @@
 import { projectCategories, resourceCategories, normalizeResourceCategory } from '../data/community.mjs';
 const $ = id => document.getElementById(id);
 const state = { csrf: '', kind: 'submission', panel:'overview', items: [], next: null, record: null, dirty: false, busy: false, request: 0, editorRequest: 0, overviewRequest:0 };
-const labels = { submission: 'Submissions', resource: 'Articles', product: 'Products', comments: 'Comments', carousel: 'Full carousels', accounts: 'Accounts' };
+const labels = { submission: 'Submissions', resource: 'Articles', product: 'Products', comments: 'Comments', threads: 'Threads', carousel: 'Full carousels', accounts: 'Accounts' };
 const stageLabels = {
   review: 'Manual review',
   badge: 'Waiting for badge',
@@ -21,7 +21,7 @@ function launchDetails(record) {
 function updatedLabel(date = new Date()) {
   return 'Updated ' + date.toLocaleTimeString(undefined, {hour:'2-digit', minute:'2-digit', second:'2-digit'});
 }
-const statusOptions = { submission: ['pending','approved','featured','rejected','archived'], resource: ['draft','published','archived'], product: ['draft','published','archived'], comments: ['pending','approved','rejected'], carousel: ['available'], accounts: ['verified','unverified','blocked'] };
+const statusOptions = { submission: ['pending','approved','featured','rejected','archived'], resource: ['draft','published','archived'], product: ['draft','published','archived'], comments: ['pending','approved','rejected'], threads: ['published','removed'], carousel: ['available'], accounts: ['verified','unverified','blocked'] };
 const element = (tag, text, className) => { const node = document.createElement(tag); if (text !== undefined) node.textContent = text; if (className) node.className = className; return node; };
 function message(text, editor = false) { const node = $(editor ? 'owner-editor-status' : 'owner-status'); node.textContent = text; }
 function signedOut() { const keyField = $('owner-gumroad-token'); if (keyField) keyField.value = ''; state.request++;state.overviewRequest++; state.csrf = ''; state.items = []; state.record = null; state.dirty = false; $('owner-editor').close(); $('owner-fields').replaceChildren(); $('owner-private-details').replaceChildren(); $('owner-list').replaceChildren();document.querySelectorAll('[data-overview-number]').forEach(n=>n.textContent='—');$('owner-activity-chart').replaceChildren();$('owner-pipeline').replaceChildren(); $('owner-dashboard').hidden = true; $('owner-login').hidden = false; $('owner-logout').hidden = true; }
@@ -39,14 +39,14 @@ function filters() {
   const select = $('owner-filter'); select.replaceChildren(new Option('All statuses',''));
   if (state.kind === 'submission') select.add(new Option('Live (approved or featured)', 'live'));
   statusOptions[state.kind].forEach(status => select.add(new Option(status[0].toUpperCase()+status.slice(1),status)));
-  $('owner-create').hidden = state.kind === 'submission' || state.kind === 'comments' || state.kind === 'carousel' || state.kind === 'accounts';
+  $('owner-create').hidden = state.kind === 'submission' || state.kind === 'comments' || state.kind === 'threads' || state.kind === 'carousel' || state.kind === 'accounts';
   $('owner-create').textContent = state.kind === 'resource' ? 'New article' : 'New product';
   $('owner-protected').hidden = state.kind !== 'product';
   $('owner-search-note').hidden = state.kind !== 'accounts';
   $('owner-search-label').textContent = state.kind === 'accounts' ? 'Search loaded accounts' : 'Search loaded items';
   $('owner-search').placeholder = state.kind === 'accounts' ? 'Email or account ID' : 'Name, title, or creator';
   $('owner-content-title').textContent=labels[state.kind];
-  $('owner-content-description').textContent={submission:'Review incoming projects, then approve, feature, or archive them.',resource:'Write and manage articles. Drafts stay private until published.',product:'Manage existing products and preserve purchase access.',comments:'Review comments and feedback with their publication permissions.',carousel:'Read full slides and references using your owner access.',accounts:'Find accounts and manage sign-in access.'}[state.kind];
+  $('owner-content-description').textContent={submission:'Review incoming projects, then approve, feature, or archive them.',resource:'Write and manage articles. Drafts stay private until published.',product:'Manage existing products and preserve purchase access.',threads:'Remove, restore or pin forum threads. Comments inside threads are moderated under Comments.',comments:'Review comments and feedback with their publication permissions.',carousel:'Read full slides and references using your owner access.',accounts:'Find accounts and manage sign-in access.'}[state.kind];
 }
 function panel(name){
  state.panel=name;
@@ -85,6 +85,15 @@ function renderList() {
     const row = element('article', undefined, 'owner-row'); const copy = element('div');
     row.dataset.status = state.kind === 'accounts' ? accountStatus(record) : record.status || 'available';
     row.dataset.kind = state.kind;
+    if(state.kind==='threads'){
+      copy.append(element('span',record.status,'tag'));if(record.pinned)copy.append(element('span','Pinned','tag'));
+      copy.append(element('h2',record.title),element('p',`${record.authorName} · ${record.forum} · ${record.createdAt?.slice(0,10)}`,'quiet'),element('p',record.body));
+      const view=element('a','Open thread','button');view.href=`/threads/${record.slug}`;view.target='_blank';view.rel='noopener';
+      const actions=element('div',undefined,'actions');actions.append(view);
+      const choices=[[record.status==='removed'?{status:'published'}:{status:'removed'},record.status==='removed'?'Restore':'Remove'],[{pinned:!record.pinned},record.pinned?'Unpin':'Pin to top']];
+      for(const [change,label] of choices){const button=element('button',label,'button');button.type='button';button.addEventListener('click',async()=>{if(label==='Remove'&&!confirm(`Remove “${record.title}” from Threads?`))return;button.disabled=true;try{await api('',{action:'moderate-thread',id:record.id,...change});message(`${label} done.`);await load();}catch(error){button.disabled=false;message(errorText(error));}});actions.append(button);}
+      row.append(copy,actions);list.append(row);continue;
+    }
     if(state.kind==='accounts'){
       const blocked=accountStatus(record)==='blocked';
       copy.append(element('span',accountStatus(record),'tag'),element('h2',record.email || 'No email address'),element('p',`Joined ${record.createdAt?.slice(0,10) || 'unknown'} · Last sign-in ${record.lastSignInAt?.slice(0,10) || 'never'}`,'quiet'),element('p',`ID: ${record.id}${record.providers.length ? ` · ${record.providers.join(', ')}` : ''}`,'quiet'));
@@ -103,7 +112,7 @@ function renderList() {
     }
     if(state.kind==='comments'){
       const packetFeedback=record.purpose==='packet-feedback';
-      copy.append(element('span',record.status,'tag'),element('h2',packetFeedback?'Packet trial feedback':record.type==='project'?'Project feedback':'Resource comment'),element('p',`${record.name} · ${record.itemId} · ${record.date?.slice(0,10)}`,'quiet'),element('p',record.body));
+      copy.append(element('span',record.status,'tag'),element('h2',packetFeedback?'Packet trial feedback':record.type==='project'?'Project comment':record.type==='thread'?'Thread comment':'Resource comment'),element('p',`${record.name} · ${record.itemId} · ${record.date?.slice(0,10)}`,'quiet'),element('p',record.body));
       if(packetFeedback)copy.append(element('p',record.quoteConsent?'Author permits a public quote. Approve only genuine feedback you have reviewed.':'Private feedback. No permission to publish.','quiet'));
       const actions=element('div',undefined,'actions');
       const choices=record.status==='pending'?[['approved',packetFeedback?'Approve public quote':'Approve'],['rejected','Reject']]:record.status==='approved'&&record.purpose==='project-feedback'?[['rejected','Hide feedback']]:[];
@@ -132,7 +141,7 @@ async function load(more = false, quiet = false) {
   try {
     const status=['submission','resource','product'].includes(kind)?$('owner-filter').value:'';
     const stage = kind === 'submission' ? $('owner-stage').value : '';
-    const data = await api(kind==='accounts'?`?action=accounts&page=${more ? state.next : 1}`:kind==='carousel'?`?action=carousels&offset=${more ? state.next : 0}`:kind==='comments'?`?action=comments&offset=${more ? state.next : 0}`:`?action=list&kind=${kind}&offset=${more ? state.next : 0}${status?'&status='+encodeURIComponent(status):''}${stage?'&stage='+encodeURIComponent(stage):''}`);
+    const data = await api(kind==='accounts'?`?action=accounts&page=${more ? state.next : 1}`:kind==='carousel'?`?action=carousels&offset=${more ? state.next : 0}`:kind==='comments'?`?action=comments&offset=${more ? state.next : 0}`:kind==='threads'?`?action=threads&offset=${more ? state.next : 0}`:`?action=list&kind=${kind}&offset=${more ? state.next : 0}${status?'&status='+encodeURIComponent(status):''}${stage?'&stage='+encodeURIComponent(stage):''}`);
     if (request !== state.request) return;
     state.items = more ? [...new Map([...state.items,...data.items].map(item=>[item.id,item])).values()] : data.items;
     state.next = data.next;

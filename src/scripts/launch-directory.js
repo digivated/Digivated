@@ -1,5 +1,5 @@
 import { requestCardInteraction } from './card-actions.js';
-import { inLaunchBatch, launchTimestamp, launchBatchLabel, readRankingPeriod } from '../lib/launch-calendar.mjs';
+import { inLaunchBatch, launchTimestamp, launchBatchLabel, readRankingPeriod, fairOrder } from '../lib/launch-calendar.mjs';
 import { aiGroups, aiTopics } from '../lib/project-taxonomy.mjs';
 import { cardIconMarkup } from '../lib/card-icons.mjs';
 const root=document.querySelector('[data-launch-directory]');
@@ -55,12 +55,15 @@ if(root){
   list.hidden=overview;
   if(overview)renderOverview();
   const matches=projects.filter(p=>inLaunchBatch(p, launchBatch?.value)).filter(p=>category==='All'||(ai?aiTopics(p).includes(category):p.category===category)).filter(p=>(p.name+' '+p.description+' '+p.creator).toLowerCase().includes(query));
-  matches.sort((a,b)=>(b.votes?.[period]||0)-(a.votes?.[period]||0)||(launchTimestamp(b)||0)-(launchTimestamp(a)||0)||a.id.localeCompare(b.id));
+  // This week's launches rank by launch score; during fair start they shuffle hourly with counts hidden.
+  const byScore=launchBatch?.value==='current'&&period==='weekly',now=Date.now();
+  const rank=p=>byScore&&p.score!=null&&Number.isFinite(Number(p.score))?Number(p.score):(p.votes?.[period]||0);
+  matches.sort((a,b)=>(a.fresh&&b.fresh?fairOrder(a.id,now)-fairOrder(b.id,now):0)||rank(b)-rank(a)||(launchTimestamp(b)||0)-(launchTimestamp(a)||0)||a.id.localeCompare(b.id));
   root.querySelector('[data-launch-total]').textContent=matches.length+(ai?(matches.length===1?' tool':' tools'):(matches.length===1?' project':' projects'));
   if(!ai){
    const votes=matches.reduce((sum,p)=>sum+(p.votes?.[period]||0),0);
    root.querySelector('[data-ranking-votes]').textContent=votes.toLocaleString()+(votes===1?' upvote':' upvotes');
-   root.querySelector('[data-ranking-context]').textContent=(launchBatch?.value ? launchBatchLabel(launchBatch.value)+' · ' : 'All launch dates · ')+{daily:'Upvotes received today · resets at 00:00 UTC',weekly:'Upvotes received this week · weeks start Monday (UTC)',monthly:'Upvotes received this month · calendar month (UTC)',all:'Every upvote, including votes before period tracking'}[period];
+   root.querySelector('[data-ranking-context]').textContent=(launchBatch?.value ? launchBatchLabel(launchBatch.value)+' · ' : 'All launch dates · ')+{daily:'Upvotes received today · resets at 00:00 UTC',weekly:(byScore?(matches.some(p=>p.fresh)?'Fresh week: order shuffles hourly, upvotes show Tuesday 14:00 UTC':'Ranked by launch score: upvotes, comments and feedback points'):'Upvotes received this week')+' · weeks start Monday (UTC)',monthly:'Upvotes received this month · calendar month (UTC)',all:'Every upvote, including votes before period tracking'}[period];
    updateCountdown();
   }
   root.querySelector('[data-ranking-title]').textContent=!ai&&launchBatch?.value ? launchBatchLabel(launchBatch.value) : ai?(category==='All'?'All AI tools':category+' tools'):{daily:"Today's rankings",weekly:"This week's rankings",monthly:"This month's rankings",all:"All-time rankings"}[period];
@@ -73,7 +76,7 @@ if(root){
    if(ai)row.append(image);else{const artwork=text('a','','ranking-artwork');artwork.href=safe(p.pageUrl||'/discover#project-'+p.id);artwork.setAttribute('aria-label','Explore '+p.name);artwork.append(image,text('span',p.name.slice(0,1).toUpperCase(),'ranking-image-fallback'));row.append(artwork);}
    const copy=text('div','','launch-copy'),heading=text('h3',''),link=text('a',p.name);link.href=safe(p.pageUrl||'/discover#project-'+p.id);heading.append(link);copy.append(heading,text('p',p.description||''));
    const meta=text('div','','launch-meta');meta.append(text('span',p.category||'Project'));if(!ai&&Number.isFinite(launchTimestamp(p))){const date=text('time',(p.publishedAt?'Published ':'Listed ')+new Date(launchTimestamp(p)).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}));date.dateTime=new Date(launchTimestamp(p)).toISOString();meta.append(date);}const visit=text('a',ai?'Visit website ↗':'Visit website');if(!ai){const icon=text('span','');icon.innerHTML=cardIconMarkup('external');visit.append(icon);}visit.href=safe(p.url);visit.target='_blank';visit.rel='noopener noreferrer';meta.append(visit);copy.append(meta);row.append(copy);
-   const vote=text('button','','launch-vote');vote.type='button';vote.setAttribute('aria-pressed',String(liked(p)));vote.setAttribute('aria-label',(liked(p)?'Remove upvote for ':'Upvote ')+p.name);if(pendingVotes.has(p.id))vote.setAttribute('aria-busy','true');const voteIcon=text('span','');voteIcon.innerHTML=cardIconMarkup('like');vote.append(voteIcon,text('span',String(p.votes?.[period]||0)));
+   const vote=text('button','','launch-vote');vote.type='button';vote.setAttribute('aria-pressed',String(liked(p)));vote.setAttribute('aria-label',(liked(p)?'Remove upvote for ':'Upvote ')+p.name);if(pendingVotes.has(p.id))vote.setAttribute('aria-busy','true');const voteIcon=text('span','');voteIcon.innerHTML=cardIconMarkup('like');vote.append(voteIcon,text('span',p.fresh?'·':String(p.votes?.[period]||0)));if(p.fresh)vote.title='Upvote counts for this week’s launches show from Tuesday 14:00 UTC.';
    if(!ai)vote.append(text('span','Upvote','ranking-vote-label'));
    vote.onclick=async()=>{
     if(pendingVotes.has(p.id))return;
