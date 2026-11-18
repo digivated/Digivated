@@ -48,7 +48,7 @@ let next = 0;
 async function load() {
   more.hidden = true;
   try {
-    const response = await fetch('/api/launches?view=winners&offset=' + next, { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(15000) });
+    const response = await fetch('/api/launches?view=winners&offset=' + next, { cache: 'no-store', credentials:'same-origin', signal: AbortSignal.timeout(15000) });
     if (!response.ok) throw Error('unavailable');
     const data = await response.json();
     root.append(...(data.weeks || []).map(week));

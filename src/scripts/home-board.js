@@ -331,22 +331,20 @@ async function loadCatalogue() {
 async function loadLaunches(view) {
   try {
     const token = view === 'upcoming' ? await session() : '';
-    const response = await fetch('/api/launches?view=' + view, { cache: 'no-store', credentials: 'omit', headers: token ? { Authorization: `Bearer ${token}` } : {}, signal: AbortSignal.timeout(15000) });
+    const response = await fetch('/api/launches?view=' + view, { cache: 'no-store', credentials:'same-origin', headers: token ? { Authorization: `Bearer ${token}` } : {}, signal: AbortSignal.timeout(15000) });
     return response.ok ? await response.json() : null;
   } catch { return null; }
 }
 async function loadFeatured() {
   const status = home?.querySelector('[data-featured-status]');
   try {
-    const response = await fetch('/api/projects?view=featured&offset=0', { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(15000) });
+    const response = await fetch('/api/projects?view=featured&offset=0', { cache: 'no-store', credentials:'same-origin', signal: AbortSignal.timeout(15000) });
     if (!response.ok) throw Error('unavailable');
     const page = await response.json();
     if (status) status.hidden = true;
     return (page.items || []).filter(p => p?.id && p.name && p.status === 'featured').sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
   } catch {
-    // Say so honestly; open paid spots still show.
-    if (status) { status.textContent = 'Featured projects are temporarily unavailable. Browse the directory instead.'; status.hidden = false; }
-    return [];
+    return null; // The catalogue below is the fallback.
   }
 }
 async function loadInstant() {
@@ -371,7 +369,7 @@ async function railThreads() {
   const box = document.querySelector('[data-rail-threads]');
   if (!box) return;
   try {
-    const response = await fetch('/api/threads?sort=trending', { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(10000) });
+    const response = await fetch('/api/threads?sort=trending', { cache: 'no-store', credentials:'same-origin', signal: AbortSignal.timeout(10000) });
     if (!response.ok) return;
     const { threads = [] } = await response.json();
     if (!threads.length) return;
@@ -401,8 +399,15 @@ if (board) {
     });
   });
   if (home) {
-    Promise.all([loadFeatured(), catalogue.catch(() => []), loadInstant()]).then(([featured, projects, instant]) => {
+    Promise.all([loadFeatured(), catalogue.catch(() => []), loadInstant()]).then(([loaded, projects, instant]) => {
       const now = Date.now();
+      // Featured projects always take their spots: from the featured list, or from the catalogue if that request failed.
+      const featured = loaded?.length ? loaded : projects.filter(p => p.status === 'featured').sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
+      const status = home.querySelector('[data-featured-status]');
+      if (status) {
+        status.hidden = !!featured.length || loaded !== null;
+        if (!status.hidden) status.textContent = 'Featured projects are temporarily unavailable. Browse the directory instead.';
+      }
       const sponsored = projects.filter(p => p.sponsored && p.status !== 'featured' && now - launchTimestamp(p) < WEEK).sort((a, b) => launchTimestamp(b) - launchTimestamp(a));
       renderSpots(featured, sponsored, instant);
     });

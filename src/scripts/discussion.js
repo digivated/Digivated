@@ -32,7 +32,7 @@ export async function session() {
 export async function api(path, body) {
   const token = await session();
   const response = await fetch(path, {
-    method: body ? 'POST' : 'GET', cache: 'no-store', credentials: 'omit',
+    method: body ? 'POST' : 'GET', cache: 'no-store', credentials:'same-origin',
     headers: { ...(body ? { 'Content-Type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) },
     ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(15000),
   });

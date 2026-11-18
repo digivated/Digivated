@@ -106,7 +106,7 @@ document.addEventListener('click', event => {
   if (!link || event.defaultPrevented || event.button > 1) return;
   const pending = { id: link.dataset.visitProject, name: link.dataset.visitName || 'this product', image: link.dataset.visitImage || '', startedAt: Date.now(), token: '' };
   write(pending);
-  fetch('/api/feedback-points', { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'visit', id: pending.id }) })
+  fetch('/api/feedback-points', { method: 'POST', credentials:'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'visit', id: pending.id }) })
     .then(response => response.ok ? response.json() : null)
     .then(data => { const current = read(); if (data?.token && current?.id === pending.id && current.startedAt === pending.startedAt) write({ ...current, token: data.token }); })
     .catch(() => {});
