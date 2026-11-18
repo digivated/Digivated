@@ -313,10 +313,15 @@ function renderRising() {
   const items = state.projects.filter(p => Number(p.rising) > 0 && !p.fresh && local(p.pageUrl)).sort((a, b) => b.rising - a.rising || launchTimestamp(b) - launchTimestamp(a)).slice(0, 4);
   box.hidden = items.length < 2;
   if (box.hidden) return;
-  box.querySelector('[data-rising-list]').replaceChildren(...items.map(p => {
+  const top = Math.max(...items.map(p => Number(p.rising) || 0)) || 1;
+  box.querySelector('[data-rising-list]').replaceChildren(...items.map((p, i) => {
     const li = el('li'); const a = el('a', null, 'dg-rising-item'); a.href = local(p.pageUrl);
-    a.append(logo(p, 'dg-rising-logo'), el('strong', p.name, 'dg-decode'), el('small', p.category || 'Project'));
-    a.setAttribute('aria-label', `${p.name}, rising in the last 24 hours`);
+    const filled = Math.max(1, Math.round((Number(p.rising) / top) * 6));
+    const meter = el('span', '▮'.repeat(filled) + '▯'.repeat(6 - filled), 'dg-rising-meter'); meter.setAttribute('aria-hidden', 'true');
+    const rank = el('span', `#${i + 1}`, 'dg-rising-rank'); rank.setAttribute('aria-hidden', 'true');
+    const text = el('span', null, 'dg-rising-text'); text.append(el('strong', p.name, 'dg-decode'), el('small', p.category || 'Project'));
+    a.append(rank, logo(p, 'dg-rising-logo'), text, meter);
+    a.setAttribute('aria-label', `${p.name}, number ${i + 1} rising in the last 24 hours`);
     li.append(a); return li;
   }));
   decodeIn(box, state.animate);
