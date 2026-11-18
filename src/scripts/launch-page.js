@@ -6,8 +6,8 @@ if (comments) mountDiscussion(comments, { type: 'project', id: comments.dataset.
 // Point people at feedback points right where they write comments.
 if (comments) {
   const hint = document.createElement('p'); hint.className = 'launch-points-hint';
-  const link = document.createElement('a'); link.href = '/points'; link.textContent = 'feedback points';
-  hint.append('✦ Tried it with the Visit button? Specific feedback here earns ', link, ' that lift your own launch.');
+  const link = document.createElement('a'); link.href = '/points'; link.textContent = 'points';
+  hint.append('✦ Visited it from Digivated? Specific feedback here earns ', link, ' toward your own launch.');
   comments.querySelector('.dg-d-head')?.after(hint);
 }
 

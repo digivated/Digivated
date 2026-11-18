@@ -295,7 +295,7 @@ if (root) {
     const feedback = el('a', 'Leave feedback →'); feedback.href = projectFeedbackHref(p.id, p.pageUrl); links.append(feedback);
     const voteRow = el('div', null, 'dg-dir-dialog-vote'); voteRow.append(vote(p));
     panel.dataset.projectName = p.name;
-    panel.replaceChildren(controls, el('p', p.category || 'Project', 'wall-focus-category'), heading, art, el('p', `BY ${p.creator || 'AN INDEPENDENT BUILDER'}`, 'wall-focus-maker'), el('p', p.description || 'Explore this project and meet its maker.', 'wall-focus-description'), voteRow, links, el('p', '✦ Visit it, come back, and leave specific feedback to earn points.', 'dg-dir-dialog-hint'));
+    panel.replaceChildren(controls, el('p', p.category || 'Project', 'wall-focus-category'), heading, art, el('p', `BY ${p.creator || 'AN INDEPENDENT BUILDER'}`, 'wall-focus-maker'), el('p', p.description || 'Explore this project and meet its maker.', 'wall-focus-description'), voteRow, links, el('p', '✦ Visit it, then come back and leave specific feedback to earn points.', 'dg-dir-dialog-hint'));
     panel.scrollTo?.({ top: 0, behavior: 'instant' });
     close.focus({ preventScroll: true });
   }

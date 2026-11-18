@@ -92,6 +92,8 @@ function renderPreview() {
 function scanPreviews() {
   document.querySelectorAll('[data-project]').forEach(card=>{
     if(card.querySelector('[data-preview-trigger]'))return;
+    // Only classic project cards get Quick view; launch rows also carry data-project.
+    if(!card.querySelector('.project-details summary, .project-copy'))return;
     let trigger=card.querySelector('.project-details summary');
     if(trigger)trigger.textContent='Quick view';
     else{trigger=make('button','Quick view','project-preview-trigger');trigger.type='button';card.querySelector('.project-copy').insertBefore(trigger,card.querySelector('.project-stats'));}
