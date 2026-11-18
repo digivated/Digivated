@@ -43,7 +43,7 @@ const submissionCategoryGroups = [
       </div>
       <p id="submission-account-status" class="submission-account-status" role="status" aria-live="polite" hidden></p>
 
-      <div id="instant-launch-resume" class="submission-review" hidden><h2>Finish publishing</h2><p>Use the same email at checkout as on your Digivated account. After paying, return here and verify your purchase.</p><div class="submission-account-actions"><a id="instant-launch-checkout" class="button primary" target="_blank" rel="noopener">Open checkout ↗</a><button id="instant-launch-verify" class="button" type="button">Verify payment and publish</button></div><p id="instant-launch-status" role="status" aria-live="polite"></p><a id="instant-launch-listing" hidden>View your live project →</a></div>
+      <div id="instant-launch-resume" class="submission-review" hidden><h2 id="instant-launch-title">Complete your payment</h2><p id="instant-launch-copy">Your project is saved. Pay in the checkout tab using <strong id="instant-launch-email">your account email</strong>. This page publishes it automatically as soon as payment goes through.</p><div class="submission-account-actions"><a id="instant-launch-checkout" class="button primary" target="_blank" rel="noopener">Open checkout ↗</a><button id="instant-launch-verify" class="button" type="button">I’ve paid — check now</button></div><p id="instant-launch-status" role="status" aria-live="polite"></p><a id="instant-launch-listing" hidden>View your live project →</a></div>
       <div id="submission-details" hidden>
       <ol class="fl-progress" id="submission-progress" aria-label="Form progress">
         <li data-progress="sub-step-details"><a href="#sub-step-details"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> Project</a></li>
@@ -118,7 +118,7 @@ const submissionCategoryGroups = [
           </select>
         </label>
         <p id="free-launch-help" class="field-help">After saving you’ll get a badge to add to your website. Verify it from your dashboard and your project launches automatically on its scheduled date. <span id="free-launch-date"></span></p>
-        <p id="instant-launch-help" class="field-help" hidden><strong>⚡ Instant, no waiting:</strong> pay once with your account email, then verify payment here. Your project goes live right away and takes an open homepage spot for 7 days.</p>
+        <p id="instant-launch-help" class="field-help" hidden><strong>⚡ Instant, no waiting:</strong> pay once at checkout and your project goes live automatically and takes an open homepage spot for 7 days.</p>
         <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/membership#member-sign-in">membership page</a> first to request your included spotlight. We review each request.</p></div>
       </fieldset>
 
