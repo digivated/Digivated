@@ -491,6 +491,14 @@ html[data-ascii] body .dg-stats-themes button[aria-pressed=true]{border-color:#e
 html[data-ascii] body .dg-stats-code{width:100%;max-width:100%;margin:0!important;padding:10px!important;overflow-x:auto;border:1px solid var(--dgb-line)!important;border-radius:2px!important;background-color:#060606!important;font-family:var(--fl-mono)!important;font-size:11px!important;line-height:1.5!important;color:#bdbdbd!important;white-space:pre}
 @media (max-width:640px){html[data-ascii] body .dg-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+/* ---------- Search fields with a leading icon ---------- */
+/* The ASCII theme gives every input the same padding (!important), which put the
+   magnifier on top of the placeholder in the site search, Resources and News.
+   Any label holding an icon and a search field keeps text clear of the icon. */
+html[data-ascii] body label:has(> svg):has(> input[type=search]) > input[type=search]{padding-left:44px!important}
+html[data-ascii] body #discovery-search #unified-search-input{padding-left:46px!important;padding-right:48px!important;text-overflow:ellipsis}
+html[data-ascii] body input[type=search]::placeholder{text-overflow:ellipsis}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){
  html[data-ascii] body :is(.dg-hero,[data-ready] .dg-spot,.dg-list-rows.is-entering .dg-row,.dg-thread-row,.dg-review,.dg-award strong,.dg-sparks span,.dg-hero-accent,.dg-spot.is-open::after,.dg-dot,.dg-rising-arrow,.notebook-navigation[open] .dg-menu-group a,.dg-d-item.is-flash,.dg-bell-panel){animation:none!important}
