@@ -1,0 +1,42 @@
+---
+import Platform from '../layouts/Platform.astro';
+import FeedbackPoints from '../components/FeedbackPoints.astro';
+import { BOOST_POINTS_PER_VOTE, REVIEW_MIN_SECONDS, DAILY_POINT_CAP } from '../lib/feedback-score.mjs';
+import '../styles/all-time-directory.css';
+const faq = [
+  ['Who can earn points?', 'Anyone with a free Digivated account. You don’t need a launch to earn them, but they only lift your ranking once you have one.'],
+  ['What counts as a visit?', `Clicking a product’s Visit button on Digivated (on the homepage, in the directory or in a featured spot), then spending at least ${REVIEW_MIN_SECONDS} seconds on the product. When you come back to the Digivated tab, a small “How was it?” card appears. Your answer there is what earns points.`],
+  ['What makes a comment count?', 'Say something specific: what worked, what confused you, what you’d change. About 8 words is the minimum, and 25+ thoughtful words earns the detailed bonus. Links and repetitive text earn nothing.'],
+  ['How much can I earn?', `+5 for a specific comment, +10 for a detailed one. Once per product, up to ${DAILY_POINT_CAP} points a day.`],
+  ['How do points help my launch?', `Every ${BOOST_POINTS_PER_VOTE} points you earn during your launch week adds +1 to your launch score, the number that orders this week’s launches. Rows with a lift show a ⚡ Boosted badge.`],
+  ['Does the maker see my comment?', 'Yes. It’s posted to the project’s public discussion and the maker gets a notification, so make it useful.'],
+];
+---
+<Platform title="Feedback points" description="Give useful feedback to other indie makers on Digivated, earn points, and get bonus upvotes on your own launch.">
+  <div class="dg-dir">
+    <section class="dg-hero" aria-labelledby="dg-points-title">
+      <pre class="ascii-field home-workshop dg-hero-ascii" data-ascii-field aria-hidden="true"></pre>
+      <div class="dg-hero-copy">
+        <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>Feedback points</p>
+        <h1 id="dg-points-title">Give good feedback. Get a <span class="dg-hero-accent">bigger launch.</span></h1>
+        <p class="dg-hero-lede">Every maker here wants honest eyes on their work. Help them out, and Digivated helps you back with bonus upvotes on your own launch.</p>
+        <div class="dg-hero-actions"><a class="dg-btn dg-btn-primary" href="/discover?sort=needs">Find a product to review →</a><a class="dg-btn" href="/submit-project">Launch your project</a></div>
+      </div>
+    </section>
+    <FeedbackPoints heading="Three steps, every week."/>
+    <section aria-labelledby="dg-points-faq">
+      <header class="dg-list-head"><h2 id="dg-points-faq"><span class="dg-list-title">Questions</span></h2><span class="dg-list-rule" aria-hidden="true"></span></header>
+      <dl class="dg-points-faq">{faq.map(([q, a]) => <div><dt>{q}</dt><dd>{a}</dd></div>)}</dl>
+    </section>
+  </div>
+</Platform>
+<style is:global>
+@layer flow {
+html[data-ascii] body .dg-points-faq{display:grid;gap:0;margin:0!important;padding:0!important}
+html[data-ascii] body .dg-points-faq div{display:grid;grid-template-columns:minmax(180px,.8fr) 1.6fr;gap:6px 24px;padding:16px 4px!important;border-bottom:1px dashed #232323}
+html[data-ascii] body .dg-points-faq dt{font-family:var(--fl-mono)!important;font-size:12.5px!important;color:#fff!important}
+html[data-ascii] body .dg-points-faq dt::before{content:'> ';color:var(--dgb-ok,#8fd6a4)}
+html[data-ascii] body .dg-points-faq dd{margin:0!important;font-family:var(--fl-sans)!important;font-size:14px!important;line-height:1.6!important;color:var(--dgb-copy,#b9b9b9)!important}
+@media (max-width:640px){html[data-ascii] body .dg-points-faq div{grid-template-columns:minmax(0,1fr)}}
+}
+</style>

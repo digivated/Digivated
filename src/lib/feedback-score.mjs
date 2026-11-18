@@ -20,3 +20,10 @@ export function scoreReview({ comment = '', seconds = 0 } = {}) {
 export function boostVotes(points) {
   return Math.floor((Number(points) || 0) / BOOST_POINTS_PER_VOTE);
 }
+
+// Progress toward the next bonus upvote, for the points cards.
+export function boostProgress(points, per = BOOST_POINTS_PER_VOTE) {
+  const value = Math.max(0, Math.floor(Number(points) || 0));
+  const into = value % per;
+  return { boosts: Math.floor(value / per), into, toNext: per - into, bar: `[${'■'.repeat(into)}${'□'.repeat(per - into)}]` };
+}

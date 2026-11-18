@@ -1,6 +1,7 @@
 ---
 import Platform from '../layouts/Platform.astro';
 import FreeLaunchGuide from '../components/FreeLaunchGuide.astro';
+import FeedbackPoints from '../components/FeedbackPoints.astro';
 import { projectPricingOptions } from '../lib/project-pricing.mjs';
 import '../styles/submission-flow.css';
 
@@ -33,6 +34,8 @@ const submissionCategoryGroups = [
   </header>
 
   <FreeLaunchGuide />
+
+  <FeedbackPoints variant="strip" cta="/discover?sort=needs" ctaLabel="Earn points while you wait"/>
 
   <div class="submission-layout submission-workspace">
     <form class="submission-form" id="project-form" action="/api/submissions" method="post">

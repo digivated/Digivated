@@ -20,14 +20,14 @@ export const primaryLinks = [
 // bar's four destinations show as a row at the top of the menu instead.
 export const menuGroups = [
   { title: 'Explore', links: [['/rankings', 'Rankings'], ['/winners', 'Weekly winners'], ['/resources', 'Resources'], ['/invstr', 'Market Scanner']] },
-  { title: 'For makers', links: [['/submit-project', 'Submit a project'], ['/submit-project?spot=1', 'Claim a $3 spot'], ['/membership', 'Membership'], ['/badges', 'Embed badges']] },
+  { title: 'For makers', links: [['/submit-project', 'Submit a project'], ['/submit-project?spot=1', 'Claim a $3 spot'], ['/points', 'Feedback points'], ['/membership', 'Membership'], ['/badges', 'Embed badges']] },
 ];
 export const menuLinks = [...primaryLinks, ...menuGroups.flatMap(group => group.links)];
 // Footer: the same destinations as the header and menu, plus account pages and socials.
 export const footerGroups = [
   { title: 'Explore', links: exploreLinks },
   { title: 'For makers', links: [
-    ['/submit-project', 'Submit a project'], ['/account', 'Your projects'], ['/saved', 'Saved items'],
+    ['/submit-project', 'Submit a project'], ['/points', 'Feedback points'], ['/account', 'Your projects'], ['/saved', 'Saved items'],
     ['/inbox', 'Inbox'], ['/badges', 'Embed badges'], ['/membership', 'Membership'],
   ] },
   { title: 'Digivated', links: [

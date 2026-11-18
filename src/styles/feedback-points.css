@@ -1,0 +1,67 @@
+/* Feedback points card and strip. Same tokens and layer as dg-board.css. */
+@layer flow {
+html[data-ascii] body .dg-fp{position:relative;margin:0!important;border:1px solid #3b2f52!important;border-radius:0!important;background-color:#0b0a0e!important;background-image:radial-gradient(70% 120% at 100% 0%,#c3a0ff14,transparent 60%)!important;color:var(--dgb-ink,#f2f2f2)}
+html[data-ascii] body .dg-fp::before{content:'';position:absolute;inset:-1px auto -1px -1px;width:2px;background:linear-gradient(180deg,#c3a0ff,#c3a0ff00)}
+html[data-ascii] body .dg-fp-spark{display:inline-block;color:#d9c6ff!important;animation:dg-fp-twinkle 3.2s ease-in-out infinite}
+@keyframes dg-fp-twinkle{0%,100%{opacity:1;transform:none}50%{opacity:.55;transform:scale(.85) rotate(20deg)}}
+html[data-ascii] body .dg-fp-me{display:inline-flex!important;align-items:center;min-height:24px;padding:2px 9px!important;border:1px solid #3b2f52!important;background-color:#c3a0ff14!important;font-family:var(--fl-mono)!important;font-size:11px!important;color:#fff!important;white-space:nowrap}
+html[data-ascii] body .dg-fp-me[hidden]{display:none!important}
+html[data-ascii] body .dg-points [hidden]{display:none!important}
+
+/* Full card */
+html[data-ascii] body .dg-fp-full{display:grid;gap:16px;padding:clamp(20px,3vw,28px)!important}
+html[data-ascii] body .dg-fp-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+html[data-ascii] body .dg-fp-head .dg-label{color:#e7dcff!important}
+html[data-ascii] body .dg-fp-full h2{margin:0!important;font-family:var(--fl-sans)!important;font-size:clamp(20px,2.4vw,26px)!important;line-height:1.15!important;letter-spacing:-.03em!important;font-weight:600!important;text-wrap:balance}
+html[data-ascii] body .dg-fp-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin:0!important;padding:0!important;list-style:none!important;counter-reset:none}
+html[data-ascii] body .dg-fp-steps li{position:relative;display:grid;align-content:start;gap:4px;margin:0!important;padding:14px 16px!important;border:1px dashed #2b2536!important}
+html[data-ascii] body .dg-fp-steps li+li{border-left:0!important}
+html[data-ascii] body .dg-fp-steps li+li::before{content:'→';position:absolute;left:-7px;top:14px;font-family:var(--fl-mono)!important;font-size:12px;color:#c3a0ff;background:#0b0a0e;line-height:1}
+html[data-ascii] body .dg-fp-n{font-family:var(--fl-mono)!important;font-size:10.5px!important;letter-spacing:.12em;color:#8a7aa8!important}
+html[data-ascii] body .dg-fp-steps strong{font-family:var(--fl-mono)!important;font-size:13px!important;font-weight:500!important;letter-spacing:.12em!important;text-transform:uppercase;color:#fff!important}
+html[data-ascii] body .dg-fp-steps p{margin:0!important;font-family:var(--fl-sans)!important;font-size:13px!important;line-height:1.5!important;color:var(--dgb-copy,#b9b9b9)!important}
+html[data-ascii] body .dg-fp-progress{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-family:var(--fl-mono)!important;font-size:12px!important;color:var(--dgb-copy,#b9b9b9)!important}
+html[data-ascii] body .dg-fp-progress[hidden]{display:none!important}
+html[data-ascii] body .dg-fp-bar{color:#d9c6ff!important;letter-spacing:.06em;white-space:nowrap}
+html[data-ascii] body .dg-fp-foot{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0!important}
+html[data-ascii] body .dg-fp-foot [hidden]{display:none!important}
+html[data-ascii] body .dg-fp-fine{margin:0!important;font-family:var(--fl-mono)!important;font-size:10.5px!important;color:#6f6f6f!important}
+
+/* One-line strip that opens the steps */
+html[data-ascii] body .dg-fp-strip{padding:0!important}
+html[data-ascii] body .dg-fp-strip summary *{text-decoration:none!important}
+html[data-ascii] body .dg-fp-strip summary{display:flex;align-items:center;gap:12px;min-height:52px;padding:10px 16px!important;cursor:pointer;list-style:none}
+html[data-ascii] body .dg-fp-strip summary::-webkit-details-marker{display:none}
+html[data-ascii] body .dg-fp-strip-copy{flex:1;min-width:0;font-family:var(--fl-sans)!important;font-size:13.5px!important;line-height:1.45!important;color:var(--dgb-copy,#b9b9b9)!important}
+html[data-ascii] body .dg-fp-strip-copy strong{margin-right:6px;font-family:var(--fl-mono)!important;font-size:11.5px!important;font-weight:500!important;letter-spacing:.12em;text-transform:uppercase;color:#e7dcff!important}
+html[data-ascii] body .dg-fp-toggle{font-family:var(--fl-mono)!important;font-size:11px!important;color:#9a8cb5!important;white-space:nowrap;transition:color .18s}
+html[data-ascii] body .dg-fp-strip summary:hover .dg-fp-toggle{color:#fff!important}
+html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle{font-size:0!important}
+html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle::after{content:'close ↑';font-size:11px}
+html[data-ascii] body .dg-fp-strip .dg-fp-steps{margin:0 16px!important}
+html[data-ascii] body .dg-fp-strip .dg-fp-foot{padding:14px 16px 16px!important}
+html[data-ascii] body .dg-fp-strip[open] .dg-fp-steps{animation:dg-fp-open .35s var(--dgb-ease,ease) both}
+@keyframes dg-fp-open{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+@media (max-width:760px){
+ html[data-ascii] body .dg-fp-steps{grid-template-columns:minmax(0,1fr)}
+ html[data-ascii] body .dg-fp-steps li+li{border-left:1px dashed #2b2536!important;border-top:0!important}
+ html[data-ascii] body .dg-fp-steps li+li::before{content:'↓';left:14px;top:-7px}
+ html[data-ascii] body .dg-fp-strip summary{align-items:flex-start}
+ html[data-ascii] body .dg-fp-strip-copy span{display:block}
+}
+@media (prefers-reduced-motion:reduce){html[data-ascii] body :is(.dg-fp-spark,.dg-fp-strip[open] .dg-fp-steps){animation:none!important}}
+}
+@layer flow {
+html[data-ascii] body .dg-fp-account{width:100%;margin:28px 0 0!important}
+html[data-ascii] body #main>.dg-fp-strip{margin-block:20px!important}
+}
+@layer flow {
+@media (max-width:420px){
+ html[data-ascii] body .dg-list-head:has([data-points-chip]) [data-section-count]{display:none!important}
+ html[data-ascii] body .dg-points{padding:2px 8px!important}
+}
+@media (max-width:380px){
+ html[data-ascii] body .dg-points [data-points-label]{display:none!important}
+}
+}
