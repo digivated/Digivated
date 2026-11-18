@@ -7,7 +7,7 @@ async function signedIn(page,{paidAfter=2}={}){
  const token=['eyJhbGciOiJIUzI1NiJ9',Buffer.from(JSON.stringify({sub:user.id,email:user.email,exp:expires})).toString('base64url'),'fixture'].join('.');
  await page.addInitScript(({token,user,expires})=>localStorage.setItem('sb-fixture-auth-token',JSON.stringify({access_token:token,refresh_token:'fixture',expires_at:expires,expires_in:3600,token_type:'bearer',user})),{token,user,expires});
  await page.route('https://fixture.supabase.co/**',route=>route.fulfill({json:user}));
- await page.route('https://digivated.gumroad.com/**',route=>route.fulfill({contentType:'text/html',body:'<title>Gumroad checkout</title>checkout'}));
+ await page.context().route(/gumroad\.com/,route=>route.fulfill({contentType:'text/html',body:'<title>Gumroad checkout</title>checkout'}));
  const calls={submit:0,checks:0};
  await page.route('**/api/**',route=>{
   const url=new URL(route.request().url());
@@ -39,9 +39,11 @@ for(const width of [390,1440])test(`instant publishing: save, open checkout, pub
  await page.locator('#project-form [name=consent]').check();
  const submit=page.locator('#project-form button[type=submit]');
  await expect(submit).toContainText('Continue to payment — $3');
- const [checkout]=await Promise.all([context.waitForEvent('page'),submit.click()]);
- await expect.poll(()=>checkout.url()).toContain('digivated.gumroad.com/l/instant-launch');
- expect(new URL(checkout.url()).searchParams.get('email')).toBe('builder@example.com');
+ const opened:string[]=[];context.on('request',request=>{if(/gumroad\.com/.test(request.url()))opened.push(request.url());});
+ await submit.click();
+ await expect.poll(()=>opened[0]||'').toContain('digivated.gumroad.com/l/instant-launch');
+ expect(new URL(opened[0]).searchParams.get('email')).toBe('builder@example.com');
+ expect(new URL(opened[0]).searchParams.get('wanted')).toBe('true');
  await expect(page.locator('#instant-launch-resume')).toBeVisible();
  await expect(page.locator('#instant-launch-email')).toHaveText('builder@example.com');
  // No "verify" click: the page notices the payment on its own.
