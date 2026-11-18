@@ -4,6 +4,7 @@ import { projectPublic, SAVE_EDIT, validId } from './admin-store.mjs';
 import { redisClient } from './submissions.mjs';
 import { readProjectSite, hasProjectBadge } from './project-site.mjs';
 import { finalizeLastWeek } from './launch-score.mjs';
+import { sendProjectUpdate } from './account-mail.mjs';
 export const QUEUE='digivated:launch:free';
 export function nextFreeLaunch(now=Date.now()){
  const d=new Date(now),day=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate());
@@ -17,6 +18,8 @@ export async function publishQueued(redis,record,now=Date.now()){
  const saved=await redis(['EVAL',SAVE_EDIT,4,`digivated:submission:${record.id}`,'digivated:submissions',`digivated:public:submission:${record.id}`,'digivated:public:submissions',record.revision||0,JSON.stringify(updated),JSON.stringify(projection),Date.parse(record.date),'submission']);
  if(saved!==1)return null;
  try { await notifyProjectApproval(redis, record, updated); } catch { /* Publication already succeeded. */ }
+ // Email the owner that their launch is live (same message as an admin approval).
+ try { await sendProjectUpdate(record, updated); } catch { /* Publication already succeeded. */ }
  return projection;
 }
 export async function verifyProjectBadge(redis,account,id,readSite=readProjectSite){
