@@ -75,8 +75,8 @@ function spotCard(item, price) {
   if (!item) {
     // Open cards are paid spots only: they always lead to $3 Instant Publishing.
     card.href = '/submit-project?spot=1#project-form';
-    card.append(asciiField(), el('span', '[ + ]', 'dg-spot-plus'), el('strong', 'Your product here'), el('small', price ? `Claim this spot · ${price}` : 'Claim this paid spot'));
-    card.setAttribute('aria-label', `Claim a paid homepage spot${price ? ` for ${price}` : ''}, live for 7 days`);
+    card.append(asciiField(), el('span', '[ + ]', 'dg-spot-plus'), el('strong', 'Your product here'), el('small', 'Claim this spot now!'), el('em', `⚡ Instant${price ? ` · ${price}` : ''}`, 'dg-spot-instant'));
+    card.setAttribute('aria-label', `Claim this spot now: instant publishing${price ? ` for ${price}` : ''}, your project goes live right away for 7 days`);
     return card;
   }
   if (outbound(item.url)) visitAttrs(card, item); else card.href = local(item.pageUrl) || '/discover';
