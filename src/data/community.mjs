@@ -1,4 +1,14 @@
-export const projectCategories = ['Apps', 'Websites', 'AI', 'SaaS', 'Digital Products', 'Design', 'Business', 'Creator Tools', 'Productivity', 'Education', 'Developer Tools', 'Other'];
+// Topic categories, grouped the way makers browse: what the product helps people do.
+export const projectCategoryGroups = [
+  ['Build', ['Developer Tools', 'No-Code', 'AI Agents', 'Privacy & Security']],
+  ['Create', ['Design & Creative', 'Video & Audio', 'Writing & Content', 'Social & Community']],
+  ['Grow', ['Marketing & SEO', 'Sales & CRM', 'Ecommerce', 'Business & Operations', 'Finance', 'Data & Research']],
+  ['Everyday', ['Productivity', 'Education', 'Health & Fitness', 'Entertainment & Games', 'Travel & Lifestyle', 'Directories']],
+];
+export const projectCategories = [...projectCategoryGroups.flatMap(([, names]) => names), 'Other'];
+// Older format-style categories. Saved records keep them; public pages show a topic instead.
+export const legacyProjectCategories = ['Apps', 'Websites', 'AI', 'SaaS', 'Digital Products', 'Design', 'Business', 'Creator Tools'];
+export const acceptedProjectCategories = [...projectCategories, ...legacyProjectCategories];
 export const resourceCategories = ['Technology & AI', 'Markets & Investing', 'Tools & Security', 'Design & UX', 'Creator Growth', 'Digital Products'];
 const resourceCategoryAliases = {
   'Tech': 'Technology & AI', 'AI': 'Technology & AI',

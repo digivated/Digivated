@@ -1,8 +1,8 @@
-import { projectCategory } from '../src/lib/project-taxonomy.mjs';
+import { projectCategory, isAiListing } from '../src/lib/project-taxonomy.mjs';
 import { projectPricingOptions } from '../src/lib/project-pricing.mjs';
 import { launchFields, pageSlug } from './launch-pages.mjs';
 import { AdminError } from './admin-auth.mjs';
-import { projectCategories, resourceCategories, normalizeResourceCategory, safeUrl, statuses } from '../src/data/community.mjs';
+import { acceptedProjectCategories, resourceCategories, normalizeResourceCategory, safeUrl, statuses } from '../src/data/community.mjs';
 import { validateSubmission } from './submissions.mjs';
 // The owner's original picks, verified against live records on 2026-10-15.
 // Only existing approved records can be displayed. No records or view totals are seeded.
@@ -31,7 +31,7 @@ export function validateEdit(kind, input, previous) {
   let record;
   if (kind === 'submission') {
     if (!previous || previous.consent !== true) throw new AdminError(400, 'A submission with permission is required.');
-    if (!statuses.includes(input.status) || !projectCategories.includes(input.category)) throw new AdminError(400, 'Choose a valid status and category.');
+    if (!statuses.includes(input.status) || !acceptedProjectCategories.includes(input.category)) throw new AdminError(400, 'Choose a valid status and category.');
     if (input.status === 'featured' && !['approved', 'featured'].includes(previous.status)) throw new AdminError(400, 'Approve this project before featuring it.');
     const socialUrl = text(input.socialUrl, 'creator profile URL', 500, false);
     record = { ...previous, name: text(input.name, 'project name', 120), creator: text(input.creator, 'creator', 100), description: text(input.description, 'description', 600), category: input.category, status: input.status, reviewFeedback: text(input.reviewFeedback ?? previous.reviewFeedback ?? '', 'private review feedback', 1500, false), pickOverride: input.pick === true, pick: input.pick === true && ['approved', 'featured'].includes(input.status), socialUrl: socialUrl ? safeUrl(socialUrl) : '', url: safeUrl(text(input.url, 'project URL', 500)) };
@@ -83,7 +83,7 @@ export function projectPublic(record) {
   // Keep incomplete legacy submissions in their owners' accounts, but off every public surface.
   const destination = safeUrl(record.url);
   if (!record.image || !destination) return null;
-  return { ...(record.promotion?.verified ? {sponsored:true} : {}), pageUrl: record.pagePublished && record.page?.consent && record.slug ? `/projects/${record.slug}` : `/projects/listing/${record.id}`, id: record.id, name: record.name, creator: record.creator, description: record.description, category: projectCategory(record), url: destination, socialUrl: safeUrl(record.socialUrl), date: record.date, ...(record.publishedAt ? { publishedAt: record.publishedAt } : {}), ...(projectPricingOptions.includes(record.pricing) ? { pricing: record.pricing } : {}), status: record.status, pick: isDigivatedPick(record), image: `/api/projects?image=${record.id}` };
+  return { ...(record.promotion?.verified ? {sponsored:true} : {}), pageUrl: record.pagePublished && record.page?.consent && record.slug ? `/projects/${record.slug}` : `/projects/listing/${record.id}`, id: record.id, name: record.name, creator: record.creator, description: record.description, category: projectCategory(record), ...(isAiListing(record) ? { ai: true } : {}), url: destination, socialUrl: safeUrl(record.socialUrl), date: record.date, ...(record.publishedAt ? { publishedAt: record.publishedAt } : {}), ...(projectPricingOptions.includes(record.pricing) ? { pricing: record.pricing } : {}), status: record.status, pick: isDigivatedPick(record), image: `/api/projects?image=${record.id}` };
 }
 export function contentPublic(kind, record) {
   if (record.status !== 'published') return null;

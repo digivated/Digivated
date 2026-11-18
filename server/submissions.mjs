@@ -7,7 +7,7 @@ import { readProjectSite, siteDetails } from './project-site.mjs';
 // used only inside request handlers, after both modules have finished loading.
 import { randomUUID, createHmac } from 'node:crypto';
 import { projectPricingOptions } from '../src/lib/project-pricing.mjs';
-import { projectCategories, safeUrl } from '../src/data/community.mjs';
+import { acceptedProjectCategories, safeUrl } from '../src/data/community.mjs';
 import { FoundingError, foundingConfig, readMember, verifyFoundingEmail } from './founding-access.mjs';
 import { accountIndex, verifiedAccount } from './project-account.mjs';
 import { projectPublic, SAVE_EDIT, validId } from './admin-store.mjs';
@@ -135,7 +135,7 @@ export function validateSubmission(body) {
   if (description.length<20) fail('Describe your project in at least 20 characters.');
   const pricing = text('pricing', 24, false);
   if (pricing && !projectPricingOptions.includes(pricing)) fail('Choose a listed pricing option.');
-  if (!projectCategories.includes(category)) fail('Choose a listed category.');
+  if (!acceptedProjectCategories.includes(category)) fail('Choose a listed category.');
   if (body.consent!==true) fail('Please confirm you have permission to submit this project.');
   const submissionType = body.submissionType || 'directory';
   if (!['directory','promotion','founding-feature','instant'].includes(submissionType)) fail('Choose a valid submission type.');
