@@ -117,7 +117,6 @@ if (root) {
     if (p.fresh) title.append(el('span', 'New this week', 'dg-badge'));
     main.append(title, el('p', p.description || 'Explore this project and meet its maker.', 'dg-tagline'));
     const meta = el('p', null, 'dg-meta');
-    if (p.pricing) meta.append(el('span', p.pricing));
     meta.append(el('span', p.category || 'Project'));
     if (p.creator) meta.append(el('span', 'by ' + p.creator));
     main.append(meta);

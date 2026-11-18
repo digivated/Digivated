@@ -30,7 +30,6 @@ function week(data) {
     const title = el('h3'); const name = el('a', place.name); name.href = page;
     title.append(name, el('span', `★ #${place.rank} of the week`, `dg-badge dg-badge-medal is-${MEDAL[place.rank]}`));
     const meta = el('p', null, 'dg-meta');
-    if (place.pricing) meta.append(el('span', place.pricing));
     meta.append(el('span', place.category || 'Project'));
     if (place.creator) meta.append(el('span', 'by ' + place.creator));
     main.append(title, el('p', place.description || '', 'dg-tagline'), meta);
