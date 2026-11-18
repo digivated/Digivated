@@ -564,3 +564,9 @@ html[data-ascii] body .dg-tier-flag{position:absolute;top:-9px;right:14px;paddin
  html#digivated-root[data-ascii] body .ascii-ambient{display:none!important}
 }
 }
+
+/* Project page: feedback points hint above the discussion. */
+@layer flow {
+html[data-ascii] body .launch-points-hint{margin:4px 0 12px!important;font-family:var(--fl-mono)!important;font-size:11.5px!important;line-height:1.6!important;color:#b9a6e0!important}
+html[data-ascii] body .launch-points-hint a{color:#fff!important}
+}

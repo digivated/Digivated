@@ -2,6 +2,7 @@
 import Platform from '../layouts/Platform.astro';
 import UiIcon from '../components/UiIcon.astro';
 import LaunchBoard from '../components/LaunchBoard.astro';
+import FeedbackPoints from '../components/FeedbackPoints.astro';
 import '../styles/project-wall.css';
 import '../styles/home-refinement.css';
 import '../styles/home-about.css';
@@ -27,6 +28,7 @@ import '../styles/home-about.css';
           </ul>
         </div>
       </section>
+      <FeedbackPoints variant="strip" cta="/discover?sort=needs" ctaLabel="Find a product that needs feedback"/>
       <p class="dg-spots-status" data-featured-status role="status" hidden></p>
       <div class="dg-spot-grid" data-spot-grid aria-label="Featured spots"></div>
       <LaunchBoard/>
@@ -43,7 +45,7 @@ import '../styles/home-about.css';
   <section class="dg-about" aria-labelledby="dg-about-title">
     <h2 id="dg-about-title">Discover and launch indie projects</h2>
     <p>Digivated is an indie project directory and launch community. Browse <a href="/discover">independent software and tools</a>, join the conversation in <a href="/threads">Threads</a>, or <a href="/submit-project">submit your project</a>. Launch free on a Monday by adding our badge, or pay $3 to go live right away. <a href="/about">How Digivated works →</a></p>
-    <p id="how-points-work" class="dg-about-points">Feedback points: visit a product, then leave a specific comment on its page. Helpful comments earn points. Every 10 points in a week adds an upvote to your own launch.</p>
+    <p id="how-points-work" class="dg-about-points">Feedback points: visit a product, then leave a specific comment on its page. Helpful comments earn points. Every 10 points in a week adds an upvote to your own launch. <a href="/points">How points work →</a></p>
   </section>
 </Platform>
 

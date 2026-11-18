@@ -383,7 +383,7 @@ async function loadInstant() {
 function pointsChip() {
   const chip = board?.querySelector('[data-points-chip]');
   if (!chip) return;
-  const show = total => { if (!Number.isFinite(total)) return; chip.querySelector('[data-points-total]').textContent = String(total); chip.hidden = false; };
+  const show = total => { if (!Number.isFinite(total)) return; chip.querySelector('[data-points-total]').textContent = String(total); chip.querySelector('[data-points-label]')?.setAttribute('hidden', ''); chip.querySelector('[data-points-have]')?.removeAttribute('hidden'); chip.hidden = false; };
   document.addEventListener('digivated:points', event => show(event.detail?.total));
   document.addEventListener('digivated:points-awarded', event => {
     show(event.detail?.total);

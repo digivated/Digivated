@@ -1,6 +1,7 @@
 ---
 import Platform from '../layouts/Platform.astro';
 import '../styles/project-account.css';
+import FeedbackPoints from '../components/FeedbackPoints.astro';
 ---
 <Platform title="Your Projects" description="Your Digivated dashboard: track launches, read feedback, and manage your profile.">
   <header class="page-intro fl-dash-intro"><div><p class="eyebrow">YOUR DASHBOARD</p><h1>Your projects</h1><p class="lede">Track your launch, see what to do next, and read feedback.</p></div><a class="button primary fl-btn-primary fl-dash-cta" id="account-submit-cta" href="/submit-project" hidden>+ Submit a project</a></header>
@@ -43,5 +44,6 @@ import '../styles/project-account.css';
       </section>
     </div>
   </section>
+  <div class="dg-fp-account"><FeedbackPoints heading="Give feedback, get bonus upvotes on your launch."/></div>
   <script>import '../scripts/project-account.js';</script>
 </Platform>
