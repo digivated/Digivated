@@ -48,7 +48,6 @@ html[data-ascii] body .compact-site-header .dg-header-submit svg{transition:tran
 html[data-ascii] body .compact-site-header .dg-header-submit:hover svg{transform:translateX(2px)}
 html[data-ascii] body .compact-site-header[data-account=signed-out] .header-login{padding-inline:4px!important}
 @media (max-width:420px){html[data-ascii] body .compact-site-header .dg-header-submit svg{display:none}html[data-ascii] body .compact-site-header .dg-header-submit{padding-inline:10px!important}}
-html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation .navigation-panel{width:min(420px,calc(100vw - 24px))!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>.dg-menu-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:4px!important;padding:8px 6px!important;flex-direction:initial!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>.dg-menu-grid::before{content:none!important}
 html#digivated-root[data-ascii] body .compact-site-header .dg-menu-group{display:flex;flex-direction:column}
@@ -61,6 +60,24 @@ html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.navigation-bottom-row a{flex:1 1 auto!important;margin:0!important;font-size:12.5px!important;color:#8d8d8d!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.navigation-bottom-row a::after{content:none!important}
 @keyframes dg-menu-in{from{opacity:0;transform:translateY(-4px)}}
+/* Condensed menu: on wide screens it only holds what the bar doesn't; on narrow
+   screens the bar's four destinations sit on top as one row of tabs. */
+html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation .navigation-panel{width:min(380px,calc(100vw - 24px))!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.dg-menu-main{display:none!important}
+@media (max-width:1000px){html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.dg-menu-main{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;padding:8px!important}}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a{justify-content:center!important;min-height:40px!important;margin:0!important;padding:6px 4px!important;border:1px solid #262626!important;border-radius:2px!important;font-family:var(--fl-mono)!important;font-size:12px!important;letter-spacing:.02em}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a::after{content:none!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a[aria-current=page]{border-color:#e8e8e8!important;color:#fff!important}
+html#digivated-root[data-ascii] body .compact-site-header .dg-menu-title::before{content:'[ ';color:#4a4a4a}
+html#digivated-root[data-ascii] body .compact-site-header .dg-menu-title::after{content:' ]';color:#4a4a4a}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a::after{content:none!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a::before{content:'›';display:inline-block!important;width:10px;margin-right:-4px;font-family:var(--fl-mono);color:#4f4f4f;transition:transform .15s var(--dgb-ease),color .15s}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a:is(:hover,:focus-visible)::before{color:#d9c6ff;transform:translateX(2px)}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a[aria-current=page]::before{content:'>';color:#fff}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a[href="/submit-project?spot=1"]{color:#d9c6ff!important}
+html[data-ascii] body .fl-menu-panel .fl-menu-who .fl-menu-points{display:block;margin-top:6px;font-family:var(--fl-mono)!important;font-size:11px;color:#a58bdc!important}
+html[data-ascii] body .fl-menu-panel .fl-menu-who .fl-menu-points:has(> b[hidden]){display:none}
+html[data-ascii] body .fl-menu-panel .fl-menu-who .fl-menu-points b{font-weight:600;color:#e7dcff!important}
 @media (max-width:360px){html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>.dg-menu-grid{grid-template-columns:1fr!important}}
 
 /* Notifications preview under the bell */
@@ -137,7 +154,7 @@ html[data-ascii] body .dg-spot-plus{font-family:var(--fl-mono)!important;font-si
 html[data-ascii] body .dg-spot.is-open:hover .dg-spot-plus{letter-spacing:.2em;color:var(--dgb-accent)!important}
 html[data-ascii] body .dg-spot.is-open strong{font-family:var(--fl-mono)!important;font-size:11px!important;font-weight:500!important;letter-spacing:.08em;text-transform:uppercase;color:#ddd!important}
 html[data-ascii] body .dg-spot.is-open small{font-family:var(--fl-mono)!important;font-size:10px!important;color:var(--dgb-accent)!important}
-html[data-ascii] body .dg-spot.is-open::after{content:'';position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(110deg,transparent 35%,#c3a0ff1f 50%,transparent 65%)!important;background-size:250% 100%;animation:dg-sheen 4s ease-in-out infinite}
+html[data-ascii] body .dg-spot.is-open::after{content:'';position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(110deg,transparent 35%,#ffffff12 50%,transparent 65%)!important;background-size:250% 100%;animation:dg-sheen 5s ease-in-out infinite}
 @keyframes dg-sheen{from{background-position:120% 0}to{background-position:-120% 0}}
 
 /* ---------- Hero: copy over a live ASCII workbench ---------- */
@@ -498,6 +515,21 @@ html[data-ascii] body .dg-stats-code{width:100%;max-width:100%;margin:0!importan
 html[data-ascii] body label:has(> svg):has(> input[type=search]) > input[type=search]{padding-left:44px!important}
 html[data-ascii] body #discovery-search #unified-search-input{padding-left:46px!important;padding-right:48px!important;text-overflow:ellipsis}
 html[data-ascii] body input[type=search]::placeholder{text-overflow:ellipsis}
+
+/* ---------- Search fields with a leading icon ----------
+   The ASCII theme sets one padding for every input (with !important), which put
+   the magnifier on top of the placeholder. These fields keep room for their icon. */
+html#digivated-root[data-ascii] body :is(.unified-search-label,.notebook-search,.news-search,.link-directory-search,.resources-search)>input{padding-left:44px!important;padding-right:14px!important;text-overflow:ellipsis}
+html#digivated-root[data-ascii] body :is(.unified-search-label,.notebook-search,.news-search,.link-directory-search,.resources-search){position:relative!important}
+html#digivated-root[data-ascii] body :is(.unified-search-label,.notebook-search,.news-search,.link-directory-search,.resources-search)>svg{position:absolute!important;z-index:1;top:50%!important;left:15px!important;width:18px!important;height:18px!important;margin:0!important;transform:translateY(-50%)!important;pointer-events:none}
+html#digivated-root[data-ascii] body #discovery-search .unified-search-label>input{min-height:52px!important;font-size:15px!important}
+html#digivated-root[data-ascii] body input[type=search]::-webkit-search-cancel-button{margin-left:6px}
+
+/* ---------- Open spots: a live ASCII field behind the call to action ---------- */
+html[data-ascii] body .dg-spot.is-open{isolation:isolate}
+html[data-ascii] body .dg-spot-field{position:absolute;inset:0;z-index:-1;margin:0!important;padding:4px 6px!important;overflow:hidden;font-family:var(--fl-mono)!important;font-size:9px!important;line-height:11px!important;letter-spacing:.12em;white-space:pre;color:#6d6d6d!important;opacity:.55;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 62% 58% at 50% 50%,transparent 32%,#000 78%);mask-image:radial-gradient(ellipse 62% 58% at 50% 50%,transparent 32%,#000 78%);transition:color .25s,opacity .25s}
+html[data-ascii] body .dg-spot.is-open:hover .dg-spot-field{color:#a58bdc!important;opacity:.7}
+html[data-ascii] body .dg-spot.is-open>:not(.dg-spot-field){position:relative}
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){

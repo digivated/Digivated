@@ -28,7 +28,8 @@ if (menu) {
       event.preventDefault();
       menu.open = true;
       sync();
-      panel?.querySelector('a')?.focus();
+      // First link that is actually shown (the bar's links repeat in the menu only on narrow screens).
+      [...(panel?.querySelectorAll('a') || [])].find(link => link.getClientRects().length)?.focus();
     }
   });
   document.addEventListener('keydown', event => {

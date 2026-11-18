@@ -12,7 +12,9 @@ for(const width of [320,390,768,1024,1440])test(`compact menu fits and keeps all
  await page.screenshot({path:test.info().outputPath(`header-${width}.png`)});
  await trigger.click();await expect(trigger.locator('.navigation-trigger-close')).toBeVisible();
  const menu=page.locator('#explore-navigation');await expect(menu).toBeVisible();
- await expect(menu.locator('.dg-menu-group>a')).toHaveText(['Launches','Products','Threads','News','Rankings','Weekly winners','Resources','Market Scanner','Submit a project','Claim a $3 spot','Membership','Embed badges']);
+ await expect(menu.locator('.dg-menu-group>a')).toHaveText(['Rankings','Weekly winners','Resources','Market Scanner','Submit a project','Claim a $3 spot','Membership','Embed badges']);
+ await expect(menu.locator('.dg-menu-main>a')).toHaveText(['Launches','Products','Threads','News']);
+ await expect(menu.locator('.dg-menu-main')).toBeVisible({visible:width<=1000});
  await expect(menu.locator('small,.navigation-icon,.navigation-builder,.navigation-products')).toHaveCount(0);
  await expect(menu.locator('a[href="/membership"]')).toHaveCount(1);await expect(menu.locator('a[href="/submit-project"]')).toHaveCount(1);
  const rect=await menu.boundingBox();expect(rect!.height).toBeLessThan(530);expect(rect!.x).toBeGreaterThanOrEqual(0);expect(rect!.x+rect!.width).toBeLessThanOrEqual(width);
@@ -27,7 +29,7 @@ test('header supports keyboard menu entry, dismissal and search',async({page})=>
  await page.goto('http://127.0.0.1:4321/threads');
  await expect(page.locator('.header-primary a[aria-current=page]')).toHaveText('Threads');
  const trigger=page.locator('.notebook-navigation>summary');await trigger.focus();await page.keyboard.press('ArrowDown');
- await expect(page.locator('#explore-navigation a').first()).toBeFocused();await expect(trigger).toHaveAttribute('aria-expanded','true');
+ await expect(page.locator('#explore-navigation a:visible').first()).toBeFocused();await expect(page.locator('#explore-navigation a:visible').first()).toHaveText('Rankings');await expect(trigger).toHaveAttribute('aria-expanded','true');
  await page.keyboard.press('Escape');await expect(trigger).toBeFocused();await expect(trigger).toHaveAttribute('aria-expanded','false');
  await page.getByRole('button',{name:'Search Digivated',exact:true}).click();
  await expect(page.locator('#discovery-search')).toBeVisible();await page.keyboard.press('Escape');await expect(page.locator('#discovery-search')).toBeHidden();

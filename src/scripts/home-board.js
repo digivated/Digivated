@@ -44,12 +44,38 @@ function visitAttrs(link, p) {
 }
 
 /* ---------- Spots ---------- */
+// Open spots sit on a faint field of ASCII characters that slowly flickers.
+const FIELD_CHARS = '      ....::-+=*#';
+const FIELD_COLS = 44, FIELD_ROWS = 16;
+const fieldChar = () => FIELD_CHARS[Math.floor(Math.random() * FIELD_CHARS.length)];
+function asciiField() {
+  const field = el('span', null, 'dg-spot-field');
+  field.setAttribute('aria-hidden', 'true');
+  field.textContent = Array.from({ length: FIELD_ROWS }, () => Array.from({ length: FIELD_COLS }, fieldChar).join('')).join('\n');
+  return field;
+}
+let fieldTimer = 0;
+function animateFields() {
+  if (fieldTimer || reduced.matches) return;
+  fieldTimer = setInterval(() => {
+    if (document.hidden) return;
+    for (const field of document.querySelectorAll('.dg-spot-field')) {
+      const chars = [...field.textContent];
+      for (let i = 0; i < 18; i++) {
+        const at = Math.floor(Math.random() * chars.length);
+        if (chars[at] !== '\n') chars[at] = fieldChar();
+      }
+      field.textContent = chars.join('');
+    }
+  }, 650);
+}
+
 function spotCard(item, price) {
   const card = el('a', null, 'dg-spot' + (item ? '' : ' is-open'));
   if (!item) {
     // Open cards are paid spots only: they always lead to $3 Instant Publishing.
     card.href = '/submit-project?spot=1#project-form';
-    card.append(el('span', '[ + ]', 'dg-spot-plus'), el('strong', 'Your product here'), el('small', price ? `Claim this spot · ${price}` : 'Claim this paid spot'));
+    card.append(asciiField(), el('span', '[ + ]', 'dg-spot-plus'), el('strong', 'Your product here'), el('small', price ? `Claim this spot · ${price}` : 'Claim this paid spot'));
     card.setAttribute('aria-label', `Claim a paid homepage spot${price ? ` for ${price}` : ''}, live for 7 days`);
     return card;
   }
@@ -78,6 +104,7 @@ function renderSpots(featured, sponsored, instant) {
   const total = Math.ceil((filled.length + 1) / 4) * 4;
   home.querySelector('[data-spot-grid]')?.replaceChildren(...[...filled, ...Array(total - filled.length).fill(null)].map(item => spotCard(item, price)));
   home.dataset.ready = 'true';
+  animateFields();
   observeProjectViews();
   decodeIn(home);
 }
