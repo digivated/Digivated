@@ -1,11 +1,13 @@
 // Canonical public destinations shared by the header and footer.
 const exploreLinks = [
-  ['/discover', 'Browse products'],
+  ['/', 'Launches'],
+  ['/discover', 'Products'],
   ['/threads', 'Threads'],
   ['/news', 'News'],
-  ['/resources', 'Resources'],
   ['/rankings', 'Rankings'],
   ['/winners', 'Weekly winners'],
+  ['/resources', 'Resources'],
+  ['/invstr', 'Market Scanner'],
 ];
 // The header bar keeps four destinations; everything else lives in the compact menu.
 export const primaryLinks = [
@@ -21,18 +23,19 @@ export const menuGroups = [
   { title: 'For makers', links: [['/submit-project', 'Submit a project'], ['/submit-project?spot=1', 'Claim a $3 spot'], ['/membership', 'Membership'], ['/badges', 'Embed badges']] },
 ];
 export const menuLinks = [...primaryLinks, ...menuGroups.flatMap(group => group.links)];
+// Footer: the same destinations as the header and menu, plus account pages and socials.
 export const footerGroups = [
   { title: 'Explore', links: exploreLinks },
-  { title: 'Your workspace', links: [
-    ['/submit-project', 'Submit a project'], ['/account', 'Your projects'],
-    ['/saved', 'Saved items'], ['/inbox', 'Inbox'], ['/notifications', 'Notifications'], ['/badges', 'Embed badges'], ['/membership', 'Membership'],
+  { title: 'For makers', links: [
+    ['/submit-project', 'Submit a project'], ['/account', 'Your projects'], ['/saved', 'Saved items'],
+    ['/inbox', 'Inbox'], ['/badges', 'Embed badges'], ['/membership', 'Membership'],
   ] },
   { title: 'Digivated', links: [
-    ['/about', 'About'], ['/privacy', 'Privacy & Data'], ['/terms', 'Terms of Use'],
+    ['/about', 'About'], ['/privacy', 'Privacy'], ['/terms', 'Terms'],
   ] },
-  { title: 'Connect', links: [
+  { title: 'Follow', links: [
     ['https://x.com/digivatedx', 'X'],
-    ['https://www.threads.com/@digivated', 'Threads'],
+    ['https://www.threads.com/@digivated', 'Threads app'],
     ['https://www.instagram.com/digivated/', 'Instagram'],
     ['https://www.pinterest.com/digivated/', 'Pinterest'],
   ] },
