@@ -88,6 +88,7 @@ function spotCard(item, price) {
   return card;
 }
 
+let spotsSignature = '';
 function renderSpots(featured, sponsored, instant) {
   if (!home) return;
   const seen = new Set();
@@ -95,6 +96,11 @@ function renderSpots(featured, sponsored, instant) {
   const filled = [...featured.map(p => ({ ...p, spot: 'Featured' })), ...sponsored.map(p => ({ ...p, spot: 'Paid spot' }))]
     .filter(p => !seen.has(p.id) && seen.add(p.id));
   const price = instant ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }).format(instant.price / 100) : '';
+  // Cached spots are painted first; skip the rebuild when the fresh data matches.
+  const signature = JSON.stringify([price, filled.map(p => [p.id, p.spot, p.name, p.description, p.category, p.image, p.url, p.pageUrl])]);
+  if (signature === spotsSignature) return;
+  const repaint = !!spotsSignature;
+  spotsSignature = signature;
   // Rails: split evenly, each at least four cards and always ending with a paid open spot.
   const half = Math.ceil(filled.length / 2);
   const perRail = Math.max(SPOTS / 2, half + 1);
@@ -106,7 +112,7 @@ function renderSpots(featured, sponsored, instant) {
   home.dataset.ready = 'true';
   animateFields();
   observeProjectViews();
-  decodeIn(home);
+  decodeIn(home, !repaint);
 }
 
 /* ---------- ASCII decode: text resolves from glyph noise as it enters view ---------- */
@@ -125,7 +131,8 @@ function decode(node) {
   requestAnimationFrame(tick);
 }
 const decoder = 'IntersectionObserver' in window ? new IntersectionObserver(entries => entries.forEach(entry => { if (!entry.isIntersecting) return; decoder.unobserve(entry.target); decode(entry.target); }), { rootMargin: '-40px' }) : null;
-function decodeIn(root) { if (!decoder || reduced.matches) return; root.querySelectorAll('.dg-decode:not([data-decoded])').forEach(node => { node.dataset.decoded = ''; decoder.observe(node); }); }
+// A background refresh rebuilds rows; those names appear as-is instead of decoding twice.
+function decodeIn(root, animate = true) { if (!decoder || reduced.matches) return; root.querySelectorAll('.dg-decode:not([data-decoded])').forEach(node => { node.dataset.decoded = ''; if (animate) decoder.observe(node); }); }
 
 /* ---------- Launch lists ---------- */
 // This week: ranked by launch score (trust-weighted upvotes, comments from other
@@ -263,12 +270,16 @@ async function toggleVote(p, button, li) {
   let failure = '';
   try {
     const result = await requestCardInteraction('project', p.id, { action: liked(p) ? 'remove-upvote' : 'upvote', includePeriods: true });
-    p.liked = result.liked;
-    if (result.fresh) p.fresh = true;
-    else if (result.votes) {
-      // Keep this week's launch score in step without waiting for a reload.
-      if (Number.isFinite(Number(p.score))) p.score = Math.max(0, Number(p.score) + (Number(result.votes.weekly) || 0) - (Number(p.votes?.weekly) || 0));
-      p.votes = result.votes;
+    // A background refresh may have replaced this row's data while the vote was saving.
+    const targets = new Set([p, state.projects.find(item => item.id === p.id)].filter(Boolean));
+    for (const target of targets) {
+      target.liked = result.liked;
+      if (result.fresh) target.fresh = true;
+      else if (result.votes) {
+        // Keep this week's launch score in step without waiting for a reload.
+        if (Number.isFinite(Number(target.score))) target.score = Math.max(0, Number(target.score) + (Number(result.votes.weekly) || 0) - (Number(target.votes?.weekly) || 0));
+        target.votes = result.votes;
+      }
     }
     try { localStorage.setItem('digivated:liked:project:' + p.id, result.liked ? '1' : '0'); } catch { /* optional */ }
   } catch (error) {
@@ -308,7 +319,7 @@ function renderRising() {
     a.setAttribute('aria-label', `${p.name}, rising in the last 24 hours`);
     li.append(a); return li;
   }));
-  decodeIn(box);
+  decodeIn(box, state.animate);
 }
 
 function render() {
@@ -362,18 +373,6 @@ async function loadLaunches(view) {
     return response.ok ? await response.json() : null;
   } catch { return null; }
 }
-async function loadFeatured() {
-  const status = home?.querySelector('[data-featured-status]');
-  try {
-    const response = await fetch('/api/projects?view=featured&offset=0', { cache: 'no-store', credentials:'same-origin', signal: AbortSignal.timeout(15000) });
-    if (!response.ok) throw Error('unavailable');
-    const page = await response.json();
-    if (status) status.hidden = true;
-    return (page.items || []).filter(p => p?.id && p.name && p.status === 'featured').sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
-  } catch {
-    return null; // The catalogue below is the fallback.
-  }
-}
 async function loadInstant() {
   try {
     const response = await fetch('/api/submissions?action=launch-options', { cache: 'no-store', signal: AbortSignal.timeout(10000) });
@@ -410,33 +409,67 @@ async function railThreads() {
   } catch { /* The box stays hidden. */ }
 }
 
+// The last good feed is kept on this device so a return visit paints at once;
+// fresh data replaces it quietly a moment later.
+const CACHE_KEY = 'digivated:home-board:v1';
+const CACHE_AGE = 60 * 60_000;
+function readCache() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (!saved || !Array.isArray(saved.projects) || !saved.projects.length || !(Date.now() - saved.at < CACHE_AGE)) return null;
+    return saved;
+  } catch { return null; }
+}
+function writeCache(patch) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null') || {};
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ ...saved, ...patch }));
+  } catch { /* Storage is optional. */ }
+}
+const featuredFrom = projects => projects.filter(p => p.status === 'featured').sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
+const sponsoredFrom = projects => { const now = Date.now(); return projects.filter(p => p.sponsored && p.status !== 'featured' && now - launchTimestamp(p) < WEEK).sort((a, b) => launchTimestamp(b) - launchTimestamp(a)); };
+
 if (board) {
   pointsChip();
   railThreads();
   board.querySelectorAll('.dg-list-head h2 .dg-list-title').forEach(node => node.classList.add('dg-decode'));
   decodeIn(board);
+  const cached = readCache();
+  if (cached) {
+    state.projects = cached.projects;
+    state.fair = cached.fair || state.fair;
+    if (cached.podium?.order) state.podium = cached.podium;
+    render();
+    if (home) renderSpots(featuredFrom(cached.projects), sponsoredFrom(cached.projects), cached.instant || null);
+  }
   const catalogue = loadCatalogue();
   // Last week's final results and the podium arrive separately; lists re-render when they do.
-  loadLaunches('podium').then(data => { if (!data?.order) return; state.podium = data; if (state.projects.length) { state.animate = false; render(); } });
+  loadLaunches('podium').then(data => { if (!data?.order) return; state.podium = data; writeCache({ podium: data }); if (state.projects.length) { state.animate = false; render(); } });
   loadLaunches('upcoming').then(data => { if (!data?.items) return; state.upcoming = data; if (state.projects.length) { state.animate = false; render(); } });
-  catalogue.then(projects => { state.projects = projects; render(); }).catch(error => {
+  catalogue.then(projects => {
+    state.projects = projects;
+    if (cached) state.animate = false;
+    render();
+    writeCache({ at: Date.now(), projects: projects.map(({ liked, ...p }) => p), fair: state.fair });
+  }).catch(error => {
+    if (cached) return; // Keep showing the saved launches.
     board.querySelectorAll('[data-board-section]').forEach(section => {
       section.querySelector('[data-section-list]').replaceChildren();
       section.querySelector('[data-section-note]').replaceChildren(error.message + ' ', Object.assign(el('a', 'Browse the directory →'), { href: '/discover' }));
     });
   });
   if (home) {
-    Promise.all([loadFeatured(), catalogue.catch(() => []), loadInstant()]).then(([loaded, projects, instant]) => {
-      const now = Date.now();
-      // Featured projects always take their spots: from the featured list, or from the catalogue if that request failed.
-      const featured = loaded?.length ? loaded : projects.filter(p => p.status === 'featured').sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
+    // The catalogue already carries every featured project (same records and view
+    // counts as the old separate featured request), so spots come from it.
+    Promise.all([catalogue.then(projects => ({ projects, ok: true }), () => ({ projects: cached?.projects || [], ok: false })), loadInstant()]).then(([{ projects, ok }, instant]) => {
+      const featured = featuredFrom(projects);
       const status = home.querySelector('[data-featured-status]');
       if (status) {
-        status.hidden = !!featured.length || loaded !== null;
+        status.hidden = !!featured.length || ok;
         if (!status.hidden) status.textContent = 'Featured projects are temporarily unavailable. Browse the directory instead.';
       }
-      const sponsored = projects.filter(p => p.sponsored && p.status !== 'featured' && now - launchTimestamp(p) < WEEK).sort((a, b) => launchTimestamp(b) - launchTimestamp(a));
-      renderSpots(featured, sponsored, instant);
+      if (instant) writeCache({ instant });
+      renderSpots(featured, sponsoredFrom(projects), instant || cached?.instant || null);
     });
   }
 }
