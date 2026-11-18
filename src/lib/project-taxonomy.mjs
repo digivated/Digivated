@@ -369,9 +369,9 @@ const legacyDefaults = { 'AI':'AI Agents', 'Design':'Design & Creative', 'Busine
 export function projectCategory(project) {
  const saved=project.category;
  if(!saved)return 'Other';
- if(current.has(saved))return saved;
  const pick=topics[project.id];
  if(pick && pick[0]===saved)return pick[1];
+ if(current.has(saved))return saved;
  const purpose=`${project.name || ''} ${(project.description || '').split(/[.!?]\s/)[0]}`;
  return topicRules.find(([,pattern])=>pattern.test(purpose))?.[0] || legacyDefaults[saved] || 'Other';
 }

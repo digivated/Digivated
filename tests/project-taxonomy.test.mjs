@@ -39,3 +39,7 @@ test('every public category is a current topic',()=>{
  assert.equal(result.category,'Sales & CRM');assert.equal(result.ai,undefined);
  assert.equal(projectPublic({id:'x',category:'AI',status:'approved',consent:true,url:'https://example.com',image:'image',name:'Vid',description:'Make AI video.'}).ai,true);
 });
+test('reviewed topic applies even when the saved category is still current',()=>{
+ assert.equal(projectCategory({id:'8c797f70-e2ce-48ee-9fda-280bb374d2be',category:'Productivity'}),'Privacy & Security');
+ assert.equal(projectCategory({id:'8c797f70-e2ce-48ee-9fda-280bb374d2be',category:'Finance'}),'Finance');
+});
