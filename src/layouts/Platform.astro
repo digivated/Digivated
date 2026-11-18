@@ -78,6 +78,6 @@ import '../scripts/resource-views.js';
 import '../scripts/account-announcement.js';
 import '../scripts/count-motion.js';
 </script>
-{path === '/' && <script is:inline>if(location.hash.includes('access_token='))location.replace('/account'+location.hash);</script>}
+{path === '/' && <script is:inline src="/auth-hash-redirect.js"></script>}
 
 </body></html>
