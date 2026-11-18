@@ -29,6 +29,7 @@ html[data-ascii] body .dg-fp-fine{margin:0!important;font-family:var(--fl-mono)!
 
 /* One-line strip that opens the steps */
 html[data-ascii] body .dg-fp-strip{padding:0!important}
+html[data-ascii] body .dg-fp-strip summary *{text-decoration:none!important}
 html[data-ascii] body .dg-fp-strip summary{display:flex;align-items:center;gap:12px;min-height:52px;padding:10px 16px!important;cursor:pointer;list-style:none}
 html[data-ascii] body .dg-fp-strip summary::-webkit-details-marker{display:none}
 html[data-ascii] body .dg-fp-strip-copy{flex:1;min-width:0;font-family:var(--fl-sans)!important;font-size:13.5px!important;line-height:1.45!important;color:var(--dgb-copy,#b9b9b9)!important}
@@ -54,4 +55,13 @@ html[data-ascii] body .dg-fp-strip[open] .dg-fp-steps{animation:dg-fp-open .35s 
 @layer flow {
 html[data-ascii] body .dg-fp-account{width:100%;margin:28px 0 0!important}
 html[data-ascii] body #main>.dg-fp-strip{margin-block:20px!important}
+}
+@layer flow {
+@media (max-width:420px){
+ html[data-ascii] body .dg-list-head:has([data-points-chip]) [data-section-count]{display:none!important}
+ html[data-ascii] body .dg-points{padding:2px 8px!important}
+}
+@media (max-width:380px){
+ html[data-ascii] body .dg-points [data-points-label]{display:none!important}
+}
 }

@@ -59,7 +59,6 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
   </section>`;
   const comments = draft ? '' : `<section id="feedback" class="launch-comments" data-project-comments="${e(item.id)}" aria-labelledby="launch-comments-title" tabindex="-1">
     <h2 id="launch-comments-title">Discussion</h2>
-    <p class="launch-points-hint"><span aria-hidden="true">✦</span> Tried it from this page? Specific feedback here earns <a href="/points">feedback points</a> that lift your own launch.</p>
     <p data-project-comments-message role="status">Loading the discussion…</p>
     <noscript><p>Turn on JavaScript to read and join the discussion.</p></noscript>
   </section>`;
