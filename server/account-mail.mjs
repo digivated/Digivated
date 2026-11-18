@@ -107,3 +107,45 @@ export async function sendAwardEmail(record, rank, weekStart, env = process.env,
     return await sendEmail(env, fetcher, message) ? 'sent' : 'failed';
   } catch { return 'failed'; }
 }
+
+// Free launches only go live once the badge is on the maker's site.
+const launchDay = record => new Date(record.launch.scheduledAt).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+const badgeTip = 'Built with React, Vite, Lovable or Bolt? Paste the badge into index.html, inside <body>, so it’s in the page’s HTML.';
+const badgeMessages = {
+  nudge: record => ({
+    subject: `One step left to launch ${record.name || 'your project'}`,
+    label: 'DIGIVATED / LAUNCH', title: 'Add your badge to launch.',
+    paragraphs: [`${record.name || 'Your project'} is booked for ${launchDay(record)}, but it only goes live once the Digivated badge is on your site.`, 'Copy the badge from your dashboard, paste it into your site’s footer and publish. We check your site every day, so once it’s there you’re set.'],
+    cta: { label: 'Get your badge', href: `${ACCOUNT}#project-${encodeURIComponent(record.id)}` },
+    after: [badgeTip],
+  }),
+  'last-call': record => ({
+    subject: `${record.name || 'Your project'} launches ${launchDay(record)}. Your badge is still missing`,
+    label: 'DIGIVATED / LAST CALL', title: 'Your launch is almost here.',
+    paragraphs: [`${record.name || 'Your project'} launches ${launchDay(record)}, but we still can’t find the badge on ${record.url}.`, 'Add it before then and you’ll go live with this week’s launches. Without it, your launch waits until you add it.'],
+    cta: { label: 'Add your badge now', href: `${ACCOUNT}#project-${encodeURIComponent(record.id)}` },
+    after: [badgeTip],
+  }),
+  verified: record => ({
+    subject: `Badge found. ${record.name || 'Your project'} launches ${launchDay(record)}`,
+    label: 'DIGIVATED / LAUNCH', title: 'You’re all set.',
+    paragraphs: [`We found the Digivated badge on your site, so ${record.name || 'your project'} is locked in for ${launchDay(record)} at 9:00 AM Eastern.`, 'Keep the badge up. It shows your live upvotes and links people to your listing.'],
+    cta: { label: 'Open your dashboard', href: ACCOUNT },
+  }),
+};
+export function badgeEmail(record, stage) {
+  if (!record?.accountId || !record.email || !badgeMessages[stage] || !record.launch?.scheduledAt) return null;
+  const { subject, ...content } = badgeMessages[stage](record);
+  return { to: record.email, subject, ...renderEmail({ ...content, preheader: content.paragraphs[0], footer }), idempotencyKey: `digivated-badge-${stage}-${record.id}` };
+}
+export async function sendBadgeEmail(record, stage, env = process.env, fetcher = fetch, accountClient) {
+  const message = badgeEmail(record, stage);
+  if (!message) return 'skipped';
+  if (!env.RESEND_API_KEY || !env.ACCOUNT_EMAIL_FROM) return 'unavailable';
+  try {
+    const owner = await confirmedOwner(record, message.to, env, accountClient);
+    if (owner === null) return 'unavailable';
+    if (!owner) return 'failed';
+    return await sendEmail(env, fetcher, message) ? 'sent' : 'failed';
+  } catch { return 'failed'; }
+}

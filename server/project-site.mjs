@@ -17,6 +17,7 @@ export async function readProjectSite(value, { resolve=lookup, transport=request
   const result=await new Promise((resolve,reject)=>{
    const req=transport(url,{headers:{Accept:'text/html','User-Agent':'Digivated project verifier'},lookup:(_host,options,cb)=>options?.all?cb(null,[{address:addresses[0].address,family:4}]):cb(null,addresses[0].address,4)},res=>{
     if([301,302,303,307,308].includes(res.statusCode)){res.resume();resolve({redirect:res.headers.location});return;}
+    if([401,403,429,503].includes(res.statusCode)){res.resume();reject(Error(`Your site blocked our checker (status ${res.statusCode}). If you use Cloudflare or other bot protection, allow the “Digivated project verifier” user agent, then try again.`));return;}
     if(res.statusCode!==200||!/^text\/html\b/i.test(res.headers['content-type']||'')){res.resume();reject(Error('The project page must return a public HTML page.'));return;}
     let size=0;const chunks=[];
     res.on('data',chunk=>{size+=chunk.length;if(size>512*1024){req.destroy(Error('The page is too large to check automatically.'));return;}chunks.push(chunk);});
@@ -38,16 +39,33 @@ export function siteDetails(html){
  const plain=s=>decode(s||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
  return {name:plain(meta['og:site_name']||meta['og:title']||html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1]).slice(0,120),description:plain(meta.description||meta['og:description']).slice(0,600)};
 }
-export function hasProjectBadge(html,id){
+// Builders often rewrite links slightly (http, www, a trailing slash, tracking
+// parameters) or drop custom attributes, so match the listing link itself.
+function listingId(href){
+ try{const u=new URL(href);if(!/^https?:$/.test(u.protocol)||!/^(?:www\.)?digivated\.com$/i.test(u.hostname))return null;return /^\/projects\/listing\/([^/]+)\/?$/.exec(u.pathname)?.[1]??null;}catch{return null;}
+}
+function badgeLinks(html){
  // Ignore comments and inert script/style content. Require a real anchor to this listing.
  const source=html.replace(/<!--[\s\S]*?-->/g,'').replace(/<(script|style|textarea|template)\b[^>]*>[\s\S]*?<\/\1>/gi,'');
- return (source.match(/<a\b[^>]*>/gi)||[]).some(tag=>{
+ return (source.match(/<a\b[^>]*>/gi)||[]).map(tag=>{
   const a=attributes(tag);
   // Boolean HTML attributes are active even when their value is "false".
   // Strip quoted values so words inside titles are not treated as attributes.
   const unquoted=tag.replace(/"[^"]*"|'[^']*'/g,'');
   const inactive=/(?:\s)(?:hidden|inert)(?:\s|=|>)/i.test(unquoted);
   const concealed=/(?:^|;)\s*(?:display\s*:\s*none|visibility\s*:\s*(?:hidden|collapse))(?:\s*!important)?\s*(?:;|$)/i.test(a.style||'');
-  return !inactive&&!concealed&&a.href===`https://digivated.com/projects/listing/${id}`&&a['data-digivated-project']===id;
+  return {target:listingId(a.href||''),marker:a['data-digivated-project'],visible:!inactive&&!concealed,digivated:/digivated\.com/i.test(a.href||'')};
  });
+}
+const matches=(link,id)=>link.target===id&&(link.marker===undefined||link.marker===id);
+export function hasProjectBadge(html,id){
+ return badgeLinks(html).some(link=>link.visible&&matches(link,id));
+}
+// Explains a failed check in plain words, so makers know what to fix.
+export function badgeProblem(html,id){
+ const links=badgeLinks(html);
+ if(links.some(link=>matches(link,id)))return 'Badge not found where people can see it. It looks hidden on your page. Make sure it is visible, publish, then try again.';
+ if(links.some(link=>link.digivated))return 'Badge not found. We found a Digivated link, but it points to a different project. Copy the badge again from your dashboard.';
+ if(/<div[^>]+id=["'](?:root|app|__next)["'][^>]*>\s*<\/div>/i.test(html))return 'Badge not found. Your site looks like it loads with JavaScript (React, Vite, Lovable, Bolt), so we can’t see components. Paste the badge into index.html, inside <body>, publish, then try again.';
+ return 'Badge not found on your project URL. Paste the badge into that page (the footer works well), publish, then try again.';
 }
