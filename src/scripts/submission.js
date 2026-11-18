@@ -341,7 +341,7 @@ if (form) {
         }
         return;
       }
-      status.textContent = (membership ? 'Your included feature request has been received. It is not public yet. Review is required, and a feature is not guaranteed.' : 'Thank you — your project has been received for review. It is not public yet. Submitting does not guarantee a feature or repost.') + (session ? ' View its status and private feedback in Your Projects.' : ' To track future submissions, sign in before submitting.');
+      status.textContent = (membership ? 'Got your spotlight request. We’ll review it before anything goes public, and a feature isn’t guaranteed.' : 'Thanks, we got your project. It stays private while we review it.') + (session ? ' Track it and read any feedback in Your Projects.' : ' Sign in next time to track your submissions.');
       status.focus();
     } catch (error) {
       popup?.close?.();

@@ -58,7 +58,7 @@ const submissionCategoryGroups = [
         <p class="field-help">Import a name and description from your website. You can edit both.</p><label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
         <label>Project URL<input name="url" type="url" placeholder="https://your-project.com" maxlength="500" required/></label>
         <button type="button" id="project-import">[ Import website details ]</button><p id="project-import-status" role="status"></p>
-        <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. Start with what it does, then who it helps. Avoid hashtags and promotional slogans.</span></label>
+        <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. Say what it does and who it’s for. Skip hashtags and slogans.</span></label>
         <label>
           <span id="project-category-label">Category</span>
           <span class="submission-category-control">
@@ -89,7 +89,7 @@ const submissionCategoryGroups = [
 
       <fieldset id="sub-step-logo">
         <legend><span class="submission-step-label">Logo</span>Project logo</legend>
-        <label class="submission-upload">Project logo<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Required. Upload your project’s logo, not a website screenshot. JPG, PNG, or WebP, up to 10 MB. A square PNG or WebP with a transparent background works best. We preserve the full logo in a consistent square frame.</span></label>
+        <label class="submission-upload">Project logo<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Required. Use your logo, not a screenshot. JPG, PNG, or WebP, up to 10 MB. A square image with a transparent background looks best.</span></label>
         <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project logo preview"/><span id="project-image-name"></span></div>
       </fieldset>
 
@@ -107,7 +107,7 @@ const submissionCategoryGroups = [
              submission script and checkout already use. -->
         <div class="dg-tiers" role="radiogroup" aria-label="Launch option" data-tiers>
           <label class="dg-tier" data-tier="directory"><input type="radio" name="dg-tier" value="directory" checked/><span class="dg-tier-head"><strong>Free launch</strong><b>$0</b></span><span class="dg-tier-sub">Join the weekly queue.</span><ul><li>Launches on a Monday, 7–14 days out</li><li>Add our badge to your site and verify it once</li><li>Permanent listing and discussion page</li></ul></label>
-          <label class="dg-tier dg-tier-instant" data-tier="instant" hidden><input type="radio" name="dg-tier" value="instant" disabled/><span class="dg-tier-flag">Fastest</span><span class="dg-tier-head"><strong>Instant Publishing</strong><b data-tier-price>$3</b></span><span class="dg-tier-sub"><span aria-hidden="true">⚡</span> Live instantly</span><ul><li>No queue and no badge needed</li><li>Goes live the moment payment is verified</li><li>Homepage spot for 7 days</li><li>Permanent listing and discussion page</li></ul></label>
+          <label class="dg-tier dg-tier-instant" data-tier="instant" hidden><input type="radio" name="dg-tier" value="instant" disabled/><span class="dg-tier-flag">Fastest</span><span class="dg-tier-head"><strong>Instant Publishing</strong><b data-tier-price>$3</b></span><span class="dg-tier-sub"><span aria-hidden="true">⚡</span> Live instantly</span><ul><li>No queue and no badge needed</li><li>Live as soon as you pay</li><li>Homepage spot for 7 days</li><li>Permanent listing and discussion page</li></ul></label>
           <label class="dg-tier" data-tier="founding-feature"><input type="radio" name="dg-tier" value="founding-feature"/><span class="dg-tier-head"><strong>Membership Spotlight</strong><b>Members</b></span><span class="dg-tier-sub">Included with Membership.</span><ul><li>A reviewed spotlight placement</li><li>Full News briefings</li></ul></label>
         </div>
         <label class="sr-only" aria-hidden="true">Launch option
@@ -117,7 +117,7 @@ const submissionCategoryGroups = [
             <option value="founding-feature">Membership Spotlight</option>
           </select>
         </label>
-        <p id="free-launch-help" class="field-help">After saving you’ll get a badge to add to your website. Verify it from your dashboard and your project launches automatically on its scheduled date. <span id="free-launch-date"></span></p>
+        <p id="free-launch-help" class="field-help">After you save, you’ll get a badge for your website. Verify it once, and your project launches on its date. <span id="free-launch-date"></span></p>
         <p id="instant-launch-help" class="field-help" hidden><strong>⚡ Instant, no waiting:</strong> pay once at checkout and your project goes live automatically and takes an open homepage spot for 7 days.</p>
         <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/membership#member-sign-in">membership page</a> first to request your included spotlight. We review each request.</p></div>
       </fieldset>
@@ -137,7 +137,7 @@ const submissionCategoryGroups = [
           <p class="eyebrow">STEP 1 OF 4 DONE</p>
           <h3 id="submission-badge-title" tabindex="-1">Project saved. Next: add your badge.</h3>
           <div id="submission-badge-tracker"></div>
-          <ol class="badge-next-steps fl-howto"><li><strong>Pick a badge style below and copy its code.</strong> Every style shows your live upvotes and links to your listing.</li><li><strong>Paste it into your website’s HTML</strong> (for example the footer) and publish the change.</li><li><strong>Press “Check my website” below.</strong> Once we find the badge, your launch is locked in. You can also do this later from your dashboard.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help"><strong>Verification is required.</strong> Once verified, the daily cycle publishes your project when its launch date arrives. No admin approval needed.</p>
+          <ol class="badge-next-steps fl-howto"><li><strong>Pick a badge style below and copy its code.</strong> Every style shows your live upvotes and links to your listing.</li><li><strong>Paste it into your website’s HTML</strong> (for example the footer) and publish the change.</li><li><strong>Press “Check my website” below.</strong> Once we find the badge, your launch is locked in. You can also do this later from your dashboard.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help"><strong>Verification is required.</strong> Once it’s verified, your project goes live on launch day. No approval needed.</p>
           <div id="submission-badge-picker"></div>
           <div class="submission-account-actions fl-actions">
             <button class="button primary fl-btn-primary" id="submission-badge-verify" type="button" hidden>Check my website</button>
