@@ -3,28 +3,9 @@ import Platform from '../layouts/Platform.astro';
 import FreeLaunchGuide from '../components/FreeLaunchGuide.astro';
 import FeedbackPoints from '../components/FeedbackPoints.astro';
 import { projectPricingOptions } from '../lib/project-pricing.mjs';
+import { projectCategoryGroups } from '../data/community.mjs';
 import '../styles/submission-flow.css';
 
-// Labels are for the submission form. Values are the existing directory categories.
-const submissionCategoryGroups = [
-  {
-    label: 'Build & create',
-    options: [
-      ['Developer Tools', 'Coding & Dev Tools'],
-      ['Design', 'Design & UX'],
-      ['Creator Tools', 'Content Creation'],
-      ['Digital Products', 'Templates & Downloads'],
-    ],
-  },
-  {
-    label: 'Work & learn',
-    options: [
-      ['Business', 'Business & Marketing'],
-      ['Productivity', 'Productivity & Tasks'],
-      ['Education', 'Education & Learning'],
-    ],
-  },
-];
 ---
 <Platform title="Submit Your Project" description="Share what you built. Choose a free launch with a website badge, Instant Publishing, or a Membership Spotlight.">
   <header class="page-intro submission-intro">
@@ -67,16 +48,15 @@ const submissionCategoryGroups = [
           <span class="submission-category-control">
             <select name="category" aria-labelledby="project-category-label" aria-describedby="project-category-help" required>
               <option value="">Choose a category</option>
-              <option value="AI">AI Tools</option>
-              {submissionCategoryGroups.map(({ label, options }) => (
+              {projectCategoryGroups.map(([label, names]) => (
                 <optgroup label={label}>
-                  {options.map(([value, text]) => <option value={value}>{text}</option>)}
+                  {names.map(name => <option value={name}>{name}</option>)}
                 </optgroup>
               ))}
               <option value="Other">Other</option>
             </select>
           </span>
-          <span id="project-category-help" class="field-help">Choose what your project mainly helps people do.</span>
+          <span id="project-category-help" class="field-help">Pick what it mainly helps people do. Using AI? Choose the job it does, like Video &amp; Audio or Marketing &amp; SEO.</span>
         </label>
         <fieldset class="submission-pricing" aria-describedby="project-pricing-help">
           <legend>Project pricing <span class="quiet">(optional)</span></legend>

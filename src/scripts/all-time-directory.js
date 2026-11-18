@@ -3,6 +3,7 @@ import { observeProjectViews } from './project-views.js';
 import { cardIconMarkup } from '../lib/card-icons.mjs';
 import { projectFeedbackHref } from '../lib/project-links.mjs';
 import { safeSearchHref } from '../lib/discovery-search.mjs';
+import { categoryFromLink } from '../lib/project-taxonomy.mjs';
 import { DIRECTORY_SORTS, sortKeys, filterProjects, sortProjects, sectionLabel, categoryCounts } from '../lib/directory-sort.mjs';
 
 // /discover: the all-time index. Same rows as the homepage, plus search, sorts,
@@ -49,7 +50,7 @@ if (root) {
   const params = new URLSearchParams(location.search);
   const state = {
     projects: [], loaded: false, failed: false,
-    query: '', category: params.get('category') || '',
+    query: '', category: categoryFromLink(params.get('category') || ''),
     sort: sortKeys.includes(params.get('sort')) ? params.get('sort') : 'top',
     featured: params.get('view') === 'featured',
     limit: PAGE, selected: null,

@@ -1,6 +1,6 @@
 import { requestCardInteraction } from './card-actions.js';
 import { inLaunchBatch, launchTimestamp, launchBatchLabel, readRankingPeriod, fairOrder } from '../lib/launch-calendar.mjs';
-import { aiGroups, aiTopics } from '../lib/project-taxonomy.mjs';
+import { aiGroups, aiTopics, categoryFromLink } from '../lib/project-taxonomy.mjs';
 import { cardIconMarkup } from '../lib/card-icons.mjs';
 const root=document.querySelector('[data-launch-directory]');
 if(root){
@@ -9,7 +9,7 @@ if(root){
  const params = new URLSearchParams(location.search);
  const initialBatch = ['current','previous'].includes(params.get('launch')) ? params.get('launch') : '';
  if (launchBatch) launchBatch.value = initialBatch;
- let projects=[],period=readRankingPeriod(params.get('period'), initialBatch),category=params.get('category')||'All',query=params.get('q')||'',limit=30;
+ let projects=[],period=readRankingPeriod(params.get('period'), initialBatch),category=categoryFromLink(params.get('category')||'')||'All',query=params.get('q')||'',limit=30;
  function syncUrl(){
    const url=new URL(location.href);
    for(const [key,value] of Object.entries({launch:launchBatch?.value||'',period,category:category==='All'?'':category,q:query})){
@@ -110,7 +110,7 @@ if(root){
   projects=[...new Map(items.filter(p=>p.image&&p.url&&(!ai||aiTopics(p).length>0)).map(p=>[p.id,p])).values()];categories();render();
  }
  const categoryHost=root.querySelector('[data-launch-categories]');
- window.addEventListener('popstate',()=>{const p=new URLSearchParams(location.search);if(launchBatch)launchBatch.value=['current','previous'].includes(p.get('launch'))?p.get('launch'):'';period=readRankingPeriod(p.get('period'),launchBatch?.value);category=p.get('category')||'All';query=p.get('q')||'';root.querySelector('[data-launch-search]').value=query;limit=30;render();});
+ window.addEventListener('popstate',()=>{const p=new URLSearchParams(location.search);if(launchBatch)launchBatch.value=['current','previous'].includes(p.get('launch'))?p.get('launch'):'';period=readRankingPeriod(p.get('period'),launchBatch?.value);category=categoryFromLink(p.get('category')||'')||'All';query=p.get('q')||'';root.querySelector('[data-launch-search]').value=query;limit=30;render();});
  function categories(){const names=['All',...(ai?groups.filter(([name])=>projects.some(p=>aiTopics(p).includes(name))).map(([name])=>name):[...new Set(projects.map(p=>p.category).filter(Boolean))].sort())];categoryHost.replaceChildren();for(const name of names){const b=text('button',name);b.type='button';b.dataset.category=name;b.setAttribute('aria-pressed',String(name===category));b.onclick=()=>{category=name;limit=30;render();};categoryHost.append(b);}}
  launchBatch?.addEventListener('change', () => {
    period = launchBatch.value === 'current' ? 'weekly' : launchBatch.value === 'previous' ? 'all' : 'daily';
