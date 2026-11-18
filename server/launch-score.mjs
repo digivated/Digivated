@@ -8,6 +8,7 @@ import { inLaunchBatch, launchBounds, launchTimestamp, fairStart } from '../src/
 import { BOOST_POINTS_PER_VOTE } from '../src/lib/feedback-score.mjs';
 import { publicRecords, projectPublic, storageKey } from './admin-store.mjs';
 import { addNotification } from './notifications.mjs';
+import { sendAwardEmail } from './account-mail.mjs';
 
 const DAY = 86_400_000;
 export const VOTE_WEIGHT = Object.freeze({ guest: 1, member: 2, trusted: 3 });
@@ -187,6 +188,7 @@ export async function finalizeLastWeek(redis, now = Date.now()) {
       try {
         const record = JSON.parse(await redis(['GET', storageKey('submission', place.id)]));
         if (record?.accountId && project) await addNotification(redis, { recipientId: record.accountId, type: 'award', link: '/winners', actorName: project.name, verb: `placed #${place.rank} in last week’s launches` });
+        if (record?.accountId) await sendAwardEmail(record, place.rank, start).catch(() => 'failed');
       } catch { /* The podium is saved either way. */ }
     }
     return week;

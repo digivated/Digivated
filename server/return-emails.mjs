@@ -3,6 +3,10 @@ import { createClient } from '@supabase/supabase-js';
 import { verifiedAccount } from './project-account.mjs';
 import { redisClient } from './submissions.mjs';
 import { notificationPreferencesKey } from './notifications.mjs';
+import { renderEmail } from './email-layout.mjs';
+
+// Small on-theme pages for the unsubscribe link.
+const page=(title,body,form='')=>`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>${title}</title></head><body style="margin:0;background:#0b0b0b;color:#e7e7e7"><main style="max-width:520px;margin:12vh auto;padding:24px;font:16px/1.6 Arial,Helvetica,sans-serif"><p style="margin:0 0 18px;color:#bfc2c5;font:700 12px/1.5 'Courier New',monospace;letter-spacing:1.5px">[ DIGIVATED / EMAIL ]</p><h1 style="margin:0 0 12px;font-size:26px;line-height:1.25">${title}</h1><p style="margin:0 0 22px;color:#c8c8c8">${body}</p>${form}<p style="margin:26px 0 0"><a href="https://digivated.com" style="color:#c8c8c8">Back to Digivated &rarr;</a></p></main></body></html>`;
 
 const MEMBERS='digivated:weekly:members';
 const preference=id=>`digivated:weekly:preference:${id}`;
@@ -23,13 +27,13 @@ export function makeReturnEmailHandler(deps={}){return async(req,res)=>{
    const id=url.searchParams.get('id'),signature=url.searchParams.get('signature');
    if(!id||!valid(signature,sign(id,env.SUBMISSIONS_REDIS_REST_TOKEN)))return json(res,400,{error:'Invalid unsubscribe link.'});
    // GET only displays a confirmation page. Email scanners cannot unsubscribe someone.
-   res.statusCode=200;res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('Cache-Control','no-store');return res.end('<!doctype html><html lang="en"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Digivated emails</title><main style="font:18px system-ui;max-width:560px;margin:12vh auto;padding:24px"><h1>Digivated weekly emails</h1><p>Stop receiving the weekly project email?</p><form method="post"><button style="padding:12px 18px">Unsubscribe</button></form><p><a href="https://digivated.com">Back to Digivated</a></p></main></html>');
+   res.statusCode=200;res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('Cache-Control','no-store');return res.end(page('Digivated weekly emails','Stop receiving the weekly project email?','<form method="post"><button style="padding:12px 20px;border:1px solid #ececec;background:#ececec;color:#0a0a0a;font:700 14px Arial,Helvetica,sans-serif;cursor:pointer">Unsubscribe</button></form>'));
   }
   if(req.method==='POST'&&action==='unsubscribe'){
    const id=url.searchParams.get('id'),signature=url.searchParams.get('signature');
    if(!id||!valid(signature,sign(id,env.SUBMISSIONS_REDIS_REST_TOKEN)))return json(res,400,{error:'Invalid unsubscribe link.'});
    await redis(['DEL',preference(id)]);await redis(['ZREM',MEMBERS,id]);
-   res.statusCode=200;res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('Cache-Control','no-store');return res.end('<!doctype html><html lang="en"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Unsubscribed</title><main style="font:18px system-ui;max-width:560px;margin:12vh auto;padding:24px"><h1>You are unsubscribed.</h1><p>You will not receive the weekly project email.</p><a href="https://digivated.com">Back to Digivated</a></main></html>');
+   res.statusCode=200;res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('Cache-Control','no-store');return res.end(page('You are unsubscribed.','You will not receive the weekly project email.'));
   }
   if(req.method==='POST'&&action==='confirm'){
    if(req.headers.origin!=='https://digivated.com'||!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))return json(res,403,{error:'Open Digivated to confirm.'});
@@ -58,7 +62,7 @@ export function makeReturnEmailHandler(deps={}){return async(req,res)=>{
    if(count>20)return json(res,429,{error:'Email confirmations are busy today. Please try again tomorrow.'});
    const token=randomBytes(24).toString('hex');await redis(['SET',tokenKey(token),JSON.stringify({id:account.id,email:account.email}),'EX',86400]);
    const link=`https://digivated.com/email-preferences?token=${token}`;
-   const response=await (deps.fetcher||fetch)('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({from:env.ACCOUNT_EMAIL_FROM,to:[account.email],subject:'Confirm your Digivated weekly email',text:`Confirm that you want a weekly email about new featured projects. Open this link and press Confirm: ${link}\n\nIf you did not request this, ignore this email.\n\nDigivated`}),signal:AbortSignal.timeout(8000),redirect:'error'});
+   const response=await (deps.fetcher||fetch)('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({from:env.ACCOUNT_EMAIL_FROM,to:[account.email],subject:'Confirm your Digivated weekly email',...renderEmail({label:'DIGIVATED / WEEKLY',title:'Confirm your weekly email.',preheader:'One tap to start the weekly project email.',paragraphs:['You asked for a weekly email about new projects on Digivated. Open the link and press Confirm to start it.'],cta:{label:'Confirm weekly email',href:link},after:['If you did not request this, ignore this email. The link expires in 24 hours.']})}),signal:AbortSignal.timeout(8000),redirect:'error'});
    if(!response.ok)return json(res,503,{error:'Could not send confirmation. Try again later.'});
    return json(res,200,{subscribed:false,pending:true});
   }
