@@ -185,3 +185,7 @@ html#digivated-root[data-ascii] .rankings-directory .ranking-front-runner .ranki
 html#digivated-root[data-ascii] .rankings-directory .ranking-front-runner .launch-copy {
   padding-left: 0;
 }
+/* Mouse and trackpad users can't swipe a row sideways, so wrap the categories instead. */
+@media (hover:hover) and (pointer:fine){
+html#digivated-root .rankings-directory .launch-categories { flex-wrap:wrap; overflow:visible; }
+}

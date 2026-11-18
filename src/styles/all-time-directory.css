@@ -98,3 +98,9 @@ html[data-ascii] body .dg-dir-dialog-hint{margin:6px 0 0!important;font-family:v
 }
 @media (prefers-reduced-motion:reduce){html[data-ascii] body .dg-dir-podium-card{transition:none!important}}
 }
+/* Mouse and trackpad users can't swipe a row sideways, so wrap the chips instead. */
+@layer flow {
+@media (hover:hover) and (pointer:fine){
+ html[data-ascii] body .dg-dir-chips{flex-wrap:wrap;overflow:visible;-webkit-mask-image:none;mask-image:none}
+}
+}
