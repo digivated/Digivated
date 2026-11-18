@@ -209,17 +209,38 @@ export async function bestPlace(redis, id) {
 }
 
 /* ---------- Maker stats ---------- */
+export const statsTotalKey = id => `digivated:stats:project:${id}:total`;
 export async function bumpStat(redis, id, field, now = Date.now()) {
   const key = statsKey(id, now);
   await redis(['HINCRBY', key, field, 1]);
   await redis(['EXPIRE', key, STATS_TTL]);
+  if (field === 'visits') await redis(['HINCRBY', statsTotalKey(id), 'visits', 1]);
 }
+// Daily numbers for the last two weeks. Upvotes and comments come from their own
+// timestamped records, so they include history from before daily stats existed;
+// views and visits are counted per day from when tracking began.
 export async function readStats(redis, id, now = Date.now(), days = STATS_DAYS) {
   const today = Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth(), new Date(now).getUTCDate());
   const dates = Array.from({ length: days }, (_, i) => today - (days - 1 - i) * DAY);
-  const rows = await Promise.all(dates.map(date => redis(['HMGET', statsKey(id, date), 'views', 'visits', 'upvotes', 'comments'])));
+  const [rows, votes, comments] = await Promise.all([
+    Promise.all(dates.map(date => redis(['HMGET', statsKey(id, date), 'views', 'visits']))),
+    redis(['ZRANGEBYSCORE', `digivated:card:votes:project:${id}`, dates[0], '+inf', 'WITHSCORES']),
+    redis(['ZRANGEBYSCORE', `digivated:card:comments:project:${id}`, dates[0], '+inf', 'WITHSCORES']),
+  ]);
+  const bucket = list => { const counts = new Array(days).fill(0); for (let i = 1; i < (list?.length || 0); i += 2) { const at = Math.floor((Number(list[i]) - dates[0]) / DAY); if (at >= 0 && at < days) counts[at] += 1; } return counts; };
+  const up = bucket(votes), said = bucket(comments);
   return dates.map((date, i) => {
-    const [views, visits, upvotes, comments] = (rows[i] || []).map(value => Number(value) || 0);
-    return { date: new Date(date).toISOString().slice(0, 10), views, visits, upvotes, comments };
+    const [views, visits] = (rows[i] || []).map(value => Number(value) || 0);
+    return { date: new Date(date).toISOString().slice(0, 10), views, visits, upvotes: up[i], comments: said[i] };
   });
+}
+// Lifetime numbers, from the same records the public pages use.
+export async function allTimeStats(redis, id) {
+  const [views, upvotes, comments, visits] = await Promise.all([
+    redis(['GET', `digivated:project-views:${id}`]),
+    redis(['GET', `digivated:card:likes:project:${id}`]),
+    redis(['ZCARD', `digivated:card:comments:project:${id}`]),
+    redis(['HGET', statsTotalKey(id), 'visits']),
+  ]);
+  return { views: Number(views) || 0, visits: Number(visits) || 0, upvotes: Number(upvotes) || 0, comments: Number(comments) || 0 };
 }

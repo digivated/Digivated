@@ -106,7 +106,7 @@ if(state){
   function statsPanel(item){
    const el=(tag,text,cls)=>{const node=document.createElement(tag);if(text!=null)node.textContent=text;if(cls)node.className=cls;return node;};
    const box=el('section',null,'dg-stats');box.setAttribute('aria-label',`Launch stats for ${item.name}`);
-   const head=el('h4',null,'dg-stats-head');head.append(el('span','Launch stats'),el('small','last 14 days'));
+   const head=el('h4',null,'dg-stats-head');head.append(el('span','Launch stats'),el('small','all time · bars show the last 14 days'));
    const status=el('p','Loading stats…','dg-stats-status');status.setAttribute('role','status');
    box.append(head,status);
    const BARS='▁▂▃▄▅▆▇█';
@@ -118,7 +118,7 @@ if(state){
     const grid=el('div',null,'dg-stats-grid');
     for(const [key,label] of [['views','Views'],['visits','Visits'],['upvotes','Upvotes'],['comments','Comments']]){
      const tile=el('div',null,'dg-stat');const values=data.days.map(day=>day[key]);
-     tile.append(el('span',label,'dg-stat-label'),el('strong',String(data.totals[key])),Object.assign(el('span',spark(values),'dg-stat-spark'),{title:`${label} per day, oldest first`}));
+     const total=data.allTime?Math.max(data.allTime[key],data.totals[key]):data.totals[key];tile.append(el('span',label,'dg-stat-label'),el('strong',String(total)),el('small',`+${data.totals[key]} in 14 days`,'dg-stat-recent'),Object.assign(el('span',spark(values),'dg-stat-spark'),{title:`${label} per day, oldest first`}));
      tile.lastChild.setAttribute('aria-hidden','true');grid.append(tile);
     }
     box.append(grid);
