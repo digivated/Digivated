@@ -52,6 +52,7 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
   try{
    const {state,email,session}=await accountSession({fresh});
    if(current!==request)return;
+   header?.removeAttribute('data-account-guess');
    signedIn=state==='signed-in';
    const hasAccount=state==='signed-in'||state==='unavailable'&&!!session;
    header?.setAttribute('data-account',hasAccount?'signed-in':'signed-out');
@@ -80,6 +81,10 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
    showCounts();
   }catch{
    // Keep the visible sign-in route available during a temporary outage.
+   if(current===request&&header?.hasAttribute('data-account-guess')){
+    header.removeAttribute('data-account-guess');header.setAttribute('data-account','signed-out');
+    link.hidden=false;if(menu)menu.hidden=true;if(menuLogin)menuLogin.hidden=false;
+   }
   }
  };
  document.addEventListener('digivated:notifications-updated',()=>update());

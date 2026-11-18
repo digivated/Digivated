@@ -5,6 +5,35 @@ import { withResourceViews } from './resource-views.mjs';
 import { withLaunchScores } from './launch-score.mjs';
 import { redisClient } from './submissions.mjs';
 import { publicRecords, validId, storageKey, projectPublic, contentPublic } from './admin-store.mjs';
+// Upvote and comment counts for a whole page of projects in one round trip.
+// ARGV: number of period starts, now, start1…startN, id1, id2, …
+// Per id returns {likes, count in each period, comments}.
+export const RANKING_COUNTS = `
+local n, now = tonumber(ARGV[1]), ARGV[2]
+local out = {}
+for i = 3 + n, #ARGV do
+  local id = ARGV[i]
+  local row = { redis.call('GET', 'digivated:card:likes:project:'..id) or '0' }
+  for s = 3, 2 + n do row[#row + 1] = redis.call('ZCOUNT', 'digivated:card:votes:project:'..id, ARGV[s], now) end
+  local ok, comments = pcall(redis.call, 'ZCARD', 'digivated:card:comments:project:'..id)
+  row[#row + 1] = ok and comments or 0
+  out[#out + 1] = row
+end
+return out`;
+
+export async function rankingCounts(redis, ids, starts, now) {
+  if (!ids.length) return [];
+  try {
+    const rows = await redis(['EVAL', RANKING_COUNTS, 0, starts.length, now, ...starts, ...ids]);
+    if (Array.isArray(rows) && rows.length === ids.length && rows.every(row => Array.isArray(row) && row.length === starts.length + 2)) return rows;
+  } catch { /* Fall back to one request per count below. */ }
+  return Promise.all(ids.map(id => Promise.all([
+    redis(['GET', 'digivated:card:likes:project:' + id]),
+    ...starts.map(start => redis(['ZCOUNT', 'digivated:card:votes:project:' + id, start, now])),
+    redis(['ZCARD', 'digivated:card:comments:project:' + id]).catch(() => 0),
+  ])));
+}
+
 export function makePublicHandler(type, deps = {}) {
   return async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
@@ -41,6 +70,9 @@ export function makePublicHandler(type, deps = {}) {
         const match = published && record.image?.match(/^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/]+={0,2})$/);
         if (!match) return send(404, { error: 'Not found.' });
         res.setHeader('Content-Type', match[1]); res.setHeader('Content-Disposition', 'inline');
+        // Logos repeat on every page; let browsers and the CDN reuse them briefly.
+        res.setHeader('Cache-Control', 'public, max-age=600, stale-while-revalidate=86400');
+        res.setHeader('Vercel-CDN-Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400');
         res.statusCode = 200; return res.end(Buffer.from(match[2], 'base64'));
       }
       if (type === 'projects' && url.searchParams.get('view') === 'featured') {
@@ -60,14 +92,11 @@ export function makePublicHandler(type, deps = {}) {
       if (kind === 'submission' && url.searchParams.get('ranking') === '1') {
         const now = Date.now();
         const starts = rankingPeriodStarts(now);
-        items=await Promise.all(items.map(async item=>{
-          const [total,daily,weekly,monthly,comments]=await Promise.all([
-            redis(['GET','digivated:card:likes:project:'+item.id]),
-            ...starts.map(start=>redis(['ZCOUNT','digivated:card:votes:project:'+item.id,start,now])),
-            redis(['ZCARD','digivated:card:comments:project:'+item.id]).catch(()=>0)
-          ]);
+        const counts = await rankingCounts(redis, items.map(item => item.id), starts, now);
+        items=items.map((item,i)=>{
+          const [total,daily,weekly,monthly,comments]=counts[i];
           return {...item,comments:Number(comments||0),votes:{all:Number(total||0),daily:Number(daily||0),weekly:Number(weekly||0),monthly:Number(monthly||0)}};
-        }));
+        });
         ({ items, fair } = await withLaunchScores(redis, items, now));
       }
       if (kind === 'resource') items = await withResourceViews(redis, items);
