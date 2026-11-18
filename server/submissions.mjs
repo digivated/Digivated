@@ -50,7 +50,6 @@ async function instantLaunchConfig(env, fetcher) {
 
 async function publishInstantProject(redis, account, id, config, fetcher) {
   if (!validId(id)) throw new SubmissionError(400, 'Choose a saved project.');
-  if (account.mailboxVerified === false) throw new SubmissionError(403, 'Sign in with an emailed link to verify your checkout email.');
   const key = `digivated:submission:${id}`;
   const record = JSON.parse(await redis(['GET', key]));
   if (record?.accountId !== account.id || record.email.toLowerCase() !== account.email ||
@@ -58,9 +57,13 @@ async function publishInstantProject(redis, account, id, config, fetcher) {
   if (record.promotion.verified && projectPublic(record)) return projectPublic(record);
   if (record.status !== 'pending') throw new SubmissionError(409, 'This project is no longer awaiting payment.');
   let saleId;
+  // Password sign-ups never proved they own the address, so they only claim a
+  // purchase made after this project was saved (a fresh checkout for it).
+  const savedAt = Date.parse(record.date);
+  const notBefore = account.mailboxVerified === false ? (Number.isFinite(savedAt) ? savedAt - 120000 : Infinity) : 0;
   try {
     ({ saleId } = await verifyFoundingEmail(account.email, {
-      productId: config.productId, gumroadToken: config.gumroadToken, minimumPriceUSD: config.price, allowTest: false
+      productId: config.productId, gumroadToken: config.gumroadToken, minimumPriceUSD: config.price, allowTest: false, notBefore
     }, fetcher));
   } catch (error) {
     if (error instanceof FoundingError && error.status === 401) {
@@ -225,7 +228,6 @@ export function makeSubmissionHandler(deps={}) {
       }
       let record = validateSubmission(body);
       if (record.promotion?.included === 'instant-launch' && !await instantLaunchConfig(env, deps.fetcher || fetch)) throw new SubmissionError(403, 'Instant publishing is currently unavailable.');
-      if (record.promotion?.included === 'instant-launch' && account.mailboxVerified === false) throw new SubmissionError(403, 'Sign in with an emailed link before choosing instant publishing.');
       if(account&&record.email.toLowerCase()!==account.email)throw new SubmissionError(403,'Use the same email as your verified account.');
       if (record.promotion?.included === 'founding-membership') record = { ...record, promotion: await memberFeature(req, env, deps) };
       const redis=deps.redis||redisClient(env);

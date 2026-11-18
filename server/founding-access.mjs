@@ -67,6 +67,10 @@ function candidateSale(sale, cfg, email) {
   if (!sale || typeof sale !== 'object') return false;
   if (typeof sale.id !== 'string' || !SALE_ID.test(sale.id) || sale.id.includes('..')) return false;
   if (sale.product_id !== cfg.productId) return false;
+  if (cfg.notBefore) {
+    const created = Date.parse(sale.created_at);
+    if (!Number.isFinite(created) || created < cfg.notBefore) return false;
+  }
   if (cfg.minimumPriceUSD && (String(sale.currency).toLowerCase() !== 'usd' || !Number.isInteger(sale.price) || sale.price < cfg.minimumPriceUSD)) return false;
   const buyer = String(sale.purchase_email || sale.email || '').trim().toLowerCase();
   if (buyer !== email) return false;

@@ -11,16 +11,21 @@ if (form) {
   const verify = document.getElementById('instant-launch-verify');
   const paymentStatus = document.getElementById('instant-launch-status');
   const listing = document.getElementById('instant-launch-listing');
-  const showCheckout = id => {
-    pendingInstantId = id;
-    checkout.href = instantConfig.checkoutUrl;
-    details.hidden = true;
-    resumePanel.hidden = false;
-    verify.focus();
+  // Instant flow: save the project, open checkout in a new tab, then publish
+  // automatically as soon as the payment shows up (no extra clicks needed).
+  let pollTimer, pollUntil = 0, checking = false, accountEmail = '';
+  const checkoutHref = () => {
+    const url = new URL(instantConfig.checkoutUrl);
+    url.searchParams.set('wanted', 'true');
+    if (accountEmail) url.searchParams.set('email', accountEmail);
+    return url.href;
   };
-  verify.addEventListener('click', async () => {
-    verify.disabled = true;
-    paymentStatus.textContent = 'Verifying your payment…';
+  const stopPolling = () => { clearTimeout(pollTimer); pollUntil = 0; };
+  const schedule = () => { clearTimeout(pollTimer); if (Date.now() < pollUntil) pollTimer = setTimeout(() => checkPayment(true), 5000); };
+  const checkPayment = async quiet => {
+    if (checking || !pendingInstantId) return;
+    checking = true;
+    if (!quiet) { verify.disabled = true; paymentStatus.textContent = 'Checking your payment…'; }
     try {
       const { data: { session } } = await accountClient.auth.getSession();
       if (!session) throw new Error('Your session expired. Sign in and resume from Your Projects.');
@@ -30,8 +35,16 @@ if (form) {
         body: JSON.stringify({ action: 'publish-instant', id: pendingInstantId }),
         signal: AbortSignal.timeout(26000)
       });
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
+      if (response.status === 409 && /could not find an eligible payment/i.test(data.error || '')) {
+        if (!quiet) paymentStatus.textContent = 'Payment not found yet. Finish checkout in the other tab — this page will publish your project as soon as it goes through.';
+        if (!pollUntil) pollUntil = Date.now() + 15 * 60000;
+        return schedule();
+      }
       if (!response.ok) throw new Error(data.error || 'Could not verify the purchase.');
+      stopPolling();
+      document.getElementById('instant-launch-title').textContent = 'Your project is live ⚡';
+      document.getElementById('instant-launch-copy').textContent = 'Payment received. Your project is published and has an open homepage spot for 7 days.';
       paymentStatus.textContent = 'Your project is live.';
       listing.href = data.pageUrl;
       listing.hidden = false;
@@ -39,11 +52,33 @@ if (form) {
       verify.hidden = true;
       listing.focus();
     } catch (error) {
+      if (quiet) return schedule();
       paymentStatus.textContent = error.message || 'Could not verify your payment. Try again.';
     } finally {
+      checking = false;
       verify.disabled = false;
     }
-  });
+  };
+  const showCheckout = (id, popup) => {
+    pendingInstantId = id;
+    checkout.href = checkoutHref();
+    if (popup && !popup.closed) popup.location.href = checkout.href;
+    else popup?.close?.();
+    document.getElementById('instant-launch-email').textContent = accountEmail || 'your account email';
+    details.hidden = true;
+    resumePanel.hidden = false;
+    paymentStatus.textContent = popup && !popup.closed ? 'Waiting for your payment…' : 'Open checkout to pay. This page publishes your project as soon as payment goes through.';
+    pollUntil = Date.now() + 15 * 60000;
+    schedule();
+    resumePanel.scrollIntoView({ block: 'start' });
+    (popup && !popup.closed ? verify : checkout).focus();
+  };
+  checkout.addEventListener('click', () => { pollUntil = Date.now() + 15 * 60000; schedule(); paymentStatus.textContent = 'Waiting for your payment…'; });
+  verify.addEventListener('click', () => checkPayment(false));
+  // Coming back from the checkout tab triggers an immediate check.
+  const onReturn = () => { if (!document.hidden && pollUntil && !resumePanel.hidden) checkPayment(true); };
+  document.addEventListener('visibilitychange', onReturn);
+  window.addEventListener('focus', onReturn);
   document.getElementById('project-import').onclick=async()=>{
     const importButton=document.getElementById('project-import'),message=document.getElementById('project-import-status');
     if(!form.elements.url.reportValidity())return;
@@ -182,13 +217,10 @@ if (form) {
       option.hidden = false;
       const price = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }).format(instant.price / 100);
       option.textContent = `Instant Publishing (${price})`;
-      if (!account.mailboxVerified) {
-        const help = document.getElementById('instant-launch-help');
-        help.replaceChildren('To use instant publishing, first sign in using an emailed link. ', Object.assign(document.createElement('a'), { href: '/login', textContent: 'Open sign-in' }));
-      }
-      const pending = account.submissions?.find(item => item.awaitingInstantPayment);
-      if (pending && account.mailboxVerified) showCheckout(pending.id);
-      if (pending && !account.mailboxVerified) intent.value = 'instant';
+      if (account.email) accountEmail = account.email;
+      const resumeId = query.get('resume');
+      const pending = account.submissions?.find(item => item.awaitingInstantPayment && (!resumeId || item.id === resumeId)) || account.submissions?.find(item => item.awaitingInstantPayment);
+      if (pending) showCheckout(pending.id);
       if (!pending && query.get('spot') === '1') intent.value = 'instant';
       syncIntent();
       updateButton();
@@ -202,6 +234,12 @@ if (form) {
     event.preventDefault();
     if (!accountVerified) { status.innerHTML='Please <a href="/login">sign in or create an account</a> before submitting.'; return; }
     if (!form.reportValidity()) return;
+    // Open the checkout tab now, while this tap still counts as a user action
+    // (browsers block tabs opened later). It's pointed at checkout once saved.
+    let popup = null;
+    if (intent.value === 'instant' && instantConfig) {
+      try { popup = window.open('', '_blank'); if (popup) { popup.opener = null; popup.document.title = 'Opening checkout…'; popup.document.body.style.cssText = 'background:#0b0b0b;color:#ccc;font:14px monospace;padding:24px'; popup.document.body.textContent = 'Opening secure checkout…'; } } catch { popup = null; }
+    }
     button.disabled = true;
     status.textContent = intent.value === 'directory' ? 'Saving your project…' : 'Submitting your project…';
     try {
@@ -223,7 +261,9 @@ if (form) {
       if (!response.ok) throw new Error(data.error || 'Your project could not be submitted. Your details are still here; please try again.');
       document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
       if (payload.submissionType === 'instant') {
-        showCheckout(data.id);
+        accountEmail = payload.email || accountEmail;
+        showCheckout(data.id, popup);
+        popup = null;
         return;
       }
       window.digivatedTrack?.('project_submit', {project_category:payload.category});
@@ -256,6 +296,7 @@ if (form) {
       status.textContent = (membership ? 'Your included feature request has been received. It is not public yet. Review is required, and a feature is not guaranteed.' : 'Thank you — your project has been received for review. It is not public yet. Submitting does not guarantee a feature or repost.') + (session ? ' View its status and private feedback in Your Projects.' : ' To track future submissions, sign in before submitting.');
       status.focus();
     } catch (error) {
+      popup?.close?.();
       status.textContent = error.name === 'TimeoutError' ? 'The response took too long. Your submission may have been received; please wait before trying again.' : (error.message || 'Unable to submit. Please try again.');
     } finally { updateButton(); }
   });
