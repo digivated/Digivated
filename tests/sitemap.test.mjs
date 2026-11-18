@@ -90,7 +90,12 @@ test('dynamic sitemap reads public projects, creators, and news dates only', asy
     'digivated:creator:public': [creator, '123e4567-e89b-42d3-a456-426614174001'],
     'digivated:news:index:published': ['story'],
     'digivated:public:resources': ['paused'],
+    'digivated:threads:all': ['t1', 't2'],
   };
+  Object.assign(strings, {
+    'digivated:thread:t1': JSON.stringify({ slug: 'roast-my-landing-page-t1', status: 'published', createdAt: '2026-11-10T12:00:00Z' }),
+    'digivated:thread:t2': JSON.stringify({ slug: 'removed-thread-t2', status: 'removed', createdAt: '2026-11-11T12:00:00Z' }),
+  });
   const redis = async command => {
     const [op, ...args] = command;
     if (op === 'ZCARD') return zsets[args[0]]?.length || 0;
@@ -109,6 +114,8 @@ test('dynamic sitemap reads public projects, creators, and news dates only', asy
   assert.ok(locs.includes(`https://digivated.com/creator?id=${creator}`));
   assert.equal(locs.filter(loc => loc.startsWith('https://digivated.com/creator?id=')).length, 1);
   assert.equal(locs.some(loc => loc.includes('paused')), false);
+  assert.equal(entries.find(entry => entry.loc === 'https://digivated.com/threads/roast-my-landing-page-t1')?.lastmod, '2026-11-10');
+  assert.equal(locs.some(loc => loc.includes('removed-thread')), false);
   assert.equal(entries.find(entry => entry.loc === 'https://digivated.com/news').lastmod, '2026-09-02');
   assert.equal(JSON.stringify(entries).includes('hidden@example.com'), false);
   assert.equal(entries.filter(entry => staticPublicPages.some(path => entry.loc === new URL(path, 'https://digivated.com').href)).length, staticPublicPages.length);

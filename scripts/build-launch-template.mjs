@@ -3,6 +3,7 @@ await mkdir('server/generated',{recursive:true});
 await writeFile('server/generated/project.html',await readFile('dist/launch-template/index.html'));
 await rm('dist/launch-template',{recursive:true});
 await writeFile('server/generated/creator.html',await readFile('dist/creator/index.html'));
+await writeFile('server/generated/thread.html',await readFile('dist/threads/thread/index.html'));
 if (process.env.VERCEL === '1') await rm('dist/creator',{recursive:true});
 // Vercel serves /sitemap.xml from the runtime function so it can include live public URLs.
 // Local preview and CI keep the static file generated from the public page list.

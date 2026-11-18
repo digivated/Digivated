@@ -19,6 +19,7 @@ const blockedPath = /^\/(?:admin|api|community|carousels|video-player|launch-tem
 const projectPath = /^\/projects\/(?:listing\/)?[a-z0-9][a-z0-9-]{0,149}$/;
 const resourceSlug = /^[a-z0-9][a-z0-9-]{0,99}$/;
 const creatorId = /^[a-f0-9-]{36}$/i;
+const threadSlug = /^[a-z0-9][a-z0-9-]{0,99}$/;
 
 export function sitemapLastmod(value, now = Date.now()) {
   if (typeof value !== 'string' || !value.trim()) return '';
@@ -69,6 +70,7 @@ export function buildSitemapEntries({
   projects = [],
   creators = [],
   liveResources = [],
+  threads = [],
   newsUpdatedAt = '',
   articlesVisible = resourceArticlesVisible,
 } = {}) {
@@ -86,6 +88,10 @@ export function buildSitemapEntries({
   for (const creator of creators) {
     if (!creatorId.test(creator?.id || '')) continue;
     remember(pages, `/creator?id=${encodeURIComponent(creator.id)}`, creator.updatedAt || '');
+  }
+  for (const thread of threads) {
+    if (!threadSlug.test(thread?.slug || '') || ['new', 'thread'].includes(thread.slug)) continue;
+    remember(pages, `/threads/${thread.slug}`, thread.lastActivityAt || thread.updatedAt || thread.createdAt || '');
   }
   if (articlesVisible) {
     for (const resource of liveResources) {
@@ -187,7 +193,20 @@ export async function loadDynamicSitemapSources(env, redisFactory = redisClient)
       }
     } catch { /* Ignore a story that cannot contribute a date. */ }
   }
-  return { projects, creators, liveResources, newsUpdatedAt };
+  // Published Threads discussions each have their own server-rendered page.
+  const threads = [];
+  try {
+    const threadIds = await zsetMembers(redis, 'digivated:threads:all', SITEMAP_LIMIT);
+    const threadRaws = threadIds.length ? await mget(redis, threadIds.map(id => `digivated:thread:${id}`)) : [];
+    for (const raw of threadRaws) {
+      if (typeof raw !== 'string') continue;
+      try {
+        const thread = JSON.parse(raw);
+        if (thread?.status === 'published' && typeof thread.slug === 'string') threads.push({ slug: thread.slug, lastActivityAt: thread.lastActivityAt || '', createdAt: thread.createdAt || '' });
+      } catch { /* Skip unreadable threads. */ }
+    }
+  } catch { /* Threads stay out if their index can't be read; the rest of the sitemap still builds. */ }
+  return { projects, creators, liveResources, newsUpdatedAt, threads };
 }
 
 async function readPublicJson(fetcher, url) {
