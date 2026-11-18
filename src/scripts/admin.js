@@ -66,6 +66,10 @@ async function refreshOverview(){
   const pipeline=$('owner-pipeline');pipeline.replaceChildren();
   for(const status of statusOptions.submission){const count=s.statuses[status]||0;const item=element('div',undefined,'owner-pipeline-row');item.dataset.status=status;const label=element('span',status[0].toUpperCase()+status.slice(1));const progress=element('progress');progress.max=Math.max(1,s.total);progress.value=count;progress.setAttribute('aria-label',status+' submissions');item.append(label,progress,element('strong',count.toLocaleString()));pipeline.append(item);}
   $('owner-overview-updated').textContent=updatedLabel(new Date(data.generatedAt));$('owner-overview-status').textContent='';
+  // "Needs you": only rows with something to do show; nav items carry the same counts.
+  let open=0;document.querySelectorAll('[data-todo]').forEach(row=>{const count=Number(values[row.dataset.todo]||0);row.hidden=!count;if(count)open++;});
+  document.querySelector('[data-allclear]').hidden=open>0;
+  document.querySelectorAll('[data-nav-count]').forEach(badge=>{const count=Number(values[badge.dataset.navCount]||0);badge.textContent=count>99?'99+':String(count);badge.hidden=!count;});
  }catch(error){if(request===state.overviewRequest)$('owner-overview-status').textContent=errorText(error);}
  finally{if(request===state.overviewRequest)button.disabled=false;}
 }
@@ -175,6 +179,15 @@ document.querySelectorAll('[data-kind]').forEach(button=>button.addEventListener
 document.querySelectorAll('[data-open-kind]').forEach(button=>button.addEventListener('click',()=>selectKind(button.dataset.openKind,button.dataset.openStatus||'',button.dataset.openStage||'')));
 document.querySelectorAll('[data-owner-panel]').forEach(button=>button.addEventListener('click',()=>{panel(button.dataset.ownerPanel);if(state.panel==='overview')refreshOverview();}));
 $('owner-overview-refresh').addEventListener('click',refreshOverview);
+$('owner-quick-review')?.addEventListener('click',()=>selectKind('submission','pending'));
+// "/" jumps to the list search (opening Submissions from Home).
+document.addEventListener('keydown',event=>{
+ if(event.key!=='/'||event.metaKey||event.ctrlKey||event.altKey||!state.csrf||$('owner-editor').open)return;
+ if(/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName)||document.activeElement?.isContentEditable)return;
+ event.preventDefault();
+ if(state.panel!=='content')selectKind(state.kind||'submission');
+ $('owner-search').focus();
+});
 for (const [value, label] of Object.entries(stageLabels)) $('owner-stage').add(new Option(label, value));
 $('owner-stage').addEventListener('change', () => {
   if ($('owner-stage').value) $('owner-filter').value = 'pending';
