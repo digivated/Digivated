@@ -154,6 +154,7 @@ html[data-ascii] body .dg-spot-plus{font-family:var(--fl-mono)!important;font-si
 html[data-ascii] body .dg-spot.is-open:hover .dg-spot-plus{letter-spacing:.2em;color:var(--dgb-accent)!important}
 html[data-ascii] body .dg-spot.is-open strong{font-family:var(--fl-mono)!important;font-size:11px!important;font-weight:500!important;letter-spacing:.08em;text-transform:uppercase;color:#ddd!important}
 html[data-ascii] body .dg-spot.is-open small{font-family:var(--fl-mono)!important;font-size:10px!important;color:var(--dgb-accent)!important}
+html[data-ascii] body .dg-spot.is-open .dg-spot-instant{margin-top:3px;padding:1px 6px!important;border:1px solid #3b2f52!important;border-radius:2px!important;background-color:#0a0a0a!important;font-family:var(--fl-mono)!important;font-size:9px!important;font-style:normal!important;letter-spacing:.08em;text-transform:uppercase;color:#cdbbf2!important;white-space:nowrap}
 html[data-ascii] body .dg-spot.is-open::after{content:'';position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(110deg,transparent 35%,#ffffff12 50%,transparent 65%)!important;background-size:250% 100%;animation:dg-sheen 5s ease-in-out infinite}
 @keyframes dg-sheen{from{background-position:120% 0}to{background-position:-120% 0}}
 
