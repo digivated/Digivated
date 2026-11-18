@@ -137,10 +137,38 @@ if (form) {
     document.getElementById('free-launch-help').hidden = intent.value !== 'directory';
     document.getElementById('instant-launch-help').hidden = intent.value !== 'instant';
     if (membershipFields) membershipFields.hidden = intent.value !== 'founding-feature';
+    syncTiers();
   };
   const query = new URLSearchParams(location.search);
   if (query.get('membership') === '1') intent.value = 'founding-feature';
-  intent.addEventListener('change',()=>{ syncIntent(); updateButton(); }); syncIntent();
+  intent.addEventListener('change',()=>{ syncIntent(); updateButton(); syncTiers(); }); syncIntent();
+  // Tier cards mirror the select: availability (Instant only shows once checkout is
+  // ready), price, and the chosen option, in both directions.
+  function syncTiers() {
+    const tiers = document.querySelector('[data-tiers]');
+    const instantOption = document.getElementById('submission-instant-option');
+    if (!tiers) return;
+    const instantCard = tiers.querySelector('[data-tier="instant"]');
+    const ready = instantOption && !instantOption.disabled && !instantOption.hidden;
+    instantCard.hidden = !ready;
+    instantCard.querySelector('input').disabled = !ready;
+    const price = instantOption?.textContent.match(/\(([^)]+)\)/)?.[1];
+    if (price) instantCard.querySelector('[data-tier-price]').textContent = price;
+    for (const card of tiers.querySelectorAll('[data-tier]')) {
+      const input = card.querySelector('input');
+      input.checked = card.dataset.tier === intent.value;
+      card.classList.toggle('is-selected', input.checked);
+    }
+  }
+  const tierGroup = document.querySelector('[data-tiers]');
+  tierGroup?.addEventListener('change', event => {
+    if (event.target.name !== 'dg-tier' || intent.value === event.target.value) return;
+    intent.value = event.target.value;
+    intent.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  const instantChoice = document.getElementById('submission-instant-option');
+  if (instantChoice) new MutationObserver(syncTiers).observe(instantChoice, { attributes: true, characterData: true, childList: true, subtree: true });
+  syncTiers();
   const configureLaunch = async account => {
     try {
       const response = await fetch('/api/submissions?action=launch-options', { cache: 'no-store' });
@@ -168,7 +196,7 @@ if (form) {
       // Free submissions remain available if the optional checkout is unavailable.
     }
   };
-  const updateButton = () => { button.disabled = !accountVerified; button.textContent=accountVerified?(intent.value==='instant'?'Save and continue to checkout':intent.value==='directory'?'Save and get your badge':'Submit for review'):'Sign in to submit your project'; };
+  const updateButton = () => { button.disabled = !accountVerified; button.textContent=accountVerified?(intent.value==='instant'?`Continue to payment${instantConfig?.price?` — ${new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',trailingZeroDisplay:'stripIfInteger'}).format(instantConfig.price/100)}`:''} →`:intent.value==='directory'?'Save and get your badge':'Submit for review'):'Sign in to submit your project'; };
   updateButton();
   form.addEventListener('submit', async event => {
     event.preventDefault();
@@ -249,7 +277,7 @@ if (form) {
       const isCurrent = !done && !current;
       item.classList.toggle('is-current', isCurrent);
       if (isCurrent) current = true;
-      item.querySelector('.fl-progress-mark').textContent = done ? '[✓]' : `[${progressItems.indexOf(item) + 1}]`;
+      item.querySelector('.fl-progress-mark').textContent = done ? '[✓]' : '[ ]';
     }
   };
   form.addEventListener('input', updateProgress);

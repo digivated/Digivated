@@ -194,13 +194,18 @@ test('real Redis: maker stats are private to the owner and show 14 days and this
     await bumpStat(redis, 'pocketlog', 'views', now - 20 * DAY);
     const days = await readStats(redis, 'pocketlog', now);
     assert.equal(days.length, 14);
-    assert.deepEqual(days.at(-1), { date: '2026-11-19', views: 2, visits: 1, upvotes: 1, comments: 0 });
+    assert.deepEqual(days.at(-1), { date: '2026-11-19', views: 2, visits: 1, upvotes: 0, comments: 0 });
+    assert.equal(days.at(-2).upvotes, 1, 'upvotes come from their timestamps, so history is kept');
+    // Lifetime numbers come from the existing public counters, not just the new daily ones.
+    await redis(['SET', 'digivated:project-views:pocketlog', '40']); await redis(['SET', 'digivated:card:likes:project:pocketlog', '7']);
+    await redis(['ZADD', 'digivated:card:comments:project:pocketlog', now - 40 * DAY, 'old-comment']);
     const stats = caller(makeMakerStatsHandler({ redis, verifyAccount, now: () => now }));
     assert.equal((await stats('GET', '/api/maker-stats?id=pocketlog')).status, 401);
     assert.equal((await stats('GET', '/api/maker-stats?id=pocketlog', null, { as: 'sam' })).status, 404, 'not your project');
     const mine = await stats('GET', '/api/maker-stats?id=pocketlog', null, { as: 'maker' });
     assert.equal(mine.status, 200, JSON.stringify(mine.data));
     assert.deepEqual(mine.data.totals, { views: 3, visits: 1, upvotes: 1, comments: 0 });
+    assert.deepEqual(mine.data.allTime, { views: 40, visits: 1, upvotes: 7, comments: 1 });
     assert.deepEqual(mine.data.week, { score: 2, upvotes: 1, commenters: 0, points: 0, rank: 2, of: 2 });
     assert.deepEqual(mine.data.places, []);
     assert.equal(mine.data.award, undefined);
