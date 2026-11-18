@@ -14,11 +14,13 @@ export const primaryLinks = [
   ['/threads', 'Threads'],
   ['/news', 'News'],
 ];
+// The menu holds what the bar doesn't: two short groups. On narrow screens the
+// bar's four destinations show as a row at the top of the menu instead.
 export const menuGroups = [
-  { title: 'Explore', links: [...primaryLinks, ['/rankings', 'Rankings'], ['/winners', 'Weekly winners'], ['/resources', 'Resources'], ['/invstr', 'Market Scanner']] },
-  { title: 'Build', links: [['/submit-project', 'Submit a project'], ['/submit-project?spot=1', 'Claim a $3 spot'], ['/membership', 'Membership'], ['/badges', 'Embed badges']] },
+  { title: 'Explore', links: [['/rankings', 'Rankings'], ['/winners', 'Weekly winners'], ['/resources', 'Resources'], ['/invstr', 'Market Scanner']] },
+  { title: 'For makers', links: [['/submit-project', 'Submit a project'], ['/submit-project?spot=1', 'Claim a $3 spot'], ['/membership', 'Membership'], ['/badges', 'Embed badges']] },
 ];
-export const menuLinks = menuGroups.flatMap(group => group.links);
+export const menuLinks = [...primaryLinks, ...menuGroups.flatMap(group => group.links)];
 export const footerGroups = [
   { title: 'Explore', links: exploreLinks },
   { title: 'Your workspace', links: [
