@@ -184,7 +184,6 @@ function row(p, key, index) {
   if (lift) { const b = el('span', '⚡ Boosted', 'dg-badge dg-badge-boost'); b.title = `+${lift} from ${p.boost} feedback points this week`; title.append(b); }
   main.append(title, el('p', p.description || 'Explore this project and meet its maker.', 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
-  if (p.pricing) meta.append(el('span', p.pricing));
   meta.append(el('span', p.category || 'Project'));
   if (p.creator) meta.append(el('span', 'by ' + p.creator));
   if (key === 'archive' && Number.isFinite(launchTimestamp(p))) meta.append(el('span', shortDate(launchTimestamp(p))));
@@ -225,7 +224,6 @@ function upcomingRow(item, index) {
   const title = el('h3'); title.append(el('span', item.name, 'dg-upcoming-name'), el('span', launchDay(item.launchAt), 'dg-badge dg-badge-date'));
   main.append(title, el('p', item.description || 'Launching soon on Digivated.', 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
-  if (item.pricing) meta.append(el('span', item.pricing));
   meta.append(el('span', item.category || 'Project'));
   if (item.creator) meta.append(el('span', 'by ' + item.creator));
   main.append(meta);
