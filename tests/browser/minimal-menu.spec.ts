@@ -29,7 +29,7 @@ test('header supports keyboard menu entry, dismissal and search',async({page})=>
  await page.goto('http://127.0.0.1:4321/threads');
  await expect(page.locator('.header-primary a[aria-current=page]')).toHaveText('Threads');
  const trigger=page.locator('.notebook-navigation>summary');await trigger.focus();await page.keyboard.press('ArrowDown');
- await expect(page.locator('#explore-navigation a').first()).toBeFocused();await expect(trigger).toHaveAttribute('aria-expanded','true');
+ await expect(page.locator('#explore-navigation a:visible').first()).toBeFocused();await expect(page.locator('#explore-navigation a:visible').first()).toHaveText('Rankings');await expect(trigger).toHaveAttribute('aria-expanded','true');
  await page.keyboard.press('Escape');await expect(trigger).toBeFocused();await expect(trigger).toHaveAttribute('aria-expanded','false');
  await page.getByRole('button',{name:'Search Digivated',exact:true}).click();
  await expect(page.locator('#discovery-search')).toBeVisible();await page.keyboard.press('Escape');await expect(page.locator('#discovery-search')).toBeHidden();
