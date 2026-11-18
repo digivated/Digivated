@@ -42,15 +42,7 @@ if (form) {
         return schedule();
       }
       if (!response.ok) throw new Error(data.error || 'Could not verify the purchase.');
-      stopPolling();
-      document.getElementById('instant-launch-title').textContent = 'Your project is live ⚡';
-      document.getElementById('instant-launch-copy').textContent = 'Payment received. Your project is published and has an open homepage spot for 7 days.';
-      paymentStatus.textContent = 'Your project is live.';
-      listing.href = data.pageUrl;
-      listing.hidden = false;
-      checkout.hidden = true;
-      verify.hidden = true;
-      listing.focus();
+      showLive(data.pageUrl);
     } catch (error) {
       if (quiet) return schedule();
       paymentStatus.textContent = error.message || 'Could not verify your payment. Try again.';
@@ -59,7 +51,63 @@ if (form) {
       verify.disabled = false;
     }
   };
+  const cancelButton = document.getElementById('instant-launch-cancel');
+  let checkoutTab = null;
+  const showLive = pageUrl => {
+    stopPolling();
+    document.getElementById('instant-launch-title').textContent = 'Your project is live ⚡';
+    document.getElementById('instant-launch-copy').textContent = 'Payment received. Your project is published and has an open homepage spot for 7 days.';
+    paymentStatus.textContent = 'Your project is live.';
+    listing.href = pageUrl;
+    listing.hidden = false;
+    checkout.hidden = true;
+    verify.hidden = true;
+    cancelButton.hidden = true;
+    document.getElementById('instant-launch-cancel-note').hidden = true;
+    listing.focus();
+  };
+  // Backing out: nothing is charged until checkout is completed. The server
+  // double-checks with Gumroad first, and publishes instead if they did pay.
+  cancelButton.addEventListener('click', async () => {
+    if (!pendingInstantId) return;
+    cancelButton.disabled = true;
+    verify.disabled = true;
+    stopPolling();
+    paymentStatus.textContent = 'Cancelling…';
+    try {
+      const { data: { session } } = await accountClient.auth.getSession();
+      if (!session) throw new Error('Your session expired. Sign in, then cancel from Your Projects.');
+      const response = await fetch('/api/submissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ action: 'cancel-instant', id: pendingInstantId }),
+        signal: AbortSignal.timeout(26000)
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Could not cancel. Try again.');
+      if (data.published) return showLive(data.pageUrl);
+      try { checkoutTab?.close(); } catch {}
+      checkoutTab = null;
+      pendingInstantId = undefined;
+      paymentStatus.textContent = '';
+      resumePanel.hidden = true;
+      details.hidden = false;
+      if (query.get('resume')) history.replaceState(null, '', location.pathname);
+      status.textContent = 'Payment cancelled — you weren’t charged. Your details are still here: choose a launch option and submit again.';
+      document.getElementById('sub-step-launch').scrollIntoView({ block: 'start' });
+      (document.querySelector('[data-tiers] input:checked') || status).focus();
+      document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
+    } catch (error) {
+      paymentStatus.textContent = error.message || 'Could not cancel. Try again.';
+      pollUntil = Date.now() + 15 * 60000;
+      schedule();
+    } finally {
+      cancelButton.disabled = false;
+      verify.disabled = false;
+    }
+  });
   const showCheckout = (id, popup) => {
+    checkoutTab = popup && !popup.closed ? popup : null;
     pendingInstantId = id;
     checkout.href = checkoutHref();
     if (popup && !popup.closed) popup.location.href = checkout.href;

@@ -31,3 +31,32 @@ test('without a time limit any eligible purchase still counts', async () => {
   const result = await verifyFoundingEmail(email, cfg({}), fetcherFor(sale('2026-11-10T10:00:00Z')));
   assert.equal(result.saleId, 'sale_fixture_123');
 });
+
+import { makeSubmissionHandler } from '../server/submissions.mjs';
+const cancel = async (record, account = { id: 'owner', email }) => {
+  const calls = [];
+  const redis = async command => { calls.push(command); if (command[0] === 'GET') return record ? JSON.stringify(record) : null; if (command[0] === 'EVAL') return 1; return null; };
+  const req = { method: 'POST', headers: { origin: 'https://digivated.com', 'content-type': 'application/json', authorization: 'Bearer fixture' }, body: { action: 'cancel-instant', id: '11111111-2222-4333-8444-555555555555' } };
+  let data; const res = { setHeader() {}, end: value => { data = JSON.parse(value); } };
+  await makeSubmissionHandler({ env: {}, redis, verifyAccount: async () => account })(req, res);
+  return { status: res.statusCode, data, calls };
+};
+const unpaid = { id: '11111111-2222-4333-8444-555555555555', accountId: 'owner', email, status: 'pending', date: '2026-11-18T05:00:00Z', promotion: { requested: true, included: 'instant-launch', verified: false } };
+
+test('makers can back out of an unpaid instant checkout', async () => {
+  const result = await cancel(unpaid);
+  assert.equal(result.status, 200);
+  assert.equal(result.data.cancelled, true);
+  const evalCall = result.calls.find(command => command[0] === 'EVAL');
+  assert.ok(evalCall, 'removes the unpaid draft');
+  assert.ok(evalCall.includes('digivated:submissions'));
+});
+
+test('cancelling never touches paid, live or someone else’s projects', async () => {
+  assert.equal((await cancel({ ...unpaid, promotion: { ...unpaid.promotion, verified: true }, status: 'approved' })).status, 409);
+  assert.equal((await cancel({ ...unpaid, accountId: 'someone-else' })).status, 404);
+  assert.equal((await cancel({ ...unpaid, promotion: { requested: true, included: 'founding-membership' } })).status, 404);
+  const gone = await cancel(null);
+  assert.equal(gone.status, 200);
+  assert.equal(gone.calls.some(command => command[0] === 'EVAL'), false);
+});

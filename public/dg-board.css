@@ -537,6 +537,9 @@ html[data-ascii] body .dg-spot.is-open>:not(.dg-spot-field){position:relative}
 html[data-ascii] body .dg-tiers{display:grid;gap:10px;margin:4px 0 6px!important}
 html[data-ascii] body .dg-tier{position:relative;display:grid!important;gap:6px;margin:0!important;padding:14px 16px!important;border:1px solid var(--dgb-line-hi)!important;border-radius:2px!important;background-color:#0b0b0b!important;cursor:pointer;transition:border-color .18s,background-color .18s}
 html[data-ascii] body .dg-tier[hidden]{display:none!important}
+html[data-ascii] body .dg-link-button{display:inline!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;color:#d8d8d8!important;font:inherit!important;text-decoration:underline!important;text-underline-offset:3px;cursor:pointer}
+html[data-ascii] body .dg-link-button:hover{color:#fff!important}
+html[data-ascii] body .dg-link-button:disabled{opacity:.5!important;cursor:default}
 html[data-ascii] body .dg-tier:hover{border-color:#555!important}
 html[data-ascii] body .dg-tier>input{position:absolute;opacity:0;width:1px;height:1px;margin:0!important;pointer-events:none}
 html[data-ascii] body .dg-tier:has(>input:focus-visible){outline:2px solid #d9c6ff;outline-offset:2px}

@@ -84,8 +84,9 @@ ${item.image || item.gallery.length ? `<section class="launch-media" aria-label=
     'launch-template':e(canonical),
     'digivated-tech-markets-banner.png':e((item.image || item.logo) && !draft ? new URL(item.image || item.logo,origin).href : `${origin}/digivated-tech-markets-banner.png`)
   };
+  const hasOgUrl = /<meta\b[^>]*property="og:url"/.test(shell);
   return shell.replace(/LAUNCH_TITLE|LAUNCH_DESCRIPTION|https:\/\/digivated(?:\.vercel\.app|\.com)\/(launch-template|digivated-tech-markets-banner\.png)(?:\/)?/g,(match, asset)=>substitutions[asset || match])
-    .replace('</head>',()=>`${schema}<meta property="og:url" content="${e(canonical)}">${draft?'<meta name="robots" content="noindex,nofollow">':''}</head>`)
+    .replace('</head>',()=>`${schema}${hasOgUrl?'':`<meta property="og:url" content="${e(canonical)}">`}${draft?'<meta name="robots" content="noindex,nofollow">':''}</head>`)
     .replace('<!--LAUNCH_BODY-->',()=>body);
 }
 export function makeLaunchHandler(deps = {}) {
