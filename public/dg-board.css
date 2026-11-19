@@ -26,8 +26,8 @@ html[data-ascii] body .dg-muted{color:var(--dgb-muted)!important}
 html[data-ascii] body .dg-badge::before{content:'[';margin-right:2px;opacity:.6}html[data-ascii] body .dg-badge::after{content:']';margin-left:2px;opacity:.6}
 html[data-ascii] body .dg-badge{display:inline-flex!important;align-items:center;min-height:18px;padding:0!important;border:0!important;font-family:var(--fl-mono)!important;font-size:9.5px!important;letter-spacing:.08em!important;text-transform:uppercase!important;color:#bdbdbd!important;font-weight:400!important}
 html[data-ascii] body :is(.dg-badge-boost,.dg-badge-top){color:#d9c6ff!important}
-html[data-ascii] body .dg-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background-color:var(--dgb-ok)!important;box-shadow:0 0 0 0 #8fd6a466!important;animation:dg-pulse 2s ease-out infinite}
-@keyframes dg-pulse{70%{box-shadow:0 0 0 7px #8fd6a400}100%{box-shadow:0 0 0 0 #8fd6a400}}
+html[data-ascii] body .dg-dot{position:relative;display:inline-block;flex:none;width:7px;height:7px;border-radius:50%;background-color:var(--dgb-ok)!important;box-shadow:0 0 6px #8fd6a4b3!important;animation:dg-live-core 2.4s ease-in-out infinite}
+@keyframes dg-live-core{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35)}}
 @keyframes dg-rise{from{opacity:0;transform:translateY(10px)}}
 @keyframes dg-shimmer{to{background-position:-200% 0}}
 html[data-ascii] body .dg-avatar{position:relative;flex:none;display:grid;place-items:center;overflow:hidden;width:var(--size,32px);height:var(--size,32px);border:1px solid var(--dgb-line-hi)!important;border-radius:2px!important;background-color:#151515!important}
@@ -74,7 +74,7 @@ html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a::before{content:'›';display:inline-block!important;width:10px;margin-right:-4px;font-family:var(--fl-mono);color:#4f4f4f;transition:transform .15s var(--dgb-ease),color .15s}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a:is(:hover,:focus-visible)::before{color:#d9c6ff;transform:translateX(2px)}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a[aria-current=page]::before{content:'>';color:#fff}
-html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a[href="/submit-project?spot=1"]{color:#d9c6ff!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a[href="/shop"]{color:#d9c6ff!important}
 html[data-ascii] body .fl-menu-panel .fl-menu-who .fl-menu-points{display:block;margin-top:6px;font-family:var(--fl-mono)!important;font-size:11px;color:#a58bdc!important}
 html[data-ascii] body .fl-menu-panel .fl-menu-who .fl-menu-points:has(> b[hidden]){display:none}
 html[data-ascii] body .fl-menu-panel .fl-menu-who .fl-menu-points b{font-weight:600;color:#e7dcff!important}
@@ -170,10 +170,6 @@ html[data-ascii] body .dg-hero-accent{display:inline-block;color:#fff!important;
 @keyframes dg-glint{0%,60%{background-position:100% 0}100%{background-position:-100% 0}}
 html[data-ascii] body .dg-hero-lede{max-width:44ch;margin:0!important;font-family:var(--fl-sans)!important;font-size:15px!important;line-height:1.6!important;color:var(--dgb-copy)!important}
 html[data-ascii] body .dg-hero-actions{display:flex;flex-wrap:wrap;gap:10px}
-html[data-ascii] body .dg-hero-facts{display:flex;flex-wrap:wrap;gap:4px 16px;margin:0!important;padding:0!important;list-style:none!important;font-family:var(--fl-mono)!important;font-size:11px!important;color:var(--dgb-muted)!important}
-html[data-ascii] body .dg-hero-facts li{margin:0!important;line-height:1.6!important}
-html[data-ascii] body .dg-hero-facts li::before{content:'> ';color:var(--dgb-ok)}
-html[data-ascii] body .dg-hero-facts :is(time,strong){color:var(--dgb-ink)!important;font-weight:500!important;font-variant-numeric:tabular-nums}
 
 /* ---------- Launch lists ---------- */
 html[data-ascii] body .dg-board{display:grid;gap:40px}

@@ -174,15 +174,10 @@ html[data-ascii] body .fl-notify .notification-item:not(.unread) .notification-c
 html[data-ascii] body .fl-notify .notification-copy time{color:var(--fl-muted)!important;font-size:11px}
 html[data-ascii] body .fl-notify .notification-item[data-type=scheduled] .notification-mark{color:var(--fl-accent)!important}
 html[data-ascii] body .fl-notify .notification-item[data-type=approved] .notification-mark{color:var(--fl-ok)!important}
-html[data-ascii] body .fl-unread-dot{flex:none;padding:1px 8px!important;border-radius:999px!important;background-color:#e8e8e8!important;color:#0a0a0a!important;font-size:10px!important;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 html[data-ascii] body .fl-notify .notifications-empty{padding:28px 12px!important;text-align:center;color:var(--fl-muted)!important}
 html[data-ascii] body .fl-notify .notifications-empty strong{display:block;color:var(--fl-ink)!important;margin-bottom:4px}
 html[data-ascii] body .fl-notify-settings{display:grid;gap:12px}
 html[data-ascii] body .fl-notify .notifications-auth{text-align:center}
-
-/* ---- Header account area ---- */
-html[data-ascii] body .fl-header-signup{display:inline-flex!important;align-items:center;min-height:36px!important;padding:6px 14px!important;border:1px solid #e8e8e8!important;border-radius:var(--fl-radius)!important;background-color:#ececec!important;color:#0a0a0a!important;font-size:13px!important;font-weight:600!important;text-decoration:none!important;white-space:nowrap}
-html[data-ascii] body .fl-header-signup:hover{background-color:#fff!important;color:#000!important;text-decoration:none!important}
 html[data-ascii] body .fl-menu{position:relative}
 html[data-ascii] body .fl-menu[hidden]{display:none!important}
 html[data-ascii] body .fl-menu-trigger{display:inline-flex!important;align-items:center;gap:8px;min-height:40px!important;padding:3px 8px 3px 3px!important;border:1px solid var(--fl-line-hi)!important;border-radius:999px!important;background:none!important;color:var(--fl-ink)!important;text-decoration:none!important;cursor:pointer}
@@ -203,7 +198,7 @@ html[data-ascii] body .fl-menu-count[hidden]{display:none!important}
 html[data-ascii] body .compact-site-header[data-account=signed-out] :is(#header-inbox-link,#header-notifications-link){display:none!important}
 html[data-ascii] body .fl-menu-trigger{position:relative}
 html[data-ascii] body .fl-menu-trigger #header-account-dot{position:absolute;top:-4px;right:-4px}
-@media (max-width:560px){html[data-ascii] body .fl-menu-name,html[data-ascii] body .fl-menu-caret{display:none!important}html[data-ascii] body .fl-menu-trigger{padding:3px!important}html[data-ascii] body .fl-header-signup{display:none!important}}
+@media (max-width:560px){html[data-ascii] body .fl-menu-name,html[data-ascii] body .fl-menu-caret{display:none!important}html[data-ascii] body .fl-menu-trigger{padding:3px!important}}
 }
 
 /* =====================================================================
@@ -282,8 +277,7 @@ html[data-ascii] body .compact-site-header .header-primary>a:hover{color:#fff!im
 html[data-ascii] body .compact-site-header .header-primary>a[aria-current=page]{color:#fff!important;text-decoration:none!important;box-shadow:inset 0 -1px 0 #f0f0f0!important}
 html[data-ascii] body .compact-site-header .header-primary>a+a::before{color:#2e2e2e!important}
 html[data-ascii] body .compact-site-header .header-login{font-family:var(--fl-sans)!important;font-size:13px!important;color:#cfcfcf!important;text-decoration:none!important}
-html[data-ascii] body .fl-header-signup[hidden],html[data-ascii] body .header-login[hidden]{display:none!important}
-html[data-ascii] body .fl-header-signup{min-height:32px!important;padding:5px 12px!important;font-size:13px!important}
+html[data-ascii] body .header-login[hidden]{display:none!important}
 html[data-ascii] body .fl-avatar{border-radius:2px!important;width:28px;height:28px;font-family:var(--fl-mono)!important}
 html[data-ascii] body .fl-menu-trigger{border-radius:2px!important;border-color:var(--fl-rule-hi)!important}
 
@@ -318,9 +312,6 @@ html[data-ascii] body.home-refresh #main .home-editorial{padding-block:clamp(56p
 html[data-ascii] body.home-refresh #main #home-title{font-size:clamp(40px,5.6vw,76px)!important;line-height:1!important;letter-spacing:-.045em!important;max-width:12ch!important}
 html[data-ascii] body.home-refresh #main #home-title em{color:#8f8f8f!important;font-style:normal!important}
 html[data-ascii] body.home-refresh .home-workshop-copy>p:not(.home-editorial-kicker){font-size:16px!important;color:#a9a9a9!important;max-width:40ch!important}
-html[data-ascii] body.home-refresh .home-editorial-actions{gap:10px!important;margin-top:32px!important}
-html[data-ascii] body.home-refresh .home-editorial-actions .button{padding-inline:16px!important;font-size:13.5px!important}
-html[data-ascii] body.home-refresh #main .home-editorial-actions .share-project-cta{min-height:38px!important;padding:8px 16px!important;border:1px solid #f0f0f0!important;background-color:#f0f0f0!important;color:#0a0a0a!important;font-size:13.5px!important;font-weight:500!important}
 html[data-ascii] body .fl-window{min-width:0;border:1px solid var(--fl-rule-hi)!important;background-color:#0b0b0b!important}
 html[data-ascii] body .fl-window-bar{display:flex;align-items:center;gap:14px;padding:8px 12px!important;border-bottom:1px solid var(--fl-rule-hi)!important}
 html[data-ascii] body .fl-window-dots{color:#3a3a3a!important;font-size:8px;letter-spacing:3px}
@@ -397,9 +388,6 @@ html[data-ascii] body .wall-dom-grid .wall-tile:last-child{border-bottom:1px sol
 html[data-ascii] body .wall-dom-grid .wall-tile:hover{background-color:#0e0e0e!important}
 html[data-ascii] body .wall-tile-caption small,html[data-ascii] body .home-launch-meta,html[data-ascii] body .home-launch-meta *{font-family:var(--fl-mono)!important;font-size:10.5px!important;letter-spacing:.08em!important;text-transform:uppercase}
 html[data-ascii] body .home-launch-row{border-top:1px solid var(--fl-rule)!important}
-
-html[data-ascii] body .compact-site-header .header-membership{font-family:var(--fl-sans)!important;font-size:13px!important;font-weight:450!important;color:#a8a8a8!important;text-decoration:none!important}
-html[data-ascii] body .compact-site-header .header-membership:hover{color:#fff!important}
 }
 
 @layer flow {

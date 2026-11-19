@@ -7,13 +7,13 @@
    rule in the same (earliest) layer can outrank. Overrides go there; plain
    declarations (motion, hover lift, reveal) stay unlayered so they win too. */
 @layer flow{
-html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.fl-header-signup,.home-editorial-actions .share-project-cta),
+html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary),
 html#digivated-root[data-ascii] body .compact-site-header .dg-header-submit,
 html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions a.button.primary{border:1px solid #c3a0ff8c!important;border-radius:var(--dg-r)!important;background-color:#150f1f!important;background-image:linear-gradient(110deg,#fff0 38%,#ffffff24 50%,#fff0 62%),linear-gradient(180deg,#c3a0ff2e,#c3a0ff0f)!important;background-size:260% 100%,100% 100%!important;background-position:130% 0,0 0!important;background-repeat:no-repeat!important;color:var(--dg-acc-ink)!important;box-shadow:inset 0 1px 0 #ffffff14,0 0 0 0 #c3a0ff00!important;transition:border-color .2s,background-color .2s,background-position .7s var(--dg-spring),box-shadow .25s,transform .2s var(--dg-spring),color .2s!important}
-html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.fl-header-signup,.home-editorial-actions .share-project-cta):is(:hover,:focus-visible),
+html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary):is(:hover,:focus-visible),
 html#digivated-root[data-ascii] body .compact-site-header .dg-header-submit:is(:hover,:focus-visible),
 html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions a.button.primary:is(:hover,:focus-visible){border-color:var(--dg-acc-text)!important;background-color:#1d1429!important;background-position:-30% 0,0 0!important;color:#fff!important;box-shadow:inset 0 1px 0 #ffffff1f,0 0 0 3px #c3a0ff1f,0 10px 28px -12px #c3a0ffb3!important}
-html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.fl-header-signup,.dg-header-submit):active{transform:translateY(0) scale(.98)!important;transition-duration:.08s!important}
+html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.dg-header-submit):active{transform:translateY(0) scale(.98)!important;transition-duration:.08s!important}
 html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary):is(:disabled,[aria-disabled=true]){transform:none!important;box-shadow:none!important}
 html#digivated-root[data-ascii] body :is(.dg-btn:not(.dg-btn-primary),.fl-btn:not(.fl-btn-primary,.fl-btn-oauth)){border-radius:var(--dg-r)!important;transition:border-color .2s,background-color .2s,color .2s,transform .2s var(--dg-spring)!important}
 html#digivated-root[data-ascii] body :is(.dg-btn:not(.dg-btn-primary),.fl-btn:not(.fl-btn-primary,.fl-btn-oauth)):hover{border-color:#5b4a7a!important;background-color:#c3a0ff0d!important;color:#fff!important}
@@ -23,7 +23,7 @@ html#digivated-root[data-ascii] body .dg-vote{border-radius:var(--dg-r)!importan
 html#digivated-root[data-ascii] body .dg-vote:hover{border-color:#5b4a7a!important;background-color:#c3a0ff0d!important}
 html#digivated-root[data-ascii] body .dg-vote[aria-pressed=true]{border-color:var(--dg-acc)!important;background-color:#c3a0ff26!important;color:#fff!important;box-shadow:0 0 18px -6px #c3a0ffb3!important}
 html#digivated-root[data-ascii] body .dg-vote[aria-pressed=true] .dg-vote-caret{color:var(--dg-acc-text)!important}
-html#digivated-root[data-ascii] body :is(.fl-unread-dot,.fl-menu-count){background-color:var(--dg-acc)!important;color:#140c22!important}
+html#digivated-root[data-ascii] body .fl-menu-count{background-color:var(--dg-acc)!important;color:#140c22!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel #menu-notifications-badge:not([hidden]){background:var(--dg-acc)!important;color:#140c22!important}
 html#digivated-root[data-ascii] body .fl-avatar{background-color:#2a2040!important;color:var(--dg-acc-ink)!important}
 html#digivated-root[data-ascii] body .fl-badge-copy.is-copied{background:#c3a0ff26!important;border-color:var(--dg-acc)!important;color:#fff!important}
@@ -40,11 +40,10 @@ html#digivated-root[data-ascii] body :is(a,button,[role=tab],summary):focus-visi
 html#digivated-root[data-ascii] body .dg-member-mark{display:inline-block!important;flex:none;width:13px!important;height:13px!important;margin:0!important;padding:0!important;background-color:currentColor!important;-webkit-mask:url(/dg-member.svg) center/contain no-repeat;mask:url(/dg-member.svg) center/contain no-repeat}
 html#digivated-root[data-ascii] body :is(.dg-badge-member,.dg-spot-member,.launch-member){display:inline-flex!important;align-items:center!important;gap:5px!important;color:#d9c6ff!important}
 html#digivated-root[data-ascii] body .dg-spot-member .dg-member-mark{width:12px!important;height:12px!important}
-html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a[href="/shop"]{color:#d9c6ff!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a[aria-current=page]{border-color:#c3a0ff73!important;background:#c3a0ff14!important;color:#f1eaff!important}
 }
 
-html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.fl-header-signup,.home-editorial-actions .share-project-cta):is(:hover,:focus-visible),
+html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary):is(:hover,:focus-visible),
 html#digivated-root[data-ascii] body .compact-site-header .dg-header-submit:is(:hover,:focus-visible),
 html#digivated-root[data-ascii] body #main .creator-public .creator-profile-actions a.button.primary:is(:hover,:focus-visible){transform:translateY(-1px)}
 html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary):is(:disabled,[aria-disabled=true]){opacity:.55;cursor:not-allowed}
@@ -78,20 +77,13 @@ html#digivated-root[data-ascii]{scrollbar-color:#2e2e2e #090909}
 }
 
 /* ---------- Live signals: green dot, > prompts, feedback sparkle ---------- */
-@layer flow{
-html#digivated-root[data-ascii] body .dg-dot{position:relative!important;width:7px!important;height:7px!important;flex:none;background-color:#8fd6a4!important;box-shadow:0 0 6px #8fd6a4b3,0 0 0 0 transparent!important;animation:dg-live-core 2.4s ease-in-out infinite!important}
-}
 html#digivated-root[data-ascii] body .dg-dot::before,html#digivated-root[data-ascii] body .dg-dot::after{content:'';position:absolute;inset:0;border:1px solid #8fd6a4;border-radius:50%;opacity:0;animation:dg-live-ring 2.4s cubic-bezier(.2,.7,.3,1) infinite;pointer-events:none}
 html#digivated-root[data-ascii] body .dg-dot::after{animation-delay:1.2s}
 @keyframes dg-live-ring{0%{transform:scale(1);opacity:.75}100%{transform:scale(3.4);opacity:0}}
 @keyframes dg-live-core{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35)}}
-html#digivated-root[data-ascii] body .dg-fp-spark{display:inline-block;animation:dg-spark-spin 4s cubic-bezier(.5,0,.3,1) infinite!important}
-@keyframes dg-spark-spin{0%,60%,100%{transform:rotate(0) scale(1);text-shadow:none}72%{transform:rotate(90deg) scale(1.45);text-shadow:0 0 10px #c3a0ff,0 0 2px #fff}84%{transform:rotate(180deg) scale(.9);text-shadow:0 0 4px #c3a0ff80}}
 @media (prefers-reduced-motion:reduce){
  html#digivated-root[data-ascii] body .dg-dot::before,html#digivated-root[data-ascii] body .dg-dot::after{display:none}
- html#digivated-root[data-ascii] body .dg-fp-spark{animation:none!important}
 }
-@layer flow{@media (prefers-reduced-motion:reduce){html#digivated-root[data-ascii] body .dg-dot{animation:none!important}}}
 
 /* ---------- Home hero stats: three labeled cells, like the directory totals ---------- */
 @layer flow{

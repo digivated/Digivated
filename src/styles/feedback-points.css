@@ -2,8 +2,8 @@
 @layer flow {
 html[data-ascii] body .dg-fp{position:relative;margin:0!important;border:1px solid #3b2f52!important;border-radius:0!important;background-color:#0b0a0e!important;background-image:radial-gradient(70% 120% at 100% 0%,#c3a0ff14,transparent 60%)!important;color:var(--dgb-ink,#f2f2f2)}
 html[data-ascii] body .dg-fp::before{content:'';position:absolute;inset:-1px auto -1px -1px;width:2px;background:linear-gradient(180deg,#c3a0ff,#c3a0ff00)}
-html[data-ascii] body .dg-fp-spark{display:inline-block;color:#d9c6ff!important;animation:dg-fp-twinkle 3.2s ease-in-out infinite}
-@keyframes dg-fp-twinkle{0%,100%{opacity:1;transform:none}50%{opacity:.55;transform:scale(.85) rotate(20deg)}}
+html[data-ascii] body .dg-fp-spark{display:inline-block;color:#d9c6ff!important;animation:dg-spark-spin 4s cubic-bezier(.5,0,.3,1) infinite}
+@keyframes dg-spark-spin{0%,60%,100%{transform:rotate(0) scale(1);text-shadow:none}72%{transform:rotate(90deg) scale(1.45);text-shadow:0 0 10px #c3a0ff,0 0 2px #fff}84%{transform:rotate(180deg) scale(.9);text-shadow:0 0 4px #c3a0ff80}}
 html[data-ascii] body .dg-fp-me{display:inline-flex!important;align-items:center;min-height:24px;padding:2px 9px!important;border:1px solid #3b2f52!important;background-color:#c3a0ff14!important;font-family:var(--fl-mono)!important;font-size:11px!important;color:#fff!important;white-space:nowrap}
 html[data-ascii] body .dg-fp-me[hidden]{display:none!important}
 html[data-ascii] body .dg-points [hidden]{display:none!important}
@@ -36,8 +36,6 @@ html[data-ascii] body .dg-fp-strip-copy{flex:1;min-width:0;font-family:var(--fl-
 html[data-ascii] body .dg-fp-strip-copy strong{margin-right:6px;font-family:var(--fl-mono)!important;font-size:11.5px!important;font-weight:500!important;letter-spacing:.12em;text-transform:uppercase;color:#e7dcff!important}
 html[data-ascii] body .dg-fp-toggle{font-family:var(--fl-mono)!important;font-size:11px!important;color:#9a8cb5!important;white-space:nowrap;transition:color .18s}
 html[data-ascii] body .dg-fp-strip summary:hover .dg-fp-toggle{color:#fff!important}
-html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle{font-size:0!important}
-html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle::after{content:'close ↑';font-size:11px}
 html[data-ascii] body .dg-fp-strip .dg-fp-steps{margin:0 16px!important}
 html[data-ascii] body .dg-fp-strip .dg-fp-foot{padding:14px 16px 16px!important}
 html[data-ascii] body .dg-fp-strip[open] .dg-fp-steps{animation:dg-fp-open .35s var(--dgb-ease,ease) both}
@@ -47,8 +45,6 @@ html[data-ascii] body .dg-fp-strip[open] .dg-fp-steps{animation:dg-fp-open .35s 
  html[data-ascii] body .dg-fp-steps{grid-template-columns:minmax(0,1fr)}
  html[data-ascii] body .dg-fp-steps li+li{border-left:1px dashed #2b2536!important;border-top:0!important}
  html[data-ascii] body .dg-fp-steps li+li::before{content:'↓';left:14px;top:-7px}
- html[data-ascii] body .dg-fp-strip summary{align-items:flex-start}
- html[data-ascii] body .dg-fp-strip-copy span{display:block}
 }
 @media (prefers-reduced-motion:reduce){html[data-ascii] body :is(.dg-fp-spark,.dg-fp-strip[open] .dg-fp-steps){animation:none!important}}
 }
@@ -71,7 +67,6 @@ html[data-ascii] body #main>.dg-fp-strip{margin-block:20px!important}
 html[data-ascii] body .dg-fp-strip summary,html[data-ascii] body .dg-fp-strip summary:hover,html[data-ascii] body .dg-fp-strip summary:hover *{text-decoration:none!important}
 html[data-ascii] body .dg-fp-strip summary:focus-visible{outline:1px solid #c3a0ff;outline-offset:-1px}
 html[data-ascii] body .dg-fp-strip-copy span{color:var(--dgb-copy,#b9b9b9)!important}
-html[data-ascii] body .dg-fp-strip summary .dg-fp-spark{align-self:center}
 html[data-ascii] body .dg-fp-steps li{grid-template-columns:auto minmax(0,1fr);column-gap:10px;row-gap:6px;padding:16px!important;background:#ffffff03}
 html[data-ascii] body .dg-fp-steps li p{grid-column:1/-1}
 html[data-ascii] body .dg-fp-n{align-self:center;font-size:11px!important;letter-spacing:0!important;color:#c3a0ff!important;white-space:nowrap}
@@ -80,8 +75,6 @@ html[data-ascii] body .dg-fp-steps p{font-size:13.5px!important}
 html[data-ascii] body .dg-fp-steps li+li::before{color:#6f5d92}
 html[data-ascii] body .dg-fp-strip .dg-fp-steps{margin-top:2px!important}
 @media (max-width:760px){
- html[data-ascii] body .dg-fp-strip summary{align-items:center}
- html[data-ascii] body .dg-fp-strip-copy strong{display:block;margin:0 0 3px!important}
  html[data-ascii] body .dg-fp-steps li+li::before{left:16px}
 }
 }
@@ -98,14 +91,12 @@ html[data-ascii] body .dg-fp-strip .dg-fp-me{grid-area:me;min-height:30px!import
 html[data-ascii] body .dg-fp-toggle{grid-area:toggle;display:inline-flex!important;align-items:center;gap:6px;min-height:30px;padding:4px 10px!important;border:1px solid #3b2f52!important;font-size:11px!important;color:#b9acd3!important;transition:border-color .2s,color .2s,background-color .2s!important}
 html[data-ascii] body .dg-fp-toggle svg{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
 html[data-ascii] body .dg-fp-strip summary:hover .dg-fp-toggle{border-color:#7a66a3!important;background:#c3a0ff14!important;color:#fff!important}
-html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle{font-size:11px!important}
-html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle::after{content:none!important}
 html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle svg{transform:rotate(180deg)}
 @media (max-width:640px){
- html[data-ascii] body .dg-fp-strip summary{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"icon copy toggle" "icon me me";row-gap:8px!important;padding:12px 14px!important}
- html[data-ascii] body .dg-fp-strip .dg-fp-me{justify-self:start}
- html[data-ascii] body .dg-fp-toggle{padding:4px 8px!important}
- html[data-ascii] body .dg-fp-toggle-text{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
- html[data-ascii] body .dg-fp-icon{align-self:start;width:34px!important;height:34px!important}
+ html[data-ascii] body .dg-fp-strip summary{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"icon copy copy" "me me toggle";column-gap:12px!important;row-gap:12px!important;padding:14px 16px!important}
+ html[data-ascii] body .dg-fp-icon{align-self:center;width:36px!important;height:36px!important}
+ html[data-ascii] body .dg-fp-strip-copy{align-self:center;font-size:14px!important}
+ html[data-ascii] body .dg-fp-strip .dg-fp-me{justify-self:start;align-self:center;min-height:28px!important;padding:2px 10px!important;font-size:11px!important}
+ html[data-ascii] body .dg-fp-toggle{justify-self:end;align-self:center;min-height:28px;padding:3px 10px!important}
 }
 }

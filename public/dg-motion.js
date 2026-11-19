@@ -7,7 +7,7 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Pointer spotlight (desktop only). Cheap: two CSS variables per move.
-  const SPOT = '.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card,.dg-thread-row,.launch-row,.dg-row,.dg-spot,.rl-card,.shop-card';
+  const SPOT = '.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card,.dg-thread-row,.launch-row,.dg-row,.dg-spot,.rl-card';
   if (!reduced && matchMedia('(hover: hover) and (pointer: fine)').matches) {
     doc.addEventListener('pointermove', (event) => {
       const el = event.target instanceof Element && event.target.closest(SPOT);
