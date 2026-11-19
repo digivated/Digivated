@@ -7,7 +7,7 @@ import { projectCategoryGroups } from '../data/community.mjs';
 import '../styles/submission-flow.css';
 
 ---
-<Platform title="Submit Your Project" description="Share what you built. Choose a free launch with a website badge, Instant Publishing, or a Membership Spotlight.">
+<Platform title="Submit Your Project" description="Share what you built. Launch free, go live instantly, or launch as a member.">
   <header class="page-intro submission-intro">
 
     <h1>Submit a project.</h1>
@@ -91,18 +91,18 @@ import '../styles/submission-flow.css';
         <div class="dg-tiers" role="radiogroup" aria-label="Launch option" data-tiers>
           <label class="dg-tier" data-tier="directory"><input type="radio" name="dg-tier" value="directory" checked/><span class="dg-tier-head"><strong>Free launch</strong><b>$0</b></span><span class="dg-tier-sub">Join the weekly queue.</span><ul><li>Launches on a Monday, 7–14 days out</li><li>Add our badge to your site. We verify it automatically</li><li>Permanent listing and discussion page</li></ul></label>
           <label class="dg-tier dg-tier-instant" data-tier="instant" hidden><input type="radio" name="dg-tier" value="instant" disabled/><span class="dg-tier-flag">Fastest</span><span class="dg-tier-head"><strong>Instant Publishing</strong><b data-tier-price>$3</b></span><span class="dg-tier-sub"><span aria-hidden="true">⚡</span> Live instantly</span><ul><li>No queue and no badge needed</li><li>Live as soon as you pay</li><li>Homepage spot for 7 days</li><li>Permanent listing and discussion page</li></ul></label>
-          <label class="dg-tier" data-tier="founding-feature"><input type="radio" name="dg-tier" value="founding-feature"/><span class="dg-tier-head"><strong>Membership Spotlight</strong><b>Members</b></span><span class="dg-tier-sub">Included with Membership.</span><ul><li>A reviewed spotlight placement</li><li>Full News briefings</li></ul></label>
+          <label class="dg-tier" data-tier="founding-feature"><input type="radio" name="dg-tier" value="founding-feature"/><span class="dg-tier-head"><strong>Member launch</strong><b>Members</b></span><span class="dg-tier-sub">Included with Membership.</span><ul><li>A member badge on your project</li><li>Full News access</li></ul></label>
         </div>
         <label class="sr-only" aria-hidden="true">Launch option
           <select name="submissionType" id="submission-type" aria-describedby="free-launch-help" tabindex="-1">
             <option value="directory">Free launch (add a badge to your site)</option>
             <option value="instant" id="submission-instant-option" hidden disabled>Instant Publishing</option>
-            <option value="founding-feature">Membership Spotlight</option>
+            <option value="founding-feature">Member launch</option>
           </select>
         </label>
         <p id="free-launch-help" class="field-help">After you save, you’ll get a badge for your website. Add it and we’ll find it automatically, then your project launches on its date. <span id="free-launch-date"></span></p>
         <p id="instant-launch-help" class="field-help" hidden><strong>⚡ Instant, no waiting:</strong> pay once at checkout and your project goes live automatically and takes an open homepage spot for 7 days.</p>
-        <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/membership#member-sign-in">membership page</a> first to request your included spotlight. We review each request.</p></div>
+        <div id="membership-fields" class="submission-option-detail" hidden><p>Verify your membership on the <a href="/shop#member-sign-in">Shop page</a> first. We take a quick look, then add your member badge.</p></div>
       </fieldset>
 
       <div class="submission-review">

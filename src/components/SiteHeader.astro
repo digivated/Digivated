@@ -2,7 +2,7 @@
 import { primaryLinks, menuGroups } from '../data/site-navigation.mjs';
 import UiIcon from './UiIcon.astro';
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const active = (link: string) => { const href = link.split('?')[0]; if (link.includes('?')) return false; return path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/')) || (href === '/membership' && ['/shop','/products','/promote','/founding-members'].includes(path)); };
+const active = (link: string) => { const href = link.split('?')[0]; if (link.includes('?')) return false; return path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/')) || (href === '/shop' && ['/membership','/products','/promote','/founding-members'].includes(path)); };
 ---
 <header class="platform-header compact-site-header" data-account="signed-out">
   <div class="header-inner">

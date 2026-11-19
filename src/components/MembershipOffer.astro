@@ -4,23 +4,57 @@ import UiIcon from './UiIcon.astro';
 import { membership } from '../data/membership.mjs';
 import '../styles/membership.css';
 ---
-<Platform canonicalPath="/membership" title="Membership" description="One Digivated Membership gives you one reviewed project spotlight, full News summaries, and the full UI/UX Prompt Packet. $5 once.">
-<section class="membership-page" aria-labelledby="membership-title">
-  <header class="membership-heading"><p class="eyebrow">DIGIVATED MEMBERSHIP</p><h1 id="membership-title">Digivated Membership</h1><p>Pay $5 once for a project spotlight request, full News access, and the UI/UX Prompt Packet.</p></header>
-  <article class="membership-offer" aria-label="Digivated Membership offer">
-    <div class="membership-offer-heading"><span class="membership-plan-label">The complete membership</span><span class="membership-once">One-time purchase</span></div>
-    <div class="membership-price"><strong>${membership.priceUSD}</strong><span>USD once<br/><small>No recurring charges</small></span></div>
-    <div class="membership-benefits">
-      <div><span class="membership-benefit-icon"><UiIcon name="sparkle" size={22}/></span><div><h2>One project spotlight</h2><p>Get your project featured once. We review it first.</p></div></div>
-      <div><span class="membership-benefit-icon"><UiIcon name="book" size={22}/></span><div><h2>Full News access</h2><p>Read the full AI, tech, markets, and security archive.</p></div></div>
-      <div><span class="membership-benefit-icon"><UiIcon name="book" size={22}/></span><div><h2>Full UI/UX Prompt Packet</h2><p>Get all 75 prompts, the prompt builder, workflows, checklists, and examples.</p></div></div>
+<Platform canonicalPath="/shop" title="Shop" description="Two one-time purchases: a $3 instant launch spot, or a $5 Digivated Membership with a member badge, full News, and the UI/UX Prompt Packet.">
+<div class="shop">
+  <section class="dg-hero shop-hero" aria-labelledby="shop-title">
+    <pre class="ascii-field home-workshop dg-hero-ascii" data-ascii-field aria-hidden="true"></pre>
+    <div class="dg-hero-copy">
+      <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>Shop</p>
+      <h1 id="shop-title">Two ways to <span class="dg-hero-accent">get seen.</span></h1>
+      <p class="dg-hero-lede">Pay once, no subscriptions. Launching is always free.</p>
     </div>
-    {membership.checkoutReady ? <a class="button primary membership-checkout" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get membership · $5 once <UiIcon name="external" size={17}/></a> : <><button class="button primary membership-checkout" disabled>Checking Gumroad checkout…</button><p class="membership-checkout-note" role="status">Loading checkout. If it doesn’t appear, try again in a moment.</p></>}
-    <p class="membership-small">Buy on Gumroad, then verify your purchase below.</p>
-  </article>
-  <div class="membership-next"><p>Browsing and launching your project stay free.</p><a href="/submit-project">Share a project <UiIcon name="arrow" size={16}/></a></div>
-  <section id="member-sign-in" class="membership-access" aria-labelledby="membership-access-title"><div><p class="eyebrow">ALREADY A MEMBER?</p><h2 id="membership-access-title">Verify your purchase</h2><p>Enter your Gumroad purchase email or license key.</p><p id="membership-verified" hidden>Your membership is verified. <a href="/submit-project?membership=1#project-form">Submit your included spotlight request</a>.</p></div><div><form id="founding-access-form" class="carousel-access" method="post" action="/api/founding-access"><label>Gumroad license key<input name="license" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="35"/></label><p class="quiet">or</p><label>Purchase email<input name="email" type="email" autocomplete="email" maxlength="254"/></label><button class="button" type="submit">Verify membership</button><p id="founding-access-status" role="status"></p></form><button class="button" id="founding-sign-out" type="button" hidden>Sign out of membership</button></div></section>
-  <section class="membership-faq" aria-labelledby="membership-questions"><h2 id="membership-questions">Membership FAQ</h2><details><summary>What does Membership unlock?</summary><p>One project spotlight, the full News archive, and the complete UI/UX Prompt Packet. You don’t need it to browse, try the free samples, or launch for free.</p></details><details><summary>How do I open the Prompt Packet?</summary><p>Verify your purchase email or license key above, then open the Prompt Packet. You can also enter your license key at <a href="/access">digivated.com/access</a>. There’s nothing else to buy.</p></details><details><summary>Is this a subscription?</summary><p>No. It’s $5, paid once. Nothing renews.</p></details><details><summary>How does the project spotlight work?</summary><p>Sign in, then pick Membership Spotlight when you submit. We check the logo, description, and link before featuring it. Paying doesn’t skip review, and it can’t guarantee traffic or sales.</p></details><details><summary>Can I read News today?</summary><p>Yes. Browse <a href="/news">five free News stories</a> now. Verify your membership above to read the rest.</p></details><details id="previous-purchases"><summary>What about a previous purchase?</summary><p>Older purchases still work. <a href="/access">Open your Prompt Packet</a>, or use the form above. Bought a promotion before? <a href="/submit-project?promotion=1#project-form">Submit it for review</a>. We don’t sell those on their own anymore.</p></details></section>
-</section>
-<script>import '../scripts/membership-access.js'; import '../scripts/membership-checkout.js';</script>
+  </section>
+
+  <div class="shop-grid">
+    <article class="shop-card shop-spot" aria-labelledby="shop-spot-title" data-shop-spot>
+      <p class="shop-kicker"><span aria-hidden="true">⚡</span> Instant spot</p>
+      <h2 id="shop-spot-title">Go live today</h2>
+      <p class="shop-for">For one launch you want out now.</p>
+      <div class="shop-price"><strong data-shop-spot-price>$3</strong><span>once</span></div>
+      <ul class="shop-list">
+        <li>Live the moment you pay</li>
+        <li>Homepage spot for 7 days</li>
+        <li>No queue, no badge needed</li>
+      </ul>
+      <a class="button primary shop-cta" href="/submit-project?spot=1#project-form" data-shop-spot-cta>Claim a spot <UiIcon name="arrow" size={16}/></a>
+      <p class="shop-note" data-shop-spot-note hidden></p>
+    </article>
+
+    <article class="shop-card membership-offer" aria-labelledby="shop-member-title">
+      <p class="shop-kicker shop-kicker-member"><span class="dg-member-mark" aria-hidden="true"></span> Membership</p>
+      <h2 id="shop-member-title">Become a member</h2>
+      <p class="shop-for">For makers who want more than one launch.</p>
+      <div class="shop-price membership-price"><strong>${membership.priceUSD}</strong><span>once</span></div>
+      <ul class="shop-list membership-benefits">
+        <li>A member badge on your project</li>
+        <li>Full News access</li>
+        <li>The full UI/UX Prompt Packet</li>
+      </ul>
+      {membership.checkoutReady ? <a class="button primary membership-checkout shop-cta" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get membership · $5 once <UiIcon name="external" size={17}/></a> : <><button class="button primary membership-checkout shop-cta" disabled>Checking checkout…</button><p class="membership-checkout-note shop-note" role="status">Loading checkout. Give it a second.</p></>}
+      <p class="shop-note">Checkout is on Gumroad. Then verify below.</p>
+    </article>
+  </div>
+
+  <section id="member-sign-in" class="membership-access" aria-labelledby="membership-access-title"><div><p class="eyebrow">Already a member?</p><h2 id="membership-access-title">Verify your purchase</h2><p>Use your Gumroad email or license key.</p><p id="membership-verified" hidden>You’re verified. <a href="/submit-project?membership=1#project-form">Submit your member project</a>.</p></div><div><form id="founding-access-form" class="carousel-access" method="post" action="/api/founding-access"><label>Gumroad license key<input name="license" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="35"/></label><p class="quiet">or</p><label>Purchase email<input name="email" type="email" autocomplete="email" maxlength="254"/></label><button class="button" type="submit">Verify membership</button><p id="founding-access-status" role="status"></p></form><button class="button" id="founding-sign-out" type="button" hidden>Sign out of membership</button></div></section>
+
+  <section class="membership-faq" aria-labelledby="membership-questions"><h2 id="membership-questions">Questions</h2>
+    <details><summary>Which one should I pick?</summary><p>Want one project live today? Get a spot. Want a member badge, News and the Prompt Packet? Become a member.</p></details>
+    <details><summary>Is anything a subscription?</summary><p>No. Both are one-time payments. Nothing renews.</p></details>
+    <details><summary>How does the member badge work?</summary><p>Sign in and pick Membership when you submit. We take a quick look at your logo, description and link, then your project shows the member badge. Paying doesn’t skip review or promise traffic.</p></details>
+    <details><summary>How do I open the Prompt Packet?</summary><p>Verify above, then open the Packet. You can also use your license key at <a href="/access">digivated.com/access</a>.</p></details>
+    <details><summary>Can I read News first?</summary><p>Yes. <a href="/news">Five stories are free</a>. Verify your membership to read the rest.</p></details>
+    <details id="previous-purchases"><summary>I bought something before.</summary><p>Older purchases still work. <a href="/access">Open your Prompt Packet</a> or use the form above. Bought a promotion? <a href="/submit-project?promotion=1#project-form">Submit it for review</a>.</p></details>
+  </section>
+</div>
+<script>import '../scripts/membership-access.js'; import '../scripts/membership-checkout.js'; import '../scripts/shop.js';</script>
 </Platform>

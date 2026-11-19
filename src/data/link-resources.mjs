@@ -90,9 +90,15 @@ https://acquire.com https://airtable.com https://akiflow.com https://amie.so htt
  `],
 ];
 
+// Stable short id per URL (FNV-1a), shared by the page and the vote API.
+export function linkId(href) {
+ let hash = 0x811c9dc5;
+ for (const char of href) { hash ^= char.codePointAt(0); hash = Math.imul(hash, 0x01000193) >>> 0; }
+ return 'l' + hash.toString(36);
+}
 export const resourceGroups = groups.map(([title, raw]) => ({
  title,
  id: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
- links: raw.trim().split(/\s+/).map(href => ({ href, label: new URL(href).hostname.replace(/^www\./, '') })),
+ links: raw.trim().split(/\s+/).map(href => ({ href, label: new URL(href).hostname.replace(/^www\./, ''), id: linkId(href) })),
 }));
 export const resourceLinkCount = resourceGroups.reduce((total, group) => total + group.links.length, 0);

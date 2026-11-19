@@ -18,6 +18,9 @@ const MEDAL = ['gold', 'silver', 'bronze'];
 const number = new Intl.NumberFormat('en-US');
 
 const el = (tag, text, className) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node; };
+
+// Membership projects show the Digivated member mark (not a generic "featured").
+const memberBadge = () => { const badge = el('span', null, 'dg-badge dg-badge-member'); badge.title = 'Digivated member'; badge.append(el('span', null, 'dg-member-mark'), 'Member'); return badge; };
 const icon = name => { const t = document.createElement('template'); t.innerHTML = cardIconMarkup(name); return t.content.firstElementChild; };
 const local = value => { const href = safeSearchHref(value); return href && href.startsWith('/') ? href : ''; };
 const outbound = value => { try { const url = new URL(safeSearchHref(value)); if (!/^https?:$/.test(url.protocol)) return ''; if (!url.searchParams.has('ref')) url.searchParams.set('ref', 'digivated'); return url.href; } catch { return ''; } };
@@ -112,7 +115,7 @@ if (root) {
     if (page) open.href = page; else { open.type = 'button'; open.addEventListener('click', () => openProject(p.id, open)); }
     open.setAttribute('aria-label', `Open ${p.name}`);
     title.append(open);
-    if (p.status === 'featured') title.append(el('span', 'Featured', 'dg-badge'));
+    if (p.status === 'featured') title.append(memberBadge());
     if (Number(p.rising) > 0 && !p.fresh) title.append(el('span', '↗ Rising', 'dg-badge dg-badge-boost'));
     if (p.fresh) title.append(el('span', 'New this week', 'dg-badge'));
     main.append(title, el('p', p.description || 'Explore this project and meet its maker.', 'dg-tagline'));

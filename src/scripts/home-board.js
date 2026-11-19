@@ -17,6 +17,10 @@ const SPOTS = 8;
 const PAGE = 10;
 
 const el = (tag, text, className) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node; };
+
+// Membership projects show the Digivated member mark (not a generic "featured").
+const memberBadge = () => { const badge = el('span', null, 'dg-badge dg-badge-member'); badge.title = 'Digivated member'; badge.append(el('span', null, 'dg-member-mark'), 'Member'); return badge; };
+const memberTag = () => { const tag = el('em', null, 'dg-spot-tag dg-spot-member'); tag.append(el('span', null, 'dg-member-mark'), 'Member'); return tag; };
 const icon = name => { const t = document.createElement('template'); t.innerHTML = cardIconMarkup(name); return t.content.firstElementChild; };
 const local = value => { const href = safeSearchHref(value); return href && href.startsWith('/') ? href : ''; };
 const outbound = value => { try { const url = new URL(safeSearchHref(value)); if (!/^https?:$/.test(url.protocol)) return ''; if (!url.searchParams.has('ref')) url.searchParams.set('ref', 'digivated'); return url.href; } catch { return ''; } };
@@ -83,7 +87,7 @@ function spotCard(item, price) {
   card.dataset.projectId = item.id;
   const top = el('span', null, 'dg-spot-top');
   top.append(logo(item, 'dg-spot-logo'), el('strong', item.name, 'dg-decode'));
-  card.append(top, el('span', item.description || item.category || 'Independent project', 'dg-spot-copy'), el('em', item.spot, 'dg-spot-tag'));
+  card.append(top, el('span', item.description || item.category || 'Independent project', 'dg-spot-copy'), item.spot === 'Member' ? memberTag() : el('em', item.spot, 'dg-spot-tag'));
   card.setAttribute('aria-label', `${item.name}, ${item.spot.toLowerCase()} spot. Opens in a new tab.`);
   return card;
 }
@@ -92,8 +96,8 @@ let spotsSignature = '';
 function renderSpots(featured, sponsored, instant) {
   if (!home) return;
   const seen = new Set();
-  // Every featured project always appears, then paid spots from the last 7 days.
-  const filled = [...featured.map(p => ({ ...p, spot: 'Featured' })), ...sponsored.map(p => ({ ...p, spot: 'Paid spot' }))]
+  // Every member project always appears, then paid spots from the last 7 days.
+  const filled = [...featured.map(p => ({ ...p, spot: 'Member' })), ...sponsored.map(p => ({ ...p, spot: 'Paid spot' }))]
     .filter(p => !seen.has(p.id) && seen.add(p.id));
   const price = instant ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }).format(instant.price / 100) : '';
   // Cached spots are painted first; skip the rebuild when the fresh data matches.
@@ -178,7 +182,7 @@ function row(p, key, index) {
   const votes = Number(p.votes?.[period]) || 0;
   const place = key === 'previous' ? placeOf(p.id) : 0;
   if (place) { const medal = el('span', `★ #${place} of the week`, `dg-badge dg-badge-medal is-${MEDAL[place]}`); title.append(medal); }
-  if (p.status === 'featured') title.append(el('span', 'Featured', 'dg-badge'));
+  if (p.status === 'featured') title.append(memberBadge());
   else if (p.sponsored) title.append(el('span', 'Spot', 'dg-badge'));
   const lift = key === 'current' && !fresh ? boostVotes(p.boost) : 0;
   if (lift) { const b = el('span', '⚡ Boosted', 'dg-badge dg-badge-boost'); b.title = `+${lift} from ${p.boost} feedback points this week`; title.append(b); }

@@ -1,35 +1,42 @@
-html#digivated-root .membership-page { width:min(920px,100%); margin:0 auto; padding:24px 0 60px; }
-html#digivated-root .membership-heading { text-align:center; padding:24px 0 32px; }
-html#digivated-root .membership-heading h1 { margin:16px auto; font-size:clamp(36px,5vw,58px); line-height:1.1; letter-spacing:-.045em; }
-html#digivated-root .membership-heading em { font-style:normal; color:#bd9af4; }
-html#digivated-root .membership-heading>p:last-child { max-width:45ch; margin:18px auto 0; font-size:16px; line-height:1.7; }
-html#digivated-root .membership-offer { max-width:600px; margin:auto; padding:32px; border:1px solid #a77ce442; border-radius:18px; background:radial-gradient(ellipse at 50% 0,#8b4be917,transparent 75%),#101014; box-shadow:0 12px 36px #0003; }
-.membership-offer-heading { display:flex; gap:16px; justify-content:space-between; align-items:center; font-size:12px; }
-.membership-plan-label { font-weight:600; }
-.membership-once{ color:#d7bef9; border:1px solid #bb8cff30; background:#a773ff0b; border-radius:999px; padding:5px 9px; font-size:10px; white-space:nowrap; }
-.membership-price { display:flex; gap:16px; align-items:center; margin:28px 0; }
-.membership-price strong { font-size:70px; letter-spacing:-.065em; line-height:1; }
-.membership-price>span { font-size:14px; line-height:1.7; }
-.membership-price small { color:var(--dg-muted); font-size:12px; }
-.membership-benefits { display:grid; gap:24px; padding:26px 0; border-top:1px solid var(--dg-line); }
-.membership-benefits>div { display:flex; align-items:flex-start; gap:14px; }
-.membership-benefit-icon { display:grid; place-items:center; width:40px; height:40px; flex:none; color:#cba6ff; background:#a574ec12; border:1px solid #a574ec26; border-radius:12px; }
-html#digivated-root .membership-benefits h2 { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin:0 0 8px; font-size:16px; line-height:1.5; letter-spacing:-.02em; }
-.membership-benefits p { margin:0; font-size:13px; line-height:1.8; }
-html#digivated-root .membership-checkout { width:100%; justify-content:center; margin-top:8px; }
-.membership-small,.membership-checkout-note { text-align:center; font-size:11px; line-height:1.8; margin:12px 0 0; }
-.membership-next { text-align:center; margin:24px 0 48px; font-size:12px; }
-.membership-next a { display:inline-flex; gap:8px; align-items:center; }
-.membership-access { display:grid; grid-template-columns:1fr 1fr; gap:36px; border-top:1px solid var(--dg-line); padding:36px 0; scroll-margin-top:90px; }
-.membership-access h2,.membership-faq h2 { font-size:24px; letter-spacing:-.025em; }
-.membership-access p { font-size:13px; line-height:1.8; }
-html#digivated-root .membership-access .carousel-access { background:#101014; padding:20px; border:1px solid var(--dg-line); border-radius:12px; }
-.membership-access input { width:100%; box-sizing:border-box; margin-top:7px; }
-.membership-faq details { padding:18px 0; border-bottom:1px solid var(--dg-line); scroll-margin-top:90px; }
-.membership-faq summary { cursor:pointer; font-size:14px; font-weight:500; }
-.membership-faq p { font-size:13px; line-height:1.8; max-width:75ch; }
-@media(max-width:600px) { html#digivated-root .membership-offer { padding:24px 20px; } .membership-access { grid-template-columns:1fr; gap:14px; } .membership-offer-heading { gap:8px; } .membership-price strong { font-size:64px; } }
-.membership-access form { display:grid; gap:12px; }
-.membership-access label { display:block; font-size:13px; }
-.membership-access form p { margin:0; }
-html#digivated-root .membership-benefit-icon { color:#cba6ff; }
+/* Shop (/shop, /membership): two purchase cards, verify form, FAQ. */
+@layer flow {
+html#digivated-root[data-ascii] body .shop{display:grid;gap:32px;width:min(980px,100%);margin:0 auto!important;padding:0 0 64px!important}
+html#digivated-root[data-ascii] body .shop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+html#digivated-root[data-ascii] body .shop-card{position:relative;display:flex!important;flex-direction:column;gap:14px;max-width:none!important;margin:0!important;padding:28px!important;border:1px solid #232323!important;border-radius:6px!important;background-color:#0d0d0d!important;box-shadow:none!important;overflow:hidden;transition:border-color .25s,box-shadow .3s!important}
+html#digivated-root[data-ascii] body .shop-card::before{content:'';position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,#c3a0ff00,var(--shop-glow,#8f8f8f),#c3a0ff00);opacity:.7}
+html#digivated-root[data-ascii] body .shop-spot{--shop-glow:#e3c26b}
+html#digivated-root[data-ascii] body .shop-card.membership-offer{--shop-glow:#c3a0ff;border-color:#3b2f52!important;background-image:radial-gradient(120% 70% at 100% 0%,#c3a0ff14,transparent 60%)!important}
+html#digivated-root[data-ascii] body .shop-card:hover{border-color:#4a3c66!important;box-shadow:0 18px 40px -28px #c3a0ff99!important}
+html#digivated-root[data-ascii] body .shop-spot:hover{border-color:#5c4d25!important;box-shadow:0 18px 40px -28px #e3c26b80!important}
+html#digivated-root[data-ascii] body .shop-kicker{display:inline-flex;align-items:center;gap:8px;margin:0!important;font-family:var(--fl-mono)!important;font-size:11px!important;letter-spacing:.1em;text-transform:uppercase;color:#e3c26b!important}
+html#digivated-root[data-ascii] body .shop-kicker-member{color:#d9c6ff!important}
+html#digivated-root[data-ascii] body .shop-card h2{margin:0!important;font-size:26px!important;font-weight:600!important;letter-spacing:-.03em!important;line-height:1.15!important;color:#f2f2f2!important}
+html#digivated-root[data-ascii] body .shop-for{margin:-6px 0 0!important;font-size:14px!important;color:#a9a9a9!important}
+html#digivated-root[data-ascii] body .shop-price{display:flex!important;align-items:baseline;gap:8px;margin:6px 0 0!important}
+html#digivated-root[data-ascii] body .shop-price strong{font-size:52px!important;font-weight:600!important;letter-spacing:-.05em!important;line-height:1!important;color:#fff!important}
+html#digivated-root[data-ascii] body .shop-price span{font-family:var(--fl-mono)!important;font-size:12px!important;color:#8f8f8f!important}
+html#digivated-root[data-ascii] body .shop-list{display:grid!important;gap:10px!important;margin:4px 0 6px!important;padding:16px 0 0!important;list-style:none!important;border:0!important;border-top:1px dashed #2a2a2a!important}
+html#digivated-root[data-ascii] body .shop-list li{position:relative;margin:0!important;padding:0 0 0 22px!important;font-size:14px!important;line-height:1.5!important;color:#d6d6d6!important}
+html#digivated-root[data-ascii] body .shop-list li::before{content:'+';position:absolute;left:0;top:0;font-family:var(--fl-mono)!important;color:var(--shop-glow)!important}
+html#digivated-root[data-ascii] body .shop-cta{width:100%;margin-top:auto!important}
+html#digivated-root[data-ascii] body .shop-note{margin:0!important;font-size:12px!important;line-height:1.6!important;color:#8f8f8f!important;text-align:center}
+html#digivated-root[data-ascii] body .shop-spot.is-paused .shop-price{opacity:.45}
+
+/* Verify + FAQ */
+html#digivated-root[data-ascii] body .membership-access{display:grid;grid-template-columns:1fr 1fr;gap:32px;padding:28px 0 0!important;border-top:1px dashed #2a2a2a!important;scroll-margin-top:90px}
+html#digivated-root[data-ascii] body .membership-access h2,html#digivated-root[data-ascii] body .membership-faq h2{margin:4px 0 8px!important;font-size:22px!important;letter-spacing:-.025em!important}
+html#digivated-root[data-ascii] body .membership-access p{font-size:13px!important;line-height:1.7!important}
+html#digivated-root[data-ascii] body .membership-access .carousel-access{display:grid;gap:12px;padding:20px!important;border:1px solid #232323!important;border-radius:6px!important;background:#0d0d0d!important}
+html#digivated-root[data-ascii] body .membership-access label{display:block;font-size:13px!important}
+html#digivated-root[data-ascii] body .membership-access input{width:100%;box-sizing:border-box;margin-top:7px!important}
+html#digivated-root[data-ascii] body .membership-access form p{margin:0!important}
+html#digivated-root[data-ascii] body .membership-faq details{padding:16px 0!important;border-bottom:1px dashed #2a2a2a!important;scroll-margin-top:90px}
+html#digivated-root[data-ascii] body .membership-faq summary{cursor:pointer;font-size:14px!important;font-weight:500!important}
+html#digivated-root[data-ascii] body .membership-faq p{max-width:70ch;margin:10px 0 0!important;font-size:13.5px!important;line-height:1.7!important;color:#b9b9b9!important}
+
+@media (max-width:760px){
+ html#digivated-root[data-ascii] body .shop-grid,html#digivated-root[data-ascii] body .membership-access{grid-template-columns:minmax(0,1fr)}
+ html#digivated-root[data-ascii] body .shop-card{padding:22px 18px!important}
+ html#digivated-root[data-ascii] body .membership-access{gap:14px}
+}
+}
