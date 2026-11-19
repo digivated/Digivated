@@ -89,6 +89,14 @@ export async function checkPendingBadges(redis,{now=Date.now(),readSite=readProj
     }
     return;
    }
+   // One note to everyone still waiting, then the usual day-after and last-call notes.
+   const finishKey=`digivated:badge-mail:${record.id}:finish`;
+   if(await redis(['SET',finishKey,'1','NX','EX',90*86400])==='OK'){
+    const sent=await mail(record,'finish');
+    if(sent==='sent')result.reminded++;
+    else await redis(['DEL',finishKey]);
+    return;
+   }
    const stage=reminderStage(record,now);
    if(!stage)return;
    // A last call also covers the first nudge, so nobody gets both in a row.

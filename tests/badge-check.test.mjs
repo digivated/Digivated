@@ -29,7 +29,7 @@ test('daily check verifies badges makers added without pressing the button', asy
   assert.equal(result.waiting, 2); assert.equal(result.verified, 1); assert.equal(result.reminded, 1);
   assert.ok(JSON.parse(store.get('digivated:submission:found')).launch.badgeVerifiedAt);
   assert.equal(JSON.parse(store.get('digivated:submission:missing')).launch.badgeVerifiedAt, undefined);
-  assert.deepEqual(mails.sort(), [['found', 'verified'], ['missing', 'nudge']]);
+  assert.deepEqual(mails.sort(), [['found', 'verified'], ['missing', 'finish']]);
 });
 
 test('reminders go out once per stage, and a failed send is retried next run', async () => {
@@ -39,7 +39,7 @@ test('reminders go out once per stage, and a failed send is retried next run', a
   await checkPendingBadges(redis, { ...opts, mail: async () => 'failed' });
   await checkPendingBadges(redis, { ...opts, mail: async (r, s) => { mails.push(s); return 'sent'; } });
   await checkPendingBadges(redis, { ...opts, mail: async (r, s) => { mails.push(s); return 'sent'; } });
-  assert.deepEqual(mails, ['nudge']);
+  assert.deepEqual(mails, ['finish', 'nudge']);
   const late = base('b', { launch: { kind: 'free', scheduledAt: new Date(now + 2 * DAY).toISOString() } });
   assert.equal(reminderStage(late, now), 'last-call');
   assert.equal(reminderStage(base('c', { date: new Date(now - 3600_000).toISOString() }), now), null);
@@ -65,6 +65,7 @@ test('reminder emails name the launch day and link to the project', () => {
   const message = badgeEmail(base('mail', { launch: { kind: 'free', scheduledAt: '2026-11-23T14:00:00Z' } }), 'last-call');
   assert.match(message.subject, /Monday, Nov 23/);
   assert.match(message.html, /account#project-mail/);
+  assert.match(badgeEmail(base('mail', { launch: { kind: 'free', scheduledAt: '2026-11-23T14:00:00Z' } }), 'finish').html, /Verify badge and submit/);
   assert.equal(badgeEmail({ id: 'x' }, 'nudge'), null);
 });
 
