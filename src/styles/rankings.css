@@ -189,3 +189,7 @@ html#digivated-root[data-ascii] .rankings-directory .ranking-front-runner .launc
 @media (hover:hover) and (pointer:fine){
 html#digivated-root .rankings-directory .launch-categories { flex-wrap:wrap; overflow:visible; }
 }
+/* The launch-week menu has short options; don't stretch it across the page on wide screens. */
+@media (min-width:601px){
+html#digivated-root .rankings-directory [data-launch-batch]{width:auto;min-width:240px;max-width:100%}
+}

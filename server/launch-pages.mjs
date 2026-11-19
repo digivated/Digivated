@@ -52,7 +52,7 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
     <dl class="launch-facts">
       <div><dt>Category</dt><dd><a href="${e(categoryHref)}">${e(item.category)}</a></dd></div>
       ${website ? `<div><dt>Website</dt><dd><a href="${e(website)}" target="_blank" rel="noopener noreferrer"${visitAttrs}>${e(new URL(website).hostname)} <span aria-hidden="true">↗</span></a></dd></div>` : ''}
-      <div><dt>Pricing</dt><dd>${e(projectPricingOptions.includes(item.pricing) ? item.pricing : 'Not specified')}</dd></div>
+      ${projectPricingOptions.includes(item.pricing) ? `<div><dt>Pricing</dt><dd>${e(item.pricing)}</dd></div>` : ''}
       ${listedDate ? `<div><dt>${item.publishedAt ? 'Published' : 'Submitted'}</dt><dd><time datetime="${listedDate.toISOString().slice(0,10)}">${e(listedDate.toLocaleDateString('en-US',{dateStyle:'medium',timeZone:'UTC'}))}</time></dd></div>` : ''}
     </dl>
     ${draft ? '' : `<button type="button" class="launch-details-vote" data-like-type="project" data-like-id="${e(item.id)}" data-show-zero aria-pressed="false" aria-label="Upvote this project"><span aria-hidden="true">↑</span><span data-like-count>–</span><span>Upvotes</span></button>`}
