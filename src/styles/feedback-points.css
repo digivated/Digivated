@@ -4,8 +4,6 @@ html[data-ascii] body .dg-fp{position:relative;margin:0!important;border:1px sol
 html[data-ascii] body .dg-fp::before{content:'';position:absolute;inset:-1px auto -1px -1px;width:2px;background:linear-gradient(180deg,#c3a0ff,#c3a0ff00)}
 html[data-ascii] body .dg-fp-spark{display:inline-block;color:#d9c6ff!important;animation:dg-spark-spin 4s cubic-bezier(.5,0,.3,1) infinite}
 @keyframes dg-spark-spin{0%,60%,100%{transform:rotate(0) scale(1);text-shadow:none}72%{transform:rotate(90deg) scale(1.45);text-shadow:0 0 10px #c3a0ff,0 0 2px #fff}84%{transform:rotate(180deg) scale(.9);text-shadow:0 0 4px #c3a0ff80}}
-html[data-ascii] body .dg-fp-me{display:inline-flex!important;align-items:center;min-height:24px;padding:2px 9px!important;border:1px solid #3b2f52!important;background-color:#c3a0ff14!important;font-family:var(--fl-mono)!important;font-size:11px!important;color:#fff!important;white-space:nowrap}
-html[data-ascii] body .dg-fp-me[hidden]{display:none!important}
 html[data-ascii] body .dg-points [hidden]{display:none!important}
 
 /* Full card */
@@ -15,7 +13,6 @@ html[data-ascii] body .dg-fp-head .dg-label{color:#e7dcff!important}
 html[data-ascii] body .dg-fp-full h2{margin:0!important;font-family:var(--fl-sans)!important;font-size:clamp(20px,2.4vw,26px)!important;line-height:1.15!important;letter-spacing:-.03em!important;font-weight:600!important;text-wrap:balance}
 html[data-ascii] body .dg-fp-progress{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-family:var(--fl-mono)!important;font-size:12px!important;color:var(--dgb-copy,#b9b9b9)!important}
 html[data-ascii] body .dg-fp-progress[hidden]{display:none!important}
-html[data-ascii] body .dg-fp-bar{color:#d9c6ff!important;letter-spacing:.06em;white-space:nowrap}
 html[data-ascii] body .dg-fp-foot{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0!important}
 html[data-ascii] body .dg-fp-foot [hidden]{display:none!important}
 html[data-ascii] body .dg-fp-fine{margin:0!important;font-family:var(--fl-mono)!important;font-size:10.5px!important;color:#6f6f6f!important}
@@ -65,7 +62,7 @@ html[data-ascii] body .dg-fp-icon .dg-fp-spark{font-size:15px;line-height:1}
 html[data-ascii] body .dg-fp-strip-copy{grid-area:copy;display:grid!important;gap:3px;font-size:14px!important}
 html[data-ascii] body .dg-fp-strip-copy strong{display:block!important;margin:0!important;font-size:11px!important;letter-spacing:.14em!important}
 html[data-ascii] body .dg-fp-strip-copy span{display:block!important;color:#cfcfcf!important;line-height:1.4!important}
-html[data-ascii] body .dg-fp-strip .dg-fp-me{grid-area:me;min-height:30px!important;padding:3px 10px!important}
+html[data-ascii] body .dg-fp-strip .dg-fp-me{grid-area:me}
 html[data-ascii] body .dg-fp-toggle{grid-area:toggle;display:inline-flex!important;align-items:center;gap:6px;min-height:30px;padding:4px 10px!important;border:1px solid #3b2f52!important;font-size:11px!important;color:#b9acd3!important;transition:border-color .2s,color .2s,background-color .2s!important}
 html[data-ascii] body .dg-fp-toggle svg{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
 html[data-ascii] body .dg-fp-strip summary:hover .dg-fp-toggle{border-color:#7a66a3!important;background:#c3a0ff14!important;color:#fff!important}
@@ -74,7 +71,7 @@ html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle svg{transform:rotate(180d
  html[data-ascii] body .dg-fp-strip summary{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"icon copy copy" "me me toggle";column-gap:12px!important;row-gap:12px!important;padding:14px 16px!important}
  html[data-ascii] body .dg-fp-icon{align-self:center;width:36px!important;height:36px!important}
  html[data-ascii] body .dg-fp-strip-copy{align-self:center;font-size:14px!important}
- html[data-ascii] body .dg-fp-strip .dg-fp-me{justify-self:start;align-self:center;min-height:28px!important;padding:2px 10px!important;font-size:11px!important}
+ html[data-ascii] body .dg-fp-strip .dg-fp-me{justify-self:start;align-self:center}
  html[data-ascii] body .dg-fp-toggle{justify-self:end;align-self:center;min-height:28px;padding:3px 10px!important}
 }
 }
@@ -124,3 +121,21 @@ html[data-ascii] body .dg-fp-strip .dg-fp-foot .dg-btn{min-height:40px!important
 @keyframes dg-rail-x{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @keyframes dg-step-in{from{opacity:0;translate:0 4px}to{opacity:1;translate:0 0}}
 @media (prefers-reduced-motion:reduce){html[data-ascii] body .dg-fp-spark{animation:none!important}}
+
+/* Points meter: this week's points toward the next bonus upvote, as an ASCII bar. */
+@layer flow {
+html[data-ascii] body .dg-fp-meter{position:relative;display:grid!important;gap:6px;align-content:center;min-width:132px;min-height:0!important;padding:8px 12px!important;border:1px solid #4a3c66!important;background:linear-gradient(180deg,#c3a0ff17,#c3a0ff08)!important;color:#fff!important;white-space:nowrap}
+html[data-ascii] body .dg-fp-meter[hidden]{display:none!important}
+html[data-ascii] body .dg-fp-meter-top{display:flex;align-items:baseline;gap:6px;font-family:var(--fl-mono)!important;line-height:1}
+html[data-ascii] body .dg-fp-meter-top :is(b,small){font-family:var(--fl-mono)!important}
+html[data-ascii] body .dg-fp-meter-top b{font-size:17px!important;font-weight:500!important;color:#fff!important;font-variant-numeric:tabular-nums}
+html[data-ascii] body .dg-fp-meter-top small{font-size:10.5px!important;color:#a596c4!important}
+html[data-ascii] body .dg-fp-meter-bar{display:block;font-family:var(--fl-mono)!important;font-size:12px!important;line-height:1!important;letter-spacing:0;color:#4a3c66!important}
+html[data-ascii] body .dg-fp-meter-bar[hidden]{display:none!important}
+html[data-ascii] body .dg-fp-meter-bar b{font-weight:400!important;color:#c3a0ff!important;text-shadow:0 0 6px #c3a0ff80}
+html[data-ascii] body .dg-fp-meter[data-boosts]::after{content:attr(data-boosts) ' ▲';position:absolute;top:-9px;right:-1px;padding:1px 6px;border:1px solid #c3a0ff!important;background:#1d1429!important;box-shadow:0 0 10px -3px #c3a0ff;font-family:var(--fl-mono)!important;font-size:10px;line-height:1.4;color:#fff}
+html[data-ascii] body .dg-fp-meter.is-bump{animation:dg-meter-bump .7s ease-out}
+@keyframes dg-meter-bump{0%{box-shadow:0 0 0 0 #c3a0ff00}30%{box-shadow:0 0 0 3px #c3a0ff40,0 0 22px -4px #c3a0ff}100%{box-shadow:0 0 0 0 #c3a0ff00}}
+html[data-ascii] body .dg-fp-progress .dg-fp-meter-bar{font-size:14px!important}
+@media (max-width:640px){html[data-ascii] body .dg-fp-strip .dg-fp-meter{min-width:0}}
+}
