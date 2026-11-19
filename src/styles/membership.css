@@ -6,7 +6,7 @@ html#digivated-root .membership-heading>p:last-child { max-width:45ch; margin:18
 html#digivated-root .membership-offer { max-width:600px; margin:auto; padding:32px; border:1px solid #a77ce442; border-radius:18px; background:radial-gradient(ellipse at 50% 0,#8b4be917,transparent 75%),#101014; box-shadow:0 12px 36px #0003; }
 .membership-offer-heading { display:flex; gap:16px; justify-content:space-between; align-items:center; font-size:12px; }
 .membership-plan-label { font-weight:600; }
-.membership-once,.membership-soon { color:#d7bef9; border:1px solid #bb8cff30; background:#a773ff0b; border-radius:999px; padding:5px 9px; font-size:10px; white-space:nowrap; }
+.membership-once{ color:#d7bef9; border:1px solid #bb8cff30; background:#a773ff0b; border-radius:999px; padding:5px 9px; font-size:10px; white-space:nowrap; }
 .membership-price { display:flex; gap:16px; align-items:center; margin:28px 0; }
 .membership-price strong { font-size:70px; letter-spacing:-.065em; line-height:1; }
 .membership-price>span { font-size:14px; line-height:1.7; }

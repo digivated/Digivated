@@ -40,9 +40,6 @@ html#digivated-root body.platform .notifications-feed-actions button:hover { col
 html#digivated-root body.platform .notification-item { display:flex; align-items:center; gap:18px; min-height:82px; padding:16px 8px; border-bottom:1px solid var(--dg-line); text-decoration:none; color:var(--dg-copy); transition:background .18s ease; }
 html#digivated-root body.platform .notification-item:hover { background:rgba(174,112,240,.06); }
 html#digivated-root body.platform .notification-item.unread { background:rgba(174,112,240,.045); }
-html#digivated-root body.platform .notification-mark { display:grid; place-items:center; flex:none; width:42px; height:42px; border:1px solid var(--dg-line-strong); border-radius:12px; color:var(--dg-accent); font-size:19px; }
-html#digivated-root body.platform .notification-mark svg { width:20px; height:20px; }
-html#digivated-root body.platform .notification-item.unread .notification-mark { background:rgba(174,112,240,.12); }
 html#digivated-root body.platform .notification-copy { display:grid; gap:3px; min-width:0; }
 html#digivated-root body.platform .notification-copy small { color:var(--dg-accent); font-size:10px; letter-spacing:.08em; text-transform:uppercase; }
 html#digivated-root body.platform .notification-copy strong { color:var(--dg-ink); font-size:14px; line-height:1.35; font-weight:550; }

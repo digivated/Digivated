@@ -1,4 +1,7 @@
 (() => {
+  // Email sign-in links can land on the homepage; finish signing in on the dashboard.
+  // (Lives here because the site's CSP blocks inline scripts.)
+  if (location.pathname === '/' && location.hash.includes('access_token=')) { location.replace('/account' + location.hash); return; }
   const root = document.documentElement;
   const key = 'digivated:intro:v2';
   try {

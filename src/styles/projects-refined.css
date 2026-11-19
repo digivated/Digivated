@@ -4,15 +4,8 @@ html body.platform.projects-dashboard {
  padding-top:0;
 }
 html body.platform.projects-dashboard main { width:100%; max-width:1440px; padding:128px 48px 56px; }
-html body.platform.projects-dashboard .projects-workspace { display:block; }
-html body.platform.projects-dashboard .projects-content { width:100%; }
 html body.platform.projects-dashboard .platform-header { inset:0 0 auto; max-width:none; width:100%; margin:0; padding:0 48px; border:0; border-bottom:1px solid #252525; border-radius:0; background:#111f; box-shadow:none; backdrop-filter:blur(12px); }
 html body.platform.projects-dashboard .header-inner { max-width:1344px; min-height:76px; margin:auto; padding:0; }
-html body.platform.projects-dashboard .platform-header .header-submit { min-height:40px; padding:10px 15px; font-size:.8rem; }
-html body.platform.projects-dashboard .dashboard-intro { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:0 0 32px; }
-html body.platform.projects-dashboard .dashboard-intro h1 { margin:0 0 10px; font-size:clamp(2rem,3.3vw,2.7rem); font-weight:600; line-height:1.15; letter-spacing:-.04em; }
-html body.platform.projects-dashboard .dashboard-intro p { margin:0; color:var(--refined-muted); font-size:.9375rem; line-height:1.6; }
-html body.platform.projects-dashboard .dashboard-curation { font-size:.65rem; text-transform:uppercase; letter-spacing:.1em; color:var(--refined-soft); }
 html body.platform.projects-dashboard .project-collections { display:flex; align-items:center; gap:28px; margin:0 0 24px; padding:0; overflow-x:auto; border-bottom:1px solid var(--refined-line); scrollbar-width:none; }
 html body.platform.projects-dashboard .project-collections button,html body.platform.projects-dashboard .project-collections a { position:relative; display:inline-flex; justify-content:flex-start; align-items:center; flex:none; gap:9px; width:auto; min-height:48px; padding:0 0 15px; border:0; border-radius:0; background:transparent; color:var(--refined-muted); font-size:.8125rem; font-weight:450; text-decoration:none; white-space:nowrap; }
 html body.platform.projects-dashboard .project-collections a { margin-left:auto; }
@@ -20,20 +13,11 @@ html body.platform.projects-dashboard .project-collections button span { font-si
 html body.platform.projects-dashboard .project-collections button[aria-pressed=true] { color:var(--refined-ink); background:transparent; border:0; }
 html body.platform.projects-dashboard .project-collections button[aria-pressed=true]::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; border-radius:2px; background:#ededed; }
 html body.platform.projects-dashboard .project-collections button:hover,html body.platform.projects-dashboard .project-collections a:hover { color:white; background:transparent; }
-html body.platform.projects-dashboard .dashboard-controls { display:grid; grid-template-columns:minmax(200px,1fr) 180px 168px auto; gap:12px; margin:0 0 16px; }
-html body.platform.projects-dashboard .dashboard-controls label { min-width:0; width:auto; margin:0; }
-html body.platform.projects-dashboard .mobile-category { display:block; }
-html body.platform.projects-dashboard .dashboard-controls input,html body.platform.projects-dashboard .dashboard-controls select { height:44px; min-height:44px; border:1px solid #303030; background:#171717; border-radius:8px; margin:0; box-shadow:none; color:#d7d7d7; font-size:.8125rem; }
-html body.platform.projects-dashboard .dashboard-controls input { padding:11px 14px 11px 40px; }
 html body.platform.projects-dashboard .project-search svg { left:13px; top:13px; width:17px; height:17px; color:#888; }
 html body.platform.projects-dashboard .project-search input::placeholder { color:#929292; }
-html body.platform.projects-dashboard .dashboard-controls select { padding:8px 12px; }
 html body.platform.projects-dashboard .project-layout-toggle { align-self:center; padding:3px; gap:2px; border-color:#303030; border-radius:8px; }
 html body.platform.projects-dashboard .project-layout-toggle button { width:36px; height:36px; min-width:36px; color:#929292; background:transparent; border-radius:4px; }
 html body.platform.projects-dashboard .project-layout-toggle button[aria-pressed=true] { background:#2c2c2c; color:white; }
-html body.platform.projects-dashboard .dashboard-results { min-height:20px; margin:0 0 18px; justify-content:space-between; }
-html body.platform.projects-dashboard .dashboard-results .results-status { font-size:.6875rem; color:#969696; }
-html body.platform.projects-dashboard .clear-project-filters { font-size:.75rem; min-height:30px; color:#ddd; }
 html body.platform.projects-dashboard [data-live-projects] .project-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
 html body.platform.projects-dashboard [data-live-projects] .project-card { background:var(--refined-surface); border:1px solid var(--refined-line); border-radius:12px; overflow:visible; box-shadow:none; transform:none; }
 html body.platform.projects-dashboard [data-live-projects] .project-card:hover { border-color:#4c4c4c; box-shadow:none; transform:none; }
@@ -75,12 +59,6 @@ html body.platform.projects-dashboard [data-live-projects] .project-grid[data-la
 html body.platform.projects-dashboard [data-live-projects] .project-grid[data-layout=list] .project-details { grid-column:3; margin:0; }
 html body.platform.projects-dashboard [data-live-projects] .project-grid[data-layout=list] .project-stats { grid-column:2; margin:4px 0 0; }
 html body.platform.projects-dashboard [data-live-projects] .project-grid[data-layout=list] .card-links.card-footer { grid-column:4; grid-row:1/5; display:flex; flex-direction:column-reverse; padding:0; margin:0; border:0; gap:4px; }
-html body.platform.projects-dashboard .refined-submit { display:flex; align-items:center; justify-content:space-between; gap:24px; margin:28px 0 0; padding:24px; border:1px solid var(--refined-line); border-radius:12px; background:transparent; }
-html body.platform.projects-dashboard .refined-submit>div { display:flex; align-items:baseline; gap:24px; }
-html body.platform.projects-dashboard .refined-submit h2 { margin:0; font-size:.875rem; line-height:1.5; font-weight:500; letter-spacing:-.015em; }
-html body.platform.projects-dashboard .refined-submit p { margin:0; color:#888; font-size:.8125rem; }
-html body.platform.projects-dashboard .refined-submit a { flex:none; color:#e5e5e5; font-size:.75rem; text-decoration:none; }
-html body.platform.projects-dashboard .dashboard-review-note { margin:18px 0 0; text-align:center; font-size:.625rem; color:#777; }
 @media(max-width:1100px) {
  html body.platform.projects-dashboard main { padding:112px 32px 40px; }
  html body.platform.projects-dashboard [data-live-projects] .project-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
