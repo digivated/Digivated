@@ -92,7 +92,7 @@ export function badgeSteps(item, { onVerify } = {}) {
     el('ol', { className: 'fl-howto' },
       el('li', {}, el('strong', { textContent: 'Pick a style and copy its code. ' }), 'Every style links to your listing and counts for verification.'),
       el('li', {}, el('strong', { textContent: 'Paste it into your page. ' }), 'Add it to the HTML of ', el('a', { href: item.url, target: '_blank', rel: 'noopener noreferrer', textContent: item.url }), ', for example in the footer. Keep it visible.'),
-      el('li', {}, el('strong', { textContent: 'Publish, then check. ' }), 'Deploy your site, then press “Check my website”.')),
+      el('li', {}, el('strong', { textContent: 'Publish. ' }), 'We check your site every day and email you when we find it. Press “Check my website” to confirm right now.')),
     picker,
     el('div', { className: 'fl-actions' }, verify),
     status,
@@ -102,7 +102,8 @@ export function badgeSteps(item, { onVerify } = {}) {
         el('li', { textContent: `Add it to the exact page you submitted (${item.url}), not a different page or subdomain.` }),
         el('li', { textContent: 'Make sure the change is published. Open your site in a private window to confirm the link is there.' }),
         el('li', { textContent: 'Paste the code exactly as copied. Don’t put it inside a comment, script, or hidden element.' }),
-        el('li', { textContent: 'Sites built entirely with JavaScript may need the link in the initial HTML (for example in index.html).' }),
+        el('li', { textContent: 'Using Cloudflare or bot protection? Allow the “Digivated project verifier” user agent so we can read your page.' }),
+        el('li', { textContent: 'Built with React, Vite, Lovable or Bolt? Paste the badge into index.html, inside <body>. We can’t see links added by JavaScript.' }),
         el('li', { textContent: 'Still stuck? Use Report a bug or contact Digivated and include your project URL.' }))),
   );
   return panel;
