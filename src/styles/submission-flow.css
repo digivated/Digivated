@@ -100,9 +100,6 @@ html#digivated-root .listing-preview-copy p {
 }
 html#digivated-root .listing-preview-footer {display:flex;gap:20px;padding:16px 20px;border-top:1px solid var(--dg-line);font-size:12px;color:var(--dg-muted)}
 html#digivated-root .listing-preview-footer b {font-weight:500;margin-left:4px}
-html#digivated-root .submission-quality {padding:24px 0 16px}
-html#digivated-root .submission-quality h3 {font-size:14px;margin:0 0 12px}
-html#digivated-root .submission-quality ul {padding-left:18px;margin:0;font-size:13px;line-height:2}
 html#digivated-root .submission-form [hidden],html#digivated-root .submission-preview-panel [hidden] {display:none!important}
 @media(max-width:1000px) {
   html#digivated-root body.platform .submission-workspace {grid-template-columns:minmax(0,1fr) 280px;gap:24px}

@@ -23,7 +23,6 @@
  html[data-ascii] body :is(hr,.ascii-rule,.home-ascii-divider,.home-kinetic,.site-atmosphere){display:none!important}
  html[data-ascii] body :is(.home-editorial,.home-featured-card,.home-featured-ribbon,.platform-section,.platform-footer,.project-wall,.project-reel)::before,
  html[data-ascii] body :is(.home-editorial,.home-featured-card,.home-featured-ribbon,.platform-section,.platform-footer,.project-wall,.project-reel)::after{content:none!important}
- html[data-ascii] body .home-featured-ribbon-track::before{content:none!important}
  /* Opaque overlays preserve legibility; they are never glass. */
  html[data-ascii] body :is(dialog,#explore-navigation,.navigation-panel,.wall-focus-panel,.owner-editor,.notebook-navigation[open],.explore-menu[open]){background:#111!important;color:#ddd!important;border:0!important;border-radius:0!important}
  html[data-ascii] dialog::backdrop{background:#090909e8!important;backdrop-filter:none!important}
@@ -34,15 +33,6 @@
  html[data-ascii] body :is(.platform-footer,body>footer){position:relative;z-index:1;padding-block:56px!important;margin-top:64px!important}
  html[data-ascii] body :is(.home-featured-card,.project-card,.resource-card,.news-card,.panel,.prompt-row,.launch-info-panel,.launch-creator,.launch-overview){border-radius:0!important;}
  html[data-ascii] body .home-featured-card{padding-block:14px!important;}
- html[data-ascii] body .home-featured-ribbon{min-height:28px!important;color:#aaa!important;}
- html[data-ascii] body .home-featured-summary{font-size:12px!important;line-height:1.8!important}
- html[data-ascii] body .home-featured-copy strong{font-size:18px!important;}
- html[data-ascii] body .home-editorial{display:block!important;text-align:left!important;padding-block:120px 100px!important;margin-block:0!important;}
- html[data-ascii] body .home-editorial h1{font-size:clamp(34px,4.7vw,66px)!important;max-width:14ch!important;line-height:1.15!important;margin-inline:0!important;}
- html[data-ascii] body .home-editorial h1 em{font-style:normal!important;color:#aaa!important;-webkit-text-fill-color:currentColor!important;}
- html[data-ascii] body .home-editorial>p{max-width:46ch!important;margin-inline:0!important;text-align:left!important;font-size:13px!important;}
- html[data-ascii] body .home-editorial-actions{justify-content:flex-start!important;gap:24px!important;margin-top:28px!important;}
- html[data-ascii] body .home-editorial-actions .button{padding-inline:0!important;font-size:12px!important;}
  html[data-ascii] body .ascii-field{position:absolute;top:220px;right:max(4vw,calc((100vw - 1200px)/2));width:42%;margin:0;padding:0;z-index:0;pointer-events:none;user-select:none;white-space:pre;line-height:1.5;font-size:clamp(8px,.9vw,12px);color:#aaa!important;opacity:.85;background:none!important;text-align:center;}
  html[data-ascii] body:not(.home-refresh) .ascii-field{display:none!important;}
  html[data-ascii] .ascii-ambient{position:fixed;inset:0;overflow:hidden;pointer-events:none;user-select:none;z-index:0;contain:strict;}
@@ -71,7 +61,6 @@
 }
 
 @layer ascii {
- html[data-ascii] body .wall-navigation{align-items:center!important;gap:16px!important;}
  html[data-ascii] body :is(.wall-search,.wall-category){margin:0!important;padding:0!important;align-self:center!important;}
  html[data-ascii] body :is(.wall-search input,.wall-category select){height:44px!important;min-height:44px!important;margin:0!important;padding-block:10px!important;box-sizing:border-box!important;}
  html[data-ascii] body .compact-site-header .platform-brand{flex:0 0 auto!important;margin-right:12px!important;}
@@ -216,10 +205,6 @@
 }
 
 @layer ascii {
- html[data-ascii] body.wall-experience .project-wall .wall-page-controls{display:flex!important;align-items:center!important;gap:8px!important;width:auto!important;min-width:0!important;padding:0!important}
- html[data-ascii] body.wall-experience .project-wall .wall-page-controls button{display:grid!important;place-items:center!important;flex:0 0 40px!important;width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;padding:0!important;overflow:hidden!important}
- html[data-ascii] body.wall-experience .project-wall .wall-page-controls button>span:not(.wall-action-icon){display:none!important}
- html[data-ascii] body.wall-experience .project-wall .wall-page-controls .wall-action-icon{display:grid!important;place-items:center!important;width:20px!important;height:20px!important}
  @media(max-width:600px){html[data-ascii] body.wall-experience .project-wall .wall-page-controls button{flex-basis:36px!important;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important}}
 }
 
@@ -503,10 +488,8 @@
 }
 
 @layer ascii {
- html#digivated-root[data-ascii] body.home-refresh .home-workshop-copy .home-editorial-kicker {text-align:left!important;}
  html#digivated-root[data-ascii] #main :is(.directory-launch-nav,.submission-layout,.submission-intro,.creator-inbox-page) {width:100%!important;max-width:none!important;margin-inline:0!important;padding-inline:0!important;}
  html#digivated-root[data-ascii] #main .project-wall :is(.wall-intro,.wall-navigation,.wall-dom-grid) {width:100%!important;max-width:none!important;margin-inline:0!important;padding-inline:0!important;}
- html#digivated-root[data-ascii] #main .directory-launch-nav {display:flex;flex-wrap:wrap;gap:16px 28px!important;}
  html#digivated-root[data-ascii] #main :is(.article-body,.about-copy) {max-width:72ch!important;line-height:1.8!important;}
  html#digivated-root[data-ascii] #main :is(.article-body,.about-copy) h2 {margin-top:48px!important;}
  html#digivated-root[data-ascii] #main .submission-account-callout {padding:24px 0!important;}
@@ -516,10 +499,6 @@
  html#digivated-root[data-ascii] body:not(.platform) .shell {max-width:1440px;margin-inline:auto;gap:40px;}
  html#digivated-root[data-ascii] body:not(.platform) #main {min-width:0;}
  @media(min-width:901px){html#digivated-root[data-ascii] body:not(.platform) .shell {padding-inline:clamp(24px,4vw,64px);}}
-}
-
-@layer ascii {
- html#digivated-root[data-ascii] #main .project-wall .wall-react-root {width:100%!important;max-width:none!important;margin-inline:0!important;}
 }
 
 /* Full-column glyph workshop; size is fitted once per container resize. */

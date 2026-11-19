@@ -1,1 +1,0 @@
-export const resourceGuides = [{title:'UI/UX Prompt Packet',description:'Improve a website or app with practical prompts, workflows, and review checklists. Try three complete prompts for free.',category:'DESIGN & UX',icon:'sparkle',href:'/ui-ux-prompt-packet',label:'Explore the packet'}];

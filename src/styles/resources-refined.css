@@ -4,7 +4,6 @@ html body.platform.resources-dashboard main { width:100%; max-width:1440px; padd
 html body.platform.resources-dashboard .site-breadcrumbs { display:none; }
 html body.platform.resources-dashboard .platform-header { inset:0 0 auto; max-width:none; width:100%; margin:0; padding:0 48px; border:0; border-bottom:1px solid #252525; border-radius:0; background:#111f; box-shadow:none; backdrop-filter:blur(12px); }
 html body.platform.resources-dashboard .header-inner { max-width:1344px; min-height:76px; margin:auto; padding:0; }
-html body.platform.resources-dashboard .platform-header .header-submit { min-height:40px; padding:10px 15px; font-size:.8rem; }
 html body.platform.resources-dashboard .resources-intro { display:flex; align-items:center; justify-content:space-between; gap:24px; margin:0 0 32px; }
 html body.platform.resources-dashboard .resources-intro h1 { margin:0 0 10px; font-size:clamp(2rem,3.3vw,2.7rem); font-weight:600; line-height:1.15; letter-spacing:-.04em; }
 html body.platform.resources-dashboard .resources-intro p { margin:0; color:#a3a3a3; font-size:.9375rem; line-height:1.6; }
@@ -58,9 +57,6 @@ html body.platform.resources-dashboard .resource-grid[data-layout=list] h3 { gri
 html body.platform.resources-dashboard .resource-grid[data-layout=list] .resource-description { grid-column:3; min-height:0; margin:0; -webkit-line-clamp:2; }
 html body.platform.resources-dashboard .resource-grid[data-layout=list] .card-stats { grid-column:2/4; grid-row:2; margin:0; }
 html body.platform.resources-dashboard .resource-grid[data-layout=list] .card-footer { grid-column:4; grid-row:1/3; flex-direction:column-reverse; margin:0; padding:0; border:0; }
-html body.platform.resources-dashboard .resources-closing { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:28px; }
-html body.platform.resources-dashboard .resources-closing p { margin:0; font-size:.8125rem; color:#999; }
-html body.platform.resources-dashboard .resources-closing a { color:#bbb; font-size:.75rem; text-decoration:none; }
 @media(max-width:1100px) {
  html body.platform.resources-dashboard main { padding:112px 32px 40px; }
  html body.platform.resources-dashboard .platform-header { padding-inline:32px; }

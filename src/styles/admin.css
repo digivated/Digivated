@@ -97,7 +97,6 @@
 .owner-inline-check input { width:22px; height:22px; min-height:22px; flex:none; margin:0; accent-color:#d0d0d0; }
 .owner-editor-status:empty { display:none; }
 #owner-editor-status { white-space:pre-wrap; overflow-wrap:anywhere; color:var(--owner-mint); }
-.owner .dirty-note { color:var(--owner-muted); font-size:.875rem; }
 @media(max-width:850px) {
   .owner-toolbar { grid-template-columns:1fr 1fr; }
   .owner-protected { align-items:flex-start; }

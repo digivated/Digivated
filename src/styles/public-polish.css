@@ -15,28 +15,15 @@ html body.platform.light-theme .product-art > .tiny { color:#555; }
 /* Public action palette: explicit surface/text pairs survive older page layers. */
 html body.platform.light-theme .button,
 html body.platform.light-theme .button:hover { background:#fff; color:#171717; border-color:#d2d2d2; box-shadow:none; }
-html body.platform.light-theme .button.primary,
-html body.platform.light-theme .button.primary:hover,
-html body.platform.light-theme .platform-header .header-submit,
-html body.platform.light-theme .platform-header .header-submit:hover,
-html body.platform.light-theme .comment-form button { background:#171717; color:#fff; border-color:#171717; }
+html body.platform.light-theme .button.primary,html body.platform.light-theme .button.primary:hover,html body.platform.light-theme .comment-form button{ background:#171717; color:#fff; border-color:#171717; }
 html body.platform.light-theme :is(.button,.header-submit) :is(span,svg),
 html body.platform.light-theme .comment-form button :is(span,svg) { color:inherit; }
 html body.platform.light-theme .button-arrow { color:inherit; background:transparent; box-shadow:none; }
 html body.platform.light-theme #saved-folders .button[aria-pressed=true] { background:#eaeaea; color:#171717; border-color:#ccc; }
-/* Legacy section links used !important white text; keep their light-theme pair explicit. */
-html body.platform.light-theme.home-refresh .section-link { color:#171717!important; border-color:#aaa; }
-html body.platform.light-theme .share-actions > a:not(.button),
-html body.platform.light-theme .text-link { color:#333; }
+html body.platform.light-theme .text-link{ color:#333; }
 html body.platform.light-theme .site-breadcrumbs,
 html body.platform.light-theme .site-breadcrumbs a { color:#595959; }
 html body.platform.light-theme :is(.button,.card-open,.card-icon):focus-visible { outline:2px solid #171717; outline-offset:4px; }
-
-/* The homepage uses the compact identity layout from the Figma project dashboard. */
-html body.platform.light-theme.home-refresh .community-builds { padding-block:28px 48px; }
-html body.platform.light-theme.home-refresh .community-builds .home-section-heading { margin-bottom:24px; }
-html body.platform.light-theme.home-refresh .community-builds h2 { font-size:clamp(1.8rem,3vw,2.5rem); }
-html body.platform.light-theme.home-refresh .community-builds .project-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
 html body.platform.light-theme.home-refresh [data-live-projects] .project-card { background:#ffffffed; border:1px solid #dedede; border-radius:14px; box-shadow:none; overflow:hidden; }
 html body.platform.light-theme.home-refresh [data-live-projects] .project-copy { display:flex; flex-direction:column; padding:24px; gap:0; }
 html body.platform.light-theme.home-refresh [data-live-projects] .project-copy > * { order:initial; }

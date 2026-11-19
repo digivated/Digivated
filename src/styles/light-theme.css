@@ -44,12 +44,10 @@ html body.platform.light-theme .button {
 html body.platform.light-theme .button:hover {
   background: #e5e5e5; color: #111111; border-color: #797979; box-shadow: none
 }
-html body.platform.light-theme .button.primary,
-html body.platform.light-theme .platform-header .header-submit {
+html body.platform.light-theme .button.primary{
   background: #171717; color: #ffffff; border-color: #171717; box-shadow: none
 }
-html body.platform.light-theme .button.primary:hover,
-html body.platform.light-theme .platform-header .header-submit:hover { background: #272727; color: #ffffff; border-color: #272727
+html body.platform.light-theme .button.primary:hover{ background: #272727; color: #ffffff; border-color: #272727
 }
 html body.platform.light-theme .platform-header {
   background: #fbfbfb;
@@ -64,10 +62,7 @@ html body.platform.light-theme .platform-header .mobile-menu nav { background: #
 }
 html body.platform.light-theme .platform-footer { background: #ffffff; border-color: #dedede
 }
-html body.platform.light-theme .section-kicker,
-html body.platform.light-theme .eyebrow { color: #545454
-}
-html body.platform.light-theme.home-refresh .hero-copy h1 em { color: #545454
+html body.platform.light-theme .eyebrow{ color: #545454
 }
 html body.platform.light-theme.home-refresh .welcome-guide {
   background: #fbfbfb;
@@ -93,8 +88,6 @@ html body.platform.light-theme.home-refresh .idea-card { background: #fbfbfb; bo
 }
 html body.platform.light-theme.home-refresh .idea-card:hover { background: #f7f7f7; border-color: #8e8e8e; box-shadow: none
 }
-html body.platform.light-theme.home-refresh .journey-icon { background: none; border: 1px solid #c9c9c9; color: #505050
-}
 html body.platform.light-theme.home-refresh .journey-steps li,
 html body.platform.light-theme.home-refresh .home-product,
 html body.platform.light-theme.home-refresh .share-next { background: #fbfbfb; border: 1px solid #dedede; box-shadow: none
@@ -103,8 +96,7 @@ html body.platform.light-theme.home-refresh .packet-display { background: #f4f4f
 }
 html body.platform.light-theme.home-refresh .packet-display strong { color: #171717
 }
-html body.platform.light-theme.home-refresh .share-next p,
-html body.platform.light-theme.home-refresh .share-next .section-kicker { color: #505050
+html body.platform.light-theme.home-refresh .share-next p{ color: #505050
 }
 html body.platform.light-theme .resource-card,
 html body.platform.light-theme .resource-grid > .resource-card:first-child,
@@ -155,21 +147,12 @@ html body.platform.light-theme [data-live-projects] .project-details summary { c
 html body.platform.light-theme .browse-controls input,
 html body.platform.light-theme .browse-controls select { background: #ffffff; border: 1px solid #ababab; box-shadow: none
 }
-html body.platform.light-theme.projects-dashboard .projects-sidebar { background: #ffffff
-}
 html body.platform.light-theme.projects-dashboard .project-collections button[aria-pressed=true],
 html body.platform.light-theme.projects-dashboard .project-category-list button[aria-pressed=true] { background: #ededed; color: #111111; border-color: #c9c9c9
 }
-html body.platform.light-theme.projects-dashboard .dashboard-overview > div { background: transparent; border: 0; border-bottom: 1px solid #dedede
-}
-html body.platform.light-theme.projects-dashboard .dashboard-overview dt { color: #505050
-}
-html body.platform.light-theme.projects-dashboard .project-search input,
-html body.platform.light-theme.projects-dashboard .dashboard-controls select { background: #fbfbfb; border-color: #ababab
+html body.platform.light-theme.projects-dashboard .project-search input{ background: #fbfbfb; border-color: #ababab
 }
 html body.platform.light-theme.projects-dashboard .project-layout-toggle button[aria-pressed=true] { background: #dedede; color: #111111
-}
-html body.platform.light-theme.home-refresh .topic-grid { border: 0
 }
 html body.platform.light-theme.home-refresh .journey-steps { border: 0
 }
@@ -177,10 +160,6 @@ html body.platform.light-theme.projects-dashboard {
  --refined-bg:#ffffff; --refined-surface:#fcfcfc; --refined-raised:#f7f7f7; --refined-line:#e7e7e7; --refined-ink:#171717; --refined-muted:#575757; --refined-soft:#686868
 }
 html body.platform.light-theme.projects-dashboard .platform-header { border:0; border-bottom:1px solid #f1f1f1; background:#ffffffff; box-shadow:none
-}
-html body.platform.light-theme.projects-dashboard .dashboard-intro p { color:var(--refined-muted)
-}
-html body.platform.light-theme.projects-dashboard .dashboard-curation { color:var(--refined-soft)
 }
 html body.platform.light-theme.projects-dashboard .project-collections { border-bottom:1px solid var(--refined-line)
 }
@@ -196,9 +175,6 @@ html body.platform.light-theme.projects-dashboard .project-collections button[ar
 html body.platform.light-theme.projects-dashboard .project-collections button:hover,
 html body.platform.light-theme.projects-dashboard .project-collections a:hover { color:#111; background:transparent
 }
-html body.platform.light-theme.projects-dashboard .dashboard-controls input,
-html body.platform.light-theme.projects-dashboard .dashboard-controls select { border:1px solid #e5e5e5; background:#fcfcfc; box-shadow:none; color:#2e2e2e
-}
 html body.platform.light-theme.projects-dashboard .project-search svg { color:#686868
 }
 html body.platform.light-theme.projects-dashboard .project-search input::placeholder { color:#616161
@@ -208,10 +184,6 @@ html body.platform.light-theme.projects-dashboard .project-layout-toggle { borde
 html body.platform.light-theme.projects-dashboard .project-layout-toggle button { color:#616161; background:transparent
 }
 html body.platform.light-theme.projects-dashboard .project-layout-toggle button[aria-pressed=true] { background:#eaeaea; color:#111
-}
-html body.platform.light-theme.projects-dashboard .dashboard-results .results-status { color:#5e5e5e
-}
-html body.platform.light-theme.projects-dashboard .clear-project-filters { color:#282828
 }
 html body.platform.light-theme.projects-dashboard [data-live-projects] .project-card { background:var(--refined-surface); border:1px solid var(--refined-line); box-shadow:none
 }
@@ -251,14 +223,6 @@ html body.platform.light-theme.projects-dashboard [data-live-projects] .project-
 html body.platform.light-theme.projects-dashboard [data-live-projects] .card-open .button-arrow { background:none; box-shadow:none
 }
 html body.platform.light-theme.projects-dashboard [data-live-projects] .project-grid[data-layout=list] .card-links.card-footer { border:0
-}
-html body.platform.light-theme.projects-dashboard .refined-submit { border:1px solid var(--refined-line); background:transparent
-}
-html body.platform.light-theme.projects-dashboard .refined-submit p { color:#686868
-}
-html body.platform.light-theme.projects-dashboard .refined-submit a { color:#212121
-}
-html body.platform.light-theme.projects-dashboard .dashboard-review-note { color:#797979
 }
 @media (max-width:767px) {
   html body.platform.light-theme.projects-dashboard [data-live-projects] .project-grid[data-layout=list] .card-links.card-footer { border-top:1px solid #ebebeb
@@ -334,10 +298,6 @@ html body.platform.light-theme.resources-dashboard .card-open:hover { color:#111
 html body.platform.light-theme.resources-dashboard .card-open .button-arrow { background:none; box-shadow:none
 }
 html body.platform.light-theme.resources-dashboard .resource-grid[data-layout=list] .card-footer { border:0
-}
-html body.platform.light-theme.resources-dashboard .resources-closing p { color:#5c5c5c
-}
-html body.platform.light-theme.resources-dashboard .resources-closing a { color:#484848
 }
 @media (max-width:767px) {
   html body.platform.light-theme.resources-dashboard .resource-grid[data-layout=list] .card-footer { border-top:1px solid #ebebeb

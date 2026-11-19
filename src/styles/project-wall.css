@@ -3,35 +3,9 @@ html body.platform.light-theme.wall-experience { background:#080a0b; color:#fff;
 .wall-experience .site-atmosphere { display:none; }
 html body.platform.light-theme.wall-experience main { width:100%; max-width:none; padding:0; margin:0; }
 .wall-experience .project-wall { position:relative; isolation:isolate; width:100%; min-height:100svh; overflow:hidden; background:#080a0b; color:#fff; }
-.wall-experience .wall-grid { --wall-x:0px; --wall-y:0px; position:absolute; inset:-7% -5%; display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); grid-auto-flow:dense; grid-auto-rows:clamp(80px,11vw,160px); gap:10px; transform:translate(var(--wall-x),var(--wall-y)) scale(1.035); transition:transform .5s cubic-bezier(.2,.8,.2,1),filter .45s; }
-.wall-experience .wall-tile { --part-x:0px; --part-y:0px; position:relative; display:block; grid-column:span 2; grid-row:span 1; min-width:0; padding:0; border:0; border-radius:3px; overflow:hidden; background:#27323a; color:white; cursor:pointer; transform:translate(var(--part-x),var(--part-y)); transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s,filter .45s; }
-.wall-experience .wall-tile.wall-shape-0 { grid-column:span 3; grid-row:span 2; }
-.wall-experience .wall-tile.wall-shape-1 { grid-column:span 2; grid-row:span 2; }
-.wall-experience .wall-tile.wall-shape-2 { grid-column:span 3; }
-.wall-experience .wall-tile.wall-shape-4 { grid-column:span 3; grid-row:span 2; }
-.wall-experience .wall-tile.wall-shape-6 { grid-column:span 3; }
-.wall-experience .wall-tile img { display:block; width:100%; height:100%; object-fit:cover; filter:saturate(.82) brightness(.85); transition:transform .6s,filter .4s; }
-.wall-experience .wall-tile:hover,.wall-experience .wall-tile:focus-visible { z-index:3; transform:translate(var(--part-x),var(--part-y)) scale(1.07); box-shadow:0 15px 45px #000b; outline:2px solid #fff; outline-offset:2px; }
-.wall-experience .wall-tile:hover img,.wall-experience .wall-tile:focus-visible img { transform:scale(1.07); filter:saturate(1) brightness(1); }
-.wall-experience .wall-no-image { background:linear-gradient(140deg,#24434b,#716352 48%,#253333); }
-.wall-experience .wall-no-image::before { content:"✦"; position:absolute; inset:0; display:grid; place-items:center; font-size:clamp(3rem,8vw,8rem); font-weight:100; color:#ffffff55; }
 .wall-experience .wall-tile-caption { position:absolute; inset:auto 0 0; display:flex; flex-direction:column; gap:3px; padding:28px 12px 10px; background:linear-gradient(transparent,#000c); text-align:left; opacity:0; transition:opacity .2s; }
-.wall-experience .wall-tile:is(:hover,:focus-visible) .wall-tile-caption { opacity:1; }
 .wall-experience .wall-tile-caption small { font-size:.55rem; letter-spacing:.14em; text-transform:uppercase; }
 .wall-experience .wall-tile-caption strong { font:600 clamp(.8rem,1.5vw,1.1rem)/1.2 'Inter Variable',system-ui,sans-serif; }
-.wall-experience .wall-shade { position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(90deg,#05060755,transparent 45%),linear-gradient(0deg,#050607d9,transparent 38%),linear-gradient(180deg,#05060780,transparent 17%); }
-.wall-experience .wall-intro { position:absolute; z-index:3; bottom:clamp(34px,6vh,80px); left:clamp(24px,4vw,70px); max-width:480px; pointer-events:none; text-shadow:0 3px 20px #000c; }
-.wall-experience .wall-overline { display:flex; align-items:center; gap:10px; margin:0 0 13px; color:#eee; font-size:.65rem; letter-spacing:.28em; font-weight:600; }
-.wall-experience .wall-overline span { display:block; width:28px; height:1px; background:#fff; }
-html body.platform.light-theme.wall-experience .wall-intro :is(h1,h2) { margin:0; color:#fff; font:650 clamp(3.7rem,7.5vw,7.6rem)/.95 'Inter Variable',system-ui,sans-serif; letter-spacing:-.07em; }
-.wall-experience .wall-intro>p:not(.wall-overline) { max-width:360px; margin:17px 0 0; color:#e5e5e5; font-size:.86rem; line-height:1.55; }
-.wall-experience .wall-intro-links { display:flex; gap:9px; flex-wrap:wrap; margin-top:20px; pointer-events:auto; }
-html body.platform.light-theme.wall-experience .wall-intro-links a { display:inline-flex; gap:15px; align-items:center; min-height:42px; padding:10px 15px; border:1px solid #ffffffaa; border-radius:2px; background:#fff; color:#151515; text-decoration:none; font-size:.74rem; font-weight:700; text-shadow:none; }
-html body.platform.light-theme.wall-experience .wall-intro-links a+a { background:#10131399; color:white; backdrop-filter:blur(10px); }
-.wall-experience .wall-hint { position:absolute; z-index:3; top:90px; right:clamp(20px,4vw,70px); font-size:.55rem; letter-spacing:.24em; color:#ddd; text-shadow:0 2px 10px #000; pointer-events:none; }
-.wall-experience .wall-status { position:absolute; z-index:3; top:50%; left:50%; transform:translate(-50%,-50%); max-width:90%; padding:16px 22px; border:1px solid #fff5; background:#101414dc; color:white; font-size:.9rem; text-align:center; }
-.wall-experience .wall-status[hidden] { display:none; }
-html body.platform.light-theme.wall-experience .wall-status a { color:white; text-underline-offset:3px; }
 /* Focused project view uses the same wall, with functional project destinations. */
 .wall-experience .wall-focus[hidden] { display:none; }
 .wall-experience .wall-focus { position:fixed; inset:0; z-index:600; display:grid; place-items:center; overflow-y:auto; padding:60px 20px 30px; }
@@ -52,7 +26,6 @@ html body.platform.light-theme.wall-experience .wall-focus-actions a+a { backgro
 .wall-experience .wall-focus-controls { position:sticky; top:-14px; z-index:3; flex:none; align-items:center; justify-content:center; width:calc(100% + 64px); min-height:58px; margin:-14px -32px 14px; padding:8px 16px; background:#fffefa; border-bottom:1px solid #e1e6e8; }
 .wall-experience .wall-focus-controls .wall-focus-close { position:absolute; top:50%; right:16px; transform:translateY(-50%); }
 .wall-modal-open { overflow:hidden; }
-.wall-experience .project-wall.wall-is-open .wall-grid { filter:brightness(.45); transform:scale(1.08); }
 /* Keep the normal account logic, but let navigation sit over the visual wall. */
 html body.platform.light-theme.wall-experience .compact-site-header { position:absolute; z-index:100; inset:0 0 auto; width:100%; max-width:none; margin:0; border:0; border-radius:0; background:linear-gradient(#050607a8,#05060700); box-shadow:none; backdrop-filter:none; }
 html#digivated-root body.platform.wall-experience.projects-dashboard .compact-site-header { position:sticky; }
@@ -65,58 +38,16 @@ html body.platform.light-theme.wall-experience .compact-site-header :is(.header-
 .wall-experience .platform-footer { margin-top:0; }
 @media(max-width:760px) { .wall-experience .wall-grid { inset:-4% -24%; grid-template-columns:repeat(6,minmax(0,1fr)); grid-auto-rows:clamp(90px,23vw,150px); gap:6px; } .wall-experience .wall-tile { grid-column:span 2; } .wall-experience .wall-tile.wall-shape-0,.wall-experience .wall-tile.wall-shape-4 { grid-column:span 3; } .wall-experience .wall-tile.wall-shape-2,.wall-experience .wall-tile.wall-shape-6 { grid-column:span 2; } .wall-experience .wall-hint { top:78px; font-size:.5rem; } .wall-experience .wall-intro { bottom:32px; left:22px; right:22px; } html body.platform.light-theme.wall-experience .wall-intro :is(h1,h2) { font-size:clamp(3.4rem,14vw,5.8rem); } .wall-experience .wall-focus-panel { padding:16px 16px 24px; } .wall-experience .wall-focus-art { height:32vh; } }
 @media(prefers-reduced-motion:reduce) { .wall-experience .wall-grid,.wall-experience .wall-tile,.wall-experience .wall-tile img { transition:none; } }
-/* Full-viewport WebGL canvas, with the project directory as an accessible fallback. */
-.wall-experience .wall-react-root,.wall-experience .wall-stage { position:absolute; inset:0; }
-.wall-experience .wall-stage canvas { display:block; width:100%; height:100%; touch-action:pan-y; }
-.wall-experience .wall-dom-grid { z-index:0; }
-.wall-experience .wall-fallback { position:absolute; z-index:2; bottom:8%; left:5%; max-width:480px; }
-.wall-experience .wall-fallback :is(h1,h2) { font:650 clamp(3rem,8vw,7rem)/.95 'Inter Variable',system-ui,sans-serif; }
-.wall-experience .wall-fallback a { color:white; }
-.wall-experience .wall-noscript { position:relative; z-index:2; padding:20px; color:white; }
-.wall-experience .wall-noscript a { color:white; }
+/* Full-viewport WebGL canvas{ position:absolute; inset:0; }
 .wall-experience .wall-focus-backdrop { width:100%; border:0; padding:0; }
 @media(max-width:760px) { .wall-experience .wall-stage canvas { touch-action:pan-y; } }
 /* Gallery composition: typography and controls frame the scene rather than occupy a conventional hero block. */
 html body.platform.light-theme.wall-experience .project-wall { background:#080b0c; }
-.wall-experience .wall-shade { background:linear-gradient(90deg,#040708dd 0%,#04070855 26%,transparent 61%),linear-gradient(0deg,#040708da 0%,transparent 34%),linear-gradient(180deg,#0407089c 0%,transparent 19%); }
-.wall-experience .wall-intro { left:clamp(24px,5vw,88px); bottom:clamp(48px,9vh,120px); max-width:660px; }
-html body.platform.light-theme.wall-experience .wall-intro :is(h1,h2) { max-width:660px; font:650 clamp(4.6rem,10vw,9rem)/.9 'Inter Variable',system-ui,sans-serif; letter-spacing:-.085em; }
-.wall-experience .wall-intro>p:not(.wall-overline) { max-width:280px; margin-top:32px; font-size:.83rem; }
-.wall-experience .wall-overline { font-size:.59rem; letter-spacing:.3em; }
-.wall-experience .wall-intro-links { margin-top:30px; gap:24px; }
-html body.platform.light-theme.wall-experience .wall-intro-links a,html body.platform.light-theme.wall-experience .wall-intro-links a+a { border:0; border-bottom:1px solid #fff9; border-radius:0; padding:8px 0; min-height:35px; background:transparent; color:white; font-size:.67rem; letter-spacing:.13em; text-transform:uppercase; backdrop-filter:none; }
-.wall-experience .wall-side-index { position:absolute; z-index:3; right:clamp(24px,5vw,88px); bottom:clamp(48px,9vh,120px); display:grid; gap:28px; color:#fff; font-size:.56rem; letter-spacing:.19em; line-height:1.6; text-align:right; text-shadow:0 2px 10px #000; pointer-events:none; }
-.wall-experience .wall-hint { top:50%; right:18px; writing-mode:vertical-rl; font-size:.52rem; }
-.wall-experience .wall-hover-caption { position:absolute; z-index:4; top:50%; left:50%; transform:translate(-50%,-50%); display:grid; gap:5px; min-width:180px; padding:16px 20px; border:1px solid #ffffffa1; background:#080c0dc7; backdrop-filter:blur(12px); pointer-events:none; color:white; text-align:center; box-shadow:0 20px 60px #000a; }
-.wall-experience .wall-hover-caption span { font-size:.52rem; letter-spacing:.2em; }
-.wall-experience .wall-hover-caption strong { font:650 1.3rem 'Inter Variable',system-ui,sans-serif; }
 @media(max-width:760px) { html body.platform.light-theme.wall-experience .wall-intro :is(h1,h2) { font-size:clamp(3.6rem,14vw,6.5rem); } .wall-experience .wall-intro { bottom:48px; } .wall-experience .wall-side-index { display:none; } .wall-experience .wall-hover-caption { display:none; } .wall-experience .wall-shade { background:linear-gradient(0deg,#040708ef,transparent 62%),linear-gradient(180deg,#040708ae,transparent 22%); } }
-/* The wall is the complete catalog: search and chapter controls remain on the scene. */
-.wall-experience .wall-navigation { position:absolute; z-index:5; top:clamp(88px,12vh,124px); left:clamp(24px,5vw,88px); right:clamp(24px,5vw,88px); display:flex; justify-content:space-between; align-items:center; gap:20px; pointer-events:none; }
-.wall-experience .wall-navigation>* { pointer-events:auto; }
-.wall-experience .wall-search input[type=search] { width:min(270px,48vw); height:42px; padding:10px 14px; border:1px solid #ffffff91; border-radius:2px; background:#0a0d0dca; color:#fff; font-size:.73rem; backdrop-filter:blur(10px); }
-.wall-experience .wall-search input::placeholder { color:#d2d6d3; }
-.wall-experience .wall-search input:focus-visible { outline:2px solid white; outline-offset:2px; }
-.wall-experience .wall-page-controls { display:flex; align-items:center; gap:12px; padding:4px; border:1px solid #ffffff69; background:#0a0d0dba; backdrop-filter:blur(12px); color:#fff; }
-.wall-experience .wall-page-controls span { min-width:90px; text-align:center; font-size:.62rem; font-weight:650; letter-spacing:.12em; }
-.wall-experience .wall-page-controls button { width:34px; height:34px; border:0; background:#ffffff18; color:#fff; font-size:1.2rem; cursor:pointer; }
-.wall-experience .wall-page-controls button:hover { background:#ffffff45; }
-.wall-experience .wall-page-controls button:disabled { opacity:.3; cursor:default; }
 @media(max-width:760px) { .wall-experience .wall-navigation { top:76px; left:16px; right:16px; align-items:stretch; gap:8px; } .wall-experience .wall-search { flex:1; min-width:0; } .wall-experience .wall-search input[type=search] { width:100%; height:42px; } .wall-experience .wall-page-controls { gap:2px; } .wall-experience .wall-page-controls span { min-width:58px; font-size:.53rem; } .wall-experience .wall-page-controls button { width:27px; height:32px; } }
 
 /* Light wall and list, including the empty and error states. */
 html body.platform.light-theme.wall-experience,html body.platform.light-theme.wall-experience .project-wall { background:#edf0f1; color:#20282c; }
-html body.platform.light-theme.wall-experience .wall-shade { background:linear-gradient(0deg,#f7f8f8b8,transparent 40%),linear-gradient(180deg,#f7f8f8b0,transparent 22%); }
-html body.platform.light-theme.wall-experience .wall-intro { text-shadow:none; }
-html body.platform.light-theme.wall-experience .wall-intro :is(h1,h2),html body.platform.light-theme.wall-experience .wall-overline,html body.platform.light-theme.wall-experience .wall-intro>p:not(.wall-overline),html body.platform.light-theme.wall-experience .wall-side-index,html body.platform.light-theme.wall-experience .wall-hint { color:#20282c; text-shadow:none; }
-html body.platform.light-theme.wall-experience .wall-intro-links a,html body.platform.light-theme.wall-experience .wall-intro-links a+a { min-height:42px; padding:10px 16px; border:1px solid #bbc6ca; border-radius:999px; background:#fff; color:#20282c; font-size:.78rem; letter-spacing:0; text-transform:none; box-shadow:0 5px 18px #17232b16; }
-html body.platform.light-theme.wall-experience .wall-intro-links a:first-child { background:#20282c; border-color:#20282c; color:#fff; }
-html body.platform.light-theme.wall-experience .wall-status { display:block; width:min(440px,calc(100% - 48px)); padding:20px; border:1px solid #dce2e4; border-radius:12px; background:#fff; color:#20282c; box-shadow:0 10px 35px #17232b14; line-height:1.5; }
-html body.platform.light-theme.wall-experience .wall-status[hidden] { display:none; }
-html body.platform.light-theme.wall-experience .wall-status a { color:#20282c; font-weight:650; }
-html body.platform.light-theme.wall-experience .wall-page-controls,html body.platform.light-theme.wall-experience .wall-search input[type=search] { border-color:#c6d0d4; background:#fff; color:#20282c; }
-html body.platform.light-theme.wall-experience .wall-page-controls button { background:#f1f3f4; color:#20282c; }
-html body.platform.light-theme.wall-experience .wall-search input::placeholder { color:#566269; }
 html body.platform.light-theme.wall-experience .wall-focus-panel { background:#fff; color:#20282c; }
 html body.platform.light-theme.wall-experience .wall-focus h2 { color:#20282c; }
 html body.platform.light-theme.wall-experience .wall-focus-description { color:#505a5f; }
@@ -126,8 +57,6 @@ html body.platform.light-theme.wall-experience .compact-site-header .platform-br
 html body.platform.light-theme.wall-experience .compact-site-header .header-primary a:is(:hover,[aria-current=page]) { color:#20282c; background:#e8edef; }
 html body.platform.light-theme.wall-experience .compact-site-header :is(.header-login,.header-search,.notebook-navigation>summary) { background:#fff; border-color:#c6d0d4; color:#20282c; }
 @media(max-width:760px) { html body.platform.light-theme.wall-experience .wall-intro :is(h1,h2) { font-size:clamp(3.4rem,12vw,5rem); } html body.platform.light-theme.wall-experience .wall-intro { bottom:40px; } }
-/* Mobile uses a swipeable rail so the controls never obscure a project. */
-.wall-experience .wall-mobile-heading { display:none; }
 @media(max-width:760px) {
  html body.platform.light-theme.wall-experience .project-wall,html body.platform.light-theme.moments-theme.home-refresh .project-wall { min-height:0; height:640px; background:#f6f7f7; }
  html body.platform.light-theme.wall-experience .wall-stage,html body.platform.light-theme.wall-experience .wall-shade,html body.platform.light-theme.wall-experience .wall-intro { display:none; }
@@ -159,16 +88,6 @@ html body.platform.light-theme.wall-experience .compact-site-header :is(.header-
  html body.platform.light-theme.moments-theme.projects-dashboard .wall-navigation { top:72px; }
  html body.platform.light-theme.moments-theme.projects-dashboard .wall-dom-grid { inset-block-start:214px; }
 }
-
-/* A consistent image frame is shared by the swipe rail and the full catalog. */
-.wall-experience .wall-card-media { position:relative; display:block; flex:1 1 auto; min-height:0; width:100%; overflow:hidden; background:#e6eaeb; }
-.wall-experience .wall-card-media img,html body.platform.light-theme.wall-experience .wall-dom-grid .wall-card-media img { display:block; width:100%; height:100%; object-fit:contain; object-position:center; filter:none; transform:none; }
-.wall-experience .wall-dom-grid .wall-no-image::before { display:none; }
-.wall-experience .wall-dom-grid .wall-no-image .wall-card-media::before { content:"✦"; position:absolute; inset:0; display:grid; place-items:center; color:#8a989e; font-size:3rem; }
-.wall-experience .wall-view-controls { display:flex; gap:3px; padding:3px; border:1px solid #c6d0d4; border-radius:10px; background:#fff; color:#20282c; }
-.wall-experience .wall-view-controls button { min-width:50px; height:34px; padding:0 10px; border:0; border-radius:7px; background:transparent; color:#4f5b61; font:600 .76rem 'Inter Variable',system-ui,sans-serif; cursor:pointer; }
-.wall-experience .wall-view-controls button[aria-pressed=true] { background:#20282c; color:#fff; }
-.wall-experience .wall-view-controls button:focus-visible { outline:2px solid #20282c; outline-offset:2px; }
 @media(max-width:760px) {
  html body.platform.light-theme.wall-experience .wall-navigation { grid-template-columns:minmax(0,1fr) auto auto; }
  html body.platform.light-theme.wall-experience .wall-search { grid-column:1/-1; }
@@ -185,34 +104,6 @@ html body.platform.light-theme.wall-experience .compact-site-header :is(.header-
  html body.platform.light-theme.wall-experience .wall-dom-grid { inset-block-start:188px; }
  html body.platform.light-theme.moments-theme.projects-dashboard .wall-dom-grid { inset-block-start:260px; }
 }
-
-/* Grid mode pages through the filtered catalog with matching image and caption bounds. */
-html body.platform.light-theme.wall-experience .project-wall.wall-grid-view { height:auto; min-height:100svh; overflow:visible; overflow-anchor:none; background:#f6f7f7; }
-.wall-experience .wall-grid-view .wall-react-root { position:relative; inset:auto; display:flex; flex-direction:column; padding:0 24px 48px; }
-.wall-experience .wall-grid-view .wall-navigation { order:0; }
-.wall-experience .wall-grid-view .wall-dom-grid { order:1; }
-.wall-experience .wall-grid-view .wall-status { order:2; }
-.wall-experience .wall-grid-view .wall-stage,.wall-experience .wall-grid-view .wall-shade,.wall-experience .wall-grid-view .wall-intro { display:none; }
-html body.platform.light-theme.wall-experience .wall-grid-view .wall-navigation { position:relative; top:auto; left:auto; right:auto; display:flex; flex-wrap:wrap; justify-content:flex-start; width:min(1200px,100%); margin:0 auto; padding:100px 0 22px; background:transparent; }
-.wall-experience .wall-grid-view .wall-mobile-heading { display:flex; flex-direction:column; gap:3px; width:100%; color:#20282c; }
-.wall-experience .wall-grid-view .wall-mobile-heading strong { font-size:clamp(1.4rem,3vw,2rem); }
-.wall-experience .wall-grid-view .wall-search { flex:1 1 250px; width:auto; }
-html body.platform.light-theme.wall-experience .wall-grid-view .wall-search input[type=search] { width:100%; max-width:450px; height:42px; border-radius:10px; }
-html body.platform.light-theme.wall-experience .wall-grid-view .wall-dom-grid.wall-card-grid { position:relative; inset:auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr)); grid-auto-flow:row; grid-auto-rows:auto; width:min(1200px,100%); height:auto; margin:0 auto; padding:0; gap:18px; overflow:visible; transform:none; filter:none; scroll-snap-type:none; }
-html body.platform.light-theme.wall-experience .wall-grid-view .wall-card-grid .wall-tile { display:flex; flex-direction:column; width:100%; height:auto; min-height:0; aspect-ratio:auto; grid-column:auto; grid-row:auto; border:1px solid #dce2e4; border-radius:14px; background:#fff; color:#20282c; transform:none; box-shadow:0 5px 18px #15232a0f; scroll-snap-align:none; }
-html body.platform.light-theme.wall-experience .wall-grid-view .wall-card-grid .wall-tile:hover,html body.platform.light-theme.wall-experience .wall-grid-view .wall-card-grid .wall-tile:focus-visible { transform:translateY(-3px); box-shadow:0 10px 26px #15232a20; outline:2px solid #20282c; outline-offset:2px; }
-.wall-experience .wall-grid-view .wall-card-grid .wall-card-media { flex:none; height:auto; aspect-ratio:4/3; border-bottom:1px solid #e7ebec; }
-.wall-experience .wall-grid-view .wall-card-grid .wall-card-media img { position:absolute; inset:0; }
-html body.platform.light-theme.wall-experience .wall-grid-view .wall-card-grid .wall-tile-caption { position:relative; inset:auto; display:flex; flex-direction:column; flex:1; gap:6px; min-height:112px; padding:15px 17px; background:#fff; color:#20282c; opacity:1; text-align:left; }
-.wall-experience .wall-grid-view .wall-card-grid .wall-tile-caption small { color:#637077; font-size:.6rem; }
-.wall-experience .wall-grid-view .wall-card-grid .wall-tile-caption strong { color:#20282c; font-size:1.05rem; line-height:1.2; }
-.wall-experience .wall-grid-view .wall-card-grid .wall-tile-caption>span { margin-top:auto; color:#59656b; font-size:.72rem; }
-html body.platform.light-theme.wall-experience .wall-focus-actions .wall-feedback-action { display:inline-flex; align-items:center; min-height:42px; padding:10px 18px; border:1px solid #263a43; border-radius:24px; background:#263a43; color:#fff; font:650 .8rem 'Inter Variable',system-ui,sans-serif; cursor:pointer; }
-html body.platform.light-theme.wall-experience .wall-focus-actions .wall-feedback-action:focus-visible { outline:2px solid #263a43; outline-offset:3px; }
-html body.platform.light-theme.wall-experience .wall-focus-actions .wall-feedback-action~a { border-color:#b8c5ca; background:#fff; color:#263840; }
-html body.platform.light-theme.wall-experience .wall-grid-view .wall-status { position:relative; top:auto; left:auto; margin:30px auto; transform:none; }
-html body.platform.light-theme.wall-experience .wall-intro-links button { min-height:42px; padding:10px 16px; border:1px solid #20282c; border-radius:999px; background:#20282c; color:#fff; font:650 .78rem 'Inter Variable',system-ui,sans-serif; cursor:pointer; }
-html body.platform.light-theme.wall-experience .wall-intro-links button:focus-visible { outline:2px solid #20282c; outline-offset:3px; }
 @media(max-width:760px) {
  .wall-experience .wall-grid-view .wall-react-root { padding:0 18px 36px; }
  html body.platform.light-theme.wall-experience .wall-grid-view .wall-navigation { top:auto; padding:22px 0 18px; }
@@ -228,12 +119,7 @@ html body.platform.light-theme.wall-experience .wall-intro-links button:focus-vi
  html body.platform.light-theme.wall-experience .wall-grid-view .wall-search { order:4; }
 }
 
-/* Featured and All use the same wall controls, without opening the old directory layout. */
-.wall-experience .wall-navigation { flex-wrap:wrap; }
-.wall-experience .wall-collection-controls { display:flex; gap:3px; padding:3px; border:1px solid #c6d0d4; border-radius:10px; background:#fff; color:#20282c; }
-.wall-experience .wall-collection-controls button { min-height:34px; padding:0 11px; border:0; border-radius:7px; background:transparent; color:#4f5b61; font:600 .76rem 'Inter Variable',system-ui,sans-serif; white-space:nowrap; cursor:pointer; }
-.wall-experience .wall-collection-controls button[aria-pressed=true] { background:#20282c; color:#fff; }
-.wall-experience .wall-collection-controls button:focus-visible { outline:2px solid #20282c; outline-offset:2px; }
+/* Featured and All use the same wall controls{ flex-wrap:wrap; }
 @media(max-width:760px) {
  html body.platform.light-theme.wall-experience .wall-navigation { grid-template-columns:minmax(0,1fr) auto; }
  html body.platform.light-theme.wall-experience .wall-mobile-heading { grid-column:1/-1; grid-row:1; }
@@ -254,20 +140,8 @@ html body.platform.light-theme.wall-experience .wall-intro-links button:focus-vi
  html body.platform.light-theme.wall-experience .wall-dom-grid { inset-block-start:232px; }
  html body.platform.light-theme.moments-theme.projects-dashboard .wall-dom-grid { inset-block-start:334px; }
 }
-
-/* Project actions belong to the card; the card itself is no longer a nested button. */
-.wall-experience .wall-dom-grid .wall-tile { cursor:default; }
 .wall-experience .wall-card-open { display:flex; flex:1 1 auto; flex-direction:column; width:100%; min-height:0; padding:0; border:0; background:transparent; color:inherit; text-align:left; cursor:pointer; }
 .wall-experience .wall-card-open:focus-visible { outline:2px solid #263a43; outline-offset:-3px; }
-.wall-experience .wall-dom-grid .wall-card-open .wall-card-media { flex:1 1 auto; }
-.wall-experience .wall-grid-view .wall-card-grid .wall-card-open .wall-card-media { flex:none; }
-.wall-experience .wall-card-actions { display:flex; align-items:center; gap:5px; width:100%; min-width:0; padding:10px 14px; border-top:1px solid #e2e7e9; background:#fff; color:#4d5a60; }
-html body.platform.light-theme.wall-experience .wall-card-actions :is(button, a) { text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:5px; min-height:32px; padding:5px 7px; border:0; border-radius:7px; background:transparent; color:#344148; font:600 .71rem 'Inter Variable',system-ui,sans-serif; white-space:nowrap; cursor:pointer; }
-html body.platform.light-theme.wall-experience .wall-card-actions :is(button, a):hover,html body.platform.light-theme.wall-experience .wall-card-actions :is(button, a)[aria-pressed=true] { background:#e8eeef; color:#20282c; }
-.wall-experience .wall-card-actions :is(button, a):focus-visible { outline:2px solid #263a43; outline-offset:2px; }
-.wall-experience .wall-action-icon,.wall-experience .wall-action-icon svg { display:inline-block; width:16px; height:16px; flex:none; }
-.wall-experience .wall-view-count { display:inline-flex; align-items:center; gap:5px; margin-left:auto; font-size:.7rem; white-space:nowrap; }
-.wall-experience .wall-focus-panel>.wall-card-actions { justify-content:center; margin:0 0 16px; border:1px solid #e2e7e9; border-radius:10px; }
 /* A fixed image area must not collapse when the detail panel scrolls on a phone. */
 .wall-experience .wall-focus-art { flex:0 0 auto; min-height:0; background:#eef1f2; }
 .wall-experience .wall-focus-art img { display:block; width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; object-position:center; transform:none; }
@@ -300,39 +174,10 @@ html body.platform.light-theme.wall-experience .wall-card-actions :is(button, a)
 
 /* Frame the moving collage with a readable heading and a stable toolbar. */
 html body.platform.light-theme.wall-experience .project-wall{padding:32px 24px 40px;min-height:0;height:auto;background:#f5f7f8;color:#28343d;overflow:hidden}
-html body.platform.light-theme.wall-experience .project-wall .wall-react-root{position:relative;inset:auto;display:flex;flex-direction:column;max-width:1240px;width:100%;margin:auto;min-height:0;height:auto}
-html body.platform.light-theme.wall-experience .project-wall .wall-intro{display:block!important;position:static;order:-3;max-width:640px;margin:0 0 24px;padding:0;pointer-events:auto;text-shadow:none;opacity:1;visibility:visible}
-html body.platform.light-theme.wall-experience .project-wall .wall-intro :is(h1,h2){color:#26343d;font-size:clamp(30px,4vw,44px);line-height:1.1;letter-spacing:-.04em;margin:8px 0 12px}
-html body.platform.light-theme.wall-experience .project-wall .wall-intro>p:not(.wall-overline){color:#73818a;font-size:13px;max-width:520px;margin:0}
-html body.platform.light-theme.wall-experience .project-wall .wall-overline{font-size:10px;letter-spacing:.13em;color:#81909a;margin:0}
-html body.platform.light-theme.wall-experience .project-wall .wall-overline span,html body.platform.light-theme.wall-experience .project-wall .wall-intro-links{display:none}
-html body.platform.light-theme.wall-experience .project-wall .wall-navigation{position:static;inset:auto;order:-2;display:flex;flex-wrap:wrap;align-items:center;gap:12px;width:100%;max-width:none;margin:0 0 20px;padding:0;transform:none;background:none;box-shadow:none;border:0}
-html body.platform.light-theme.wall-experience .project-wall .wall-search{flex:1 1 220px;max-width:350px;order:0;margin:0}
-html body.platform.light-theme.wall-experience .project-wall .wall-search input{width:100%;min-height:40px;font-size:14px;background:#fff;color:#35444e;border:1px solid #dce3e7;border-radius:7px;box-shadow:none}
-html body.platform.light-theme.wall-experience .project-wall .wall-mobile-heading{display:none}
-html body.platform.light-theme.wall-experience .project-wall .wall-collection-controls{order:1}
-html body.platform.light-theme.wall-experience .project-wall .wall-view-controls{order:2}
-html body.platform.light-theme.wall-experience .project-wall .wall-page-controls{order:3;margin-left:auto}
-html body.platform.light-theme.wall-experience .project-wall .wall-stage{position:relative;inset:auto;display:block;width:100%;height:clamp(450px,52vw,720px);overflow:hidden;border:1px solid #dfe5e8;border-radius:12px;background:#eef2f4}
-html body.platform.light-theme.wall-experience .project-wall.wall-grid-view .wall-stage{display:none}
-html body.platform.light-theme.wall-experience .project-wall .wall-shade{display:none}
-html body.platform.light-theme.wall-experience .project-wall .wall-hover-caption{position:absolute;bottom:20px;left:24px;top:auto;max-width:calc(100% - 48px);background:#ffffffed;border:1px solid #dce3e7;border-radius:8px;padding:10px 16px;color:#28343d;text-shadow:none;pointer-events:none}
-html body.platform.light-theme.wall-experience .project-wall .wall-hover-caption strong{color:#28343d;font-size:16px}
-html body.platform.light-theme.wall-experience .project-wall .wall-status{position:static;transform:none;max-width:none;background:#fff;color:#667780;border:1px solid #e0e5e8}
-html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid{position:static!important;inset:auto!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:auto!important;gap:20px!important;transform:none!important;width:100%!important;height:auto!important;padding:0!important;overflow:visible!important}
-html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid .wall-tile{display:flex!important;flex-direction:column;grid-column:auto!important;grid-row:auto!important;transform:none!important;width:auto!important;height:auto!important;border:1px solid #dde5e9;border-radius:10px;background:white;color:#28343d}
-html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid .wall-card-media{display:block;flex:none;aspect-ratio:16/10;width:100%;height:auto;background:#eef2f4}
-html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid .wall-card-media img{height:100%;object-fit:contain;filter:none;transform:none}
-html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid .wall-tile-caption{position:static;opacity:1;display:flex;gap:8px;padding:16px;background:none;color:#28343d}
-html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid .wall-tile-caption strong{font-size:16px;color:#28343d}
 @media(max-width:760px){html body.platform.light-theme.wall-experience .project-wall{padding:24px 16px}html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}html body.platform.light-theme.wall-experience .project-wall .wall-search{flex-basis:100%;max-width:none}html body.platform.light-theme.wall-experience .project-wall .wall-search input{font-size:16px}html body.platform.light-theme.wall-experience .project-wall .wall-stage{height:480px}}
 @media(max-width:480px){html body.platform.light-theme.wall-experience .project-wall .wall-dom-grid{grid-template-columns:1fr!important}}
 
-/* Keep the original immersive, image-led collage rather than a framed directory. */
-html body.platform.light-theme.wall-experience .project-wall .wall-react-root{max-width:none}
-html body.platform.light-theme.wall-experience .project-wall .wall-stage{height:clamp(560px,70vh,900px);border:0;border-radius:0;background:#e8ecee}
-html body.platform.light-theme.wall-experience .project-wall .wall-intro{max-width:700px}
-html body.platform.light-theme.wall-experience .project-wall .wall-navigation{padding-bottom:8px}
+/* Keep the original immersive{max-width:none}
 @media(max-width:760px){html body.platform.light-theme.wall-experience .project-wall .wall-stage{height:65svh;min-height:480px}}
 
 /* Preserve the complete artwork inside a flex-based detail panel. */
@@ -340,25 +185,7 @@ html body.platform.light-theme.wall-experience .wall-focus-art{display:flex!impo
 html body.platform.light-theme.wall-experience .wall-focus-art img{display:block!important;flex:none!important;width:auto!important;height:auto!important;max-width:100%!important;max-height:50dvh!important;object-fit:contain!important;object-position:center;transform:none!important}
 html body.platform.light-theme.wall-experience .wall-focus-panel{overflow-x:hidden;overflow-y:auto}
 
-/* Use the shared SVG icon rather than relying on an arrow font glyph. */
-.wall-experience .wall-open-label { display:inline-flex; align-items:center; gap:4px; }
-
-/* Compact project directory: a crisp mark, useful description and quiet actions. */
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid.wall-card-grid { display:flex!important; flex-direction:column; gap:0!important; max-width:1060px; margin-inline:auto; border-top:1px solid #ffffff1c; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile { display:grid!important; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:18px; flex:0 0 auto!important; min-width:0; height:auto!important; border:0!important; border-bottom:1px solid #ffffff1c!important; border-radius:0; background:transparent!important; box-shadow:none!important; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile:hover { background:#b987f90b!important; transform:none!important; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-open { display:grid; grid-template-columns:64px minmax(0,1fr) 20px; align-items:center; gap:18px; min-height:106px; padding:16px 0; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-media { display:grid; place-items:center; width:64px; height:64px; aspect-ratio:1; overflow:hidden; border:1px solid #ffffff25; border-radius:14px; background:#17101f!important; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-media img { position:relative; width:100%; height:100%; padding:5px; object-fit:contain; filter:none; }
-.wall-list-monogram { font:650 18px/1 'Inter Variable',system-ui,sans-serif; color:#d8c0ff; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile-caption { position:static; display:flex; flex-direction:column; justify-content:center; gap:4px; min-width:0; min-height:0; padding:0; background:transparent!important; opacity:1; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile-caption small { color:#a894c0!important; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:none; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile-caption strong { color:#f5f0fb!important; font-size:16px; line-height:1.25; letter-spacing:-.02em; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-list-summary { display:-webkit-box; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:2; max-width:66ch; color:#ab9eb9; font-size:14px; line-height:1.45; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-open-label { display:grid; place-items:center; color:#bda2db; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions { width:auto; min-width:210px; padding:0; border:0; background:transparent!important; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions :is(button, a) { color:#baadc9; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions :is(button, a):is(:hover,[aria-pressed=true]) { background:#a877e522; color:#f4eaff; }
+/* Compact project directory: a crisp mark{ display:flex!important; flex-direction:column; gap:0!important; max-width:1060px; margin-inline:auto; border-top:1px solid #ffffff1c; }
 @media(max-width:760px) {
  html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile { grid-template-columns:minmax(0,1fr); gap:0; padding:0 0 8px; }
  html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-open { grid-template-columns:56px minmax(0,1fr) 18px; gap:12px; min-height:92px; padding:13px 0 8px; }
@@ -367,52 +194,19 @@ html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .
  html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-list-summary { -webkit-line-clamp:1; }
 }
 
-/* A single contained component owns identity, description, and engagement. */
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid.wall-card-grid {
+/* A single contained component owns identity,description{
  gap:12px!important; border:0; width:100%; box-sizing:border-box;
-}
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile {
- display:flex!important; flex-direction:column; align-items:stretch; gap:0;
- width:100%; max-width:100%; padding:0!important; overflow:hidden; box-sizing:border-box;
- border:1px solid #ffffff20!important; border-radius:16px;
- background:#121016!important;
-}
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-open {
- width:100%; min-width:0; box-sizing:border-box; padding:18px!important;
- grid-template-columns:56px minmax(0,1fr) 20px; gap:16px; min-height:104px;
-}
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-media {
- width:56px; height:56px; flex:none; box-sizing:border-box; background:#ffffff0a!important;
-}
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-media img {
- width:100%; height:100%; padding:8px; box-sizing:border-box; object-fit:contain;
-}
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-tile-caption strong {
- overflow-wrap:anywhere; text-align:left;
-}
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions {
- position:static; width:100%; min-width:0; max-width:100%; margin:0; padding:8px 18px;
- box-sizing:border-box; display:flex; justify-content:flex-start; align-items:center; gap:12px;
- border:0; border-top:1px solid #ffffff14; flex-wrap:wrap;
-}
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions .wall-view-count {
- margin-left:auto;
 }
 @media(max-width:480px) {
  html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-open { padding:14px!important; gap:12px; grid-template-columns:48px minmax(0,1fr) 16px; }
  html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-media { width:48px; height:48px; }
  html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-actions { padding:8px 10px; gap:4px; }
 }
-/* Align the heading, filters and cards to the same content edges. */
-html#digivated-root body.platform.wall-experience .project-wall[data-wall-directory="true"] .wall-intro,
-html#digivated-root body.platform.wall-experience .project-wall[data-wall-directory="true"] .wall-navigation {
+/* Align the heading{
  width:100%; max-width:1060px; margin-left:auto; margin-right:auto; box-sizing:border-box;
 }
 
-/* Original project artwork in compact, uncropped preview frames. */
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-open { grid-template-columns:104px minmax(0,1fr) 20px; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-media { width:104px; height:72px; border-radius:10px; aspect-ratio:auto; }
-html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-media img { width:100%; height:100%; padding:0; object-fit:contain; object-position:center; image-rendering:auto; }
+/* Original project artwork in compact{ grid-template-columns:104px minmax(0,1fr) 20px; }
 @media(max-width:480px) {
  html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-open { grid-template-columns:72px minmax(0,1fr) 16px; }
  html#digivated-root body.platform.wall-experience .project-wall .wall-dom-grid .wall-card-media { width:72px; height:54px; }
