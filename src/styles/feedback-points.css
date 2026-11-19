@@ -85,3 +85,27 @@ html[data-ascii] body .dg-fp-strip .dg-fp-steps{margin-top:2px!important}
  html[data-ascii] body .dg-fp-steps li+li::before{left:16px}
 }
 }
+
+/* Strip v2: icon tile, two-line copy, points chip and a real toggle button. */
+@layer flow {
+html[data-ascii] body .dg-fp-strip summary{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto auto;grid-template-areas:"icon copy me toggle";align-items:center!important;gap:14px!important;min-height:64px;padding:14px 18px!important}
+html[data-ascii] body .dg-fp-icon{grid-area:icon;align-self:center;display:grid!important;place-items:center;width:38px!important;height:38px!important;border:1px solid #4a3c66!important;background:#c3a0ff14!important;box-shadow:inset 0 0 14px #c3a0ff1f!important}
+html[data-ascii] body .dg-fp-icon .dg-fp-spark{font-size:15px;line-height:1}
+html[data-ascii] body .dg-fp-strip-copy{grid-area:copy;display:grid!important;gap:3px;font-size:14px!important}
+html[data-ascii] body .dg-fp-strip-copy strong{display:block!important;margin:0!important;font-size:11px!important;letter-spacing:.14em!important}
+html[data-ascii] body .dg-fp-strip-copy span{display:block!important;color:#cfcfcf!important;line-height:1.4!important}
+html[data-ascii] body .dg-fp-strip .dg-fp-me{grid-area:me;min-height:30px!important;padding:3px 10px!important}
+html[data-ascii] body .dg-fp-toggle{grid-area:toggle;display:inline-flex!important;align-items:center;gap:6px;min-height:30px;padding:4px 10px!important;border:1px solid #3b2f52!important;font-size:11px!important;color:#b9acd3!important;transition:border-color .2s,color .2s,background-color .2s!important}
+html[data-ascii] body .dg-fp-toggle svg{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+html[data-ascii] body .dg-fp-strip summary:hover .dg-fp-toggle{border-color:#7a66a3!important;background:#c3a0ff14!important;color:#fff!important}
+html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle{font-size:11px!important}
+html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle::after{content:none!important}
+html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle svg{transform:rotate(180deg)}
+@media (max-width:640px){
+ html[data-ascii] body .dg-fp-strip summary{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"icon copy toggle" "icon me me";row-gap:8px!important;padding:12px 14px!important}
+ html[data-ascii] body .dg-fp-strip .dg-fp-me{justify-self:start}
+ html[data-ascii] body .dg-fp-toggle{padding:4px 8px!important}
+ html[data-ascii] body .dg-fp-toggle-text{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+ html[data-ascii] body .dg-fp-icon{align-self:start;width:34px!important;height:34px!important}
+}
+}

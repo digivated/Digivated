@@ -13,7 +13,7 @@ const steps = [
 ---
 {variant === 'strip' ? (
   <details class="dg-fp dg-fp-strip" data-feedback-points>
-    <summary><span class="dg-fp-spark" aria-hidden="true">✦</span><span class="dg-fp-strip-copy"><strong>Feedback points</strong> <span>Review other launches and earn upvotes for your own.</span></span><span class="dg-fp-me" data-fp-me hidden></span><span class="dg-fp-toggle" aria-hidden="true">how it works ↓</span></summary>
+    <summary><span class="dg-fp-icon" aria-hidden="true"><span class="dg-fp-spark">✦</span></span><span class="dg-fp-strip-copy"><strong>Feedback points</strong> <span>Review launches, earn upvotes for yours.</span></span><span class="dg-fp-me" data-fp-me hidden></span><span class="dg-fp-toggle"><span class="dg-fp-toggle-text">How it works</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></summary>
     <ol class="dg-fp-steps">{steps.map(([n, t, d]) => <li><span class="dg-fp-n" aria-hidden="true">[ {n} ]</span><strong>{t}</strong><p>{d}</p></li>)}</ol>
     <p class="dg-fp-foot"><a class="dg-btn dg-btn-primary" href={cta}>{ctaLabel} →</a><a class="dg-quiet-link" href="/points">How points work</a></p>
   </details>

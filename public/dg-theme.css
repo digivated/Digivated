@@ -85,14 +85,25 @@ html#digivated-root[data-ascii] body .dg-dot::before,html#digivated-root[data-as
 html#digivated-root[data-ascii] body .dg-dot::after{animation-delay:1.2s}
 @keyframes dg-live-ring{0%{transform:scale(1);opacity:.75}100%{transform:scale(3.4);opacity:0}}
 @keyframes dg-live-core{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35)}}
-html#digivated-root[data-ascii] body .dg-hero-facts li::before{display:inline-block;animation:dg-prompt 3.6s ease-in-out infinite}
-html#digivated-root[data-ascii] body .dg-hero-facts li:nth-child(2)::before{animation-delay:.3s}
-html#digivated-root[data-ascii] body .dg-hero-facts li:nth-child(3)::before{animation-delay:.6s}
-@keyframes dg-prompt{0%,22%,100%{transform:translateX(0);color:#8fd6a4;text-shadow:none}8%{transform:translateX(3px);color:#c9f7d6;text-shadow:0 0 8px #8fd6a4}}
 html#digivated-root[data-ascii] body .dg-fp-spark{display:inline-block;animation:dg-spark-spin 4s cubic-bezier(.5,0,.3,1) infinite!important}
 @keyframes dg-spark-spin{0%,60%,100%{transform:rotate(0) scale(1);text-shadow:none}72%{transform:rotate(90deg) scale(1.45);text-shadow:0 0 10px #c3a0ff,0 0 2px #fff}84%{transform:rotate(180deg) scale(.9);text-shadow:0 0 4px #c3a0ff80}}
 @media (prefers-reduced-motion:reduce){
  html#digivated-root[data-ascii] body .dg-dot::before,html#digivated-root[data-ascii] body .dg-dot::after{display:none}
- html#digivated-root[data-ascii] body :is(.dg-hero-facts li::before,.dg-fp-spark){animation:none!important}
+ html#digivated-root[data-ascii] body .dg-fp-spark{animation:none!important}
 }
 @layer flow{@media (prefers-reduced-motion:reduce){html#digivated-root[data-ascii] body .dg-dot{animation:none!important}}}
+
+/* ---------- Home hero stats: three labeled cells, like the directory totals ---------- */
+@layer flow{
+html#digivated-root[data-ascii] body .dg-hero-stats{display:grid!important;grid-template-columns:1.35fr 1fr 1fr;width:100%;max-width:520px;margin:4px 0 0!important;padding:0!important;border:1px dashed #2e2e2e!important;background:#0a0a0a!important;position:relative;z-index:1}
+html#digivated-root[data-ascii] body .dg-hero-stat{display:grid;gap:4px;min-width:0;margin:0!important;padding:10px 14px!important}
+html#digivated-root[data-ascii] body .dg-hero-stat+.dg-hero-stat{border-left:1px dashed #2a2a2a!important}
+html#digivated-root[data-ascii] body .dg-hero-stat dt{display:flex;align-items:center;gap:7px;margin:0!important;font-family:var(--fl-mono)!important;font-size:10px!important;letter-spacing:.12em;text-transform:uppercase;color:#8a8a8a!important;white-space:nowrap}
+html#digivated-root[data-ascii] body .dg-hero-stat dd{margin:0!important;font-family:var(--fl-mono)!important;font-size:18px!important;font-weight:500!important;line-height:1.2!important;color:#f2f2f2!important;font-variant-numeric:tabular-nums;white-space:nowrap}
+html#digivated-root[data-ascii] body .dg-hero-stat.is-countdown dd{color:#e7dcff!important}
+@media (max-width:520px){
+ html#digivated-root[data-ascii] body .dg-hero-stats{grid-template-columns:1fr 1fr}
+ html#digivated-root[data-ascii] body .dg-hero-stat.is-countdown{grid-column:1/-1;border-bottom:1px dashed #2a2a2a!important}
+ html#digivated-root[data-ascii] body .dg-hero-stat.is-countdown+.dg-hero-stat{border-left:0!important}
+}
+}
