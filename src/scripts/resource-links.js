@@ -20,6 +20,16 @@ if (root) {
   const mine = new Set((() => { try { return JSON.parse(localStorage.getItem(MINE) || '[]'); } catch { return []; } })());
   const saveMine = () => { try { localStorage.setItem(MINE, JSON.stringify([...mine].slice(-500))); } catch {} };
 
+  // Site icons: show the real logo when it loads; keep the monogram if it's missing or blank.
+  const settleIcon = img => {
+    const tile = img.closest('.rl-mono');
+    if (img.naturalWidth >= 8) tile?.classList.add('has-icon');
+    else { tile?.classList.remove('has-icon'); img.remove(); }
+  };
+  root.addEventListener('load', event => { if (event.target instanceof HTMLImageElement && event.target.matches('.rl-icon')) settleIcon(event.target); }, true);
+  root.addEventListener('error', event => { if (event.target instanceof HTMLImageElement && event.target.matches('.rl-icon')) settleIcon(event.target); }, true);
+  for (const img of root.querySelectorAll('.rl-icon')) if (img.complete) settleIcon(img);
+
   const count = id => counts[id] || 0;
   function paintVote(item) {
     const id = item.dataset.id, button = item.querySelector('[data-vote]');
