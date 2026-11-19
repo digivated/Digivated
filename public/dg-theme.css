@@ -40,6 +40,8 @@ html#digivated-root[data-ascii] body :is(a,button,[role=tab],summary):focus-visi
 html#digivated-root[data-ascii] body .dg-member-mark{display:inline-block!important;flex:none;width:13px!important;height:13px!important;margin:0!important;padding:0!important;background-color:currentColor!important;-webkit-mask:url(/dg-member.svg) center/contain no-repeat;mask:url(/dg-member.svg) center/contain no-repeat}
 html#digivated-root[data-ascii] body :is(.dg-badge-member,.dg-spot-member,.launch-member){display:inline-flex!important;align-items:center!important;gap:5px!important;color:#d9c6ff!important}
 html#digivated-root[data-ascii] body .dg-spot-member .dg-member-mark{width:12px!important;height:12px!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-group a[href="/shop"]{color:#d9c6ff!important}
+html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a[aria-current=page]{border-color:#c3a0ff73!important;background:#c3a0ff14!important;color:#f1eaff!important}
 }
 
 html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.fl-header-signup,.home-editorial-actions .share-project-cta):is(:hover,:focus-visible),
@@ -68,3 +70,29 @@ html#digivated-root[data-ascii]{scrollbar-color:#2e2e2e #090909}
   html.dg-motion .dg-rv{opacity:1}
 }
 @media print{html.dg-motion .dg-rv{opacity:1!important;animation:none!important}}
+
+/* ---------- Menu: when the bar is hidden (<=1280px) its links lead the menu ---------- */
+@layer flow{
+@media (max-width:1280px){html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.dg-menu-main{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:4px!important;padding:8px!important}}
+@media (max-width:420px){html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a{padding-inline:2px!important;font-size:10.5px!important;letter-spacing:0!important}}
+}
+
+/* ---------- Live signals: green dot, > prompts, feedback sparkle ---------- */
+@layer flow{
+html#digivated-root[data-ascii] body .dg-dot{position:relative!important;width:7px!important;height:7px!important;flex:none;background-color:#8fd6a4!important;box-shadow:0 0 6px #8fd6a4b3,0 0 0 0 transparent!important;animation:dg-live-core 2.4s ease-in-out infinite!important}
+}
+html#digivated-root[data-ascii] body .dg-dot::before,html#digivated-root[data-ascii] body .dg-dot::after{content:'';position:absolute;inset:0;border:1px solid #8fd6a4;border-radius:50%;opacity:0;animation:dg-live-ring 2.4s cubic-bezier(.2,.7,.3,1) infinite;pointer-events:none}
+html#digivated-root[data-ascii] body .dg-dot::after{animation-delay:1.2s}
+@keyframes dg-live-ring{0%{transform:scale(1);opacity:.75}100%{transform:scale(3.4);opacity:0}}
+@keyframes dg-live-core{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35)}}
+html#digivated-root[data-ascii] body .dg-hero-facts li::before{display:inline-block;animation:dg-prompt 3.6s ease-in-out infinite}
+html#digivated-root[data-ascii] body .dg-hero-facts li:nth-child(2)::before{animation-delay:.3s}
+html#digivated-root[data-ascii] body .dg-hero-facts li:nth-child(3)::before{animation-delay:.6s}
+@keyframes dg-prompt{0%,22%,100%{transform:translateX(0);color:#8fd6a4;text-shadow:none}8%{transform:translateX(3px);color:#c9f7d6;text-shadow:0 0 8px #8fd6a4}}
+html#digivated-root[data-ascii] body .dg-fp-spark{display:inline-block;animation:dg-spark-spin 4s cubic-bezier(.5,0,.3,1) infinite!important}
+@keyframes dg-spark-spin{0%,60%,100%{transform:rotate(0) scale(1);text-shadow:none}72%{transform:rotate(90deg) scale(1.45);text-shadow:0 0 10px #c3a0ff,0 0 2px #fff}84%{transform:rotate(180deg) scale(.9);text-shadow:0 0 4px #c3a0ff80}}
+@media (prefers-reduced-motion:reduce){
+ html#digivated-root[data-ascii] body .dg-dot::before,html#digivated-root[data-ascii] body .dg-dot::after{display:none}
+ html#digivated-root[data-ascii] body :is(.dg-hero-facts li::before,.dg-fp-spark){animation:none!important}
+}
+@layer flow{@media (prefers-reduced-motion:reduce){html#digivated-root[data-ascii] body .dg-dot{animation:none!important}}}

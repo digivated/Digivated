@@ -9,18 +9,19 @@ const exploreLinks = [
   ['/resources', 'Resources'],
   ['/invstr', 'Market Scanner'],
 ];
-// The header bar keeps four destinations; everything else lives in the compact menu.
+// The header bar keeps the five places people use most; the rest lives in the menu.
 export const primaryLinks = [
   ['/', 'Launches'],
   ['/discover', 'Products'],
+  ['/rankings', 'Rankings'],
   ['/threads', 'Threads'],
   ['/news', 'News'],
 ];
-// The menu holds what the bar doesn't: two short groups. On narrow screens the
-// bar's four destinations show as a row at the top of the menu instead.
+// The menu holds what the bar doesn't: two short groups, makers first. When the
+// bar is hidden, its five destinations show as a row of tabs at the top instead.
 export const menuGroups = [
-  { title: 'Explore', links: [['/rankings', 'Rankings'], ['/winners', 'Weekly winners'], ['/resources', 'Resources'], ['/invstr', 'Market Scanner']] },
-  { title: 'For makers', links: [['/submit-project', 'Submit a project'], ['/points', 'Feedback points'], ['/shop', 'Shop'], ['/badges', 'Embed badges']] },
+  { title: 'For makers', links: [['/submit-project', 'Submit a project'], ['/shop', 'Shop'], ['/points', 'Feedback points'], ['/badges', 'Embed badges']] },
+  { title: 'Explore', links: [['/winners', 'Weekly winners'], ['/resources', 'Resources'], ['/invstr', 'Market Scanner']] },
 ];
 export const menuLinks = [...primaryLinks, ...menuGroups.flatMap(group => group.links)];
 // Footer: the same destinations as the header and menu, plus account pages and socials.
