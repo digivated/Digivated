@@ -88,11 +88,11 @@ export function badgeSteps(item, { onVerify } = {}) {
   const days = daysUntil(item.launch.scheduledAt);
   panel.append(
     el('h4', { textContent: `Next: add your badge to ${site}` }),
-    el('p', { className: 'fl-next-lede', textContent: 'Free launches need a small “Featured on Digivated” badge on your site. It takes about two minutes, and the badge shows your live upvotes. Verification is required before automatic publication.' }),
+    el('p', { className: 'fl-next-lede', textContent: 'Free launches need our badge on your site. It takes about two minutes.' }),
     el('ol', { className: 'fl-howto' },
-      el('li', {}, el('strong', { textContent: 'Pick a style and copy its code. ' }), 'Every style links to your listing and counts for verification.'),
+      el('li', {}, el('strong', { textContent: 'Pick a style and copy its code. ' }), 'Any style works.'),
       el('li', {}, el('strong', { textContent: 'Paste it into your page. ' }), 'Add it to the HTML of ', el('a', { href: item.url, target: '_blank', rel: 'noopener noreferrer', textContent: item.url }), ', for example in the footer. Keep it visible.'),
-      el('li', {}, el('strong', { textContent: 'Publish. ' }), 'We check your site every day and email you when we find it. Press “Check my website” to confirm right now.')),
+      el('li', {}, el('strong', { textContent: 'Publish. ' }), 'We check daily and email you when we find it. Or check now.')),
     picker,
     el('div', { className: 'fl-actions' }, verify),
     status,

@@ -23,7 +23,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await page.setViewportSize({width,height:900});await signedIn(page);
  await page.goto(base+'/submit-project');
  await expect(page.locator('.free-launch-guide ol>li')).toHaveCount(4);
- await expect(page.locator('.free-launch-guide')).toContainText('Verification is required.');
+ await expect(page.locator('.free-launch-guide')).toContainText('Launches go out every Monday');
  await expect(page.locator('.free-launch-guide')).toContainText('Monday at 9:00 AM Eastern');
  await expect(page.locator('#submission-details')).toBeVisible();
  await expect(page.locator('#submission-progress li.is-current')).toContainText('Project');
@@ -43,12 +43,12 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await picker.locator('[data-copy-badge=light]').click();
  await expect(picker.locator('[data-copy-badge=light]')).toHaveText('Copied ✓');
  await expect(page.locator('#submission-badge-launch')).toContainText('November 23, 2026');
- await expect(page.locator('#submission-badge')).toContainText('Verification is required.');
+ await expect(page.locator('#submission-badge')).toContainText('Once verified, you go live on launch day.');
  await expect(page.locator('#sub-step-details')).toBeHidden();
  await expect(page.locator('#submission-badge .fl-tracker [aria-current=step]')).toContainText('Badge verified');
  await page.goto(base+'/account#account-submissions');
  await expect(page.locator('[data-submission-state]')).toHaveText('Action needed');
- await expect(page.locator('.account-launch')).toContainText('Verification is required before automatic publication.');
+ await expect(page.locator('.account-launch')).toContainText('Free launches need our badge on your site.');
  await expect(page.locator('.account-launch [data-badge-style]')).toHaveCount(4);
  await page.locator('[data-verify-badge]').click();
  await expect(page.locator('[data-submission-state]')).toHaveText('Scheduled');
