@@ -13,13 +13,6 @@ html[data-ascii] body .dg-fp-full{display:grid;gap:16px;padding:clamp(20px,3vw,2
 html[data-ascii] body .dg-fp-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
 html[data-ascii] body .dg-fp-head .dg-label{color:#e7dcff!important}
 html[data-ascii] body .dg-fp-full h2{margin:0!important;font-family:var(--fl-sans)!important;font-size:clamp(20px,2.4vw,26px)!important;line-height:1.15!important;letter-spacing:-.03em!important;font-weight:600!important;text-wrap:balance}
-html[data-ascii] body .dg-fp-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin:0!important;padding:0!important;list-style:none!important;counter-reset:none}
-html[data-ascii] body .dg-fp-steps li{position:relative;display:grid;align-content:start;gap:4px;margin:0!important;padding:14px 16px!important;border:1px dashed #2b2536!important}
-html[data-ascii] body .dg-fp-steps li+li{border-left:0!important}
-html[data-ascii] body .dg-fp-steps li+li::before{content:'→';position:absolute;left:-7px;top:14px;font-family:var(--fl-mono)!important;font-size:12px;color:#c3a0ff;background:#0b0a0e;line-height:1}
-html[data-ascii] body .dg-fp-n{font-family:var(--fl-mono)!important;font-size:10.5px!important;letter-spacing:.12em;color:#8a7aa8!important}
-html[data-ascii] body .dg-fp-steps strong{font-family:var(--fl-mono)!important;font-size:13px!important;font-weight:500!important;letter-spacing:.12em!important;text-transform:uppercase;color:#fff!important}
-html[data-ascii] body .dg-fp-steps p{margin:0!important;font-family:var(--fl-sans)!important;font-size:13px!important;line-height:1.5!important;color:var(--dgb-copy,#b9b9b9)!important}
 html[data-ascii] body .dg-fp-progress{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-family:var(--fl-mono)!important;font-size:12px!important;color:var(--dgb-copy,#b9b9b9)!important}
 html[data-ascii] body .dg-fp-progress[hidden]{display:none!important}
 html[data-ascii] body .dg-fp-bar{color:#d9c6ff!important;letter-spacing:.06em;white-space:nowrap}
@@ -36,17 +29,10 @@ html[data-ascii] body .dg-fp-strip-copy{flex:1;min-width:0;font-family:var(--fl-
 html[data-ascii] body .dg-fp-strip-copy strong{margin-right:6px;font-family:var(--fl-mono)!important;font-size:11.5px!important;font-weight:500!important;letter-spacing:.12em;text-transform:uppercase;color:#e7dcff!important}
 html[data-ascii] body .dg-fp-toggle{font-family:var(--fl-mono)!important;font-size:11px!important;color:#9a8cb5!important;white-space:nowrap;transition:color .18s}
 html[data-ascii] body .dg-fp-strip summary:hover .dg-fp-toggle{color:#fff!important}
-html[data-ascii] body .dg-fp-strip .dg-fp-steps{margin:0 16px!important}
 html[data-ascii] body .dg-fp-strip .dg-fp-foot{padding:14px 16px 16px!important}
-html[data-ascii] body .dg-fp-strip[open] .dg-fp-steps{animation:dg-fp-open .35s var(--dgb-ease,ease) both}
-@keyframes dg-fp-open{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 
 @media (max-width:760px){
- html[data-ascii] body .dg-fp-steps{grid-template-columns:minmax(0,1fr)}
- html[data-ascii] body .dg-fp-steps li+li{border-left:1px dashed #2b2536!important;border-top:0!important}
- html[data-ascii] body .dg-fp-steps li+li::before{content:'↓';left:14px;top:-7px}
 }
-@media (prefers-reduced-motion:reduce){html[data-ascii] body :is(.dg-fp-spark,.dg-fp-strip[open] .dg-fp-steps){animation:none!important}}
 }
 @layer flow {
 html[data-ascii] body .dg-fp-account{width:100%;margin:28px 0 0!important}
@@ -67,15 +53,7 @@ html[data-ascii] body #main>.dg-fp-strip{margin-block:20px!important}
 html[data-ascii] body .dg-fp-strip summary,html[data-ascii] body .dg-fp-strip summary:hover,html[data-ascii] body .dg-fp-strip summary:hover *{text-decoration:none!important}
 html[data-ascii] body .dg-fp-strip summary:focus-visible{outline:1px solid #c3a0ff;outline-offset:-1px}
 html[data-ascii] body .dg-fp-strip-copy span{color:var(--dgb-copy,#b9b9b9)!important}
-html[data-ascii] body .dg-fp-steps li{grid-template-columns:auto minmax(0,1fr);column-gap:10px;row-gap:6px;padding:16px!important;background:#ffffff03}
-html[data-ascii] body .dg-fp-steps li p{grid-column:1/-1}
-html[data-ascii] body .dg-fp-n{align-self:center;font-size:11px!important;letter-spacing:0!important;color:#c3a0ff!important;white-space:nowrap}
-html[data-ascii] body .dg-fp-steps strong{font-family:var(--fl-sans)!important;font-size:14.5px!important;font-weight:600!important;letter-spacing:-.01em!important;text-transform:none!important}
-html[data-ascii] body .dg-fp-steps p{font-size:13.5px!important}
-html[data-ascii] body .dg-fp-steps li+li::before{color:#6f5d92}
-html[data-ascii] body .dg-fp-strip .dg-fp-steps{margin-top:2px!important}
 @media (max-width:760px){
- html[data-ascii] body .dg-fp-steps li+li::before{left:16px}
 }
 }
 
@@ -100,3 +78,49 @@ html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle svg{transform:rotate(180d
  html[data-ascii] body .dg-fp-toggle{justify-self:end;align-self:center;min-height:28px;padding:3px 10px!important}
 }
 }
+
+/* Pipeline: the three steps as nodes on a dashed rail, with what each is worth.
+   Vertical in narrow boxes, horizontal once the card is wide enough. */
+@layer flow {
+html[data-ascii] body .dg-fp{container-type:inline-size}
+html[data-ascii] body .dg-fp-steps{--rail:#4a3c66;position:relative;display:grid;gap:0;margin:0!important;padding:0!important;list-style:none!important}
+html[data-ascii] body .dg-fp-strip .dg-fp-steps{margin:6px 18px 0!important;padding:18px 0 4px!important;border-top:1px dashed #2b2536!important}
+html[data-ascii] body .dg-fp-step{position:relative;display:grid!important;grid-template-columns:30px minmax(0,1fr) auto;column-gap:14px;align-items:start;margin:0!important;padding:0 0 20px!important;border:0!important;background:none!important}
+html[data-ascii] body .dg-fp-step:last-child{padding-bottom:0!important}
+html[data-ascii] body .dg-fp-step::before{content:''!important;position:absolute;left:14px;top:30px;bottom:0;border:0!important;border-left:1px dashed var(--rail)!important;transform-origin:top}
+html[data-ascii] body .dg-fp-step:last-child::before{display:none}
+html[data-ascii] body .dg-fp-node{position:relative;z-index:1;display:grid;place-items:center;width:30px;height:30px;border:1px solid #4a3c66!important;background:#120e1a!important;font-family:var(--fl-mono)!important;font-size:13px!important;line-height:1;color:#d9c6ff!important}
+html[data-ascii] body .dg-fp-step:last-child .dg-fp-node{border-color:#c3a0ff!important;background:#c3a0ff29!important;color:#fff!important;box-shadow:0 0 16px -4px #c3a0ffcc!important}
+html[data-ascii] body .dg-fp-step-copy{display:grid;gap:3px;min-width:0;padding-top:4px}
+html[data-ascii] body .dg-fp-step-copy strong{font-family:var(--fl-sans)!important;font-size:14.5px!important;font-weight:600!important;letter-spacing:-.01em!important;text-transform:none!important;line-height:1.3!important;color:#f2f2f2!important}
+html[data-ascii] body .dg-fp-step-copy span{font-family:var(--fl-sans)!important;font-size:13.5px!important;line-height:1.5!important;color:#a9a9a9!important}
+html[data-ascii] body .dg-fp-reward{align-self:start;margin-top:4px;padding:2px 8px!important;border:1px dashed #4a3c66!important;font-family:var(--fl-mono)!important;font-size:11px!important;line-height:1.5!important;color:#d9c6ff!important;white-space:nowrap}
+html[data-ascii] body .dg-fp-step:last-child .dg-fp-reward{border-style:solid!important;border-color:#c3a0ff80!important;background:#c3a0ff14!important;color:#fff!important}
+@container (min-width:600px){
+ html[data-ascii] body .dg-fp-steps{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:24px}
+ html[data-ascii] body .dg-fp-step{grid-template-columns:minmax(0,1fr);row-gap:12px;padding:0!important}
+ html[data-ascii] body .dg-fp-step::before{left:38px;right:-16px;top:15px;bottom:auto;border-left:0!important;border-top:1px dashed var(--rail)!important;transform-origin:left}
+ html[data-ascii] body .dg-fp-step-copy{padding-top:0}
+ html[data-ascii] body .dg-fp-reward{justify-self:start;margin-top:0}
+}
+/* Footer: primary action and the full rules, side by side and aligned. */
+html[data-ascii] body .dg-fp-strip .dg-fp-foot{display:flex!important;flex-wrap:wrap;gap:10px!important;padding:18px 18px 18px!important}
+html[data-ascii] body .dg-fp-strip .dg-fp-foot .dg-btn{min-height:40px!important}
+@media (max-width:640px){
+ html[data-ascii] body .dg-fp-strip .dg-fp-steps{margin:6px 16px 0!important}
+ html[data-ascii] body .dg-fp-strip .dg-fp-foot{display:grid!important;grid-template-columns:minmax(0,1fr);padding:16px!important}
+ html[data-ascii] body .dg-fp-strip .dg-fp-foot .dg-btn{width:100%}
+}
+}
+/* Opening the strip runs the pipeline once: the rail draws, nodes light in order. */
+@media (prefers-reduced-motion:no-preference){
+ html[data-ascii] body .dg-fp-strip[open] .dg-fp-node{animation:dg-node-in .42s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 160ms)}
+ html[data-ascii] body .dg-fp-strip[open] .dg-fp-step::before{animation:dg-rail-y .5s ease-out both;animation-delay:calc(var(--i,0) * 160ms + 120ms)}
+ html[data-ascii] body .dg-fp-strip[open] :is(.dg-fp-step-copy,.dg-fp-reward){animation:dg-step-in .45s ease-out both;animation-delay:calc(var(--i,0) * 160ms + 60ms)}
+ @container (min-width:600px){html[data-ascii] body .dg-fp-strip[open] .dg-fp-step::before{animation-name:dg-rail-x}}
+}
+@keyframes dg-node-in{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.12);box-shadow:0 0 18px -2px #c3a0ff}100%{opacity:1;transform:scale(1)}}
+@keyframes dg-rail-y{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes dg-rail-x{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes dg-step-in{from{opacity:0;translate:0 4px}to{opacity:1;translate:0 0}}
+@media (prefers-reduced-motion:reduce){html[data-ascii] body .dg-fp-spark{animation:none!important}}

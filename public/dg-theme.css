@@ -76,14 +76,6 @@ html#digivated-root[data-ascii]{scrollbar-color:#2e2e2e #090909}
 @media (max-width:420px){html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a{padding-inline:2px!important;font-size:10.5px!important;letter-spacing:0!important}}
 }
 
-/* ---------- Live signals: green dot, > prompts, feedback sparkle ---------- */
-html#digivated-root[data-ascii] body .dg-dot::before,html#digivated-root[data-ascii] body .dg-dot::after{content:'';position:absolute;inset:0;border:1px solid #8fd6a4;border-radius:50%;opacity:0;animation:dg-live-ring 2.4s cubic-bezier(.2,.7,.3,1) infinite;pointer-events:none}
-html#digivated-root[data-ascii] body .dg-dot::after{animation-delay:1.2s}
-@keyframes dg-live-ring{0%{transform:scale(1);opacity:.75}100%{transform:scale(3.4);opacity:0}}
-@keyframes dg-live-core{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35)}}
-@media (prefers-reduced-motion:reduce){
- html#digivated-root[data-ascii] body .dg-dot::before,html#digivated-root[data-ascii] body .dg-dot::after{display:none}
-}
 
 /* ---------- Home hero stats: three labeled cells, like the directory totals ---------- */
 @layer flow{
@@ -92,7 +84,9 @@ html#digivated-root[data-ascii] body .dg-hero-stat{display:grid;gap:4px;min-widt
 html#digivated-root[data-ascii] body .dg-hero-stat+.dg-hero-stat{border-left:1px dashed #2a2a2a!important}
 html#digivated-root[data-ascii] body .dg-hero-stat dt{display:flex;align-items:center;gap:7px;margin:0!important;font-family:var(--fl-mono)!important;font-size:10px!important;letter-spacing:.12em;text-transform:uppercase;color:#8a8a8a!important;white-space:nowrap}
 html#digivated-root[data-ascii] body .dg-hero-stat dd{margin:0!important;font-family:var(--fl-mono)!important;font-size:18px!important;font-weight:500!important;line-height:1.2!important;color:#f2f2f2!important;font-variant-numeric:tabular-nums;white-space:nowrap}
-html#digivated-root[data-ascii] body .dg-hero-stat.is-countdown dd{color:#e7dcff!important}
+html#digivated-root[data-ascii] body .dg-hero-stat.is-countdown dd{display:grid;gap:6px;color:#e7dcff!important}
+html#digivated-root[data-ascii] body .dg-week-bar{font-size:10px!important;line-height:1!important;letter-spacing:.5px;color:#6f5d92!important}
+html#digivated-root[data-ascii] body .dg-week-bar b{font-weight:400;color:#c3a0ff!important}
 @media (max-width:520px){
  html#digivated-root[data-ascii] body .dg-hero-stats{grid-template-columns:1fr 1fr}
  html#digivated-root[data-ascii] body .dg-hero-stat.is-countdown{grid-column:1/-1;border-bottom:1px dashed #2a2a2a!important}

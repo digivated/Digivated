@@ -5,17 +5,19 @@ import { BOOST_POINTS_PER_VOTE, REVIEW_MIN_SECONDS, DAILY_POINT_CAP } from '../l
 import '../styles/feedback-points.css';
 const { variant = 'full', heading = 'Help other makers. Lift your own launch.', cta = '/discover?sort=needs', ctaLabel = 'Find a product that needs feedback' } = Astro.props;
 const id = `fp-${Math.random().toString(36).slice(2, 8)}`;
+// A short pipeline: glyph on the rail, what to do, and what it's worth.
 const steps = [
-  ['↗', 'Visit a launch', `Hit Visit and look around for ${REVIEW_MIN_SECONDS}+ seconds.`],
-  ['✎', 'Leave feedback', 'Be specific. +5 points, or +10 for a detailed one.'],
-  ['▲', 'Get bonus upvotes', `Every ${BOOST_POINTS_PER_VOTE} points this week adds an upvote to yours.`],
+  ['↗', 'Visit a launch', 'Hit Visit and look around for a bit.', `≥ ${REVIEW_MIN_SECONDS}s`],
+  ['✎', 'Leave feedback', 'Say what worked and what didn’t.', '+5 / +10 pts'],
+  ['▲', 'Get bonus upvotes', 'Points this week lift your own launch.', `▲ +1 per ${BOOST_POINTS_PER_VOTE}`],
 ];
+const pipeline = steps.map(([glyph, title, copy, reward], i) => ({ glyph, title, copy, reward, i }));
 ---
 {variant === 'strip' ? (
   <details class="dg-fp dg-fp-strip" data-feedback-points>
     <summary><span class="dg-fp-icon" aria-hidden="true"><span class="dg-fp-spark">✦</span></span><span class="dg-fp-strip-copy"><strong>Feedback points</strong> <span>Review launches, earn upvotes for yours.</span></span><span class="dg-fp-me" data-fp-me hidden></span><span class="dg-fp-toggle"><span class="dg-fp-toggle-text">How it works</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></summary>
-    <ol class="dg-fp-steps">{steps.map(([n, t, d]) => <li><span class="dg-fp-n" aria-hidden="true">[ {n} ]</span><strong>{t}</strong><p>{d}</p></li>)}</ol>
-    <p class="dg-fp-foot"><a class="dg-btn dg-btn-primary" href={cta}>{ctaLabel} →</a><a class="dg-quiet-link" href="/points">How points work</a></p>
+    <ol class="dg-fp-steps">{pipeline.map(step => <li class="dg-fp-step" style={`--i:${step.i}`}><span class="dg-fp-node" aria-hidden="true">{step.glyph}</span><span class="dg-fp-step-copy"><strong>{step.title}</strong><span>{step.copy}</span></span><span class="dg-fp-reward">{step.reward}</span></li>)}</ol>
+    <p class="dg-fp-foot"><a class="dg-btn dg-btn-primary" href={cta}>{ctaLabel}</a><a class="dg-btn dg-fp-rules" href="/points">Full rules</a></p>
   </details>
 ) : (
   <section class="dg-fp dg-fp-full" aria-labelledby={id} data-feedback-points>
@@ -24,7 +26,7 @@ const steps = [
       <span class="dg-fp-me" data-fp-me hidden></span>
     </header>
     <h2 id={id}>{heading}</h2>
-    <ol class="dg-fp-steps">{steps.map(([n, t, d]) => <li><span class="dg-fp-n" aria-hidden="true">[ {n} ]</span><strong>{t}</strong><p>{d}</p></li>)}</ol>
+    <ol class="dg-fp-steps">{pipeline.map(step => <li class="dg-fp-step" style={`--i:${step.i}`}><span class="dg-fp-node" aria-hidden="true">{step.glyph}</span><span class="dg-fp-step-copy"><strong>{step.title}</strong><span>{step.copy}</span></span><span class="dg-fp-reward">{step.reward}</span></li>)}</ol>
     <div class="dg-fp-progress" data-fp-progress hidden>
       <span class="dg-fp-bar" aria-hidden="true" data-fp-bar>[□□□□□□□□□□]</span>
       <span data-fp-progress-copy></span>
