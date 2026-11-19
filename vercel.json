@@ -230,7 +230,7 @@
     },
     {
       "path": "/api/badge-check",
-      "schedule": "0 16 * * *"
+      "schedule": "0 13 * * *"
     }
   ],
   "rewrites": [

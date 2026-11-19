@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { checkPendingBadges, reminderStage, badgeSnippet, makeBadgeCheckHandler } from '../server/launch-queue.mjs';
 import { hasProjectBadge, badgeProblem } from '../server/project-site.mjs';
 import { badgeEmail } from '../server/account-mail.mjs';
@@ -12,8 +13,8 @@ function fakeRedis(records) {
   const redis = async ([cmd, ...args]) => {
     if (cmd === 'ZRANGEBYSCORE') return records.map(r => r.id);
     if (cmd === 'GET') return store.get(args[0]) ?? null;
-    if (cmd === 'SET') { if (args.includes('NX') && keys.has(args[0])) return null; keys.add(args[0]); return 'OK'; }
-    if (cmd === 'DEL') { keys.delete(args[0]); return 1; }
+    if (cmd === 'SET') { if (args.includes('NX') && keys.has(args[0])) return null; keys.add(args[0]); store.set(args[0], args[1]); return 'OK'; }
+    if (cmd === 'DEL') { keys.delete(args[0]); store.delete(args[0]); return 1; }
     if (cmd === 'EXISTS') return keys.has(args[0]) ? 1 : 0;
     if (cmd === 'EVAL') { store.set(args[2], args[7]); return 1; }
     return null;
@@ -39,6 +40,8 @@ test('reminders go out once per stage, and a failed send is retried next run', a
   await checkPendingBadges(redis, { ...opts, mail: async () => 'failed' });
   await checkPendingBadges(redis, { ...opts, mail: async (r, s) => { mails.push(s); return 'sent'; } });
   await checkPendingBadges(redis, { ...opts, mail: async (r, s) => { mails.push(s); return 'sent'; } });
+  assert.deepEqual(mails, ['finish']);
+  await checkPendingBadges(redis, { ...opts, now: now + 21 * 3600_000, mail: async (r, s) => { mails.push(s); return 'sent'; } });
   assert.deepEqual(mails, ['finish', 'nudge']);
   const late = base('b', { launch: { kind: 'free', scheduledAt: new Date(now + 2 * DAY).toISOString() } });
   assert.equal(reminderStage(late, now), 'last-call');
@@ -67,6 +70,25 @@ test('reminder emails name the launch day and link to the project', () => {
   assert.match(message.html, /account#project-mail/);
   assert.match(badgeEmail(base('mail', { launch: { kind: 'free', scheduledAt: '2026-11-23T14:00:00Z' } }), 'finish').html, /Verify badge and submit/);
   assert.equal(badgeEmail({ id: 'x' }, 'nudge'), null);
+});
+
+test('finish notes reach projects past the first batch before a same-day second note', async () => {
+  const soon = base('soon', { launch: { kind: 'free', scheduledAt: new Date(now + 2 * DAY).toISOString() } });
+  const later = base('later', { launch: { kind: 'free', scheduledAt: new Date(now + 6 * DAY).toISOString() } });
+  const { redis } = fakeRedis([soon, later]);
+  const mails = [];
+  const opts = { now, maxChecks: 1, readSite: async () => ({ html: '' }), mail: async (r, s) => { mails.push([r.id, s]); return 'sent'; } };
+  await checkPendingBadges(redis, opts);
+  await checkPendingBadges(redis, opts);
+  assert.deepEqual(mails, [['soon', 'finish'], ['later', 'finish']]);
+});
+
+test('badge check runs before 9am Eastern', async () => {
+  const config = JSON.parse(await readFile(new URL('../vercel.json', import.meta.url), 'utf8'));
+  const cron = config.crons.find(item => item.path === '/api/badge-check');
+  const [minute, hour] = cron.schedule.split(' ');
+  assert.equal(minute, '0');
+  assert.ok(Number(hour) < 14, cron.schedule);
 });
 
 test('badge check endpoint requires the cron secret', async () => {

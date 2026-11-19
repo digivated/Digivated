@@ -75,8 +75,15 @@ export async function checkPendingBadges(redis,{now=Date.now(),readSite=readProj
  result.waiting=waiting.length;
  // Upcoming launches first (soonest first), then any whose date already passed.
  waiting.sort((a,b)=>{const x=Date.parse(a.launch.scheduledAt),y=Date.parse(b.launch.scheduledAt);return (x<now)-(y<now)||x-y;});
+ // People who have not received the finish note go first, so a full queue
+ // still reaches everyone instead of rechecking the same launches.
+ const unsent=[],already=[];
+ for(const record of waiting){
+  if(await redis(['EXISTS',`digivated:badge-mail:${record.id}:finish`])===1)already.push(record);
+  else unsent.push(record);
+ }
  // Sites are checked eight at a time, within the route's time limit.
- const started=Date.now(),queue=waiting.slice(0,maxChecks);
+ const started=Date.now(),queue=[...unsent,...already].slice(0,maxChecks);
  const one=async record=>{
   try{
    let found=false;
@@ -89,14 +96,17 @@ export async function checkPendingBadges(redis,{now=Date.now(),readSite=readProj
     }
     return;
    }
-   // One note to everyone still waiting, then the usual day-after and last-call notes.
+   // One finish note per project. The day-after and last-call notes wait until
+   // the next day, so an early run does not send two emails the same morning.
    const finishKey=`digivated:badge-mail:${record.id}:finish`;
-   if(await redis(['SET',finishKey,'1','NX','EX',90*86400])==='OK'){
+   if(await redis(['SET',finishKey,String(now),'NX','EX',90*86400])==='OK'){
     const sent=await mail(record,'finish');
     if(sent==='sent')result.reminded++;
     else await redis(['DEL',finishKey]);
     return;
    }
+   const finishAt=Number(await redis(['GET',finishKey]));
+   if(finishAt>1e11&&now-finishAt<20*60*60*1000)return;
    const stage=reminderStage(record,now);
    if(!stage)return;
    // A last call also covers the first nudge, so nobody gets both in a row.
