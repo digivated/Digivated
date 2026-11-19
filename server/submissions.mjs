@@ -1,12 +1,16 @@
-import { defaultNotificationPreferences, notificationPreferencesKey, notifyProjectApproval } from './notifications.mjs';
+import { defaultNotificationPreferences, notificationPreferencesKey, notifyProjectApproval, notifyLaunchScheduled } from './notifications.mjs';
 import { sendProjectUpdate } from './account-mail.mjs';
 import { badgeSnippet, nextFreeLaunch, verifyProjectBadge } from './launch-queue.mjs';
-import { readProjectSite, siteDetails, siteExtras, readPublicImage } from './project-site.mjs';
+import { readProjectSite, siteDetails, siteExtras, readPublicImage, hasProjectBadge, badgeProblem } from './project-site.mjs';
 import { guessCategory } from '../src/lib/project-taxonomy.mjs';
 // Isolated from purchase handlers, sessions, rate-limit rules, and environment names.
 // founding-access imports redisClient from this module. The membership helpers are
 // used only inside request handlers, after both modules have finished loading.
-import { randomUUID, createHmac } from 'node:crypto';
+import { randomUUID, createHmac, timingSafeEqual } from 'node:crypto';
+// Badge-first launches: the project ID is reserved (and signed for this account)
+// before saving, so the real badge can be installed and verified in one step.
+const reserveToken=(secret,accountId,id)=>createHmac('sha256',secret).update(`badge-reserve:${accountId}:${id}`).digest('hex');
+const sameToken=(a,b)=>typeof a==='string'&&typeof b==='string'&&a.length===b.length&&timingSafeEqual(Buffer.from(a),Buffer.from(b));
 import { projectPricingOptions } from '../src/lib/project-pricing.mjs';
 import { acceptedProjectCategories, safeUrl } from '../src/data/community.mjs';
 import { FoundingError, foundingConfig, readMember, verifyFoundingEmail } from './founding-access.mjs';
@@ -252,9 +256,14 @@ export function makeSubmissionHandler(deps={}) {
           // The site icon becomes the logo when we can fetch one; never fatal.
           const readImage=deps.readImage||(deps.readSite?null:readPublicImage);
           let logo=null;
-          if(readImage)for(const icon of extra.icons.slice(0,3)){try{logo=await readImage(icon);break;}catch{}}
+          const iconDeadline=Date.now()+6000; // stay well inside the function's time limit
+          if(readImage)for(const icon of extra.icons.slice(0,3)){if(Date.now()>iconDeadline)break;try{logo=await Promise.race([readImage(icon),new Promise((_,reject)=>setTimeout(()=>reject(Error('slow')),Math.max(1,iconDeadline-Date.now())))]);break;}catch{}}
           return send(200,{...base,name,category:guessCategory(`${name} ${base.description}`),social:extra.social,url:page.url||body.url,logo});
         }catch(error){throw new SubmissionError(400,error.message||'Could not check that website. You can enter details manually.');}
+      }
+      if (body?.action === 'reserve-badge') {
+        const id=randomUUID();
+        return send(200,{id,token:reserveToken(env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only',account.id,id)});
       }
       if (body?.action === 'cancel-instant') {
         const instant = await instantLaunchConfig(env, deps.fetcher || fetch);
@@ -274,8 +283,27 @@ export function makeSubmissionHandler(deps={}) {
       const ip=req.headers['x-real-ip'];
       if(!deps.redis && (env.VERCEL!=='1'||typeof ip!=='string'||!ip))throw new SubmissionError(503,'Submissions are temporarily unavailable. Please try again later.');
       const hash=createHmac('sha256',env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only').update(String(ip||'fixture')).digest('hex');
-      const id=randomUUID();const now=new Date();
-      const stored={...record,...(!record.promotion?{launch:{kind:'free',version:1,scheduledAt:nextFreeLaunch(now.getTime()),scheduledTimestamp:Date.parse(nextFreeLaunch(now.getTime()))}}:{}),...(account?{accountId:account.id}:{}),id,date:now.toISOString(),consentedAt:now.toISOString(),...(record.emailOutreachConsent?{emailOutreachConsentedAt:now.toISOString(),emailOutreachConsentVersion:2}:{})};
+      let id=randomUUID();const now=new Date();
+      // A reserved ID keeps the badge the maker already installed; verifyBadge
+      // checks their site first and saves nothing if the badge is missing.
+      let badgeVerifiedAt=null;
+      if(body.reservedId!==undefined){
+        if(record.promotion||typeof body.reservedId!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(body.reservedId)||!sameToken(body.reservedToken,reserveToken(env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only',account.id,body.reservedId)))throw new SubmissionError(400,'Your badge code expired. Refresh the page and copy the badge again.');
+        if(Number(await redis(['EXISTS',`digivated:submission:${body.reservedId}`])))throw new SubmissionError(409,'This badge code was already used. Refresh the page to get a new one.');
+        id=body.reservedId;
+      }
+      if(body.verifyBadge===true){
+        if(record.promotion||body.reservedId===undefined)throw new SubmissionError(400,'Badge verification is for free launches. Refresh the page and try again.');
+        const key=`digivated:site-check:${account.id}`;
+        const attempts=Number(await redis(['INCR',key]));if(attempts===1)await redis(['EXPIRE',key,3600]);
+        if(!Number.isFinite(attempts)||attempts>20)throw new SubmissionError(429,'Too many website checks. Try again in an hour.');
+        try{
+          const {html}=await (deps.readSite||readProjectSite)(record.url);
+          if(!hasProjectBadge(html,id))throw Error(badgeProblem(html,id));
+        }catch(error){throw new SubmissionError(400,error.message||'Could not check your website. Try again, or submit now and add the badge later.');}
+        badgeVerifiedAt=now.toISOString();
+      }
+      const stored={...record,...(!record.promotion?{launch:{kind:'free',version:1,scheduledAt:nextFreeLaunch(now.getTime()),scheduledTimestamp:Date.parse(nextFreeLaunch(now.getTime())),...(badgeVerifiedAt?{badgeVerifiedAt}:{})}}:{}),...(account?{accountId:account.id}:{}),id,date:now.toISOString(),consentedAt:now.toISOString(),...(record.emailOutreachConsent?{emailOutreachConsentedAt:now.toISOString(),emailOutreachConsentVersion:2}:{})};
       const accountKey=accountIndex(record.email,env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only');
       const activityNotifications = body.activityNotifications;
       if (activityNotifications !== undefined && typeof activityNotifications !== 'boolean') throw new SubmissionError(400, 'Choose a valid activity notification setting.');
@@ -292,6 +320,7 @@ export function makeSubmissionHandler(deps={}) {
       if(saved===-2)throw new SubmissionError(409,'You already have a project live or in review. Check Your Projects for its status.');
       if(saved===-1)throw new SubmissionError(409,MEMBER_FEATURE_USED);
       if(saved!==1){res.setHeader('Retry-After','3600');throw new SubmissionError(429,'You’ve reached the submission limit. Please try again in an hour.');}
+      if(badgeVerifiedAt){try{await notifyLaunchScheduled(redis,stored);}catch{/* Saved and verified; the notice is a courtesy. */}}
       send(201,{ok:true,id,status:'pending',...(typeof activityNotifications === 'boolean' ? {activityNotifications} : {}),...(stored.launch?{launch:{...stored.launch,badge:badgeSnippet(id)}}:{})});
     }catch(error){send(error instanceof SubmissionError?error.status:503,{error:error instanceof SubmissionError?error.message:'Submissions are temporarily unavailable. Your details have not been cleared; please try again later.'});}
   };
