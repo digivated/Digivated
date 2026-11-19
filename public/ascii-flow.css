@@ -378,9 +378,9 @@ html[data-ascii] body .fl-notify .notifications-choice-list label{display:flex!i
 html[data-ascii] body .fl-notify .notifications-choice-list label *{text-transform:none!important;letter-spacing:normal!important}
 
 /* ---- Directory, rankings and other intros share the ruled band ---- */
-html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.creator-social-heading,.membership-heading,.rankings-hero,.creator-directory-intro){position:relative;padding-bottom:56px!important;margin-bottom:32px!important}
-html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.creator-social-heading,.membership-heading,.rankings-hero,.creator-directory-intro)::after{content:'';position:absolute;left:0;right:0;bottom:0;height:22px;border-top:1px solid var(--fl-rule)!important;border-bottom:1px solid var(--fl-rule)!important;background-image:repeating-linear-gradient(135deg,transparent 0 6px,#191919 6px 7px)!important}
-html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.membership-heading,.rankings-hero) h1{font-size:clamp(36px,5vw,60px)!important}
+html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.creator-social-heading,.membership-heading,.creator-directory-intro){position:relative;padding-bottom:56px!important;margin-bottom:32px!important}
+html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.creator-social-heading,.membership-heading,.creator-directory-intro)::after{content:'';position:absolute;left:0;right:0;bottom:0;height:22px;border-top:1px solid var(--fl-rule)!important;border-bottom:1px solid var(--fl-rule)!important;background-image:repeating-linear-gradient(135deg,transparent 0 6px,#191919 6px 7px)!important}
+html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.membership-heading) h1{font-size:clamp(36px,5vw,60px)!important}
 
 /* Directory rows: ruled list, like the reference project index. */
 html[data-ascii] body .wall-dom-grid .wall-tile{border-top:1px solid var(--fl-rule)!important;padding-block:18px!important;margin:0!important}

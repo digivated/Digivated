@@ -71,7 +71,7 @@ if(root){
   root.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===category)));
   list.replaceChildren();status.textContent=matches.length?'':'No projects match yet. Try another category or search.';
   for(const [i,p] of matches.slice(0,limit).entries()){
-   const row=text('li','','launch-row');row.dataset.projectId=p.id;if(!ai&&i<3)row.classList.add('ranking-front-runner');row.append(text('span',String(i+1).padStart(2,'0'),'launch-rank'));
+   const row=text('li','','launch-row');row.dataset.projectId=p.id;if(!ai&&i<3)row.classList.add('ranking-front-runner');row.append(text('span',!ai&&i<3?String(i+1):String(i+1).padStart(2,'0'),'launch-rank'));
    const image=document.createElement('img');image.className='launch-logo';image.src=safe(p.image);image.alt='';image.loading=i<3?'eager':'lazy';image.width=64;image.height=64;image.onerror=()=>{image.hidden=true;};
    if(ai)row.append(image);else{const artwork=text('a','','ranking-artwork');artwork.href=safe(p.pageUrl||'/discover#project-'+p.id);artwork.setAttribute('aria-label','Explore '+p.name);artwork.append(image,text('span',p.name.slice(0,1).toUpperCase(),'ranking-image-fallback'));row.append(artwork);}
    const copy=text('div','','launch-copy'),heading=text('h3',''),link=text('a',p.name);link.href=safe(p.pageUrl||'/discover#project-'+p.id);heading.append(link);copy.append(heading,text('p',p.description||''));

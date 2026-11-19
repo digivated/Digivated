@@ -3,16 +3,49 @@ import UiIcon from './UiIcon.astro';
 const { ai=false }=Astro.props;
 ---
 <section class:list={['launch-directory',{'rankings-directory':!ai}]} data-launch-directory data-ai={String(ai)}>
- {ai ? <header class="launch-heading"><p class="launch-eyebrow">THE DIGIVATED DIRECTORY</p><h1>AI Tools</h1><p>Find AI tools by category and meet their makers.</p></header> :
- <header class="rankings-hero"><div><p class="launch-eyebrow">THE COMMUNITY LEADERBOARD</p><h1>Built by people.<br/><span>Ranked by you.</span></h1></div><div class="rankings-hero-copy"><p>See which projects the community is upvoting.</p><div class="launch-links"><a href="/submit-project">Submit a project <UiIcon name="external" size={16}/></a><a href="/discover">Explore all projects</a><a href="/resources">Resources</a></div></div></header>}
- {!ai&&<section class="ranking-personal" aria-labelledby="ranking-personal-title"><div class="ranking-personal-heading"><p class="rankings-section-label">YOUR BOARD</p><h2 id="ranking-personal-title">Your picks <span data-ranking-picks-count></span></h2><p>Projects you’ve upvoted on this device.</p></div><div class="ranking-personal-list" data-ranking-picks><span>No picks yet.</span></div><div class="ranking-personal-share"><button class="ranking-share" type="button" data-ranking-share>Share rankings <UiIcon name="external" size={14}/></button><span data-ranking-share-status role="status"></span></div></section>}
- {!ai&&<p><label>Launch week <select data-launch-batch><option value="">All launch dates</option><option value="current">This week’s launches</option><option value="previous">Last week’s launches</option></select></label></p>}
- <div class="launch-toolbar"><div hidden={ai} role="group" aria-label="Count upvotes received during" class="launch-periods"><button data-period="daily" aria-pressed="true">Today</button><button data-period="weekly" aria-pressed="false">This week</button><button data-period="monthly" aria-pressed="false">This month</button><button data-period="all" aria-pressed="false">All time</button></div><label><span class="sr-only">Search projects</span><input data-launch-search type="search" placeholder="Search projects or builders"/></label></div>
+ {ai ? <>
+ <header class="launch-heading"><p class="launch-eyebrow">THE DIGIVATED DIRECTORY</p><h1>AI Tools</h1><p>Find AI tools by category and meet their makers.</p></header>
+ <div class="launch-toolbar"><label><span class="sr-only">Search projects</span><input data-launch-search type="search" placeholder="Search projects or builders"/></label></div>
  <div class="launch-categories" data-launch-categories role="group" aria-label="Filter category"></div>
  <div class="ai-category-grid" data-ai-overview hidden></div>
- <div class="launch-list-heading" data-list-heading>{ai ? <><h2 data-ranking-title>AI tools</h2><span data-launch-total></span></> : <><div><p class="rankings-section-label">THE BOARD</p><h2 data-ranking-title>Today's rankings</h2></div><div class="rankings-totals"><span data-launch-total></span><span data-ranking-votes></span></div></>}</div>
- <div class="rankings-context" hidden={ai}><div class="rankings-context-status"><p data-ranking-context>Upvotes received today · resets at 00:00 UTC</p><div class="rankings-countdown"><span data-ranking-countdown-label>Next reset</span><time data-ranking-countdown role="timer" aria-live="off">Calculating…</time></div></div><details><summary>How rankings work</summary><p>Pick a launch week to filter projects, and a time period to choose which upvotes count. Weeks start on Monday, and days reset at midnight UTC. Older listings go by their submission date. Votes from before November 1, 2026 still count toward all-time rankings.</p></details></div>
- <p role="status" data-launch-status>Loading projects…</p><ol class="launch-list" data-launch-list aria-label={ai?'AI tools':'Ranked projects'}></ol><button class="button" data-launch-more hidden>Show more</button>
+ <div class="launch-list-heading" data-list-heading><h2 data-ranking-title>AI tools</h2><span data-launch-total></span></div>
+ </> : <>
+ <section class="dg-hero rk-hero" aria-labelledby="rk-title">
+  <pre class="ascii-field home-workshop dg-hero-ascii" data-ascii-field aria-hidden="true"></pre>
+  <div class="dg-hero-copy">
+   <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>The leaderboard</p>
+   <h1 id="rk-title">Built by people. <span class="dg-hero-accent">Ranked by you.</span></h1>
+   <p class="dg-hero-lede">See what the community is backing right now. Every upvote moves the board.</p>
+   <dl class="dg-hero-stats">
+    <div class="dg-hero-stat is-countdown rankings-countdown"><dt data-ranking-countdown-label>Next reset</dt><dd><time data-ranking-countdown role="timer" aria-live="off">—</time></dd></div>
+    <div class="dg-hero-stat"><dt>On the board</dt><dd data-launch-total>—</dd></div>
+    <div class="dg-hero-stat"><dt>Counted</dt><dd data-ranking-votes>—</dd></div>
+   </dl>
+  </div>
+ </section>
+
+ <div class="rk-controls">
+  <div class="dg-dir-searchrow rk-searchrow">
+   <label class="dg-dir-search"><span class="sr-only">Search projects</span><input data-launch-search type="search" placeholder="search projects or makers" autocomplete="off" enterkeyhint="search"/></label>
+   <label class="rk-week"><span class="sr-only">Launch week</span><select data-launch-batch><option value="">All launch dates</option><option value="current">This week’s launches</option><option value="previous">Last week’s launches</option></select></label>
+  </div>
+  <div class="dg-dir-sorts launch-periods" role="group" aria-label="Count upvotes received during"><button class="dg-dir-sort" type="button" data-period="daily" aria-pressed="true">Today</button><button class="dg-dir-sort" type="button" data-period="weekly" aria-pressed="false">This week</button><button class="dg-dir-sort" type="button" data-period="monthly" aria-pressed="false">This month</button><button class="dg-dir-sort" type="button" data-period="all" aria-pressed="false">All time</button></div>
+  <div class="dg-dir-chips launch-categories" data-launch-categories role="group" aria-label="Filter category"></div>
+ </div>
+
+ <section class="ranking-personal rk-picks" aria-labelledby="ranking-personal-title">
+  <header class="dg-list-head"><h2 id="ranking-personal-title"><span class="dg-list-title">Your picks</span> <span class="rk-picks-count" data-ranking-picks-count></span></h2><span class="dg-list-rule" aria-hidden="true"></span><button class="ranking-share dg-btn" type="button" data-ranking-share>Share rankings <UiIcon name="external" size={13}/></button></header>
+  <div class="ranking-personal-list" data-ranking-picks><span>No picks yet.</span></div>
+  <span class="rk-share-status" data-ranking-share-status role="status"></span>
+ </section>
+
+ <div class="ai-category-grid" data-ai-overview hidden></div>
+ <div class="launch-list-heading rk-board-head" data-list-heading>
+  <header class="dg-list-head"><h2><span class="dg-list-title" data-ranking-title>Today's rankings</span></h2><span class="dg-list-rule" aria-hidden="true"></span></header>
+  <div class="rankings-context"><p data-ranking-context>Upvotes received today · resets at 00:00 UTC</p><details><summary>How rankings work</summary><p>Pick a launch week to filter projects, and a time period to choose which upvotes count. Weeks start on Monday, and days reset at midnight UTC. Older listings go by their submission date. Votes from before November 1, 2026 still count toward all-time rankings.</p></details></div>
+ </div>
+ </>}
+ <p role="status" class="rk-status" data-launch-status>Loading projects…</p><ol class="launch-list" data-launch-list aria-label={ai?'AI tools':'Ranked projects'}></ol><button class="button" data-launch-more hidden>Show more</button>
 </section>
 <script>import '../scripts/launch-directory.js';</script>
 <style is:global>
