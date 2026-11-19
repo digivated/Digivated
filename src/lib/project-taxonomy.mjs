@@ -398,3 +398,5 @@ export function aiTopics(project) {
 // Old links such as /discover?category=SaaS open the closest topic, or everything.
 const legacyLinks = { 'Design':'Design & Creative', 'Business':'Business & Operations', 'Apps':'', 'Websites':'', 'AI':'', 'SaaS':'', 'Digital Products':'', 'Creator Tools':'' };
 export const categoryFromLink = value => value in legacyLinks ? legacyLinks[value] : value;
+// Best-guess topic from a name and description (used by website import). Empty when unsure.
+export const guessCategory = text => topicRules.find(([, pattern]) => pattern.test(String(text || '')))?.[0] || '';

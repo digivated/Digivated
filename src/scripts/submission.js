@@ -127,18 +127,55 @@ if (form) {
   const onReturn = () => { if (!document.hidden && pollUntil && !resumePanel.hidden) checkPayment(true); };
   document.addEventListener('visibilitychange', onReturn);
   window.addEventListener('focus', onReturn);
+  // Website import: accepts a bare domain, fills only empty fields, shows what changed.
+  const urlInput=form.elements.url;
+  const normalizeUrl=()=>{const v=urlInput.value.trim();if(v&&!/^[a-z][a-z0-9+.-]*:\/\//i.test(v)&&/^[^\s/]+\.[^\s]+$/.test(v))urlInput.value=`https://${v}`;};
+  urlInput.addEventListener('blur',normalizeUrl);
+  urlInput.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.getElementById('project-import').click();}});
+  const SPIN='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏';
+  const iconToFile=async(logo,name)=>{
+    // Normalize any site icon (PNG, SVG, ICO…) into a square PNG for the logo field.
+    const img=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=reject;i.src=`data:${logo.type};base64,${logo.data}`;});
+    const natural=Math.max(img.naturalWidth||0,img.naturalHeight||0)||256;
+    if(natural<48&&!/svg/.test(logo.type))return null; // too small to look good
+    const side=Math.min(512,Math.max(256,natural));
+    const canvas=document.createElement('canvas');canvas.width=canvas.height=side;
+    const ctx=canvas.getContext('2d');ctx.imageSmoothingQuality='high';
+    const w=img.naturalWidth||side,h=img.naturalHeight||side,scale=Math.min(side/w,side/h);
+    ctx.drawImage(img,(side-w*scale)/2,(side-h*scale)/2,w*scale,h*scale);
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+    return blob?new File([blob],`${(name||'logo').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'logo'}-logo.png`,{type:'image/png'}):null;
+  };
+  const flash=el=>{el.classList.remove('is-imported');void el.offsetWidth;el.classList.add('is-imported');};
   document.getElementById('project-import').onclick=async()=>{
-    const importButton=document.getElementById('project-import'),message=document.getElementById('project-import-status');
-    if(!form.elements.url.reportValidity())return;
-    importButton.disabled=true;message.textContent='Reading your website…';
+    const button=document.getElementById('project-import'),label=button.querySelector('.dg-import-label'),icon=button.querySelector('.dg-import-icon'),message=document.getElementById('project-import-status');
+    const say=(state,text)=>{message.hidden=false;message.dataset.state=state;message.textContent=text;};
+    normalizeUrl();
+    if(!urlInput.reportValidity())return;
+    let host='';try{host=new URL(urlInput.value).hostname.replace(/^www\./,'');}catch{}
+    button.disabled=true;button.setAttribute('aria-busy','true');label.textContent='Importing';
+    let frame=0;const spin=setInterval(()=>{icon.textContent=SPIN[frame++%SPIN.length];},80);
+    say('loading',`Reading ${host||'your website'}…`);
     try{
       const {data:{session}}=await accountClient.auth.getSession();
       if(!session)throw Error('Sign in before importing project details.');
-      const response=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${session.access_token}`},body:JSON.stringify({action:'read-site',url:form.elements.url.value}),signal:AbortSignal.timeout(30000)});
+      const response=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${session.access_token}`},body:JSON.stringify({action:'read-site',url:urlInput.value}),signal:AbortSignal.timeout(30000)});
       const data=await response.json();if(!response.ok)throw Error(data.error||'Could not read that website.');
-      let filled=0;for(const key of ['name','description'])if(!form.elements[key].value.trim()&&data[key]){form.elements[key].value=data[key];filled++;}
-      form.dispatchEvent(new Event('input',{bubbles:true}));message.textContent=filled?'Details imported. Review the text, choose a category, and upload your logo.':'Existing details were kept. You can edit them below.';
-    }catch(error){message.textContent=error.message||'Import unavailable. You can enter your details manually.';}finally{importButton.disabled=false;}
+      let filled=0;
+      const fill=(key,value)=>{const field=form.elements[key];if(!field||!value||field.value.trim())return;field.value=value;flash(field.closest('label')||field);filled++;};
+      fill('name',data.name);fill('description',data.description);fill('social',data.social);
+      const category=form.elements.category;
+      if(data.category&&category&&!category.value&&[...category.options].some(o=>o.value===data.category)){category.value=data.category;flash(category.closest('label')||category);filled++;}
+      if(data.url&&data.url!==urlInput.value&&/^https:\/\//.test(data.url)){urlInput.value=data.url;}
+      const imageInput=document.getElementById('project-image');
+      if(data.logo&&imageInput&&!imageInput.files?.length){
+        try{const file=await iconToFile(data.logo,data.name);if(file){const dt=new DataTransfer();dt.items.add(file);imageInput.files=dt.files;imageInput.dispatchEvent(new Event('change',{bubbles:true}));flash(imageInput.closest('label')||imageInput);filled++;}}catch{}
+      }
+      form.dispatchEvent(new Event('input',{bubbles:true}));
+      if(filled)say('ok',`✓ ${filled} detail${filled===1?'':'s'} imported from ${host}. Check them below.`);
+      else say('ok','Your fields were already filled, so nothing changed.');
+    }catch(error){say('error',error.message||'Import unavailable. You can enter your details manually.');}
+    finally{clearInterval(spin);icon.textContent='⇣';label.textContent='Import from your website';button.disabled=false;button.removeAttribute('aria-busy');}
   };
   const accountStatus=document.getElementById('submission-account-status');
   const details=document.getElementById('submission-details');

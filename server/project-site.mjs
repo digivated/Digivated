@@ -39,6 +39,59 @@ export function siteDetails(html){
  const plain=s=>decode(s||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
  return {name:plain(meta['og:site_name']||meta['og:title']||html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1]).slice(0,120),description:plain(meta.description||meta['og:description']).slice(0,600)};
 }
+// Extra details for website import: a clean product name, the X handle and
+// icon candidates (best first). Kept separate so siteDetails stays minimal.
+export function siteExtras(html,pageUrl){
+ let page;try{page=new URL(pageUrl);}catch{return {name:'',social:'',icons:[]};}
+ const meta={};for(const tag of html.match(/<meta\b[^>]*>/gi)||[]){const a=attributes(tag);meta[(a.property||a.name||'').toLowerCase()]=a.content||'';}
+ const plain=s=>decode(s||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+ const label=page.hostname.replace(/^www\./i,'').split('.')[0].toLowerCase().replace(/[^a-z0-9]/g,'');
+ let name=plain(meta['og:site_name']||meta['application-name']);
+ if(!name){
+  const parts=plain(html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1]||meta['og:title']).split(/\s+[|·•–—-]\s+|\s*[|·•]\s*/).map(s=>s.trim()).filter(Boolean);
+  name=parts.find(p=>label&&p.toLowerCase().replace(/[^a-z0-9]/g,'').includes(label))||parts[0]||'';
+ }
+ const handle=(meta['twitter:site']||meta['twitter:creator']||'').trim().replace(/^@/,'');
+ const social=/^\w{1,15}$/.test(handle)?`@${handle} on X`:'';
+ const icons=[];
+ const add=(href,score)=>{try{const u=new URL(href,page);if(u.protocol==='https:'&&!u.username&&!u.password)icons.push({href:u.href,score});}catch{}};
+ for(const tag of html.match(/<link\b[^>]*>/gi)||[]){
+  const a=attributes(tag),rel=(a.rel||'').toLowerCase();if(!a.href)continue;
+  const size=Math.max(0,...String(a.sizes||'').split(/\s+/).map(s=>Number(s.split('x')[0])||0));
+  if(rel.includes('apple-touch-icon'))add(a.href,1000+size);
+  else if(/(?:^|\s)icon(?:\s|$)/.test(rel)){const type=(a.type||a.href).toLowerCase();add(a.href,/svg/.test(type)?900:/\.ico\b|x-icon/.test(type)?40:200+size*2);}
+ }
+ add('/apple-touch-icon.png',500);add('/favicon.ico',10);
+ const seen=new Set();
+ return {name:name.slice(0,120),social,icons:icons.sort((a,b)=>b.score-a.score).map(i=>i.href).filter(h=>!seen.has(h)&&seen.add(h)).slice(0,4)};
+}
+const IMAGE_TYPES=/^image\/(?:png|jpeg|webp|gif|svg\+xml|x-icon|vnd\.microsoft\.icon)\b/i;
+// Fetch a small public image (a site icon) with the same address checks as
+// readProjectSite. Any public HTTPS host is allowed, since icons often live on a CDN.
+export async function readPublicImage(value,{resolve=lookup,transport=request,maxBytes=512*1024}={}){
+ let url=new URL(value);const deadline=Date.now()+8000;
+ for(let hop=0;hop<3;hop++){
+  if(url.protocol!=='https:'||url.username||url.password||url.port&&url.port!=='443'||isIP(url.hostname))throw Error('Icon URL not allowed.');
+  let dnsTimer;let addresses;try{addresses=await Promise.race([resolve(url.hostname,{family:4,all:true}),new Promise((_,reject)=>{dnsTimer=setTimeout(()=>reject(Error('Icon lookup timed out.')),Math.min(4000,Math.max(1,deadline-Date.now())));})]);}finally{clearTimeout(dnsTimer);}
+  if(!addresses.length||addresses.some(x=>!publicIPv4(x.address)))throw Error('Icon host not allowed.');
+  const result=await new Promise((resolve,reject)=>{
+   const req=transport(url,{headers:{Accept:'image/*','User-Agent':'Digivated project verifier'},lookup:(_host,options,cb)=>options?.all?cb(null,[{address:addresses[0].address,family:4}]):cb(null,addresses[0].address,4)},res=>{
+    if([301,302,303,307,308].includes(res.statusCode)){res.resume();resolve({redirect:res.headers.location});return;}
+    const type=(res.headers['content-type']||'').split(';')[0].trim().toLowerCase();
+    if(res.statusCode!==200||!IMAGE_TYPES.test(type)){res.resume();reject(Error('Not an image.'));return;}
+    let size=0;const chunks=[];
+    res.on('data',chunk=>{size+=chunk.length;if(size>maxBytes){req.destroy(Error('Icon too large.'));return;}chunks.push(chunk);});
+    res.on('end',()=>resolve({type,data:Buffer.concat(chunks).toString('base64')}));res.on('error',reject);
+   });
+   const timer=setTimeout(()=>req.destroy(Error('Icon took too long.')),Math.min(5000,Math.max(1,deadline-Date.now())));
+   req.on('close',()=>clearTimeout(timer));req.on('error',reject);req.end();
+  });
+  if(result.data!==undefined){if(!result.data)throw Error('Empty image.');return result;}
+  if(!result.redirect)throw Error('Icon unavailable.');
+  url=new URL(result.redirect,url);
+ }
+ throw Error('Too many redirects.');
+}
 // Builders often rewrite links slightly (http, www, a trailing slash, tracking
 // parameters) or drop custom attributes, so match the listing link itself.
 function listingId(href){
