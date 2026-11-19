@@ -15,7 +15,7 @@ const pipeline = steps.map(([glyph, title, copy, reward], i) => ({ glyph, title,
 ---
 {variant === 'strip' ? (
   <details class="dg-fp dg-fp-strip" data-feedback-points>
-    <summary><span class="dg-fp-icon" aria-hidden="true"><span class="dg-fp-spark">✦</span></span><span class="dg-fp-strip-copy"><strong>Feedback points</strong> <span>Review launches, earn upvotes for yours.</span></span><span class="dg-fp-me" data-fp-me hidden></span><span class="dg-fp-toggle"><span class="dg-fp-toggle-text">How it works</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></summary>
+    <summary><span class="dg-fp-icon" aria-hidden="true"><span class="dg-fp-spark">✦</span></span><span class="dg-fp-strip-copy"><strong>Feedback points</strong> <span>Review launches, earn upvotes for yours.</span></span><span class="dg-fp-me dg-fp-meter" data-fp-me hidden><span class="dg-fp-meter-top"><b data-fp-count>0</b><small data-fp-goal>/ {BOOST_POINTS_PER_VOTE} to ▲</small></span><span class="dg-fp-meter-bar" data-fp-cells aria-hidden="true"></span></span><span class="dg-fp-toggle"><span class="dg-fp-toggle-text">How it works</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></summary>
     <ol class="dg-fp-steps">{pipeline.map(step => <li class="dg-fp-step" style={`--i:${step.i}`}><span class="dg-fp-node" aria-hidden="true">{step.glyph}</span><span class="dg-fp-step-copy"><strong>{step.title}</strong><span>{step.copy}</span></span><span class="dg-fp-reward">{step.reward}</span></li>)}</ol>
     <p class="dg-fp-foot"><a class="dg-btn dg-btn-primary" href={cta}>{ctaLabel}</a><a class="dg-btn dg-fp-rules" href="/points">Full rules</a></p>
   </details>
@@ -23,12 +23,12 @@ const pipeline = steps.map(([glyph, title, copy, reward], i) => ({ glyph, title,
   <section class="dg-fp dg-fp-full" aria-labelledby={id} data-feedback-points>
     <header class="dg-fp-head">
       <p class="dg-label"><span class="dg-fp-spark" aria-hidden="true">✦</span> Feedback points</p>
-      <span class="dg-fp-me" data-fp-me hidden></span>
+      <span class="dg-fp-me dg-fp-meter" data-fp-me hidden><span class="dg-fp-meter-top"><b data-fp-count>0</b><small data-fp-goal>/ {BOOST_POINTS_PER_VOTE} to ▲</small></span><span class="dg-fp-meter-bar" data-fp-cells aria-hidden="true"></span></span>
     </header>
     <h2 id={id}>{heading}</h2>
     <ol class="dg-fp-steps">{pipeline.map(step => <li class="dg-fp-step" style={`--i:${step.i}`}><span class="dg-fp-node" aria-hidden="true">{step.glyph}</span><span class="dg-fp-step-copy"><strong>{step.title}</strong><span>{step.copy}</span></span><span class="dg-fp-reward">{step.reward}</span></li>)}</ol>
     <div class="dg-fp-progress" data-fp-progress hidden>
-      <span class="dg-fp-bar" aria-hidden="true" data-fp-bar>[□□□□□□□□□□]</span>
+      <span class="dg-fp-meter-bar dg-fp-bar" aria-hidden="true" data-fp-bar></span>
       <span data-fp-progress-copy></span>
     </div>
     <p class="dg-fp-foot">
