@@ -316,7 +316,7 @@ if (form) {
   };
   // Badge-first free launch: reserve this project's ID up front so the real badge
   // can be installed, then one press verifies it and submits.
-  let reservedBadge=null, verifyFirst=true, reserving=null, accountUserId='';
+  let reservedBadge=null, reserving=null, accountUserId='';
   const badgeFirst=document.getElementById('badge-first');
   const reserveKey=()=>`digivated:badge-reserve:${accountUserId}`;
   const ensureReservation=async()=>{
@@ -342,17 +342,14 @@ if (form) {
     badgeFirst.hidden=!show;
     if(!show)return;
     const slot=document.getElementById('badge-first-picker');
-    if(slot.dataset.id!==reservedBadge.id){slot.dataset.id=reservedBadge.id;slot.replaceChildren(badgePicker(reservedBadge.id,{label:'Your badge'}));}
+    if(slot.dataset.id!==reservedBadge.id){slot.dataset.id=reservedBadge.id;slot.replaceChildren(badgePicker(reservedBadge.id,{label:'Your badge',aiPrompt:true}));}
     let host='your site';try{host=new URL(form.elements.url.value).hostname.replace(/^www\./,'')||host;}catch{}
     badgeFirst.querySelector('[data-badge-host]').textContent=host;
-    badgeFirst.classList.toggle('is-later',!verifyFirst);
-    document.getElementById('badge-first-later-note').hidden=!verifyFirst;
     updateButton();
   };
-  document.getElementById('badge-first-later')?.addEventListener('click',()=>{verifyFirst=false;renderBadgeFirst();updateButton();});
   form.elements.url?.addEventListener('change',()=>renderBadgeFirst());
   intent.addEventListener('change',()=>{if(intent.value==='directory')ensureReservation();renderBadgeFirst();});
-  const updateButton = () => { button.disabled = !accountVerified; button.textContent=accountVerified?(intent.value==='instant'?`Continue to payment${instantConfig?.price?` — ${new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',trailingZeroDisplay:'stripIfInteger'}).format(instantConfig.price/100)}`:''} →`:intent.value==='directory'?(reservedBadge&&verifyFirst?'Verify badge & submit':'Save and get your badge'):'Submit for review'):'Sign in to submit your project'; };
+  const updateButton = () => { button.disabled = !accountVerified; button.textContent=accountVerified?(intent.value==='instant'?`Continue to payment${instantConfig?.price?` — ${new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',trailingZeroDisplay:'stripIfInteger'}).format(instantConfig.price/100)}`:''} →`:intent.value==='directory'?(reservedBadge?'Verify badge & submit':'Save and get your badge'):'Submit for review'):'Sign in to submit your project'; };
   updateButton();
   form.addEventListener('submit', async event => {
     event.preventDefault();
@@ -365,7 +362,7 @@ if (form) {
       try { popup = window.open('', '_blank'); if (popup) { popup.opener = null; popup.document.title = 'Opening checkout…'; popup.document.body.style.cssText = 'background:#0b0b0b;color:#ccc;font:14px monospace;padding:24px'; popup.document.body.textContent = 'Opening secure checkout…'; } } catch { popup = null; }
     }
     button.disabled = true;
-    status.textContent = intent.value === 'directory' ? (reservedBadge && verifyFirst ? 'Checking your site for the badge… this can take up to 30 seconds.' : 'Saving your project…') : 'Submitting your project…';
+    status.textContent = intent.value === 'directory' ? (reservedBadge ? 'Checking your site for the badge… this can take up to 30 seconds.' : 'Saving your project…') : 'Submitting your project…';
     try {
       const values = new FormData(form);
       const payload = Object.fromEntries([...values].filter(([key])=>key!=='image'));
@@ -373,7 +370,7 @@ if (form) {
       payload.activityNotifications = values.get('activityNotifications') === 'on';
       payload.emailOutreachConsent = values.get('emailOutreachConsent') === 'on';
       const badgeFirstSubmit = payload.submissionType === 'directory' && reservedBadge;
-      if (badgeFirstSubmit) { payload.reservedId = reservedBadge.id; payload.reservedToken = reservedBadge.token; if (verifyFirst) payload.verifyBadge = true; }
+      if (badgeFirstSubmit) { payload.reservedId = reservedBadge.id; payload.reservedToken = reservedBadge.token; payload.verifyBadge = true; }
       const file = values.get('image');
       if (!file?.size) throw new Error('Add your project logo.');
       if (file?.size) {
@@ -395,7 +392,7 @@ if (form) {
       window.digivatedTrack?.('project_submit', {project_category:payload.category});
       const membership = payload.submissionType === 'founding-feature';
       form.reset();form.dispatchEvent(new Event('input'));if(session?.user?.email_confirmed_at)form.elements.email.value=session.user.email;syncIntent();updateImagePreview();
-      if (badgeFirstSubmit) { try { localStorage.removeItem(reserveKey()); } catch {} reservedBadge = null; verifyFirst = true; if (badgeFirst) badgeFirst.hidden = true; ensureReservation(); }
+      if (badgeFirstSubmit) { try { localStorage.removeItem(reserveKey()); } catch {} reservedBadge = null; if (badgeFirst) badgeFirst.hidden = true; ensureReservation(); }
       if (data.launch?.badgeVerifiedAt) {
         // Verified at submit: no badge steps left, just the locked-in launch.
         const scheduledDate = new Date(data.launch.scheduledAt);

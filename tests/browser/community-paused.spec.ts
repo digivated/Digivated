@@ -101,6 +101,9 @@ test('free launch can verify the badge and submit in one step', async ({ page })
  });
  await page.goto('http://127.0.0.1:4321/submit-project');
  await expect(page.locator('#badge-first')).toBeVisible();
+ await expect(page.locator('#badge-first .dg-badge-tip')).toContainText('ask your AI coding assistant');
+ await expect(page.locator('#badge-first-later, #badge-first-later-note')).toHaveCount(0);
+ await expect(page.getByRole('button', { name: 'Copy an AI prompt for the Dark badge' })).toBeVisible();
  await expect(page.locator('#badge-first [data-badge-style=dark] code')).toContainText(reservedId);
  await page.locator('#project-form [name=name]').fill('Studio Notes');
  await page.locator('#project-form [name=url]').fill('https://example.com');

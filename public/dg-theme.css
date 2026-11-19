@@ -26,7 +26,7 @@ html#digivated-root[data-ascii] body .dg-vote[aria-pressed=true] .dg-vote-caret{
 html#digivated-root[data-ascii] body .fl-menu-count{background-color:var(--dg-acc)!important;color:#140c22!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel #menu-notifications-badge:not([hidden]){background:var(--dg-acc)!important;color:#140c22!important}
 html#digivated-root[data-ascii] body .fl-avatar{background-color:#2a2040!important;color:var(--dg-acc-ink)!important}
-html#digivated-root[data-ascii] body .fl-badge-copy.is-copied{background:#c3a0ff26!important;border-color:var(--dg-acc)!important;color:#fff!important}
+html#digivated-root[data-ascii] body :is(.fl-badge-copy,.fl-badge-prompt).is-copied{background:#c3a0ff26!important;border-color:var(--dg-acc)!important;color:#fff!important}
 html#digivated-root[data-ascii] body .fl-badge-tag{border-color:#c3a0ff73!important;background:#c3a0ff1a!important;color:var(--dg-acc-ink)!important}
 html#digivated-root[data-ascii] body :is(.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card,.dg-thread-row,.launch-row,.dg-row,.dg-spot,.rl-card){background-image:radial-gradient(260px circle at var(--mx,-999px) var(--my,-999px),#c3a0ff14,#c3a0ff00 70%)!important}
 html#digivated-root[data-ascii] body :is(.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card){transition:border-color .25s,transform .3s var(--dg-spring),box-shadow .3s!important}
@@ -120,7 +120,9 @@ html#digivated-root[data-ascii] body .dg-badge-first-steps li:last-child>span{bo
 html#digivated-root[data-ascii] body .dg-badge-first-steps p{margin:2px 0 0!important;font-size:13.5px!important;line-height:1.5!important;color:#b9b9b9!important}
 html#digivated-root[data-ascii] body .dg-badge-first-steps strong{color:#f2f2f2!important;font-weight:600!important}
 html#digivated-root[data-ascii] body .dg-badge-first-steps b{color:#e7dcff!important;font-weight:500!important}
-html#digivated-root[data-ascii] body .dg-badge-first-later{margin:0!important}
-html#digivated-root[data-ascii] body .dg-badge-first-later[hidden]{display:none!important}
-html#digivated-root[data-ascii] body .dg-badge-first.is-later{border-style:solid!important;border-color:#2a2a2a!important;background:#0c0c0c!important}
+html#digivated-root[data-ascii] body .dg-badge-tip{margin:0!important;font-size:13px!important;line-height:1.55!important;color:#9a9a9a!important}
+html#digivated-root[data-ascii] body .dg-badge-first .fl-badges{margin:0!important}
+html#digivated-root[data-ascii] body .dg-badge-first .fl-badge-bar{flex-wrap:wrap!important;align-items:center!important;row-gap:10px!important}
+html#digivated-root[data-ascii] body .dg-badge-first .fl-badge-bar>div:not(.fl-badge-actions){flex:1 1 100%!important}
+html#digivated-root[data-ascii] body .dg-badge-first .fl-badge-bar>.fl-badge-actions{margin-left:auto!important}
 }
