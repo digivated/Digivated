@@ -2,6 +2,7 @@ import { requestCardInteraction } from './card-actions.js';
 import { inLaunchBatch, launchTimestamp, launchBatchLabel, readRankingPeriod, fairOrder } from '../lib/launch-calendar.mjs';
 import { aiGroups, aiTopics, categoryFromLink } from '../lib/project-taxonomy.mjs';
 import { cardIconMarkup } from '../lib/card-icons.mjs';
+import { projectMarks } from '../lib/project-marks.mjs';
 const root=document.querySelector('[data-launch-directory]');
 if(root){
  const list=root.querySelector('[data-launch-list]'),status=root.querySelector('[data-launch-status]'),more=root.querySelector('[data-launch-more]');
@@ -74,7 +75,9 @@ if(root){
    const row=text('li','','launch-row');row.dataset.projectId=p.id;if(!ai&&i<3)row.classList.add('ranking-front-runner');row.append(text('span',!ai&&i<3?String(i+1):String(i+1).padStart(2,'0'),'launch-rank'));
    const image=document.createElement('img');image.className='launch-logo';image.src=safe(p.image);image.alt='';image.loading=i<3?'eager':'lazy';image.width=64;image.height=64;image.onerror=()=>{image.hidden=true;};
    if(ai)row.append(image);else{const artwork=text('a','','ranking-artwork');artwork.href=safe(p.pageUrl||'/discover#project-'+p.id);artwork.setAttribute('aria-label','Explore '+p.name);artwork.append(image,text('span',p.name.slice(0,1).toUpperCase(),'ranking-image-fallback'));row.append(artwork);}
-   const copy=text('div','','launch-copy'),heading=text('h3',''),link=text('a',p.name);link.href=safe(p.pageUrl||'/discover#project-'+p.id);heading.append(link);copy.append(heading,text('p',p.description||''));
+   const copy=text('div','','launch-copy'),heading=text('h3',''),link=text('a',p.name);link.href=safe(p.pageUrl||'/discover#project-'+p.id);heading.append(link);
+   for(const key of projectMarks(p)){const badge=text('span',key==='member'?'Member':key==='spot'?'Spot':key==='fresh'?'New this week':'↗ Rising',key==='member'?'dg-badge dg-badge-member':key==='rising'?'dg-badge dg-badge-boost':'dg-badge');if(key==='member'){const mark=text('span','','dg-member-mark');mark.setAttribute('aria-hidden','true');badge.title='Digivated member';badge.prepend(mark);}heading.append(badge);}
+   copy.append(heading,text('p',p.description||''));
    const meta=text('div','','launch-meta');meta.append(text('span',p.category||'Project'));if(!ai&&Number.isFinite(launchTimestamp(p))){const date=text('time',(p.publishedAt?'Published ':'Listed ')+new Date(launchTimestamp(p)).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}));date.dateTime=new Date(launchTimestamp(p)).toISOString();meta.append(date);}const visit=text('a',ai?'Visit website ↗':'Visit website');if(!ai){const icon=text('span','');icon.innerHTML=cardIconMarkup('external');visit.append(icon);}visit.href=safe(p.url);visit.target='_blank';visit.rel='noopener noreferrer';meta.append(visit);copy.append(meta);row.append(copy);
    const vote=text('button','','launch-vote');vote.type='button';vote.setAttribute('aria-pressed',String(liked(p)));vote.setAttribute('aria-label',(liked(p)?'Remove upvote for ':'Upvote ')+p.name);if(pendingVotes.has(p.id))vote.setAttribute('aria-busy','true');const voteIcon=text('span','');voteIcon.innerHTML=cardIconMarkup('like');vote.append(voteIcon,text('span',p.fresh?'·':String(p.votes?.[period]||0)));if(p.fresh)vote.title='Upvote counts for this week’s launches show from Tuesday 14:00 UTC.';
    if(!ai)vote.append(text('span','Upvote','ranking-vote-label'));

@@ -6,6 +6,7 @@ import { api, session } from './discussion.js';
 import { boostVotes } from '../lib/feedback-score.mjs';
 import { safeSearchHref } from '../lib/discovery-search.mjs';
 import { cardIconMarkup } from '../lib/card-icons.mjs';
+import { projectMarks } from '../lib/project-marks.mjs';
 
 // Homepage: spot cards (side rails on wide screens, a grid elsewhere) and three
 // stacked launch lists. One catalogue request feeds everything.
@@ -20,6 +21,12 @@ const el = (tag, text, className) => { const node = document.createElement(tag);
 
 // Membership projects show the Digivated member mark (not a generic "featured").
 const memberBadge = () => { const badge = el('span', null, 'dg-badge dg-badge-member'); badge.title = 'Digivated member'; badge.append(el('span', null, 'dg-member-mark'), 'Member'); return badge; };
+const markBadge = key => {
+  if (key === 'member') return memberBadge();
+  const rising = key === 'rising';
+  return el('span', rising ? '↗ Rising' : key === 'fresh' ? 'New this week' : 'Spot', rising ? 'dg-badge dg-badge-boost' : 'dg-badge');
+};
+const appendMarks = (title, project) => { for (const key of projectMarks(project)) title.append(markBadge(key)); };
 const memberTag = () => { const tag = el('em', null, 'dg-spot-tag dg-spot-member'); tag.append(el('span', null, 'dg-member-mark'), 'Member'); return tag; };
 const icon = name => { const t = document.createElement('template'); t.innerHTML = cardIconMarkup(name); return t.content.firstElementChild; };
 const local = value => { const href = safeSearchHref(value); return href && href.startsWith('/') ? href : ''; };
@@ -97,7 +104,7 @@ function renderSpots(featured, sponsored, instant) {
   if (!home) return;
   const seen = new Set();
   // Every member project always appears, then paid spots from the last 7 days.
-  const filled = [...featured.map(p => ({ ...p, spot: 'Member' })), ...sponsored.map(p => ({ ...p, spot: 'Paid spot' }))]
+  const filled = [...featured.map(p => ({ ...p, spot: 'Member' })), ...sponsored.map(p => ({ ...p, spot: 'Spot' }))]
     .filter(p => !seen.has(p.id) && seen.add(p.id));
   const price = instant ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }).format(instant.price / 100) : '';
   // Cached spots are painted first; skip the rebuild when the fresh data matches.
@@ -182,8 +189,7 @@ function row(p, key, index) {
   const votes = Number(p.votes?.[period]) || 0;
   const place = key === 'previous' ? placeOf(p.id) : 0;
   if (place) { const medal = el('span', `★ #${place} of the week`, `dg-badge dg-badge-medal is-${MEDAL[place]}`); title.append(medal); }
-  if (p.status === 'featured') title.append(memberBadge());
-  else if (p.sponsored) title.append(el('span', 'Spot', 'dg-badge'));
+  appendMarks(title, p);
   const lift = key === 'current' && !fresh ? boostVotes(p.boost) : 0;
   if (lift) { const b = el('span', '⚡ Boosted', 'dg-badge dg-badge-boost'); b.title = `+${lift} from ${p.boost} feedback points this week`; title.append(b); }
   main.append(title, el('p', p.description || 'Explore this project and meet its maker.', 'dg-tagline'));

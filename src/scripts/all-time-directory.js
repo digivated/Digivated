@@ -5,6 +5,7 @@ import { projectFeedbackHref } from '../lib/project-links.mjs';
 import { safeSearchHref } from '../lib/discovery-search.mjs';
 import { categoryFromLink } from '../lib/project-taxonomy.mjs';
 import { DIRECTORY_SORTS, sortKeys, filterProjects, sortProjects, sectionLabel, categoryCounts } from '../lib/directory-sort.mjs';
+import { projectMarks } from '../lib/project-marks.mjs';
 
 // /discover: the all-time index. Same rows as the homepage, plus search, sorts,
 // category chips, a top-three podium and a project dialog. Visiting a product
@@ -21,6 +22,12 @@ const el = (tag, text, className) => { const node = document.createElement(tag);
 
 // Membership projects show the Digivated member mark (not a generic "featured").
 const memberBadge = () => { const badge = el('span', null, 'dg-badge dg-badge-member'); badge.title = 'Digivated member'; badge.append(el('span', null, 'dg-member-mark'), 'Member'); return badge; };
+const markBadge = key => {
+  if (key === 'member') return memberBadge();
+  const rising = key === 'rising';
+  return el('span', rising ? '↗ Rising' : key === 'fresh' ? 'New this week' : 'Spot', rising ? 'dg-badge dg-badge-boost' : 'dg-badge');
+};
+const appendMarks = (title, project) => { for (const key of projectMarks(project)) title.append(markBadge(key)); };
 const icon = name => { const t = document.createElement('template'); t.innerHTML = cardIconMarkup(name); return t.content.firstElementChild; };
 const local = value => { const href = safeSearchHref(value); return href && href.startsWith('/') ? href : ''; };
 const outbound = value => { try { const url = new URL(safeSearchHref(value)); if (!/^https?:$/.test(url.protocol)) return ''; if (!url.searchParams.has('ref')) url.searchParams.set('ref', 'digivated'); return url.href; } catch { return ''; } };
@@ -115,9 +122,7 @@ if (root) {
     if (page) open.href = page; else { open.type = 'button'; open.addEventListener('click', () => openProject(p.id, open)); }
     open.setAttribute('aria-label', `Open ${p.name}`);
     title.append(open);
-    if (p.status === 'featured') title.append(memberBadge());
-    if (Number(p.rising) > 0 && !p.fresh) title.append(el('span', '↗ Rising', 'dg-badge dg-badge-boost'));
-    if (p.fresh) title.append(el('span', 'New this week', 'dg-badge'));
+    appendMarks(title, p);
     main.append(title, el('p', p.description || 'Explore this project and meet its maker.', 'dg-tagline'));
     const meta = el('p', null, 'dg-meta');
     meta.append(el('span', p.category || 'Project'));
@@ -168,6 +173,7 @@ if (root) {
     finally {
       pending.delete(p.id);
       const focused = document.activeElement === button;
+      renderPodium();
       for (const node of document.querySelectorAll(`[data-vote-id="${CSS.escape(p.id)}"]`)) node.replaceWith(vote(p));
       const next = document.querySelector(`.dg-dir-row[data-project-id="${CSS.escape(p.id)}"] .dg-vote, .wall-focus [data-vote-id="${CSS.escape(p.id)}"]`);
       if (focused) next?.focus({ preventScroll: true });
@@ -191,6 +197,7 @@ if (root) {
       if (page) a.href = page; else { a.type = 'button'; a.addEventListener('click', () => openProject(p.id, a)); }
       a.setAttribute('aria-label', `#${i + 1} all time: ${p.name}, ${p.votes.all} upvotes`);
       a.append(el('span', `#${i + 1}`, 'dg-dir-podium-rank'), logo(p, 'dg-logo'), el('strong', p.name), el('small', `▲ ${number.format(p.votes.all)} · ${p.category || 'Project'}`));
+      appendMarks(a, p);
       li.append(a); return li;
     }));
   }

@@ -136,20 +136,19 @@ html[data-ascii] body .fl-help summary{min-height:0!important;color:var(--fl-cop
 html[data-ascii] body .fl-help ul{margin:10px 0 0!important;padding-left:20px!important;color:var(--fl-muted)!important;font-size:12px;display:grid;gap:4px}
 
 /* ---- Submit flow ---- */
-html[data-ascii] body .fl-progress{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0 0 24px!important;padding:0!important;list-style:none!important;background-color:var(--fl-bg)!important}
-html[data-ascii] body .fl-progress li{border-bottom:2px solid var(--fl-line)!important}
-html[data-ascii] body .fl-progress li.is-done{border-bottom-color:var(--fl-ok)!important}
-html[data-ascii] body .fl-progress li.is-current{border-bottom-color:#e8e8e8!important}
-html[data-ascii] body .fl-progress a{display:block;min-height:0!important;padding:12px 6px!important;color:var(--fl-muted)!important;font-size:12px;text-decoration:none!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-html[data-ascii] body .fl-progress li.is-done a{color:var(--fl-ok)!important}
-html[data-ascii] body .fl-progress li.is-current a{color:#fff!important}
+html[data-ascii] body .fl-progress{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:0 0 24px!important;padding:0!important;list-style:none!important;background-color:var(--fl-bg)!important;border-bottom:2px solid var(--fl-line)!important}
+html[data-ascii] body .fl-progress li{min-width:0;border-bottom:0!important}
+html[data-ascii] body .fl-progress a{display:inline-block;min-height:0!important;padding:12px 0 10px!important;margin-bottom:-2px;border-bottom:2px solid transparent;color:var(--fl-muted)!important;font-size:12px;text-decoration:none!important;white-space:nowrap}
+html[data-ascii] body .fl-progress li.is-done a{color:var(--fl-ok)!important;border-bottom-color:var(--fl-ok)!important}
+html[data-ascii] body .fl-progress li.is-current a{color:#fff!important;border-bottom-color:#e8e8e8!important}
 html[data-ascii] body .submission-form fieldset[id^=sub-step]{scroll-margin-top:64px}
 html[data-ascii] body #project-form.is-saved :is(fieldset,#submission-progress,.submission-review>h2,.submission-review>p:not(#submission-status),.submission-review>label,.submission-review>button[type=submit]){display:none!important}
 html[data-ascii] body #submission-badge:not([hidden]){display:grid!important;gap:12px;padding:clamp(18px,3vw,26px)!important;border:1px solid var(--fl-line)!important;border-radius:10px!important;background-color:var(--fl-panel)!important}
 html[data-ascii] body #submission-badge h3{margin:0!important;font-size:20px!important}
 html[data-ascii] body #submission-badge .eyebrow{margin:0!important;color:var(--fl-ok)!important}
 html[data-ascii] body .submission-account-callout{padding:20px!important;border:1px solid var(--fl-line)!important;border-radius:10px!important;background-color:var(--fl-panel)!important}
-@media (max-width:560px){html[data-ascii] body .fl-progress a{font-size:11px;padding:10px 2px!important}}
+@media (max-width:560px){html[data-ascii] body .fl-progress{gap:8px}html[data-ascii] body .fl-progress a{font-size:11px;padding:10px 0 8px!important}}
+@media (max-width:340px){html[data-ascii] body .fl-progress{flex-wrap:wrap;row-gap:2px}html[data-ascii] body .fl-progress li{flex:1 1 42%}html[data-ascii] body .fl-progress li:nth-child(even){text-align:right}}
 
 /* ---- Notifications ---- */
 html[data-ascii] body .fl-notify{max-width:820px!important;margin-inline:auto!important}

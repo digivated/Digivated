@@ -100,6 +100,7 @@ test('free launch can verify the badge and submit in one step', async ({ page })
   return route.fulfill({ status: 201, json: { ok: true, id: reservedId, status: 'pending', launch: { kind: 'free', scheduledAt: '2026-11-30T14:00:00.000Z', badgeVerifiedAt: '2026-11-19T00:00:00.000Z' } } });
  });
  await page.goto('http://127.0.0.1:4321/submit-project');
+ await expect(page.locator('[data-tier=founding-feature] .dg-tier-head b')).toHaveText('$5');
  await expect(page.locator('#badge-first')).toBeVisible();
  await expect(page.locator('#badge-first .dg-badge-tip')).toContainText('ask your AI coding assistant');
  await expect(page.locator('#badge-first-later, #badge-first-later-note')).toHaveCount(0);

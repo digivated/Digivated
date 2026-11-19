@@ -25,6 +25,7 @@ html[data-ascii] body .dg-quiet-link:hover{color:#fff!important;text-decoration:
 html[data-ascii] body .dg-muted{color:var(--dgb-muted)!important}
 html[data-ascii] body .dg-badge::before{content:'[';margin-right:2px;opacity:.6}html[data-ascii] body .dg-badge::after{content:']';margin-left:2px;opacity:.6}
 html[data-ascii] body .dg-badge{display:inline-flex!important;align-items:center;min-height:18px;padding:0!important;border:0!important;font-family:var(--fl-mono)!important;font-size:9.5px!important;letter-spacing:.08em!important;text-transform:uppercase!important;color:#bdbdbd!important;font-weight:400!important}
+html[data-ascii] body .launch-copy h3{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 html[data-ascii] body :is(.dg-badge-boost,.dg-badge-top){color:#d9c6ff!important}
 /* Live signal: a three-character ASCII level meter, animated by /dg-motion.js. */
 html[data-ascii] body .dg-dot{display:inline-block;flex:none;width:3ch;min-width:3ch;font-family:var(--fl-mono)!important;font-size:11px!important;font-weight:400!important;line-height:1!important;letter-spacing:0!important;text-transform:none!important;color:var(--dgb-ok)!important;text-shadow:0 0 6px #8fd6a466;white-space:pre;overflow:hidden}
