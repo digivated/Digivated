@@ -3,20 +3,20 @@ const $ = id => document.getElementById(id);
 const state = { csrf: '', kind: 'submission', panel:'overview', items: [], next: null, record: null, dirty: false, busy: false, request: 0, editorRequest: 0, overviewRequest:0 };
 const labels = { submission: 'Submissions', resource: 'Articles', product: 'Products', comments: 'Comments', threads: 'Threads', carousel: 'Full carousels', accounts: 'Accounts' };
 const stageLabels = {
-  review: 'Manual review',
-  badge: 'Waiting for badge',
-  scheduled: 'Badge verified',
-  payment: 'Waiting for payment',
-  spotlight: 'Spotlight review',
+  review: 'Needs a look',
+  badge: 'Badge missing',
+  scheduled: 'Date locked',
+  payment: 'Instant, not paid',
+  spotlight: 'Member spotlight',
 };
 function launchDetails(record) {
-  if (record.promotion?.included === 'instant-launch') return record.promotion.verified ? 'Instant Publishing · Payment verified' : 'Instant Publishing · Waiting for payment';
-  if (record.promotion?.included === 'founding-membership') return 'Member launch';
+  if (record.promotion?.included === 'instant-launch') return record.promotion.verified ? 'Instant. Payment in.' : 'Instant. Waiting for payment.';
+  if (record.promotion?.included === 'founding-membership') return 'Member launch. Spotlight review.';
   if (record.launch?.kind !== 'free') return '';
-  if (record.status !== 'pending') return 'Free launch';
+  if (record.status !== 'pending') return 'Free launch. Live on its date.';
   const time = Date.parse(record.launch.scheduledAt);
-  const date = Number.isFinite(time) ? new Date(time).toLocaleDateString(undefined, {dateStyle:'medium',timeZone:'UTC'}) + ' (UTC)' : 'No launch date';
-  return `Free launch · ${record.launch.badgeVerifiedAt ? 'Badge verified' : 'Waiting for badge'} · ${date}`;
+  const date = Number.isFinite(time) ? new Date(time).toLocaleDateString(undefined, {dateStyle:'medium',timeZone:'UTC'}) + ' UTC' : 'No launch date';
+  return record.launch.badgeVerifiedAt ? `Free. Badge verified. Locked for ${date}.` : `Free. Badge not on the site yet. Target ${date}.`;
 }
 function updatedLabel(date = new Date()) {
   return 'Updated ' + date.toLocaleTimeString(undefined, {hour:'2-digit', minute:'2-digit', second:'2-digit'});
@@ -24,7 +24,7 @@ function updatedLabel(date = new Date()) {
 const statusOptions = { submission: ['pending','approved','featured','rejected','archived'], resource: ['draft','published','archived'], product: ['draft','published','archived'], comments: ['pending','approved','rejected'], threads: ['published','removed'], carousel: ['available'], accounts: ['verified','unverified','blocked'] };
 const element = (tag, text, className) => { const node = document.createElement(tag); if (text !== undefined) node.textContent = text; if (className) node.className = className; return node; };
 function message(text, editor = false) { const node = $(editor ? 'owner-editor-status' : 'owner-status'); node.textContent = text; }
-function signedOut() { const keyField = $('owner-gumroad-token'); if (keyField) keyField.value = ''; state.request++;state.overviewRequest++; state.csrf = ''; state.items = []; state.record = null; state.dirty = false; $('owner-editor').close(); $('owner-fields').replaceChildren(); $('owner-private-details').replaceChildren(); $('owner-list').replaceChildren();document.querySelectorAll('[data-overview-number]').forEach(n=>n.textContent='—');$('owner-activity-chart').replaceChildren();$('owner-pipeline').replaceChildren(); $('owner-dashboard').hidden = true; $('owner-login').hidden = false; $('owner-logout').hidden = true; }
+function signedOut() { const keyField = $('owner-gumroad-token'); if (keyField) keyField.value = ''; state.request++;state.overviewRequest++; state.csrf = ''; state.items = []; state.record = null; state.dirty = false; $('owner-editor').close(); $('owner-fields').replaceChildren(); $('owner-private-details').replaceChildren(); $('owner-list').replaceChildren();document.querySelectorAll('[data-overview-number],[data-flow-number]').forEach(n=>n.textContent='0');$('owner-activity-chart').replaceChildren();$('owner-pipeline').replaceChildren(); $('owner-dashboard').hidden = true; $('owner-login').hidden = false; $('owner-logout').hidden = true; }
 async function api(path = '', body) {
   const response = await fetch(`/api/admin${path}`, { method: body ? 'POST' : 'GET', cache: 'no-store', credentials: 'same-origin', headers: body ? { 'Content-Type': 'application/json', 'X-Admin-CSRF': state.csrf } : {}, ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(20000) });
   const data = await response.json().catch(() => ({}));
@@ -46,7 +46,7 @@ function filters() {
   $('owner-search-label').textContent = state.kind === 'accounts' ? 'Search loaded accounts' : 'Search loaded items';
   $('owner-search').placeholder = state.kind === 'accounts' ? 'Email or account ID' : 'Name, title, or creator';
   $('owner-content-title').textContent=labels[state.kind];
-  $('owner-content-description').textContent={submission:'Review incoming projects, then approve, feature, or archive them.',resource:'Write and manage articles. Drafts stay private until published.',product:'Manage existing products and preserve purchase access.',threads:'Remove, restore or pin forum threads. Comments inside threads are moderated under Comments.',comments:'Review comments and feedback with their publication permissions.',carousel:'Read full slides and references using your owner access.',accounts:'Find accounts and manage sign-in access.'}[state.kind];
+  $('owner-content-description').textContent={submission:'Free launches go live on their date once the badge is verified. Open a project to feature, archive, or fix a stuck one.',resource:'Write and manage articles. Drafts stay private until published.',product:'Manage existing products and preserve purchase access.',threads:'Remove, restore or pin forum threads. Comments inside threads are moderated under Comments.',comments:'Review comments and feedback with their publication permissions.',carousel:'Read every slide and reference. Owner access includes the full member carousels.',accounts:'Find accounts and manage sign-in access.'}[state.kind];
 }
 function panel(name){
  state.panel=name;
@@ -58,8 +58,8 @@ async function refreshOverview(){
  const request=++state.overviewRequest;const button=$('owner-overview-refresh');button.disabled=true;$('owner-overview-status').textContent='Loading workspace totals…';
  try{
   const data=await api('?action=overview');if(request!==state.overviewRequest||!state.csrf)return;
-  const s=data.submissions,values={...s.stages,pending:s.statuses.pending||0,published:(s.statuses.approved||0)+(s.statuses.featured||0),featured:s.statuses.featured||0,newsReview:data.news.review,total:s.total,comments:data.comments.statuses.pending||0,articles:data.articles.total,carousels:data.carousels,products:data.products.total};
-  document.querySelectorAll('[data-overview-number]').forEach(n=>n.textContent=Number(values[n.dataset.overviewNumber] ?? 0).toLocaleString());
+  const s=data.submissions,values={...s.stages,pending:s.statuses.pending||0,published:(s.statuses.approved||0)+(s.statuses.featured||0),featured:s.statuses.featured||0,newsReview:data.news.review,newsPublished:data.news.published,total:s.total,comments:data.comments.statuses.pending||0,articles:data.articles.total,carousels:data.carousels,products:data.products.total};
+  document.querySelectorAll('[data-overview-number],[data-flow-number]').forEach(n=>n.textContent=Number(values[n.dataset.overviewNumber || n.dataset.flowNumber] ?? 0).toLocaleString());
   const activity=$('owner-activity-chart');activity.replaceChildren();const max=Math.max(1,...s.activity.map(day=>day.count));
   for(const day of s.activity){const li=element('li');const label=new Date(day.date+'T12:00:00Z').toLocaleDateString(undefined,{weekday:'short',timeZone:'UTC'});li.setAttribute('aria-label',`${day.date}: ${day.count} submissions`);const track=element('div',undefined,'owner-chart-track'),bar=element('span',undefined,'owner-chart-fill');bar.style.height=(day.count/max*100)+'%';track.append(bar);li.append(element('strong',String(day.count)),track,element('span',label));activity.append(li);}
   $('owner-activity-total').textContent=s.activity.reduce((sum,day)=>sum+day.count,0).toLocaleString();
@@ -124,7 +124,7 @@ function renderList() {
       row.append(copy,actions);list.append(row);continue;
     }
     const mark=element('span',(record.name||record.title||'?').slice(0,2).toUpperCase(),'owner-row-mark');mark.setAttribute('aria-hidden','true');row.append(mark);
-    copy.append(element('span', record.status, 'tag')); if (record.promotion?.requested && record.promotion.included !== 'instant-launch') { const member=record.promotion.included==='founding-membership'; copy.append(element('span', record.promotion.verified ? (member ? 'Membership feature reviewed' : 'Promo purchase verified') : (member ? 'Membership feature, review required' : 'Promo — verify purchase'), 'tag')); } if (record.pick) copy.append(element('span','Digivated Pick','tag'));
+    copy.append(element('span', record.status, 'tag')); if (record.promotion?.requested && record.promotion.included !== 'instant-launch') { const member=record.promotion.included==='founding-membership'; copy.append(element('span', record.promotion.verified ? (member ? 'Membership feature reviewed' : 'Promo purchase verified') : (member ? 'Member spotlight, review required' : 'Promo, verify the purchase'), 'tag')); } if (record.pick) copy.append(element('span','Digivated Pick','tag'));
     copy.append(element('h2', record.title || record.name)); copy.append(element('p', [record.creator,record.category,record.date?.slice(0,10)].filter(Boolean).join(' · '),'quiet'));
     const launch = state.kind === 'submission' ? launchDetails(record) : '';
     if (launch) copy.append(element('p', launch, 'quiet'));
@@ -269,7 +269,7 @@ function renderEditor(record) {
     if(heading){const details=element('details',undefined,'owner-editor-section'),summary=element('summary','Launch page & screenshots'),fields=element('div',undefined,'owner-launch-fields');details.append(summary,fields);heading.before(details);let next=heading.nextSibling;heading.remove();const statusField=$('edit-status').closest('label');while(next&&next!==statusField){const current=next;next=current.nextSibling;fields.append(current);}}
   }
   const save=element('button','Save changes','button');save.type='submit';save.value='save';$('owner-editor-actions').append(save);
-  if(state.kind==='submission')for(const [status,label] of [['approved',record.launch?.kind==='free'&&record.status==='pending'?'Publish now (override queue)':'Approve & publish'],['featured','Make Featured Build'],['rejected','Reject'],['archived','Archive']]){
+  if(state.kind==='submission')for(const [status,label] of [['approved',record.launch?.kind==='free'&&record.status==='pending'?'Publish now':'Approve & publish'],['featured','Make Featured Build'],['rejected','Reject'],['archived','Archive']]){
     const button=element('button',status==='approved'&&record.status==='pending'&&!record.promotion?.requested&&record.launch?.kind!=='free'?'Approve with edits':label,status==='approved'?'button primary':'button');button.type='submit';button.value=status;button.disabled=status==='featured'&&!['approved','featured'].includes(record.status);$('owner-editor-actions').append(button);
   }
   else {const button=element('button','Publish','button');button.type='submit';button.value='published';$('owner-editor-actions').append(button);}
