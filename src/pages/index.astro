@@ -22,7 +22,7 @@ import '../styles/home-about.css';
             <a class="dg-btn" href="#this-week">Browse launches</a>
           </div>
           <dl class="dg-hero-stats">
-            <div class="dg-hero-stat is-countdown"><dt>Next free launch</dt><dd><time id="queue-countdown" role="timer" aria-live="off">—</time></dd></div>
+            <div class="dg-hero-stat is-countdown"><dt>Next free launch</dt><dd><time id="queue-countdown" role="timer" aria-live="off">—</time><span class="dg-week-bar" data-week-bar aria-hidden="true"></span></dd></div>
             <div class="dg-hero-stat"><dt>Products</dt><dd data-stat-products>—</dd></div>
             <div class="dg-hero-stat"><dt><span class="dg-dot" aria-hidden="true"></span>Browsing now</dt><dd data-site-online>—</dd></div>
           </dl>
@@ -51,6 +51,7 @@ import '../styles/home-about.css';
 
 <script>
   const countdown = document.querySelector<HTMLTimeElement>('#queue-countdown');
+  const weekBar = document.querySelector<HTMLElement>('[data-week-bar]');
 
   function updateCountdown() {
     if (!countdown) return;
@@ -66,6 +67,13 @@ import '../styles/home-about.css';
     const hours = Math.floor(minutes / 60) % 24;
     countdown.dateTime = new Date(target).toISOString();
     countdown.textContent = `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes % 60).padStart(2, '0')}m`;
+    // How far through the weekly cycle we are, drawn in ASCII.
+    if (weekBar) {
+      const filled = Math.round((1 - (target - now.getTime()) / (7 * 86_400_000)) * 16);
+      const done = document.createElement('b');
+      done.textContent = '▓'.repeat(Math.max(0, Math.min(16, filled)));
+      weekBar.replaceChildren(done, '░'.repeat(16 - done.textContent.length));
+    }
   }
 
   updateCountdown();

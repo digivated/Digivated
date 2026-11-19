@@ -18,6 +18,19 @@
     }, { passive: true });
   }
 
+  // Live signal: every .dg-dot is a tiny ASCII level meter (▁▂▃▄▅▆▇█).
+  const LEVELS = '▁▂▃▄▅▆▇█';
+  const meter = (t, seed) => [0, 1, 2].map(k => {
+    const wave = Math.sin(t * 0.55 + k * 1.15 + seed) * (0.62 + 0.38 * Math.sin(t * 0.17 + k + seed));
+    return LEVELS[Math.max(0, Math.min(7, Math.round(3.5 + 3.5 * wave)))];
+  }).join('');
+  const paintSignals = t => document.querySelectorAll('.dg-dot').forEach((dot, i) => { dot.textContent = meter(t, i * 0.9); });
+  paintSignals(2);
+  if (!reduced) {
+    let tick = 2;
+    setInterval(() => { if (!document.hidden) paintSignals(++tick); }, 120);
+  }
+
   const setHeroHeight = () => {
     for (const hero of doc.querySelectorAll('.dg-hero')) hero.style.setProperty('--dg-hero-h', `${hero.offsetHeight + 120}px`);
   };
