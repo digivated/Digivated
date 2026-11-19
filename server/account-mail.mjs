@@ -111,18 +111,27 @@ export async function sendAwardEmail(record, rank, weekStart, env = process.env,
 // Free launches only go live once the badge is on the maker's site.
 const launchDay = record => new Date(record.launch.scheduledAt).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'America/New_York' });
 const badgeTip = 'Built with React, Vite, Lovable or Bolt? Paste the badge into index.html, inside <body>, so it’s in the page’s HTML.';
+const badgeWhen = record => Date.parse(record.launch.scheduledAt) > Date.now() ? `is booked for ${launchDay(record)}` : 'is waiting to go live';
+const badgeSteps = 'Copy the badge in your dashboard, paste it in your footer, and publish. Then press Verify badge and submit. We find it and lock your launch date.';
 const badgeMessages = {
+  finish: record => ({
+    subject: `One step left to launch ${record.name || 'your project'}`,
+    label: 'DIGIVATED / LAUNCH', title: 'Your badge is the last step.',
+    paragraphs: [`${record.name || 'Your project'} ${badgeWhen(record)}. It stays off the board until the Digivated badge is on your site.`, badgeSteps],
+    cta: { label: 'Open your badge', href: `${ACCOUNT}#project-${encodeURIComponent(record.id)}` },
+    after: [badgeTip],
+  }),
   nudge: record => ({
     subject: `One step left to launch ${record.name || 'your project'}`,
     label: 'DIGIVATED / LAUNCH', title: 'Add your badge to launch.',
-    paragraphs: [`${record.name || 'Your project'} is booked for ${launchDay(record)}, but it only goes live once the Digivated badge is on your site.`, 'Copy the badge from your dashboard, paste it into your site’s footer and publish. We check your site every day, so once it’s there you’re set.'],
-    cta: { label: 'Get your badge', href: `${ACCOUNT}#project-${encodeURIComponent(record.id)}` },
+    paragraphs: [`${record.name || 'Your project'} ${badgeWhen(record)}. It only goes live once the Digivated badge is on your site.`, badgeSteps],
+    cta: { label: 'Open your badge', href: `${ACCOUNT}#project-${encodeURIComponent(record.id)}` },
     after: [badgeTip],
   }),
   'last-call': record => ({
     subject: `${record.name || 'Your project'} launches ${launchDay(record)}. Your badge is still missing`,
     label: 'DIGIVATED / LAST CALL', title: 'Your launch is almost here.',
-    paragraphs: [`${record.name || 'Your project'} launches ${launchDay(record)}, but we still can’t find the badge on ${record.url}.`, 'Add it before then and you’ll go live with this week’s launches. Without it, your launch waits until you add it.'],
+    paragraphs: [`${record.name || 'Your project'} launches ${launchDay(record)}, and the badge is still missing on ${record.url}.`, 'Paste it, publish, and press Verify badge and submit before then. Without the badge, the launch waits.'],
     cta: { label: 'Add your badge now', href: `${ACCOUNT}#project-${encodeURIComponent(record.id)}` },
     after: [badgeTip],
   }),
