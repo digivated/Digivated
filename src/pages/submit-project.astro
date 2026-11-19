@@ -89,7 +89,7 @@ import '../styles/submission-flow.css';
         <!-- Launch tiers, LaunchKiwi-style. The cards drive the select below, which the
              submission script and checkout already use. -->
         <div class="dg-tiers" role="radiogroup" aria-label="Launch option" data-tiers>
-          <label class="dg-tier" data-tier="directory"><input type="radio" name="dg-tier" value="directory" checked/><span class="dg-tier-head"><strong>Free launch</strong><b>$0</b></span><span class="dg-tier-sub">Join the weekly queue.</span><ul><li>Launches on a Monday, 7–14 days out</li><li>Add our badge to your site and verify it once</li><li>Permanent listing and discussion page</li></ul></label>
+          <label class="dg-tier" data-tier="directory"><input type="radio" name="dg-tier" value="directory" checked/><span class="dg-tier-head"><strong>Free launch</strong><b>$0</b></span><span class="dg-tier-sub">Join the weekly queue.</span><ul><li>Launches on a Monday, 7–14 days out</li><li>Add our badge to your site. We verify it automatically</li><li>Permanent listing and discussion page</li></ul></label>
           <label class="dg-tier dg-tier-instant" data-tier="instant" hidden><input type="radio" name="dg-tier" value="instant" disabled/><span class="dg-tier-flag">Fastest</span><span class="dg-tier-head"><strong>Instant Publishing</strong><b data-tier-price>$3</b></span><span class="dg-tier-sub"><span aria-hidden="true">⚡</span> Live instantly</span><ul><li>No queue and no badge needed</li><li>Live as soon as you pay</li><li>Homepage spot for 7 days</li><li>Permanent listing and discussion page</li></ul></label>
           <label class="dg-tier" data-tier="founding-feature"><input type="radio" name="dg-tier" value="founding-feature"/><span class="dg-tier-head"><strong>Membership Spotlight</strong><b>Members</b></span><span class="dg-tier-sub">Included with Membership.</span><ul><li>A reviewed spotlight placement</li><li>Full News briefings</li></ul></label>
         </div>
@@ -100,7 +100,7 @@ import '../styles/submission-flow.css';
             <option value="founding-feature">Membership Spotlight</option>
           </select>
         </label>
-        <p id="free-launch-help" class="field-help">After you save, you’ll get a badge for your website. Verify it once, and your project launches on its date. <span id="free-launch-date"></span></p>
+        <p id="free-launch-help" class="field-help">After you save, you’ll get a badge for your website. Add it and we’ll find it automatically, then your project launches on its date. <span id="free-launch-date"></span></p>
         <p id="instant-launch-help" class="field-help" hidden><strong>⚡ Instant, no waiting:</strong> pay once at checkout and your project goes live automatically and takes an open homepage spot for 7 days.</p>
         <div id="membership-fields" class="submission-option-detail" hidden><p>Sign in on the <a href="/membership#member-sign-in">membership page</a> first to request your included spotlight. We review each request.</p></div>
       </fieldset>
