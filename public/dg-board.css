@@ -577,3 +577,11 @@ html[data-ascii] body .dg-tier-flag{position:absolute;top:-9px;right:14px;paddin
 html[data-ascii] body .launch-points-hint{margin:4px 0 12px!important;font-family:var(--fl-mono)!important;font-size:11.5px!important;line-height:1.6!important;color:#b9a6e0!important}
 html[data-ascii] body .launch-points-hint a{color:#fff!important}
 }
+/* Phones: keep "category · by maker" on one line so a wrapped line never starts with a stray dot. */
+@layer flow {
+@media (max-width:640px){
+ html[data-ascii] body .dg-meta{flex-wrap:nowrap;min-width:0;overflow:hidden;white-space:nowrap}
+ html[data-ascii] body .dg-meta span{flex:none}
+ html[data-ascii] body .dg-meta span:last-child{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+}
+}
