@@ -321,13 +321,14 @@ if (form) {
   const reserveKey=()=>`digivated:badge-reserve:${accountUserId}`;
   const ensureReservation=async()=>{
     if(reservedBadge||reserving||!accountVerified||!accountUserId)return reserving;
-    try{const saved=JSON.parse(localStorage.getItem(reserveKey())||'null');if(saved?.id&&saved?.token){reservedBadge=saved;renderBadgeFirst();return;}}catch{}
+    try{const saved=JSON.parse(localStorage.getItem(reserveKey())||'null');if(typeof saved?.id==='string'&&typeof saved?.token==='string'&&saved.token){reservedBadge=saved;renderBadgeFirst();return;}}catch{}
     reserving=(async()=>{
       try{
         const {data:{session}}=await accountClient.auth.getSession();if(!session)return;
         const response=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${session.access_token}`},body:JSON.stringify({action:'reserve-badge'}),signal:AbortSignal.timeout(15000)});
         const data=await response.json().catch(()=>({}));
-        if(!response.ok||!data.id)return;
+        // Only a signed reservation counts; anything else keeps the classic flow.
+        if(!response.ok||typeof data.id!=='string'||typeof data.token!=='string'||!data.token)return;
         reservedBadge={id:data.id,token:data.token};
         try{localStorage.setItem(reserveKey(),JSON.stringify(reservedBadge));}catch{}
         renderBadgeFirst();

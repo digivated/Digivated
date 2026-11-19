@@ -79,3 +79,37 @@ test('Share a Product offers all activity alerts and submits the exact checkbox 
  expect((await request).postDataJSON().activityNotifications).toBe(false);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });
+
+test('free launch can verify the badge and submit in one step', async ({ page }) => {
+ await page.setViewportSize({ width: 390, height: 900 });
+ await page.addInitScript(() => {
+  localStorage.setItem('sb-fixture-auth-token', JSON.stringify({
+   access_token:'fixture-token', refresh_token:'fixture-refresh',
+   expires_at:Math.floor(Date.now()/1000)+3600,
+   user:{id:'fixture-owner',email:'fixture@example.com',email_confirmed_at:'2026-11-01T00:00:00Z'},
+  }));
+ });
+ await page.route('**/api/project-account**', route => route.fulfill({ json: route.request().url().includes('action=config') ? { ready: true, url: 'https://fixture.supabase.co', key: 'fixture-key' } : { email: 'fixture@example.com', submissions: [], mailboxVerified: true } }));
+ const reservedId = '123e4567-e89b-42d3-a456-426614174055';
+ let submitted = null;
+ await page.route('**/api/submissions**', route => {
+  if (route.request().method() !== 'POST') return route.fulfill({ json: { instant: null } });
+  const body = route.request().postDataJSON();
+  if (body.action === 'reserve-badge') return route.fulfill({ json: { id: reservedId, token: 'signed-fixture' } });
+  submitted = body;
+  return route.fulfill({ status: 201, json: { ok: true, id: reservedId, status: 'pending', launch: { kind: 'free', scheduledAt: '2026-11-30T14:00:00.000Z', badgeVerifiedAt: '2026-11-19T00:00:00.000Z' } } });
+ });
+ await page.goto('http://127.0.0.1:4321/submit-project');
+ await expect(page.locator('#badge-first')).toBeVisible();
+ await expect(page.locator('#badge-first [data-badge-style=dark] code')).toContainText(reservedId);
+ await page.locator('#project-form [name=name]').fill('Studio Notes');
+ await page.locator('#project-form [name=url]').fill('https://example.com');
+ await page.locator('#project-form [name=description]').fill('Simple project notes for independent developers.');
+ await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('Other');
+ await page.locator('#project-form [name=creator]').fill('Test Creator');
+ await page.locator('#project-image').setInputFiles({ name: 'logo.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aFJkAAAAASUVORK5CYII=', 'base64') });
+ await page.getByRole('button', { name: 'Verify badge & submit' }).click();
+ await expect(page.locator('#submission-status')).toContainText('Badge verified');
+ expect(submitted).toMatchObject({ reservedId, reservedToken: 'signed-fixture', verifyBadge: true });
+ await expect(page.locator('#submission-badge-title')).toHaveText('Badge found. You’re in the launch.');
+});
