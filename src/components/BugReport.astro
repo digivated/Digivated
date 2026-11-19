@@ -1,0 +1,64 @@
+---
+// Footer "Report a bug": a small form that opens the visitor's email app with the
+// report filled in, or copies it. Same flow as invstr.app. Nothing is stored.
+const to = 'digivatedbiz@gmail.com';
+---
+<dialog id="dg-bug" class="dg-bug" aria-labelledby="dg-bug-title">
+  <form id="dg-bug-form" method="dialog">
+    <header class="dg-bug-head"><h2 id="dg-bug-title">Report a bug</h2><button type="button" class="dg-bug-close" data-bug-close aria-label="Close">✕</button></header>
+    <p class="dg-bug-note">Tell us what broke and we’ll fix it. Don’t include passwords.</p>
+    <label for="dg-bug-what">What went wrong?</label>
+    <textarea id="dg-bug-what" required minlength="10" maxlength="1500" rows="4" placeholder="The upvote button didn’t respond…"></textarea>
+    <label for="dg-bug-steps">How did it happen? <span>(optional)</span></label>
+    <textarea id="dg-bug-steps" maxlength="1000" rows="2" placeholder="What did you click, and on which page?"></textarea>
+    <div class="dg-bug-actions"><button type="submit" class="dg-btn dg-btn-primary">Email report →</button><button type="button" class="dg-btn" data-bug-copy>Copy report</button></div>
+    <p class="dg-bug-note">Opens your email app, addressed to {to}. Review it, then send.</p>
+    <p class="dg-bug-note" data-bug-status role="status" aria-live="polite"></p>
+    <textarea class="dg-bug-fallback" data-bug-fallback aria-label="Report text to copy" rows="5" readonly hidden></textarea>
+  </form>
+</dialog>
+<script>
+  const dialog = document.getElementById('dg-bug') as HTMLDialogElement | null;
+  const form = document.getElementById('dg-bug-form') as HTMLFormElement | null;
+  if (dialog && form && typeof dialog.showModal === 'function') {
+    const to = 'digivatedbiz@gmail.com';
+    const status = dialog.querySelector('[data-bug-status]') as HTMLElement;
+    const fallback = dialog.querySelector('[data-bug-fallback]') as HTMLTextAreaElement;
+    const field = (id: string) => (document.getElementById(id) as HTMLTextAreaElement).value.trim();
+    const report = () => `Digivated bug report\n\nWhat went wrong:\n${field('dg-bug-what')}\n\nSteps to reproduce:\n${field('dg-bug-steps') || 'Not provided'}\n\nPage: ${location.origin}${location.pathname}\nScreen: ${innerWidth}×${innerHeight}\nBrowser: ${navigator.userAgent}`;
+    document.addEventListener('click', event => {
+      const trigger = (event.target as Element)?.closest?.('[data-bug-open]');
+      if (!trigger) return;
+      event.preventDefault();
+      status.textContent = ''; fallback.hidden = true;
+      dialog.showModal();
+    });
+    dialog.querySelector('[data-bug-close]')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      location.href = `mailto:${to}?subject=${encodeURIComponent('Digivated bug report')}&body=${encodeURIComponent(report())}`;
+      status.textContent = 'Send it from your email app. If it didn’t open, use Copy report.';
+    });
+    dialog.querySelector('[data-bug-copy]')?.addEventListener('click', async () => {
+      if (!form.reportValidity()) return;
+      try { await navigator.clipboard.writeText(report()); status.textContent = `Copied. Email it to ${to}.`; }
+      catch { fallback.value = report(); fallback.hidden = false; fallback.focus(); fallback.select(); status.textContent = `Copy the text below and email it to ${to}.`; }
+    });
+  }
+</script>
+<style is:global>
+  html[data-ascii] body dialog.dg-bug{width:min(520px,calc(100% - 32px));max-height:calc(100svh - 48px);overflow:auto;margin:auto;padding:22px!important;border:1px solid #3b2f52!important;border-radius:0!important;background:#0b0a0e!important;background-image:radial-gradient(70% 120% at 100% 0%,#c3a0ff14,transparent 60%)!important;color:#e8e8e8;box-shadow:0 24px 80px #000c}
+  html[data-ascii] body dialog.dg-bug::backdrop{background:#000000b8;backdrop-filter:blur(2px)}
+  html[data-ascii] body .dg-bug-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+  html[data-ascii] body .dg-bug h2{margin:0!important;font-family:var(--fl-mono,ui-monospace,monospace)!important;font-size:12px!important;font-weight:500!important;letter-spacing:.14em!important;text-transform:uppercase;color:#e7dcff!important}
+  html[data-ascii] body .dg-bug-close{min-height:36px!important;padding:0 6px!important;font-size:14px!important;color:#9a8cb5!important}
+  html[data-ascii] body .dg-bug label{display:block;margin:16px 0 6px!important;font-family:var(--fl-sans,inherit);font-size:13px!important;font-weight:500!important;color:#d8d8d8}
+  html[data-ascii] body .dg-bug label span,html[data-ascii] body .dg-bug-note{color:#8a8a8a!important}
+  html[data-ascii] body .dg-bug-note{margin:8px 0 0!important;font-size:12px!important;line-height:1.6!important}
+  html[data-ascii] body .dg-bug textarea{display:block;width:100%;margin:0!important;padding:11px 12px!important;resize:vertical;border:1px solid #2b2536!important;border-radius:0!important;background:#050505!important;color:#f2f2f2!important;font:16px/1.55 var(--fl-sans,inherit)!important}
+  html[data-ascii] body .dg-bug textarea:focus-visible{outline:1px solid #c3a0ff;outline-offset:0}
+  html[data-ascii] body .dg-bug textarea[hidden]{display:none!important}
+  html[data-ascii] body .dg-bug-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:18px}
+</style>
