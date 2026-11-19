@@ -139,8 +139,7 @@ export function makeBadgeCheckHandler(deps={}){
   const env=deps.env||process.env;
   const silent=new URL(req.url||'/api/badge-check','https://digivated.invalid').searchParams.get('silent')==='1';
   const cronOk=bearerMatches(req.headers.authorization,env.CRON_SECRET);
-  const silentOk=silent&&bearerMatches(req.headers.authorization,env.BADGE_CHECK_SILENT);
-  if(req.method!=='GET'||(silent?!cronOk&&!silentOk:!cronOk))return send(401,{error:'Unauthorized.'});
+  if(req.method!=='GET'||!cronOk)return send(401,{error:'Unauthorized.'});
   try{
    const result=await checkPendingBadges(deps.redis||redisClient(env),{now:(deps.now||Date.now)(),...(deps.readSite?{readSite:deps.readSite}:{}),...(deps.mail?{mail:deps.mail}:{}),...(silent?{silent:true,maxChecks:80,budgetMs:100_000,mail:async()=>'skipped'}:{})});
    console.info('Badge check run',{waiting:result.waiting,verified:result.verified,reminded:result.reminded,errors:result.errors,silent});

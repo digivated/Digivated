@@ -104,11 +104,10 @@ test('a silent check queues a found badge and does not email', async () => {
 });
 
 test('badge check endpoint requires the cron secret', async () => {
-  const handler = makeBadgeCheckHandler({ env: { CRON_SECRET: 's', BADGE_CHECK_SILENT: 'quiet' }, redis: async () => [] });
+  const handler = makeBadgeCheckHandler({ env: { CRON_SECRET: 's' }, redis: async () => [] });
   const res = { headers: {}, setHeader(k, v) { this.headers[k] = v; }, end(body) { this.body = body; } };
   await handler({ method: 'GET', headers: {} }, res); assert.equal(res.statusCode, 401);
-  await handler({ method: 'GET', url: '/api/badge-check?silent=1', headers: { authorization: 'Bearer quiet' } }, res); assert.equal(res.statusCode, 200);
   await handler({ method: 'GET', url: '/api/badge-check?silent=1', headers: {} }, res); assert.equal(res.statusCode, 401);
-  await handler({ method: 'GET', headers: { authorization: 'Bearer quiet' } }, res); assert.equal(res.statusCode, 401);
+  await handler({ method: 'GET', url: '/api/badge-check?silent=1', headers: { authorization: 'Bearer s' } }, res); assert.equal(res.statusCode, 200);
   await handler({ method: 'GET', headers: { authorization: 'Bearer s' } }, res); assert.equal(res.statusCode, 200);
 });
