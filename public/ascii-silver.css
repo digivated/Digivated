@@ -445,11 +445,6 @@
  html#digivated-root[data-ascii] .ascii-workshop-signals .ascii-drift {opacity:.10!important;}
  html#digivated-root[data-ascii] .ascii-workshop-signals .ascii-drift:nth-child(4) {opacity:.07!important;}
  /* Rankings retain the exact order and voting handlers, with consistent gutters. */
- html#digivated-root[data-ascii] .rankings-directory .launch-list {gap:40px!important;}
- html#digivated-root[data-ascii] .rankings-directory .ranking-front-runner {padding:0!important;row-gap:20px!important;}
- html#digivated-root[data-ascii] .rankings-directory .ranking-front-runner .launch-rank {position:static!important;grid-column:1/-1!important;grid-row:1!important;line-height:1.4!important;}
- html#digivated-root[data-ascii] .rankings-directory .ranking-front-runner .ranking-artwork {grid-row:2!important;}
- html#digivated-root[data-ascii] .rankings-directory .launch-row:not(.ranking-front-runner) {padding-block:28px!important;}
  /* Size the outer columns to their contents so the links cannot overlap them. */
  @media (min-width:1281px) {
   html#digivated-root[data-ascii] .compact-site-header .header-inner {
@@ -496,7 +491,6 @@
   html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.news-masthead,.creator-social-heading,.notifications-heading) {margin-bottom:32px!important;}
   html#digivated-root[data-ascii] .home-launch-heading {align-items:start!important;flex-wrap:wrap;gap:12px!important;}
   html#digivated-root[data-ascii] body.home-refresh .home-launch-row {gap:14px!important;}
-  html#digivated-root[data-ascii] .rankings-directory .launch-list {gap:36px!important;}
  }
 }
 
