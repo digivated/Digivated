@@ -102,7 +102,16 @@ import '../styles/submission-flow.css';
             <option value="founding-feature">Member launch</option>
           </select>
         </label>
-        <p id="free-launch-help" class="field-help">After you save, add the badge to your site. We’ll find it, and you launch on your date. <span id="free-launch-date"></span></p>
+        <p id="free-launch-help" class="field-help">Add your badge, then verify and submit in one step. <span id="free-launch-date"></span></p>
+        <div id="badge-first" class="dg-badge-first" hidden>
+          <ol class="dg-badge-first-steps">
+            <li><span aria-hidden="true">1</span><p><strong>Copy your badge.</strong> It’s already linked to this project.</p></li>
+            <li><span aria-hidden="true">2</span><p><strong>Paste it on <b data-badge-host>your site</b></strong>, like in the footer, and publish.</p></li>
+            <li><span aria-hidden="true">3</span><p><strong>Press Verify badge &amp; submit.</strong> We find it and lock in your launch.</p></li>
+          </ol>
+          <div id="badge-first-picker"></div>
+          <p class="field-help dg-badge-first-later" id="badge-first-later-note">Can’t edit your site right now? <button type="button" class="dg-link-button" id="badge-first-later">Submit now and add the badge later</button></p>
+        </div>
         <p id="instant-launch-help" class="field-help" hidden><strong>⚡ No waiting:</strong> pay once and you’re live, with a homepage spot for 7 days.</p>
         <div id="membership-fields" class="submission-option-detail" hidden><p>Verify your membership on the <a href="/shop#member-sign-in">Shop page</a> first. We take a quick look, then add your member badge.</p></div>
       </fieldset>

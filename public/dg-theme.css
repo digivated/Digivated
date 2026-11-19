@@ -108,3 +108,19 @@ html#digivated-root[data-ascii] body .dg-import-status[data-state=error]{--st:#e
 html#digivated-root[data-ascii] body .is-imported :is(input,select,textarea){animation:dg-imported 1.8s ease-out}
 @keyframes dg-imported{0%,35%{box-shadow:0 0 0 2px #c3a0ff99,0 0 18px -4px #c3a0ff}100%{box-shadow:0 0 0 0 #c3a0ff00}}
 @media (prefers-reduced-motion:reduce){html#digivated-root[data-ascii] body .is-imported :is(input,select,textarea){animation:none}}
+
+/* ---------- Submit: badge-first free launch ---------- */
+@layer flow{
+html#digivated-root[data-ascii] body .dg-badge-first{display:grid;gap:14px;margin:6px 0 4px!important;padding:16px!important;border:1px dashed #4a3c66!important;border-radius:4px!important;background:#c3a0ff08!important}
+html#digivated-root[data-ascii] body .dg-badge-first[hidden]{display:none!important}
+html#digivated-root[data-ascii] body .dg-badge-first-steps{display:grid;gap:10px;margin:0!important;padding:0!important;list-style:none!important}
+html#digivated-root[data-ascii] body .dg-badge-first-steps li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start;margin:0!important;padding:0!important}
+html#digivated-root[data-ascii] body .dg-badge-first-steps li>span{display:grid;place-items:center;width:24px;height:24px;border:1px solid #4a3c66!important;background:#120e1a!important;font-family:var(--fl-mono)!important;font-size:11px!important;color:#d9c6ff!important}
+html#digivated-root[data-ascii] body .dg-badge-first-steps li:last-child>span{border-color:#c3a0ff!important;background:#c3a0ff29!important;color:#fff!important}
+html#digivated-root[data-ascii] body .dg-badge-first-steps p{margin:2px 0 0!important;font-size:13.5px!important;line-height:1.5!important;color:#b9b9b9!important}
+html#digivated-root[data-ascii] body .dg-badge-first-steps strong{color:#f2f2f2!important;font-weight:600!important}
+html#digivated-root[data-ascii] body .dg-badge-first-steps b{color:#e7dcff!important;font-weight:500!important}
+html#digivated-root[data-ascii] body .dg-badge-first-later{margin:0!important}
+html#digivated-root[data-ascii] body .dg-badge-first-later[hidden]{display:none!important}
+html#digivated-root[data-ascii] body .dg-badge-first.is-later{border-style:solid!important;border-color:#2a2a2a!important;background:#0c0c0c!important}
+}
