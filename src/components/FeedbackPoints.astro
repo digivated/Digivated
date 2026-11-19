@@ -6,9 +6,9 @@ import '../styles/feedback-points.css';
 const { variant = 'full', heading = 'Help other makers. Lift your own launch.', cta = '/discover?sort=needs', ctaLabel = 'Find a product that needs feedback' } = Astro.props;
 const id = `fp-${Math.random().toString(36).slice(2, 8)}`;
 const steps = [
-  ['↗', 'Visit a launch', `Open it with the Visit button and look around for ${REVIEW_MIN_SECONDS}+ seconds.`],
-  ['✎', 'Leave feedback', 'Say something specific. +5 points, or +10 for a detailed comment.'],
-  ['▲', 'Get bonus upvotes', `Every ${BOOST_POINTS_PER_VOTE} points you earn this week adds an upvote to your launch.`],
+  ['↗', 'Visit a launch', `Hit Visit and look around for ${REVIEW_MIN_SECONDS}+ seconds.`],
+  ['✎', 'Leave feedback', 'Be specific. +5 points, or +10 for a detailed one.'],
+  ['▲', 'Get bonus upvotes', `Every ${BOOST_POINTS_PER_VOTE} points this week adds an upvote to yours.`],
 ];
 ---
 {variant === 'strip' ? (

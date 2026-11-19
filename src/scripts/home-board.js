@@ -473,7 +473,7 @@ if (board) {
       const status = home.querySelector('[data-featured-status]');
       if (status) {
         status.hidden = !!featured.length || ok;
-        if (!status.hidden) status.textContent = 'Featured projects are temporarily unavailable. Browse the directory instead.';
+        if (!status.hidden) status.textContent = 'Spots didn’t load. Browse the directory instead.';
       }
       if (instant) writeCache({ instant });
       renderSpots(featured, sponsoredFrom(projects), instant || cached?.instant || null);

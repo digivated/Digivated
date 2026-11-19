@@ -11,7 +11,7 @@ import '../styles/submission-flow.css';
   <header class="page-intro submission-intro">
 
     <h1>Submit a project.</h1>
-    <p class="lede">Add your details, pick how to launch, and track every step from your dashboard.</p>
+    <p class="lede">Add your details, pick a launch, and track it all from your dashboard.</p>
   </header>
 
   <FreeLaunchGuide />
@@ -22,7 +22,7 @@ import '../styles/submission-flow.css';
     <form class="submission-form" id="project-form" action="/api/submissions" method="post">
       <div id="submission-account-callout" class="submission-account-callout">
         <strong>Create a free account to submit</strong>
-        <p>Sign in to submit, track your review, and see private feedback.</p>
+        <p>It’s free, and you’ll see your launch status and feedback.</p>
         <div class="submission-account-actions"><a class="button primary" href="/login?mode=signup&amp;next=%2Fsubmit-project">Create an account</a><a href="/login?next=%2Fsubmit-project">Already have one? Sign in</a></div>
       </div>
       <p id="submission-account-status" class="submission-account-status" role="status" aria-live="polite" hidden></p>
@@ -39,10 +39,10 @@ import '../styles/submission-flow.css';
 
       <fieldset id="sub-step-details">
         <legend><span class="submission-step-label">Project details</span>Tell us about your project</legend>
-        <p class="field-help">Import a name and description from your website. You can edit both.</p><label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
+        <p class="field-help">We can pull these from your site. Edit anything.</p><label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
         <label>Project URL<input name="url" type="url" placeholder="https://your-project.com" maxlength="500" required/></label>
         <button type="button" id="project-import">[ Import website details ]</button><p id="project-import-status" role="status"></p>
-        <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. Say what it does and who it’s for. Skip hashtags and slogans.</span></label>
+        <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. What it does and who it’s for.</span></label>
         <label>
           <span id="project-category-label">Category</span>
           <span class="submission-category-control">
@@ -56,7 +56,7 @@ import '../styles/submission-flow.css';
               <option value="Other">Other</option>
             </select>
           </span>
-          <span id="project-category-help" class="field-help">Pick what it mainly helps people do. Using AI? Choose the job it does, like Video &amp; Audio or Marketing &amp; SEO.</span>
+          <span id="project-category-help" class="field-help">Choose what it mainly does. For AI tools, pick the job, like Video &amp; Audio.</span>
         </label>
         <fieldset class="submission-pricing" aria-describedby="project-pricing-help">
           <legend>Project pricing <span class="quiet">(optional)</span></legend>
@@ -72,13 +72,13 @@ import '../styles/submission-flow.css';
 
       <fieldset id="sub-step-logo">
         <legend><span class="submission-step-label">Logo</span>Project logo</legend>
-        <label class="submission-upload">Project logo<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Required. Use your logo, not a screenshot. JPG, PNG, or WebP, up to 10 MB. A square image with a transparent background looks best.</span></label>
+        <label class="submission-upload">Project logo<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Your logo, not a screenshot. Square JPG, PNG or WebP, up to 10 MB.</span></label>
         <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project logo preview"/><span id="project-image-name"></span></div>
       </fieldset>
 
       <fieldset id="sub-step-you">
         <legend><span class="submission-step-label">Creator details</span>About you</legend>
-        <p class="submission-section-help">We’ll use these details to review your submission. Your email stays private.</p>
+        <p class="submission-section-help">Your email stays private.</p>
         <div class="form-row"><label>Creator name<input name="creator" placeholder="Your name" autocomplete="name" maxlength="100" required/></label><label>Email<input name="email" placeholder="you@example.com" type="email" autocomplete="email" maxlength="254" required/><span class="field-help">Use the email linked to your account.</span></label></div>
         <label>Social handle <span class="quiet">(optional)</span><input name="social" maxlength="200" placeholder="@yourhandle — include the platform"/></label>
         <label>Notes for the review <span class="quiet">(optional)</span><textarea name="notes" rows="3" maxlength="2000" placeholder="Anything else you’d like us to know?"></textarea><span class="field-help">Only the review team sees these notes.</span></label>
@@ -100,8 +100,8 @@ import '../styles/submission-flow.css';
             <option value="founding-feature">Member launch</option>
           </select>
         </label>
-        <p id="free-launch-help" class="field-help">After you save, you’ll get a badge for your website. Add it and we’ll find it automatically, then your project launches on its date. <span id="free-launch-date"></span></p>
-        <p id="instant-launch-help" class="field-help" hidden><strong>⚡ Instant, no waiting:</strong> pay once at checkout and your project goes live automatically and takes an open homepage spot for 7 days.</p>
+        <p id="free-launch-help" class="field-help">After you save, add the badge to your site. We’ll find it, and you launch on your date. <span id="free-launch-date"></span></p>
+        <p id="instant-launch-help" class="field-help" hidden><strong>⚡ No waiting:</strong> pay once and you’re live, with a homepage spot for 7 days.</p>
         <div id="membership-fields" class="submission-option-detail" hidden><p>Verify your membership on the <a href="/shop#member-sign-in">Shop page</a> first. We take a quick look, then add your member badge.</p></div>
       </fieldset>
 
@@ -110,9 +110,9 @@ import '../styles/submission-flow.css';
         <p>Track your project’s status in <a href="/account">Your Projects</a>.</p>
         <label class="honeypot" aria-hidden="true">Leave this empty<input name="company" tabindex="-1" autocomplete="off"/></label>
         <label class="consent"><input name="consent" type="checkbox" required checked/><span>I confirm that I own or am authorized to submit this project and allow Digivated to display the submitted information and project logo.</span></label>
-        <label class="consent"><input name="emailOutreachConsent" type="checkbox" checked/><span>Send me one follow-up email about my submission, my account, and how to opt in to weekly updates. I will not be subscribed automatically.</span></label>
+        <label class="consent"><input name="emailOutreachConsent" type="checkbox" checked/><span>Send me one follow-up email about my launch. No newsletter unless I opt in.</span></label>
         <label class="consent"><input name="activityNotifications" type="checkbox" aria-describedby="submission-notification-help" checked/><span><strong>Turn on all activity notifications</strong></span></label>
-        <p id="submission-notification-help" class="field-help">Get replies, follows, messages, and project feedback on Digivated. Approval alerts are automatic. Manage your choices in <a href="/notifications">Notifications</a>.</p>
+        <p id="submission-notification-help" class="field-help">Replies, follows, messages and feedback. Change this any time in <a href="/notifications">Notifications</a>.</p>
         <button class="button primary" type="submit" disabled>Sign in to submit your project</button>
         <noscript>Enable JavaScript to submit your project securely.</noscript>
         <p class="form-status" id="submission-status" role="status" aria-live="polite" tabindex="-1"></p>
@@ -120,7 +120,7 @@ import '../styles/submission-flow.css';
           <p class="eyebrow">STEP 1 OF 4 DONE</p>
           <h3 id="submission-badge-title" tabindex="-1">Project saved. Next: add your badge.</h3>
           <div id="submission-badge-tracker"></div>
-          <ol class="badge-next-steps fl-howto"><li><strong>Pick a badge style below and copy its code.</strong> Every style shows your live upvotes and links to your listing.</li><li><strong>Paste it into your website’s HTML</strong> (for example the footer) and publish the change.</li><li><strong>Press “Check my website” below.</strong> Once we find the badge, your launch is locked in. You can also do this later from your dashboard.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help"><strong>Verification is required.</strong> Once it’s verified, your project goes live on launch day. No approval needed.</p>
+          <ol class="badge-next-steps fl-howto"><li><strong>Pick a badge style and copy the code.</strong></li><li><strong>Paste it into your site</strong>, like in the footer, and publish.</li><li><strong>Hit “Check my website.”</strong> Once we see it, your launch is locked in.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help">Once verified, you go live on launch day.</p>
           <div id="submission-badge-picker"></div>
           <div class="submission-account-actions fl-actions">
             <button class="button primary fl-btn-primary" id="submission-badge-verify" type="button" hidden>Check my website</button>

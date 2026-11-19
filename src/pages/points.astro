@@ -4,12 +4,12 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
 import { BOOST_POINTS_PER_VOTE, REVIEW_MIN_SECONDS, DAILY_POINT_CAP } from '../lib/feedback-score.mjs';
 import '../styles/all-time-directory.css';
 const faq = [
-  ['Who can earn points?', 'Anyone with a free Digivated account. You don’t need a launch to earn them, but they only lift your ranking once you have one.'],
-  ['What counts as a visit?', `Clicking a product’s Visit button on Digivated (on the homepage, in the directory or in a featured spot), then spending at least ${REVIEW_MIN_SECONDS} seconds on the product. When you come back to the Digivated tab, a small “How was it?” card appears. Your answer there is what earns points.`],
-  ['What makes a comment count?', 'Say something specific: what worked, what confused you, what you’d change. About 8 words is the minimum, and 25+ thoughtful words earns the detailed bonus. Links and repetitive text earn nothing.'],
+  ['Who can earn points?', 'Anyone with a free account. Points lift your ranking once you have a launch.'],
+  ['What counts as a visit?', `Hit Visit on any product and spend ${REVIEW_MIN_SECONDS}+ seconds there. When you come back, a “How was it?” card pops up. Answer it to earn points.`],
+  ['What makes a comment count?', 'Be specific: what worked, what didn’t, what you’d change. 8+ words counts. 25+ thoughtful words gets the bonus.'],
   ['How much can I earn?', `+5 for a specific comment, +10 for a detailed one. Once per product, up to ${DAILY_POINT_CAP} points a day.`],
-  ['How do points help my launch?', `Every ${BOOST_POINTS_PER_VOTE} points you earn during your launch week adds +1 to your launch score, the number that orders this week’s launches. Rows with a lift show a ⚡ Boosted badge.`],
-  ['Does the maker see my comment?', 'Yes. It’s posted to the project’s public discussion and the maker gets a notification, so make it useful.'],
+  ['How do points help my launch?', `Every ${BOOST_POINTS_PER_VOTE} points in your launch week adds +1 to your score. Boosted launches show a ⚡ badge.`],
+  ['Does the maker see my comment?', 'Yes. It’s posted publicly and the maker gets notified, so make it count.'],
 ];
 ---
 <Platform title="Feedback points" description="Give useful feedback to other indie makers on Digivated, earn points, and get bonus upvotes on your own launch.">
@@ -19,7 +19,7 @@ const faq = [
       <div class="dg-hero-copy">
         <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>Feedback points</p>
         <h1 id="dg-points-title">Give good feedback. Get a <span class="dg-hero-accent">bigger launch.</span></h1>
-        <p class="dg-hero-lede">Every maker here wants honest eyes on their work. Help them out, and Digivated helps you back with bonus upvotes on your own launch.</p>
+        <p class="dg-hero-lede">Help other makers with honest feedback. You’ll earn bonus upvotes for your own launch.</p>
         <div class="dg-hero-actions"><a class="dg-btn dg-btn-primary" href="/discover?sort=needs">Find a product to review →</a><a class="dg-btn" href="/submit-project">Launch your project</a></div>
       </div>
     </section>
