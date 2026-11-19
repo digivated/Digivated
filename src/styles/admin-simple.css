@@ -45,6 +45,20 @@ html#digivated-root body.owner .owner-todo em { font:normal 12px ui-monospace,Me
 html#digivated-root body.owner .owner-allclear { margin:0; padding:16px; border:1px dashed var(--ow-line-hi); border-radius:2px; color:var(--ow-copy); font-size:14px; }
 html#digivated-root body.owner .owner-allclear span { font-family:ui-monospace,Menlo,monospace; color:#8fd6a4; }
 
+/* Automatic launch path */
+html#digivated-root body.owner .owner-flow-note { margin:0 0 10px; max-width:68ch; font-size:13px; line-height:1.6; color:var(--ow-muted); }
+html#digivated-root body.owner .owner-flow { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin:0 0 8px; padding:0; list-style:none; }
+html#digivated-root body.owner .owner-flow button { display:grid; gap:4px; width:100%; min-height:84px; padding:12px; border:1px solid var(--ow-line)!important; border-radius:2px; background:var(--ow-panel)!important; color:var(--ow-ink)!important; text-align:left; cursor:pointer; box-shadow:none!important; }
+html#digivated-root body.owner .owner-flow button:hover { border-color:var(--ow-accent)!important; }
+html#digivated-root body.owner .owner-flow button>span { font:500 11px/1 ui-monospace,Menlo,monospace; color:var(--ow-accent); }
+html#digivated-root body.owner .owner-flow b { font-size:13px; font-weight:600; }
+html#digivated-root body.owner .owner-flow small { font:500 20px/1 ui-monospace,Menlo,monospace; color:var(--ow-ink); font-variant-numeric:tabular-nums; }
+html#digivated-root body.owner .owner-sections { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin:0 0 22px; }
+html#digivated-root body.owner .owner-section-card { display:flex; align-items:baseline; justify-content:space-between; gap:12px; min-height:64px; padding:14px 16px; border:1px solid var(--ow-line)!important; border-radius:2px; background:var(--ow-panel)!important; color:var(--ow-ink)!important; text-align:left; text-decoration:none; cursor:pointer; box-shadow:none!important; }
+html#digivated-root body.owner .owner-section-card:hover { border-color:var(--ow-line-hi)!important; background:var(--ow-raised)!important; }
+html#digivated-root body.owner .owner-section-card span { font-size:13px; color:var(--ow-copy); }
+html#digivated-root body.owner .owner-section-card strong { font:500 18px/1 ui-monospace,Menlo,monospace; color:var(--ow-ink); }
+
 /* At a glance */
 html#digivated-root body.owner .owner-metrics { grid-template-columns:repeat(6,minmax(0,1fr))!important; gap:6px!important; margin:0 0 18px!important; }
 html#digivated-root body.owner .owner-metric { padding:12px 14px!important; border:1px solid var(--ow-line)!important; border-radius:2px!important; background:var(--ow-panel)!important; }
@@ -81,7 +95,7 @@ html#digivated-root body.owner .owner-row[data-status=pending] .tag:first-child 
 html#digivated-root body.owner .owner-row :is(.button,.actions .button) { min-height:36px!important; padding:6px 12px!important; border:1px solid var(--ow-line-hi)!important; border-radius:2px!important; }
 html#digivated-root body.owner .owner-row .actions { display:flex; flex-wrap:wrap; gap:6px!important; }
 html#digivated-root body.owner .owner-publish-note { margin-top:18px!important; font-size:11.5px!important; }
-@media (max-width:1100px) { html#digivated-root body.owner .owner-metrics { grid-template-columns:repeat(3,minmax(0,1fr))!important; } }
+@media (max-width:1100px) { html#digivated-root body.owner .owner-metrics { grid-template-columns:repeat(3,minmax(0,1fr))!important; } html#digivated-root body.owner .owner-flow { grid-template-columns:repeat(2,minmax(0,1fr)); } html#digivated-root body.owner .owner-sections { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media (max-width:860px) {
  html#digivated-root body.owner .owner-workspace-grid { grid-template-columns:1fr!important; gap:16px!important; }
  html#digivated-root body.owner .owner-sidebar { position:static!important; }
@@ -94,6 +108,8 @@ html#digivated-root body.owner .owner-publish-note { margin-top:18px!important; 
 }
 @media (max-width:560px) {
  html#digivated-root body.owner .owner-metrics { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+ html#digivated-root body.owner .owner-flow { grid-template-columns:1fr 1fr; }
+ html#digivated-root body.owner .owner-sections { grid-template-columns:1fr; }
  html#digivated-root body.owner .owner-workspace-heading { flex-direction:column; align-items:flex-start!important; gap:12px; }
  html#digivated-root body.owner .owner-section-heading { flex-direction:row!important; align-items:center!important; justify-content:space-between!important; text-align:left!important; }
  html#digivated-root body.owner .owner-todo :is(button,a) { grid-template-columns:44px minmax(0,1fr); }
