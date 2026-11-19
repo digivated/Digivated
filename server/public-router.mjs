@@ -1,6 +1,7 @@
 import { makeCreatorPageHandler } from './creator-page.mjs';
 import { makeThreadPageHandler, threadSlugFromPath } from './thread-page.mjs';
 import { makeLaunchQueueHandler, makeBadgeCheckHandler } from './launch-queue.mjs';
+import { makeBadgeAuditHandler } from './badge-audit.mjs';
 import {makeNewsHandler} from './news-handler.mjs';
 import { makeMembershipCheckoutHandler } from './membership-checkout.mjs';
 import { makePublicHandler } from './public-community.mjs';
@@ -30,6 +31,7 @@ export function defaultPublicHandlers(overrides = {}) {
   return {
     'launch-queue':makeLaunchQueueHandler(),
     'badge-check':makeBadgeCheckHandler(),
+    'badge-audit':makeBadgeAuditHandler(),
     news:makeNewsHandler(),
     'site-activity': makeSiteActivityHandler(),
     'invstr-activity': makeSiteActivityHandler({}, 'invstr'),
