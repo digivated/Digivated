@@ -258,6 +258,6 @@ test('one-time membership advertises one offer and leaves checkout gated during 
   assert.match(payload.custom_receipt, /unlocks all member content/i);
   const page = readFileSync(new URL('../src/components/MembershipOffer.astro', import.meta.url), 'utf8');
   assert.match(page, /membership.checkoutReady/);
-  assert.match(page, /Loading checkout\. If it doesn’t appear, try again in a moment\./);
+  assert.match(page, /Loading checkout\. Give it a second\./);
   assert.match(page, /Previous purchases|previous purchase/);
 });
