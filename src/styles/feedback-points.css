@@ -139,3 +139,14 @@ html[data-ascii] body .dg-fp-meter.is-bump{animation:dg-meter-bump .7s ease-out}
 html[data-ascii] body .dg-fp-progress .dg-fp-meter-bar{font-size:14px!important}
 @media (max-width:640px){html[data-ascii] body .dg-fp-strip .dg-fp-meter{min-width:0}}
 }
+/* Pixel icon: the arrow climbs one pixel at a time, like an upvote landing. */
+@layer flow {
+html[data-ascii] body .dg-fp-px{display:block;overflow:visible}
+html[data-ascii] body .dg-fp-px-bubble{fill:#8f74c4}
+html[data-ascii] body .dg-fp-px-arrow{fill:#f1eaff;filter:drop-shadow(0 0 1.2px #c3a0ff)}
+}
+@media (prefers-reduced-motion:no-preference){
+ html[data-ascii] body .dg-fp-px-arrow{animation:dg-px-climb 2.8s steps(1,end) infinite}
+ html[data-ascii] body .dg-fp-strip summary:hover .dg-fp-px-arrow{animation-duration:1.2s}
+}
+@keyframes dg-px-climb{0%{transform:translateY(1px);opacity:.75}20%{transform:translateY(0);opacity:1}40%{transform:translateY(-1px);opacity:1}70%{transform:translateY(-1px);fill:#fff}85%{transform:translateY(0);opacity:.9}100%{transform:translateY(1px);opacity:.75}}

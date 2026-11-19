@@ -1,7 +1,8 @@
 import { defaultNotificationPreferences, notificationPreferencesKey, notifyProjectApproval } from './notifications.mjs';
 import { sendProjectUpdate } from './account-mail.mjs';
 import { badgeSnippet, nextFreeLaunch, verifyProjectBadge } from './launch-queue.mjs';
-import { readProjectSite, siteDetails } from './project-site.mjs';
+import { readProjectSite, siteDetails, siteExtras, readPublicImage } from './project-site.mjs';
+import { guessCategory } from '../src/lib/project-taxonomy.mjs';
 // Isolated from purchase handlers, sessions, rate-limit rules, and environment names.
 // founding-access imports redisClient from this module. The membership helpers are
 // used only inside request handlers, after both modules have finished loading.
@@ -245,8 +246,14 @@ export function makeSubmissionHandler(deps={}) {
         try {
           if(body.action==='verify-badge')return send(200,await verifyProjectBadge(redis,account,body.id,deps.readSite));
           if(typeof body.url!=='string'||body.url.length>500)throw Error('Enter your public HTTPS project URL.');
-          const {html}=await (deps.readSite||readProjectSite)(body.url);
-          return send(200,siteDetails(html));
+          const page=await (deps.readSite||readProjectSite)(body.url);
+          const base=siteDetails(page.html),extra=siteExtras(page.html,page.url||body.url);
+          const name=extra.name||base.name;
+          // The site icon becomes the logo when we can fetch one; never fatal.
+          const readImage=deps.readImage||(deps.readSite?null:readPublicImage);
+          let logo=null;
+          if(readImage)for(const icon of extra.icons.slice(0,3)){try{logo=await readImage(icon);break;}catch{}}
+          return send(200,{...base,name,category:guessCategory(`${name} ${base.description}`),social:extra.social,url:page.url||body.url,logo});
         }catch(error){throw new SubmissionError(400,error.message||'Could not check that website. You can enter details manually.');}
       }
       if (body?.action === 'cancel-instant') {

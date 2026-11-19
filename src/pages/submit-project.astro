@@ -39,9 +39,11 @@ import '../styles/submission-flow.css';
 
       <fieldset id="sub-step-details">
         <legend><span class="submission-step-label">Project details</span>Tell us about your project</legend>
-        <p class="field-help">We can pull these from your site. Edit anything.</p><label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
-        <label>Project URL<input name="url" type="url" placeholder="https://your-project.com" maxlength="500" required/></label>
-        <button type="button" id="project-import">[ Import website details ]</button><p id="project-import-status" role="status"></p>
+        <label>Project URL<input name="url" type="url" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="yourproduct.com" maxlength="500" required/></label>
+        <button type="button" id="project-import" class="dg-import"><span class="dg-import-icon" aria-hidden="true">⇣</span><span class="dg-import-label">Import from your website</span></button>
+        <p id="project-import-status" class="dg-import-status" role="status" aria-live="polite" hidden></p>
+        <p class="field-help">We fill in what we find: name, description, category, logo and your X handle. Edit anything.</p>
+        <label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
         <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. What it does and who it’s for.</span></label>
         <label>
           <span id="project-category-label">Category</span>
