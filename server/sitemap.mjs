@@ -9,7 +9,7 @@ const SITEMAP_LIMIT = 50000;
 // Public HTML that is not a private account, an auth form, or a redirected alias.
 export const staticPublicPages = [
   '/', '/discover', '/creators', '/news', '/resources', '/resources/guides',
-  '/rankings', '/winners', '/points', '/threads', '/invstr', '/membership', '/submit-project', '/badges', '/about', '/privacy', '/terms',
+  '/rankings', '/winners', '/points', '/threads', '/invstr', '/shop', '/submit-project', '/badges', '/about', '/privacy', '/terms',
   '/ui-ux-prompt-packet', '/packet-example', '/start', '/library', '/fixes',
   '/builder', '/workflows', '/checklists', '/learn', '/toolkit', '/access',
 ];

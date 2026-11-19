@@ -7,7 +7,7 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Pointer spotlight (desktop only). Cheap: two CSS variables per move.
-  const SPOT = '.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card,.dg-thread-row,.launch-row,.dg-row,.dg-spot';
+  const SPOT = '.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card,.dg-thread-row,.launch-row,.dg-row,.dg-spot,.rl-card,.shop-card';
   if (!reduced && matchMedia('(hover: hover) and (pointer: fine)').matches) {
     doc.addEventListener('pointermove', (event) => {
       const el = event.target instanceof Element && event.target.closest(SPOT);
@@ -31,7 +31,7 @@
     const REVEAL = [
       'main .dg-list-head', 'main .dg-fp', 'main .dg-rising', 'main .dg-dir-podium-item',
       'main .fl-badge-card', 'main .news-card', 'main .resource-card', 'main .launch-row',
-      'main .dg-points-faq > *', 'main .membership-benefits > *', 'main .dg-forum-list > *',
+      'main .dg-points-faq > *', 'main .shop-card', 'main .membership-faq details', 'main .rl-top', 'main .membership-benefits > *', 'main .dg-forum-list > *',
       'footer .footer-columns > *'
     ].join(',');
 

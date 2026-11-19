@@ -11,7 +11,7 @@ const stageLabels = {
 };
 function launchDetails(record) {
   if (record.promotion?.included === 'instant-launch') return record.promotion.verified ? 'Instant Publishing · Payment verified' : 'Instant Publishing · Waiting for payment';
-  if (record.promotion?.included === 'founding-membership') return 'Membership Spotlight';
+  if (record.promotion?.included === 'founding-membership') return 'Member launch';
   if (record.launch?.kind !== 'free') return '';
   if (record.status !== 'pending') return 'Free launch';
   const time = Date.parse(record.launch.scheduledAt);

@@ -1,30 +1,56 @@
 ---
 import Platform from '../../layouts/Platform.astro';
-import UiIcon from '../../components/UiIcon.astro';
 import {resourceGroups,resourceLinkCount} from '../../data/link-resources.mjs';
+import '../../styles/all-time-directory.css';
 import '../../styles/resource-links.css';
-const label = link => { const url = new URL(link.href); return url.hostname.replace(/^www\./,'') + (url.pathname === '/' ? '' : url.pathname.replace(/\/$/,'')); };
+const nice = new Intl.NumberFormat('en-US');
+const parts = link => { const url = new URL(link.href); return { name: url.hostname.replace(/^www\./,''), path: url.pathname === '/' ? '' : url.pathname.replace(/\/$/,'') }; };
+const mono = name => name.replace(/^(app|get|use|try|go)\.|^the/,'').replace(/[^a-z0-9]/gi,'').slice(0,2).toUpperCase() || '··';
 ---
-<Platform title="Resources" description="A clean, searchable directory of design inspiration, creative assets, AI tools, development resources, business tools, and more." canonicalPath="/resources">
-<section class="link-directory" data-link-directory aria-labelledby="links-title">
-  <header class="link-directory-head">
-    <p class="link-directory-kicker">THE USEFUL INTERNET, ORGANIZED</p>
-    <h1 id="links-title">Resources.</h1>
-    <p>Handpicked links for making things: inspiration, tools, and places to learn.</p>
-    <a class="button" href="/invstr">Open Market Scanner ↗</a>
-  </header>
-  <div class="link-directory-controls">
-    <label class="link-directory-search"><UiIcon name="search" size={18}/><span class="sr-only">Search resources</span><input data-link-search type="search" placeholder="Search all resources" autocomplete="off"/></label>
-    <label class="link-directory-select-label"><span class="sr-only">Choose a category</span><select data-link-select>{resourceGroups.map(group=><option value={group.id}>{group.title}</option>)}</select></label>
+<Platform title="Resources" description="1,259 handpicked tools and sites for designers, makers, and founders. Upvote the ones that helped you." canonicalPath="/resources">
+<div class="rl" data-link-directory>
+  <section class="dg-hero" aria-labelledby="links-title">
+    <pre class="ascii-field home-workshop dg-hero-ascii" data-ascii-field aria-hidden="true"></pre>
+    <div class="dg-hero-copy">
+      <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>The useful internet</p>
+      <h1 id="links-title">Tools worth <span class="dg-hero-accent">bookmarking.</span></h1>
+      <p class="dg-hero-lede">Handpicked sites for designing, building, and growing. Upvote the ones that helped you, and the best rise to the top.</p>
+      <ul class="dg-dir-stats" aria-label="Resource totals">
+        <li><strong>{nice.format(resourceLinkCount)}</strong><span>links</span></li>
+        <li><strong>{resourceGroups.length}</strong><span>categories</span></li>
+        <li><strong data-rl-total>—</strong><span>upvotes</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="rl-top" aria-labelledby="rl-top-title" data-rl-top hidden>
+    <header class="dg-list-head"><h2 id="rl-top-title"><span class="dg-list-title">Most helpful</span></h2><span class="dg-list-rule" aria-hidden="true"></span></header>
+    <ol class="rl-top-list" data-rl-top-list></ol>
+  </section>
+
+  <div class="rl-controls">
+    <label class="dg-dir-search"><span class="sr-only">Search resources</span><input data-link-search type="search" placeholder="search 1,259 resources" autocomplete="off" enterkeyhint="search"/></label>
+    <div class="rl-sorts" role="group" aria-label="Sort resources">
+      <button type="button" class="dg-dir-sort" data-rl-sort="top" aria-pressed="true">most helpful</button>
+      <button type="button" class="dg-dir-sort" data-rl-sort="az" aria-pressed="false">a–z</button>
+    </div>
+    <label class="rl-select"><span class="sr-only">Choose a category</span><select data-link-select>{resourceGroups.map(group=><option value={group.id}>{group.title} ({group.links.length})</option>)}</select></label>
   </div>
-  <div class="link-directory-layout">
-    <nav class="link-directory-categories" aria-label="Resource categories">{resourceGroups.map((group,index)=><button type="button" data-link-category={group.id} aria-current={index===0?'true':undefined}>{group.title}</button>)}</nav>
-    <div class="link-directory-content">
-      <p class="link-directory-status" data-link-status role="status">{resourceLinkCount.toLocaleString('en-US')} links across {resourceGroups.length} categories</p>
-      {resourceGroups.map((group,index)=><section class="link-directory-group" data-link-group={group.id} data-link-title={group.title.toLowerCase()} hidden={index!==0} aria-labelledby={`links-${group.id}`}><header><h2 id={`links-${group.id}`}>{group.title}</h2><span>{group.links.length} links</span></header><ul>{group.links.map(link=><li data-link-item data-link-search-text={`${group.title} ${link.href}`.toLowerCase()}><a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`Open ${label(link)} in a new tab`}><span>{label(link)}</span><span aria-hidden="true">↗</span></a></li>)}</ul></section>)}
-      <p class="link-directory-empty" data-link-empty hidden>No matching links. Try another search or category.</p>
+
+  <div class="rl-layout">
+    <nav class="rl-cats" aria-label="Resource categories">{resourceGroups.map((group,index)=><button type="button" data-link-category={group.id} aria-current={index===0?'true':'false'}><span>{group.title}</span><small>{group.links.length}</small></button>)}</nav>
+    <div class="rl-content">
+      <p class="rl-status" data-link-status role="status">{nice.format(resourceLinkCount)} links across {resourceGroups.length} categories</p>
+      {resourceGroups.map((group,index)=><section class="rl-group" data-link-group={group.id} hidden={index!==0} aria-labelledby={`links-${group.id}`}>
+        <header class="dg-list-head"><h2 id={`links-${group.id}`}><span class="dg-list-title">{group.title}</span></h2><span class="dg-list-rule" aria-hidden="true"></span><span class="rl-count">{group.links.length}</span></header>
+        <ul class="rl-grid">{group.links.map((link,order)=>{const p=parts(link);return <li data-link-item data-id={link.id} data-order={order} data-name={p.name} data-cat={group.title} data-link-search-text={`${group.title} ${link.href}`.toLowerCase()}>
+          <a class="rl-card" href={link.href} target="_blank" rel="noopener noreferrer"><span class="rl-mono" aria-hidden="true">{mono(p.name)}</span><span class="rl-text"><strong>{p.name}</strong>{p.path && <small>{p.path}</small>}</span><span class="rl-open" aria-hidden="true">↗</span></a>
+          <button type="button" class="rl-vote" data-vote={link.id} aria-pressed="false" aria-label={`Upvote ${p.name}`}><span class="rl-caret" aria-hidden="true">▲</span><span data-vote-count></span></button>
+        </li>})}</ul>
+      </section>)}
+      <p class="rl-empty" data-link-empty hidden>Nothing matches that. Try another word or category.</p>
     </div>
   </div>
-</section>
+</div>
 </Platform>
 <script>import '../../scripts/resource-links.js';</script>

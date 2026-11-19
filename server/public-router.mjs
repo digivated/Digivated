@@ -8,6 +8,7 @@ import { makeSavedItemHandler } from './saved-items.mjs';
 import { makeProjectViewHandler } from './project-views.mjs';
 import { makeResourceViewHandler } from './resource-views.mjs';
 import { makeCardInteractionHandler } from './card-interactions.mjs';
+import { makeLinkVoteHandler } from './link-votes.mjs';
 import { makeFeedbackPointsHandler } from './feedback-points.mjs';
 import { makeDiscussionHandler } from './discussions.mjs';
 import { makeThreadsHandler } from './threads.mjs';
@@ -40,6 +41,7 @@ export function defaultPublicHandlers(overrides = {}) {
     'project-views': makeProjectViewHandler(),
     'resource-views': makeResourceViewHandler(),
     'card-interactions': makeCardInteractionHandler(),
+    'link-votes': makeLinkVoteHandler(),
     'feedback-points': makeFeedbackPointsHandler(),
     discussions: makeDiscussionHandler(),
     launches: makeLaunchesHandler(),

@@ -116,11 +116,6 @@
       "permanent": true
     },
     {
-      "source": "/shop",
-      "destination": "/membership",
-      "permanent": true
-    },
-    {
       "source": "/products",
       "destination": "/membership",
       "permanent": true

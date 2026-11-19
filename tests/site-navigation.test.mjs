@@ -8,12 +8,13 @@ test('shared public destinations use canonical current routes without repeated f
  for(const [link] of [...primaryLinks,...menuLinks,...footer]){
   if(!link.startsWith('/'))continue;
   const href=link.split('?')[0];
-  assert.ok(!['/shop','/products','/promote','/founding-members','/community'].includes(href));
+  assert.ok(!['/membership','/products','/promote','/founding-members','/community'].includes(href));
   const base=href==='/'?'/index':href;
   await readFile(new URL('../src/pages'+base+'.astro',import.meta.url)).catch(()=>readFile(new URL('../src/pages'+base+'/index.astro',import.meta.url)));
  }
  const config=JSON.parse(await readFile(new URL('../vercel.json',import.meta.url),'utf8'));
- for(const source of ['/shop','/products','/promote','/founding-members']){
+ assert.equal(config.redirects.find(r=>r.source==='/shop'),undefined,'/shop is the shop page');
+ for(const source of ['/products','/promote','/founding-members']){
   assert.deepEqual(config.redirects.find(r=>r.source===source),{source,destination:'/membership',permanent:true});
  }
 });

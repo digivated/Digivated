@@ -28,7 +28,7 @@ html#digivated-root[data-ascii] body .compact-site-header .navigation-panel #men
 html#digivated-root[data-ascii] body .fl-avatar{background-color:#2a2040!important;color:var(--dg-acc-ink)!important}
 html#digivated-root[data-ascii] body .fl-badge-copy.is-copied{background:#c3a0ff26!important;border-color:var(--dg-acc)!important;color:#fff!important}
 html#digivated-root[data-ascii] body .fl-badge-tag{border-color:#c3a0ff73!important;background:#c3a0ff1a!important;color:var(--dg-acc-ink)!important}
-html#digivated-root[data-ascii] body :is(.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card,.dg-thread-row,.launch-row,.dg-row,.dg-spot){background-image:radial-gradient(260px circle at var(--mx,-999px) var(--my,-999px),#c3a0ff14,#c3a0ff00 70%)!important}
+html#digivated-root[data-ascii] body :is(.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card,.dg-thread-row,.launch-row,.dg-row,.dg-spot,.rl-card){background-image:radial-gradient(260px circle at var(--mx,-999px) var(--my,-999px),#c3a0ff14,#c3a0ff00 70%)!important}
 html#digivated-root[data-ascii] body :is(.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card){transition:border-color .25s,transform .3s var(--dg-spring),box-shadow .3s!important}
 html#digivated-root[data-ascii] body :is(.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card):hover{border-color:#4a3c66!important;box-shadow:0 14px 34px -22px #c3a0ff80!important}
 html#digivated-root[data-ascii] body .is-gold .dg-dir-podium-card{background-image:radial-gradient(260px circle at var(--mx,-999px) var(--my,-999px),#e6c46a12,#e6c46a00 70%),radial-gradient(90% 80% at 100% 0%,#e6c46a14,transparent 70%)!important}
@@ -37,6 +37,9 @@ html#digivated-root[data-ascii] body .dg-spot.is-open:hover{box-shadow:0 12px 30
 html#digivated-root[data-ascii] body .dg-quiet-link{transition:color .2s!important}
 html#digivated-root[data-ascii] body .dg-quiet-link:hover{color:var(--dg-acc-text)!important}
 html#digivated-root[data-ascii] body :is(a,button,[role=tab],summary):focus-visible{outline:2px solid var(--dg-acc-text)!important}
+html#digivated-root[data-ascii] body .dg-member-mark{display:inline-block!important;flex:none;width:13px!important;height:13px!important;margin:0!important;padding:0!important;background-color:currentColor!important;-webkit-mask:url(/dg-member.svg) center/contain no-repeat;mask:url(/dg-member.svg) center/contain no-repeat}
+html#digivated-root[data-ascii] body :is(.dg-badge-member,.dg-spot-member,.launch-member){display:inline-flex!important;align-items:center!important;gap:5px!important;color:#d9c6ff!important}
+html#digivated-root[data-ascii] body .dg-spot-member .dg-member-mark{width:12px!important;height:12px!important}
 }
 
 html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.fl-header-signup,.home-editorial-actions .share-project-cta):is(:hover,:focus-visible),
