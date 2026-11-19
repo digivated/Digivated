@@ -11,15 +11,17 @@ export function nextFreeLaunch(now=Date.now()){
  return new Date(day+((8-d.getUTCDay())%7||7)*86400000+7*86400000).toISOString();
 }
 export { badgeSnippet, badgeSnippets } from './badge-snippets.mjs';
-export async function publishQueued(redis,record,now=Date.now()){
+export async function publishQueued(redis,record,now=Date.now(),{quiet=false}={}){
  if(record.status!=='pending'||record.launch?.kind!=='free'||!record.launch.badgeVerifiedAt||!Number.isFinite(Date.parse(record.launch.scheduledAt))||Date.parse(record.launch.scheduledAt)>now)return null;
  const updated={...record,status:'approved',publishedAt:new Date(now).toISOString(),revision:(record.revision||0)+1};
  const projection=projectPublic(updated);if(!projection)return null;
  const saved=await redis(['EVAL',SAVE_EDIT,4,`digivated:submission:${record.id}`,'digivated:submissions',`digivated:public:submission:${record.id}`,'digivated:public:submissions',record.revision||0,JSON.stringify(updated),JSON.stringify(projection),Date.parse(record.date),'submission']);
  if(saved!==1)return null;
- try { await notifyProjectApproval(redis, record, updated); } catch { /* Publication already succeeded. */ }
- // Email the owner that their launch is live (same message as an admin approval).
- try { await sendProjectUpdate(record, updated); } catch { /* Publication already succeeded. */ }
+ if(!quiet){
+  try { await notifyProjectApproval(redis, record, updated); } catch { /* Publication already succeeded. */ }
+  // Email the owner that their launch is live (same message as an admin approval).
+  try { await sendProjectUpdate(record, updated); } catch { /* Publication already succeeded. */ }
+ }
  return projection;
 }
 export async function verifyProjectBadge(redis,account,id,readSite=readProjectSite){
@@ -42,13 +44,13 @@ export async function verifyProjectBadge(redis,account,id,readSite=readProjectSi
  const {updated,project}=await saveVerified(redis,record,scheduledTimestamp);
  return {verified:true,scheduledAt:updated.launch.scheduledAt,...(project?{pageUrl:project.pageUrl}:{})};
 }
-async function saveVerified(redis,record,scheduledTimestamp){
+async function saveVerified(redis,record,scheduledTimestamp,{quiet=false}={}){
  const id=record.id;
  const updated={...record,revision:(record.revision||0)+1,launch:{...record.launch,scheduledTimestamp,badgeVerifiedAt:new Date().toISOString()}};
  const saved=await redis(['EVAL',SAVE_EDIT,4,`digivated:submission:${id}`,'digivated:submissions',`digivated:public:submission:${id}`,'digivated:public:submissions',record.revision||0,JSON.stringify(updated),'',Date.parse(record.date),'submission']);
  if(saved!==1)throw Error('The project changed. Refresh Your Projects and try again.');
- const project=await publishQueued(redis,updated);
- if(!project){try{await notifyLaunchScheduled(redis,updated);}catch{/* Verification already succeeded. */}}
+ const project=await publishQueued(redis,updated,Date.now(),{quiet});
+ if(!project&&!quiet){try{await notifyLaunchScheduled(redis,updated);}catch{/* Verification already succeeded. */}}
  return {updated,project};
 }
 
@@ -63,14 +65,16 @@ export function reminderStage(record,now){
  if(Number.isFinite(saved)&&now-saved>=DAY&&launch>now)return 'nudge';
  return null;
 }
-export async function checkPendingBadges(redis,{now=Date.now(),readSite=readProjectSite,mail=sendBadgeEmail,maxChecks=40,budgetMs=75_000}={}){
+export async function checkPendingBadges(redis,{now=Date.now(),readSite=readProjectSite,mail=sendBadgeEmail,maxChecks=40,budgetMs=75_000,silent=false}={}){
  const ids=await redis(['ZRANGEBYSCORE','digivated:submissions',now-60*DAY,'+inf']);
- const result={waiting:0,verified:0,reminded:0,errors:0};
+ const result={waiting:0,verified:0,reminded:0,errors:0,queued:[],missing:[]};
+ const seen=silent?new Set(await redis(['SMEMBERS','digivated:badge-scan:silent'])||[]):null;
  const waiting=[];
  for(const id of ids||[]){
   if(!validId(id))continue;
   let record;try{record=JSON.parse(await redis(['GET',`digivated:submission:${id}`]));}catch{continue;}
-  if(awaitingBadge(record))waiting.push(record);
+  if(!awaitingBadge(record)||seen?.has(record.id))continue;
+  waiting.push(record);
  }
  result.waiting=waiting.length;
  // Upcoming launches first (soonest first), then any whose date already passed.
@@ -89,13 +93,15 @@ export async function checkPendingBadges(redis,{now=Date.now(),readSite=readProj
    let found=false;
    try{const {html}=await readSite(record.url);found=hasProjectBadge(html,record.id);}catch{/* Site unreachable today; remind below and retry tomorrow. */}
    if(found){
-    const {updated}=await saveVerified(redis,record,Date.parse(record.launch.scheduledAt));
+    const {updated}=await saveVerified(redis,record,Date.parse(record.launch.scheduledAt),{quiet:silent});
     result.verified++;
+    if(silent){result.queued.push(updated.name||record.id);await redis(['SADD','digivated:badge-scan:silent',record.id]);await redis(['EXPIRE','digivated:badge-scan:silent',6*3600]);return;}
     if(await redis(['SET',`digivated:badge-mail:${record.id}:verified`,'1','NX','EX',90*86400])==='OK'){
      const sent=await mail(updated,'verified');if(sent!=='sent')await redis(['DEL',`digivated:badge-mail:${record.id}:verified`]);
     }
     return;
    }
+   if(silent){result.missing.push(record.name||record.id);await redis(['SADD','digivated:badge-scan:silent',record.id]);await redis(['EXPIRE','digivated:badge-scan:silent',6*3600]);return;}
    // One finish note per project. The day-after and last-call notes wait until
    // the next day, so an early run does not send two emails the same morning.
    const finishKey=`digivated:badge-mail:${record.id}:finish`;
@@ -121,15 +127,23 @@ export async function checkPendingBadges(redis,{now=Date.now(),readSite=readProj
  for(let i=0;i<queue.length&&Date.now()-started<budgetMs;i+=8)await Promise.all(queue.slice(i,i+8).map(one));
  return result;
 }
+const bearerMatches=(authorization,secret)=>{
+ if(!secret)return false;
+ const expected=Buffer.from(`Bearer ${secret}`),actual=Buffer.from(authorization||'');
+ return actual.length===expected.length&&timingSafeEqual(actual,expected);
+};
 export function makeBadgeCheckHandler(deps={}){
  return async(req,res)=>{
   res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json');
   const send=(status,value)=>{res.statusCode=status;res.end(JSON.stringify(value));};
-  const env=deps.env||process.env,expected=Buffer.from(`Bearer ${env.CRON_SECRET||''}`),actual=Buffer.from(req.headers.authorization||'');
-  if(req.method!=='GET'||!env.CRON_SECRET||actual.length!==expected.length||!timingSafeEqual(actual,expected))return send(401,{error:'Unauthorized.'});
+  const env=deps.env||process.env;
+  const silent=new URL(req.url||'/api/badge-check','https://digivated.invalid').searchParams.get('silent')==='1';
+  const cronOk=bearerMatches(req.headers.authorization,env.CRON_SECRET);
+  const silentOk=silent&&bearerMatches(req.headers.authorization,env.BADGE_CHECK_SILENT);
+  if(req.method!=='GET'||(silent?!cronOk&&!silentOk:!cronOk))return send(401,{error:'Unauthorized.'});
   try{
-   const result=await checkPendingBadges(deps.redis||redisClient(env),{now:(deps.now||Date.now)(),...(deps.readSite?{readSite:deps.readSite}:{}),...(deps.mail?{mail:deps.mail}:{})});
-   console.info('Badge check run',result);
+   const result=await checkPendingBadges(deps.redis||redisClient(env),{now:(deps.now||Date.now)(),...(deps.readSite?{readSite:deps.readSite}:{}),...(deps.mail?{mail:deps.mail}:{}),...(silent?{silent:true,maxChecks:80,budgetMs:100_000,mail:async()=>'skipped'}:{})});
+   console.info('Badge check run',{waiting:result.waiting,verified:result.verified,reminded:result.reminded,errors:result.errors,silent});
    return send(200,result);
   }catch{return send(503,{error:'Badge check could not finish. Nothing was changed.'});}
  };
