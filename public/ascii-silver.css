@@ -41,8 +41,6 @@
  html[data-ascii] body .home-editorial h1{font-size:clamp(34px,4.7vw,66px)!important;max-width:14ch!important;line-height:1.15!important;margin-inline:0!important;}
  html[data-ascii] body .home-editorial h1 em{font-style:normal!important;color:#aaa!important;-webkit-text-fill-color:currentColor!important;}
  html[data-ascii] body .home-editorial>p{max-width:46ch!important;margin-inline:0!important;text-align:left!important;font-size:13px!important;}
- html[data-ascii] body .home-editorial-actions{justify-content:flex-start!important;gap:24px!important;margin-top:28px!important;}
- html[data-ascii] body .home-editorial-actions .button{padding-inline:0!important;font-size:12px!important;}
  html[data-ascii] body .ascii-field{position:absolute;top:220px;right:max(4vw,calc((100vw - 1200px)/2));width:42%;margin:0;padding:0;z-index:0;pointer-events:none;user-select:none;white-space:pre;line-height:1.5;font-size:clamp(8px,.9vw,12px);color:#aaa!important;opacity:.85;background:none!important;text-align:center;}
  html[data-ascii] body:not(.home-refresh) .ascii-field{display:none!important;}
  html[data-ascii] .ascii-ambient{position:fixed;inset:0;overflow:hidden;pointer-events:none;user-select:none;z-index:0;contain:strict;}
@@ -405,12 +403,12 @@
  html#digivated-root[data-ascii] .compact-header-actions {gap:16px!important;}
  html#digivated-root[data-ascii] .site-breadcrumbs {padding:24px 0!important;margin:0!important;}
  html#digivated-root[data-ascii] #main > :is(section,article) {margin-block:48px var(--canvas-space)!important;}
- html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.link-directory-head,.news-masthead,.creator-social-heading,.notifications-heading,.membership-heading) {padding-inline:0!important;margin-bottom:48px!important;}
- html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.link-directory-head,.news-masthead,.creator-social-heading,.notifications-heading,.membership-heading) h1 {font-size:clamp(32px,4vw,56px)!important;line-height:1.18!important;margin-block:16px 20px!important;text-wrap:balance;}
- html#digivated-root[data-ascii] #main :is(.lede,.news-intro,.link-directory-head>p,.page-intro>p) {max-width:60ch;line-height:1.75!important;}
- html#digivated-root[data-ascii] #main :is(.launch-directory,.link-directory,.news-page,.creator-feed-shell,.launch-page,.project-wall) {width:100%!important;max-width:none!important;padding-inline:0!important;}
- html#digivated-root[data-ascii] #main :is(.launch-toolbar,.wall-navigation,.news-toolbar,.link-directory-controls) {gap:24px!important;margin-block:24px 40px!important;}
- html#digivated-root[data-ascii] #main :is(.launch-layout,.news-layout,.link-directory-layout,.submission-layout) {gap:clamp(32px,5vw,72px)!important;}
+ html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.news-masthead,.creator-social-heading,.notifications-heading) {padding-inline:0!important;margin-bottom:48px!important;}
+ html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.news-masthead,.creator-social-heading,.notifications-heading) h1 {font-size:clamp(32px,4vw,56px)!important;line-height:1.18!important;margin-block:16px 20px!important;text-wrap:balance;}
+ html#digivated-root[data-ascii] #main :is(.lede,.news-intro,.page-intro>p) {max-width:60ch;line-height:1.75!important;}
+ html#digivated-root[data-ascii] #main :is(.launch-directory,.news-page,.creator-feed-shell,.launch-page,.project-wall) {width:100%!important;max-width:none!important;padding-inline:0!important;}
+ html#digivated-root[data-ascii] #main :is(.launch-toolbar,.wall-navigation,.news-toolbar) {gap:24px!important;margin-block:24px 40px!important;}
+ html#digivated-root[data-ascii] #main :is(.launch-layout,.news-layout,.submission-layout) {gap:clamp(32px,5vw,72px)!important;}
  html#digivated-root[data-ascii] #main :is(.wall-card-grid,.resource-grid,.ai-category-grid) {gap:32px!important;}
  html#digivated-root[data-ascii] .launch-page .launch-content-column > :is(section,article) {margin-block:40px!important;}
  html#digivated-root[data-ascii] .launch-page :is(.launch-info-panel,.launch-creator) {padding:24px 0!important;}
@@ -495,7 +493,7 @@
   html#digivated-root[data-ascii] .compact-header-actions {gap:6px!important;}
   html#digivated-root[data-ascii] #main > :is(section,article) {margin-top:28px!important;}
   html#digivated-root[data-ascii] body.home-refresh #main .home-editorial {padding-top:40px!important;gap:40px!important;}
-  html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.link-directory-head,.news-masthead,.creator-social-heading,.notifications-heading,.membership-heading) {margin-bottom:32px!important;}
+  html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.news-masthead,.creator-social-heading,.notifications-heading) {margin-bottom:32px!important;}
   html#digivated-root[data-ascii] .home-launch-heading {align-items:start!important;flex-wrap:wrap;gap:12px!important;}
   html#digivated-root[data-ascii] body.home-refresh .home-launch-row {gap:14px!important;}
   html#digivated-root[data-ascii] .rankings-directory .launch-list {gap:36px!important;}
