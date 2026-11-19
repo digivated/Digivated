@@ -23,7 +23,8 @@ async function copyText(text, fallbackNode) {
 // id: the project id (or a placeholder for the public examples page).
 // copy: false shows code without Copy buttons (public examples).
 // onCopy(style, copied): optional hook after a copy attempt.
-export function badgePicker(id, { copy = true, count = null, onCopy, label = '' } = {}) {
+// aiPrompt adds a second button that copies a ready-made assistant prompt.
+export function badgePicker(id, { copy = true, count = null, onCopy, label = '', aiPrompt = false } = {}) {
   const root = el('div', { className: 'fl-badges' });
   root.setAttribute('data-badge-picker', '');
   if (label) root.setAttribute('aria-label', label);
@@ -42,15 +43,32 @@ export function badgePicker(id, { copy = true, count = null, onCopy, label = '' 
       const button = el('button', { type: 'button', className: 'fl-btn fl-btn-small fl-badge-copy', textContent: 'Copy' });
       button.setAttribute('data-copy-badge', style.key);
       button.setAttribute('aria-label', `Copy ${style.label} badge code`);
+      const resetCopies = () => {
+        root.querySelectorAll('.fl-badge-copy').forEach(b => { b.textContent = 'Copy'; b.classList.remove('is-copied'); });
+        root.querySelectorAll('.fl-badge-prompt').forEach(b => { b.textContent = 'Copy prompt'; b.classList.remove('is-copied'); });
+      };
       button.onclick = async () => {
         const copied = await copyText(code, codeNode);
-        root.querySelectorAll('.fl-badge-copy').forEach(b => { b.textContent = 'Copy'; b.classList.remove('is-copied'); });
+        resetCopies();
         if (copied) { button.textContent = 'Copied ✓'; button.classList.add('is-copied'); setTimeout(() => { button.textContent = 'Copy'; button.classList.remove('is-copied'); }, 2400); }
         status.dataset.tone = copied ? 'ok' : '';
         status.textContent = copied ? `${style.label} badge copied. Paste it into your site and publish.` : 'Code selected. Press Ctrl+C (or ⌘C) to copy it.';
         onCopy?.(style.key, copied);
       };
-      bar.append(button);
+      if (aiPrompt) {
+        const prompt = `Add this Digivated badge to my site footer without changing anything else:\n${code}`;
+        const promptButton = el('button', { type: 'button', className: 'fl-btn fl-btn-small fl-badge-prompt', textContent: 'Copy prompt' });
+        promptButton.setAttribute('data-copy-badge-prompt', style.key);
+        promptButton.setAttribute('aria-label', `Copy an AI prompt for the ${style.label} badge`);
+        promptButton.onclick = async () => {
+          const copied = await copyText(prompt, codeNode);
+          resetCopies();
+          if (copied) { promptButton.textContent = 'Copied ✓'; promptButton.classList.add('is-copied'); setTimeout(() => { promptButton.textContent = 'Copy prompt'; promptButton.classList.remove('is-copied'); }, 2400); }
+          status.dataset.tone = copied ? 'ok' : '';
+          status.textContent = copied ? 'Prompt copied. Paste it into your AI coding assistant.' : 'Code selected. Press Ctrl+C (or ⌘C) to copy it.';
+        };
+        bar.append(el('div', { className: 'fl-badge-actions' }, button, promptButton));
+      } else bar.append(button);
     }
     const card = el('article', { className: 'fl-badge-card' }, stage, bar, el('pre', { className: 'fl-badge-code' }, codeNode));
     card.setAttribute('data-badge-style', style.key);

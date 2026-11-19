@@ -486,7 +486,8 @@ html[data-ascii] body .fl-badge-bar>div{display:flex;flex-wrap:wrap;align-items:
 html[data-ascii] body .fl-badge-bar strong{color:#f2f2f2!important;font-size:14px;font-weight:550}
 html[data-ascii] body .fl-badge-bar span{color:#7d7d7d!important;font-family:var(--fl-mono)!important;font-size:11px;letter-spacing:.04em}
 html[data-ascii] body .fl-badge-bar :is(.fl-btn,a.fl-btn){flex:none;min-height:34px!important;padding:0 14px!important;font-size:12.5px!important;text-decoration:none!important}
-html[data-ascii] body .fl-badge-copy.is-copied{background:#f0f0f0!important;border-color:#f0f0f0!important;color:#0a0a0a!important}
+html[data-ascii] body :is(.fl-badge-copy,.fl-badge-prompt).is-copied{background:#f0f0f0!important;border-color:#f0f0f0!important;color:#0a0a0a!important}
+html[data-ascii] body .fl-badge-bar>.fl-badge-actions{display:flex;flex:none;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;margin-left:auto}
 html[data-ascii] body .fl-badge-code{margin:0!important;padding:14px 16px!important;max-width:100%;overflow-x:auto;background:#070707!important;border:0!important;border-radius:0!important;color:#a9a9a9!important;font-size:12px!important;line-height:1.7!important;white-space:pre!important;scrollbar-width:thin;scrollbar-color:#333 transparent}
 html[data-ascii] body .fl-badge-code code{background:none!important;color:inherit!important;padding:0!important;font-size:inherit!important}
 html[data-ascii] body .fl-badge-status:empty{display:none}
