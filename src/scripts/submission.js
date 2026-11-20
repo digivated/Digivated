@@ -342,7 +342,7 @@ if (form) {
     badgeFirst.hidden=!show;
     if(!show)return;
     const slot=document.getElementById('badge-first-picker');
-    if(slot.dataset.id!==reservedBadge.id){slot.dataset.id=reservedBadge.id;slot.replaceChildren(badgePicker(reservedBadge.id,{label:'Your badge',aiPrompt:true}));}
+    if(slot.dataset.id!==reservedBadge.id){slot.dataset.id=reservedBadge.id;slot.replaceChildren(badgePicker(reservedBadge.id,{label:'Your badge',aiPrompt:true,collapseAlternatives:true}));}
     let host='your site';try{host=new URL(form.elements.url.value).hostname.replace(/^www\./,'')||host;}catch{}
     badgeFirst.querySelector('[data-badge-host]').textContent=host;
     updateButton();
