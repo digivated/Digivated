@@ -341,19 +341,26 @@ html[data-ascii] body .compact-site-header .header-primary>a[aria-current=page]{
 html[data-ascii] body .compact-site-header .header-primary>a::after{content:none!important}
 
 /* ---- Submit form rhythm ---- */
-html[data-ascii] body .submission-form fieldset{margin:0 0 40px!important;padding:28px 0 0!important;border-top:1px solid var(--fl-rule)!important}
+html[data-ascii] body #main .submission-intro{padding-block:8px 26px!important;margin-bottom:12px!important}
+html[data-ascii] body #main .submission-intro h1{font-size:clamp(32px,4vw,46px)!important;margin-block:0 6px!important}
+html[data-ascii] body #main .submission-intro::after{height:10px}
+html[data-ascii] body #main:has(.submission-intro)>.site-breadcrumbs{padding-block:8px!important}
+html[data-ascii] body #project-form #submission-account-status{padding:8px 16px}
+html[data-ascii] body #project-form #submission-progress{margin-bottom:8px!important}
+
+html[data-ascii] body #project-form fieldset[id^=sub-step]{margin:0!important;padding:16px!important;border-top:1px solid var(--fl-rule)!important}
 html[data-ascii] body .submission-form fieldset fieldset{margin:0!important;padding:0!important;border:0!important}
-html[data-ascii] body .submission-form label{display:grid!important;gap:8px!important;margin-block:0 18px!important}
-html[data-ascii] body .submission-form legend{margin-bottom:18px!important}
+html[data-ascii] body .submission-form label{display:grid!important;gap:6px!important;margin-block:0!important}
+html[data-ascii] body .submission-form legend{margin-bottom:8px!important}
 html[data-ascii] body .submission-form legend:not(:has(.submission-step-label)),html[data-ascii] body #project-category-label{font-family:var(--fl-mono)!important;font-size:11px!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:var(--fl-label)!important}
 html[data-ascii] body .submission-form legend .quiet{text-transform:none!important;letter-spacing:normal!important}
 html[data-ascii] body .submission-form legend .submission-step-label{display:block;margin-bottom:6px}
-html[data-ascii] body #project-import{display:inline-flex!important;width:auto!important;min-height:32px!important;margin:-6px 0 6px!important;padding:5px 11px!important;border:1px solid var(--fl-rule-hi)!important;border-radius:var(--fl-radius)!important;background-color:#0d0d0d!important;color:#e6e6e6!important;font-size:12.5px!important;text-decoration:none!important}
+html[data-ascii] body #project-import{display:inline-flex!important;align-items:center;justify-content:center;gap:6px;width:auto!important;min-height:44px!important;margin:0!important;padding:5px 11px!important;border:1px solid var(--fl-rule-hi)!important;border-radius:var(--fl-radius)!important;background-color:#0d0d0d!important;color:#e6e6e6!important;font-size:12.5px!important;text-decoration:none!important}
 html[data-ascii] body #project-import:hover{border-color:#4a4a4a!important;color:#fff!important}
 html[data-ascii] body #project-import-status:empty{display:none}
 html[data-ascii] body input[type=file]{color:#9a9a9a!important;font-size:13px!important}
 html[data-ascii] body input[type=file]::file-selector-button{margin-right:12px;padding:7px 12px;border:1px solid var(--fl-rule-hi);border-radius:2px;background:#151515;color:#eee;font:500 12.5px var(--fl-sans);cursor:pointer}
-html[data-ascii] body .submission-upload{padding:16px!important;border:1px dashed var(--fl-rule-hi)!important}
+html[data-ascii] body .submission-upload{padding:10px!important;border:1px dashed var(--fl-rule-hi)!important}
 html[data-ascii] body .submission-pricing-options{display:flex!important;flex-wrap:wrap;gap:8px!important}
 html[data-ascii] body .submission-pricing-options label{display:inline-flex!important;align-items:center;gap:8px!important;margin:0!important;padding:6px 12px!important;border:1px solid var(--fl-rule-hi)!important;border-radius:2px!important;font-size:13px!important;cursor:pointer}
 html[data-ascii] body .submission-pricing-options label:has(input:checked){border-color:#f0f0f0!important;color:#fff!important}

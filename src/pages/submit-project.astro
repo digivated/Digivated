@@ -10,13 +10,9 @@ import '../styles/submission-flow.css';
 <Platform title="Submit Your Project" description="Share what you built. Launch free, go live instantly, or launch as a member.">
   <header class="page-intro submission-intro">
 
-    <h1>Submit a project.</h1>
+    <h1>Launch your project.</h1>
     <p class="lede">Add your details, pick a launch, and track it all from your dashboard.</p>
   </header>
-
-  <FreeLaunchGuide />
-
-  <FeedbackPoints variant="strip" cta="/discover?sort=needs" ctaLabel="Earn points while you wait"/>
 
   <div class="submission-layout submission-workspace">
     <form class="submission-form" id="project-form" action="/api/submissions" method="post">
@@ -29,125 +25,137 @@ import '../styles/submission-flow.css';
 
       <div id="instant-launch-resume" class="submission-review" hidden><h2 id="instant-launch-title">Complete your payment</h2><p id="instant-launch-copy">Your project is saved. Pay in the checkout tab using <strong id="instant-launch-email">your account email</strong>. This page publishes it automatically as soon as payment goes through.</p><div class="submission-account-actions"><a id="instant-launch-checkout" class="button primary" target="_blank" rel="noopener">Open checkout ↗</a><button id="instant-launch-verify" class="button" type="button">I’ve paid — check now</button></div><p id="instant-launch-cancel-note" class="field-help">Changed your mind? You’re only charged if you finish checkout. <button id="instant-launch-cancel" class="dg-link-button" type="button">← Cancel and change launch option</button></p><p id="instant-launch-status" role="status" aria-live="polite"></p><a id="instant-launch-listing" hidden>View your live project →</a></div>
       <div id="submission-details" hidden>
-      <ol class="fl-progress" id="submission-progress" aria-label="Form progress">
-        <li data-progress="sub-step-details"><a href="#sub-step-details"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> Project</a></li>
-        <li data-progress="sub-step-logo"><a href="#sub-step-logo"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> Logo</a></li>
-        <li data-progress="sub-step-you"><a href="#sub-step-you"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> About you</a></li>
-        <li data-progress="sub-step-launch"><a href="#sub-step-launch"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> Launch</a></li>
-      </ol>
+        <ol class="fl-progress" id="submission-progress" aria-label="Form progress">
+          <li data-progress="sub-step-details"><a href="#sub-step-details"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> Project</a></li>
+          <li data-progress="sub-step-logo"><a href="#sub-step-logo"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> Logo</a></li>
+          <li data-progress="sub-step-you"><a href="#sub-step-you"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> About you</a></li>
+          <li data-progress="sub-step-launch"><a href="#sub-step-launch"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> Launch</a></li>
+        </ol>
 
 
-      <fieldset id="sub-step-details">
-        <legend><span class="submission-step-label">Project details</span>Tell us about your project</legend>
-        <label>Project URL<input name="url" type="url" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="yourproduct.com" maxlength="500" required/></label>
-        <button type="button" id="project-import" class="dg-import"><span class="dg-import-icon" aria-hidden="true">⇣</span><span class="dg-import-label">Import from your website</span></button>
-        <p id="project-import-status" class="dg-import-status" role="status" aria-live="polite" hidden></p>
-        <p class="field-help">We fill in what we find: name, description, category, logo and your X handle. Edit anything.</p>
-        <label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
-        <label>Project description<textarea name="description" rows="4" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. What it does and who it’s for.</span></label>
-        <label>
-          <span id="project-category-label">Category</span>
-          <span class="submission-category-control">
-            <select name="category" aria-labelledby="project-category-label" aria-describedby="project-category-help" required>
-              <option value="">Choose a category</option>
-              {projectCategoryGroups.map(([label, names]) => (
-                <optgroup label={label}>
-                  {names.map(name => <option value={name}>{name}</option>)}
-                </optgroup>
-              ))}
-              <option value="Other">Other</option>
+        <div class="submission-project-fields">
+          <fieldset id="sub-step-details">
+            <legend><span class="submission-step-label">Project details</span>Tell us about your project</legend>
+            <div class="submission-url-row">
+              <label>Project URL<input name="url" type="url" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="yourproduct.com" maxlength="500" required/></label>
+              <button type="button" id="project-import" class="dg-import"><span class="dg-import-icon" aria-hidden="true">⇣</span><span class="dg-import-label">Autofill</span></button>
+            </div>
+            <p id="project-import-status" class="dg-import-status" role="status" aria-live="polite" hidden></p>
+            <label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
+            <label>Project description<textarea name="description" rows="3" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters. What it does and who it’s for.</span></label>
+            <label>
+              <span id="project-category-label">Category</span>
+              <span class="submission-category-control">
+                <select name="category" aria-labelledby="project-category-label" aria-describedby="project-category-help" required>
+                  <option value="">Choose a category</option>
+                  {projectCategoryGroups.map(([label, names]) => (
+                    <optgroup label={label}>
+                      {names.map(name => <option value={name}>{name}</option>)}
+                    </optgroup>
+                  ))}
+                  <option value="Other">Other</option>
+                </select>
+              </span>
+              <span id="project-category-help" class="field-help">Choose what it mainly does. For AI tools, pick the job, like Video &amp; Audio.</span>
+            </label>
+            <fieldset class="submission-pricing" aria-describedby="project-pricing-help">
+              <legend>Project pricing <span class="quiet">(optional)</span></legend>
+              <p id="project-pricing-help" class="field-help">Choose how people pay to use your project.</p>
+              <div class="submission-pricing-options">
+                <label><input type="radio" name="pricing" value="" checked/><span>Skip for now</span></label>
+                {projectPricingOptions.filter(option => option !== 'Open source').map(option => (
+                  <label><input type="radio" name="pricing" value={option}/><span>{option === 'Freemium' ? 'Free + paid plans' : option}</span></label>
+                ))}
+              </div>
+            </fieldset>
+          </fieldset>
+
+          <fieldset id="sub-step-logo">
+            <legend><span class="submission-step-label">Logo</span>Project logo</legend>
+            <label class="submission-upload">Project logo<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Your logo, not a screenshot. Square JPG, PNG or WebP, up to 10 MB.</span></label>
+            <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project logo preview"/><span id="project-image-name"></span></div>
+          </fieldset>
+
+          <fieldset id="sub-step-you">
+            <legend><span class="submission-step-label">Creator details</span>About you</legend>
+            <p class="submission-section-help">Your email stays private.</p>
+            <div class="form-row"><label>Creator name<input name="creator" placeholder="Your name" autocomplete="name" maxlength="100" required/></label><label>Email<input name="email" placeholder="you@example.com" type="email" autocomplete="email" maxlength="254" required/><span class="field-help">Use the email linked to your account.</span></label></div>
+            <details class="submission-disclosure">
+              <summary>Social handle and review notes (optional)</summary>
+              <div class="submission-optional-fields">
+                <label>Social handle <span class="quiet">(optional)</span><input name="social" maxlength="200" placeholder="@yourhandle — include the platform"/></label>
+                <label>Notes for the review <span class="quiet">(optional)</span><textarea name="notes" rows="3" maxlength="2000" placeholder="Anything else you’d like us to know?"></textarea><span class="field-help">Only the review team sees these notes.</span></label>
+              </div>
+            </details>
+          </fieldset>
+        </div>
+
+        <fieldset class="submission-intent" id="sub-step-launch">
+          <legend><span class="submission-step-label">Launch</span>Choose how to launch</legend>
+          <!-- The tier cards drive the select used by submission and checkout. -->
+          <div class="dg-tiers" role="radiogroup" aria-label="Launch option" data-tiers>
+            <label class="dg-tier" data-tier="directory"><input type="radio" name="dg-tier" value="directory" checked/><span class="dg-tier-head"><strong>Free launch</strong><b>$0</b></span><span class="dg-tier-sub">Join the weekly queue.</span><ul><li>Launches on a Monday, 7–14 days out</li><li>Add our badge to your site. We verify it automatically</li><li>Permanent listing and discussion page</li></ul></label>
+            <label class="dg-tier dg-tier-instant" data-tier="instant" hidden><input type="radio" name="dg-tier" value="instant" disabled/><span class="dg-tier-flag">Fastest</span><span class="dg-tier-head"><strong>Instant Publishing</strong><b data-tier-price>$3</b></span><span class="dg-tier-sub"><span aria-hidden="true">⚡</span> Live instantly</span><ul><li>No queue and no badge needed</li><li>Live as soon as you pay</li><li>Homepage spot for 7 days</li><li>Permanent listing and discussion page</li></ul></label>
+            <label class="dg-tier" data-tier="founding-feature"><input type="radio" name="dg-tier" value="founding-feature"/><span class="dg-tier-head"><strong>Member launch</strong><b>$5</b></span><span class="dg-tier-sub">Members get full access to everything on Digivated.</span><ul><li>A member badge on your project</li><li>One reviewed project spotlight</li><li>Full News archive and market snapshot</li><li>The full UI/UX Prompt Packet</li><li>Full member guides</li></ul></label>
+          </div>
+          <label class="sr-only" aria-hidden="true">Launch option
+            <select name="submissionType" id="submission-type" aria-describedby="free-launch-help" tabindex="-1">
+              <option value="directory">Free launch (add a badge to your site)</option>
+              <option value="instant" id="submission-instant-option" hidden disabled>Instant Publishing</option>
+              <option value="founding-feature">Member launch</option>
             </select>
-          </span>
-          <span id="project-category-help" class="field-help">Choose what it mainly does. For AI tools, pick the job, like Video &amp; Audio.</span>
-        </label>
-        <fieldset class="submission-pricing" aria-describedby="project-pricing-help">
-          <legend>Project pricing <span class="quiet">(optional)</span></legend>
-          <p id="project-pricing-help" class="field-help">Choose how people pay to use your project.</p>
-          <div class="submission-pricing-options">
-            <label><input type="radio" name="pricing" value="" checked/><span>Skip for now</span></label>
-            {projectPricingOptions.filter(option => option !== 'Open source').map(option => (
-              <label><input type="radio" name="pricing" value={option}/><span>{option === 'Freemium' ? 'Free + paid plans' : option}</span></label>
-            ))}
+          </label>
+          <p id="free-launch-help" class="field-help">Add your badge, then verify and submit in one step. <span id="free-launch-date"></span></p>
+          <div id="badge-first" class="dg-badge-first" hidden>
+            <ol class="dg-badge-first-steps">
+              <li><span aria-hidden="true">1</span><p><strong>Copy your badge.</strong> It’s already linked to this project.</p></li>
+              <li><span aria-hidden="true">2</span><p><strong>Paste it on <b data-badge-host>your site</b></strong>, like in the footer, and publish.</p></li>
+              <li><span aria-hidden="true">3</span><p><strong>Press Verify badge &amp; submit.</strong> If the badge is live, we add your project to Launching Next. You can also submit now and add your badge later.</p></li>
+            </ol>
+            <p class="dg-badge-tip">Tip: not sure where to paste it? Copy the snippet and ask your AI coding assistant (Cursor, ChatGPT, Claude, etc.) to add it to your site footer.</p>
+            <div id="badge-first-picker"></div>
           </div>
+          <p id="instant-launch-help" class="field-help" hidden><strong>⚡ No waiting:</strong> pay once and you’re live, with a homepage spot for 7 days.</p>
+          <div id="membership-fields" class="submission-option-detail" hidden><p>Verify your membership on the <a href="/shop#member-sign-in">Shop page</a> first. We take a quick look, then add your member badge.</p></div>
         </fieldset>
-      </fieldset>
 
-      <fieldset id="sub-step-logo">
-        <legend><span class="submission-step-label">Logo</span>Project logo</legend>
-        <label class="submission-upload">Project logo<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Your logo, not a screenshot. Square JPG, PNG or WebP, up to 10 MB.</span></label>
-        <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project logo preview"/><span id="project-image-name"></span></div>
-      </fieldset>
-
-      <fieldset id="sub-step-you">
-        <legend><span class="submission-step-label">Creator details</span>About you</legend>
-        <p class="submission-section-help">Your email stays private.</p>
-        <div class="form-row"><label>Creator name<input name="creator" placeholder="Your name" autocomplete="name" maxlength="100" required/></label><label>Email<input name="email" placeholder="you@example.com" type="email" autocomplete="email" maxlength="254" required/><span class="field-help">Use the email linked to your account.</span></label></div>
-        <label>Social handle <span class="quiet">(optional)</span><input name="social" maxlength="200" placeholder="@yourhandle — include the platform"/></label>
-        <label>Notes for the review <span class="quiet">(optional)</span><textarea name="notes" rows="3" maxlength="2000" placeholder="Anything else you’d like us to know?"></textarea><span class="field-help">Only the review team sees these notes.</span></label>
-      </fieldset>
-
-      <fieldset class="submission-intent" id="sub-step-launch">
-        <legend><span class="submission-step-label">Launch</span>Choose how to launch</legend>
-        <!-- Launch tiers, LaunchKiwi-style. The cards drive the select below, which the
-             submission script and checkout already use. -->
-        <div class="dg-tiers" role="radiogroup" aria-label="Launch option" data-tiers>
-          <label class="dg-tier" data-tier="directory"><input type="radio" name="dg-tier" value="directory" checked/><span class="dg-tier-head"><strong>Free launch</strong><b>$0</b></span><span class="dg-tier-sub">Join the weekly queue.</span><ul><li>Launches on a Monday, 7–14 days out</li><li>Add our badge to your site. We verify it automatically</li><li>Permanent listing and discussion page</li></ul></label>
-          <label class="dg-tier dg-tier-instant" data-tier="instant" hidden><input type="radio" name="dg-tier" value="instant" disabled/><span class="dg-tier-flag">Fastest</span><span class="dg-tier-head"><strong>Instant Publishing</strong><b data-tier-price>$3</b></span><span class="dg-tier-sub"><span aria-hidden="true">⚡</span> Live instantly</span><ul><li>No queue and no badge needed</li><li>Live as soon as you pay</li><li>Homepage spot for 7 days</li><li>Permanent listing and discussion page</li></ul></label>
-          <label class="dg-tier" data-tier="founding-feature"><input type="radio" name="dg-tier" value="founding-feature"/><span class="dg-tier-head"><strong>Member launch</strong><b>$5</b></span><span class="dg-tier-sub">Members get full access to everything on Digivated.</span><ul><li>A member badge on your project</li><li>One reviewed project spotlight</li><li>Full News archive and market snapshot</li><li>The full UI/UX Prompt Packet</li><li>Full member guides</li></ul></label>
+        <div class="submission-review">
+          <h2>Confirm and submit</h2>
+          <p>Track your project’s status in <a href="/account">Your Projects</a>.</p>
+          <label class="honeypot" aria-hidden="true">Leave this empty<input name="company" tabindex="-1" autocomplete="off"/></label>
+          <label class="consent"><input name="consent" type="checkbox" required checked/><span>I confirm that I own or am authorized to submit this project and allow Digivated to display the submitted information and project logo.</span></label>
+          <label class="consent"><input name="emailOutreachConsent" type="checkbox" checked/><span>Send me one follow-up email about my launch. No newsletter unless I opt in.</span></label>
+          <label class="consent"><input name="activityNotifications" type="checkbox" aria-describedby="submission-notification-help" checked/><span><strong>Turn on all activity notifications</strong></span></label>
+          <p id="submission-notification-help" class="field-help">Replies, follows, messages and feedback. Change this any time in <a href="/notifications">Notifications</a>.</p>
+          <button class="button primary" type="submit" disabled>Sign in to submit your project</button>
+          <noscript>Enable JavaScript to submit your project securely.</noscript>
+          <p class="form-status" id="submission-status" role="status" aria-live="polite" tabindex="-1"></p>
+          <section id="submission-badge" class="submission-option-detail" aria-labelledby="submission-badge-title" hidden>
+            <p class="eyebrow">STEP 1 OF 4 DONE</p>
+            <h3 id="submission-badge-title" tabindex="-1">Project saved. Next: add your badge.</h3>
+            <div id="submission-badge-tracker"></div>
+            <ol class="badge-next-steps fl-howto"><li><strong>Pick a badge style and copy the code.</strong></li><li><strong>Paste it into your site</strong>, like in the footer, and publish.</li><li><strong>Hit “Check my website.”</strong> Once we see it, your launch is locked in.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help">Once verified, you go live on launch day.</p>
+            <div id="submission-badge-picker"></div>
+            <div class="submission-account-actions fl-actions">
+              <button class="button primary fl-btn-primary" id="submission-badge-verify" type="button" hidden>Check my website</button>
+              <a class="button" id="submission-badge-dashboard" href="/account#account-submissions">Go to my dashboard →</a>
+            </div>
+            <p class="fl-status" id="submission-badge-status" role="status" aria-live="polite"></p>
+          </section>
         </div>
-        <label class="sr-only" aria-hidden="true">Launch option
-          <select name="submissionType" id="submission-type" aria-describedby="free-launch-help" tabindex="-1">
-            <option value="directory">Free launch (add a badge to your site)</option>
-            <option value="instant" id="submission-instant-option" hidden disabled>Instant Publishing</option>
-            <option value="founding-feature">Member launch</option>
-          </select>
-        </label>
-        <p id="free-launch-help" class="field-help">Add your badge, then verify and submit in one step. <span id="free-launch-date"></span></p>
-        <div id="badge-first" class="dg-badge-first" hidden>
-          <ol class="dg-badge-first-steps">
-            <li><span aria-hidden="true">1</span><p><strong>Copy your badge.</strong> It’s already linked to this project.</p></li>
-            <li><span aria-hidden="true">2</span><p><strong>Paste it on <b data-badge-host>your site</b></strong>, like in the footer, and publish.</p></li>
-            <li><span aria-hidden="true">3</span><p><strong>Press Verify badge &amp; submit.</strong> If the badge is live, we add your project to Launching Next. You can also submit now and add your badge later.</p></li>
-          </ol>
-          <p class="dg-badge-tip">Tip: not sure where to paste it? Copy the snippet and ask your AI coding assistant (Cursor, ChatGPT, Claude, etc.) to add it to your site footer.</p>
-          <div id="badge-first-picker"></div>
-        </div>
-        <p id="instant-launch-help" class="field-help" hidden><strong>⚡ No waiting:</strong> pay once and you’re live, with a homepage spot for 7 days.</p>
-        <div id="membership-fields" class="submission-option-detail" hidden><p>Verify your membership on the <a href="/shop#member-sign-in">Shop page</a> first. We take a quick look, then add your member badge.</p></div>
-      </fieldset>
-
-      <div class="submission-review">
-        <h2>Confirm and submit</h2>
-        <p>Track your project’s status in <a href="/account">Your Projects</a>.</p>
-        <label class="honeypot" aria-hidden="true">Leave this empty<input name="company" tabindex="-1" autocomplete="off"/></label>
-        <label class="consent"><input name="consent" type="checkbox" required checked/><span>I confirm that I own or am authorized to submit this project and allow Digivated to display the submitted information and project logo.</span></label>
-        <label class="consent"><input name="emailOutreachConsent" type="checkbox" checked/><span>Send me one follow-up email about my launch. No newsletter unless I opt in.</span></label>
-        <label class="consent"><input name="activityNotifications" type="checkbox" aria-describedby="submission-notification-help" checked/><span><strong>Turn on all activity notifications</strong></span></label>
-        <p id="submission-notification-help" class="field-help">Replies, follows, messages and feedback. Change this any time in <a href="/notifications">Notifications</a>.</p>
-        <button class="button primary" type="submit" disabled>Sign in to submit your project</button>
-        <noscript>Enable JavaScript to submit your project securely.</noscript>
-        <p class="form-status" id="submission-status" role="status" aria-live="polite" tabindex="-1"></p>
-        <section id="submission-badge" class="submission-option-detail" aria-labelledby="submission-badge-title" hidden>
-          <p class="eyebrow">STEP 1 OF 4 DONE</p>
-          <h3 id="submission-badge-title" tabindex="-1">Project saved. Next: add your badge.</h3>
-          <div id="submission-badge-tracker"></div>
-          <ol class="badge-next-steps fl-howto"><li><strong>Pick a badge style and copy the code.</strong></li><li><strong>Paste it into your site</strong>, like in the footer, and publish.</li><li><strong>Hit “Check my website.”</strong> Once we see it, your launch is locked in.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help">Once verified, you go live on launch day.</p>
-          <div id="submission-badge-picker"></div>
-          <div class="submission-account-actions fl-actions">
-            <button class="button primary fl-btn-primary" id="submission-badge-verify" type="button" hidden>Check my website</button>
-            <a class="button" id="submission-badge-dashboard" href="/account#account-submissions">Go to my dashboard →</a>
-          </div>
-          <p class="fl-status" id="submission-badge-status" role="status" aria-live="polite"></p>
-        </section>
-      </div>
       </div>
     </form>
 
-    <aside class="submission-preview-panel" aria-labelledby="listing-preview-title">
-      <div class="submission-preview-sticky"><p class="submission-step-label">YOUR PUBLIC LISTING</p><h2 id="listing-preview-title">Preview your project</h2>
+    <details class="submission-preview-panel submission-disclosure">
+      <summary>Preview your public listing</summary>
       <article class="submission-listing-preview"><div class="listing-preview-cover"><img data-listing-image alt="" hidden/><span data-listing-placeholder>Your project logo</span></div><div class="listing-preview-copy"><span data-listing-category>Category</span><h3 data-listing-name>Your project name</h3><p data-listing-description>A clear description of what your project does and who it helps.</p><span data-listing-domain>your-project.com</span></div><div class="listing-preview-footer"><span>Feedback <b>0</b></span><span>↑ Upvote <b>0</b></span></div></article>
-      <p class="field-help">Your email, order details, and review notes stay private.</p></div>
-    </aside>
+      <p class="field-help">Your email, order details, and review notes stay private.</p>
+    </details>
+    <details class="submission-disclosure">
+      <summary>How free launches work</summary>
+      <FreeLaunchGuide />
+      <FeedbackPoints variant="strip" cta="/discover?sort=needs" ctaLabel="Earn points while you wait"/>
+    </details>
   </div>
   <script>import '../scripts/submission.js'; import '../scripts/submission-preview.js';</script>
 </Platform>

@@ -408,12 +408,12 @@
  html#digivated-root[data-ascii] #main :is(.lede,.news-intro,.page-intro>p) {max-width:60ch;line-height:1.75!important;}
  html#digivated-root[data-ascii] #main :is(.launch-directory,.news-page,.creator-feed-shell,.launch-page,.project-wall) {width:100%!important;max-width:none!important;padding-inline:0!important;}
  html#digivated-root[data-ascii] #main :is(.launch-toolbar,.wall-navigation,.news-toolbar) {gap:24px!important;margin-block:24px 40px!important;}
- html#digivated-root[data-ascii] #main :is(.launch-layout,.news-layout,.submission-layout) {gap:clamp(32px,5vw,72px)!important;}
+ html#digivated-root[data-ascii] #main :is(.launch-layout,.news-layout) {gap:clamp(32px,5vw,72px)!important;}
  html#digivated-root[data-ascii] #main :is(.wall-card-grid,.resource-grid,.ai-category-grid) {gap:32px!important;}
  html#digivated-root[data-ascii] .launch-page .launch-content-column > :is(section,article) {margin-block:40px!important;}
  html#digivated-root[data-ascii] .launch-page :is(.launch-info-panel,.launch-creator) {padding:24px 0!important;}
  html#digivated-root[data-ascii] .launch-page .launch-layout {grid-template-columns:minmax(0,1fr) minmax(240px,320px)!important;}
- html#digivated-root[data-ascii] #main :is(.submission-form,.creator-profile-editor form) {min-width:0;max-width:760px;}
+ html#digivated-root[data-ascii] #main .creator-profile-editor form {min-width:0;max-width:760px;}
  html#digivated-root[data-ascii] .submission-form fieldset {padding:0!important;margin:0 0 56px!important;}
  html#digivated-root[data-ascii] .submission-form label {margin-block:24px!important;}
  html#digivated-root[data-ascii] .submission-form :is(input,select,textarea) {box-sizing:border-box;max-width:100%;}

@@ -175,7 +175,7 @@ if (form) {
       if(filled)say('ok',`✓ ${filled} detail${filled===1?'':'s'} imported from ${host}. Check them below.`);
       else say('ok','Your fields were already filled, so nothing changed.');
     }catch(error){say('error',error.message||'Import unavailable. You can enter your details manually.');}
-    finally{clearInterval(spin);icon.textContent='⇣';label.textContent='Import from your website';button.disabled=false;button.removeAttribute('aria-busy');}
+    finally{clearInterval(spin);icon.textContent='⇣';label.textContent='Autofill';button.disabled=false;button.removeAttribute('aria-busy');}
   };
   const accountStatus=document.getElementById('submission-account-status');
   const details=document.getElementById('submission-details');
