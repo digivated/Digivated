@@ -25,7 +25,6 @@ html[data-ascii] body .launch-copy h3{display:flex;flex-wrap:wrap;align-items:ce
 html[data-ascii] body :is(.dg-badge-boost,.dg-badge-top){color:#d9c6ff!important}
 /* Live signal: a three-character ASCII level meter, animated by /dg-motion.js. */
 html[data-ascii] body .dg-dot{display:inline-block;flex:none;width:3ch;min-width:3ch;font-family:var(--fl-mono)!important;font-size:11px!important;font-weight:400!important;line-height:1!important;letter-spacing:0!important;text-transform:none!important;color:var(--dgb-ok)!important;text-shadow:0 0 6px #8fd6a466;white-space:pre;overflow:hidden}
-@keyframes dg-rise{from{opacity:0;transform:translateY(10px)}}
 @keyframes dg-shimmer{to{background-position:-200% 0}}
 html[data-ascii] body .dg-avatar{position:relative;flex:none;display:grid;place-items:center;overflow:hidden;width:var(--size,32px);height:var(--size,32px);border:1px solid var(--dgb-line-hi)!important;border-radius:2px!important;background-color:#151515!important}
 html[data-ascii] body .dg-avatar>span{font-family:var(--fl-mono)!important;font-size:calc(var(--size,32px) * .34)!important;line-height:1!important;color:#cfcfcf!important}
@@ -130,11 +129,6 @@ html[data-ascii] body .dg-rail-threads .dg-quiet-link{font-family:var(--fl-mono)
 
 /* ---------- Spot cards ---------- */
 html[data-ascii] body .dg-spot{position:relative;display:grid!important;align-content:start;gap:8px;min-height:96px;margin:0!important;padding:12px!important;border:1px solid var(--dgb-line)!important;border-radius:2px!important;background-color:var(--dgb-panel)!important;color:var(--dgb-ink)!important;text-decoration:none!important;transition:border-color .2s,background-color .2s,transform .25s var(--dgb-ease)!important}
-html[data-ascii] body [data-ready] .dg-spot{animation:dg-pop-in .45s var(--dgb-spring) both}
-html[data-ascii] body [data-ready] .dg-spot:nth-child(2){animation-delay:.05s}
-html[data-ascii] body [data-ready] .dg-spot:nth-child(3){animation-delay:.1s}
-html[data-ascii] body [data-ready] .dg-spot:nth-child(n+4){animation-delay:.15s}
-@keyframes dg-pop-in{from{opacity:0;transform:translateY(8px) scale(.97)}}
 html[data-ascii] body .dg-spot:hover{border-color:#444!important;background-color:#131313!important;transform:translateY(-2px);text-decoration:none!important}
 html[data-ascii] body .dg-spot-top{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;gap:8px}
 html[data-ascii] body .dg-spot-top strong{overflow:hidden;font-family:var(--fl-sans)!important;font-size:13.5px!important;font-weight:600!important;color:var(--dgb-ink)!important;white-space:nowrap;text-overflow:ellipsis}
@@ -154,7 +148,7 @@ html[data-ascii] body .dg-spot.is-open small{font-family:var(--fl-mono)!importan
 html[data-ascii] body .dg-spot.is-open .dg-spot-instant{margin-top:3px;padding:1px 6px!important;border:1px solid #3b2f52!important;border-radius:2px!important;background-color:#0a0a0a!important;font-family:var(--fl-mono)!important;font-size:9px!important;font-style:normal!important;letter-spacing:.08em;text-transform:uppercase;color:#d9c6ff!important;white-space:nowrap}
 
 /* ---------- Hero ---------- */
-html[data-ascii] body .dg-hero{position:relative;display:block;overflow:hidden;margin:0!important;padding:clamp(28px,4vw,48px) clamp(20px,3.4vw,40px)!important;border:1px solid var(--fl-outline)!important;border-radius:var(--fl-radius-card)!important;background-color:var(--fl-surface)!important;background-image:radial-gradient(85% 100% at 90% 0%,#c3a0ff13,transparent 70%)!important;animation:dg-rise .6s var(--dgb-ease) both;container-type:inline-size}
+html[data-ascii] body .dg-hero{position:relative;display:block;overflow:hidden;margin:0!important;padding:clamp(28px,4vw,48px) clamp(20px,3.4vw,40px)!important;border:1px solid var(--fl-outline)!important;border-radius:var(--fl-radius-card)!important;background-color:var(--fl-surface)!important;background-image:radial-gradient(85% 100% at 90% 0%,#c3a0ff13,transparent 70%)!important;container-type:inline-size}
 html[data-ascii] body .dg-hero-copy{position:relative;z-index:1;display:grid;justify-items:start;gap:14px;max-width:560px}
 html[data-ascii] body .dg-pill::before{content:'[';color:#666}html[data-ascii] body .dg-pill::after{content:']';color:#666}
 html[data-ascii] body .dg-pill{display:inline-flex!important;align-items:center;gap:8px;margin:0!important;padding:0!important;border:0!important;background-color:transparent!important;font-family:var(--fl-mono)!important;font-size:11px!important;letter-spacing:.08em!important;text-transform:uppercase!important;color:#e7dcff!important}
@@ -181,8 +175,6 @@ html[data-ascii] body .dg-row{position:relative;display:grid!important;grid-temp
 html[data-ascii] body .dg-row:hover{background-color:#0f0f0f!important}
 html[data-ascii] body .dg-row::before{content:'>';position:absolute;left:-14px;top:50%;font-family:var(--fl-mono)!important;font-size:12px;line-height:1;color:#fff;opacity:0;transform:translate(-4px,-50%);transition:opacity .2s,transform .25s var(--dgb-ease)}
 html[data-ascii] body .dg-row:hover::before{opacity:1;transform:translate(0,-50%)}
-html[data-ascii] body .dg-list-rows.is-entering .dg-row{animation:dg-row-in .5s var(--dgb-ease) both;animation-delay:calc(var(--i,0) * 35ms)}
-@keyframes dg-row-in{from{opacity:0;transform:translateY(8px)}}
 html[data-ascii] body .dg-logo{width:44px;height:44px;transition:transform .3s var(--dgb-spring)!important}
 html[data-ascii] body .dg-row:hover .dg-logo{transform:rotate(-4deg) scale(1.05)}
 html[data-ascii] body .dg-logo-link{display:block;text-decoration:none!important}
@@ -548,7 +540,7 @@ html[data-ascii] body .dg-tier-flag{position:absolute;top:-9px;right:14px;paddin
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){
- html[data-ascii] body :is(.dg-hero,[data-ready] .dg-spot,.dg-list-rows.is-entering .dg-row,.dg-thread-row,.dg-review,.dg-award strong,.dg-sparks span,.dg-dot,.dg-rising-arrow,.dg-rising-item,.notebook-navigation[open] .dg-menu-group a,.dg-d-item.is-flash,.dg-bell-panel){animation:none!important}
+ html[data-ascii] body :is(.dg-hero,.dg-thread-row,.dg-review,.dg-award strong,.dg-sparks span,.dg-dot,.dg-rising-arrow,.dg-rising-item,.notebook-navigation[open] .dg-menu-group a,.dg-d-item.is-flash,.dg-bell-panel){animation:none!important}
  html[data-ascii] body :is(.dg-row::before,.dg-logo,.dg-spot,.dg-spot-plus,.dg-d-caret,.dg-vote-caret){transition:none!important}
 }
 }

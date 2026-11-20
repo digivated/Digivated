@@ -2,6 +2,7 @@
 @layer flow {
   html[data-ascii] body .news-page {
     width:min(1140px,100%);
+    min-block-size:calc(100svh - 100px);
     margin:0 auto!important;
     padding-block:var(--fl-space) 64px;
     color:var(--fl-ink);

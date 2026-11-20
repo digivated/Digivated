@@ -85,8 +85,8 @@
   }
 
   @media (prefers-reduced-motion:no-preference) {
-    .dg-hero-panel { animation:launch-panel-in .5s ease-out both; }
-    @keyframes launch-panel-in { from { opacity:.4; transform:translateY(5px); } }
+    .dg-hero-panel { animation:launch-panel-in .22s ease-out both; }
+    @keyframes launch-panel-in { from { opacity:.92; transform:translateY(3px); } }
   }
 
   @supports (animation-timeline:scroll()) {

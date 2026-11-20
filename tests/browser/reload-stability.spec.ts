@@ -3,24 +3,24 @@ import { test, expect } from '@playwright/test';
 const base = 'http://127.0.0.1:4321';
 
 for (const path of ['/', '/discover', '/creators', '/news']) {
-  test(`${path} stays usable through repeated reloads`, async ({ page }) => {
-    await page.goto(base + path);
-    await page.reload();
-    await page.reload();
-    await expect(page.locator('main#main')).toBeVisible();
-    await expect.poll(() => page.evaluate(() => {
-      const intro = document.getElementById('site-intro');
-      return !intro || getComputedStyle(intro).pointerEvents === 'none' || getComputedStyle(intro).display === 'none';
-    })).toBe(true);
-    expect(await page.evaluate(() => document.documentElement.dataset.siteIntro)).toBeUndefined();
+  test(`${path} stays usable on first visit and repeated reloads`, async ({ page }) => {
+    await page.goto(base + path, { waitUntil: 'domcontentloaded' });
+    for (let attempt = 0; attempt < 3; attempt++) {
+      await expect(page.locator('main#main h1').first()).toBeVisible();
+      await expect(page.locator('#site-intro,[data-fl-reveal],.dg-rv')).toHaveCount(0);
+      await page.getByRole('button', { name: 'Search Digivated' }).click();
+      await expect(page.locator('#unified-search-input')).toBeFocused();
+      if (attempt < 2) await page.reload({ waitUntil: 'domcontentloaded' });
+    }
   });
 }
 
-test('first-visit intro releases the page if its JavaScript timer is delayed', async ({ page }) => {
-  await page.addInitScript(() => sessionStorage.removeItem('digivated:intro:v1'));
-  await page.goto(base + '/creators');
-  await expect.poll(() => page.evaluate(() => {
-    const intro = document.getElementById('site-intro');
-    return !intro || getComputedStyle(intro).pointerEvents === 'none';
-  }), { timeout: 3000 }).toBe(true);
+test('the homepage still forwards email sign-in callbacks to the dashboard', async ({ page }) => {
+  const callback = '#access_token=fixture-token&refresh_token=fixture-refresh';
+  const dashboard = page.waitForURL(url => url.pathname === '/account' && url.hash === callback);
+  await page.route('**/account', route => route.fulfill({ contentType: 'text/html', body: '<title>Account callback fixture</title>' }));
+  await page.goto(base + '/' + callback).catch(error => {
+    if (!String(error).includes('ERR_ABORTED')) throw error;
+  });
+  await dashboard;
 });

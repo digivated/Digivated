@@ -15,16 +15,16 @@ function finish(element) {
   active.delete(element);
   animation.cancel();
 }
-function reveal(element, delay = 0) {
+function reveal(element) {
   if (!pending.delete(element)) return;
   observer?.unobserve(element);
   if (preference.matches || navigator.connection?.saveData || document.hidden || !element.animate || element.contains(document.activeElement)) return;
   // No fill mode or inline opacity: cancellation and failures restore the base UI.
   try {
     const animation = element.animate([
-      { opacity: .65, transform: 'translateY(9px)' },
+      { opacity: .9, transform: 'translateY(3px)' },
       { opacity: 1, transform: 'translateY(0)' },
-    ], { duration: 390, delay, easing: 'cubic-bezier(.2,.75,.25,1)' });
+    ], { duration: 180, easing: 'cubic-bezier(.2,.75,.25,1)' });
     animation.id = 'digivated-content-entrance';
     active.set(element, animation);
     animation.finished.then(() => finish(element), () => {
@@ -39,12 +39,11 @@ function start() {
       for (const entry of entries) if (entry.isIntersecting) reveal(entry.target);
     }, { threshold: .12 });
   }
-  let visibleIndex = 0;
   for (const element of pending) {
     const bounds = element.getBoundingClientRect();
     if (!bounds.width || !bounds.height) { pending.delete(element); continue; }
     if (bounds.bottom <= 0) { pending.delete(element); continue; }
-    if (bounds.top < innerHeight) reveal(element, Math.min(visibleIndex++ * 45, 135));
+    if (bounds.top < innerHeight) reveal(element);
     else if (observer) observer.observe(element);
     else pending.delete(element);
   }
