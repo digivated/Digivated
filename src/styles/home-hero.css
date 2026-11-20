@@ -53,6 +53,7 @@
     font:600 clamp(14px,1.55vw,19px)/1.2 var(--fl-sans);
     font-variant-numeric:tabular-nums;
   }
+  .dg-hero-stat .dg-hero-activity { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 6px; }
   .dg-hero-stat.is-countdown {
     grid-column:1/-1;
     padding-bottom:14px;
