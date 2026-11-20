@@ -97,27 +97,11 @@ test('Google sign-in counts only when Google verified the same email',async()=>{
  assert.equal(await verifiedAccount(req,env,user([{provider:'github',identity_data:{email:account.email,email_verified:true}}])),null);
  assert.equal(await verifiedAccount(req,env,user(undefined)),null);
 });
-test('signup creates an account only after the one-time email code is verified', {skip:!process.env.DIGIVATED_TEST_REDIS_PORT}, async()=>{
- const redis=testRedis(11);await redis(['FLUSHDB']);
- try {
-  const created=[];let code;
-  const handler=makeProjectAccountHandler({
-   env:{...env,COMMUNITY_SUPABASE_SECRET_KEY:'test-secret',RESEND_API_KEY:'test-mail',ACCOUNT_EMAIL_FROM:'accounts@example.com',VERCEL:'1'},
-   redis,
-   fetcher:async(url,options)=>{assert.equal(url,'https://api.resend.com/emails');const message=JSON.parse(options.body);assert.deepEqual(message.to,[account.email]);code=message.text.match(/verification code is (\d{6})/)[1];return {ok:true};},
-   adminClient:{auth:{admin:{createUser:async input=>{created.push(input);return {data:{user:{id:account.id}},error:null};}}}},
-  });
-  const signup=body=>invoke(handler,{method:'POST',url:'/api/project-account?action=signup',headers:{origin:'https://digivated.com','content-type':'application/json','x-real-ip':'127.0.0.1'},body:{email:account.email,...body}});
-  const started=await signup({});
-  assert.equal(started.status,202);assert.deepEqual(Object.keys(started.body),['challenge']);assert.equal(created.length,0);
-  assert.equal((await signup({})).status,429);
-  const verification={challenge:started.body.challenge,password:'long-safe-password'};
-  assert.equal((await signup({...verification,code:code==='111111'?'222222':'111111'})).status,400);
-  assert.equal(created.length,0);
-  const results=await Promise.all([signup({...verification,code}),signup({...verification,code})]);
-  assert.deepEqual(results.map(r=>r.status).sort(),[201,400]);
-  assert.deepEqual(created,[{email:account.email,password:'long-safe-password',email_confirm:true}]);
- } finally {await redis(['FLUSHDB']);}
+test('immediate signup creates a confirmed account with a rate limit',async()=>{
+ const commands=[];let created;
+ const handler=makeProjectAccountHandler({env:{...env,COMMUNITY_SUPABASE_SECRET_KEY:'test-secret',VERCEL:'1'},redis:async c=>{commands.push(c);return c[0]==='INCR'?1:1;},adminClient:{auth:{admin:{createUser:async input=>{created=input;return {data:{user:{id:account.id}},error:null};}}}}});
+ const result=await invoke(handler,{method:'POST',url:'/api/project-account?action=signup',headers:{origin:'https://digivated.com','content-type':'application/json','x-real-ip':'127.0.0.1'},body:{email:account.email,password:'long-safe-password'}});
+ assert.equal(result.status,201);assert.equal(result.body.ok,true);assert.deepEqual(created,{email:account.email,password:'long-safe-password',email_confirm:true});assert.deepEqual(commands.map(c=>c[0]),['INCR','EXPIRE']);
 });
 test('owner feedback stays private through review and public projection',()=>{
  const previous={...submission,id:'4ad90c9b-5666-482d-899c-d0d3ef41ee46',date:'2026-10-23T00:00:00Z',status:'pending',revision:0};

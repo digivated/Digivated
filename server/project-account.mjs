@@ -1,4 +1,3 @@
-import { handleSignup } from './signup-code.mjs';
 import { badgeSnippet } from './launch-queue.mjs';
 import { projectPublic } from './admin-store.mjs';
 import { createHmac } from 'node:crypto';
@@ -82,17 +81,16 @@ export function makeProjectAccountHandler(deps={}) {
       if(req.method==='POST'&&url.searchParams.get('action')==='signup'){
         if(!cfg||!env.COMMUNITY_SUPABASE_SECRET_KEY||!env.SUBMISSIONS_REDIS_REST_TOKEN)return send(503,{error:'Accounts are temporarily unavailable.'});
         if(req.headers.origin!=='https://digivated.com'||req.headers['sec-fetch-site']==='cross-site'||!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))return send(403,{error:'Open the signup page on Digivated.'});
-        let body;
-        try { body=typeof req.body==='string'?JSON.parse(req.body):req.body; }
-        catch { return send(400,{error:'Invalid signup request.'}); }
-        const ip=req.headers['x-real-ip'];
-        if(!ip || (env.VERCEL!=='1'&&!deps.redis))return send(503,{error:'Signup is temporarily unavailable.'});
-        const redis=deps.redis||redisClient(env);
-        const createUser = input => {
-          const client=deps.adminClient||createClient(cfg.url,env.COMMUNITY_SUPABASE_SECRET_KEY,{auth:{autoRefreshToken:false,persistSession:false,detectSessionInUrl:false}});
-          return client.auth.admin.createUser(input);
-        };
-        return await handleSignup({body,ip,env,redis,createUser,fetcher:deps.fetcher||fetch,send});
+        const body=typeof req.body==='string'?JSON.parse(req.body):req.body;
+        const email=String(body?.email||'').trim().toLowerCase(),password=body?.password;
+        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||typeof password!=='string'||password.length<10||password.length>128)return send(400,{error:'Enter a valid email and a password of 10–128 characters.'});
+        const ip=req.headers['x-real-ip'];if(!ip||env.VERCEL!=='1'&&!deps.redis)return send(503,{error:'Signup is temporarily unavailable.'});
+        const redis=deps.redis||redisClient(env),key=`digivated:signup:limit:${createHmac('sha256',env.SUBMISSIONS_REDIS_REST_TOKEN).update(ip).digest('hex')}`;
+        const attempts=Number(await redis(['INCR',key]));if(attempts===1)await redis(['EXPIRE',key,3600]);if(!Number.isFinite(attempts)||attempts>5)return send(429,{error:'Too many signup attempts. Try again later.'});
+        const client=deps.adminClient||createClient(cfg.url,env.COMMUNITY_SUPABASE_SECRET_KEY,{auth:{autoRefreshToken:false,persistSession:false,detectSessionInUrl:false}});
+        const {data,error}=await client.auth.admin.createUser({email,password,email_confirm:true});
+        if(error)return send(error.status===422||error.status===400?409:503,{error:error.status===422||error.status===400?'This email already has an account. Sign in or reset its password.':'Account could not be created. Try again.'});
+        return send(201,{ok:!!data?.user?.id});
       }
       if(req.method!=='GET'){res.setHeader('Allow','GET, POST');return send(405,{error:'Method not allowed.'});}
       if(url.searchParams.get('action')==='config')return send(200,{ready:!!cfg,...(cfg?{url:cfg.url,key:cfg.key,...(env.COMMUNITY_GOOGLE_ENABLED==='true'?{google:true}:{})}:{})});

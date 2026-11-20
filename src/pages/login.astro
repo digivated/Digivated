@@ -31,14 +31,6 @@ import '../styles/project-account.css';
           <p id="login-password-hint" class="fl-hint" hidden>At least 10 characters.</p>
           <button class="button primary fl-btn fl-btn-primary" id="login-submit" type="submit">Sign in</button>
         </form>
-        <form id="login-code-form" class="fl-form" hidden>
-          <p id="login-code-help">Enter the six-digit code we sent to <strong id="login-code-email"></strong>. It expires in 10 minutes.</p>
-          <label for="login-code">Verification code</label>
-          <input id="login-code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" aria-describedby="login-code-help" required/>
-          <button class="button primary fl-btn fl-btn-primary" type="submit">Verify and create account</button>
-          <button type="button" class="fl-link" id="login-resend-code">Send a new code</button>
-          <button type="button" class="fl-link" id="login-change-email">Change email</button>
-        </form>
         <p id="login-status" class="fl-status" role="status" aria-live="polite"></p>
         <details id="login-alternative" class="fl-alt"><summary>Email me a sign-in link instead</summary><p>We’ll email a one-time sign-in link to the address above.</p><button type="button" id="login-email-link" class="fl-btn">Send sign-in link</button></details>
         <p id="login-terms" class="fl-fineprint" hidden>By creating an account you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy policy</a>.</p>
