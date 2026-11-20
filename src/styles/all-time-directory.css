@@ -23,6 +23,8 @@ html[data-ascii] body .dg-dir-collection button+button{border-left:1px solid var
 html[data-ascii] body .dg-dir-collection button[aria-pressed=true]{background-color:#ececec!important;color:#0a0a0a!important}
 html[data-ascii] body .dg-dir-surprise{white-space:nowrap}
 html[data-ascii] body :is(.dg-dir-sorts,.dg-dir-chips){display:flex;gap:6px;margin:0!important;padding:4px 2px!important}
+html[data-ascii] body .dg-dir-sorts{min-block-size:44px}
+html[data-ascii] body .dg-dir-chips{min-block-size:40px}
 html[data-ascii] body :is(.dg-dir-sorts,.dg-dir-chips){overflow-x:auto;scrollbar-width:thin;scrollbar-color:#434343 transparent}
 html[data-ascii] body .dg-dir-sort{flex:none;min-height:36px!important;padding:4px 10px!important;border:0!important;border-radius:0!important;background:transparent!important;color:#8f8f8f!important;font-family:var(--fl-mono)!important;font-size:12px!important;letter-spacing:.04em;text-transform:lowercase;cursor:pointer;transition:color .18s!important}
 html[data-ascii] body .dg-dir-sort::before{content:'[ ';color:#444}

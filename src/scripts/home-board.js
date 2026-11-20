@@ -67,7 +67,7 @@ function spotCard(item, price) {
   if (outbound(item.url)) visitAttrs(card, item); else card.href = local(item.pageUrl) || '/discover';
   card.dataset.projectId = item.id;
   const top = el('span', null, 'dg-spot-top');
-  top.append(logo(item, 'dg-spot-logo'), el('strong', item.name, 'dg-decode'));
+  top.append(logo(item, 'dg-spot-logo'), el('strong', item.name));
   card.append(top, el('span', item.description || item.category || 'Independent project', 'dg-spot-copy'), item.spot === 'Member' ? memberTag() : el('em', item.spot, 'dg-spot-tag'));
   card.setAttribute('aria-label', `${item.name}, ${item.spot.toLowerCase()} spot. Opens in a new tab.`);
   return card;
@@ -84,7 +84,6 @@ function renderSpots(featured, sponsored, instant) {
   // Cached spots are painted first; skip the rebuild when the fresh data matches.
   const signature = JSON.stringify([price, filled.map(p => [p.id, p.spot, p.name, p.description, p.category, p.image, p.url, p.pageUrl])]);
   if (signature === spotsSignature) return;
-  const repaint = !!spotsSignature;
   spotsSignature = signature;
   // Rails: split evenly, each at least four cards and always ending with a paid open spot.
   const half = Math.ceil(filled.length / 2);
@@ -94,29 +93,8 @@ function renderSpots(featured, sponsored, instant) {
   // Grid (narrow screens): full rows of four (two on phones) with at least one paid open spot.
   const total = Math.ceil((filled.length + 1) / 4) * 4;
   home.querySelector('[data-spot-grid]')?.replaceChildren(...[...filled, ...Array(total - filled.length).fill(null)].map(item => spotCard(item, price)));
-  home.dataset.ready = 'true';
   observeProjectViews();
-  decodeIn(home, !repaint);
 }
-
-/* ---------- ASCII decode: text resolves from glyph noise as it enters view ---------- */
-const GLYPHS = '#%&*+=-:./\\|<>[]{}01';
-function decode(node) {
-  const final = node.textContent;
-  if (!final || reduced.matches) return;
-  node.setAttribute('aria-label', final);
-  const start = performance.now(), duration = Math.min(700, 260 + final.length * 22);
-  const tick = now => {
-    const progress = Math.min(1, (now - start) / duration);
-    const shown = Math.floor(progress * final.length);
-    node.textContent = final.slice(0, shown) + [...final.slice(shown)].map(ch => ch === ' ' ? ' ' : GLYPHS[Math.floor(Math.random() * GLYPHS.length)]).join('');
-    if (progress < 1) requestAnimationFrame(tick); else { node.textContent = final; node.removeAttribute('aria-label'); }
-  };
-  requestAnimationFrame(tick);
-}
-const decoder = 'IntersectionObserver' in window ? new IntersectionObserver(entries => entries.forEach(entry => { if (!entry.isIntersecting) return; decoder.unobserve(entry.target); decode(entry.target); }), { rootMargin: '-40px' }) : null;
-// A background refresh rebuilds rows; those names appear as-is instead of decoding twice.
-function decodeIn(root, animate = true) { if (!decoder || reduced.matches) return; root.querySelectorAll('.dg-decode:not([data-decoded])').forEach(node => { node.dataset.decoded = ''; if (animate) decoder.observe(node); }); }
 
 /* ---------- Launch lists ---------- */
 // This week: ranked by launch score (trust-weighted upvotes, comments from other
@@ -124,7 +102,7 @@ function decodeIn(root, animate = true) { if (!decoder || reduced.matches) retur
 // counts stay hidden. Last week: frozen final results with the podium.
 const state = {
   projects: [], fair: { active: false, endsAt: 0 }, podium: null, upcoming: null,
-  limits: { current: PAGE, upcoming: 5, previous: 5, archive: 5 }, animate: true,
+  limits: { current: PAGE, upcoming: 5, previous: 5, archive: 5 },
 };
 const pendingVotes = new Set();
 const pendingWatch = new Set();
@@ -236,7 +214,7 @@ async function toggleWatch(item, button) {
   finally {
     pendingWatch.delete(item.id);
     const focused = document.activeElement === button;
-    state.animate = false; render();
+    render();
     const note = section.querySelector('[data-section-note]');
     if (failure) note.textContent = failure;
     else if (item.watching) note.textContent = `We’ll notify you when ${item.name} goes live.`;
@@ -268,7 +246,7 @@ async function toggleVote(p, button, li) {
   } finally {
     pendingVotes.delete(p.id);
     const focused = document.activeElement === button;
-    state.animate = false; render();
+    render();
     if (failure) section.querySelector('[data-section-note]').textContent = failure;
     const next = section.querySelector(`[data-launch-id="${CSS.escape(p.id)}"] .dg-vote`);
     if (focused) next?.focus({ preventScroll: true });
@@ -300,12 +278,11 @@ function renderRising() {
     const filled = Math.max(1, Math.round((Number(p.rising) / top) * 6));
     const meter = el('span', '▮'.repeat(filled) + '▯'.repeat(6 - filled), 'dg-rising-meter'); meter.setAttribute('aria-hidden', 'true');
     const rank = el('span', `#${i + 1}`, 'dg-rising-rank'); rank.setAttribute('aria-hidden', 'true');
-    const text = el('span', null, 'dg-rising-text'); text.append(el('strong', p.name, 'dg-decode'), el('small', p.category || 'Project'));
+    const text = el('span', null, 'dg-rising-text'); text.append(el('strong', p.name), el('small', p.category || 'Project'));
     a.append(rank, logo(p, 'dg-rising-logo'), text, meter);
     a.setAttribute('aria-label', `${p.name}, number ${i + 1} rising in the last 24 hours`);
     li.append(a); return li;
   }));
-  decodeIn(box, state.animate);
 }
 
 function render() {
@@ -319,7 +296,6 @@ function render() {
     count.textContent = key === 'archive' ? `${items.length} ${items.length === 1 ? 'project' : 'projects'}` : key === 'upcoming' ? `${items.length} scheduled` : `${items.length} ${items.length === 1 ? 'launch' : 'launches'}`;
     note.replaceChildren(...sectionNote(key, items));
     const list = section.querySelector('[data-section-list]');
-    list.classList.toggle('is-entering', state.animate && !reduced.matches);
     list.replaceChildren(...items.slice(0, limit).map((p, i) => key === 'upcoming' ? upcomingRow(p, i) : row(p, key, i)));
     if (!items.length) {
       const empty = el('li', null, 'dg-row dg-row-empty');
@@ -329,13 +305,12 @@ function render() {
     }
     const more = section.querySelector('[data-section-more]');
     more.hidden = items.length <= limit;
-    more.onclick = () => { state.limits[key] += PAGE; state.animate = false; render(); };
+    more.onclick = () => { state.limits[key] += PAGE; render(); };
     more.textContent = `View ${Math.min(PAGE, items.length - limit)} more`;
   }
   const upvotes = state.projects.reduce((sum, p) => sum + (Number(p.votes?.all) || 0), 0);
   document.querySelectorAll('[data-stat-upvotes]').forEach(node => { node.textContent = number.format(upvotes); });
   document.querySelectorAll('[data-stat-products]').forEach(node => { node.textContent = number.format(state.projects.length); });
-  state.animate = true;
 }
 
 async function loadCatalogue() {
@@ -386,12 +361,11 @@ async function railThreads() {
     const { threads = [] } = await response.json();
     if (!threads.length) return;
     box.querySelector('[data-rail-thread-list]').replaceChildren(...threads.slice(0, 4).map(thread => {
-      const li = el('li'); const a = el('a', thread.title, 'dg-decode'); a.href = `/threads/${thread.slug}`;
+      const li = el('li'); const a = el('a', thread.title); a.href = `/threads/${thread.slug}`;
       li.append(a, el('small', `▲ ${thread.votes} · ${thread.comments} ${thread.comments === 1 ? 'reply' : 'replies'}`));
       return li;
     }));
     box.hidden = false;
-    decodeIn(box);
   } catch { /* The box stays hidden. */ }
 }
 
@@ -418,8 +392,6 @@ const sponsoredFrom = projects => { const now = Date.now(); return projects.filt
 if (board) {
   pointsChip();
   railThreads();
-  board.querySelectorAll('.dg-list-head h2 .dg-list-title').forEach(node => node.classList.add('dg-decode'));
-  decodeIn(board);
   const cached = readCache();
   if (cached) {
     state.projects = cached.projects;
@@ -430,11 +402,10 @@ if (board) {
   }
   const catalogue = loadCatalogue();
   // Last week's final results and the podium arrive separately; lists re-render when they do.
-  loadLaunches('podium').then(data => { if (!data?.order) return; state.podium = data; writeCache({ podium: data }); if (state.projects.length) { state.animate = false; render(); } });
-  loadLaunches('upcoming').then(data => { if (!data?.items) return; state.upcoming = data; if (state.projects.length) { state.animate = false; render(); } });
+  loadLaunches('podium').then(data => { if (!data?.order) return; state.podium = data; writeCache({ podium: data }); if (state.projects.length) { render(); } });
+  loadLaunches('upcoming').then(data => { if (!data?.items) return; state.upcoming = data; if (state.projects.length) { render(); } });
   catalogue.then(projects => {
     state.projects = projects;
-    if (cached) state.animate = false;
     render();
     writeCache({ at: Date.now(), projects: projects.map(({ liked, ...p }) => p), fair: state.fair });
   }).catch(error => {
