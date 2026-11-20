@@ -16,6 +16,8 @@ const projects = Array.from({ length: 27 }, (_, i) => ({
 
 for (const width of [390, 1440]) {
   test(`Directory navigation and project controls work at ${width}px`, async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
     await page.setViewportSize({ width, height: 900 });
     await page.route('**/api/projects*', route => route.fulfill({ json: { items: projects, next: null } }));
     await page.goto(base + '/discover');
@@ -32,6 +34,7 @@ for (const width of [390, 1440]) {
     await expect(rows).toHaveCount(1);
     await expect(rows.first()).toHaveAttribute('href', '/projects/listing/directory-26');
     await expect(page.locator('[data-dir-list] .dg-comments')).toHaveAttribute('href', '/projects/listing/directory-26#feedback');
+    expect(errors).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 }
