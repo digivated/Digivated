@@ -12,6 +12,7 @@ const projects = Array.from({ length: 27 }, (_, i) => ({
   url: 'https://example.com',
   pageUrl: '/projects/listing/directory-' + i,
   votes: { all: 100 - i },
+  date: new Date(Date.UTC(2026, 9, i + 1)).toISOString(),
 }));
 
 for (const width of [390, 1440]) {
@@ -28,6 +29,15 @@ for (const width of [390, 1440]) {
     await expect(page.locator('[data-dir-podium]')).toHaveCount(0);
     const rows = page.locator('[data-dir-list] .dg-dir-open');
     await expect(rows).toHaveCount(24);
+    await expect(page.locator('[data-dir-sorts] [data-sort=new]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(rows.first()).toHaveText('Directory fixture 26');
+    await page.locator('[data-dir-sorts] [data-sort=top]').click();
+    await expect(page).toHaveURL(/sort=top$/);
+    await page.reload();
+    await expect(rows.first()).toHaveText('Directory fixture 0');
+    await page.locator('[data-dir-sorts] [data-sort=new]').click();
+    await expect(page).toHaveURL(base + '/discover');
+    await expect(rows.first()).toHaveText('Directory fixture 26');
     await page.locator('[data-dir-more]').click();
     await expect(rows).toHaveCount(27);
     await page.locator('[data-dir-search]').fill('Directory fixture 26');
