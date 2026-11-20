@@ -32,7 +32,6 @@
   }
 
   const setHeroHeight = () => {
-    for (const hero of doc.querySelectorAll('.dg-hero')) hero.style.setProperty('--dg-hero-h', `${hero.offsetHeight + 120}px`);
   };
 
   const start = () => {

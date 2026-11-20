@@ -7,6 +7,19 @@
 @layer flow {
 :root{--fl-bg:#090909;--fl-panel:#0f0f0f;--fl-raised:#141414;--fl-line:#2a2a2a;--fl-line-hi:#4a4a4a;--fl-ink:#f0f0f0;--fl-copy:#c4c4c4;--fl-muted:#8f8f8f;--fl-ok:#8fd6a4;--fl-warn:#e8c47a;--fl-bad:#ef8f8f;--fl-accent:#c3a0ff;--fl-radius:6px}
 
+/* Shared surfaces and spacing for public content. */
+:root {
+  --fl-surface:#101013;
+  --fl-outline:#2b2b32;
+  --fl-radius-card:12px;
+  --fl-space:clamp(16px,2.5vw,28px);
+  --fl-shadow:0 12px 36px #0003;
+  --fl-display:clamp(32px,3.8vw,52px);
+}
+html[data-ascii] body.platform {
+  background-image:radial-gradient(ellipse 70% 500px at 50% 0%, #16131e, transparent)!important;
+}
+
 /* ---- Site-wide form fields: visible, consistent, accessible ---- */
 html[data-ascii] body :is(input:not([type=checkbox],[type=radio],[type=range],[type=file],[type=hidden]),select,textarea){border:1px solid var(--fl-line-hi)!important;border-radius:var(--fl-radius)!important;background-color:#0c0c0c!important;color:var(--fl-ink)!important;padding:10px 12px!important;min-height:44px}
 html[data-ascii] body :is(input:not([type=checkbox],[type=radio],[type=range],[type=file],[type=hidden]),select,textarea):focus{border-color:#d8d8d8!important;outline:none!important}
@@ -211,7 +224,7 @@ html[data-ascii] body .fl-menu-trigger #header-account-dot{position:absolute;top
 
 /* Type: clean sans for reading, mono for labels, meta and ASCII. */
 html[data-ascii] body *{font-family:var(--fl-sans)!important}
-html[data-ascii] body :is(pre,pre *,code,kbd,samp,.fl-mono,.fl-mono *,.eyebrow,.eyebrow *,time,.fl-pill,.fl-step-mark,.fl-progress,.fl-progress *,.site-breadcrumbs,.site-breadcrumbs *,.fl-badge-preview,.home-editorial-kicker,.home-about-label,.submission-step-label,.fl-code textarea,.ascii-field,.ascii-field *,.ascii-ambient,.ascii-ambient *,.queue-countdown,.queue-countdown *,.header-inbox-badge,.fl-menu-count,.fl-unread-dot,.fl-notify-group,.fl-label,.fl-hud,.fl-hud *,.fl-step-copy small,.notification-copy small,.fl-project-meta,.fl-tag){font-family:var(--fl-mono)!important}
+html[data-ascii] body :is(pre,pre *,code,kbd,samp,.fl-mono,.fl-mono *,.eyebrow,.eyebrow *,time,.fl-pill,.fl-step-mark,.fl-progress,.fl-progress *,.site-breadcrumbs,.site-breadcrumbs *,.fl-badge-preview,.home-editorial-kicker,.home-about-label,.submission-step-label,.fl-code textarea,.queue-countdown,.queue-countdown *,.header-inbox-badge,.fl-menu-count,.fl-unread-dot,.fl-notify-group,.fl-label,.fl-hud,.fl-hud *,.fl-step-copy small,.notification-copy small,.fl-project-meta,.fl-tag){font-family:var(--fl-mono)!important}
 html[data-ascii] body{font-size:15px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 html[data-ascii] body :is(h1,h2,h3,h4){font-family:var(--fl-sans)!important;font-weight:500!important;color:#f3f3f3!important;-webkit-text-fill-color:currentColor!important}
 html[data-ascii] body h1{letter-spacing:-.04em!important;line-height:1.04!important}
@@ -286,7 +299,6 @@ html[data-ascii] body .site-breadcrumbs{font-size:11px!important;letter-spacing:
 html[data-ascii] body .site-breadcrumbs [aria-current=page]{color:#bdbdbd!important;text-decoration:none!important}
 
 /* Ambient ASCII stays as texture, not noise. */
-html[data-ascii] body .ascii-ambient{display:none!important}
 
 /* Dashboard alignment: one measure under the heading. */
 html[data-ascii] body #main .fl-dash-intro,html[data-ascii] body #main:has(.fl-dash-intro)>.site-breadcrumbs{max-width:900px!important;margin-inline:auto!important}
@@ -317,7 +329,7 @@ html[data-ascii] body .compact-site-header .header-primary>a::after{content:none
 html[data-ascii] body #main .submission-intro{padding-block:8px 26px!important;margin-bottom:12px!important}
 html[data-ascii] body #main .submission-intro h1{font-size:clamp(32px,4vw,46px)!important;margin-block:0 6px!important}
 html[data-ascii] body #main .submission-intro::after{height:10px}
-html[data-ascii] body #main:has(:is(.submission-intro,.dg-dir))>.site-breadcrumbs{padding-block:8px!important}
+html[data-ascii] body #main:has(:is(.submission-intro,.dg-dir,.news-page))>.site-breadcrumbs{padding-block:8px!important}
 html[data-ascii] body #project-form #submission-account-status{padding:8px 16px}
 html[data-ascii] body #project-form #submission-progress{margin-bottom:8px!important}
 
@@ -352,9 +364,9 @@ html[data-ascii] body .fl-notify .notifications-choice-list label{display:flex!i
 html[data-ascii] body .fl-notify .notifications-choice-list label *{text-transform:none!important;letter-spacing:normal!important}
 
 /* ---- Directory, rankings and other intros share the ruled band ---- */
-html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.creator-social-heading,.membership-heading,.creator-directory-intro){position:relative;padding-bottom:56px!important;margin-bottom:32px!important}
-html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.creator-social-heading,.membership-heading,.creator-directory-intro)::after{content:'';position:absolute;left:0;right:0;bottom:0;height:22px;border-top:1px solid var(--fl-rule)!important;border-bottom:1px solid var(--fl-rule)!important;background-image:repeating-linear-gradient(135deg,transparent 0 6px,#191919 6px 7px)!important}
-html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.news-masthead,.membership-heading) h1{font-size:clamp(36px,5vw,60px)!important}
+html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.creator-social-heading,.membership-heading,.creator-directory-intro){position:relative;padding-bottom:56px!important;margin-bottom:32px!important}
+html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.creator-social-heading,.membership-heading,.creator-directory-intro)::after{content:'';position:absolute;left:0;right:0;bottom:0;height:22px;border-top:1px solid var(--fl-rule)!important;border-bottom:1px solid var(--fl-rule)!important;background-image:repeating-linear-gradient(135deg,transparent 0 6px,#191919 6px 7px)!important}
+html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.membership-heading) h1{font-size:clamp(36px,5vw,60px)!important}
 
 /* Directory rows: ruled list, like the reference project index. */
 html[data-ascii] body .wall-dom-grid .wall-tile{border-top:1px solid var(--fl-rule)!important;padding-block:18px!important;margin:0!important}

@@ -38,24 +38,11 @@
  html[data-ascii] body .home-featured-summary{font-size:12px!important;line-height:1.8!important}
  html[data-ascii] body .home-featured-copy strong{font-size:18px!important;}
 
- html[data-ascii] body .ascii-field{position:absolute;top:220px;right:max(4vw,calc((100vw - 1200px)/2));width:42%;margin:0;padding:0;z-index:0;pointer-events:none;user-select:none;white-space:pre;line-height:1.5;font-size:clamp(8px,.9vw,12px);color:#aaa!important;opacity:.85;background:none!important;text-align:center;}
- html[data-ascii] body:not(.home-refresh) .ascii-field{display:none!important;}
- html[data-ascii] .ascii-ambient{position:fixed;inset:0;overflow:hidden;pointer-events:none;user-select:none;z-index:0;contain:strict;}
- html[data-ascii] .ascii-drift{position:absolute;margin:0;font:11px/1.35 var(--ascii-mono)!important;color:#c0c0c0!important;opacity:.13;white-space:pre;animation:ascii-float 28s ease-in-out infinite alternate;}
- html[data-ascii] .ascii-drift:nth-child(1){left:2%;top:16%}
- html[data-ascii] .ascii-drift:nth-child(2){right:2%;top:48%;animation-delay:-14s;animation-duration:36s;}
- html[data-ascii] .ascii-drift:nth-child(3){left:12%;bottom:6%;animation-delay:-8s;animation-duration:40s;}
- html[data-ascii] .ascii-drift:nth-child(4){right:16%;top:8%;animation-delay:-20s;animation-duration:32s;}
- html[data-ascii] .ascii-ambient[data-paused] .ascii-drift{animation-play-state:paused;}
- @keyframes ascii-float{from{transform:translate3d(-10px,-16px,0)}to{transform:translate3d(16px,22px,0)}}
  @media(max-width:760px){
 
- html[data-ascii] body .ascii-field{top:130px;right:0;width:100%;font-size:9px;}
 
- html[data-ascii] .ascii-drift{font-size:8px!important;opacity:.085;}
  html[data-ascii] body main>:is(section,article){margin-block:48px}
  }
- @media(prefers-reduced-motion:reduce){html[data-ascii]{scroll-behavior:auto}html[data-ascii] .ascii-drift{animation:none!important}}
 }
 @layer ascii {
  html[data-ascii] body .account-announcement{background:#111!important;color:#ddd!important;}
@@ -85,22 +72,13 @@
 }
 
 @layer ascii {
- html[data-ascii] .ascii-drift{opacity:.21;animation-name:ascii-community-drift;animation-duration:16s;animation-timing-function:ease-in-out;animation-iteration-count:infinite;animation-direction:alternate;}
- html[data-ascii] .ascii-drift:nth-child(2){animation-duration:20s;}
- html[data-ascii] .ascii-drift:nth-child(3){animation-duration:24s;opacity:.25;}
- html[data-ascii] .ascii-drift:nth-child(4){animation-duration:18s;}
  @keyframes ascii-community-drift {
   from{transform:translate3d(-22px,-24px,0)}
   to{transform:translate3d(28px,38px,0)}
  }
- @media(max-width:760px){html[data-ascii] .ascii-drift{opacity:.16;}html[data-ascii] .ascii-drift:nth-child(3){opacity:.20;}}
- @media(prefers-reduced-motion:reduce){html[data-ascii] .ascii-drift{animation:none!important}}
 }
 
 @layer ascii {
- html[data-ascii] .ascii-drift{animation:none!important;transform:none!important;font-size:9px!important;line-height:1.1!important;opacity:.25;}
- html[data-ascii] .ascii-drift:nth-child(3){opacity:.24;}
- @media(max-width:760px){html[data-ascii] .ascii-drift{font-size:6px!important;opacity:.18;}}
 }
 
 @layer ascii {html[data-ascii] body .ascii-brand-art{width:min(100%,340px);margin:24px auto 64px!important}html[data-ascii] body .ascii-brand-art img{display:block;width:100%;height:auto;mix-blend-mode:screen}}
@@ -293,7 +271,6 @@
  @media(max-width:760px){
   html[data-ascii] body .compact-site-header .brand-spinner,
   html[data-ascii] body .compact-site-header .brand-spinner .new-brand-mark{width:34px!important;height:34px!important}
-  html[data-ascii] body.home-refresh .ascii-field{top:135px!important;font-size:9px!important;line-height:1.5!important;max-width:100vw!important;overflow:hidden!important;opacity:.85!important}
 
  }
 
@@ -318,42 +295,6 @@
   }
 }
 
-/* The workshop owns a real grid column so its art cannot overlap the copy. */
-@layer ascii {
-
- html[data-ascii] body.home-refresh #main .ascii-field.home-workshop {
-  position: static;
-  width: 100%;
-  margin: 0;
-  color: #c5c5c5 !important;
-  font-size: clamp(8px, 1vw, 14px) !important;
-  line-height: 1.5 !important;
-  text-align: left;
-  overflow: hidden;
-  min-height: 14lh;
- }
- html[data-ascii] .ascii-workshop-signals .ascii-drift {
-  animation: none;
-  opacity: .23;
-  font-size: clamp(7px, .75vw, 11px) !important;
- }
- html[data-ascii] .ascii-workshop-signals .ascii-drift:nth-child(1) { left: 0; top: 16%; }
- html[data-ascii] .ascii-workshop-signals .ascii-drift:nth-child(2) { right: 0; top: 42%; }
- html[data-ascii] .ascii-workshop-signals .ascii-drift:nth-child(3) { left: 12%; bottom: 3%; }
- html[data-ascii] .ascii-workshop-signals .ascii-drift:nth-child(4) { right: 22%; top: 4%; opacity: .14; }
- @media (max-width: 900px) {
-
-  html[data-ascii] body.home-refresh #main .ascii-field.home-workshop {
-   grid-row: 1;
-   width: max-content;
-   max-width: 100% !important;
-   justify-self: center;
-   font-size: clamp(8px, 2.65vw, 12px) !important;
-  }
- }
-
-}
-
 /* Shared canvas: one gutter, a readable measure, and space between tasks.
    Scope layout rules to content, never dialogs, hidden panels, or account logic. */
 @layer ascii {
@@ -376,12 +317,12 @@
  html#digivated-root[data-ascii] .compact-header-actions {gap:16px!important;}
  html#digivated-root[data-ascii] .site-breadcrumbs {padding:24px 0!important;margin:0!important;}
  html#digivated-root[data-ascii] #main > :is(section,article) {margin-block:48px var(--canvas-space)!important;}
- html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.news-masthead,.creator-social-heading,.notifications-heading) {padding-inline:0!important;margin-bottom:48px!important;}
- html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.news-masthead,.creator-social-heading,.notifications-heading) h1 {font-size:clamp(32px,4vw,56px)!important;line-height:1.18!important;margin-block:16px 20px!important;text-wrap:balance;}
- html#digivated-root[data-ascii] #main :is(.lede,.news-intro,.page-intro>p) {max-width:60ch;line-height:1.75!important;}
- html#digivated-root[data-ascii] #main :is(.launch-directory,.news-page,.creator-feed-shell,.launch-page,.project-wall) {width:100%!important;max-width:none!important;padding-inline:0!important;}
- html#digivated-root[data-ascii] #main :is(.launch-toolbar,.wall-navigation,.news-toolbar) {gap:24px!important;margin-block:24px 40px!important;}
- html#digivated-root[data-ascii] #main :is(.launch-layout,.news-layout) {gap:clamp(32px,5vw,72px)!important;}
+ html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.creator-social-heading,.notifications-heading) {padding-inline:0!important;margin-bottom:48px!important;}
+ html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.creator-social-heading,.notifications-heading) h1 {font-size:clamp(32px,4vw,56px)!important;line-height:1.18!important;margin-block:16px 20px!important;text-wrap:balance;}
+ html#digivated-root[data-ascii] #main :is(.lede,.page-intro>p) {max-width:60ch;line-height:1.75!important;}
+ html#digivated-root[data-ascii] #main :is(.launch-directory,.creator-feed-shell,.launch-page,.project-wall) {width:100%!important;max-width:none!important;padding-inline:0!important;}
+ html#digivated-root[data-ascii] #main :is(.launch-toolbar,.wall-navigation) {gap:24px!important;margin-block:24px 40px!important;}
+ html#digivated-root[data-ascii] #main .launch-layout {gap:clamp(32px,5vw,72px)!important;}
  html#digivated-root[data-ascii] #main :is(.wall-card-grid,.resource-grid,.ai-category-grid) {gap:32px!important;}
  html#digivated-root[data-ascii] .launch-page .launch-content-column > :is(section,article) {margin-block:40px!important;}
  html#digivated-root[data-ascii] .launch-page :is(.launch-info-panel,.launch-creator) {padding:24px 0!important;}
@@ -404,12 +345,9 @@
  html#digivated-root[data-ascii] body.home-refresh .compact-site-header {position:relative!important;inset:auto!important;}
  html#digivated-root[data-ascii] body.home-refresh #main .site-activity {position:relative!important;inset:auto!important;transform:none!important;width:100%!important;margin:20px 0 0!important;padding:0!important;}
 
- html#digivated-root[data-ascii] body.home-refresh #main .ascii-field.home-workshop {position:static!important;width:100%!important;min-width:0;max-width:100%!important;font-size:clamp(8px,1.05vw,14px)!important;line-height:1.5!important;margin:0!important;text-align:left!important;}
  html#digivated-root[data-ascii] body.home-refresh #main .project-reel-heading {width:100%!important;max-width:none!important;padding-inline:0!important;margin-inline:0!important;}
  html#digivated-root[data-ascii] body.home-refresh #main .project-reel {margin-block:0 var(--canvas-space)!important;}
 
- html#digivated-root[data-ascii] .ascii-workshop-signals .ascii-drift {opacity:.10!important;}
- html#digivated-root[data-ascii] .ascii-workshop-signals .ascii-drift:nth-child(4) {opacity:.07!important;}
  /* Size the outer columns to their contents so the links cannot overlap them. */
  @media (min-width:1281px) {
   html#digivated-root[data-ascii] .compact-site-header .header-inner {
@@ -432,7 +370,6 @@
  }
  @media (max-width:900px) {
 
-  html#digivated-root[data-ascii] body.home-refresh #main .ascii-field.home-workshop {grid-row:1;width:max-content!important;justify-self:center;font-size:clamp(8px,2.5vw,14px)!important;}
 
   html#digivated-root[data-ascii] .launch-page .launch-layout {grid-template-columns:minmax(0,1fr)!important;}
  }
@@ -442,7 +379,7 @@
   html#digivated-root[data-ascii] .compact-header-actions {gap:6px!important;}
   html#digivated-root[data-ascii] #main > :is(section,article) {margin-top:28px!important;}
 
-  html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.news-masthead,.creator-social-heading,.notifications-heading) {margin-bottom:32px!important;}
+  html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.creator-social-heading,.notifications-heading) {margin-bottom:32px!important;}
 
  }
 }
@@ -465,17 +402,6 @@
 
 @layer ascii {
  html#digivated-root[data-ascii] #main .project-wall .wall-react-root {width:100%!important;max-width:none!important;margin-inline:0!important;}
-}
-
-/* Full-column glyph workshop; size is fitted once per container resize. */
-@layer ascii {
- html#digivated-root[data-ascii] body.home-refresh #main .ascii-field.home-workshop {
-  width:100%!important;max-width:100%!important;min-height:0!important;
-  font-size:var(--workshop-font,12px)!important;line-height:1.3!important;
-  justify-self:stretch;align-self:center;letter-spacing:0!important;
-  overflow:hidden;contain:layout paint;opacity:.9!important;
- }
-
 }
 
 /* Project thumbnails share a square frame; full previews keep their own proportions. */

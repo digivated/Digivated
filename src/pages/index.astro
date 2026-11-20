@@ -4,25 +4,28 @@ import UiIcon from '../components/UiIcon.astro';
 import LaunchBoard from '../components/LaunchBoard.astro';
 import FeedbackPoints from '../components/FeedbackPoints.astro';
 import '../styles/project-wall.css';
+import '../styles/home-hero.css';
 ---
 <Platform title="Indie Project Directory & Weekly Launches" description="Discover indie software and tools, upvote weekly launches, and give builders feedback. Submit your own project to Digivated for free.">
   <div class="dg-home" data-spots>
     <aside class="dg-rail" data-spot-rail="0" aria-label="Homepage spots"></aside>
     <div class="dg-center">
-      <section class="dg-hero" aria-labelledby="dg-home-title">
-        <pre class="ascii-field home-workshop dg-hero-ascii" data-ascii-field aria-hidden="true"></pre>
+      <section class="dg-hero dg-home-hero" aria-labelledby="dg-home-title">
         <div class="dg-hero-copy">
           <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>Weekly indie product launches</p>
-          <h1 id="dg-home-title">Get your product in front of <span class="dg-hero-accent" data-site-visits-headline>visitors.</span></h1>
-          <p class="dg-hero-lede">Discover what indie makers are building, or launch your own project for free.</p>
+          <h1 id="dg-home-title">Launch your next product.</h1>
+          <p class="dg-hero-lede">Get your product in front of indie makers. Launch for free and find out what people think.</p>
           <div class="dg-hero-actions">
             <a class="dg-btn dg-btn-primary" href="/submit-project">Submit your product <UiIcon name="arrow" size={16}/></a>
             <a class="dg-btn" href="#this-week">Browse launches</a>
           </div>
+        </div>
+        <div class="dg-hero-panel">
           <dl class="dg-hero-stats">
             <div class="dg-hero-stat is-countdown"><dt>Next free launch</dt><dd><time id="queue-countdown" role="timer" aria-live="off">—</time><span class="dg-week-bar" data-week-bar aria-hidden="true"></span></dd></div>
             <div class="dg-hero-stat"><dt>Projects</dt><dd data-stat-products>—</dd></div>
-            <div class="dg-hero-stat"><dt><span class="dg-dot" aria-hidden="true"></span>Browsing now</dt><dd data-site-online>—</dd></div>
+            <div class="dg-hero-stat"><dt>Browsing now</dt><dd data-site-online>—</dd></div>
+            <div class="dg-hero-stat"><dt>Site visits</dt><dd data-site-visits>—</dd></div>
           </dl>
         </div>
       </section>
@@ -65,12 +68,9 @@ import '../styles/project-wall.css';
     const hours = Math.floor(minutes / 60) % 24;
     countdown.dateTime = new Date(target).toISOString();
     countdown.textContent = `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes % 60).padStart(2, '0')}m`;
-    // How far through the weekly cycle we are, drawn in ASCII.
     if (weekBar) {
-      const filled = Math.round((1 - (target - now.getTime()) / (7 * 86_400_000)) * 16);
-      const done = document.createElement('b');
-      done.textContent = '▓'.repeat(Math.max(0, Math.min(16, filled)));
-      weekBar.replaceChildren(done, '░'.repeat(16 - done.textContent.length));
+      const percent = (1 - (target - now.getTime()) / (7 * 86_400_000)) * 100;
+      weekBar.style.setProperty('--launch-progress', `${Math.max(0, Math.min(100, percent))}%`);
     }
   }
 

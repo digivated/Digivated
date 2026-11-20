@@ -37,7 +37,7 @@
   }
   const textNodes = el => {
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    const nodes = []; while (walker.nextNode()) if (!walker.currentNode.parentElement?.closest('[data-site-visits-headline],[aria-live]')) nodes.push(walker.currentNode); return nodes;
+    const nodes = []; while (walker.nextNode()) if (!walker.currentNode.parentElement?.closest('[data-site-visits],[aria-live]')) nodes.push(walker.currentNode); return nodes;
   };
   const decodeElement = (el, duration) => {
     if (!el || el.closest('[data-no-scramble]')) return;

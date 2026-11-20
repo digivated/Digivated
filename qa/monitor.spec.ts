@@ -63,7 +63,7 @@ for (const viewport of viewports) {
         expect(brokenImages, `${route} visible images must load`).toEqual([]);
         const capturePath = test.info().outputPath(`${name}-${viewport.name}.png`);
         const screenshot = await page.screenshot({ path: capturePath, animations: 'disabled',
-          mask: [page.locator('time[role="timer"], [data-site-visits-headline], [data-news-checked]')],
+          mask: [page.locator('time[role="timer"], [data-site-visits], [data-news-checked]')],
           maskColor: '#111111' });
         await test.info().attach(`${name}-${viewport.name}`, { path: capturePath, contentType: 'image/png' });
         expect(screenshot).toMatchSnapshot({ name: `${name}-${viewport.name}.png`, maxDiffPixelRatio: 0.22 });
