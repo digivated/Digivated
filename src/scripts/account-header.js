@@ -14,6 +14,7 @@ const menuNotificationBadge=document.getElementById('menu-notifications-badge');
 const panelNotifications=document.getElementById('header-menu-notifications');
 const panelInbox=document.getElementById('header-menu-inbox');
 const dot=document.getElementById('header-account-dot');
+const avatar=document.getElementById('header-account-avatar');
 const counts={inbox:0,notifications:0};
 const label=value=>value>9?'9+':String(value);
 const showCounts=()=>{
@@ -21,6 +22,40 @@ const showCounts=()=>{
  if(panelInbox){panelInbox.textContent=label(counts.inbox);panelInbox.hidden=!counts.inbox;}
  if(dot){const total=counts.inbox+counts.notifications;dot.textContent=label(total);dot.hidden=!total;}
 };
+
+let avatarAccount, avatarRequest=0, avatarUrl;
+function showAvatar(initial, src, image) {
+ if(avatarUrl)URL.revokeObjectURL(avatarUrl);
+ avatarUrl=src;
+ if(image)avatar.replaceChildren(image);
+ else avatar.textContent=initial;
+}
+
+async function updateAvatar(address, session, refresh) {
+ if(!avatar)return;
+ const account=session ? (session.user?.id||address) : `fallback:${address}`;
+ if(account===avatarAccount&&!refresh)return;
+ const current=++avatarRequest, initial=(address||'D').slice(0,1).toUpperCase();
+ if(account!==avatarAccount||!session)showAvatar(initial);
+ avatarAccount=account;
+ if(!session)return;
+ let src;
+ try{
+  const response=await fetch('/api/creator-profile?action=avatar',{
+   headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store',signal:AbortSignal.timeout(8000),
+  });
+  if(current!==avatarRequest)return;
+  if(response.status===204){showAvatar(initial);return;}
+  if(!response.ok)return;
+  src=URL.createObjectURL(await response.blob());
+  const image=new Image();
+  image.alt='';
+  image.src=src;
+  await image.decode();
+  if(current===avatarRequest){showAvatar(initial,src,image);src=undefined;}
+ }catch{/* Keep the initial or the previously loaded logo. */}
+ finally{if(src)URL.revokeObjectURL(src);}
+}
 
 // Account dropdown: opens on click, closes on Escape, outside click, or focus leaving.
 if(menu&&trigger&&panel){
@@ -47,7 +82,7 @@ if(menu&&trigger&&panel){
 // Let an incoming email callback establish its session on the account page first.
 if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.includes('access_token='))){
  let request=0,signedIn=false;
- const update=async(fresh=false)=>{
+ const update=async(fresh=false,refreshAvatar=false)=>{
   const current=++request;
   try{
    const {state,email,session}=await accountSession({fresh});
@@ -68,7 +103,7 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
     menu.hidden=!hasAccount;link.hidden=hasAccount;if(signup)signup.hidden=hasAccount;
     const address=email||session?.user?.email||'';
     document.getElementById('header-account-email').textContent=address;
-    document.getElementById('header-account-avatar').textContent=(address||'D').slice(0,1).toUpperCase();
+    void updateAvatar(address,state==='signed-in'?session:null,refreshAvatar);
     document.getElementById('header-account-label').textContent=address?`Account menu for ${address}`:'Account menu';
    }
    if(menuAccount)(menuAccount.querySelector('span')||menuAccount).textContent=hasAccount?'Dashboard':'Your projects';
@@ -88,6 +123,7 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
   }
  };
  document.addEventListener('digivated:notifications-updated',()=>update());
+ document.addEventListener('digivated:profile-logo-updated',()=>update(false,true));
  update();
  window.addEventListener('pageshow',event=>{if(event.persisted)update(true);});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)update(true);});

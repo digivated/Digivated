@@ -35,6 +35,7 @@ export function makeCreatorProfileHandler(deps={}){
  return async(req,res)=>{
   res.setHeader('Content-Type','application/json; charset=utf-8');res.setHeader('Cache-Control','private, no-store');res.setHeader('Vercel-CDN-Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
   const send=(code,body)=>{res.statusCode=code;res.end(JSON.stringify(body));};
+  const sendLogo=image=>{const {bytes,type}=imageBytes(image);res.setHeader('Content-Type',type);res.statusCode=200;return res.end(bytes);};
   try{
    const env=deps.env||process.env,url=new URL(req.url,'https://digivated.com');
    if(!deps.redis&&!env.SUBMISSIONS_REDIS_REST_TOKEN)return send(503,{error:'Profiles are temporarily unavailable.'});
@@ -45,7 +46,7 @@ export function makeCreatorProfileHandler(deps={}){
     const profile=JSON.parse(raw);
     if(!profile.public){const owner=req.headers.authorization?await(deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch):null;if(owner?.id!==id)return send(404,{error:'Logo not found.'});}
     const image=await redis(['GET',logoKey(id)]);if(!image)return send(404,{error:'Logo not found.'});
-    const {bytes,type}=imageBytes(image);res.setHeader('Content-Type',type);res.statusCode=200;return res.end(bytes);
+    return sendLogo(image);
    }
    if(req.method==='GET'&&url.searchParams.get('action')==='discover'){
     const ids=await redis(['ZREVRANGE',publicIndex,0,99]);
@@ -104,6 +105,11 @@ export function makeCreatorProfileHandler(deps={}){
    }
    if(!['GET','POST'].includes(req.method))return send(405,{error:'Method not allowed.'});
    const account=await(deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch);if(!account)return send(401,{error:'Sign in to manage your profile.'});
+   if(req.method==='GET'&&url.searchParams.get('action')==='avatar'){
+    const image=await redis(['GET',logoKey(account.id)]);
+    if(!image){res.statusCode=204;return res.end();}
+    return sendLogo(image);
+   }
    if(req.method==='GET'&&url.searchParams.get('action')==='feed'){
     const following=await redis(['SMEMBERS',`digivated:creator:following:${account.id}`]);
     if(!following.length)return send(200,{items:[]});

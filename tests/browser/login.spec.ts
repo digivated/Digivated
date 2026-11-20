@@ -35,10 +35,20 @@ test('verified account shows a signed-in header, welcome, account, and sign-out'
   await page.route('**/api/project-account?action=me', route => route.fulfill({ json: { email } }));
   let submissionsAvailable = false;
   await page.route('**/api/project-account', route => submissionsAvailable ? route.fulfill({ json: { email, submissions: [] } }) : route.fulfill({ status: 503, json: { error: 'Submissions unavailable.' } }));
+  let avatarAvailable = true;
+  await page.route('**/api/creator-profile?action=avatar', route => route.fulfill(avatarAvailable ? {
+    contentType: 'image/png',
+    body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a3foAAAAASUVORK5CYII=', 'base64'),
+  } : { status: 204 }));
   await page.route('https://fixture.supabase.co/auth/v1/**', route => route.fulfill({ json: user }));
   await page.goto('http://127.0.0.1:4321/discover?view=featured&signed_in=1');
   const menu = page.getByRole('button', { name: `Account menu for ${email}` });
   await expect(menu).toBeVisible();
+  const avatar = page.locator('#header-account-avatar');
+  await expect(avatar.locator('img')).toBeVisible();
+  avatarAvailable = false;
+  await page.evaluate(() => document.dispatchEvent(new Event('digivated:profile-logo-updated')));
+  await expect(avatar).toHaveText('V');
   await menu.click();
   await expect(page.getByRole('menu')).toContainText(email);
   await page.getByRole('menuitem', { name: 'Dashboard' }).click();
