@@ -1,3 +1,4 @@
+import { sendActivityEmail } from './activity-email.mjs';
 import { randomUUID } from 'node:crypto';
 import { projectPublic, validId } from './admin-store.mjs';
 
@@ -29,7 +30,7 @@ async function pruneExpired(redis, userId) {
 }
 
 // Activity alerts are on unless a member has saved a different choice.
-export const defaultNotificationPreferences = Object.freeze({ enabled: true, reply: true, follow: true, message: true, feedback: true, upvote: true, launch: true, award: true });
+export const defaultNotificationPreferences = Object.freeze({ enabled: true, emailEnabled: false, reply: true, follow: true, message: true, feedback: true, upvote: true, launch: true, award: true });
 
 export async function getNotificationPreferences(redis, userId) {
   if (!UUID.test(userId)) throw new Error('Invalid account');
@@ -77,6 +78,7 @@ export async function addNotification(redis, { recipientId, type, actorId, targe
   await redis(['ZADD', indexKey(recipientId), Date.now(), id]);
   await redis(['SADD', unreadKey(recipientId), id]);
   await trimFeed(redis, recipientId);
+  if (preferences.emailEnabled) await deliverActivityEmail(redis, item);
   return true;
 }
 
@@ -100,7 +102,13 @@ export async function notifyUpvoteDigest(redis, { recipientId, actorId, subjectK
   await redis(['ZADD', indexKey(recipientId), Date.now(), id]);
   await redis(['SADD', unreadKey(recipientId), id]);
   await trimFeed(redis, recipientId);
+  if (count === 1 && preferences.emailEnabled) await deliverActivityEmail(redis, item);
   return true;
+}
+
+async function deliverActivityEmail(redis, item) {
+  const result = await sendActivityEmail(redis, item);
+  if (result === 'failed' || result === 'unavailable') console.warn('Activity email delivery failed', { type: item.type, result });
 }
 
 async function trimFeed(redis, recipientId) {
