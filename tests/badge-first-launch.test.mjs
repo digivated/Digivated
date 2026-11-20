@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { makeSubmissionHandler } from '../server/submissions.mjs';
-import { badgeSnippet } from '../server/launch-queue.mjs';
+import { makeLaunchesHandler } from '../server/launches.mjs';
+import { badgeSnippet, checkPendingBadges, QUEUE } from '../server/launch-queue.mjs';
 
 const origin = 'https://badge-first.test';
 const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aFJkAAAAASUVORK5CYII=';
@@ -26,15 +27,9 @@ test('badge-first launch: reserve an ID, verify the badge, and save in one step'
   // A forged token is refused before anything is read or saved.
   assert.equal((await call(handler, { ...input, reservedId: reserved.body.id, reservedToken: 'x'.repeat(64), verifyBadge: true })).status, 400);
 
-  // Badge missing: a clear problem, and nothing is saved.
-  const missing = await call(handler, { ...input, reservedId: reserved.body.id, reservedToken: reserved.body.token, verifyBadge: true });
-  assert.equal(missing.status, 400);
-  assert.match(missing.body.error, /Badge not found/);
-  assert.equal(await redis(['EXISTS', `digivated:submission:${reserved.body.id}`]), 0);
-
   // Badge installed: saved under the reserved ID, already verified and scheduled.
   page = `<html><body><footer>${badgeSnippet(reserved.body.id)}</footer></body></html>`;
-  const ok = await call(handler, { ...input, reservedId: reserved.body.id, reservedToken: reserved.body.token, verifyBadge: true });
+  const ok = await call(handler, { ...input, reservedId: reserved.body.id, reservedToken: reserved.body.token });
   assert.equal(ok.status, 201);
   assert.equal(ok.body.id, reserved.body.id);
   assert.ok(ok.body.launch.badgeVerifiedAt);
@@ -42,8 +37,30 @@ test('badge-first launch: reserve an ID, verify the badge, and save in one step'
   assert.equal(stored.status, 'pending');
   assert.ok(stored.launch.badgeVerifiedAt);
 
+  let upcoming;
+  const response = { statusCode: 0, setHeader() {}, end(body) { upcoming = JSON.parse(body); } };
+  const list = makeLaunchesHandler({ redis });
+  const request = { method: 'GET', url: '/api/launches?view=upcoming', headers: {} };
+  await list(request, response);
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(upcoming.items.map(project => project.id), [reserved.body.id]);
+  assert.equal(upcoming.items[0].email, undefined);
+
+  await redis(['ZREM', QUEUE, reserved.body.id]);
+  await checkPendingBadges(redis, { readSite: async () => assert.fail('Verified project should not be scanned again'), mail: async () => assert.fail('No duplicate email expected') });
+  await list(request, response);
+  assert.deepEqual(upcoming.items.map(project => project.id), [reserved.body.id]);
+
   // The same reserved ID cannot be used twice.
   assert.equal((await call(handler, { ...input, reservedId: reserved.body.id, reservedToken: reserved.body.token })).status, 409);
+  await redis(['FLUSHDB']);
+  page = '<html><body>No badge yet</body></html>';
+  const pending = await call(handler, { ...input, reservedId: reserved.body.id, reservedToken: reserved.body.token, verifyBadge: true });
+  assert.equal(pending.status, 201);
+  assert.equal(pending.body.id, reserved.body.id);
+  assert.equal(pending.body.launch.badgeVerifiedAt, undefined);
+  await list(request, response);
+  assert.deepEqual(upcoming.items, []);
   await redis(['FLUSHDB']);
 });
 

@@ -110,9 +110,9 @@ export async function sendAwardEmail(record, rank, weekStart, env = process.env,
 
 // Free launches only go live once the badge is on the maker's site.
 const launchDay = record => new Date(record.launch.scheduledAt).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'America/New_York' });
-const badgeTip = 'Built with React, Vite, Lovable or Bolt? Paste the badge into index.html, inside <body>, so it’s in the page’s HTML.';
+const badgeTip = 'Using an AI site builder or coding assistant? Copy your badge HTML from Digivated and paste it into the chat with this prompt: “Add this exact HTML to my homepage footer. Keep the link, image, and data attributes intact, and make sure the badge is in the published page’s HTML. Show me what changed so I can publish it.” Paste your badge HTML below the prompt.';
 const badgeWhen = record => Date.parse(record.launch.scheduledAt) > Date.now() ? `is booked for ${launchDay(record)}` : 'is waiting to go live';
-const badgeSteps = 'Copy the badge in your dashboard, paste it in your footer, and publish. Then press Verify badge and submit. We find it and lock your launch date.';
+const badgeSteps = 'Copy the badge from Your Projects, add it to your homepage footer, and publish your site. Then click Check my website in Digivated. Once we find the badge, your project is ready for launch.';
 const badgeMessages = {
   finish: record => ({
     subject: `One step left to launch ${record.name || 'your project'}`,
@@ -131,7 +131,7 @@ const badgeMessages = {
   'last-call': record => ({
     subject: `${record.name || 'Your project'} launches ${launchDay(record)}. Your badge is still missing`,
     label: 'DIGIVATED / LAST CALL', title: 'Your launch is almost here.',
-    paragraphs: [`${record.name || 'Your project'} launches ${launchDay(record)}, and the badge is still missing on ${record.url}.`, 'Paste it, publish, and press Verify badge and submit before then. Without the badge, the launch waits.'],
+    paragraphs: [`${record.name || 'Your project'} launches ${launchDay(record)}, and the badge is still missing on ${record.url}.`, 'Add the badge to your homepage footer, publish your site, then click Check my website in Digivated. Your launch waits until the badge is verified.'],
     cta: { label: 'Add your badge now', href: `${ACCOUNT}#project-${encodeURIComponent(record.id)}` },
     after: [badgeTip],
   }),
@@ -150,11 +150,14 @@ export function badgeEmail(record, stage) {
 export async function sendBadgeEmail(record, stage, env = process.env, fetcher = fetch, accountClient) {
   const message = badgeEmail(record, stage);
   if (!message) return 'skipped';
-  if (!env.RESEND_API_KEY || !env.ACCOUNT_EMAIL_FROM) return 'unavailable';
+  const mailEnv = stage !== 'verified' && env.SIGNUP_RESEND_API_KEY && env.SIGNUP_EMAIL_FROM
+    ? { RESEND_API_KEY: env.SIGNUP_RESEND_API_KEY, ACCOUNT_EMAIL_FROM: env.SIGNUP_EMAIL_FROM }
+    : env;
+  if (!mailEnv.RESEND_API_KEY || !mailEnv.ACCOUNT_EMAIL_FROM) return 'unavailable';
   try {
     const owner = await confirmedOwner(record, message.to, env, accountClient);
     if (owner === null) return 'unavailable';
     if (!owner) return 'failed';
-    return await sendEmail(env, fetcher, message) ? 'sent' : 'failed';
+    return await sendEmail(mailEnv, fetcher, message) ? 'sent' : 'failed';
   } catch { return 'failed'; }
 }

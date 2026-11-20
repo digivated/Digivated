@@ -57,3 +57,26 @@ test('owner emails are on theme, escape project names and never carry private fe
   assert.equal(await sendAwardEmail(named, 1, '2026-11-09T00:00:00.000Z', env, async (url, options) => { requests.push(JSON.parse(options.body)); return { ok: true }; }, client), 'sent');
   assert.ok(requests[0].html && requests[0].text, 'every email has an HTML and a plain-text version');
 });
+
+test('missing-badge reminders give an AI prompt and use the verified transactional sender', async () => {
+  const { badgeEmail, sendBadgeEmail } = await import('../server/account-mail.mjs');
+  const record = { ...previous, name: 'Example', url: 'https://example.com', launch: { scheduledAt: '2026-11-23T14:00:00Z' } };
+  const env = {
+    RESEND_API_KEY: 'original-key', ACCOUNT_EMAIL_FROM: 'original@example.com',
+    SIGNUP_RESEND_API_KEY: 'transactional-key', SIGNUP_EMAIL_FROM: 'accounts@auth.example.com',
+  };
+  const client = { auth: { admin: { getUserById: async () => ({ data: { user: { email: record.email, email_confirmed_at: '2026-10-25T00:00:00Z' } }, error: null }) } } };
+  for (const stage of ['finish', 'nudge', 'last-call']) {
+    const message = badgeEmail(record, stage);
+    assert.match(message.text, /Check my website/);
+    assert.match(message.text, /Add this exact HTML to my homepage footer/);
+    assert.match(message.text, /account#project-project-1/);
+  }
+  for (const [stage, from] of [['finish', env.SIGNUP_EMAIL_FROM], ['verified', env.ACCOUNT_EMAIL_FROM]]) {
+    const sent = await sendBadgeEmail(record, stage, env, async (_url, request) => {
+      assert.equal(JSON.parse(request.body).from, from);
+      return { ok: true };
+    }, client);
+    assert.equal(sent, 'sent');
+  }
+});

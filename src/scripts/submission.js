@@ -332,7 +332,7 @@ if (form) {
         reservedBadge={id:data.id,token:data.token};
         try{localStorage.setItem(reserveKey(),JSON.stringify(reservedBadge));}catch{}
         renderBadgeFirst();
-      }finally{reserving=null;}
+      }catch{ /* The saved-project badge remains available if reservation fails. */ }finally{reserving=null;}
     })();
     return reserving;
   };
@@ -397,7 +397,7 @@ if (form) {
         // Verified at submit: no badge steps left, just the locked-in launch.
         const scheduledDate = new Date(data.launch.scheduledAt);
         const when = Number.isFinite(scheduledDate.getTime()) ? scheduledDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}) : 'your launch day';
-        status.textContent = `✓ Badge verified. Your launch is locked in for ${when}.`;
+        status.textContent = `✓ Badge verified. Your project is in Launching Next for ${when}.`;
         badgePickerSlot.replaceChildren();
         badgePanel.querySelector('.eyebrow').textContent = 'VERIFIED';
         document.getElementById('submission-badge-title').textContent = 'Badge found. You’re in the launch.';

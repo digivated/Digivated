@@ -1,7 +1,7 @@
 import { defaultNotificationPreferences, notificationPreferencesKey, notifyProjectApproval, notifyLaunchScheduled } from './notifications.mjs';
 import { sendProjectUpdate } from './account-mail.mjs';
 import { badgeSnippet, nextFreeLaunch, verifyProjectBadge } from './launch-queue.mjs';
-import { readProjectSite, siteDetails, siteExtras, readPublicImage, hasProjectBadge, badgeProblem } from './project-site.mjs';
+import { readProjectSite, siteDetails, siteExtras, readPublicImage, hasProjectBadge } from './project-site.mjs';
 import { guessCategory } from '../src/lib/project-taxonomy.mjs';
 // Isolated from purchase handlers, sessions, rate-limit rules, and environment names.
 // founding-access imports redisClient from this module. The membership helpers are
@@ -202,7 +202,11 @@ if ARGV[4] then
  redis.call('SET',KEYS[#KEYS],cjson.encode(preferences))
 end
 return 1`;
-const SAVE = ONE_ACTIVE_SUBMISSION + `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],3600) end; if n>5 then return 0 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); redis.call('ZADD',KEYS[4],ARGV[2],ARGV[3]); ` + SAVE_ACTIVITY_CHOICE;
+const SAVE = ONE_ACTIVE_SUBMISSION + `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],3600) end; if n>5 then return 0 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); redis.call('ZADD',KEYS[4],ARGV[2],ARGV[3]);
+if incoming.launch and incoming.launch.badgeVerifiedAt then
+ redis.call('ZADD','digivated:launch:free',incoming.launch.scheduledTimestamp,ARGV[3])
+end
+` + SAVE_ACTIVITY_CHOICE;
 const SAVE_MEMBER_FEATURE = ONE_ACTIVE_SUBMISSION + `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],3600) end; if n>5 then return 0 end; if not redis.call('SET',KEYS[4],ARGV[3],'NX') then return -1 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); redis.call('ZADD',KEYS[5],ARGV[2],ARGV[3]); ` + SAVE_ACTIVITY_CHOICE;
 const MEMBER_FEATURE_MESSAGE = 'Sign in with your Founding Membership before using the included feature.';
 const MEMBER_FEATURE_USED = 'This membership already includes one featured submission. It stays in review, and a feature is not guaranteed.';
@@ -284,24 +288,25 @@ export function makeSubmissionHandler(deps={}) {
       if(!deps.redis && (env.VERCEL!=='1'||typeof ip!=='string'||!ip))throw new SubmissionError(503,'Submissions are temporarily unavailable. Please try again later.');
       const hash=createHmac('sha256',env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only').update(String(ip||'fixture')).digest('hex');
       let id=randomUUID();const now=new Date();
-      // A reserved ID keeps the badge the maker already installed; verifyBadge
-      // checks their site first and saves nothing if the badge is missing.
+      // Keep the ID used in the badge the maker may already have installed.
       let badgeVerifiedAt=null;
       if(body.reservedId!==undefined){
         if(record.promotion||typeof body.reservedId!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(body.reservedId)||!sameToken(body.reservedToken,reserveToken(env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only',account.id,body.reservedId)))throw new SubmissionError(400,'Your badge code expired. Refresh the page and copy the badge again.');
         if(Number(await redis(['EXISTS',`digivated:submission:${body.reservedId}`])))throw new SubmissionError(409,'This badge code was already used. Refresh the page to get a new one.');
         id=body.reservedId;
       }
-      if(body.verifyBadge===true){
-        if(record.promotion||body.reservedId===undefined)throw new SubmissionError(400,'Badge verification is for free launches. Refresh the page and try again.');
+      if(body.verifyBadge===true&&body.reservedId===undefined){
+        throw new SubmissionError(400,'Badge verification is for free launches. Refresh the page and try again.');
+      }
+      if(body.reservedId!==undefined){
         const key=`digivated:site-check:${account.id}`;
         const attempts=Number(await redis(['INCR',key]));if(attempts===1)await redis(['EXPIRE',key,3600]);
-        if(!Number.isFinite(attempts)||attempts>20)throw new SubmissionError(429,'Too many website checks. Try again in an hour.');
-        try{
-          const {html}=await (deps.readSite||readProjectSite)(record.url);
-          if(!hasProjectBadge(html,id))throw Error(badgeProblem(html,id));
-        }catch(error){throw new SubmissionError(400,error.message||'Could not check your website. Try again, or submit now and add the badge later.');}
-        badgeVerifiedAt=now.toISOString();
+        if(Number.isFinite(attempts)&&attempts<=20){
+          try {
+            const {html}=await (deps.readSite||readProjectSite)(record.url);
+            if(hasProjectBadge(html,id))badgeVerifiedAt=now.toISOString();
+          } catch { /* Save the submission so the maker can retry verification from their dashboard. */ }
+        }
       }
       const stored={...record,...(!record.promotion?{launch:{kind:'free',version:1,scheduledAt:nextFreeLaunch(now.getTime()),scheduledTimestamp:Date.parse(nextFreeLaunch(now.getTime())),...(badgeVerifiedAt?{badgeVerifiedAt}:{})}}:{}),...(account?{accountId:account.id}:{}),id,date:now.toISOString(),consentedAt:now.toISOString(),...(record.emailOutreachConsent?{emailOutreachConsentedAt:now.toISOString(),emailOutreachConsentVersion:2}:{})};
       const accountKey=accountIndex(record.email,env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only');
