@@ -14,6 +14,8 @@ export const badgePreviewSrc = (style, count = null) =>
 async function copyText(text, fallbackNode) {
   try { await navigator.clipboard.writeText(text); return true; }
   catch {
+    const disclosure = fallbackNode.closest('.fl-badge-code-details');
+    if (disclosure) disclosure.open = true;
     const range = document.createRange(); range.selectNodeContents(fallbackNode);
     const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range);
     return false;
@@ -73,7 +75,11 @@ export function badgePicker(id, { copy = true, count = null, onCopy, label = '',
         bar.append(el('div', { className: 'fl-badge-actions' }, button, promptButton));
       } else bar.append(button);
     }
-    const card = el('article', { className: 'fl-badge-card' }, stage, bar, el('pre', { className: 'fl-badge-code' }, codeNode));
+    const codeBlock = el('pre', { className: 'fl-badge-code' }, codeNode);
+    const manualCode = alternatives
+      ? el('details', { className: 'fl-badge-more fl-badge-code-details' }, el('summary', { textContent: 'View embed code' }), codeBlock)
+      : codeBlock;
+    const card = el('article', { className: 'fl-badge-card' }, stage, bar, manualCode);
     card.setAttribute('data-badge-style', style.key);
     if (alternatives && style.key !== 'dark') {
       alternatives.append(card);

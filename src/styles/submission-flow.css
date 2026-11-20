@@ -24,6 +24,7 @@ html#digivated-root .submission-account-callout p {font-size:14px;line-height:1.
 html#digivated-root .submission-account-actions {display:flex;flex-wrap:wrap;gap:16px;align-items:center;font-size:14px}
 html#digivated-root .submission-account-actions a {min-height:44px;display:inline-flex;align-items:center}
 html#digivated-root .submission-form .submission-account-status {font-size:13px;line-height:1.7}
+html#digivated-root body.platform #project-form .submission-account-status {padding:8px 16px}
 html#digivated-root body.platform .submission-form fieldset {
   display:flex;flex-direction:column;gap:12px;min-width:0;margin:0;padding:16px 20px;
   border:0;border-bottom:1px solid var(--dg-line);background:var(--dg-panel);
@@ -44,12 +45,12 @@ html#digivated-root body.platform .submission-form :is(input:not([type=checkbox]
   box-sizing:border-box;min-width:0;width:100%;min-height:48px;margin:0;padding:12px 14px;
   border:1px solid var(--dg-line-strong);border-radius:8px;font:400 16px/1.5 'Inter Variable',system-ui,sans-serif;
 }
-html#digivated-root .submission-form textarea {resize:vertical;min-height:88px}
+html#digivated-root .submission-form textarea {resize:vertical;min-height:72px}
 html#digivated-root .submission-form :is(.field-help,.submission-section-help),
 html#digivated-root .submission-preview-panel .field-help {
   display:block;margin:0;font-size:13px;font-weight:400;line-height:1.7;overflow-wrap:anywhere;
 }
-html#digivated-root .submission-form .form-row {display:grid;grid-template-columns:1fr 1fr;gap:20px;min-width:0}
+html#digivated-root .submission-form .form-row {display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:12px;min-width:0}
 html#digivated-root .submission-form .form-row>label {min-width:0}
 html#digivated-root .submission-option-detail {
   padding:20px;border:1px solid var(--dg-line-strong);border-radius:10px;
