@@ -62,11 +62,10 @@ jobs:
           tests/browser/free-launch-guide.spec.ts
           tests/browser/login.spec.ts
           tests/browser/gumroad-secure-setup.spec.ts
-          tests/browser/launch-calendar.spec.ts
           tests/browser/membership-offer.spec.ts
           tests/browser/mobile-stability.spec.ts
           tests/browser/news-paused.spec.ts
-          tests/browser/rankings-experience.spec.ts
+          tests/browser/directory.spec.ts
           tests/browser/sentry.spec.ts
 
       # Keep the full suite available while older layout assertions are reviewed.
