@@ -105,7 +105,15 @@ test('free launch can verify the badge and submit in one step', async ({ page })
  await expect(page.locator('#badge-first .dg-badge-tip')).toContainText('ask your AI coding assistant');
  await expect(page.locator('#badge-first-later, #badge-first-later-note')).toHaveCount(0);
  await expect(page.getByRole('button', { name: 'Copy an AI prompt for the Dark badge' })).toBeVisible();
- await expect(page.locator('#badge-first [data-badge-style=dark] code')).toContainText(reservedId);
+ const badgeCode = page.locator('#badge-first [data-badge-style=dark] code');
+ await expect(badgeCode).toContainText(reservedId);
+ await expect(badgeCode).toBeHidden();
+ await page.evaluate(() => Object.defineProperty(navigator.clipboard, 'writeText', {
+  value: () => Promise.reject(new Error('Clipboard permission denied')),
+ }));
+ await page.getByRole('button', { name: 'Copy Dark badge code' }).click();
+ await expect(badgeCode).toBeVisible();
+ await expect.poll(() => page.evaluate(() => getSelection()?.toString())).toContain(reservedId);
  const moreStyles = page.locator('#badge-first').getByText('More badge styles', { exact: true });
  await expect(page.locator('#badge-first [data-badge-style=light]')).toBeHidden();
  await moreStyles.click();
@@ -116,10 +124,14 @@ test('free launch can verify the badge and submit in one step', async ({ page })
  await page.locator('#project-form [name=url]').fill('https://example.com');
  await page.locator('#project-form [name=description]').fill('Simple project notes for independent developers.');
  await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('Other');
+ await expect(page.getByRole('radio', { name: 'Free', exact: true })).toBeHidden();
+ await page.getByText('Project pricing (optional)', { exact: true }).click();
+ await page.getByRole('radio', { name: 'Free', exact: true }).check();
+ await page.getByText('Project pricing (optional)', { exact: true }).click();
  await page.locator('#project-form [name=creator]').fill('Test Creator');
  await page.locator('#project-image').setInputFiles({ name: 'logo.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aFJkAAAAASUVORK5CYII=', 'base64') });
  await page.getByRole('button', { name: 'Verify badge & submit' }).click();
  await expect(page.locator('#submission-status')).toContainText('Badge verified');
- expect(submitted).toMatchObject({ reservedId, reservedToken: 'signed-fixture', verifyBadge: true });
+ expect(submitted).toMatchObject({ reservedId, reservedToken: 'signed-fixture', verifyBadge: true, pricing: 'Free' });
  await expect(page.locator('#submission-badge-title')).toHaveText('Badge found. You’re in the launch.');
 });

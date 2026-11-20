@@ -332,7 +332,6 @@ html[data-ascii] body #main .submission-intro{padding-block:8px 26px!important;m
 html[data-ascii] body #main .submission-intro h1{font-size:clamp(32px,4vw,46px)!important;margin-block:0 6px!important}
 html[data-ascii] body #main .submission-intro::after{height:10px}
 html[data-ascii] body #main:has(:is(.submission-intro,.dg-dir,.news-page))>.site-breadcrumbs{padding-block:8px!important}
-html[data-ascii] body #project-form #submission-account-status{padding:8px 16px}
 html[data-ascii] body #project-form #submission-progress{margin-bottom:8px!important}
 
 html[data-ascii] body #project-form fieldset[id^=sub-step]{margin:0!important;padding:16px!important;border-top:1px solid var(--fl-rule)!important}
