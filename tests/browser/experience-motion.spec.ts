@@ -35,16 +35,15 @@ test('hero stays readable when JavaScript is disabled',async({browser})=>{
  await expect(p.locator('#dg-home-title')).toBeVisible();await expect(p.locator('.dg-hero-actions a').first()).toHaveAttribute('href','/submit-project');
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
 });
-test('ASCII accents leave resources search and home hero actions usable',async({page})=>{
+test('the new backdrop leaves resources search and home hero actions usable',async({page})=>{
  await page.setViewportSize({width:390,height:900});
  await page.goto(base+'/resources');
  await page.locator('.header-search').click();
  await expect(page.locator('#discovery-search')).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.goto(base+'/');
- const artwork=page.locator('.dg-hero-ascii');
- await expect(artwork).toHaveAttribute('aria-hidden','true');
- await expect(artwork).toHaveCSS('pointer-events','none');
+ await expect(page.locator('[data-ascii-field],.ascii-ambient')).toHaveCount(0);
+ await expect(page.locator('.dg-hero-panel [role=timer]')).toBeVisible();
  await expect(page.locator('.dg-hero-actions a').first()).toHaveAttribute('href','/submit-project');
  await page.getByRole('link',{name:'Browse launches',exact:true}).click();
  await expect(page).toHaveURL(/#this-week$/);
