@@ -16,10 +16,10 @@ const { title = 'Tech. AI. Markets. What’s next.', description = 'Discover ind
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 // Discover and project details share a sticky header and use direct page navigation.
 // Native page transitions briefly duplicate the sticky header during navigation.
-const sectionNames: Record<string,string> = { '/threads':'Threads', '/threads/new':'Start a thread', '/discover':'Products', '/winners':'Weekly winners', '/resources':'Resources', '/products':'Membership', '/ui-ux-prompt-packet':'Prompt Packet', '/submit-project':'Submit Project', '/account':'Your Projects', '/login':'Log in', '/promote':'Membership', '/about':'About', '/privacy':'Privacy & Data', '/terms':'Terms of Use' };
+const sectionNames: Record<string,string> = { '/threads':'Threads', '/threads/new':'Start a thread', '/discover':'Directory', '/winners':'Weekly winners', '/resources':'Resources', '/products':'Membership', '/ui-ux-prompt-packet':'Prompt Packet', '/submit-project':'Submit Project', '/account':'Your Projects', '/login':'Log in', '/promote':'Membership', '/about':'About', '/privacy':'Privacy & Data', '/terms':'Terms of Use' };
 const breadcrumb = sectionNames[path] || title;
 const canonicalUrl = new URL(canonicalPath || path, 'https://digivated.com').href;
-const pageType = ['/discover','/news','/resources','/rankings','/creators','/threads'].includes(path) ? 'CollectionPage' : path === '/about' ? 'AboutPage' : 'WebPage';
+const pageType = ['/discover','/news','/resources','/creators','/threads'].includes(path) ? 'CollectionPage' : path === '/about' ? 'AboutPage' : 'WebPage';
 const privatePage = ['/account','/inbox','/notifications','/login','/saved','/email-preferences'].includes(path);
 const socialTitle = `${title} · Digivated`;
 // Homepage share card. Other platform pages keep /digivated-social-card.png, including /membership.

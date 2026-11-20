@@ -22,7 +22,7 @@ test('reduced motion keeps content immediately visible', async ({ page }) => {
 for (const [path, selector] of [
   ['/', '.home-editorial h1'], ['/discover', '.wall-intro h1'], ['/creators', '.creator-social-heading h1'],
   ['/news', '.news-masthead h1'], ['/resources', '.link-directory-head h1'], ['/membership', '.membership-heading h1'],
-  ['/inbox', '.creator-inbox-heading h1'], ['/rankings', '.rankings-hero'], ['/account', '.page-intro h1'], ['/login', '.login-heading h1'],
+  ['/inbox', '.creator-inbox-heading h1'], ['/account', '.page-intro h1'], ['/login', '.login-heading h1'],
 ] as const) {
   test(`${path} has a visible heading trace`, async ({ page }) => {
     await page.goto(base + path);

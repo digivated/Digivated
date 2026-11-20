@@ -31,7 +31,7 @@ test('resource search and category picker use iOS-safe text sizes',async({page})
 
 for(const width of [320,375])test(`primary mobile routes never force sideways scrolling at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:812});
- for(const path of ['/','/discover','/creators','/inbox','/news','/resources','/rankings','/membership','/account','/login','/submit-project']){
+ for(const path of ['/','/discover','/creators','/inbox','/news','/resources','/membership','/account','/login','/submit-project']){
   await page.goto(base+path);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),path).toBe(true);
  }

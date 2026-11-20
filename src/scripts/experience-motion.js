@@ -3,7 +3,7 @@
 // retain their own positioning, animation and focus behavior.
 const preference = matchMedia('(prefers-reduced-motion: reduce)');
 const groups = [
-  ...document.querySelectorAll('#home-title,.page-intro h1,.rankings-hero h1,#creators-title,#news-title,.resources-hero h1,.home-featured-heading,.project-reel-heading,.news-section-heading h2,.ranking-personal-heading h2,.launch-list-heading h2'),
+  ...document.querySelectorAll('#home-title,.page-intro h1,#creators-title,#news-title,.resources-hero h1,.home-featured-heading,.project-reel-heading,.news-section-heading h2,.ranking-personal-heading h2,.launch-list-heading h2'),
 ].slice(0, 12);
 const pending = new Set(groups);
 const active = new Map();

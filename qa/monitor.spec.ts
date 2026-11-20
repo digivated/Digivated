@@ -5,7 +5,7 @@ import type { Page } from '@playwright/test';
 // call authenticated endpoints from the monitor.
 const routes = [
   '/', '/discover', '/creators', '/news', '/resources', '/resources/guides',
-  '/rankings', '/membership', '/submit-project', '/about', '/privacy', '/terms',
+  '/membership', '/submit-project', '/about', '/privacy', '/terms',
   '/ui-ux-prompt-packet', '/packet-example', '/start', '/library', '/fixes',
   '/builder', '/workflows', '/checklists', '/learn', '/toolkit', '/access',
   '/login', '/account', '/creator', '/notifications', '/email-preferences', '/admin',
@@ -13,7 +13,6 @@ const routes = [
 const viewports = [{ name: 'mobile', width: 390, height: 900 }, { name: 'desktop', width: 1440, height: 900 }];
 const dynamic = new Map([
   ['/discover', 'main a[href^="/projects/"]'],
-  ['/rankings', '[data-launch-list] li'],
   ['/news', '[data-news-feed] > *'],
   ['/creators', '#creators-feed > *, #creators-empty:not([hidden])'],
 ]);
@@ -81,9 +80,9 @@ for (const viewport of viewports) {
       await page.goto(listing!);
       await expect(page.locator('h1').first()).toBeVisible();
       await page.goto('/rankings');
-      await expect(page.locator('[data-launch-list] li').first()).toBeVisible({ timeout: 8000 });
-      await page.locator('[data-period="weekly"]').click();
-      await expect(page.locator('[data-period="weekly"]')).toHaveAttribute('aria-pressed', 'true');
+      await expect(page).toHaveURL(/\/discover$/);
+      await page.locator('[data-dir-collection="featured"]').click();
+      await expect(page.locator('[data-dir-collection="featured"]')).toHaveAttribute('aria-pressed', 'true');
       await page.goto('/news');
       await expect(page.locator('[data-news-feed] > *').first()).toBeVisible({ timeout: 8000 });
       await page.locator('[data-news-category="markets"]').click();

@@ -8,14 +8,13 @@ import { DIRECTORY_SORTS, sortKeys, filterProjects, sortProjects, sectionLabel, 
 import { projectMarks } from '../lib/project-marks.mjs';
 
 // /discover: the all-time index. Same rows as the homepage, plus search, sorts,
-// category chips, a top-three podium and a project dialog. Visiting a product
+// category chips, and a project dialog. Visiting a product
 // from here counts toward feedback points (visit-feedback.js).
 const root = document.querySelector('[data-directory]');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const PAGE = 24;
 const CACHE_KEY = 'digivated:home-board:v1'; // Shared with the homepage: same feed.
 const CACHE_AGE = 60 * 60_000;
-const MEDAL = ['gold', 'silver', 'bronze'];
 const number = new Intl.NumberFormat('en-US');
 
 const el = (tag, text, className) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node; };
@@ -68,7 +67,7 @@ if (root) {
   const pending = new Set();
   const $ = selector => root.querySelector(selector);
   const list = $('[data-dir-list]'), status = $('[data-dir-status]'), more = $('[data-dir-more]'), shown = $('[data-dir-shown]');
-  const chips = $('[data-dir-chips]'), sorts = $('[data-dir-sorts]'), podium = $('[data-dir-podium]'), search = $('[data-dir-search]');
+  const chips = $('[data-dir-chips]'), sorts = $('[data-dir-sorts]'), search = $('[data-dir-search]');
 
   // ---------- URL state ----------
   function syncUrl() {
@@ -173,7 +172,6 @@ if (root) {
     finally {
       pending.delete(p.id);
       const focused = document.activeElement === button;
-      renderPodium();
       for (const node of document.querySelectorAll(`[data-vote-id="${CSS.escape(p.id)}"]`)) node.replaceWith(vote(p));
       const next = document.querySelector(`.dg-dir-row[data-project-id="${CSS.escape(p.id)}"] .dg-vote, .wall-focus [data-vote-id="${CSS.escape(p.id)}"]`);
       if (focused) next?.focus({ preventScroll: true });
@@ -183,24 +181,6 @@ if (root) {
   }
   const live = $('[data-dir-live]');
   const say = text => { live.textContent = ''; requestAnimationFrame(() => { live.textContent = text; }); };
-
-  // ---------- Podium: the all-time top three ----------
-  function renderPodium() {
-    const top = state.projects.filter(p => Number(p.votes?.all) > 0).sort((a, b) => b.votes.all - a.votes.all || (Number(b.comments) || 0) - (Number(a.comments) || 0)).slice(0, 3);
-    const quiet = !state.query && !state.category && !state.featured && state.sort === 'top';
-    podium.hidden = !quiet || top.length < 3;
-    if (podium.hidden) return;
-    podium.querySelector('ol').replaceChildren(...top.map((p, i) => {
-      const li = el('li', null, `dg-dir-podium-item is-${MEDAL[i]}`);
-      const page = pageOf(p);
-      const a = el(page ? 'a' : 'button', null, 'dg-dir-podium-card');
-      if (page) a.href = page; else { a.type = 'button'; a.addEventListener('click', () => openProject(p.id, a)); }
-      a.setAttribute('aria-label', `#${i + 1} all time: ${p.name}, ${p.votes.all} upvotes`);
-      a.append(el('span', `#${i + 1}`, 'dg-dir-podium-rank'), logo(p, 'dg-logo'), el('strong', p.name), el('small', `▲ ${number.format(p.votes.all)} · ${p.category || 'Project'}`));
-      appendMarks(a, p);
-      li.append(a); return li;
-    }));
-  }
 
   // ---------- Category chips ----------
   function renderChips() {
@@ -222,7 +202,7 @@ if (root) {
     sorts.querySelectorAll('[data-sort]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.sort === state.sort)));
     root.querySelectorAll('[data-dir-collection]').forEach(button => button.setAttribute('aria-pressed', String((button.dataset.dirCollection === 'featured') === state.featured)));
     root.dataset.sort = state.sort;
-    renderChips(); renderPodium();
+    renderChips();
     $('[data-dir-needs]').hidden = state.sort !== 'needs';
     if (!state.loaded) return;
     const items = sortProjects(filterProjects(state.projects, state), state.sort);

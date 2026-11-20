@@ -72,7 +72,7 @@ html#digivated-root[data-ascii]{scrollbar-color:#2e2e2e #090909}
 
 /* ---------- Menu: when the bar is hidden (<=1280px) its links lead the menu ---------- */
 @layer flow{
-@media (max-width:1280px){html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.dg-menu-main{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:4px!important;padding:8px!important}}
+@media (max-width:1280px){html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.dg-menu-main{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;padding:8px!important}}
 @media (max-width:420px){html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a{padding-inline:2px!important;font-size:10.5px!important;letter-spacing:0!important}}
 }
 
