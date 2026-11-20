@@ -73,36 +73,8 @@ document.addEventListener('keydown',event=>{
   if((shortcut||slash)&&!document.querySelector('dialog[open],.wall-focus[role="dialog"]')){event.preventDefault();openSearch();}
 });
 
-const preview=$('#project-preview');let previewCards=[],previewIndex=0,previewTrigger;
-function renderPreview() {
-  const card=previewCards[previewIndex];if(!card)return;
-  const name=card.querySelector('h3')?.textContent.trim()||'Project';
-  $('#project-preview-title').textContent=name;
-  $('#preview-category').textContent=card.dataset.category||'Independent project';
-  $('#preview-creator').textContent=card.querySelector('.project-meta')?.textContent.trim()||'';
-  $('#preview-description').textContent=card.querySelector('.project-details p')?.textContent||card.querySelector('.project-description')?.textContent||'';
-  $('#preview-meta').textContent=[...card.querySelectorAll('.project-stats .card-stat')].map(node=>node.textContent.trim()).join(' · ')||'Reviewed by Digivated';
-  const visit=$('#preview-visit'),href=safeSearchHref(card.querySelector('.card-open')?.href);if(href)visit.href=href;else visit.removeAttribute('href');
-  const identity=$('#preview-identity'),original=card.querySelector('.project-image img');identity.replaceChildren();
-  if(original){const img=make('img');img.src=original.currentSrc||original.src;img.alt='';img.width=64;img.height=64;img.addEventListener('error',()=>identity.replaceChildren(make('span',name.slice(0,2).toUpperCase())),{once:true});identity.append(img);}else identity.append(make('span',name.slice(0,2).toUpperCase()));
-  $('#preview-position').textContent=`${previewIndex+1} of ${previewCards.length}`;
-  $('#preview-previous').disabled=previewIndex===0;$('#preview-next').disabled=previewIndex===previewCards.length-1;
-  const body=preview.querySelector('.preview-copy');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)body.animate([{opacity:.5,translate:'0 5px'},{opacity:1,translate:'0 0'}],{duration:180,easing:'ease-out'});
-}
-function scanPreviews() {
-  document.querySelectorAll('[data-project]').forEach(card=>{
-    if(card.querySelector('[data-preview-trigger]'))return;
-    let trigger=card.querySelector('.project-details summary');
-    if(trigger)trigger.textContent='Quick view';
-    else{trigger=make('button','Quick view','project-preview-trigger');trigger.type='button';card.querySelector('.project-copy').insertBefore(trigger,card.querySelector('.project-stats'));}
-    trigger.dataset.previewTrigger='';trigger.setAttribute('aria-haspopup','dialog');
-  });
-}
-scanPreviews();document.addEventListener('digivated:collection-updated',scanPreviews);
-document.addEventListener('click',event=>{const trigger=event.target.closest('[data-preview-trigger]');if(!trigger)return;event.preventDefault();const card=trigger.closest('[data-project]');previewCards=[...card.parentElement.querySelectorAll('[data-project]')].filter(node=>!node.hidden);previewIndex=previewCards.indexOf(card);previewTrigger=trigger;renderPreview();preview.showModal();preview.querySelector('[data-close-preview]').focus({preventScroll:true});});
-preview.querySelector('[data-close-preview]').addEventListener('click',()=>preview.close());
-preview.addEventListener('close',()=>{if(previewTrigger?.isConnected)previewTrigger.focus({preventScroll:true});});
-$('#preview-previous').addEventListener('click',()=>{if(previewIndex>0){previewIndex--;renderPreview();}});
-$('#preview-next').addEventListener('click',()=>{if(previewIndex<previewCards.length-1){previewIndex++;renderPreview();}});
-preview.addEventListener('keydown',event=>{if(event.altKey||event.ctrlKey||event.metaKey)return;if(event.key==='ArrowLeft'&&previewIndex>0){event.preventDefault();previewIndex--;renderPreview();}if(event.key==='ArrowRight'&&previewIndex<previewCards.length-1){event.preventDefault();previewIndex++;renderPreview();}});
-for(const dialog of [search,preview])dialog.addEventListener('click',event=>{if(event.target!==dialog)return;const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();});
+search.addEventListener('click', event => {
+  if (event.target !== search) return;
+  const bounds = search.getBoundingClientRect();
+  if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) search.close();
+});
