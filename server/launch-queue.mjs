@@ -65,6 +65,16 @@ export function reminderStage(record,now){
  if(Number.isFinite(saved)&&now-saved>=DAY&&launch>now)return 'nudge';
  return null;
 }
+// Repair submissions written before verified submissions were indexed atomically.
+const repairVerifiedQueue = `
+local raw = redis.call('GET', KEYS[1])
+if not raw then return 0 end
+local record = cjson.decode(raw)
+local launch = record.launch
+if record.status ~= 'pending' or type(launch) ~= 'table' or launch.kind ~= 'free'
+ or type(launch.badgeVerifiedAt) ~= 'string' or type(launch.scheduledTimestamp) ~= 'number' then return 0 end
+return redis.call('ZADD', KEYS[2], 'NX', launch.scheduledTimestamp, record.id)
+`;
 export async function checkPendingBadges(redis,{now=Date.now(),readSite=readProjectSite,mail=sendBadgeEmail,maxChecks=40,budgetMs=75_000,silent=false}={}){
  const ids=await redis(['ZRANGEBYSCORE','digivated:submissions',now-60*DAY,'+inf']);
  const result={waiting:0,verified:0,reminded:0,errors:0,queued:[],missing:[]};
@@ -73,6 +83,10 @@ export async function checkPendingBadges(redis,{now=Date.now(),readSite=readProj
  for(const id of ids||[]){
   if(!validId(id))continue;
   let record;try{record=JSON.parse(await redis(['GET',`digivated:submission:${id}`]));}catch{continue;}
+  if(record?.status==='pending'&&record.launch?.kind==='free'&&record.launch.badgeVerifiedAt&&Number.isFinite(record.launch.scheduledTimestamp)){
+   await redis(['EVAL',repairVerifiedQueue,2,`digivated:submission:${id}`,QUEUE]);
+   continue;
+  }
   if(!awaitingBadge(record)||seen?.has(record.id))continue;
   waiting.push(record);
  }
