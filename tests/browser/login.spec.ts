@@ -34,6 +34,10 @@ test('verified account shows a named mobile account menu, welcome, account, and 
   }, { token, user, expires });
   await page.route('**/api/project-account?action=config', route => route.fulfill({ json: { ready: true, url: 'https://fixture.supabase.co', key: 'sb_publishable_fixture' } }));
   await page.route('**/api/project-account?action=me', route => route.fulfill({ json: { email } }));
+  await page.route('**/api/creator-profile', route => route.fulfill({
+    json: { id: user.id, profile: { name: 'Test maker', public: true } },
+  }));
+
   let submissionsAvailable = false;
   await page.route('**/api/project-account', route => submissionsAvailable ? route.fulfill({ json: { email, submissions: [] } }) : route.fulfill({ status: 503, json: { error: 'Submissions unavailable.' } }));
   let avatarAvailable = true;
@@ -54,6 +58,7 @@ test('verified account shows a named mobile account menu, welcome, account, and 
   await expect(page.getByRole('menu')).toContainText(email);
   await page.getByRole('menuitem', { name: 'Dashboard' }).click();
   await expect(page.locator('#account-state')).toContainText(`You're logged in as ${email}.`);
+  await expect(page.locator('#creator-profile-link')).toHaveAttribute('href', `/creator?id=${user.id}`);
   await expect(page.locator('#account-submissions')).toContainText('Submissions unavailable.');
   submissionsAvailable = true;
   await page.reload();
