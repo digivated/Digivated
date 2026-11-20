@@ -26,7 +26,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: node --test --test-concurrency=1 tests/admin.test.mjs tests/admin-accounts.test.mjs tests/admin-overview.test.mjs tests/notifications.test.mjs tests/project-views.test.mjs tests/launch-collections.test.mjs tests/discussions.test.mjs tests/threads.test.mjs tests/feedback-points.test.mjs tests/launch-visibility.test.mjs
+      - run: node --test --test-concurrency=1 tests/admin.test.mjs tests/admin-accounts.test.mjs tests/admin-overview.test.mjs tests/notifications.test.mjs tests/project-views.test.mjs tests/launch-collections.test.mjs tests/discussions.test.mjs tests/threads.test.mjs tests/feedback-points.test.mjs tests/launch-visibility.test.mjs tests/badge-first-launch.test.mjs
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test tests/browser/admin-workspace.spec.ts --workers=1
