@@ -49,7 +49,10 @@ export async function handleSignup({ body, ip, env, redis, fetcher, createUser, 
     return send(201, { ok: true });
   }
 
-  if (!env.RESEND_API_KEY || !env.ACCOUNT_EMAIL_FROM) return send(503, { error: 'Verification email is temporarily unavailable.' });
+  const mailEnv = { RESEND_API_KEY: env.SIGNUP_RESEND_API_KEY, ACCOUNT_EMAIL_FROM: env.SIGNUP_EMAIL_FROM };
+  if (!mailEnv.RESEND_API_KEY || !mailEnv.ACCOUNT_EMAIL_FROM) {
+    return send(503, { error: 'Verification email is temporarily unavailable.' });
+  }
   const ipAttempts = await redis(['EVAL', incrementLimit, 1, 'digivated:signup:ip:' + digest(ip), '3600']);
   if (ipAttempts > 12) return send(429, { error: 'Too many code requests. Try again later.' });
   const cooldown = await redis(['SET', 'digivated:signup:cooldown:' + digest(email), '1', 'EX', '60', 'NX']);
@@ -68,7 +71,7 @@ export async function handleSignup({ body, ip, env, redis, fetcher, createUser, 
     paragraphs: [`Your Digivated verification code is ${code}.`, 'Enter it on the signup page within 10 minutes.'],
     after: ['If you didn’t request this code, you can ignore this email.'],
   });
-  const delivered = await sendEmail(env, fetcher, { ...message, to: email, subject: 'Your Digivated verification code', idempotencyKey: 'signup-' + challenge }).catch(() => false);
+  const delivered = await sendEmail(mailEnv, fetcher, { ...message, to: email, subject: 'Your Digivated verification code', idempotencyKey: 'signup-' + challenge }).catch(() => false);
   if (!delivered) {
     await redis(['DEL', key]);
     return send(503, { error: 'We couldn’t send your code. Please try again in a minute.' });

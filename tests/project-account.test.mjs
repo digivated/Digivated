@@ -102,9 +102,9 @@ test('signup creates an account only after the one-time email code is verified',
  try {
   const created=[];let code;
   const handler=makeProjectAccountHandler({
-   env:{...env,COMMUNITY_SUPABASE_SECRET_KEY:'test-secret',RESEND_API_KEY:'test-mail',ACCOUNT_EMAIL_FROM:'accounts@example.com',VERCEL:'1'},
+   env:{...env,COMMUNITY_SUPABASE_SECRET_KEY:'test-secret',SIGNUP_RESEND_API_KEY:'test-mail',SIGNUP_EMAIL_FROM:'accounts@auth.example.com',VERCEL:'1'},
    redis,
-   fetcher:async(url,options)=>{assert.equal(url,'https://api.resend.com/emails');const message=JSON.parse(options.body);assert.deepEqual(message.to,[account.email]);code=message.text.match(/verification code is (\d{6})/)[1];return {ok:true};},
+   fetcher:async(url,options)=>{assert.equal(url,'https://api.resend.com/emails');const message=JSON.parse(options.body);assert.deepEqual(message.to,[account.email]);assert.equal(message.from,'accounts@auth.example.com');code=message.text.match(/verification code is (\d{6})/)[1];return {ok:true};},
    adminClient:{auth:{admin:{createUser:async input=>{created.push(input);return {data:{user:{id:account.id}},error:null};}}}},
   });
   const signup=body=>invoke(handler,{method:'POST',url:'/api/project-account?action=signup',headers:{origin:'https://digivated.com','content-type':'application/json','x-real-ip':'127.0.0.1'},body:{email:account.email,...body}});
