@@ -59,6 +59,8 @@ jobs:
           tests/browser/community-paused.spec.ts
           tests/browser/creator-seo.spec.ts
           tests/browser/creators-experience.spec.ts
+          tests/browser/free-launch-guide.spec.ts
+          tests/browser/login.spec.ts
           tests/browser/gumroad-secure-setup.spec.ts
           tests/browser/launch-calendar.spec.ts
           tests/browser/membership-offer.spec.ts

@@ -27,6 +27,8 @@ test('verified account shows a signed-in header, welcome, account, and sign-out'
   const expires = Math.floor(Date.now() / 1000) + 3600;
   const token = [Buffer.from(JSON.stringify({ alg: 'HS256' })).toString('base64url'), Buffer.from(JSON.stringify({ sub: user.id, email, exp: expires, amr: [{ method: 'magiclink' }] })).toString('base64url'), 'fixture'].join('.');
   await page.addInitScript(({ token, user, expires }) => {
+    if (sessionStorage.getItem('login-fixture-seeded')) return;
+    sessionStorage.setItem('login-fixture-seeded', '1');
     localStorage.setItem('sb-fixture-auth-token', JSON.stringify({ access_token: token, refresh_token: 'fixture', expires_at: expires, expires_in: 3600, token_type: 'bearer', user }));
   }, { token, user, expires });
   await page.route('**/api/project-account?action=config', route => route.fulfill({ json: { ready: true, url: 'https://fixture.supabase.co', key: 'sb_publishable_fixture' } }));

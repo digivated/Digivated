@@ -5,6 +5,11 @@ const state=document.getElementById('account-state');
 if(state){
  const form=document.getElementById('account-sign-in'),panel=document.getElementById('account-signed-in'),list=document.getElementById('account-submissions');
  const callback=new URLSearchParams(location.hash.slice(1));
+ const projectAnchor=/^#project-[a-z0-9_-]{1,100}$/i.test(location.hash)?location.hash:'';
+ const clearAuthFragment=()=>{
+  if(location.hash&&location.hash!=='#account-submissions'&&location.hash!==projectAnchor)history.replaceState(null,'',location.pathname+location.search);
+ };
+ if(projectAnchor)form.querySelector('a[href="/login"]').href='/login?next='+encodeURIComponent('/account'+projectAnchor);
  const arrivingFromEmail=callback.has('access_token');
  const callbackError=callback.get('error_description');
  const recovering=callback.get('type')==='recovery'||new URLSearchParams(location.search).get('reset')==='password';
@@ -18,11 +23,11 @@ if(state){
   };
   tabs.forEach((tab,index)=>{tab.onclick=()=>select(tab.dataset.accountTab);tab.onkeydown=event=>{const step={ArrowRight:1,ArrowLeft:-1}[event.key];if(!step)return;event.preventDefault();select(tabs[(index+step+tabs.length)%tabs.length].dataset.accountTab,true);};});
   const wanted=new URLSearchParams(location.search).get('tab');
-  select(tabs.some(tab=>tab.dataset.accountTab===wanted)?wanted:'projects');
+  select(!projectAnchor&&tabs.some(tab=>tab.dataset.accountTab===wanted)?wanted:'projects');
  }
  async function boot(){
   const {state:authState,client,session,email}=await accountSession();
-  if(location.hash&&location.hash!=='#account-submissions')history.replaceState(null,'',location.pathname+location.search);
+  clearAuthFragment();
   if(recovering){
    document.querySelector('h1').textContent='Choose a new password.';
    document.querySelector('.page-intro .lede').textContent='Save a new password to get back to your Digivated account.';
@@ -179,7 +184,7 @@ if(state){
     const data=await response.json();
     if(!response.ok){list.textContent=data.error||'Your submissions could not be loaded. Try again shortly.';return;}
     renderSubmissions(data.submissions||[]);
-    if(location.hash==='#account-submissions'||location.hash.startsWith('#project-'))(document.querySelector(location.hash)||list).scrollIntoView({block:'start'});
+    if(location.hash==='#account-submissions'||projectAnchor)(document.getElementById(location.hash.slice(1))||list).scrollIntoView({block:'start'});
    }catch{list.textContent='Your submissions could not be loaded. Try again shortly.';}
   }
   const profileForm=document.getElementById('creator-profile-form'),profileStatus=document.getElementById('creator-profile-status'),profileLink=document.getElementById('creator-profile-link');
@@ -200,5 +205,5 @@ if(state){
   }catch{}
 
  }
- boot().catch(error=>{if(location.hash&&location.hash!=='#account-submissions')history.replaceState(null,'',location.pathname+location.search);form.hidden=false;show(error.message||'Accounts are temporarily unavailable.');});
+ boot().catch(error=>{clearAuthFragment();form.hidden=false;show(error.message||'Accounts are temporarily unavailable.');});
 }
