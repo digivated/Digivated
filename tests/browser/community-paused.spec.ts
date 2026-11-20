@@ -106,6 +106,12 @@ test('free launch can verify the badge and submit in one step', async ({ page })
  await expect(page.locator('#badge-first-later, #badge-first-later-note')).toHaveCount(0);
  await expect(page.getByRole('button', { name: 'Copy an AI prompt for the Dark badge' })).toBeVisible();
  await expect(page.locator('#badge-first [data-badge-style=dark] code')).toContainText(reservedId);
+ const moreStyles = page.locator('#badge-first').getByText('More badge styles', { exact: true });
+ await expect(page.locator('#badge-first [data-badge-style=light]')).toBeHidden();
+ await moreStyles.click();
+ await expect(page.locator('#badge-first [data-badge-style=light]')).toBeVisible();
+ await expect(page.locator('#badge-first [data-badge-style=text] code')).toContainText(reservedId);
+ await moreStyles.click();
  await page.locator('#project-form [name=name]').fill('Studio Notes');
  await page.locator('#project-form [name=url]').fill('https://example.com');
  await page.locator('#project-form [name=description]').fill('Simple project notes for independent developers.');

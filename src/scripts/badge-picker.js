@@ -24,12 +24,15 @@ async function copyText(text, fallbackNode) {
 // copy: false shows code without Copy buttons (public examples).
 // onCopy(style, copied): optional hook after a copy attempt.
 // aiPrompt adds a second button that copies a ready-made assistant prompt.
-export function badgePicker(id, { copy = true, count = null, onCopy, label = '', aiPrompt = false } = {}) {
+export function badgePicker(id, { copy = true, count = null, onCopy, label = '', aiPrompt = false, collapseAlternatives = false } = {}) {
   const root = el('div', { className: 'fl-badges' });
   root.setAttribute('data-badge-picker', '');
   if (label) root.setAttribute('aria-label', label);
   const status = el('p', { className: 'fl-status fl-badge-status', role: 'status' });
   status.setAttribute('aria-live', 'polite');
+  const alternatives = collapseAlternatives
+    ? el('details', { className: 'fl-badge-more' }, el('summary', { textContent: 'More badge styles' }))
+    : null;
   for (const style of BADGE_STYLES) {
     const code = badgeSnippet(id, style.key);
     const stage = el('div', { className: `fl-badge-stage is-${style.key}` });
@@ -72,11 +75,14 @@ export function badgePicker(id, { copy = true, count = null, onCopy, label = '',
     }
     const card = el('article', { className: 'fl-badge-card' }, stage, bar, el('pre', { className: 'fl-badge-code' }, codeNode));
     card.setAttribute('data-badge-style', style.key);
-    if (style.key === 'text') {
+    if (alternatives && style.key !== 'dark') {
+      alternatives.append(card);
+    } else if (style.key === 'text') {
       const more = el('details', { className: 'fl-badge-more' }, el('summary', { textContent: 'Prefer a plain text link instead of an image?' }), card);
       root.append(more);
     } else root.append(card);
   }
+  if (alternatives) root.append(alternatives);
   if (copy) root.append(status);
   return root;
 }

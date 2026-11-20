@@ -1,14 +1,14 @@
 /* Submission workspace: use the shared Obsidian tokens, never light-only surfaces.
    Scope every rule to this page so account and directory forms stay unchanged. */
 html#digivated-root body.platform .submission-intro {
-  max-width:1120px;margin-inline:auto;padding:40px 0 32px;
+  max-width:1120px;margin-inline:auto;padding:24px 0 16px;
 }
 html#digivated-root body.platform .submission-intro h1 {
-  margin:0 0 16px;font-size:clamp(36px,5vw,56px);line-height:1.08;letter-spacing:-.05em;
+  margin:0 0 8px;font-size:clamp(32px,4vw,46px);line-height:1.08;letter-spacing:-.05em;
 }
 html#digivated-root .submission-intro .lede {max-width:58ch;font-size:16px;line-height:1.7;margin:0}
 html#digivated-root body.platform .submission-workspace {
-  display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:32px;
+  display:grid;grid-template-columns:minmax(0,1fr);gap:12px;
   max-width:1120px;margin-inline:auto;align-items:start;
 }
 html#digivated-root body.platform .submission-form {
@@ -25,7 +25,7 @@ html#digivated-root .submission-account-actions {display:flex;flex-wrap:wrap;gap
 html#digivated-root .submission-account-actions a {min-height:44px;display:inline-flex;align-items:center}
 html#digivated-root .submission-form .submission-account-status {font-size:13px;line-height:1.7}
 html#digivated-root body.platform .submission-form fieldset {
-  display:flex;flex-direction:column;gap:20px;min-width:0;margin:0;padding:28px;
+  display:flex;flex-direction:column;gap:12px;min-width:0;margin:0;padding:16px 20px;
   border:0;border-bottom:1px solid var(--dg-line);background:var(--dg-panel);
 }
 /* Float returns the legend to normal layout instead of straddling the fieldset edge. */
@@ -44,7 +44,7 @@ html#digivated-root body.platform .submission-form :is(input:not([type=checkbox]
   box-sizing:border-box;min-width:0;width:100%;min-height:48px;margin:0;padding:12px 14px;
   border:1px solid var(--dg-line-strong);border-radius:8px;font:400 16px/1.5 'Inter Variable',system-ui,sans-serif;
 }
-html#digivated-root .submission-form textarea {resize:vertical;min-height:128px}
+html#digivated-root .submission-form textarea {resize:vertical;min-height:88px}
 html#digivated-root .submission-form :is(.field-help,.submission-section-help),
 html#digivated-root .submission-preview-panel .field-help {
   display:block;margin:0;font-size:13px;font-weight:400;line-height:1.7;overflow-wrap:anywhere;
@@ -73,7 +73,7 @@ html#digivated-root #project-form .submission-image-preview {
 html#digivated-root .submission-image-preview img {width:100%;max-height:240px;aspect-ratio:16/10;object-fit:contain;border-radius:6px}
 html#digivated-root .submission-image-preview span {font-size:13px;overflow-wrap:anywhere}
 html#digivated-root .submission-form .submission-review {
-  display:grid;gap:20px;padding:28px;background:var(--dg-raised);border:0;
+  display:grid;gap:12px;padding:16px 20px;background:var(--dg-raised);border:0;
 }
 html#digivated-root .submission-review h2 {margin:0;font-size:20px;letter-spacing:-.025em}
 html#digivated-root .submission-review>p {margin:0;font-size:14px;line-height:1.7}
@@ -85,7 +85,6 @@ html#digivated-root .submission-review button[type=submit] {width:100%;min-heigh
 html#digivated-root body.platform .submission-preview-panel {
   display:block;align-self:stretch;min-width:0;padding:0;border:0;background:transparent!important;
 }
-html#digivated-root .submission-preview-sticky {position:sticky;top:100px}
 html#digivated-root .submission-preview-panel h2 {margin:0 0 8px;font-size:20px;letter-spacing:-.025em}
 html#digivated-root .submission-listing-preview {margin-top:24px;overflow:hidden;border:1px solid var(--dg-line-strong);border-radius:12px}
 html#digivated-root .listing-preview-cover {
@@ -102,18 +101,15 @@ html#digivated-root .listing-preview-footer {display:flex;gap:20px;padding:16px 
 html#digivated-root .listing-preview-footer b {font-weight:500;margin-left:4px}
 html#digivated-root .submission-form [hidden],html#digivated-root .submission-preview-panel [hidden] {display:none!important}
 @media(max-width:1000px) {
-  html#digivated-root body.platform .submission-workspace {grid-template-columns:minmax(0,1fr) 280px;gap:24px}
   html#digivated-root .submission-form .form-row {grid-template-columns:1fr}
 }
 @media(max-width:760px) {
-  html#digivated-root body.platform .submission-workspace {grid-template-columns:minmax(0,1fr)}
-  html#digivated-root .submission-preview-sticky {position:static}
   html#digivated-root .submission-listing-preview {max-width:440px}
-  html#digivated-root body.platform .submission-intro {padding:32px 0 24px}
+  html#digivated-root body.platform .submission-intro {padding:20px 0 12px}
 }
 @media(max-width:540px) {
   html#digivated-root body.platform .submission-form fieldset,
-  html#digivated-root .submission-form :is(.submission-review,.submission-account-callout,.submission-account-status) {padding:24px 20px}
+  html#digivated-root .submission-form :is(.submission-review,.submission-account-callout,.submission-account-status) {padding:14px 16px}
   html#digivated-root .submission-account-actions {align-items:stretch;flex-direction:column;gap:8px}
   html#digivated-root .submission-account-actions .button {width:100%}
 }
@@ -191,4 +187,27 @@ html#digivated-root body.platform .submission-pricing-options input[type=radio] 
   padding: 0;
   accent-color: #d7d7d7;
   color-scheme: dark;
+}
+
+html#digivated-root .submission-project-fields {min-width:0}
+html#digivated-root .submission-url-row {
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:8px;
+}
+html#digivated-root .submission-disclosure {
+  min-width:0;border:1px solid var(--fl-rule-hi, var(--dg-line-strong));border-radius:6px;padding-inline:14px;
+}
+html#digivated-root .submission-disclosure > summary {
+  align-content:center;min-height:44px;cursor:pointer;color:var(--dg-ink);font-size:14px;
+}
+html#digivated-root .submission-disclosure > :last-child:not(summary) {margin-bottom:12px}
+html#digivated-root .submission-optional-fields {display:grid;gap:12px}
+html#digivated-root body.platform .submission-preview-panel {padding-inline:14px;border:1px solid var(--fl-rule-hi, var(--dg-line-strong))}
+html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;margin-bottom:8px}
+@media(min-width:850px) {
+  html#digivated-root #submission-details:not([hidden]) {
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(280px, 35%);align-items:start;
+  }
+  html#digivated-root #submission-details > :is(#submission-progress,.submission-review) {grid-column:1/-1}
+  html#digivated-root body.platform #sub-step-launch {border-inline-start:1px solid var(--fl-rule, var(--dg-line))}
+  html#digivated-root .submission-form .form-row {grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 }

@@ -27,8 +27,31 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await expect(page.locator('.free-launch-guide')).toContainText('Monday at 9:00 AM Eastern');
  await expect(page.locator('#submission-details')).toBeVisible();
  await expect(page.locator('#submission-progress li.is-current')).toContainText('Project');
+ const projectBox = (await page.locator('#sub-step-details').boundingBox())!;
+ const launchBox = (await page.locator('#sub-step-launch').boundingBox())!;
+ if (width === 1440) {
+  expect(launchBox.x).toBeGreaterThanOrEqual(projectBox.x + projectBox.width - 1);
+  expect(launchBox.y).toBeCloseTo(projectBox.y, 0);
+ } else {
+  expect(launchBox.y).toBeGreaterThan(projectBox.y + projectBox.height);
+  expect(launchBox.x + launchBox.width).toBeLessThanOrEqual(width);
+ }
+ const guide = page.getByText('How free launches work', { exact: true });
+ await expect(page.locator('.free-launch-guide')).toBeHidden();
+ await guide.click();
+ await expect(page.locator('.free-launch-guide')).toBeVisible();
+ await guide.click();
+ const preview = page.getByText('Preview your public listing', { exact: true });
+ await expect(page.locator('[data-listing-name]')).toBeHidden();
+ await preview.click();
+ await expect(page.locator('[data-listing-name]')).toBeVisible();
+ await preview.click();
  for(const [name,value] of Object.entries({name:'Orbit',url:'https://example.com',description:'A useful workspace for independent builders to organize projects.',creator:'Builder'}))await page.locator(`#project-form [name=${name}]`).fill(value);
  await page.locator('#project-form [name=category]').selectOption('Developer Tools');
+ await preview.click();
+ await expect(page.locator('[data-listing-name]')).toHaveText('Orbit');
+ await expect(page.locator('[data-listing-category]')).toHaveText('Developer Tools');
+ await preview.click();
  const image=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=64;c.getContext('2d')!.fillRect(0,0,64,64);return c.toDataURL('image/png').split(',')[1];});
  await page.locator('#project-image').setInputFiles({name:'logo.png',mimeType:'image/png',buffer:Buffer.from(image,'base64')});
  await page.locator('#project-form [name=consent]').check();

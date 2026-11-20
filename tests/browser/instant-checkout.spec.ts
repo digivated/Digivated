@@ -16,6 +16,7 @@ async function signedIn(page,{paidAfter=2}:{paidAfter?:number}={}){
   if(url.pathname==='/api/submissions'){
    if(route.request().method()==='GET')return route.fulfill({json:{instant:{price:300,checkoutUrl},nextFreeLaunch:'2026-11-23T00:00:00.000Z'}});
    const body=route.request().postDataJSON();
+   if(body.action==='reserve-badge')return route.fulfill({json:{id:'123e4567-e89b-42d3-a456-426614174055',token:'signed-fixture'}});
    if(body.action==='cancel-instant'){calls.cancel=(calls.cancel||0)+1;return route.fulfill({json:{cancelled:true}});}
    if(body.action==='publish-instant'){calls.checks++;return calls.checks<paidAfter?route.fulfill({status:409,json:{error:'We could not find an eligible payment for your account email. If you just paid, wait a moment and try again.'}}):route.fulfill({json:{ok:true,id:'instant-fixture',pageUrl:'/projects/listing/instant-fixture'}});}
    calls.submit++;assert(body.submissionType==='instant');
@@ -51,7 +52,7 @@ for(const width of [390,1440])test(`instant checkout can be cancelled and the fo
  expect(calls.cancel).toBe(1);
  // They can pick the free launch instead and keep going.
  await page.locator('.dg-tiers [data-tier="directory"]').click();
- await expect(page.locator('#project-form button[type=submit]')).toContainText('Save and get your badge');
+ await expect(page.locator('#project-form button[type=submit]')).toContainText('Verify badge & submit');
 });
 for(const width of [390,1440])test(`instant publishing: save, open checkout, publish automatically at ${width}px`,async({page,context})=>{
  await page.setViewportSize({width,height:900});
