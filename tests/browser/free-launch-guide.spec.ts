@@ -49,6 +49,11 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await page.goto(base+'/account?tab=profile#project-badge-fixture');
  await expect(page).toHaveURL(/\/account#project-badge-fixture$/);
  await expect(page.locator('#project-badge-fixture')).toBeInViewport();
+ if(width===390){
+  await page.goto(base+'/login?next='+encodeURIComponent('/account#project-badge-fixture'));
+  await expect(page).toHaveURL(/\/account#project-badge-fixture$/);
+  await expect(page.locator('#project-badge-fixture')).toBeInViewport();
+ }
  await expect(page.locator('[data-submission-state]')).toHaveText('Action needed');
  await expect(page.locator('.account-launch')).toContainText('Free launches need our badge on your site.');
  await expect(page.locator('.account-launch [data-badge-style]')).toHaveCount(4);
