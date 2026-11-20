@@ -13,6 +13,7 @@ import { projectMarks } from '../lib/project-marks.mjs';
 const root = document.querySelector('[data-directory]');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const PAGE = 24;
+const DEFAULT_SORT = 'new';
 const CACHE_KEY = 'digivated:home-board:v1'; // Shared with the homepage: same feed.
 const CACHE_AGE = 60 * 60_000;
 const number = new Intl.NumberFormat('en-US');
@@ -60,7 +61,7 @@ if (root) {
   const state = {
     projects: [], loaded: false, failed: false,
     query: '', category: categoryFromLink(params.get('category') || ''),
-    sort: sortKeys.includes(params.get('sort')) ? params.get('sort') : 'top',
+    sort: sortKeys.includes(params.get('sort')) ? params.get('sort') : DEFAULT_SORT,
     featured: params.get('view') === 'featured',
     limit: PAGE, selected: null,
   };
@@ -73,7 +74,7 @@ if (root) {
   function syncUrl() {
     const url = new URL(location.href);
     const set = (key, value) => value ? url.searchParams.set(key, value) : url.searchParams.delete(key);
-    set('view', state.featured ? 'featured' : ''); set('category', state.category); set('sort', state.sort === 'top' ? '' : state.sort);
+    set('view', state.featured ? 'featured' : ''); set('category', state.category); set('sort', state.sort === DEFAULT_SORT ? '' : state.sort);
     history.replaceState(history.state, '', url.pathname + url.search + url.hash);
   }
 
