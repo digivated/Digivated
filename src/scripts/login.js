@@ -10,17 +10,7 @@ if(form){
  const safeNext=next&&(/^\/account#project-[a-z0-9_-]{1,100}$/i.test(next)||/^\/creator\?id=[a-f0-9-]{36}$/i.test(next)||/^\/inbox(?:\?id=[a-f0-9-]{36})?$/i.test(next)||/^\/(?:submit-project|notifications|account|saved|creators)$/.test(next)||/^\/(?:threads(?:\/(?:new|[a-z0-9][a-z0-9-]{0,99}))?(?:\?(?:forum|view|q|sort)=[a-z0-9 %-]{0,60})?|projects\/(?:listing\/)?[a-z0-9][a-z0-9-]{0,99})?(?:#(?:feedback|launching-next|comment-[a-f0-9-]{36}))?$/.test(next));
  const destination=safeNext?next:'/account';
  let mode=params.get('mode')==='signup'?'signup':'signin';
- let client=null,busy=false,unavailable='',pending=null;
- const codeForm=$('login-code-form'),code=$('login-code');
- const showCode=(challenge,address)=>{
-  pending={challenge,address};
-  $('login-code-email').textContent=address;
-  form.hidden=true;explanation.hidden=true;$('login-terms').hidden=true;codeForm.hidden=false;
-  code.value='';code.focus();
- };
- const hideCode=()=>{
-  pending=null;code.value='';codeForm.hidden=true;form.hidden=false;explanation.hidden=false;
- };
+ let client=null,busy=false,unavailable='';
  const copy={
   signin:{title:'Welcome back.',subtitle:'Sign in to track your launches and read feedback.',explain:'Sign in with your email and password.',submit:'Sign in',switchText:'New to Digivated? ',switchAction:'Create an account'},
   signup:{title:'Join Digivated.',subtitle:'Launch your project for free and get real feedback from builders.',explain:'Create your account with an email and password.',submit:'Create account',switchText:'Already have an account? ',switchAction:'Sign in'}
@@ -39,7 +29,7 @@ if(form){
   document.title=(mode==='signin'?'Log in':'Create account')+' · Digivated';
   if(unavailable)say(unavailable,'error');else say('');
  };
- const setMode=value=>{if(busy)return;hideCode();mode=value;render();const url=new URL(location.href);if(mode==='signup')url.searchParams.set('mode','signup');else url.searchParams.delete('mode');history.replaceState(null,'',url);};
+ const setMode=value=>{mode=value;render();const url=new URL(location.href);if(mode==='signup')url.searchParams.set('mode','signup');else url.searchParams.delete('mode');history.replaceState(null,'',url);};
  tabs.forEach((tab,index)=>{tab.onclick=()=>setMode(index===0?'signin':'signup');tab.onkeydown=event=>{if(!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();const other=tabs[index===0?1:0];other.click();other.focus();};});
  $('login-switch-button').onclick=()=>{setMode(mode==='signin'?'signup':'signin');email.focus();};
  const toggle=$('login-show-password');
@@ -71,51 +61,17 @@ if(form){
  }
  form.onsubmit=event=>{
   event.preventDefault();
-  if(pending)return;
   action(submit,async address=>{
    if(mode==='signup'){
-    const result=await signupRequest({email:address});
-    showCode(result.challenge,address);
-    return;
+    const response=await fetch('/api/project-account?action=signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:address,password:password.value}),signal:AbortSignal.timeout(20000)});
+    if(!response.ok){const result=await response.json().catch(()=>({}));if(response.status===409){setMode('signin');email.value=address;}throw Error(result.error||'Your account could not be created. Please try again.');}
    }
    const {data,error}=await client.auth.signInWithPassword({email:address,password:password.value});
    if(error)throw error;
-   if(data.session){password.value='';say('Signed in. Taking you to your dashboard…','ok');location.replace(destination);return;}
+   if(data.session){password.value='';say(mode==='signup'?'Account created. Taking you to your dashboard…':'Signed in. Taking you to your dashboard…','ok');location.replace(destination);return;}
    say('Please try signing in again.','error');
   },{needsPassword:true});
  };
- async function signupRequest(payload){
-  const response=await fetch('/api/project-account?action=signup',{
-   method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(20000),
-  });
-  const result=await response.json().catch(()=>({}));
-  if(!response.ok)throw Error(result.error||'Signup is temporarily unavailable. Please try again.');
-  if(!payload.challenge&&!result.challenge)throw Error('No verification code was sent. Try again.');
-  return result;
- }
- codeForm.onsubmit=event=>{
-  event.preventDefault();
-  if(!pending)return;
-  const {challenge,address}=pending;
-  action(event.submitter||codeForm.querySelector('[type=submit]'),async()=>{
-   await signupRequest({email:address,challenge,code:code.value,password:password.value});
-   const {data}=await client.auth.signInWithPassword({email:address,password:password.value}).catch(()=>({}));
-   password.value='';
-   if(data?.session){location.replace(destination);return;}
-   hideCode();mode='signin';render();
-   say('Your account is verified. Sign in with your password to continue.', 'ok');
-  });
- };
- $('login-resend-code').onclick=event=>{
-  if(!pending)return;
-  const {address}=pending;
-  action(event.currentTarget,async()=>{
-   const result=await signupRequest({email:address});
-   showCode(result.challenge,address);
-   say('We sent a new code. Check your inbox.','ok');
-  });
- };
- $('login-change-email').onclick=()=>{if(!busy){setMode('signup');email.focus();}};
  $('login-email-link').onclick=event=>action(event.currentTarget,async address=>{const {error}=await client.auth.signInWithOtp({email:address,options:{shouldCreateUser:false,emailRedirectTo:`${location.origin}/account`}});if(error)throw error;say(`If ${address} has an account, a sign-in link is on its way. Check your inbox.`,'ok');});
  $('login-reset').onclick=event=>action(event.currentTarget,async address=>{const {error}=await client.auth.resetPasswordForEmail(address,{redirectTo:`${location.origin}/account`});if(error)throw error;say(`If ${address} has an account, a password reset link is on its way. Check your inbox.`,'ok');});
  $('login-google').onclick=async event=>{
