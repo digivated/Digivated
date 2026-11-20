@@ -32,6 +32,10 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  if (width === 1440) {
   expect(launchBox.x).toBeGreaterThanOrEqual(projectBox.x + projectBox.width - 1);
   expect(launchBox.y).toBeCloseTo(projectBox.y, 0);
+  const creator = (await page.locator('#sub-step-you').boundingBox())!;
+  const review = (await page.locator('#submission-details > .submission-review').boundingBox())!;
+  expect(review.x).toBeCloseTo(projectBox.x, 0);
+  expect(review.y).toBeCloseTo(creator.y + creator.height, 0);
  } else {
   expect(launchBox.y).toBeGreaterThan(projectBox.y + projectBox.height);
   expect(launchBox.x + launchBox.width).toBeLessThanOrEqual(width);

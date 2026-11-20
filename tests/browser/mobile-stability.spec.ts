@@ -7,7 +7,7 @@ for(const width of [320,375,390])test(`mobile controls and project card stay at 
  await page.route('**/api/projects*',route=>route.fulfill({json:{items:[project],next:null}}));
  await page.goto(base+'/discover');
  await expect(page.getByRole('button',{name:'Open Mobile Card'})).toBeVisible();
- const search=page.getByRole('searchbox',{name:'Search the wall'});
+ const search=page.getByRole('searchbox',{name:'Search projects or makers'});
  expect(await search.evaluate(element=>parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(16);
  const open=page.getByRole('button',{name:'Open Mobile Card'});
  expect(await open.evaluate(element=>getComputedStyle(element).touchAction)).toBe('manipulation');

@@ -2,7 +2,6 @@
 import Platform from '../layouts/Platform.astro';
 import FeedbackPoints from '../components/FeedbackPoints.astro';
 import '../styles/project-wall.css';
-import '../styles/home-launches.css';
 import '../styles/all-time-directory.css';
 ---
 <Platform title="All-time project directory" description="Discover independent projects, tools, and the people building them.">
@@ -10,9 +9,8 @@ import '../styles/all-time-directory.css';
     <section class="dg-hero" aria-labelledby="dg-dir-title">
       <pre class="ascii-field home-workshop dg-hero-ascii" data-ascii-field aria-hidden="true"></pre>
       <div class="dg-hero-copy">
-        <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>The all-time index</p>
-        <h1 id="dg-dir-title">Every project ever launched on Digivated.</h1>
-        <p class="dg-hero-lede">Search them, sort them, find something new. Or find one that needs feedback and earn points for your own launch.</p>
+        <h1 id="dg-dir-title">Project directory</h1>
+        <p class="dg-hero-lede">Browse independent projects by category, or search by project or maker.</p>
         <ul class="dg-dir-stats" aria-label="Directory totals">
           <li><strong data-dir-stat="projects">—</strong><span>projects</span></li>
           <li><strong data-dir-stat="categories">—</strong><span>categories</span></li>
@@ -27,7 +25,7 @@ import '../styles/all-time-directory.css';
 
     <div class="dg-dir-controls">
       <div class="dg-dir-searchrow">
-        <label class="dg-dir-search"><span class="sr-only">Search the wall</span><input type="search" data-dir-search placeholder="search projects or makers" autocomplete="off" enterkeyhint="search"/></label>
+        <label class="dg-dir-search"><span class="sr-only">Search projects or makers</span><input type="search" data-dir-search placeholder="search projects or makers" autocomplete="off" enterkeyhint="search"/></label>
         <div class="dg-dir-collection" role="group" aria-label="Project collection"><button type="button" data-dir-collection="all" aria-pressed="true">All</button><button type="button" data-dir-collection="featured" aria-pressed="false">Members</button></div>
         <button type="button" class="dg-btn dg-dir-surprise" data-dir-surprise><span aria-hidden="true">[?]</span> Surprise me</button>
       </div>
@@ -36,7 +34,7 @@ import '../styles/all-time-directory.css';
     </div>
 
     <section id="project-wall" aria-labelledby="dg-dir-list-title">
-      <header class="dg-list-head"><h2 id="dg-dir-list-title"><span class="dg-list-title">All-time directory</span></h2><span class="dg-list-rule" aria-hidden="true"></span></header>
+      <header class="dg-list-head"><h2 id="dg-dir-list-title"><span class="dg-list-title">Projects</span></h2><span class="dg-list-rule" aria-hidden="true"></span></header>
       <p class="dg-dir-needs" data-dir-needs hidden>✦ These projects have the least feedback. Hit <strong>Visit</strong>, spend 20+ seconds there, come back and leave a specific comment to earn points. <a href="/points">How points work →</a></p>
       <ol class="dg-dir-list dg-list-rows" data-dir-list aria-label="Projects">
         {Array.from({ length: 6 }, () => <li class="dg-row is-loading" aria-hidden="true"><span class="dg-logo"></span><span class="dg-main"></span></li>)}
