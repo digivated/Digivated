@@ -21,7 +21,8 @@ test('login entry point exposes sign-in and sign-up email flows', async ({ page 
   await expect(page.getByText('Account sign-in is temporarily unavailable.')).toBeVisible();
 });
 
-test('verified account shows a signed-in header, welcome, account, and sign-out', async ({ page }) => {
+test('verified account shows a named mobile account menu, welcome, account, and sign-out', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
   const email = 'verified@example.invalid';
   const user = { id: '4ad90c9b-5666-482d-899c-d0d3ef41ee46', email, email_confirmed_at: '2026-10-23T00:00:00Z', role: 'authenticated', aud: 'authenticated' };
   const expires = Math.floor(Date.now() / 1000) + 3600;
