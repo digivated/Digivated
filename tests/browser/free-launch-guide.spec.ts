@@ -46,7 +46,9 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await expect(page.locator('#submission-badge')).toContainText('Once verified, you go live on launch day.');
  await expect(page.locator('#sub-step-details')).toBeHidden();
  await expect(page.locator('#submission-badge .fl-tracker [aria-current=step]')).toContainText('Badge verified');
- await page.goto(base+'/account#account-submissions');
+ await page.goto(base+'/account?tab=profile#project-badge-fixture');
+ await expect(page).toHaveURL(/\/account#project-badge-fixture$/);
+ await expect(page.locator('#project-badge-fixture')).toBeInViewport();
  await expect(page.locator('[data-submission-state]')).toHaveText('Action needed');
  await expect(page.locator('.account-launch')).toContainText('Free launches need our badge on your site.');
  await expect(page.locator('.account-launch [data-badge-style]')).toHaveCount(4);
