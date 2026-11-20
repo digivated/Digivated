@@ -55,7 +55,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           QA_ISSUES_ENABLED: 'true'
         run: node qa/triage.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always() && steps.switch.outputs.active == 'true'
         with:
           name: digivated-qa-evidence
