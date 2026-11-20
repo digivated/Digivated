@@ -35,7 +35,7 @@ import '../styles/submission-flow.css';
 
         <div class="submission-project-fields">
           <fieldset id="sub-step-details">
-            <legend><span class="submission-step-label">Project details</span>Tell us about your project</legend>
+            <legend>Project details</legend>
             <div class="submission-url-row">
               <label>Project URL<input name="url" type="url" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="yourproduct.com" maxlength="500" required/></label>
               <button type="button" id="project-import" class="dg-import"><span class="dg-import-icon" aria-hidden="true">⇣</span><span class="dg-import-label">Autofill</span></button>
@@ -71,13 +71,13 @@ import '../styles/submission-flow.css';
           </fieldset>
 
           <fieldset id="sub-step-logo">
-            <legend><span class="submission-step-label">Logo</span>Project logo</legend>
-            <label class="submission-upload">Project logo<input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Your logo, not a screenshot. Square JPG, PNG or WebP, up to 10 MB.</span></label>
+            <legend>Project logo</legend>
+            <label class="submission-upload"><span class="sr-only">Project logo</span><input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Your logo, not a screenshot. Square JPG, PNG or WebP, up to 10 MB.</span></label>
             <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project logo preview"/><span id="project-image-name"></span></div>
           </fieldset>
 
           <fieldset id="sub-step-you">
-            <legend><span class="submission-step-label">Creator details</span>About you</legend>
+            <legend>About you</legend>
             <p class="submission-section-help">Your email stays private.</p>
             <div class="form-row"><label>Creator name<input name="creator" placeholder="Your name" autocomplete="name" maxlength="100" required/></label><label>Email<input name="email" placeholder="you@example.com" type="email" autocomplete="email" maxlength="254" required/><span class="field-help">Use the email linked to your account.</span></label></div>
             <details class="submission-disclosure">
@@ -91,7 +91,7 @@ import '../styles/submission-flow.css';
         </div>
 
         <fieldset class="submission-intent" id="sub-step-launch">
-          <legend><span class="submission-step-label">Launch</span>Choose how to launch</legend>
+          <legend>Launch options</legend>
           <!-- The tier cards drive the select used by submission and checkout. -->
           <div class="dg-tiers" role="radiogroup" aria-label="Launch option" data-tiers>
             <label class="dg-tier" data-tier="directory"><input type="radio" name="dg-tier" value="directory" checked/><span class="dg-tier-head"><strong>Free launch</strong><b>$0</b></span><span class="dg-tier-sub">Join the weekly queue.</span><ul><li>Launches on a Monday, 7–14 days out</li><li>Add our badge to your site. We verify it automatically</li><li>Permanent listing and discussion page</li></ul></label>

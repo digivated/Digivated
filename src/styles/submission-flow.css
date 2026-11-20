@@ -208,6 +208,14 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
     display:grid;grid-template-columns:minmax(0,1fr) minmax(280px, 35%);align-items:start;
   }
   html#digivated-root #submission-details > :is(#submission-progress,.submission-review) {grid-column:1/-1}
+  html#digivated-root #project-form:not(.is-saved) #submission-details {
+    grid-template-areas:"progress progress" "project launch" "review launch";
+    grid-template-rows:auto max-content 1fr;
+  }
+  html#digivated-root #project-form:not(.is-saved) #submission-progress {grid-area:progress}
+  html#digivated-root #project-form:not(.is-saved) .submission-project-fields {grid-area:project}
+  html#digivated-root #project-form:not(.is-saved) #sub-step-launch {grid-area:launch}
+  html#digivated-root #project-form:not(.is-saved) #submission-details > .submission-review {grid-area:review}
   html#digivated-root body.platform #sub-step-launch {border-inline-start:1px solid var(--fl-rule, var(--dg-line))}
   html#digivated-root .submission-form .form-row {grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 }

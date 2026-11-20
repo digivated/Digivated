@@ -52,7 +52,7 @@ html[data-ascii] body .compact-site-header[data-account=signed-out] .header-logi
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>.dg-menu-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:4px!important;padding:8px 6px!important;flex-direction:initial!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>.dg-menu-grid::before{content:none!important}
 html#digivated-root[data-ascii] body .compact-site-header .dg-menu-group{display:flex;flex-direction:column}
-html#digivated-root[data-ascii] body .compact-site-header .dg-menu-title{margin:0!important;padding:6px 12px 4px!important;font-family:var(--fl-mono)!important;font-size:10.5px!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:#6f6f6f!important}
+html#digivated-root[data-ascii] body .compact-site-header .dg-menu-title{margin:0!important;padding:6px 12px 4px!important;font-family:var(--fl-mono)!important;font-size:10.5px!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:#9a9a9a!important}
 html#digivated-root[data-ascii] body .compact-site-header .dg-menu-group a{margin:0!important;min-height:34px!important;font-size:13.5px!important}
 html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation[open] .dg-menu-group a{animation:dg-menu-in .26s var(--dgb-ease) both}
 html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation[open] .dg-menu-group a:nth-child(n+4){animation-delay:.04s}
@@ -65,7 +65,7 @@ html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.
    screens the bar's four destinations sit on top as one row of tabs. */
 html#digivated-root[data-ascii] body .compact-site-header .notebook-navigation .navigation-panel{width:min(380px,calc(100vw - 24px))!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.dg-menu-main{display:none!important}
-@media (max-width:1000px){html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.dg-menu-main{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;padding:8px!important}}
+@media (max-width:1280px){html#digivated-root[data-ascii] body .compact-site-header .navigation-panel>div.dg-menu-main{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;padding:8px!important}}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a{justify-content:center!important;min-height:40px!important;margin:0!important;padding:6px 4px!important;border:1px solid #262626!important;border-radius:2px!important;font-family:var(--fl-mono)!important;font-size:12px!important;letter-spacing:.02em}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a::after{content:none!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a[aria-current=page]{border-color:#e8e8e8!important;color:#fff!important}
@@ -156,19 +156,16 @@ html[data-ascii] body .dg-spot.is-open:hover .dg-spot-plus{letter-spacing:.2em;c
 html[data-ascii] body .dg-spot.is-open strong{font-family:var(--fl-mono)!important;font-size:11px!important;font-weight:500!important;letter-spacing:.08em;text-transform:uppercase;color:#ddd!important}
 html[data-ascii] body .dg-spot.is-open small{font-family:var(--fl-mono)!important;font-size:10px!important;color:var(--dgb-accent)!important}
 html[data-ascii] body .dg-spot.is-open .dg-spot-instant{margin-top:3px;padding:1px 6px!important;border:1px solid #3b2f52!important;border-radius:2px!important;background-color:#0a0a0a!important;font-family:var(--fl-mono)!important;font-size:9px!important;font-style:normal!important;letter-spacing:.08em;text-transform:uppercase;color:#d9c6ff!important;white-space:nowrap}
-html[data-ascii] body .dg-spot.is-open::after{content:'';position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(110deg,transparent 35%,#ffffff12 50%,transparent 65%)!important;background-size:250% 100%;animation:dg-sheen 5s ease-in-out infinite}
-@keyframes dg-sheen{from{background-position:120% 0}to{background-position:-120% 0}}
 
 /* ---------- Hero: copy over a live ASCII workbench ---------- */
 html[data-ascii] body .dg-hero{position:relative;display:block;overflow:hidden;margin:0!important;padding:clamp(28px,4vw,48px) clamp(20px,3.4vw,40px)!important;border:1px solid var(--fl-rule-hi,#2c2c2c)!important;border-radius:0!important;background-color:#0b0b0b!important;background-image:radial-gradient(80% 90% at 0% 0%,#c3a0ff12,transparent 60%)!important;animation:dg-rise .6s var(--dgb-ease) both;container-type:inline-size}
 html[data-ascii] body .dg-hero-ascii{position:absolute!important;inset:0 0 0 auto!important;left:auto!important;width:52%!important;height:auto!important;min-height:0!important;max-width:none!important;margin:0!important;padding:14px 16px!important;overflow:hidden!important;pointer-events:none;transform:none!important;font-size:1.32cqw!important;line-height:1.18!important;color:#cfcfcf!important;opacity:.26!important;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 38%)!important;mask-image:linear-gradient(90deg,transparent 0%,#000 38%)!important;z-index:0}
-html[data-ascii] body .dg-hero-copy{position:relative;z-index:1;display:grid;justify-items:start;gap:16px;max-width:560px}
+html[data-ascii] body .dg-hero-copy{position:relative;z-index:1;display:grid;justify-items:start;gap:14px;max-width:560px}
 @media (max-width:760px){html[data-ascii] body .dg-hero-ascii{width:100%!important;font-size:2.4cqw!important;opacity:.12!important;-webkit-mask-image:linear-gradient(180deg,#000,transparent 85%)!important;mask-image:linear-gradient(180deg,#000,transparent 85%)!important}}
 html[data-ascii] body .dg-pill::before{content:'[';color:#666}html[data-ascii] body .dg-pill::after{content:']';color:#666}
 html[data-ascii] body .dg-pill{display:inline-flex!important;align-items:center;gap:8px;margin:0!important;padding:0!important;border:0!important;background-color:transparent!important;font-family:var(--fl-mono)!important;font-size:11px!important;letter-spacing:.08em!important;text-transform:uppercase!important;color:#e7dcff!important}
-html[data-ascii] body .dg-hero h1{margin:0!important;font-family:var(--fl-sans)!important;font-size:clamp(30px,3.6vw,48px)!important;line-height:1.04!important;letter-spacing:-.045em!important;font-weight:600!important;text-wrap:balance}
-html[data-ascii] body .dg-hero-accent{display:inline-block;color:#fff!important;background-image:linear-gradient(90deg,#fff 0%,#d9c6ff 40%,#fff 80%)!important;background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent!important;animation:dg-glint 6s ease-in-out 1.2s infinite}
-@keyframes dg-glint{0%,60%{background-position:100% 0}100%{background-position:-100% 0}}
+html[data-ascii] body .dg-hero h1{margin:0!important;font-family:var(--fl-sans)!important;font-size:clamp(30px,3.6vw,48px)!important;line-height:1.12!important;letter-spacing:-.04em!important;font-weight:600!important;text-wrap:balance}
+html[data-ascii] body .dg-hero-accent{color:#e7dcff!important}
 html[data-ascii] body .dg-hero-lede{max-width:44ch;margin:0!important;font-family:var(--fl-sans)!important;font-size:15px!important;line-height:1.6!important;color:var(--dgb-copy)!important}
 html[data-ascii] body .dg-hero-actions{display:flex;flex-wrap:wrap;gap:10px}
 
@@ -176,7 +173,7 @@ html[data-ascii] body .dg-hero-actions{display:flex;flex-wrap:wrap;gap:10px}
 html[data-ascii] body .dg-board{display:grid;gap:40px}
 html[data-ascii] body .dg-list{margin:0!important;padding:0!important}
 html[data-ascii] body .dg-list-head{display:flex;align-items:center;gap:12px;padding:0 0 10px!important}
-html[data-ascii] body .dg-list-head h2{display:flex;align-items:center;gap:10px;margin:0!important;font-family:var(--fl-mono)!important;font-size:13px!important;font-weight:500!important;letter-spacing:.12em!important;text-transform:uppercase!important;white-space:nowrap}
+html[data-ascii] body .dg-list-head h2{display:flex;align-items:center;gap:10px;margin:0!important;font-family:var(--fl-sans)!important;font-size:19px!important;font-weight:600!important;white-space:nowrap}
 html[data-ascii] body .dg-list-title::before{content:'[ ';color:#666}
 html[data-ascii] body .dg-list-title::after{content:' ]';color:#666}
 html[data-ascii] body .dg-list-rule{flex:1;min-width:20px;height:1px;border-top:1px dashed #333!important}
@@ -236,7 +233,7 @@ html[data-ascii] body .dg-more[hidden]{display:none!important}
  html[data-ascii] body .dg-vote{width:44px!important;min-height:46px!important}
  html[data-ascii] body .dg-meta span:nth-child(n+3){display:none}
 }
-@media (max-width:560px){html[data-ascii] body .dg-list-rule{display:none}html[data-ascii] body .dg-list-head h2{font-size:12px!important;white-space:normal}html[data-ascii] body .dg-list-count{margin-left:auto}}
+@media (max-width:560px){html[data-ascii] body .dg-list-rule{display:none}html[data-ascii] body .dg-list-head h2{font-size:17px!important;white-space:normal}html[data-ascii] body .dg-list-count{margin-left:auto}}
 html[data-ascii] body.home-refresh #main>.dg-about{margin:56px 0 0!important;padding:20px 0 0!important;border-top:1px solid var(--dgb-line)!important}
 html[data-ascii] body .dg-about h2{margin:0 0 8px!important;font-size:15px!important;letter-spacing:-.01em!important}
 html[data-ascii] body .dg-about p{max-width:80ch;margin:0!important;font-family:var(--fl-sans)!important;font-size:13px!important;line-height:1.7!important;color:var(--dgb-muted)!important}
@@ -532,8 +529,8 @@ html#digivated-root[data-ascii] body input[type=search]::-webkit-search-cancel-b
 
 /* ---------- Open spots: a live ASCII field behind the call to action ---------- */
 html[data-ascii] body .dg-spot.is-open{isolation:isolate}
-html[data-ascii] body .dg-spot-field{position:absolute;inset:0;z-index:-1;margin:0!important;padding:4px 6px!important;overflow:hidden;font-family:var(--fl-mono)!important;font-size:9px!important;line-height:11px!important;letter-spacing:.12em;white-space:pre;color:#6d6d6d!important;opacity:.55;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 62% 58% at 50% 50%,transparent 32%,#000 78%);mask-image:radial-gradient(ellipse 62% 58% at 50% 50%,transparent 32%,#000 78%);transition:color .25s,opacity .25s}
-html[data-ascii] body .dg-spot.is-open:hover .dg-spot-field{color:#a58bdc!important;opacity:.7}
+html[data-ascii] body .dg-spot-field{position:absolute;inset:0;z-index:-1;margin:0!important;padding:4px 6px!important;overflow:hidden;font-family:var(--fl-mono)!important;font-size:9px!important;line-height:11px!important;letter-spacing:.12em;white-space:pre;color:#6d6d6d!important;opacity:.32;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 62% 58% at 50% 50%,transparent 32%,#000 78%);mask-image:radial-gradient(ellipse 62% 58% at 50% 50%,transparent 32%,#000 78%);transition:color .25s,opacity .25s}
+html[data-ascii] body .dg-spot.is-open:hover .dg-spot-field{color:#a58bdc!important;opacity:.55}
 html[data-ascii] body .dg-spot.is-open>:not(.dg-spot-field){position:relative}
 
 /* ---------- Submit: launch tier cards ---------- */
@@ -562,7 +559,7 @@ html[data-ascii] body .dg-tier-flag{position:absolute;top:-9px;right:14px;paddin
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){
- html[data-ascii] body :is(.dg-hero,[data-ready] .dg-spot,.dg-list-rows.is-entering .dg-row,.dg-thread-row,.dg-review,.dg-award strong,.dg-sparks span,.dg-hero-accent,.dg-spot.is-open::after,.dg-dot,.dg-rising-arrow,.dg-rising-item,.notebook-navigation[open] .dg-menu-group a,.dg-d-item.is-flash,.dg-bell-panel){animation:none!important}
+ html[data-ascii] body :is(.dg-hero,[data-ready] .dg-spot,.dg-list-rows.is-entering .dg-row,.dg-thread-row,.dg-review,.dg-award strong,.dg-sparks span,.dg-dot,.dg-rising-arrow,.dg-rising-item,.notebook-navigation[open] .dg-menu-group a,.dg-d-item.is-flash,.dg-bell-panel){animation:none!important}
  html[data-ascii] body :is(.dg-row::before,.dg-logo,.dg-spot,.dg-spot-plus,.dg-d-caret,.dg-vote-caret){transition:none!important}
  html#digivated-root[data-ascii] body .ascii-ambient{display:none!important}
 }
