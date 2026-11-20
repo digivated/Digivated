@@ -97,3 +97,26 @@ test('post media uses signed upload ticket and verifies file before publishing',
  uploaded=true;const created=await call('POST','/?action=post',{body:'My latest work',mediaPath:ticket.path},'Alice');assert.equal(created.status,201);assert.match(created.post.media.url,/creator-media/);
  assert.equal((await call('POST','/?action=post',{body:'Another work',mediaPath:ticket.path},'Bob')).status,403);
 });
+
+test('the header avatar serves only the signed-in member’s uploaded logo', async () => {
+ const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a3foAAAAASUVORK5CYII=','base64');
+ const handler=makeCreatorProfileHandler({
+  redis:async ([command, key])=>{
+   assert.equal(command,'GET');
+   return key===`digivated:creator:logo:${alice}`?`data:image/png;base64,${png.toString('base64')}`:null;
+  },
+  verifyAccount:async req=>req.headers.authorization?{id:req.headers.authorization==='Alice'?alice:bob}:null,
+ });
+ const avatar=async authorization=>{
+  const headers=new Map();
+  const res={setHeader:(key,value)=>headers.set(key,value),end(body){this.body=body;}};
+  await handler({method:'GET',url:'/?action=avatar',headers:{authorization}},res);
+  return {status:res.statusCode,body:res.body,headers};
+ };
+ assert.equal((await avatar()).status,401);
+ assert.equal((await avatar('Bob')).status,204);
+ const owner=await avatar('Alice');
+ assert.equal(owner.status,200);
+ assert.deepEqual(owner.body,png);
+ assert.equal(owner.headers.get('Cache-Control'),'private, no-store');
+});
