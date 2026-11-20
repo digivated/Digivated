@@ -37,12 +37,12 @@
 
   .dg-hero-stats {
     display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-template-columns:minmax(0,.8fr) minmax(min-content,1fr) minmax(max-content,1.2fr);
     gap:14px 8px;
     margin:0!important;
   }
 
-  .dg-hero-stat { display:grid; gap:5px; min-width:0; }
+  .dg-hero-stat { display:grid; grid-template-rows:1fr auto; gap:5px; min-width:0; }
   .dg-hero-stat dt {
     color:var(--fl-muted);
     font:500 11px/1.35 var(--fl-sans);
@@ -53,7 +53,13 @@
     font:600 clamp(14px,1.55vw,19px)/1.2 var(--fl-sans);
     font-variant-numeric:tabular-nums;
   }
-  .dg-hero-stat .dg-hero-activity { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 6px; }
+  .dg-hero-stat .dg-hero-activity {
+    display:flex;
+    align-items:baseline;
+    gap:4px;
+    white-space:nowrap;
+  }
+  html[data-ascii] body .dg-hero-activity .dg-dot { font-size:9px!important; }
   .dg-hero-stat.is-countdown {
     grid-column:1/-1;
     padding-bottom:14px;
