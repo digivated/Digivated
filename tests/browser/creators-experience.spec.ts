@@ -132,9 +132,9 @@ for (const width of [1100, 390]) {
   }
   expect(status.top,'status text sits under the tabs').toBeGreaterThanOrEqual(tabs.bottom-1);
   const message=page.getByRole('link',{name:'Message'});
-  // Primary buttons are the on-theme lilac style: light text on a dark fill.
-  expect(await message.evaluate(el=>getComputedStyle(el).color)).toBe('rgb(241, 234, 255)');
-  expect(await message.evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(21, 15, 31)');
+  // The message link uses the shared primary action colors.
+  expect(await message.evaluate(el=>getComputedStyle(el).color)).toBe('rgb(255, 255, 255)');
+  expect(await message.evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(36, 70, 178)');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  });
 }
