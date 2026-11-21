@@ -3,7 +3,10 @@
   .dg-shell {
     --shell-bar-glass: #f7f7f5f5;
     --shell-panel-glass: #f7f7f5fa;
-    --shell-shadow: 0 15px 35px #191a181a;
+    --shell-shadow: 0 12px 32px #191a181f;
+    --shell-rim: inset 0 1px 0 #fffc, inset 0 0 0 1px #ffffff48;
+    --shell-sheen: linear-gradient(159deg, #ffffff75, transparent 24%, transparent 78%, #fff7);
+    --shell-bar-edge: 14px;
     --shell-border: var(--fl-line);
     --shell-accent: var(--fl-accent);
     --shell-ink: var(--fl-ink);
@@ -26,7 +29,7 @@
     gap: 12px;
     min-height: 66px;
     padding: 5px 0 !important;
-    border-block-end: 1px solid var(--shell-border) !important;
+    border-block-end: 1px solid #1a19151f !important;
     background: transparent !important;
   }
   .dg-shell-bar::before {
@@ -34,8 +37,10 @@
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: var(--shell-bar-glass);
-    background-image: var(--shell-reflection, none) !important;
+    border-radius: var(--shell-bar-edge) !important;
+    background-color: var(--shell-bar-glass) !important;
+    background-image: var(--shell-reflection, none), var(--shell-sheen) !important;
+    box-shadow: var(--shell-rim) !important;
     pointer-events: none;
   }
   .dg-shell .dg-reading-track { inset-inline: var(--daylight-gutter); }
@@ -136,9 +141,9 @@
     border: 1px solid var(--shell-border) !important;
     border-radius: 16px !important;
     background-color: var(--shell-panel-glass) !important;
-    background-image: var(--shell-reflection, none) !important;
+    background-image: var(--shell-reflection, none), var(--shell-sheen) !important;
     color: var(--shell-ink) !important;
-    box-shadow: var(--shell-shadow) !important;
+    box-shadow: var(--shell-rim), var(--shell-shadow) !important;
   }
 
   .dg-shell .site-menu-primary { display: none; }
@@ -225,6 +230,15 @@
       backdrop-filter: blur(18px) !important;
     }
   }
+  .dg-shell .dg-shell-bar[data-glass-refraction]::before,
+  .dg-shell :is(.site-menu-panel,.dg-shell-account-panel)[data-glass-refraction] {
+    backdrop-filter: blur(1.6px) var(--shell-lens) !important;
+  }
+  .dg-shell .dg-shell-bar[data-glass-refraction]::before { background-color: #f7f7f550 !important; }
+  .dg-shell :is(.site-menu-panel,.dg-shell-account-panel)[data-glass-refraction] {
+    background-color: #f7f7f5b6 !important;
+  }
+  .dg-glass-definitions { position: absolute; width: 0; height: 0; pointer-events: none; }
   @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
     html[data-motion-ready] .dg-shell [data-reflecting] {
       --shell-reflection:

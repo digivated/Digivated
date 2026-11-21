@@ -120,6 +120,39 @@ test('the glass reflection follows a mouse across the bar and menu and respects 
   await expect(panel).toHaveCSS('background-image', /radial-gradient/);
   await expect(bar).not.toHaveAttribute('data-reflecting', '');
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(panel).toHaveCSS('background-image', 'none');
+  await expect(panel).not.toHaveCSS('background-image', /radial-gradient/);
   await expect(panel).not.toHaveAttribute('data-reflecting', '');
+});
+
+
+test('the bevel optically displaces a real backdrop and keeps the labels outside the filter', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Native backdrop displacement is enabled on Chromium.');
+  await page.setViewportSize({ width: 1440, height: 850 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(base + '/');
+  const bar = page.locator('.dg-shell-bar');
+  await expect(bar).toHaveAttribute('data-glass-refraction', '');
+  await page.addStyleTag({ content: 'body.platform::before{content:"";position:absolute;inset:0 0 auto;height:100px;z-index:-1;background:repeating-linear-gradient(120deg, #fff 0 5px,#171817 5px 10px)!important}' });
+
+  const optics = await bar.evaluate(el => {
+    const id = (el as HTMLElement).style.getPropertyValue('--shell-lens').match(/#([^"]+)/)?.[1];
+    const filter = id && document.getElementById(id);
+    const glass = getComputedStyle(el, '::before');
+    return { id, scale: Number(filter && filter.lastElementChild?.getAttribute('scale')), backdrop: glass.backdropFilter, foreground: getComputedStyle(el.querySelector('nav')!).filter };
+  });
+  expect(optics.scale).toBeGreaterThan(0);
+  expect(optics.backdrop).toContain('url(');
+  expect(optics.foreground).toBe('none');
+
+  const refracted = await bar.screenshot();
+  await page.evaluate(id => document.getElementById(id!)?.lastElementChild?.setAttribute('scale', '0'), optics.id);
+  const flat = await bar.screenshot();
+  expect(refracted.equals(flat)).toBe(false);
+
+  await page.locator('.site-menu-trigger').click();
+  const menu = page.locator('#explore-navigation');
+  await expect(menu).toHaveAttribute('data-glass-refraction', '');
+  await expect(menu).toHaveCSS('backdrop-filter', /url\(/);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.site-menu-trigger')).toBeFocused();
 });
