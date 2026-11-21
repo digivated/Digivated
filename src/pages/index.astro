@@ -1,22 +1,13 @@
 ---
 import Platform from '../layouts/Platform.astro';
-import UiIcon from '../components/UiIcon.astro';
+import DiscoveryHero from '../components/DiscoveryHero.astro';
 import LaunchBoard from '../components/LaunchBoard.astro';
 import FeedbackPoints from '../components/FeedbackPoints.astro';
 import '../styles/project-wall.css';
 import '../styles/home-hero.css';
 ---
 <Platform title="Indie Project Directory & Weekly Launches" description="Discover indie software and tools, upvote weekly launches, and give builders feedback. Submit your own project to Digivated for free.">
-  <section class="dg-hero dg-home-hero" aria-labelledby="dg-home-title">
-    <div class="dg-hero-copy">
-      <h1 id="dg-home-title">Discover new products</h1>
-      <p class="dg-hero-lede">Find useful tools from independent makers. If you’re building something, you can launch it here for free.</p>
-      <div class="dg-hero-actions">
-        <a class="dg-btn dg-btn-primary" href="#this-week">Browse launches <UiIcon name="arrow" size={16}/></a>
-        <a class="dg-btn" href="/submit-project">Submit your product</a>
-      </div>
-    </div>
-  </section>
+  <DiscoveryHero/>
   <div class="dg-home" data-spots>
     <LaunchBoard/>
     <section class="dg-home-extras" aria-labelledby="dg-home-extras-title">

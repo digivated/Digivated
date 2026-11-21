@@ -19,6 +19,7 @@ test('spot cards and launch rows stay lightweight and calm under reduced motion'
 test('reduced motion keeps all content visible and native search focus working',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:900});await page.goto(base+'/');
  await expect(page.locator('#dg-home-title')).toBeVisible();
+ await expect(page.locator('[data-discovery-lights]')).toBeHidden();
  expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.id==='digivated-content-entrance').length)).toBe(0);
  expect(await page.locator('.dg-hero').evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
  await page.locator('.header-search').click();await expect(page.locator('#unified-search-input')).toBeFocused();
@@ -34,7 +35,9 @@ test('section entrances never leave content hidden and stop after completion',as
 });
 test('hero stays readable when JavaScript is disabled',async({browser})=>{
  const c=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});const p=await c.newPage();await p.goto(base+'/');
- await expect(p.locator('#dg-home-title')).toBeVisible();await expect(p.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
+ await expect(p.locator('#dg-home-title')).toBeVisible();
+ await expect(p.locator('.dg-discovery-image')).toHaveJSProperty('complete', true);
+ await expect(p.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
 });
 test('the new backdrop leaves resources search and home hero actions usable',async({page})=>{
@@ -48,5 +51,20 @@ test('the new backdrop leaves resources search and home hero actions usable',asy
  await expect(page.locator('.dg-hero-panel [role=timer]')).toBeVisible();
  await expect(page.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
  await page.getByRole('link',{name:'Browse launches',exact:true}).click();
+ await expect(page).toHaveURL(/#this-week$/);
+});
+
+test('discovery artwork responds to a pointer while native launch links remain usable', async ({ page }) => {
+ await page.setViewportSize({width:1440,height:900});
+ await page.goto(base+'/');
+ const hero=page.locator('[data-discovery-hero]');
+ const canvas=hero.locator('canvas');
+ await expect(canvas).toBeVisible();
+ await expect.poll(()=>canvas.evaluate(element=>(element as HTMLCanvasElement).width)).toBeGreaterThan(600);
+ await hero.hover({position:{x:850,y:190}});
+ await expect.poll(()=>hero.evaluate(element=>parseFloat((element as HTMLElement).style.getPropertyValue('--field-x')))).toBeGreaterThan(2);
+ const browse=hero.getByRole('link',{name:'Browse launches',exact:true});
+ await browse.focus();
+ await page.keyboard.press('Enter');
  await expect(page).toHaveURL(/#this-week$/);
 });

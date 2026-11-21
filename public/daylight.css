@@ -149,21 +149,7 @@
   }
   html[data-theme="daylight"] dialog::backdrop { background: #1f282569 !important; }
 
-  /* Launches are the first content after a compact introduction. */
   html[data-theme="daylight"] body.home-refresh #main { width: min(100%,var(--daylight-content)) !important; padding-inline: var(--daylight-gutter) !important; }
-  html[data-theme="daylight"] body #main > .dg-home-hero {
-    display: block !important;
-    margin: 0 !important;
-    padding: clamp(30px,5.4vw,76px) 0 clamp(26px,4vw,48px) !important;
-    border: 0 !important;
-    background: transparent !important;
-    overflow: visible;
-  }
-  html[data-theme="daylight"] body .dg-home-hero::before { content: none !important; }
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-copy { gap: 12px !important; }
-  html[data-theme="daylight"] body .dg-home-hero h1 { max-width: none !important; }
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-lede { max-width: 54ch; }
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions { margin-top: 7px !important; }
   html[data-theme="daylight"] body .dg-pill { color: var(--fl-muted) !important; letter-spacing: .02em !important; }
 
   html[data-theme="daylight"] body.home-refresh #main>.dg-home {

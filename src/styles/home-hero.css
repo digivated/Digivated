@@ -1,31 +1,4 @@
 @layer flow {
-  html[data-ascii] body .dg-hero.dg-home-hero {
-    display:grid;
-    grid-template-columns:minmax(0,1.2fr) minmax(220px,1fr);
-    align-items:center;
-    gap:var(--fl-space);
-    isolation:isolate;
-  }
-
-  .dg-home-hero::before {
-    content:'';
-    position:absolute;
-    inset:-20px 0 -20px 38%;
-    z-index:-1;
-    pointer-events:none;
-    background:linear-gradient(#d4bfff0a 1px,transparent 1px),linear-gradient(90deg,#d4bfff0a 1px,transparent 1px);
-    background-size:26px 26px;
-    mask-image:radial-gradient(ellipse at 75% 50%,black,transparent 70%);
-  }
-
-  html[data-ascii] body .dg-home-hero h1 {
-    max-width:13ch;
-    font-size:var(--fl-display)!important;
-  }
-
-  .dg-home-hero .dg-hero-lede { max-width:36ch; }
-  .dg-home-hero .dg-hero-actions { margin-top:4px; }
-
   .dg-hero-panel {
     container:hero-panel / inline-size;
     min-width:0;
@@ -96,23 +69,4 @@
     }
   }
 
-  @media (max-width:680px) {
-    html[data-ascii] body .dg-hero.dg-home-hero { grid-template-columns:minmax(0,1fr); }
-  }
-
-  @media (prefers-reduced-motion:no-preference) {
-    .dg-hero-panel { animation:launch-panel-in .22s ease-out both; }
-    @keyframes launch-panel-in { from { opacity:.92; transform:translateY(3px); } }
-  }
-
-  @supports (animation-timeline:scroll()) {
-    @media (prefers-reduced-motion:no-preference) and (min-width:681px) {
-      .dg-home-hero::before {
-        animation:launch-grid-drift linear both;
-        animation-timeline:scroll(root);
-        animation-range:0px 440px;
-      }
-      @keyframes launch-grid-drift { to { transform:translateY(12px); } }
-    }
-  }
 }

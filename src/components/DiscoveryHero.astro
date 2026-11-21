@@ -1,0 +1,30 @@
+---
+import UiIcon from './UiIcon.astro';
+import '../styles/discovery-hero.css';
+---
+
+<section class="dg-hero dg-home-hero" aria-labelledby="dg-home-title" data-discovery-hero>
+  <div class="dg-discovery-scene" aria-hidden="true">
+    <img
+      class="dg-discovery-image"
+      src="/media/discovery-field.webp"
+      srcset="/media/discovery-field-small.webp 768w, /media/discovery-field.webp 1536w"
+      sizes="(max-width: 680px) 100vw, 1040px"
+      width="1536"
+      height="1024"
+      fetchpriority="high"
+      alt=""
+    />
+    <canvas class="dg-discovery-lights" data-discovery-lights></canvas>
+  </div>
+  <div class="dg-hero-copy">
+    <h1 id="dg-home-title">Discover new products</h1>
+    <p class="dg-hero-lede">Find useful tools from independent makers. Launch your own for free.</p>
+    <div class="dg-hero-actions">
+      <a class="dg-btn dg-btn-primary" href="#this-week">Browse launches <UiIcon name="arrow" size={16}/></a>
+      <a class="dg-btn" href="/submit-project">Submit your product</a>
+    </div>
+  </div>
+</section>
+
+<script>import '../scripts/discovery-hero.js';</script>
