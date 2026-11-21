@@ -10,15 +10,7 @@ const sections = [
 ];
 ---
 <div class="dg-board" data-board>
-  <section class="dg-rising" data-rising hidden aria-labelledby="dg-rising-title">
-    <header class="dg-rising-head">
-      <h2 id="dg-rising-title"><span class="dg-rising-arrow" aria-hidden="true">↗</span> Rising now</h2>
-      <p class="dg-rising-sub">Most momentum in the last 24 hours</p>
-      <a class="dg-quiet-link dg-rising-how" href="/winners#how-ranking-works">How ranking works <span aria-hidden="true">→</span></a>
-    </header>
-    <ol class="dg-rising-list" data-rising-list></ol>
-  </section>
-  {sections.map(section => (
+  {sections.map(section => (<>
     <section id={section.id} class="dg-list" data-board-section={section.key} aria-labelledby={`dg-list-${section.key}`} hidden={section.key === 'upcoming'}>
       <header class="dg-list-head">
         <h2 id={`dg-list-${section.key}`}>{section.live && <span class="dg-dot" aria-hidden="true"></span>}<span class="dg-list-title">{section.title}</span></h2>
@@ -35,7 +27,17 @@ const sections = [
         {section.more && <a class="dg-quiet-link" href={section.more}>{section.moreLabel} <span aria-hidden="true">→</span></a>}
       </div>
     </section>
-  ))}
+    {section.live && (
+      <section class="dg-rising" data-rising hidden aria-labelledby="dg-rising-title">
+        <header class="dg-rising-head">
+          <h2 id="dg-rising-title"><span class="dg-rising-arrow" aria-hidden="true">↗</span> Rising now</h2>
+          <p class="dg-rising-sub">Most momentum in the last 24 hours</p>
+          <a class="dg-quiet-link dg-rising-how" href="/winners#how-ranking-works">How ranking works <span aria-hidden="true">→</span></a>
+        </header>
+        <ol class="dg-rising-list" data-rising-list></ol>
+      </section>
+    )}
+  </>))}
   <noscript><p><a href="/discover">Open the project directory.</a></p></noscript>
 </div>
 <script>import '../scripts/home-board.js'; import '../scripts/visit-feedback.js';</script>

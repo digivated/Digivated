@@ -20,8 +20,6 @@ import '../styles/all-time-directory.css';
       </div>
     </section>
 
-    <FeedbackPoints variant="strip" cta="/discover?sort=needs" ctaLabel="Show products that need feedback"/>
-
     <div class="dg-dir-controls">
       <div class="dg-dir-searchrow">
         <label class="dg-dir-search"><span class="sr-only">Search projects or makers</span><input type="search" data-dir-search placeholder="search projects or makers" autocomplete="off" enterkeyhint="search"/></label>
@@ -43,6 +41,8 @@ import '../styles/all-time-directory.css';
       <p class="sr-only" aria-live="polite" data-dir-live></p>
       <noscript><p>JavaScript is needed to browse projects.</p></noscript>
     </section>
+
+    <FeedbackPoints variant="strip" cta="/discover?sort=needs" ctaLabel="Show products that need feedback"/>
   </div>
 </Platform>
 <script>import '../scripts/all-time-directory.js'; import '../scripts/visit-feedback.js';</script>

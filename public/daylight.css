@@ -1,0 +1,277 @@
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/instrument-serif.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+/* Loaded by Platform only. The existing layers continue to own layout and behavior. */
+@layer daylight {
+  html[data-theme="daylight"] {
+    --fl-bg: #f8f7f3 !important;
+    --fl-panel: #fff !important;
+    --fl-raised: #f0f0eb !important;
+    --fl-surface: #fff !important;
+    --fl-line: #dfdfd6 !important;
+    --fl-rule: #dfdfd6 !important;
+    --fl-outline: #dfdfd6 !important;
+    --fl-line-hi: #a6aba4 !important;
+    --fl-ink: #1f2825 !important;
+    --fl-copy: #39443f !important;
+    --fl-muted: #545f59 !important;
+    --fl-accent: #2446b2 !important;
+    --fl-ok: #126b51 !important;
+    --fl-warn: #78500d !important;
+    --fl-bad: #a13441 !important;
+    --fl-radius: 8px !important;
+    --fl-radius-card: 14px !important;
+    --fl-shadow: 0 12px 36px #2433270b !important;
+    --dg-acc: var(--fl-accent) !important;
+    --dg-acc-ink: #1b358c !important;
+    --dg-acc-text: #2446b2 !important;
+    --dg-acc-line: #bdcaf0 !important;
+    --dg-r: 8px !important;
+    --daylight-wash: #eaf0ff !important;
+    --daylight-display: "Instrument Serif", Georgia, serif !important;
+    background: var(--fl-bg) !important;
+    color-scheme: light !important;
+    scrollbar-color: #bcbfb7 var(--fl-bg) !important;
+  }
+
+  html[data-theme="daylight"] body {
+    --accent: var(--fl-accent);
+    --muted: var(--fl-muted);
+    --paper: var(--fl-surface);
+    --line: var(--fl-line);
+    --tint: var(--fl-raised);
+    background: var(--fl-bg) !important;
+    color: var(--fl-copy) !important;
+    font-family: var(--fl-sans) !important;
+  }
+
+  html[data-theme="daylight"] body :is(h1,h2,h3,h4,h5,h6) { color: var(--fl-ink) !important; }
+  html[data-theme="daylight"] body :is(.lede,.eyebrow,.quiet,.tiny,small,.field-help) { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body :is(a,button,input,textarea,select,summary,[tabindex]):focus-visible {
+    outline: 2px solid var(--fl-accent) !important;
+    outline-offset: 3px !important;
+  }
+  html[data-theme="daylight"] body :is(button,summary,.button):hover { color: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body input[type="checkbox"],
+  html[data-theme="daylight"] body input[type="radio"],
+  html[data-theme="daylight"] body input[type="range"] { accent-color: var(--fl-accent); }
+
+  html[data-theme="daylight"] body :is(input:not([type="checkbox"],[type="radio"],[type="range"],[type="file"],[type="hidden"]),textarea,select) {
+    border-color: var(--fl-line-hi) !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+    caret-color: var(--fl-ink);
+  }
+  html[data-theme="daylight"] body :is(input,textarea)::placeholder { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body :is(input,select,textarea)[aria-invalid="true"] { border-color: var(--fl-bad) !important; }
+
+  html[data-theme="daylight"] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.dg-header-submit) {
+    border: 1px solid var(--fl-accent) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-accent) !important;
+    color: white !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+  }
+  html[data-theme="daylight"] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.dg-header-submit):hover { background: #1b358c !important; }
+  html[data-theme="daylight"] body :is(.fl-btn:not(.fl-btn-primary),.dg-btn:not(.dg-btn-primary),.dg-more,.fl-btn-oauth) {
+    border-color: var(--fl-line-hi) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+  }
+  html[data-theme="daylight"] body :is(.fl-tabs,.login-tabs) :is([aria-selected="true"],[aria-current="page"],.active) {
+    border-bottom-color: var(--fl-accent) !important;
+    color: var(--fl-accent) !important;
+  }
+  html[data-theme="daylight"] body :is(.fl-link,.fl-switch .fl-link) { color: var(--fl-accent) !important; }
+
+  html[data-theme="daylight"] body :is(.compact-site-header,.platform-footer) {
+    background: var(--fl-bg) !important;
+    color: var(--fl-copy) !important;
+    border-color: var(--fl-line) !important;
+  }
+  html[data-theme="daylight"] body .daylight-brand-mark {
+    display: block !important;
+    flex: none;
+    width: 32px !important;
+    height: 32px !important;
+    object-fit: contain;
+  }
+  html[data-theme="daylight"] body :is(.platform-brand,.header-login,.header-primary a,.header-search,.header-notifications,.notebook-navigation>summary) {
+    color: var(--fl-ink) !important;
+    font-family: var(--fl-sans) !important;
+  }
+  html[data-theme="daylight"] body :is(.header-primary a,.navigation-panel a)[aria-current="page"] { color: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body :is(.navigation-panel,.fl-menu-panel,.dg-bell-panel,.dg-bell-head,.wall-focus-panel,dialog,.account-announcement) {
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+    border: 1px solid var(--fl-line) !important;
+    border-radius: var(--fl-radius-card) !important;
+    box-shadow: var(--fl-shadow) !important;
+  }
+  html[data-theme="daylight"] body .notebook-navigation[open] { background: transparent !important; }
+  html[data-theme="daylight"] body :is(.navigation-panel a,.fl-menu-panel :is(a,button),.site-breadcrumbs,.site-breadcrumbs a,.platform-footer a,.platform-footer p) {
+    color: var(--fl-copy) !important;
+    font-family: var(--fl-sans) !important;
+  }
+  html[data-theme="daylight"] body :is(.navigation-panel a,.fl-menu-panel :is(a,button),.platform-footer a):hover { color: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body .navigation-panel .dg-menu-main a[aria-current="page"] {
+    color: var(--fl-accent) !important;
+    background: var(--daylight-wash) !important;
+    border-color: var(--dg-acc-line) !important;
+  }
+  html[data-theme="daylight"] dialog::backdrop { background: #1f282569 !important; }
+
+  html[data-theme="daylight"] body #main > .dg-home-hero {
+    margin: clamp(22px,4vw,48px) 0 0 !important;
+    padding: clamp(24px,5vw,62px) !important;
+    border-color: #e1e4de !important;
+    border-radius: 20px !important;
+    background: linear-gradient(115deg,#fcfbf7 15%,#edf1e9 100%) !important;
+    gap: clamp(18px,5vw,68px) !important;
+  }
+  html[data-theme="daylight"] body .dg-home-hero::before { content: none !important; }
+  html[data-theme="daylight"] body .dg-home-hero h1 {
+    max-width: 13ch;
+    font-family: var(--daylight-display) !important;
+    font-size: clamp(46px,6vw,78px) !important;
+    font-weight: 400 !important;
+    line-height: .96 !important;
+    letter-spacing: -.025em !important;
+  }
+  html[data-theme="daylight"] body .dg-pill {
+    color: var(--fl-muted) !important;
+    font-family: var(--fl-sans) !important;
+    letter-spacing: .04em !important;
+  }
+  html[data-theme="daylight"] body .dg-pill::before,
+  html[data-theme="daylight"] body .dg-pill::after { content: none !important; }
+  html[data-theme="daylight"] body .dg-home-hero .dg-hero-panel { background: #ffffffc4 !important; }
+  html[data-theme="daylight"] body .dg-hero-stat dt {
+    color: var(--fl-muted) !important;
+    font-family: var(--fl-sans) !important;
+  }
+  html[data-theme="daylight"] body .dg-hero-stat :is(dd,time) {
+    color: var(--fl-ink) !important;
+    font-family: var(--fl-sans) !important;
+  }
+  html[data-theme="daylight"] body .dg-week-bar { background: var(--fl-line) !important; }
+  html[data-theme="daylight"] body .dg-week-bar::after { background: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body .dg-dot { text-shadow: none !important; }
+
+  html[data-theme="daylight"] body.home-refresh #main>.dg-home {
+    grid-template-columns: minmax(0,1fr) minmax(260px,27%) !important;
+    gap: clamp(24px,4vw,56px) !important;
+    margin-top: clamp(22px,4vw,46px) !important;
+  }
+  html[data-theme="daylight"] body .dg-home-sidebar { display: grid; gap: 12px; min-width: 0; }
+  html[data-theme="daylight"] body .dg-home-sidebar .dg-rail { position: static; }
+  html[data-theme="daylight"] body .dg-list { scroll-margin-block-start: 92px; }
+  html[data-theme="daylight"] body .dg-list-title { font-size: 21px !important; color: var(--fl-ink) !important; }
+  html[data-theme="daylight"] body .dg-list-title::before,
+  html[data-theme="daylight"] body .dg-list-title::after { content: none !important; }
+  html[data-theme="daylight"] body .dg-list-head .dg-dot { display: none !important; }
+  html[data-theme="daylight"] body .dg-list-rule { border-color: var(--fl-line) !important; }
+
+  html[data-theme="daylight"] body :is(.dg-row,.dg-thread-row) {
+    border-bottom: 1px solid var(--fl-line) !important;
+    background-image: none !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-row,.dg-thread-row):hover { background: #f0f1eb !important; }
+  html[data-theme="daylight"] body .dg-row::before { content: none !important; }
+  html[data-theme="daylight"] body :is(.dg-logo,.dg-spot-logo,.dg-rising-logo,.dg-avatar) {
+    border-color: var(--fl-line) !important;
+    border-radius: 9px !important;
+    background-color: var(--fl-raised) !important;
+  }
+  html[data-theme="daylight"] body .dg-avatar span { color: var(--fl-ink) !important; }
+  html[data-theme="daylight"] body .dg-row.is-loading>* {
+    background-image: linear-gradient(90deg,#eeeee8,#e7e8e2,#eeeee8) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-vote,.dg-d-like) {
+    border-color: var(--fl-line) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-vote,.dg-d-like)[aria-pressed="true"],
+  html[data-theme="daylight"] body :is(.dg-vote,.dg-d-like):hover {
+    background: var(--daylight-wash) !important;
+    color: var(--fl-accent) !important;
+    border-color: var(--dg-acc-line) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-row-empty a,.dg-badge-member,.dg-spot-member,.launch-member) { color: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body :is(.dg-list-note,.dg-comment,.dg-visit,.dg-meta,.dg-spot-plus,.dg-rail-threads h2 a) { color: var(--fl-muted) !important; }
+
+  html[data-theme="daylight"] body :is(.dg-spot,.dg-rail-threads,.dg-rising,.dg-dir .dg-hero,.news-masthead,.news-feature) {
+    border-radius: var(--fl-radius-card) !important;
+    border-color: var(--fl-line) !important;
+    background: var(--fl-surface) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-points,.dg-dir-sort[aria-pressed="true"],.dg-dir-chip[aria-pressed="true"],.dg-dir-collection button[aria-pressed="true"],.news-page .news-filters button[aria-pressed="true"]) {
+    border-color: var(--dg-acc-line) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--daylight-wash) !important;
+    color: var(--fl-accent) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-dir-sort,.dg-dir-chip,.dg-dir-collection button) { font-family: var(--fl-sans) !important; }
+  html[data-theme="daylight"] body :is(.dg-dir-sort,.dg-rail-threads h2 a)::before,
+  html[data-theme="daylight"] body :is(.dg-dir-sort,.dg-rail-threads h2 a)::after { content: none !important; }
+  html[data-theme="daylight"] body :is(.dg-dir-stats,.dg-dir-launchnav,.dg-dir-month) { border-color: var(--fl-line) !important; }
+  html[data-theme="daylight"] body :is(.dg-dir-launchnav a,.dg-dir-stats span,.dg-dir-month,.dg-dir-sort:not([aria-pressed="true"])) { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body .dg-dir-stats strong { color: var(--fl-ink) !important; }
+
+  /* Shared cards in sign-in, submission, listings, resources, and badges. */
+  html[data-theme="daylight"] body :is(.fl-card,.submission-account-callout,.submission-review,.submission-option-detail,.free-launch-guide,.fl-badge-card,.fl-badge-stage,.shop-card,.rl-card,.dg-fp,.dg-d-composer) {
+    border-color: var(--fl-line) !important;
+    border-radius: var(--fl-radius-card) !important;
+    background: var(--fl-surface) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-tier,.dg-badge-first,.fl-code,.submission-disclosure,.rl-mono,.dg-note-icon,.fl-avatar) {
+    border-color: var(--fl-line) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-raised) !important;
+    color: var(--fl-ink) !important;
+  }
+  html[data-theme="daylight"] body :is(.login-tabs button,.submission-disclosure summary,.fl-badges-notes summary,.dg-forum-sort button,.dg-dir-collection button,.dg-dir-chip,.rl-status,.rl-description,.dg-menu-title,.site-breadcrumbs [aria-current="page"],.footer-bottom,.dg-note-link,.fl-badges-intro) {
+    color: var(--fl-muted) !important;
+  }
+  html[data-theme="daylight"] body :is(.fl-badges-intro a,.fl-badges-notes a,.dg-forum-status a,.submission-account-actions a:not(.primary),.dg-rail-threads h2 a) {
+    color: var(--fl-accent) !important;
+  }
+  html[data-theme="daylight"] body :is(.login-tabs button[aria-selected="true"],.dg-forum-sort button[aria-pressed="true"],.navigation-panel a[aria-current="page"],.dg-tier:has(input:checked),#project-import.dg-import,.fl-badge-tag,.dg-fp-icon,.dg-fp-toggle,.dg-fp-node,.dg-fp-reward) {
+    border-color: var(--dg-acc-line) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--daylight-wash) !important;
+    color: var(--fl-accent) !important;
+    box-shadow: none !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-dir-chip:not([aria-pressed="true"]),.dg-fp-strip .dg-fp-steps) { border-color: var(--fl-line) !important; }
+  html[data-theme="daylight"] body .dg-dir-chip:not([aria-pressed="true"]) { border-radius: 6px !important; }
+  html[data-theme="daylight"] body .dg-dir-chip span { color: inherit !important; }
+  html[data-theme="daylight"] body :is(.dg-fp-strip-copy strong,.dg-fp-step-copy strong,.dg-spot.is-open strong,.shop-card h2) { color: var(--fl-ink) !important; }
+  html[data-theme="daylight"] body :is(.dg-fp-strip-copy span,.dg-fp-step-copy span,.dg-tier-sub,.rl-name,.rl-meta) { color: var(--fl-copy) !important; }
+  html[data-theme="daylight"] body .dg-fp::before { content: none !important; }
+  html[data-theme="daylight"] body .dg-home-sidebar .dg-fp-strip summary {
+    grid-template-columns: auto minmax(0,1fr) auto;
+    grid-template-areas: "icon copy copy" "me me toggle";
+  }
+  html[data-theme="daylight"] body .dg-home-sidebar .dg-fp-strip .dg-fp-step {
+    grid-template-columns: 30px minmax(0,1fr);
+    row-gap: 5px;
+  }
+  html[data-theme="daylight"] body .dg-home-sidebar .dg-fp-reward { grid-column: 2; justify-self: start; }
+
+  @media (max-width: 1180px) {
+    html[data-theme="daylight"] body.home-refresh #main>.dg-home { grid-template-columns: minmax(0,1fr) !important; }
+  }
+  @media (max-width: 680px) {
+    html[data-theme="daylight"] body #main > .dg-home-hero { padding: 22px !important; }
+  }
+}
