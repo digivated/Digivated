@@ -9,41 +9,42 @@ import '../styles/home-hero.css';
 <Platform title="Indie Project Directory & Weekly Launches" description="Discover indie software and tools, upvote weekly launches, and give builders feedback. Submit your own project to Digivated for free.">
   <section class="dg-hero dg-home-hero" aria-labelledby="dg-home-title">
     <div class="dg-hero-copy">
-      <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>Weekly indie product launches</p>
-      <h1 id="dg-home-title">Discover what’s launching.</h1>
-      <p class="dg-hero-lede">Find useful new tools from independent makers. Building something? Launch it for free.</p>
+      <h1 id="dg-home-title">Discover new products</h1>
+      <p class="dg-hero-lede">Find useful tools from independent makers. If you’re building something, you can launch it here for free.</p>
       <div class="dg-hero-actions">
         <a class="dg-btn dg-btn-primary" href="#this-week">Browse launches <UiIcon name="arrow" size={16}/></a>
         <a class="dg-btn" href="/submit-project">Submit your product</a>
       </div>
     </div>
-    <div class="dg-hero-panel">
-      <dl class="dg-hero-stats">
-        <div class="dg-hero-stat is-countdown"><dt>Next free launch</dt><dd><time id="queue-countdown" role="timer" aria-live="off">—</time><span class="dg-week-bar" data-week-bar aria-hidden="true"></span></dd></div>
-        <div class="dg-hero-stat"><dt>Products</dt><dd data-stat-products>—</dd></div>
-        <div class="dg-hero-stat"><dt>Browsing now</dt><dd class="dg-hero-activity"><span data-site-online>—</span><span class="dg-dot" aria-hidden="true">▂▄▃</span></dd></div>
-        <div class="dg-hero-stat"><dt>Site visits</dt><dd class="dg-hero-activity"><span data-site-visits>—</span><span class="dg-dot" aria-hidden="true">▂▄▃</span></dd></div>
-      </dl>
-    </div>
   </section>
   <div class="dg-home" data-spots>
-    <div class="dg-center">
-      <LaunchBoard/>
-    </div>
-    <aside class="dg-home-sidebar" aria-label="Feedback, featured products, and threads">
-      <FeedbackPoints variant="strip" cta="/discover?sort=needs" ctaLabel="Find a product that needs feedback"/>
-      <p class="dg-spots-status" data-featured-status role="status" hidden></p>
-      <div class="dg-spot-grid" data-spot-grid aria-label="Homepage spots"></div>
-      <div class="dg-rail" data-spot-rail="0" aria-label="Homepage spots"></div>
-      <div class="dg-rail">
-        <div class="dg-rail-stack" data-spot-rail="1"></div>
-        <section class="dg-rail-threads" data-rail-threads aria-labelledby="dg-rail-threads-title" hidden>
-          <h2 id="dg-rail-threads-title"><a href="/threads">Trending threads</a></h2>
-          <ol data-rail-thread-list></ol>
-          <a class="dg-quiet-link" href="/threads">All threads →</a>
+    <LaunchBoard/>
+    <section class="dg-home-extras" aria-labelledby="dg-home-extras-title">
+      <h2 id="dg-home-extras-title">More from Digivated</h2>
+      <div class="dg-home-extras-grid">
+        <section class="dg-home-spots" aria-labelledby="dg-home-spots-title">
+          <h3 id="dg-home-spots-title">Featured products</h3>
+          <p class="dg-spots-status" data-featured-status role="status" hidden></p>
+          <div class="dg-spot-grid" data-spot-grid></div>
         </section>
+        <div class="dg-home-side">
+          <FeedbackPoints variant="strip" cta="/discover?sort=needs" ctaLabel="Find a product that needs feedback"/>
+          <section class="dg-rail-threads" data-rail-threads aria-labelledby="dg-rail-threads-title" hidden>
+            <h3 id="dg-rail-threads-title"><a href="/threads">Trending threads</a></h3>
+            <ol data-rail-thread-list></ol>
+            <a class="dg-quiet-link" href="/threads">All threads →</a>
+          </section>
+        </div>
       </div>
-    </aside>
+      <div class="dg-hero-panel">
+        <dl class="dg-hero-stats">
+          <div class="dg-hero-stat is-countdown"><dt>Next free launch</dt><dd><time id="queue-countdown" role="timer" aria-live="off">—</time><span class="dg-week-bar" data-week-bar aria-hidden="true"></span></dd></div>
+          <div class="dg-hero-stat"><dt>Products</dt><dd data-stat-products>—</dd></div>
+          <div class="dg-hero-stat"><dt>Browsing now</dt><dd class="dg-hero-activity"><span data-site-online>—</span><span class="dg-dot" aria-hidden="true">▂▄▃</span></dd></div>
+          <div class="dg-hero-stat"><dt>Site visits</dt><dd class="dg-hero-activity"><span data-site-visits>—</span><span class="dg-dot" aria-hidden="true">▂▄▃</span></dd></div>
+        </dl>
+      </div>
+    </section>
   </div>
   <section class="dg-about" aria-labelledby="dg-about-title">
     <h2 id="dg-about-title">Discover and launch indie projects</h2>

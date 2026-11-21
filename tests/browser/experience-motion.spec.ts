@@ -6,7 +6,9 @@ test.beforeEach(async({page})=>{
 });
 test('spot cards and launch rows stay lightweight and calm under reduced motion',async({page})=>{
  await page.setViewportSize({width:1440,height:950});await page.goto(base+'/');
- const spot=page.locator('[data-spot-rail] .dg-spot').first();await expect(spot).toBeVisible();await spot.hover();
+ const spot=page.locator('[data-spot-grid] .dg-spot').first();await expect(spot).toBeVisible();await spot.hover();
+ await expect(page.locator('[data-spot-grid] .dg-spot.is-open')).toHaveCount(1);
+ await expect(page.locator('[data-spot-grid] .dg-spot.is-open')).toHaveAttribute('href','/submit-project?spot=1#project-form');
  const costs=await page.locator('.dg-spot,.dg-row,.dg-vote').evaluateAll(elements=>elements.map(e=>getComputedStyle(e).backdropFilter));
  expect(costs.length).toBeGreaterThan(0);
  expect(costs.every(blur=>blur==='none')).toBe(true);
