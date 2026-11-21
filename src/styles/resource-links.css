@@ -35,26 +35,25 @@ html#digivated-root[data-ascii] body .rl-group{display:grid;gap:12px}
 html#digivated-root[data-ascii] body .rl-count{font-family:var(--fl-mono)!important;font-size:11px!important;color:#6f6f6f!important}
 
 /* Cards */
-html#digivated-root[data-ascii] body .rl-grid{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin:0!important;padding:0!important;list-style:none!important}
-html#digivated-root[data-ascii] body .rl-grid>li{position:relative;display:flex;align-items:stretch;gap:6px;margin:0!important;padding:0!important;min-width:0}
+html#digivated-root[data-ascii] body .rl-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;margin:0!important;padding:0!important;list-style:none!important}
+html#digivated-root[data-ascii] body .rl-grid>li{display:flex;align-items:center;gap:6px;margin:0!important;padding:3px 0!important;min-width:0;border-block-end:1px solid var(--fl-line)!important}
 html#digivated-root[data-ascii] body .rl-grid>li[hidden]{display:none!important}
 html#digivated-root[data-ascii] body .rl-card{position:relative;display:flex!important;flex:1;align-items:center;gap:12px;min-width:0;min-height:58px;padding:10px 12px!important;border:1px solid #1f1f1f!important;border-radius:4px!important;background-color:#0d0d0d!important;color:#f0f0f0!important;text-decoration:none!important;transition:border-color .2s,background-color .2s,transform .25s cubic-bezier(.2,.8,.2,1)!important}
 html#digivated-root[data-ascii] body .rl-card:hover{border-color:#4a3c66!important;background-color:#111!important;text-decoration:none!important}
 html#digivated-root[data-ascii] body .rl-mono{display:grid;flex:none;place-items:center;width:34px;height:34px;border:1px solid #2e2e2e!important;border-radius:4px!important;background:#0a0a0a!important;font-family:var(--fl-mono)!important;font-size:12px!important;font-weight:600!important;letter-spacing:.02em;color:#cfcfcf!important;transition:border-color .2s,color .2s!important}
-html#digivated-root[data-ascii] body .rl-mono{position:relative;overflow:hidden}
-html#digivated-root[data-ascii] body .rl-icon{position:absolute;top:50%;left:50%;width:20px!important;height:20px!important;margin:-10px 0 0 -10px!important;border:0!important;border-radius:3px!important;object-fit:contain;opacity:0;transition:opacity .25s!important}
-html#digivated-root[data-ascii] body .rl-mono.has-icon{border-color:#3a3a3a!important;background:#efefef!important;color:transparent!important}
-html#digivated-root[data-ascii] body .rl-mono.has-icon .rl-icon{opacity:1}
-html#digivated-root[data-ascii] body .rl-card:hover .rl-mono.has-icon{border-color:#c3a0ff!important}
-html#digivated-root[data-ascii] body .rl-card:hover .rl-mono{border-color:#c3a0ff80!important;color:#e7dcff!important}
+html#digivated-root[data-ascii] body .rl-mono > *{grid-area:1/1}
+html#digivated-root[data-ascii] body .rl-mono:not(.has-icon) .rl-icon,
+html#digivated-root[data-ascii] body .rl-mono.has-icon .rl-fallback{visibility:hidden}
+html#digivated-root[data-ascii] body .rl-icon{inline-size:20px!important;block-size:20px!important;margin:0!important;border:0!important;border-radius:3px!important;object-fit:contain}
+html#digivated-root[data-ascii] body .rl-card:is(:hover,:focus-visible) .rl-mono{border-color:var(--fl-line-hi)!important}
 html#digivated-root[data-ascii] body .rl-text{display:grid;gap:1px;min-width:0}
 html#digivated-root[data-ascii] body .rl-text strong{overflow:hidden;font-size:14px!important;font-weight:550!important;line-height:1.3!important;color:#f0f0f0!important;text-overflow:ellipsis;white-space:nowrap}
 html#digivated-root[data-ascii] body .rl-text small{overflow:hidden;font-family:var(--fl-mono)!important;font-size:10.5px!important;color:#777!important;text-overflow:ellipsis;white-space:nowrap}
 html#digivated-root[data-ascii] body .rl-open{flex:none;margin-left:auto;font-size:13px!important;color:#5f5f5f!important;transition:color .2s,transform .25s cubic-bezier(.2,.8,.2,1)!important}
-html#digivated-root[data-ascii] body .rl-card:hover .rl-open{color:#d9c6ff!important;transform:translate(2px,-2px)}
+html#digivated-root[data-ascii] body .rl-card:is(:hover,:focus-visible) .rl-open{color:var(--fl-ink)!important}
 
 /* Upvote */
-html#digivated-root[data-ascii] body .rl-vote{display:grid!important;flex:none;place-items:center;align-content:center;gap:0;width:46px!important;min-height:58px!important;padding:4px!important;border:1px solid #2e2e2e!important;border-radius:4px!important;background:#0c0c0c!important;color:#dcdcdc!important;font-family:var(--fl-mono)!important;font-size:12px!important;line-height:1.2!important;cursor:pointer;transition:border-color .2s,background-color .2s,color .2s,box-shadow .25s!important}
+html#digivated-root[data-ascii] body .rl-vote{display:grid!important;flex:none;place-items:center;align-content:center;gap:0;width:46px!important;min-height:44px!important;padding:4px!important;border:1px solid #2e2e2e!important;border-radius:4px!important;background:#0c0c0c!important;color:#dcdcdc!important;font-family:var(--fl-mono)!important;font-size:12px!important;line-height:1.2!important;cursor:pointer;transition:border-color .2s,background-color .2s,color .2s,box-shadow .25s!important}
 html#digivated-root[data-ascii] body .rl-vote,html#digivated-root[data-ascii] body .rl-vote *{text-decoration:none!important}
 html#digivated-root[data-ascii] body .rl-vote:hover{border-color:#5b4a7a!important;background:#c3a0ff0d!important}
 html#digivated-root[data-ascii] body .rl-vote[aria-pressed=true]{border-color:#c3a0ff!important;background:#c3a0ff26!important;color:#fff!important;box-shadow:0 0 18px -6px #c3a0ffb3!important}
@@ -71,7 +70,16 @@ html#digivated-root[data-ascii] body .rl-empty{margin:0!important;padding:28px!i
  html#digivated-root[data-ascii] body .rl-grid{grid-template-columns:minmax(0,1fr)}
 }
 }
-/* Unlayered: motion that should beat layered transforms. */
-html#digivated-root[data-ascii] body .rl-card:hover{transform:translateY(-1px)}
+/* Keep the vote feedback independent of the resource row. */
 html#digivated-root[data-ascii] body .rl-vote[aria-pressed=true] .rl-caret{animation:dg-vote-pop .38s cubic-bezier(.2,.8,.2,1)}
-@media (prefers-reduced-motion:reduce){html#digivated-root[data-ascii] body .rl-vote[aria-pressed=true] .rl-caret{animation:none}html#digivated-root[data-ascii] body .rl-card:hover{transform:none}}
+@layer daylight {
+  html[data-theme="daylight"] body .rl-grid > li > .rl-card {
+    border: 0 !important;
+    padding-inline: 4px 8px !important;
+    background: transparent !important;
+  }
+  html[data-theme="daylight"] body .rl-grid > li > .rl-card:is(:hover, :focus-visible) {
+    background: var(--daylight-hover) !important;
+  }
+}
+@media (prefers-reduced-motion:reduce){html#digivated-root[data-ascii] body .rl-vote[aria-pressed=true] .rl-caret{animation:none}}

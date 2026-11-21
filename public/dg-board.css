@@ -100,13 +100,7 @@ html[data-ascii] body .dg-note-quote{display:-webkit-box;overflow:hidden;-webkit
 html[data-ascii] body .dg-note time{font-family:var(--fl-mono)!important;font-size:10.5px!important;color:#6f6f6f!important}
 html[data-ascii] body .dg-note-dot{width:8px;height:8px;margin-top:6px;border-radius:50%;background-color:var(--dgb-accent)!important}
 
-/* ---------- Home layout: spots | launches | spots + threads ---------- */
-html[data-ascii] body.home-refresh #main{width:min(100%,1360px)!important}
-html[data-ascii] body.home-refresh #main>.dg-home{display:grid!important;grid-template-columns:184px minmax(0,1fr) 184px;align-items:start;gap:24px;margin:24px 0 0!important;padding:0!important}
-html[data-ascii] body .dg-rail{position:sticky;top:88px;display:grid;gap:10px;margin:0!important;padding:0!important}
-html[data-ascii] body .dg-rail-stack{display:grid;gap:10px}
-html[data-ascii] body .dg-center{display:grid;gap:28px;min-width:0}
-html[data-ascii] body .dg-spot-grid{display:none}
+/* ---------- Home activity and featured products ---------- */
 html[data-ascii] body .dg-spots-status{margin:0!important;font-family:var(--fl-mono)!important;font-size:11.5px!important;color:var(--dgb-muted)!important}
 html[data-ascii] body .dg-spots-status[hidden]{display:none!important}
 html[data-ascii] body .dg-rail-threads{display:grid;gap:8px;margin:6px 0 0!important;padding:12px!important;border:1px solid var(--dgb-line)!important;border-radius:2px!important;background-color:var(--dgb-panel)!important}
@@ -120,13 +114,6 @@ html[data-ascii] body .dg-rail-threads li a{font-family:var(--fl-sans)!important
 html[data-ascii] body .dg-rail-threads li a:hover{text-decoration:underline!important}
 html[data-ascii] body .dg-rail-threads small{font-family:var(--fl-mono)!important;font-size:10px!important;color:#777!important}
 html[data-ascii] body .dg-rail-threads .dg-quiet-link{font-family:var(--fl-mono)!important;font-size:11px!important}
-@media (max-width:1180px){
- html[data-ascii] body.home-refresh #main>.dg-home{grid-template-columns:minmax(0,1fr)}
- html[data-ascii] body .dg-rail{display:none!important}
- html[data-ascii] body .dg-spot-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-}
-@media (max-width:760px){html[data-ascii] body .dg-spot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-
 /* ---------- Spot cards ---------- */
 html[data-ascii] body .dg-spot{position:relative;display:grid!important;align-content:start;gap:8px;min-height:96px;margin:0!important;padding:12px!important;border:1px solid var(--dgb-line)!important;border-radius:2px!important;background-color:var(--dgb-panel)!important;color:var(--dgb-ink)!important;text-decoration:none!important;transition:border-color .2s,background-color .2s,transform .25s var(--dgb-ease)!important}
 html[data-ascii] body .dg-spot:hover{border-color:#444!important;background-color:#131313!important;transform:translateY(-2px);text-decoration:none!important}

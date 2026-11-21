@@ -50,11 +50,10 @@ html#digivated-root body.platform .creator-inbox-page :is(a,button,input,textare
     grid-template-columns: auto minmax(0, 1fr);
     align-items: start;
     gap: clamp(12px, 3vw, 20px);
-    padding: clamp(14px, 4vw, 26px) !important;
+    padding: 12px 0 clamp(18px, 4vw, 34px) !important;
     margin: 0 !important;
-    border: 1px solid var(--fl-line) !important;
-    border-radius: var(--fl-radius-card) !important;
-    background: var(--fl-surface) !important;
+    border: 0 !important;
+    background: transparent !important;
   }
   .creator-public .creator-public-intro .creator-avatar {
     display: grid;
@@ -71,7 +70,7 @@ html#digivated-root body.platform .creator-inbox-page :is(a,button,input,textare
   }
   .creator-public .creator-public-intro h1 {
     margin: 0 0 6px !important;
-    font-size: clamp(26px, 4vw, 38px) !important;
+    font-size: var(--editorial-title) !important;
     line-height: 1.12 !important;
   }
   .creator-public .creator-profile-links a svg { vertical-align: -.1em; }
@@ -104,9 +103,11 @@ html#digivated-root body.platform .creator-inbox-page :is(a,button,input,textare
     background: var(--daylight-wash) !important;
   }
   .creator-public .creator-post {
-    padding: 16px !important;
-    border: 1px solid var(--fl-line) !important;
-    border-radius: var(--fl-radius-card) !important;
+    padding: 16px 0 !important;
+    border: 0 !important;
+    border-block-end: 1px solid var(--fl-line) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
   }
   .creator-public .creator-post-actions { display: flex; flex-wrap: wrap; gap: 6px; }
   .creator-public .creator-post-actions :is(a,button) {

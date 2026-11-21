@@ -166,7 +166,7 @@ for (const width of [320, 1440]) {
     const card = page.locator('.launch-creator');
     await expect(card.getByText(creator)).toBeVisible();
     await expect(card.getByText(creator)).toHaveCSS('color', 'rgb(25, 26, 24)');
-    await expect(card).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(card).toHaveCSS('border-top-width', '1px');
     await expect(card.getByRole('link', { name: /Creator profile/ })).toHaveAttribute('href', 'https://example.com/creator');
     await expect(page.getByRole('link', { name: /Visit project/ })).toHaveAttribute('href', 'https://example.com');
     await expect(page.getByRole('link', { name: /Visit project/ }).locator('svg')).toHaveCount(1);

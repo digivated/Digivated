@@ -14,14 +14,14 @@
   }
   .dg-footer-main {
     display: grid;
-    grid-template-columns: minmax(125px, 1fr) minmax(0, 3fr);
+    grid-template-columns: minmax(125px, 1fr) minmax(0, 2.7fr);
     align-items: start;
-    gap: 20px;
+    gap: 16px clamp(20px, 4vw, 48px);
   }
   .dg-site-footer .dg-footer-groups {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px 18px !important;
+    gap: 12px clamp(16px, 3vw, 32px) !important;
     margin: 0 !important;
   }
   .dg-footer-group h2 {
@@ -75,6 +75,13 @@
   }
   .dg-footer-bottom > span { margin-inline-end: auto; }
   .dg-site-footer .dg-footer-credit { font-size: 13px !important; }
+  @media (prefers-reduced-motion: no-preference) {
+    .dg-site-footer a {
+      text-decoration-color: transparent !important;
+      transition: color 180ms ease, text-decoration-color 180ms ease !important;
+    }
+    .dg-site-footer a:is(:hover, :focus-visible) { text-decoration-color: currentColor !important; }
+  }
   .dg-site-footer-compact .dg-footer-main {
     display: flex;
     flex-wrap: wrap;

@@ -11,7 +11,7 @@ const sections = [
 ---
 <div class="dg-board" data-board>
   {sections.map(section => (<>
-    <section id={section.id} class="dg-list" data-board-section={section.key} aria-labelledby={`dg-list-${section.key}`} hidden={section.key === 'upcoming'}>
+    <section id={section.id} class="dg-list" data-section-reveal data-board-section={section.key} aria-labelledby={`dg-list-${section.key}`} hidden={section.key === 'upcoming'}>
       <header class="dg-list-head">
         <h2 id={`dg-list-${section.key}`}>{section.live && <span class="dg-dot" aria-hidden="true"></span>}<span class="dg-list-title">{section.title}</span></h2>
 
@@ -28,7 +28,7 @@ const sections = [
       </div>
     </section>
     {section.live && (
-      <section class="dg-rising" data-rising hidden aria-labelledby="dg-rising-title">
+      <section class="dg-rising" data-section-reveal data-rising hidden aria-labelledby="dg-rising-title">
         <header class="dg-rising-head">
           <h2 id="dg-rising-title"><span class="dg-rising-arrow" aria-hidden="true">↗</span> Rising now</h2>
           <p class="dg-rising-sub">Most momentum in the last 24 hours</p>

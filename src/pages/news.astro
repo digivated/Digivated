@@ -22,7 +22,7 @@ import '../styles/news.css';
     <div class="news-layout" hidden>
       <div class="news-editorial">
         <section class="news-feature" data-news-feature aria-label="Featured story" hidden></section>
-        <section class="news-latest" aria-labelledby="news-latest-title">
+        <section class="news-latest" data-section-reveal aria-labelledby="news-latest-title">
           <header class="news-section-heading"><h2 id="news-latest-title" data-news-latest-title>Latest</h2><span data-news-scope>Newest first</span></header>
           <p class="news-results" data-news-results hidden role="status"></p>
           <p class="news-status" data-news-status role="status">Loading the latest stories…</p>
@@ -32,7 +32,7 @@ import '../styles/news.css';
         </section>
       </div>
       <aside class="news-sidebar" aria-label="Market data and editorial standards" data-news-sidebar>
-        <section class="news-market" aria-labelledby="news-markets-title">
+        <section class="news-market" data-section-reveal aria-labelledby="news-markets-title">
           <header class="news-section-heading"><h2 id="news-markets-title">Market snapshot</h2><span class="news-data-label">DATA</span></header>
           <p class="news-market-note" data-news-market-note>Checking available market data</p>
           <dl class="news-quotes" data-news-quotes></dl>

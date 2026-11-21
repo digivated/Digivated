@@ -80,7 +80,10 @@ if (root) {
   function choose(category) {
     if (!valid.has(category)) return;
     active = category; search.value = ''; syncUrl(); render();
-    if (matchMedia('(max-width: 860px)').matches) $('.rl-content').scrollIntoView({ block: 'start', behavior: 'smooth' });
+    if (matchMedia('(max-width: 860px)').matches) {
+      const behavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
+      $('.rl-content').scrollIntoView({ block: 'start', behavior });
+    }
   }
 
   // Most helpful: the top six across every category.
