@@ -1,31 +1,45 @@
 /* The public navigation shell uses its own selectors. Shared account logic uses IDs. */
 @layer daylight {
   .dg-shell {
-    --shell-glass: #fffffff0;
+    --shell-bar-glass: #f7f7f5f5;
+    --shell-panel-glass: #f7f7f5fa;
+    --shell-shadow: 0 15px 35px #191a181a;
     --shell-border: var(--fl-line);
     --shell-accent: var(--fl-accent);
     --shell-ink: var(--fl-ink);
     --shell-muted: var(--fl-muted);
     --shell-active: var(--daylight-wash);
     position: sticky;
-    top: 10px;
+    top: 0;
     z-index: 40;
-    width: min(1240px, calc(100% - 40px));
-    margin: 10px auto 0 !important;
+    width: min(100%, var(--daylight-content));
+    margin: 0 auto !important;
+    padding-inline: var(--daylight-gutter) !important;
   }
 
   .dg-shell .dg-shell-bar {
     display: grid;
-    grid-template-columns: minmax(max-content,1fr) auto minmax(max-content,1fr);
+    grid-template-columns: max-content minmax(0,1fr) max-content;
     align-items: center;
-    gap: 14px;
-    min-height: 64px;
-    padding: 7px 12px !important;
-    border: 1px solid var(--shell-border) !important;
-    border-radius: 22px !important;
-    background: var(--shell-glass) !important;
-    box-shadow: 0 2px 5px #24332708, 0 8px 28px #2433270a !important;
+    position: relative;
+    isolation: isolate;
+    gap: 12px;
+    min-height: 66px;
+    padding: 5px 0 !important;
+    border-block-end: 1px solid var(--shell-border) !important;
+    background: transparent !important;
   }
+  .dg-shell-bar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--shell-bar-glass);
+    background-image: var(--shell-reflection, none) !important;
+    pointer-events: none;
+  }
+  .dg-shell .dg-reading-track { inset-inline: var(--daylight-gutter); }
+  .dg-shell [data-nav-reflection] { --shell-reflection: none; }
 
   .dg-shell .dg-shell-brand,
   .dg-shell .dg-shell-primary,
@@ -39,15 +53,15 @@
     grid-row: 1;
     justify-self: start;
     gap: 6px;
-    padding: 2px 5px !important;
+    padding: 2px 4px 2px 0 !important;
     color: var(--shell-ink) !important;
     font-size: 16px !important;
     font-weight: 680;
     letter-spacing: -.035em;
     text-decoration: none !important;
   }
-  .dg-shell .dg-shell-primary { display: flex !important; grid-column: 2; grid-row: 1; gap: 2px; }
-  .dg-shell .dg-shell-tools { grid-column: -2; grid-row: 1; justify-self: end; gap: 5px; }
+  .dg-shell .dg-shell-primary { display: flex !important; grid-column: 2; grid-row: 1; gap: 2px; margin-inline-start: clamp(10px, 2.5vw, 36px); }
+  .dg-shell .dg-shell-tools { grid-column: -2; grid-row: 1; justify-self: end; gap: 4px; }
 
   .dg-shell .dg-shell-primary a,
   .dg-shell .dg-shell-login,
@@ -89,7 +103,12 @@
     font-weight: 600;
     white-space: nowrap;
   }
-  .dg-shell .site-menu-trigger { border-color: var(--shell-border) !important; list-style: none; cursor: pointer; }
+  .dg-shell .dg-shell-primary a[aria-current="page"] {
+    background: transparent !important;
+    text-decoration: underline !important;
+    text-underline-offset: 7px;
+  }
+  .dg-shell .site-menu-trigger { list-style: none; cursor: pointer; }
   .dg-shell .site-menu-trigger::-webkit-details-marker { display: none; }
   .dg-shell .site-menu-trigger::marker { content: ""; }
   .dg-shell .dg-shell-menu-close,
@@ -109,20 +128,21 @@
     grid-template-columns: minmax(0,1fr);
     gap: 12px;
     min-width: 0;
-    width: min(315px,calc(100vw - 24px));
+    width: min(340px,calc(100vw - 24px));
     max-height: min(68dvh,570px);
     overflow: auto;
     overscroll-behavior: contain;
     padding: 12px !important;
     border: 1px solid var(--shell-border) !important;
-    border-radius: 20px !important;
-    background: var(--shell-glass) !important;
+    border-radius: 16px !important;
+    background-color: var(--shell-panel-glass) !important;
+    background-image: var(--shell-reflection, none) !important;
     color: var(--shell-ink) !important;
-    box-shadow: 0 15px 42px #2d345328 !important;
+    box-shadow: var(--shell-shadow) !important;
   }
 
   .dg-shell .site-menu-primary { display: none; }
-  .dg-shell .site-menu-groups { display: grid; gap: 10px; }
+  .dg-shell .site-menu-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   .dg-shell .site-menu-title {
     margin: 0 0 4px !important;
     padding-inline: 10px !important;
@@ -133,7 +153,13 @@
   }
   .dg-shell .site-menu-links,
   .dg-shell .site-menu-footer { display: grid; gap: 1px; }
-  .dg-shell .site-menu-footer { padding-top: 8px; border-top: 1px solid var(--shell-border) !important; }
+  .dg-shell .site-menu-footer {
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 6px;
+    border-top: 1px solid var(--shell-border) !important;
+  }
+  .dg-shell .site-menu-footer a { font-size: 13px !important; }
   .dg-shell :is(.site-menu-links,.site-menu-footer,.dg-shell-account-panel) :is(a,button) {
     display: flex !important;
     align-items: center;
@@ -153,7 +179,7 @@
     background: var(--shell-active) !important;
     color: var(--shell-accent) !important;
   }
-  .dg-shell .dg-shell-account-panel { gap: 2px; }
+  .dg-shell .dg-shell-account-panel { gap: 2px; width: min(300px, calc(100vw - 24px)); }
   .dg-shell .dg-shell-account-who {
     display: grid;
     gap: 3px;
@@ -188,12 +214,29 @@
     text-align: center;
   }
 
-  @supports (backdrop-filter: blur(1px)) {
-    .dg-shell :is(.dg-shell-bar,.site-menu-panel,.dg-shell-account-panel) {
-      --shell-glass: #fffffff2;
-      backdrop-filter: blur(22px) saturate(1.35) !important;
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .dg-shell {
+      --shell-bar-glass: #f7f7f580;
+      --shell-panel-glass: #f7f7f5c7;
     }
-    .dg-shell .dg-shell-bar { --shell-glass: #ffffffdf; }
+    .dg-shell .dg-shell-bar::before,
+    .dg-shell :is(.site-menu-panel,.dg-shell-account-panel) {
+      -webkit-backdrop-filter: blur(18px) !important;
+      backdrop-filter: blur(18px) !important;
+    }
+  }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html[data-motion-ready] .dg-shell [data-reflecting] {
+      --shell-reflection:
+        radial-gradient(ellipse 62px 27px at calc(var(--reflection-x) - 46px) var(--reflection-y), #e681b36b, transparent 94%),
+        radial-gradient(ellipse 67px 34px at calc(var(--reflection-x) - 20px) var(--reflection-y), #ecc3595e, transparent 95%),
+        radial-gradient(ellipse 65px 34px at var(--reflection-x) var(--reflection-y), #81d9ac66, transparent 95%),
+        radial-gradient(ellipse 66px 31px at calc(var(--reflection-x) + 26px) var(--reflection-y), #77b9e96b, transparent 94%),
+        radial-gradient(ellipse 65px 24px at calc(var(--reflection-x) + 53px) var(--reflection-y), #b392e668, transparent 94%);
+    }
+    html[data-motion-ready] .dg-shell [data-reflecting] :is(.dg-shell-primary a,.site-menu-links a,.site-menu-footer a):hover {
+      background-color: #ffffff35 !important;
+    }
   }
   @media (max-width: 920px) {
     .dg-shell .dg-shell-bar { grid-template-columns: minmax(max-content,1fr) max-content; }
@@ -202,8 +245,8 @@
     .dg-shell .site-menu-primary .site-menu-links { grid-template-columns: repeat(2,minmax(0,1fr)); }
   }
   @media (max-width: 550px) {
-    .dg-shell { top: max(6px, env(safe-area-inset-top)); width: calc(100% - 16px); margin-top: 6px !important; }
-    .dg-shell .dg-shell-bar { gap: 4px; min-height: 56px; padding: 5px 6px !important; border-radius: 17px !important; }
+    .dg-shell { top: env(safe-area-inset-top); padding-inline: max(8px, env(safe-area-inset-left), env(safe-area-inset-right)) !important; }
+    .dg-shell .dg-shell-bar { gap: 4px; min-height: 58px; }
     .dg-shell .dg-shell-tools { gap: 2px; }
     .dg-shell .dg-shell-brand { padding-inline: 3px !important; }
     .dg-shell .dg-shell-brand > span { display: none; }
@@ -211,8 +254,8 @@
     .dg-shell .dg-shell-icon { width: 38px; }
     .dg-shell .dg-header-submit svg { display: none; }
     .dg-shell :is(.dg-shell-disclosure,.dg-shell-account) { position: static; }
-    .dg-shell :is(.site-menu-panel,.dg-shell-account-panel) { top: calc(100% + 7px); right: 0; }
-    .dg-shell .site-menu-panel { left: 0; width: auto; max-height: min(82dvh, 660px, calc(100dvh - 78px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); }
+    .dg-shell :is(.site-menu-panel,.dg-shell-account-panel) { top: calc(100% + 6px); right: 8px; }
+    .dg-shell .site-menu-panel { left: 8px; width: auto; max-height: min(82dvh, 660px, calc(100dvh - 78px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); }
   }
   @media (max-width: 359px) {
     .dg-shell .site-menu-trigger-label,

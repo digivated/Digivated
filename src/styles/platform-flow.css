@@ -1,32 +1,8 @@
 @layer daylight {
   html[data-theme="daylight"] body.platform:has(> .dg-launch-scene) {
     background-image:
-      radial-gradient(ellipse min(76vw, 1100px) 530px at 91% 75px, #e8e5ed 0, #f2f0f4 44%, transparent 82%) !important;
+      radial-gradient(ellipse min(76vw, 1100px) 530px at 91% 75px, #e9e9e6 0, #f1f1ef 44%, transparent 82%) !important;
   }
-  html[data-theme="daylight"] body.platform .dg-shell {
-    top: 0;
-    width: min(100%, var(--daylight-content));
-    margin: 0 auto !important;
-    padding-inline: var(--daylight-gutter) !important;
-  }
-  html[data-theme="daylight"] body.platform .dg-shell-bar {
-    --shell-glass: #f7f7f5df;
-    min-height: 68px;
-    padding: 5px 0 !important;
-    border: 0 !important;
-    border-block-end: 1px solid #302c371f !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-  }
-  html[data-theme="daylight"] body.platform .dg-shell-brand { padding-inline-start: 0 !important; }
-  html[data-theme="daylight"] body.platform .dg-shell .dg-shell-primary a[aria-current="page"] {
-    background: transparent !important;
-    text-decoration: underline !important;
-    text-underline-offset: 7px;
-    text-decoration-thickness: 1px !important;
-  }
-  html[data-theme="daylight"] body.platform .dg-reading-track { inset-inline: var(--daylight-gutter); }
-
   html[data-theme="daylight"] body.platform #main :is(.dg-dir .dg-hero, .news-masthead, .dg-forum-header, .rl > .dg-hero) {
     padding: clamp(28px, 5.5vw, 75px) 0 clamp(18px, 3vw, 36px) !important;
     margin-block: 0 !important;
@@ -68,9 +44,6 @@
     border-block-end: 1px solid var(--fl-line) !important;
     padding-block-end: 10px;
   }
-  html[data-theme="daylight"] body.platform .dg-forum-nav :is(.dg-forum-links a, .dg-forum-topics summary) {
-    border-radius: 4px !important;
-  }
   html[data-theme="daylight"] body.platform .news-page { padding-block-start: 0; }
   html[data-theme="daylight"] body.platform .news-toolbar { margin-block-end: clamp(14px, 2vw, 26px); }
   html[data-theme="daylight"] body.platform .news-page :is(.news-feature, .news-standards, .news-market) {
@@ -96,13 +69,9 @@
     background: transparent !important;
   }
   html[data-theme="daylight"] body.platform .dg-site-footer {
-    background: linear-gradient(var(--fl-bg), #eeedf0) !important;
+    background: linear-gradient(var(--fl-bg), #eeeee9) !important;
   }
   @media (max-width: 700px) {
-    html[data-theme="daylight"] body.platform .dg-shell {
-      padding-inline: max(8px, env(safe-area-inset-left), env(safe-area-inset-right)) !important;
-    }
-    html[data-theme="daylight"] body.platform .dg-shell-bar { min-height: 58px; }
     html[data-theme="daylight"] body.platform #main :is(.dg-dir .dg-hero, .news-masthead, .dg-forum-header, .rl > .dg-hero) {
       padding-block-start: 28px !important;
     }

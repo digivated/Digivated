@@ -23,8 +23,8 @@ for (const width of [320, 390, 768, 920, 921, 1440]) {
     await expect(menu).toBeVisible();
     await expect(menu).toHaveCSS('backdrop-filter', /blur/);
     await expect(menu.locator('.site-menu-group a')).toHaveText([
-      'Submit a project', 'Shop', 'Feedback points', 'Embed badges',
-      'Weekly winners', 'Resources', 'For Investors',
+      'Resources', 'Weekly winners', 'For Investors',
+      'Submit a project', 'Embed badges', 'Feedback points', 'Shop',
     ]);
     await expect(menu.locator('.site-menu-footer a')).toHaveText(['Your projects', 'About', 'Log in or sign up']);
     await expect(menu.locator('.site-menu-primary a')).toHaveText(['Launches', 'Directory', 'Threads', 'News']);
@@ -96,4 +96,30 @@ test('the phone menu stays inside a short viewport', async ({ page }) => {
   expect(bounds.y + bounds.height).toBeLessThanOrEqual(360);
   await menu.getByRole('link', { name: 'About', exact: true }).click();
   await expect(page).toHaveURL(/\/about$/);
+});
+
+
+test('the glass reflection follows a mouse across the bar and menu and respects reduced motion', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 920 });
+  await page.goto(base + '/');
+  await page.locator('html[data-motion-ready]').waitFor();
+  const bar = page.locator('.dg-shell-bar');
+  const bounds = (await bar.boundingBox())!;
+  await page.mouse.move(bounds.x + 100, bounds.y + 20);
+  await expect(bar).toHaveAttribute('data-reflecting', '');
+  await expect.poll(() => bar.evaluate(el => getComputedStyle(el, '::before').backgroundImage)).toContain('radial-gradient');
+  const coordinate = () => bar.evaluate(el => (el as HTMLElement).style.getPropertyValue('--reflection-x'));
+  const first = await coordinate();
+  await page.mouse.move(bounds.x + 220, bounds.y + 20);
+  await expect.poll(coordinate).not.toBe(first);
+
+  await page.locator('.site-menu-trigger').click();
+  const panel = page.locator('#explore-navigation');
+  await panel.getByRole('link', { name: 'Resources', exact: true }).hover();
+  await expect(panel).toHaveAttribute('data-reflecting', '');
+  await expect(panel).toHaveCSS('background-image', /radial-gradient/);
+  await expect(bar).not.toHaveAttribute('data-reflecting', '');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(panel).toHaveCSS('background-image', 'none');
+  await expect(panel).not.toHaveAttribute('data-reflecting', '');
 });

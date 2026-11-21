@@ -66,8 +66,10 @@
   .dg-forum .dg-forum-nav a:hover { background-color: var(--daylight-hover) !important; }
   .dg-forum .dg-forum-nav a[aria-current="page"],
   .dg-forum .dg-forum-sort button[aria-pressed="true"] {
-    background-color: var(--daylight-wash) !important;
-    color: var(--fl-accent) !important;
+    background-color: transparent !important;
+    color: var(--fl-ink) !important;
+    text-decoration: underline !important;
+    text-underline-offset: 5px;
   }
   .dg-forum-glyph {
     flex: 0 0 18px;
@@ -95,9 +97,9 @@
     display: list-item !important;
     padding: 8px !important;
     min-height: 38px !important;
-    border: 1px solid var(--fl-line) !important;
-    border-radius: var(--fl-radius) !important;
-    background: var(--fl-raised) !important;
+    border: 0 !important;
+    border-block-end: 1px solid var(--fl-line) !important;
+    background: transparent !important;
     color: var(--fl-muted) !important;
     font-size: 13px;
     font-weight: 650;

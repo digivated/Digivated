@@ -6,7 +6,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const active = (link: string) => { const href = link.split('?')[0]; if (link.includes('?')) return false; return path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/')) || (href === '/shop' && ['/membership','/products','/promote','/founding-members'].includes(path)); };
 ---
 <header class="dg-shell" data-site-header data-account="signed-out">
-  <div class="dg-shell-bar">
+  <div class="dg-shell-bar" data-nav-reflection>
     <a class="dg-shell-brand" href="/" aria-label="Digivated home"><img class="daylight-brand-mark" src="/digivated-daylight-mark.png" width="32" height="32" alt=""/><span>Digivated</span></a>
     <nav class="dg-shell-primary" aria-label="Primary navigation">{primaryLinks.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</nav>
     <div class="dg-shell-tools">
@@ -15,7 +15,7 @@ const active = (link: string) => { const href = link.split('?')[0]; if (link.inc
       <a class="dg-shell-login" id="header-account-link" href="/login" aria-current={active('/login')?'page':undefined}>Log In</a>
       <div class="dg-shell-account" id="header-account-menu" hidden>
         <button type="button" class="dg-shell-avatar-trigger" id="header-account-trigger" aria-labelledby="header-account-label" aria-haspopup="menu" aria-expanded="false" aria-controls="header-account-panel"><span class="dg-shell-avatar" id="header-account-avatar" aria-hidden="true">D</span><span class="fl-menu-name sr-only" id="header-account-label">Account menu</span><span class="dg-shell-account-caret" aria-hidden="true">▾</span><span id="header-account-dot" class="dg-shell-badge" hidden></span></button>
-        <div class="dg-shell-account-panel" id="header-account-panel" role="menu" aria-labelledby="header-account-trigger" hidden>
+        <div class="dg-shell-account-panel" data-nav-reflection id="header-account-panel" role="menu" aria-labelledby="header-account-trigger" hidden>
           <span class="dg-shell-account-who" role="presentation"><strong>Signed in</strong><span id="header-account-email"></span><span class="fl-menu-points"><span aria-hidden="true">✦</span> <b id="header-menu-points" hidden>0</b> feedback points</span></span>
           <a role="menuitem" href="/account">Dashboard</a>
           <a role="menuitem" href="/inbox">Inbox <span class="fl-menu-count" id="header-menu-inbox" hidden></span></a>
@@ -28,7 +28,7 @@ const active = (link: string) => { const href = link.split('?')[0]; if (link.inc
       <a class="dg-header-submit" href="/submit-project" aria-current={active('/submit-project')?'page':undefined}><span>Submit</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <details class="dg-shell-disclosure" data-navigation>
         <summary class="site-menu-trigger" aria-controls="explore-navigation" aria-label="Open navigation menu" aria-expanded="false"><span class="site-menu-trigger-label">Menu</span><span class="dg-shell-menu-open" aria-hidden="true"><UiIcon name="menu" size={18}/></span><span class="dg-shell-menu-close" aria-hidden="true"><UiIcon name="close" size={18}/></span></summary>
-        <nav id="explore-navigation" class="site-menu-panel" aria-label="Site menu">
+        <nav id="explore-navigation" class="site-menu-panel" data-nav-reflection aria-label="Site menu">
           <div class="site-menu-primary">
             <p class="site-menu-title">Browse</p>
             <div class="site-menu-links">{primaryLinks.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</div>
@@ -42,4 +42,4 @@ const active = (link: string) => { const href = link.split('?')[0]; if (link.inc
   <span class="dg-reading-track" data-reading-progress aria-hidden="true"></span>
 </header>
 <script is:inline src="/header-session.js"></script>
-<script>import '../scripts/account-header.js'; import '../scripts/notification-bell.js';</script>
+<script>import '../scripts/navigation-reflection.js'; import '../scripts/account-header.js'; import '../scripts/notification-bell.js';</script>

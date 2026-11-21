@@ -15,11 +15,11 @@ export const primaryLinks = [
   ['/threads', 'Threads'],
   ['/news', 'News'],
 ];
-// The menu holds what the bar doesn't: two short groups, makers first. When the
+// The menu holds what the bar doesn't: two short groups for browsing and launching. When the
 // bar is hidden, its four destinations show as a row of tabs at the top instead.
 export const menuGroups = [
-  { title: 'For makers', links: [['/submit-project', 'Submit a project'], ['/shop', 'Shop'], ['/points', 'Feedback points'], ['/badges', 'Embed badges']] },
-  { title: 'Explore', links: [['/winners', 'Weekly winners'], ['/resources', 'Resources'], ['/invstr', 'For Investors']] },
+  { title: 'Explore', links: [['/resources', 'Resources'], ['/winners', 'Weekly winners'], ['/invstr', 'For Investors']] },
+  { title: 'For makers', links: [['/submit-project', 'Submit a project'], ['/badges', 'Embed badges'], ['/points', 'Feedback points'], ['/shop', 'Shop']] },
 ];
 export const menuLinks = [...primaryLinks, ...menuGroups.flatMap(group => group.links)];
 // Footer: the same destinations as the header and menu, plus account pages and socials.
