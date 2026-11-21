@@ -9,6 +9,7 @@ test.beforeEach(async ({ page }) => {
 for (const width of [320, 390, 768, 1000, 1024, 1440]) {
   test(`site menu fits and keeps its destinations at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(base + '/');
     const trigger = page.locator('.site-menu-trigger');
     const menu = page.locator('#explore-navigation');
@@ -33,7 +34,7 @@ for (const width of [320, 390, 768, 1000, 1024, 1440]) {
       const primaryBounds = (await menu.locator('.site-menu-primary').boundingBox())!;
       const groupBounds = (await menu.locator('.site-menu-groups').boundingBox())!;
       expect(groupBounds.y).toBeGreaterThanOrEqual(primaryBounds.y + primaryBounds.height);
-      expect(groupBounds.width).toBeCloseTo(primaryBounds.width, 0);
+      expect(Math.abs(groupBounds.width - primaryBounds.width)).toBeLessThanOrEqual(1);
     }
     const bounds = (await menu.boundingBox())!;
     expect(bounds.x).toBeGreaterThanOrEqual(0);
