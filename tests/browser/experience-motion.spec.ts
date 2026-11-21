@@ -22,7 +22,8 @@ test('reduced motion keeps all content visible and native search focus working',
  await expect(page.locator('.dg-launch-scene-hero canvas')).toBeHidden();
  const [hero, title, actions] = await Promise.all(['[data-discovery-hero]', '#dg-home-title', '.dg-hero-actions'].map(selector => page.locator(selector).boundingBox()));
  for (const bounds of [title, actions]) {
-  expect(Math.abs((hero!.x + hero!.width / 2) - (bounds!.x + bounds!.width / 2))).toBeLessThan(2);
+  expect(bounds!.x).toBeCloseTo(hero!.x, 0);
+  expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(hero!.x + hero!.width + 1);
  }
 
  expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.id==='digivated-content-entrance').length)).toBe(0);
@@ -41,7 +42,7 @@ test('section entrances never leave content hidden and stop after completion',as
 test('hero stays readable when JavaScript is disabled',async({browser})=>{
  const c=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});const p=await c.newPage();await p.goto(base+'/');
  await expect(p.locator('#dg-home-title')).toBeVisible();
- await expect(p.locator('.dg-launch-scene-hero .dg-scene-poster')).toHaveJSProperty('complete', true);
+ await expect(p.locator('.dg-launch-scene-hero .dg-scene-poster img')).toHaveJSProperty('complete', true);
  await expect(p.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
 });
@@ -59,18 +60,17 @@ test('the new backdrop leaves resources search and home hero actions usable',asy
  await expect(page).toHaveURL(/#this-week$/);
 });
 
-test('the launch scene changes poses, pauses, and keeps native launch links usable', async ({ page }) => {
+test('the shared current moves, pauses, and keeps native launch links usable', async ({ page }) => {
  await page.setViewportSize({ width: 1440, height: 900 });
  await page.clock.install();
  await page.goto(base + '/');
  const hero = page.locator('[data-discovery-hero]');
- const canvas = hero.locator('canvas');
+ const canvas = page.locator('.dg-launch-scene-hero canvas');
  await expect(canvas).toBeVisible();
  const capture = () => canvas.evaluate(element => (element as HTMLCanvasElement).toDataURL());
- const lens = await capture();
+ const first = await capture();
  await page.clock.runFor(8000);
- const launch = await capture();
- expect(launch).not.toBe(lens);
+ expect(await capture()).not.toBe(first);
 
  const pause = hero.getByRole('button', { name: 'Pause animation' });
  await pause.click();

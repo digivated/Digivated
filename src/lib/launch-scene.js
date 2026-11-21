@@ -1,137 +1,83 @@
-const turn = Math.PI * 2;
-const loopSeconds = 24;
-const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
-const lerp = (a, b, amount) => a + (b - a) * amount;
+const tau = Math.PI * 2;
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
-function ease(value) {
-  const t = clamp(value, 0, 1);
+function smooth(start, end, value) {
+  const t = clamp((value - start) / (end - start), 0, 1);
   return t * t * (3 - 2 * t);
 }
 
-function random(index) {
-  const value = Math.sin(index * 127.1 + 19.17) * 43758.5453;
-  return value - Math.floor(value);
-}
-
-function lens(index, u, v, w) {
-  const angle = turn * u;
-  if (index % 10 < 6) {
-    const tube = turn * v;
-    const radius = .69 + .066 * Math.cos(tube);
-    return [Math.cos(angle) * radius - .12, Math.sin(angle) * radius - .15, .14 * Math.sin(tube)];
-  }
-  if (index % 10 < 8) {
-    const radius = .47 * Math.sqrt(v);
-    const x = Math.cos(angle) * radius;
-    const y = Math.sin(angle) * radius;
-    const wave = .11 * Math.sin(x * 8 + y * 10);
-    return [x - .12, y - .15, wave];
-  }
-  const cross = (v - .5) * .15;
-  return [.38 + u * .46 + cross, .34 + u * .55 - cross, (w - .5) * .14];
-}
-
-function orbit(index, u, v, w) {
-  if (index % 8 < 2) {
-    const y = 2 * u - 1;
-    const radius = .33 * Math.sqrt(1 - y * y);
-    return [radius * Math.cos(v * turn), y * .33, radius * Math.sin(v * turn)];
-  }
-  const angle = u * turn, tilt = (index % 3 - 1) * .86;
-  const radius = .83 + (v - .5) * .105;
-  return [radius * Math.cos(angle), Math.sin(angle) * radius * Math.sin(tilt) + (w - .5) * .09, Math.sin(angle) * radius * Math.cos(tilt)];
-}
-
-function lift(index, u, v, w) {
-  if (index % 7 < 2) {
-    const y = u * 1.5 - .8;
-    const radius = (.17 + .25 * u) * Math.sqrt(v);
-    return [radius * Math.cos(w * turn), y, radius * Math.sin(w * turn)];
-  }
-  const level = index % 5;
-  const angle = turn * u;
-  const radius = .33 + level * .105 + (v - .5) * .12;
-  const square = value => Math.sign(value) * Math.sqrt(Math.abs(value));
-  return [square(Math.cos(angle)) * radius, level * .25 - .49 + (w - .5) * .07, square(Math.sin(angle)) * radius];
-}
-
-const models = { lens, orbit, lift };
-
-export function createLaunchScene(canvas, { mode = 'lens', compact = false } = {}) {
+export function createLaunchScene(canvas, { compact = false } = {}) {
   const context = canvas.getContext('2d');
   if (!context) return null;
-  const count = compact ? 580 : 1680;
-  const home = mode === 'lens' && !compact;
-  const origin = models[mode] || lens;
-  const destination = mode === 'lift' ? orbit : lift;
-  const dots = Array.from({ length: count }, (_, index) => {
-    const id = index * 7, u = random(id), v = random(id + 1), w = random(id + 2);
-    return {
-      from: origin(index, u, v, w),
-      to: destination(index, u, v, w),
-      offset: random(id + 3) - .5,
-      drift: random(id + 4) - .5,
-      size: .7 + random(id + 5) * .8,
-      phase: random(id + 6) * turn,
-    };
-  });
-  let width = 0, height = 0, pixelRatio = 1;
+  let width = 0;
+  let height = 0;
+  let density = 1;
+  let columns = 0;
+  const strands = compact ? 20 : 33;
+  const shades = ['#34333a1c', '#34333a31', '#34333a56', '#28272f80', '#28272faa'];
 
-  function resize(nextWidth, nextHeight, density = 1) {
+  function resize(nextWidth, nextHeight, pixelRatio = 1) {
     width = nextWidth;
     height = nextHeight;
-    pixelRatio = Math.min(density, compact ? 1.25 : 1.6);
-    canvas.width = Math.max(1, Math.round(width * pixelRatio));
-    canvas.height = Math.max(1, Math.round(height * pixelRatio));
+    density = Math.min(pixelRatio, 1.5);
+    columns = Math.min(142, Math.max(66, Math.round(width / 8)));
+    canvas.width = Math.max(1, Math.round(width * density));
+    canvas.height = Math.max(1, Math.round(height * density));
   }
 
-  function render(time, { x: pointerX = 0, y: pointerY = 0, scroll = 0, attract = 0, approach = 0 } = {}) {
+  function render(seconds, { x = 0, y = 0, scroll = 0, attract = 0, approach = 0 } = {}) {
     if (!width || !height) return;
-    const seconds = (time % loopSeconds + loopSeconds) % loopSeconds;
-    const phase = seconds * turn / loopSeconds;
-    const yaw = Math.sin(phase) * (home ? .66 : .9) + pointerX * .28;
-    const pitch = -.22 + .18 * Math.sin(phase * 2) + pointerY * .18;
-    const sinY = Math.sin(yaw), cosY = Math.cos(yaw), sinX = Math.sin(pitch), cosX = Math.cos(pitch);
-    const unit = Math.min(width * .46, height * .49) * (1 + .09 * Math.sin(phase) + scroll * .16);
-    const centerX = width * .51;
-    const centerY = height * (.49 - scroll * .1);
-    const paths = [new Path2D(), new Path2D(), new Path2D(), new Path2D()];
-    const dissolve = ease((seconds - 5) / 3.8) * (1 - ease((seconds - 15) / 4.8));
+    const mobile = width < 700;
+    const paths = shades.map(() => new Path2D());
+    const time = seconds * tau / 24;
+    const reach = mobile ? .82 : .89;
+    const spread = mobile ? .16 : compact ? .23 : .32;
 
-    for (const dot of dots) {
-      const stagger = dissolve + dot.offset * .85 * Math.sin(dissolve * Math.PI);
-      const blend = ease(stagger);
-      const burst = Math.sin(blend * Math.PI) * (home ? .7 : .43) + approach * .26;
-      // Both poses share a set of particles. A staggered burst opens each
-      // silhouette into a cloud before the dots gather into the next form.
-      const [startX, startY, startZ] = dot.from;
-      const [endX, endY, endZ] = dot.to;
-      const x = lerp(startX, endX, blend) + Math.cos(dot.phase) * burst;
-      const y = lerp(startY, endY, blend) + Math.sin(dot.phase) * burst * .63;
-      const z = lerp(startZ, endZ, blend) + dot.drift * burst;
-      const depthY = z * cosY - x * sinY;
-      const depth = y * sinX + depthY * cosX;
-      const perspective = 2.85 / (2.85 - depth);
-      let px = centerX + (x * cosY + z * sinY) * unit * perspective;
-      let py = centerY + (y * cosX - depthY * sinX) * unit * perspective;
-      if (attract > .01) {
-        const dx = px - (centerX + pointerX * width * .43);
-        const dy = py - (centerY + pointerY * height * .43);
-        const energy = Math.exp(-(dx * dx + dy * dy) / (unit * unit * .28)) * attract * .38;
-        px += dx * energy;
-        py += dy * energy;
+    for (let col = 0; col < columns; col++) {
+      const u = col / (columns - 1);
+      const travel = (u - .5) * tau * .92;
+      const baseX = width * (1.04 - (mobile ? u * 1.1 : Math.pow(u, 1.48) * 1.16));
+      const fold = Math.sin(travel - time * .8) * .42 + .56;
+      const fall = Math.pow(u, .87) * reach;
+      const ridge = (mobile ? .23 : .12) + fall + Math.sin(u * 7.2 - time) * .077;
+      const depthWave = Math.sin(u * 10 - time * 1.6);
+      const scale = .62 + .38 * Math.sin(u * Math.PI);
+
+      for (let row = 0; row < strands; row++) {
+        const cross = row / (strands - 1) - .5;
+        const roll = Math.sin(time + u * 9 + cross * .9);
+        let px = baseX + cross * width * .12 * roll + depthWave * width * .016;
+        let py = height * (ridge + cross * spread * (fold + .5) - scroll * .07);
+        py += Math.sin(u * 23 + cross * 5 - time * 1.3) * height * .019;
+        py += depthWave * cross * height * .08;
+        px += x * width * .017 * scale;
+        py += y * height * .035 * scale;
+        if (attract > .01) {
+          const dx = px - width * (.5 + x * .48), dy = py - height * (.5 + y * .48);
+          const falloff = Math.exp(-(dx * dx + dy * dy) / Math.pow(Math.min(width, height) * .15, 2));
+          px += dx * falloff * attract * .34;
+          py += dy * falloff * attract * .34;
+        }
+        py += approach * cross * height * .08;
+
+        // Keep the black typography clear, even as the ribbon turns toward it.
+        const readingArea = mobile
+          ? smooth(.45, .71, py / height)
+          : Math.max(smooth(.46, .77, px / width), smooth(.62, .88, py / height) * .7);
+        const edge = smooth(0, .16, u) * (1 - smooth(.76, 1, u)) * (1 - Math.abs(cross) * .8);
+        const weight = readingArea * edge;
+        if (weight < .048) continue;
+        const shade = clamp(Math.floor(weight * 4.85 + roll * .36), 0, shades.length - 1);
+        const radius = (.65 + weight * 1.34) * (compact ? .86 : 1) * (1 + depthWave * .14);
+        paths[shade].moveTo(px + radius, py);
+        paths[shade].arc(px, py, radius, 0, tau);
       }
-      const radius = dot.size * (compact ? .93 : 1.24) * perspective;
-      const tone = clamp(Math.floor((depth + .72) * 2.4 + dot.drift), 0, 3);
-      paths[tone].moveTo(px + radius, py);
-      paths[tone].arc(px, py, radius, 0, turn);
     }
 
-    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    context.setTransform(density, 0, 0, density, 0, 0);
     context.clearRect(0, 0, width, height);
-    const ink = ['#24262032', '#24262068', '#242620a6', '#181a16e0'];
     paths.forEach((path, index) => {
-      context.fillStyle = ink[index];
+      context.fillStyle = shades[index];
       context.fill(path);
     });
   }

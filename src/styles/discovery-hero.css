@@ -1,109 +1,80 @@
 @layer daylight {
   html[data-theme="daylight"] body #main > .dg-home-hero {
-    display: grid !important;
-    grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
-    align-items: center;
     position: relative;
-    isolation: isolate;
-    min-height: clamp(430px, 57svh, 600px);
-    margin: clamp(12px, 3vw, 30px) 0 clamp(16px, 3vw, 30px) !important;
-    padding: clamp(22px, 4vw, 52px) !important;
-    border: 1px solid var(--fl-line) !important;
-    border-radius: clamp(20px, 3vw, 36px) !important;
-    background: radial-gradient(ellipse at 76% 38%, #fbfbf8 0, #edede6 62%, #e9eae1 100%) !important;
-    overflow: hidden;
+    display: grid !important;
+    align-content: center;
+    min-height: clamp(390px, 54svh, 560px);
+    margin: 0 !important;
+    padding: clamp(36px, 7vw, 88px) 0 34px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    overflow: visible;
   }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-copy {
-    gap: 18px !important;
+    gap: clamp(12px, 2.4vw, 28px) !important;
     min-width: 0;
-    max-width: 560px;
-    z-index: 1;
+    max-width: min(100%, 820px) !important;
   }
   html[data-theme="daylight"] body .dg-home-hero #dg-home-title {
     margin: 0 !important;
-    font-size: clamp(55px, 6.9vw, 98px) !important;
-    font-weight: 570 !important;
-    line-height: .91 !important;
-    letter-spacing: -.087em !important;
+    font-size: clamp(64px, 8.65vw, 135px) !important;
+    font-weight: 560 !important;
+    line-height: .92 !important;
+    letter-spacing: -.085em !important;
     text-wrap: initial;
   }
   html[data-theme="daylight"] body .dg-home-hero #dg-home-title span {
-    color: #5b5e53 !important;
+    display: block;
+    width: max-content;
+    padding-inline-end: .13em;
+    color: #575361 !important;
+    font-style: italic;
+    font-weight: 490;
   }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-lede {
-    max-width: 32ch;
+    max-width: 35ch;
     margin: 0 !important;
     color: var(--fl-copy) !important;
-    font-size: clamp(15px, 1.4vw, 18px) !important;
-    line-height: 1.55 !important;
+    font-size: clamp(15px, 1.5vw, 19px) !important;
+    line-height: 1.56 !important;
   }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions {
-    gap: 8px;
-    margin-top: 8px !important;
+    gap: 8px 14px;
+    margin-top: 6px !important;
   }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions .dg-btn {
     min-height: 44px !important;
     border-radius: 999px !important;
-    padding-inline: 14px !important;
+    padding-inline: 16px !important;
     white-space: nowrap;
   }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-secondary {
-    background: #f9f9f380 !important;
-    border-color: var(--fl-line-hi) !important;
+    padding-inline: 8px !important;
+    border-color: transparent !important;
+    background: transparent !important;
+    text-decoration: underline !important;
+    text-underline-offset: 5px;
   }
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-secondary:hover { background: var(--fl-surface) !important; }
-
-  .dg-scene-stage {
-    position: relative;
-    min-width: 0;
-    height: 100%;
-    min-height: 320px;
+  html[data-theme="daylight"] body .dg-home-hero > .dg-scene-toggle {
+    inset-inline-end: 0 !important;
+    inset-block-end: 3px !important;
   }
-  .dg-scene-stage::before,
-  .dg-scene-stage::after {
-    content: '';
-    position: absolute;
-    pointer-events: none;
-  }
-  .dg-scene-stage::before {
-    inset: 0;
-    background-image: radial-gradient(circle, #35392a55 .65px, transparent 1px);
-    background-size: 8px 8px;
-    mask-image: radial-gradient(ellipse at center, #000 5%, transparent 68%);
-  }
-  .dg-scene-stage::after {
-    inset: 8% 11%;
-    border-block: 1px solid #23261b1f;
-    mask-image: linear-gradient(90deg, black 6%, transparent 6%, transparent 94%, black 94%);
-  }
-  .dg-scene-stage .dg-launch-scene-hero {
-    position: absolute;
-    inset: -8% -9%;
-  }
-  @media (max-width: 850px) {
+  @media (max-width: 700px) {
     html[data-theme="daylight"] body #main > .dg-home-hero {
-      grid-template-columns: minmax(0, 1fr);
-      padding: clamp(18px, 5vw, 34px) !important;
-    }
-    html[data-theme="daylight"] body .dg-home-hero .dg-hero-copy {
-      justify-items: center !important;
-      max-width: none;
-      text-align: center;
-      gap: 12px !important;
+      min-height: 450px;
+      align-content: start;
+      padding: 36px 0 110px !important;
     }
     html[data-theme="daylight"] body .dg-home-hero #dg-home-title {
-      font-size: clamp(49px, 11vw, 86px) !important;
+      font-size: clamp(51px, 12vw, 85px) !important;
     }
-    html[data-theme="daylight"] body .dg-home-hero #dg-home-title br { display: none; }
-    html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions { justify-content: center; }
-    .dg-scene-stage { min-height: clamp(194px, 53vw, 300px); }
-    .dg-scene-stage .dg-launch-scene-hero { inset: -7% -6%; }
   }
   @media (max-width: 420px) {
+    html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions { gap: 5px; }
     html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions .dg-btn {
       padding-inline: 10px !important;
       font-size: 12px !important;
     }
-    html[data-theme="daylight"] body .dg-scene-toggle { right: -3px; bottom: -3px; }
   }
 }

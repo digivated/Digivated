@@ -53,7 +53,7 @@ function sync() {
     const scene = state.get(element) || init(element);
     if (scene) element.dataset.sceneReady = '';
   }
-  if (allowed && scenesOnscreen.size) {
+  if (allowed && scenesOnscreen.size && state.size) {
     if (!frame) frame = requestAnimationFrame(render);
     return;
   }
@@ -65,7 +65,7 @@ function sync() {
 function init(element) {
   const canvas = element.querySelector('canvas');
   if (!canvas) return null;
-  const engine = createLaunchScene(canvas, { mode: element.dataset.launchScene, compact: element.dataset.sceneSize !== 'hero' });
+  const engine = createLaunchScene(canvas, { compact: element.dataset.sceneSize !== 'hero' });
   if (!engine) return null;
   const scene = { engine, time: 1.2, x: 0, y: 0, targetX: 0, targetY: 0, attract: 0, targetEnergy: 0, approach: 0, targetApproach: 0 };
   state.set(element, scene);
@@ -75,7 +75,7 @@ function init(element) {
   };
   resize();
   new ResizeObserver(resize).observe(element);
-  const stage = element.closest('[data-discovery-hero]') || element.parentElement;
+  const stage = document.querySelector('[data-discovery-hero]') || document.querySelector('main');
   stage.addEventListener('pointermove', event => {
     if (event.pointerType === 'touch' || !permitted()) return;
     const box = element.getBoundingClientRect();

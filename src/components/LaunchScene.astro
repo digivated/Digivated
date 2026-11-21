@@ -1,11 +1,12 @@
 ---
 import '../styles/launch-scenes.css';
-
-const { mode = 'orbit', size = 'masthead' } = Astro.props;
+const { size = 'masthead' } = Astro.props;
 ---
-<div class:list={['dg-launch-scene', `dg-launch-scene-${size}`]} data-launch-scene={mode} data-scene-size={size} aria-hidden="true">
-  <img class="dg-scene-poster" src={`/media/launch-${mode}.webp`} width="640" height="560" alt="" loading={size === 'hero' ? 'eager' : 'lazy'} decoding="async"/>
+<div class:list={['dg-launch-scene', `dg-launch-scene-${size}`]} data-launch-scene data-scene-size={size} aria-hidden="true">
+  <picture class="dg-scene-poster">
+    <source media="(max-width: 699px)" srcset="/media/digivated-current-narrow.webp"/>
+    <img src="/media/digivated-current.webp" width="1440" height="740" alt="" decoding="async"/>
+  </picture>
   <canvas></canvas>
 </div>
-
 <script>import '../scripts/launch-scenes.js';</script>

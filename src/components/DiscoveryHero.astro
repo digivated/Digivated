@@ -1,21 +1,17 @@
 ---
 import UiIcon from './UiIcon.astro';
-import LaunchScene from './LaunchScene.astro';
 import SceneToggle from './SceneToggle.astro';
 import '../styles/discovery-hero.css';
 ---
 
 <section class="dg-hero dg-home-hero" aria-labelledby="dg-home-title" data-discovery-hero>
   <div class="dg-hero-copy">
-    <h1 id="dg-home-title">Find what’s<br/> <span>next.</span></h1>
+    <h1 id="dg-home-title">Find what’s <span>next.</span></h1>
     <p class="dg-hero-lede">Discover useful products from independent makers. Launch your own for free.</p>
     <div class="dg-hero-actions">
       <a class="dg-btn dg-btn-primary" href="#this-week">Browse launches <UiIcon name="arrow" size={16}/></a>
       <a class="dg-btn dg-hero-secondary" href="/submit-project">Submit your product</a>
     </div>
   </div>
-  <div class="dg-scene-stage">
-    <LaunchScene mode="lens" size="hero"/>
-    <SceneToggle/>
-  </div>
+  <SceneToggle/>
 </section>

@@ -49,6 +49,14 @@ test('editorial details animate during scrolling and menu interaction', async ({
   const art = page.locator('.dg-launch-scene-masthead');
   await expect(art).toHaveAttribute('data-scene-ready', '');
   await expect(art.locator('canvas')).toBeVisible();
+  await expect(page.locator('[data-launch-scene]')).toHaveCount(1);
+  const [artBounds, searchBounds] = await Promise.all([
+    art.boundingBox(),
+    page.locator('[data-dir-search]').boundingBox(),
+  ]);
+  expect(artBounds!.x).toBe(0);
+  expect(artBounds!.width).toBe(1440);
+  expect(artBounds!.y + artBounds!.height).toBeGreaterThan(searchBounds!.y);
 
   const menu = page.locator('.site-menu-trigger');
   await menu.click();
@@ -61,7 +69,6 @@ test('editorial details animate during scrolling and menu interaction', async ({
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await expect.poll(() => track.evaluate(node => Number((node as HTMLElement).style.getPropertyValue('--reading-progress')))).toBeGreaterThan(.95);
   await expect(page.locator('.dg-footer-imprint')).toHaveAttribute('data-motion-entered', '');
-  await expect(page.locator('.dg-launch-scene-footer canvas')).toBeVisible();
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(track).toBeHidden();

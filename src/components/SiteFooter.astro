@@ -1,7 +1,6 @@
 ---
 import { footerGroups } from '../data/site-navigation.mjs';
 import BugReport from './BugReport.astro';
-import LaunchScene from './LaunchScene.astro';
 import SceneToggle from './SceneToggle.astro';
 import '../styles/site-footer.css';
 
@@ -14,7 +13,6 @@ const socials = footerGroups.find(group => group.title === 'Follow')?.links ?? [
   <div class="dg-footer-inner">
     {!compact && <>
       <span class="dg-footer-imprint" data-motion-scene aria-hidden="true"></span>
-      <LaunchScene mode="orbit" size="footer"/>
       <SceneToggle footer/>
     </>}
     <div class="dg-footer-main">
