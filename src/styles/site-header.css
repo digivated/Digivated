@@ -195,11 +195,6 @@
     }
     .dg-shell .dg-shell-bar { --shell-glass: #ffffffdf; }
   }
-  @media (prefers-reduced-motion: no-preference) {
-    .dg-shell .dg-shell-disclosure[open] .site-menu-panel,
-    .dg-shell .dg-shell-account-panel:not([hidden]) { animation: dg-shell-in 160ms ease-out both; }
-    @keyframes dg-shell-in { from { opacity: .5; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-  }
   @media (max-width: 920px) {
     .dg-shell .dg-shell-bar { grid-template-columns: minmax(max-content,1fr) max-content; }
     .dg-shell .dg-shell-primary { display: none !important; }

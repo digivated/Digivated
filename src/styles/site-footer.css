@@ -4,7 +4,7 @@
     margin: 0 !important;
     padding: clamp(18px, 3vw, 30px) 0 max(14px, env(safe-area-inset-bottom)) !important;
     border-top: 1px solid var(--fl-line) !important;
-    background: var(--fl-bg) !important;
+    background: var(--fl-raised) !important;
     color: var(--fl-copy) !important;
   }
   .dg-footer-inner {

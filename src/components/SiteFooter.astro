@@ -10,6 +10,7 @@ const socials = footerGroups.find(group => group.title === 'Follow')?.links ?? [
 ---
 <footer class:list={['dg-site-footer', { 'dg-site-footer-compact': compact }]}>
   <div class="dg-footer-inner">
+    {!compact && <span class="dg-footer-imprint" data-motion-scene aria-hidden="true"></span>}
     <div class="dg-footer-main">
       <a class="dg-footer-brand" href="/">
         <img class="daylight-brand-mark" src="/digivated-daylight-mark.png" width="32" height="32" alt=""/>

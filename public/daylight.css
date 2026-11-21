@@ -333,8 +333,8 @@
 
 @layer daylight {
   html[data-theme="daylight"] {
-    --editorial-title: clamp(32px, 4.5vw, 56px);
-    --editorial-space: clamp(22px, 3.4vw, 42px);
+    --editorial-title: clamp(34px, 5.2vw, 64px);
+    --editorial-space: clamp(24px, 4.2vw, 48px);
     --section-space: clamp(30px, 5vw, 64px);
     --section-title: clamp(22px, 2.8vw, 32px);
   }
@@ -409,9 +409,9 @@
   html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .creator-social-heading, .notifications-heading, .news-masthead, .dg-forum-header, .dg-dir, .rl) h1::after {
     content: '';
     display: block;
-    width: 32px;
+    width: 54px;
     height: 4px;
-    margin-top: 8px;
+    margin-top: 11px;
     background: radial-gradient(circle, var(--fl-muted) 1px, transparent 1.5px) left center / 6px 4px repeat-x !important;
     opacity: .7;
     pointer-events: none;
