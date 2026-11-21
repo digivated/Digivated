@@ -1,0 +1,109 @@
+@layer daylight {
+  html[data-theme="daylight"] body .compact-site-header {
+    background: var(--fl-bg) !important;
+    border-bottom: 1px solid var(--fl-line) !important;
+  }
+  html[data-theme="daylight"] body .compact-site-header .header-inner { max-width: 1240px !important; margin-inline: auto !important; }
+  html[data-theme="daylight"] body .compact-site-header .header-primary { display: flex !important; gap: 6px !important; }
+  html[data-theme="daylight"] body .compact-site-header .header-primary a {
+    padding: 7px 12px !important;
+    border-radius: var(--fl-radius) !important;
+    background: transparent !important;
+    text-decoration: none !important;
+  }
+  html[data-theme="daylight"] body .compact-site-header .header-primary a:hover,
+  html[data-theme="daylight"] body .compact-site-header .header-primary a[aria-current="page"] {
+    background: var(--daylight-wash) !important;
+    color: var(--fl-accent) !important;
+  }
+
+  html[data-theme="daylight"] body .compact-site-header .explore-menu { position: relative !important; }
+  html[data-theme="daylight"] body .site-menu-trigger {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 6px !important;
+    width: auto !important;
+    min-width: 40px;
+    padding: 0 9px !important;
+    border-radius: var(--fl-radius) !important;
+    font-size: 13px !important;
+    font-weight: 550;
+    text-decoration: none !important;
+  }
+  html[data-theme="daylight"] body .site-menu-trigger:hover,
+  html[data-theme="daylight"] body .site-menu-trigger[aria-expanded="true"] { background: var(--fl-raised) !important; }
+  html[data-theme="daylight"] body .site-menu-trigger::-webkit-details-marker { display: none; }
+  html[data-theme="daylight"] body .site-menu-trigger::marker { content: ""; }
+
+  html[data-theme="daylight"] body .site-menu-panel {
+    position: absolute !important;
+    z-index: 1;
+    inset: calc(100% + 9px) 0 auto auto !important;
+    display: grid !important;
+    gap: 14px;
+    width: min(398px, calc(100vw - 24px)) !important;
+    max-height: calc(100dvh - var(--navigation-top, 76px) - 12px) !important;
+    overflow: auto !important;
+    overscroll-behavior: contain;
+    padding: 16px !important;
+    border: 1px solid var(--fl-line) !important;
+    border-radius: var(--fl-radius-card) !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+    box-shadow: 0 12px 34px #2433271d !important;
+  }
+  html[data-theme="daylight"] body .site-menu-primary { display: none; }
+  html[data-theme="daylight"] body .site-menu-groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 10px;
+  }
+  html[data-theme="daylight"] body .site-menu-title {
+    margin: 0 0 5px !important;
+    padding: 0 8px !important;
+    color: var(--fl-muted) !important;
+    font-size: 12px !important;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  html[data-theme="daylight"] body .site-menu-links { display: grid; gap: 1px; }
+  html[data-theme="daylight"] body .site-menu-panel a {
+    display: flex;
+    align-items: center;
+    min-height: 39px;
+    padding: 7px 8px !important;
+    border-radius: var(--fl-radius) !important;
+    color: var(--fl-ink) !important;
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+    text-decoration: none !important;
+  }
+  html[data-theme="daylight"] body .site-menu-panel a:hover,
+  html[data-theme="daylight"] body .site-menu-panel a:focus-visible,
+  html[data-theme="daylight"] body .site-menu-panel a[aria-current="page"] {
+    background: var(--daylight-wash) !important;
+    color: var(--fl-accent) !important;
+  }
+  html[data-theme="daylight"] body .site-menu-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding-top: 8px;
+    border-top: 1px solid var(--fl-line) !important;
+  }
+  html[data-theme="daylight"] body .site-menu-footer a { color: var(--fl-muted) !important; }
+
+  @media (max-width: 1000px) {
+    html[data-theme="daylight"] body .compact-site-header .header-primary { display: none !important; }
+    html[data-theme="daylight"] body .site-menu-primary { display: block; }
+    html[data-theme="daylight"] body .site-menu-primary .site-menu-links { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  }
+  @media (max-width: 520px) {
+    html[data-theme="daylight"] body .site-menu-panel { position: fixed !important; inset: var(--navigation-top, 72px) 12px auto !important; width: auto !important; }
+    html[data-theme="daylight"] body .site-menu-trigger { padding-inline: 7px !important; }
+  }
+  @media (max-width: 360px) {
+    html[data-theme="daylight"] body .site-menu-trigger-label { display: none !important; }
+  }
+}

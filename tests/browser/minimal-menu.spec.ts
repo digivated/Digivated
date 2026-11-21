@@ -1,40 +1,73 @@
-import {test,expect} from '@playwright/test';
-for(const width of [320,390,768,1024,1440])test(`compact menu fits and keeps all destinations at ${width}px`,async({page})=>{
- await page.setViewportSize({width,height:900});
- await page.addInitScript(()=>sessionStorage.setItem('digivated-announcement-seen-v2','1'));
- await page.route('**/api/**',r=>r.fulfill({json:{ready:false,items:[],next:null}}));
- await page.goto('http://127.0.0.1:4321/');
- const trigger=page.locator('.notebook-navigation>summary');
- await expect(trigger).toHaveText('');await expect(trigger.locator('.navigation-trigger-menu')).toBeVisible();
- await expect(page.locator('.dg-header-submit')).toBeVisible();await expect(page.locator('.dg-header-submit')).toHaveAttribute('href','/submit-project');
- const controls=await page.locator('.compact-header-actions>button,.compact-header-actions>a,.notebook-navigation>summary').evaluateAll(es=>es.filter(e=>e.getBoundingClientRect().width>0).map(e=>e.getBoundingClientRect().toJSON()));
- for(let i=0;i<controls.length;i++){expect(controls[i].x).toBeGreaterThanOrEqual(0);expect(controls[i].right).toBeLessThanOrEqual(width);if(i)expect(controls[i].left).toBeGreaterThanOrEqual(controls[i-1].right);}
- await page.screenshot({path:test.info().outputPath(`header-${width}.png`)});
- await trigger.click();await expect(trigger.locator('.navigation-trigger-close')).toBeVisible();
- const menu=page.locator('#explore-navigation');await expect(menu).toBeVisible();
- await expect(menu.locator('.dg-menu-group>a')).toHaveText(['Rankings','Weekly winners','Resources','Market Scanner','Submit a project','Claim a $3 spot','Membership','Embed badges']);
- await expect(menu.locator('.dg-menu-main>a')).toHaveText(['Launches','Products','Threads','News']);
- await expect(menu.locator('.dg-menu-main')).toBeVisible({visible:width<=1000});
- await expect(menu.locator('small,.navigation-icon,.navigation-builder,.navigation-products')).toHaveCount(0);
- await expect(menu.locator('a[href="/membership"]')).toHaveCount(1);await expect(menu.locator('a[href="/submit-project"]')).toHaveCount(1);
- const rect=await menu.boundingBox();expect(rect!.height).toBeLessThan(530);expect(rect!.x).toBeGreaterThanOrEqual(0);expect(rect!.x+rect!.width).toBeLessThanOrEqual(width);
- const material=await menu.evaluate(element=>({color:getComputedStyle(element).backgroundColor,blur:getComputedStyle(element).backdropFilter}));
- expect(Number(material.color.match(/,\s*([\d.]+)\)$/)?.[1])).toBeGreaterThanOrEqual(.96);
- expect(material.blur).toContain('blur(');
- await page.keyboard.press('Escape');await expect(menu).toBeHidden();await expect(page.locator('.notebook-navigation>summary')).toBeFocused();
- expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+import { test, expect } from '@playwright/test';
+
+const base = 'http://127.0.0.1:4321';
+
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/**', route => route.fulfill({ json: { ready: false, items: [], next: null } }));
 });
-test('header supports keyboard menu entry, dismissal and search',async({page})=>{
- await page.route('**/api/**',r=>r.fulfill({json:{ready:false,items:[],next:null}}));
- await page.goto('http://127.0.0.1:4321/threads');
- await expect(page.locator('.header-primary a[aria-current=page]')).toHaveText('Threads');
- const trigger=page.locator('.notebook-navigation>summary');await trigger.focus();await page.keyboard.press('ArrowDown');
- await expect(page.locator('#explore-navigation a:visible').first()).toBeFocused();await expect(page.locator('#explore-navigation a:visible').first()).toHaveText('Rankings');await expect(trigger).toHaveAttribute('aria-expanded','true');
- await page.keyboard.press('Escape');await expect(trigger).toBeFocused();await expect(trigger).toHaveAttribute('aria-expanded','false');
- await page.getByRole('button',{name:'Search Digivated',exact:true}).click();
- await expect(page.locator('#discovery-search')).toBeVisible();await page.keyboard.press('Escape');await expect(page.locator('#discovery-search')).toBeHidden();
+
+for (const width of [320, 390, 768, 1000, 1024, 1440]) {
+  test(`site menu fits and keeps its destinations at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(base + '/');
+    const trigger = page.locator('.site-menu-trigger');
+    const menu = page.locator('#explore-navigation');
+
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    await expect(trigger.locator('.navigation-trigger-menu')).toBeVisible();
+    await expect(page.locator('.dg-header-submit')).toHaveAttribute('href', '/submit-project');
+    await expect(menu).toBeHidden();
+    await trigger.click();
+    await expect(trigger.locator('.navigation-trigger-close')).toBeVisible();
+    await expect(menu).toBeVisible();
+    await expect(menu.locator('.site-menu-group a')).toHaveText([
+      'Submit a project', 'Shop', 'Feedback points', 'Embed badges',
+      'Weekly winners', 'Resources', 'For Investors',
+    ]);
+    await expect(menu.locator('.site-menu-footer a')).toHaveText(['Your projects', 'About', 'Log in or sign up']);
+    await expect(menu.locator('.site-menu-primary a')).toHaveText(['Launches', 'Directory', 'Threads', 'News']);
+    await expect(menu.locator('.site-menu-primary')).toBeVisible({ visible: width <= 1000 });
+    await expect(page.locator('.header-primary')).toBeVisible({ visible: width > 1000 });
+
+    const bounds = (await menu.boundingBox())!;
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width + 1);
+    expect(bounds.y + bounds.height).toBeLessThanOrEqual(900);
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+    await expect(trigger).toBeFocused();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  });
+}
+
+test('header supports keyboard navigation and search', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto(base + '/threads');
+  const trigger = page.locator('.site-menu-trigger');
+  await trigger.focus();
+  await page.keyboard.press('ArrowDown');
+  const menu = page.locator('#explore-navigation');
+  await expect(menu.getByRole('link', { name: 'Launches', exact: true })).toBeFocused();
+  await expect(menu.getByRole('link', { name: 'Threads', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Escape');
+  await expect(trigger).toBeFocused();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+
+  await page.getByRole('button', { name: 'Search Digivated', exact: true }).click();
+  await expect(page.locator('#discovery-search')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#discovery-search')).toBeHidden();
 });
-test('signed-in account label does not overflow the compact mobile header',async({page})=>{
- await page.setViewportSize({width:320,height:900});await page.route('**/api/**',r=>r.fulfill({json:{ready:false,items:[],next:null}}));await page.goto('http://127.0.0.1:4321/');
- await page.locator('#header-account-link').evaluate(e=>e.textContent='My account');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+
+test('the menu opens without JavaScript', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  try {
+    const page = await context.newPage();
+    await page.goto(base + '/');
+    await page.locator('.site-menu-trigger').click();
+    await expect(page.locator('#explore-navigation').getByRole('link', { name: 'Directory', exact: true })).toHaveAttribute('href', '/discover');
+  } finally {
+    await context.close();
+  }
 });

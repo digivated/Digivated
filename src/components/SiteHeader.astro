@@ -1,6 +1,7 @@
 ---
 import { primaryLinks, menuGroups } from '../data/site-navigation.mjs';
 import UiIcon from './UiIcon.astro';
+import '../styles/site-header.css';
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const active = (link: string) => { const href = link.split('?')[0]; if (link.includes('?')) return false; return path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/')) || (href === '/shop' && ['/membership','/products','/promote','/founding-members'].includes(path)); };
 ---
@@ -26,11 +27,14 @@ const active = (link: string) => { const href = link.split('?')[0]; if (link.inc
       </div>
       <a class="dg-header-submit" href="/submit-project" aria-current={active('/submit-project')?'page':undefined}><span>Submit</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <details class="explore-menu notebook-navigation" data-navigation>
-        <summary aria-controls="explore-navigation" aria-label="Open navigation menu" aria-expanded="false"><span class="navigation-trigger-menu"><UiIcon name="menu" size={21}/></span><span class="navigation-trigger-close"><UiIcon name="close" size={21}/></span></summary>
-        <nav id="explore-navigation" class="navigation-panel" aria-label="Explore Digivated">
-          <div class="dg-menu-main">{primaryLinks.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</div>
-          <div class="dg-menu-grid">{menuGroups.map(group=><div class="dg-menu-group"><p class="dg-menu-title">{group.title}</p>{group.links.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</div>)}</div>
-          <div class="navigation-bottom-row"><a id="menu-account-link" href="/account"><span>Your projects</span></a><a href="/about">About</a><a id="menu-login-link" href="/login">Log in or sign up</a></div>
+        <summary class="site-menu-trigger" aria-controls="explore-navigation" aria-label="Open navigation menu" aria-expanded="false"><span class="site-menu-trigger-label">Menu</span><span class="navigation-trigger-menu"><UiIcon name="menu" size={18}/></span><span class="navigation-trigger-close"><UiIcon name="close" size={18}/></span></summary>
+        <nav id="explore-navigation" class="site-menu-panel" aria-label="Site menu">
+          <div class="site-menu-primary">
+            <p class="site-menu-title">Browse</p>
+            <div class="site-menu-links">{primaryLinks.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</div>
+          </div>
+          <div class="site-menu-groups">{menuGroups.map(group=><div class="site-menu-group"><p class="site-menu-title">{group.title}</p><div class="site-menu-links">{group.links.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</div></div>)}</div>
+          <div class="site-menu-footer"><a id="menu-account-link" href="/account">Your projects</a><a href="/about">About</a><a id="menu-login-link" href="/login">Log in or sign up</a></div>
         </nav>
       </details>
     </div>

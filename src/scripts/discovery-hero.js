@@ -9,14 +9,11 @@ if (hero && context && "IntersectionObserver" in window && "ResizeObserver" in w
   const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
   const introDuration = 3600;
   const responseDuration = 650;
-  const points = Array.from({ length: 58 }, (_, i) => ({
-    x: .33 + Math.random() * .65,
-    y: .36 + Math.random() * .63,
-    depth: .25 + Math.random() * .75,
-    phase: Math.random() * Math.PI * 2,
-    tint: i % 3,
-  }));
-  const colors = ['#f4efce', '#bacce7', '#c2dfc7'];
+  const colorFields = [
+    { x: .80, y: .42, radius: .42, color: '#9082dd27' },
+    { x: .69, y: .70, radius: .35, color: '#efac8d32' },
+    { x: .93, y: .60, radius: .44, color: '#7b8ad527' },
+  ];
   const pointer = { x: .65, y: .55, active: false };
   let width = 0;
   let height = 0;
@@ -54,7 +51,7 @@ if (hero && context && "IntersectionObserver" in window && "ResizeObserver" in w
   function resize() {
     width = hero.clientWidth;
     height = hero.clientHeight;
-    const ratio = Math.min(devicePixelRatio || 1, 1.5);
+    const ratio = .65;
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -75,40 +72,17 @@ if (hero && context && "IntersectionObserver" in window && "ResizeObserver" in w
     hero.style.setProperty('--field-y', offsetY.toFixed(2) + 'px');
     context.clearRect(0, 0, width, height);
 
-    const mobile = width < 600;
-    const influence = Math.min(width, height) * .27;
-    const count = mobile ? 32 : points.length;
-    for (let i = 0; i < count; i++) {
-      const light = points[i];
-      const wave = Math.sin(elapsed * .9 + light.phase);
-      let x = (mobile ? (light.x - .33) * 1.4 : light.x) * width;
-      let y = (mobile ? .39 + light.y * .56 : light.y) * height;
-      x += wave * 4 + offsetX * light.depth;
-      y += Math.cos(elapsed * .65 + light.phase) * 3 + offsetY * light.depth;
-
-      let strength = 0;
-      if (pointer.active) {
-        const dx = x - pointer.x * width;
-        const dy = y - pointer.y * height;
-        const distance = Math.hypot(dx, dy);
-        strength = Math.max(0, 1 - distance / influence);
-        const push = strength * 17 / Math.max(distance, 1);
-        x += dx * push;
-        y += dy * push;
-      }
-
-      const radius = .45 + light.depth * 1.05;
-      context.fillStyle = colors[light.tint];
-      context.globalAlpha = .14 + light.depth * .16 + wave * .08 + strength * .3;
-      context.beginPath();
-      context.arc(x, y, radius, 0, Math.PI * 2);
-      context.fill();
-      context.globalAlpha *= .18;
-      context.beginPath();
-      context.arc(x, y, radius * 2.9, 0, Math.PI * 2);
-      context.fill();
+    for (const [index, field] of colorFields.entries()) {
+      const phase = elapsed * .64 + index * 1.9;
+      const radius = height * field.radius;
+      const x = field.x * width + Math.sin(phase) * 14 + offsetX * (index + 1);
+      const y = field.y * height + Math.cos(phase) * 10 + offsetY * (index + 1);
+      const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, field.color);
+      gradient.addColorStop(1, 'transparent');
+      context.fillStyle = gradient;
+      context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
     }
-    context.globalAlpha = 1;
 
     if (now < settleAt) frame = requestAnimationFrame(paint);
     else lastTime = 0;

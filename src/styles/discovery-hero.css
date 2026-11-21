@@ -1,17 +1,14 @@
 @layer daylight {
   html[data-theme="daylight"] body #main > .dg-home-hero {
-    --hero-night: #10211f;
-    --hero-cream: #f5f1e4;
     display: grid !important;
     align-items: center;
     isolation: isolate;
     position: relative;
-    min-block-size: clamp(355px, 41vw, 475px);
-    margin: clamp(14px, 3.2vw, 38px) 0 clamp(23px, 4vw, 46px) !important;
-    padding: clamp(22px, 5vw, 64px) !important;
-    background: var(--hero-night) !important;
-    border: 1px solid #263632 !important;
-    border-radius: 22px !important;
+    min-block-size: clamp(320px,38vw,418px);
+    margin: 0 0 clamp(20px,3vw,34px) !important;
+    padding: clamp(28px,5vw,54px) 0 !important;
+    background: var(--fl-bg) !important;
+    border: 0 !important;
     overflow: hidden;
   }
 
@@ -26,72 +23,46 @@
     pointer-events: none;
   }
 
-  html[data-theme="daylight"] body .dg-discovery-scene { z-index: -1; overflow: hidden; }
+  html[data-theme="daylight"] body .dg-discovery-scene {
+    z-index: -1;
+    overflow: hidden;
+    mask-image: linear-gradient(180deg,transparent,#000 13%,#000 74%,transparent);
+  }
   html[data-theme="daylight"] body .dg-discovery-image {
     display: block;
     object-fit: cover;
-    object-position: center 54%;
-    transform: translate3d(var(--field-x, 0px), var(--field-y, 0px), 0) scale(1.045);
+    object-position: center 55%;
+    transform: translate3d(var(--field-x, 0px),var(--field-y, 0px),0) scale(1.045);
   }
   html[data-theme="daylight"] body .dg-discovery-scene::after {
     content: "";
-    background: linear-gradient(90deg, #0c1917f0 4%, #0c1917cf 34%, #0c191738 63%, transparent 83%) !important;
+    background: linear-gradient(90deg,var(--fl-bg),#f8f7f3ef 31%,#f8f7f340 61%,transparent 84%,var(--fl-bg)) !important;
   }
-  html[data-theme="daylight"] body .dg-discovery-lights { opacity: .72; }
 
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-copy { gap: 15px !important; max-width: 520px !important; }
+  html[data-theme="daylight"] body .dg-home-hero .dg-hero-copy { gap: 14px !important; max-width: 550px !important; }
   html[data-theme="daylight"] body .dg-home-hero #dg-home-title {
     max-width: 15ch;
-    color: var(--hero-cream) !important;
-    font-size: clamp(40px, 6.3vw, 74px) !important;
+    color: var(--fl-ink) !important;
+    font-size: clamp(40px,6vw,70px) !important;
     font-weight: 650 !important;
     line-height: 1.02 !important;
-    letter-spacing: -.063em !important;
+    letter-spacing: -.06em !important;
     text-wrap: balance;
   }
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-lede {
-    max-width: 34ch;
-    color: #e1e3d6 !important;
-    line-height: 1.6 !important;
-  }
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions { margin-top: 9px !important; }
-
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions .dg-btn {
-    min-height: 43px !important;
-    border-radius: 999px !important;
-    border: 1px solid #f5f1e464 !important;
-    background: #10211f91 !important;
-    color: var(--hero-cream) !important;
-    transition: background-color .2s ease, border-color .2s ease !important;
-  }
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions .dg-btn-primary {
-    border-color: var(--hero-cream) !important;
-    background: var(--hero-cream) !important;
-    color: var(--hero-night) !important;
-  }
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions .dg-btn:hover {
-    border-color: #fff !important;
-    background: #273932 !important;
-  }
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions .dg-btn-primary:hover { background: #fff !important; }
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions .dg-btn:focus-visible { outline-color: var(--hero-cream) !important; }
+  html[data-theme="daylight"] body .dg-home-hero .dg-hero-lede { max-width: 34ch; line-height: 1.6 !important; }
+  html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions { margin-top: 6px !important; }
 
   @media (max-width: 680px) {
-    html[data-theme="daylight"] body #main > .dg-home-hero {
-      align-items: start;
-      min-block-size: 392px;
-      border-radius: 16px !important;
-    }
-    html[data-theme="daylight"] body .dg-discovery-image { object-position: 75% 59%; }
+    html[data-theme="daylight"] body #main > .dg-home-hero { min-block-size: 302px; }
+    html[data-theme="daylight"] body .dg-discovery-image { object-position: 70% 59%; }
     html[data-theme="daylight"] body .dg-discovery-scene::after {
-      background: linear-gradient(180deg, #0c1917f2, #0c1917bc 44%, #0c19171f 85%) !important;
+      background: linear-gradient(90deg,#f8f7f3f2,#f8f7f3a6 52%,#f8f7f32c 85%,var(--fl-bg)) !important;
     }
-    html[data-theme="daylight"] body .dg-home-hero #dg-home-title { max-width: 14ch; font-size: clamp(37px, 9.5vw, 54px) !important; }
+    html[data-theme="daylight"] body .dg-home-hero #dg-home-title { max-width: 14ch; font-size: clamp(37px,9.5vw,54px) !important; }
     html[data-theme="daylight"] body .dg-home-hero .dg-hero-lede { max-width: 28ch; }
   }
   @media (prefers-reduced-motion: reduce) {
     html[data-theme="daylight"] body .dg-discovery-image { transform: none; }
     html[data-theme="daylight"] body .dg-discovery-lights { display: none; }
-    html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions .dg-btn { transition: none !important; }
   }
 }

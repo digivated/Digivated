@@ -23,7 +23,7 @@ const mono = name => name.replace(/^(app|get|use|try|go)\.|^the/,'').replace(/[^
   </section>
 
   <section class="rl-top" aria-labelledby="rl-top-title" data-rl-top hidden>
-    <header class="dg-list-head"><h2 id="rl-top-title"><span class="dg-list-title">Most helpful</span></h2><span class="dg-list-rule" aria-hidden="true"></span></header>
+    <header class="dg-list-head"><h2 id="rl-top-title"><span class="dg-list-title">Most helpful</span></h2></header>
     <ol class="rl-top-list" data-rl-top-list></ol>
   </section>
 
@@ -41,7 +41,7 @@ const mono = name => name.replace(/^(app|get|use|try|go)\.|^the/,'').replace(/[^
     <div class="rl-content">
       <p class="rl-status" data-link-status role="status">{nice.format(resourceLinkCount)} links across {resourceGroups.length} categories</p>
       {resourceGroups.map((group,index)=><section class="rl-group" data-link-group={group.id} hidden={index!==0} aria-labelledby={`links-${group.id}`}>
-        <header class="dg-list-head"><h2 id={`links-${group.id}`}><span class="dg-list-title">{group.title}</span></h2><span class="dg-list-rule" aria-hidden="true"></span><span class="rl-count">{group.links.length}</span></header>
+        <header class="dg-list-head"><h2 id={`links-${group.id}`}><span class="dg-list-title">{group.title}</span></h2><span class="rl-count">{group.links.length}</span></header>
         <ul class="rl-grid">{group.links.map((link,order)=>{const p=parts(link);return <li data-link-item data-id={link.id} data-order={order} data-name={p.name} data-cat={group.title} data-link-search-text={`${group.title} ${link.href}`.toLowerCase()}>
           <a class="rl-card" href={link.href} target="_blank" rel="noopener noreferrer"><span class="rl-mono" aria-hidden="true">{mono(p.name)}<img class="rl-icon" src={`https://icons.duckduckgo.com/ip3/${new URL(link.href).hostname}.ico`} alt="" width="20" height="20" loading="lazy" decoding="async" referrerpolicy="no-referrer"/></span><span class="rl-text"><strong>{p.name}</strong>{p.path && <small>{p.path}</small>}</span><span class="rl-open" aria-hidden="true">↗</span></a>
           <button type="button" class="rl-vote" data-vote={link.id} aria-pressed="false" aria-label={`Upvote ${p.name}`}><span class="rl-caret" aria-hidden="true">▲</span><span data-vote-count></span></button>

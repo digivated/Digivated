@@ -14,7 +14,7 @@ const sections = [
     <section id={section.id} class="dg-list" data-board-section={section.key} aria-labelledby={`dg-list-${section.key}`} hidden={section.key === 'upcoming'}>
       <header class="dg-list-head">
         <h2 id={`dg-list-${section.key}`}>{section.live && <span class="dg-dot" aria-hidden="true"></span>}<span class="dg-list-title">{section.title}</span></h2>
-        <span class="dg-list-rule" aria-hidden="true"></span>
+
         <span class="dg-list-count" data-section-count></span>
         {section.live && <a class="dg-points" href="/points" data-points-chip><span aria-hidden="true">✦</span> <span data-points-label>Feedback points</span><span hidden data-points-have><strong data-points-total>0</strong> pts</span><span class="sr-only"> How feedback points work.</span></a>}
       </header>

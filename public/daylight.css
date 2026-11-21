@@ -142,11 +142,6 @@
     font-family: var(--fl-sans) !important;
   }
   html[data-theme="daylight"] body :is(.navigation-panel a,.fl-menu-panel :is(a,button),.platform-footer a):hover { color: var(--fl-accent) !important; }
-  html[data-theme="daylight"] body .navigation-panel .dg-menu-main a[aria-current="page"] {
-    color: var(--fl-accent) !important;
-    background: var(--daylight-wash) !important;
-    border-color: var(--dg-acc-line) !important;
-  }
   html[data-theme="daylight"] dialog::backdrop { background: #1f282569 !important; }
 
   html[data-theme="daylight"] body.home-refresh #main { width: min(100%,var(--daylight-content)) !important; padding-inline: var(--daylight-gutter) !important; }
@@ -191,7 +186,7 @@
   html[data-theme="daylight"] body :is(.dg-list-title,.dg-pill,.dg-badge,.dg-spot-tag,.dg-rail-threads h3 a)::before,
   html[data-theme="daylight"] body :is(.dg-list-title,.dg-pill,.dg-badge,.dg-spot-tag,.dg-rail-threads h3 a)::after { content: none !important; }
   html[data-theme="daylight"] body .dg-list-head .dg-dot { display: none !important; }
-  html[data-theme="daylight"] body .dg-list-rule { border: 0 !important; background: var(--fl-line) !important; }
+  html[data-theme="daylight"] body .dg-list-head > h2 { margin-inline-end: auto !important; }
 
   html[data-theme="daylight"] body :is(.dg-row,.dg-thread-row) {
     border-bottom: 1px solid var(--fl-line) !important;
@@ -246,8 +241,8 @@
   html[data-theme="daylight"] body .dg-dir-filters select { width: 100%; }
   html[data-theme="daylight"] body .dg-dir-collection { border-radius: var(--fl-radius) !important; }
   html[data-theme="daylight"] body :is(.dg-dir-list,.dg-dir-stats,.dg-dir-stats li,.dg-dir-launchnav,.dg-dir-divider) { border-color: var(--fl-line) !important; }
-  html[data-theme="daylight"] body .dg-dir-divider::before { content: none !important; }
-  html[data-theme="daylight"] body .dg-dir-divider::after { border-color: var(--fl-line) !important; border-style: solid; }
+  html[data-theme="daylight"] body .dg-dir-divider::before,
+  html[data-theme="daylight"] body .dg-dir-divider::after { content: none !important; }
   html[data-theme="daylight"] body :is(.dg-dir-launchnav a,.dg-dir-stats span,.dg-dir-divider) { color: var(--fl-muted) !important; }
   html[data-theme="daylight"] body .dg-dir-overview { display: grid; gap: 12px; margin-top: 18px; }
   html[data-theme="daylight"] body .dg-dir-overview h2 { margin: 0 !important; font-size: 18px !important; }
