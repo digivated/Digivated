@@ -1,33 +1,34 @@
 /* Public theme. Component styles continue to own structure and interaction. */
 @layer daylight {
   html[data-theme="daylight"] {
-    --fl-bg: #f8f7f3 !important;
+    --fl-bg: #f7f7f5 !important;
     --fl-panel: #fff !important;
-    --fl-raised: #f0f0eb !important;
+    --fl-raised: #efefeb !important;
     --fl-surface: #fff !important;
-    --fl-line: #dfdfd6 !important;
-    --fl-rule: #dfdfd6 !important;
-    --fl-outline: #dfdfd6 !important;
-    --fl-line-hi: #a6aba4 !important;
-    --fl-ink: #1f2825 !important;
-    --fl-copy: #39443f !important;
-    --fl-muted: #545f59 !important;
-    --fl-accent: #2446b2 !important;
+    --fl-line: #dfdfda !important;
+    --fl-rule: #dfdfda !important;
+    --fl-outline: #dfdfda !important;
+    --fl-line-hi: #a9aaa4 !important;
+    --fl-ink: #191a18 !important;
+    --fl-copy: #363832 !important;
+    --fl-muted: #61635b !important;
+    --fl-accent: #242620 !important;
+    --fl-accent-hover: #34372e !important;
     --fl-ok: #126b51 !important;
     --fl-warn: #78500d !important;
     --fl-bad: #a13441 !important;
     --fl-radius: 8px !important;
     --fl-radius-card: 14px !important;
     --fl-shadow: 0 8px 24px #2433270c !important;
-    --daylight-hover: #f1f2ed;
+    --daylight-hover: #f0f0ec;
     --daylight-content: 1160px;
     --daylight-gutter: clamp(16px,3vw,38px);
     --dg-acc: var(--fl-accent) !important;
-    --dg-acc-ink: #1b358c !important;
-    --dg-acc-text: #2446b2 !important;
-    --dg-acc-line: #bdcaf0 !important;
+    --dg-acc-ink: var(--fl-accent-hover) !important;
+    --dg-acc-text: var(--fl-accent) !important;
+    --dg-acc-line: #c5c6bc !important;
     --dg-r: 8px !important;
-    --daylight-wash: #eaf0ff !important;
+    --daylight-wash: #edede8 !important;
     background: var(--fl-bg) !important;
     color-scheme: light !important;
     scrollbar-color: #bcbfb7 var(--fl-bg) !important;
@@ -97,7 +98,7 @@
     box-shadow: none !important;
     text-decoration: none !important;
   }
-  html[data-theme="daylight"] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.dg-header-submit):hover { background: #1b358c !important; }
+  html[data-theme="daylight"] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.dg-header-submit):hover { background: var(--fl-accent-hover) !important; }
   html[data-theme="daylight"] body :is(.fl-btn:not(.fl-btn-primary),.dg-btn:not(.dg-btn-primary),.dg-more,.fl-btn-oauth) {
     border-color: var(--fl-line-hi) !important;
     border-radius: var(--fl-radius) !important;
@@ -138,7 +139,7 @@
     color: var(--fl-copy) !important;
     font-family: var(--fl-sans) !important;
   }
-  html[data-theme="daylight"] dialog::backdrop { background: #1f282569 !important; }
+  html[data-theme="daylight"] dialog::backdrop { background: #191a1869 !important; }
 
   html[data-theme="daylight"] body.home-refresh #main { width: min(100%,var(--daylight-content)) !important; padding-inline: var(--daylight-gutter) !important; }
   html[data-theme="daylight"] body .dg-pill { color: var(--fl-muted) !important; letter-spacing: .02em !important; }

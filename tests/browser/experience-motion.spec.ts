@@ -20,6 +20,11 @@ test('reduced motion keeps all content visible and native search focus working',
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:900});await page.goto(base+'/');
  await expect(page.locator('#dg-home-title')).toBeVisible();
  await expect(page.locator('[data-discovery-lights]')).toBeHidden();
+ const [hero, title, actions] = await Promise.all(['[data-discovery-hero]', '#dg-home-title', '.dg-hero-actions'].map(selector => page.locator(selector).boundingBox()));
+ for (const bounds of [title, actions]) {
+  expect(Math.abs((hero!.x + hero!.width / 2) - (bounds!.x + bounds!.width / 2))).toBeLessThan(2);
+ }
+
  expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.id==='digivated-content-entrance').length)).toBe(0);
  expect(await page.locator('.dg-hero').evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
  await page.locator('[data-open-search]').click();await expect(page.locator('#unified-search-input')).toBeFocused();
@@ -36,7 +41,7 @@ test('section entrances never leave content hidden and stop after completion',as
 test('hero stays readable when JavaScript is disabled',async({browser})=>{
  const c=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});const p=await c.newPage();await p.goto(base+'/');
  await expect(p.locator('#dg-home-title')).toBeVisible();
- await expect(p.locator('.dg-discovery-image')).toHaveJSProperty('complete', true);
+ await expect(p.locator('.dg-discovery-poster img')).toHaveJSProperty('complete', true);
  await expect(p.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
 });
@@ -54,16 +59,24 @@ test('the new backdrop leaves resources search and home hero actions usable',asy
  await expect(page).toHaveURL(/#this-week$/);
 });
 
-test('discovery artwork responds to a pointer while native launch links remain usable', async ({ page }) => {
+test('the dot matrix changes poses and leaves native launch links usable', async ({ page }) => {
+ await page.route('https://images.higgs.ai/**', route => route.fulfill({
+   contentType: 'image/svg+xml',
+   headers: { 'Access-Control-Allow-Origin': '*' },
+   body: '<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="905"><rect width="1600" height="905" fill="white"/><path d="M0 140h670v85H0zM910 158h690v72H910zM0 605h660v160H0zM910 620h690v160H910z" fill="#222"/></svg>',
+ }));
  await page.setViewportSize({width:1440,height:900});
  await page.goto(base+'/');
  const hero=page.locator('[data-discovery-hero]');
  const canvas=hero.locator('canvas');
  await expect(canvas).toBeVisible();
- await expect.poll(()=>canvas.evaluate(element=>(element as HTMLCanvasElement).width)).toBeGreaterThan(600);
- const bounds = (await hero.boundingBox())!;
- await hero.hover({position:{x:Math.floor(bounds.width * .9),y:Math.floor(bounds.height * .45)}});
- await expect.poll(()=>hero.evaluate(element=>parseFloat((element as HTMLElement).style.getPropertyValue('--field-x')))).toBeGreaterThan(2);
+ const pose = (time:number) => canvas.evaluate((element, seconds)=>{
+   (window as any).__render(seconds);
+   return (element as HTMLCanvasElement).toDataURL();
+ },time);
+ const closed = await pose(0);
+ expect(await pose(8)).not.toBe(closed);
+ expect(await pose(20)).toBe(closed);
  const browse=hero.getByRole('link',{name:'Browse launches',exact:true});
  await browse.focus();
  await page.keyboard.press('Enter');

@@ -130,7 +130,7 @@ for (const width of [1100, 390]) {
   const message=page.getByRole('link',{name:'Message'});
   // The message link uses the shared primary action colors.
   expect(await message.evaluate(el=>getComputedStyle(el).color)).toBe('rgb(255, 255, 255)');
-  expect(await message.evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(36, 70, 178)');
+  expect(await message.evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(36, 38, 32)');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  });
 }

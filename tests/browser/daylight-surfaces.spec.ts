@@ -165,7 +165,7 @@ for (const width of [320, 1440]) {
     await page.goto(base + listing);
     const card = page.locator('.launch-creator');
     await expect(card.getByText(creator)).toBeVisible();
-    await expect(card.getByText(creator)).toHaveCSS('color', 'rgb(31, 40, 37)');
+    await expect(card.getByText(creator)).toHaveCSS('color', 'rgb(25, 26, 24)');
     await expect(card).toHaveCSS('background-color', 'rgb(255, 255, 255)');
     await expect(card.getByRole('link', { name: /Creator profile/ })).toHaveAttribute('href', 'https://example.com/creator');
     await expect(page.getByRole('link', { name: /Visit project/ })).toHaveAttribute('href', 'https://example.com');
@@ -182,7 +182,7 @@ for (const width of [320, 1440]) {
     }
 
     await page.getByRole('link', { name: 'Join the discussion' }).click();
-    await expect(page.locator('#feedback .dg-signin')).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.locator('#feedback .dg-signin')).toHaveCSS('background-color', 'rgb(239, 239, 235)');
     await expect(page.locator('#feedback').getByRole('link', { name: 'Log in' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });

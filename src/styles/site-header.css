@@ -2,11 +2,11 @@
 @layer daylight {
   .dg-shell {
     --shell-glass: #fffffff0;
-    --shell-border: #e2e1d9;
-    --shell-accent: #2446b2;
-    --shell-ink: #1f2825;
-    --shell-muted: #53615a;
-    --shell-active: #edf0ff;
+    --shell-border: var(--fl-line);
+    --shell-accent: var(--fl-accent);
+    --shell-ink: var(--fl-ink);
+    --shell-muted: var(--fl-muted);
+    --shell-active: var(--daylight-wash);
     position: sticky;
     top: 10px;
     z-index: 40;
@@ -150,7 +150,7 @@
     text-decoration: none !important;
   }
   .dg-shell :is(.site-menu-links,.site-menu-footer,.dg-shell-account-panel) :is(a,button):is(:hover,[aria-current="page"]) {
-    background: linear-gradient(100deg,#eef0ff,#f3edf9) !important;
+    background: var(--shell-active) !important;
     color: var(--shell-accent) !important;
   }
   .dg-shell .dg-shell-account-panel { gap: 2px; }
