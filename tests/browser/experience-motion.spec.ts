@@ -61,7 +61,8 @@ test('discovery artwork responds to a pointer while native launch links remain u
  const canvas=hero.locator('canvas');
  await expect(canvas).toBeVisible();
  await expect.poll(()=>canvas.evaluate(element=>(element as HTMLCanvasElement).width)).toBeGreaterThan(600);
- await hero.hover({position:{x:850,y:190}});
+ const bounds = (await hero.boundingBox())!;
+ await hero.hover({position:{x:Math.floor(bounds.width * .9),y:Math.floor(bounds.height * .45)}});
  await expect.poll(()=>hero.evaluate(element=>parseFloat((element as HTMLElement).style.getPropertyValue('--field-x')))).toBeGreaterThan(2);
  const browse=hero.getByRole('link',{name:'Browse launches',exact:true});
  await browse.focus();
