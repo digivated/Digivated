@@ -39,6 +39,16 @@ test('homepage activity, launches and community sections stay in reading order',
     });
     expect(layout, `Layout at ${width}px`).toEqual({ ordered: true, separated: true, overflow: 0 });
   }
+  await page.setViewportSize({ width: 320, height: 900 });
+  const feedback = page.locator('.dg-home-side .dg-fp-strip');
+  const [description, toggle] = await Promise.all([
+    feedback.locator('.dg-fp-strip-copy').boundingBox(),
+    feedback.locator('.dg-fp-toggle').boundingBox(),
+  ]);
+  expect(toggle!.y).toBeGreaterThanOrEqual(description!.y + description!.height);
+  await feedback.locator('summary').click();
+  await expect(feedback.getByRole('link', { name: 'Find a product that needs feedback' })).toHaveAttribute('href', '/discover?sort=needs');
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.getByRole('link', { name: 'Browse launches' }).click();
   await expect(page).toHaveURL(/#this-week$/);
 });

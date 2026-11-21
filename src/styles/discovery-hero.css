@@ -5,9 +5,9 @@
     align-content: start;
     isolation: isolate;
     position: relative;
-    min-block-size: clamp(480px, 67svh, 650px);
+    min-block-size: clamp(440px, 60svh, 580px);
     margin: 0 0 clamp(10px, 2vw, 24px) !important;
-    padding: clamp(36px, 8svh, 82px) 12px 0 !important;
+    padding: clamp(36px, 7svh, 76px) 12px 0 !important;
     background: var(--fl-bg) !important;
     border: 0 !important;
     overflow: hidden;
