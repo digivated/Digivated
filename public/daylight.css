@@ -202,7 +202,7 @@
   }
   html[data-theme="daylight"] body :is(.dg-row,.dg-thread-row,.dg-spot,.rl-card,.dg-rising-item,.dg-note):hover { background: var(--daylight-hover) !important; }
   html[data-theme="daylight"] body .dg-row::before { content: none !important; }
-  html[data-theme="daylight"] body :is(.dg-logo,.dg-spot-logo,.dg-rising-logo,.dg-review-logo,.launch-featured-art) img { object-fit: contain; background-color: var(--fl-raised) !important; }
+  html[data-theme="daylight"] body :is(.dg-logo,.dg-spot-logo,.dg-rising-logo,.dg-review-logo,.launch-featured-art) img { background-color: var(--fl-raised) !important; }
   html[data-theme="daylight"] body :is(.dg-logo,.dg-spot-logo,.dg-rising-logo,.dg-review-logo,.dg-avatar) {
     border-color: var(--fl-line) !important;
     border-radius: 9px !important;

@@ -9,6 +9,7 @@ const projects = Array.from({ length: 27 }, (_, i) => ({
   description: 'An independent project for the directory test.',
   category: i === 0 ? 'Education' : 'Apps',
   status: i === 0 ? 'featured' : 'approved',
+  image: i === 26 ? '/digivated-daylight-mark.png' : '',
   url: 'https://example.com',
   pageUrl: '/projects/listing/directory-' + i,
   votes: { all: 100 - i },
@@ -31,6 +32,8 @@ for (const width of [390, 1440]) {
     await expect(rows).toHaveCount(24);
     await expect(page.getByLabel('Sort by')).toHaveValue('new');
     await expect(rows.first()).toHaveText('Directory fixture 26');
+    await expect(page.locator('#project-directory-26 .dg-logo img')).toHaveCSS('object-fit', 'contain');
+    await expect(page.locator('#project-directory-25 .dg-monogram')).toHaveText('DI');
     await page.getByLabel('Sort by').selectOption('top');
     await expect(page).toHaveURL(/sort=top$/);
     await page.reload();

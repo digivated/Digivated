@@ -134,7 +134,7 @@ html[data-ascii] body .dg-spot-top{display:grid;grid-template-columns:28px minma
 html[data-ascii] body .dg-spot-top strong{overflow:hidden;font-family:var(--fl-sans)!important;font-size:13.5px!important;font-weight:600!important;color:var(--dgb-ink)!important;white-space:nowrap;text-overflow:ellipsis}
 html[data-ascii] body .dg-spot-logo,html[data-ascii] body .dg-logo,html[data-ascii] body .dg-review-logo,html[data-ascii] body .dg-rising-logo{position:relative;display:grid;place-items:center;overflow:hidden;border:1px solid var(--dgb-line-hi)!important;border-radius:2px!important;background-color:#171717!important}
 html[data-ascii] body .dg-spot-logo{width:28px;height:28px}
-html[data-ascii] body :is(.dg-spot-logo,.dg-logo,.dg-review-logo,.dg-rising-logo) img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+html[data-ascii] body :is(.dg-spot-logo,.dg-logo,.dg-review-logo,.dg-rising-logo) img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 html[data-ascii] body :is(.dg-monogram,.dg-review-logo>span){font-family:var(--fl-mono)!important;font-size:11px!important;color:#9a9a9a!important}
 html[data-ascii] body .dg-spot-tag::before{content:'[ '}html[data-ascii] body .dg-spot-tag::after{content:' ]'}
 html[data-ascii] body .dg-spot-tag{justify-self:start;font-style:normal!important;font-family:var(--fl-mono)!important;font-size:9px!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:#777!important}
