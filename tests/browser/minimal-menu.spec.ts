@@ -29,6 +29,12 @@ for (const width of [320, 390, 768, 1000, 1024, 1440]) {
     await expect(menu.locator('.site-menu-primary')).toBeVisible({ visible: width <= 1000 });
     await expect(page.locator('.header-primary')).toBeVisible({ visible: width > 1000 });
 
+    if (width <= 1000) {
+      const primaryBounds = (await menu.locator('.site-menu-primary').boundingBox())!;
+      const groupBounds = (await menu.locator('.site-menu-groups').boundingBox())!;
+      expect(groupBounds.y).toBeGreaterThanOrEqual(primaryBounds.y + primaryBounds.height);
+      expect(groupBounds.width).toBeCloseTo(primaryBounds.width, 0);
+    }
     const bounds = (await menu.boundingBox())!;
     expect(bounds.x).toBeGreaterThanOrEqual(0);
     expect(bounds.x + bounds.width).toBeLessThanOrEqual(width + 1);
