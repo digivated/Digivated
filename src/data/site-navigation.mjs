@@ -6,7 +6,7 @@ const exploreLinks = [
   ['/news', 'News'],
   ['/winners', 'Weekly winners'],
   ['/resources', 'Resources'],
-  ['/invstr', 'Market Scanner'],
+  ['/invstr', 'For Investors'],
 ];
 // The header bar keeps the four places people use most; the rest lives in the menu.
 export const primaryLinks = [
@@ -19,7 +19,7 @@ export const primaryLinks = [
 // bar is hidden, its four destinations show as a row of tabs at the top instead.
 export const menuGroups = [
   { title: 'For makers', links: [['/submit-project', 'Submit a project'], ['/shop', 'Shop'], ['/points', 'Feedback points'], ['/badges', 'Embed badges']] },
-  { title: 'Explore', links: [['/winners', 'Weekly winners'], ['/resources', 'Resources'], ['/invstr', 'Market Scanner']] },
+  { title: 'Explore', links: [['/winners', 'Weekly winners'], ['/resources', 'Resources'], ['/invstr', 'For Investors']] },
 ];
 export const menuLinks = [...primaryLinks, ...menuGroups.flatMap(group => group.links)];
 // Footer: the same destinations as the header and menu, plus account pages and socials.
