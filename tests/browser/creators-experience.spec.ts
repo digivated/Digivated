@@ -175,3 +175,28 @@ for(const width of [320, 768, 1440])for(const ownProfile of [false,true])test(`a
  await expect(page.locator('#creator-posts')).not.toHaveAttribute('hidden');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('Projects works while the creator’s posts are still loading', async ({ page }) => {
+ const person = people[0];
+ let releasePosts!: () => void;
+ const postsReady = new Promise<void>(resolve => { releasePosts = resolve; });
+ await page.route('**/api/creator-profile*', async route => {
+  if (new URL(route.request().url()).searchParams.get('action') === 'posts') {
+   await postsReady;
+   return route.fulfill({ json: { posts: [], next: null } });
+  }
+  return route.fulfill({
+   json: { profile: { name: person.name, bio: person.bio }, projects: [], followers: 0, ownProfile: false },
+  });
+ });
+ await page.goto(base + '/creator?id=' + person.id);
+ try {
+  await expect(page.locator('#creator-public-status')).toHaveText('Loading posts…');
+  await page.getByRole('button', { name: 'Projects', exact: true }).click();
+  await expect(page.locator('#creator-public-status')).toHaveText('No published projects yet.');
+ } finally {
+  releasePosts();
+ }
+ await page.getByRole('button', { name: 'Posts', exact: true }).click();
+ await expect(page.locator('#creator-public-status')).toHaveText('No posts yet.');
+});
