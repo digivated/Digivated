@@ -27,6 +27,7 @@
   .dg-home-hero .dg-hero-actions { margin-top:4px; }
 
   .dg-hero-panel {
+    container:hero-panel / inline-size;
     min-width:0;
     padding:var(--fl-space);
     border:1px solid var(--fl-outline)!important;
@@ -37,12 +38,12 @@
 
   .dg-hero-stats {
     display:grid;
-    grid-template-columns:minmax(0,.8fr) minmax(min-content,1fr) minmax(max-content,1.2fr);
+    grid-template-columns:repeat(3,minmax(min-content,1fr));
     gap:14px 8px;
     margin:0!important;
   }
 
-  .dg-hero-stat { display:grid; grid-template-rows:1fr auto; gap:5px; min-width:0; }
+  .dg-hero-stat { display:grid; grid-row:span 2; grid-template-rows:subgrid; row-gap:5px; min-width:0; }
   .dg-hero-stat dt {
     color:var(--fl-muted);
     font:500 11px/1.35 var(--fl-sans);
@@ -55,13 +56,17 @@
   }
   .dg-hero-stat .dg-hero-activity {
     display:flex;
+    flex-wrap:wrap;
+    align-content:start;
     align-items:baseline;
-    gap:4px;
+    gap:2px 4px;
     white-space:nowrap;
   }
   html[data-ascii] body .dg-hero-activity .dg-dot { font-size:9px!important; }
   .dg-hero-stat.is-countdown {
     grid-column:1/-1;
+    grid-row:auto;
+    grid-template-rows:auto auto;
     padding-bottom:14px;
     border-bottom:1px solid var(--fl-outline);
   }
@@ -78,6 +83,17 @@
     width:var(--launch-progress,0%);
     height:100%;
     background:var(--fl-accent);
+  }
+
+  @container hero-panel (width < 15rem) {
+    .dg-hero-stats { grid-template-columns:minmax(0,1fr); row-gap:10px; }
+    .dg-hero-stat:not(.is-countdown) {
+      grid-row:auto;
+      grid-template-rows:auto;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:baseline;
+      column-gap:8px;
+    }
   }
 
   @media (max-width:680px) {

@@ -29,6 +29,50 @@ test('resource search and category picker use iOS-safe text sizes',async({page})
  }
 });
 
+test('homepage stats fit at narrow sizes and between the desktop sidebars', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.route('**/api/**', route => route.fulfill({ json: { items: [], next: null } }));
+  await page.goto(base + '/');
+  await page.evaluate(() => document.fonts.ready);
+  const stats = page.locator('.dg-hero-stats');
+  await expect(stats.locator('time')).toHaveText(/\d+d \d+h \d+m/);
+
+  for (const width of [320, 390, 681, 1200, 1366, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const counts of [['72', '2', '8,701'], ['12,345', '987', '1,234,567']]) {
+      const layout = await stats.evaluate((grid, values) => {
+        const selectors = ['[data-stat-products]', '[data-site-online]', '[data-site-visits]'];
+        const counters = selectors.map(selector => grid.querySelector(selector)!);
+        counters.forEach((counter, i) => { counter.textContent = values[i]; });
+        const bounds = grid.getBoundingClientRect();
+        return counters.map(counter => {
+          const stat = counter.closest('.dg-hero-stat')!;
+          const cell = stat.getBoundingClientRect();
+          const text = [stat.querySelector('dt')!, counter].flatMap(element => {
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            return [...range.getClientRects()];
+          });
+          const meter = stat.querySelector('.dg-dot');
+          if (meter) text.push(meter.getBoundingClientRect());
+          return {
+            aligned: cell.left >= bounds.left - 1 && cell.right <= bounds.right + 1,
+            fits: text.every(rect => rect.left >= cell.left - 1 && rect.right <= cell.right + 1),
+            row: text[0].top,
+            valueTop: counter.getBoundingClientRect().top,
+          };
+        });
+      }, counts);
+      for (const stat of layout) {
+        expect(stat.aligned && stat.fits, `stats fit at ${width}px with ${counts.join(' / ')}`).toBe(true);
+      }
+      if (layout[0].row === layout[2].row) {
+        expect(Math.abs(layout[0].valueTop - layout[2].valueTop)).toBeLessThan(4);
+      }
+    }
+  }
+});
+
 for(const width of [320,375])test(`primary mobile routes never force sideways scrolling at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:812});
  for(const path of ['/','/discover','/creators','/inbox','/news','/resources','/membership','/account','/login','/submit-project']){
