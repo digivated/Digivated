@@ -3,11 +3,10 @@ import Platform from '../../layouts/Platform.astro';
 import ThreadsSidebar from '../../components/ThreadsSidebar.astro';
 import { forums, THREAD_BODY_MAX, THREAD_TITLE_MAX } from '../../data/forums.mjs';
 ---
-<Platform title="Start a thread" description="Start a new discussion on Digivated Threads." noindex>
-  <div class="dg-forum" data-threads-page="new">
-    <ThreadsSidebar active=""/>
+<Platform showBreadcrumb={false} title="Start a thread" description="Start a new discussion on Digivated Threads." noindex>
+  <div class="dg-forum dg-forum-secondary" data-threads-page="new">
     <section class="dg-forum-main" aria-labelledby="dg-new-title">
-      <header class="dg-forum-header dg-forum-header-plain">
+      <header class="dg-forum-header">
         <div>
           <h1 id="dg-new-title">Start a new thread</h1>
           <p>Ask a question, share what you learned or get feedback. One topic per thread.</p>
@@ -27,6 +26,7 @@ import { forums, THREAD_BODY_MAX, THREAD_TITLE_MAX } from '../../data/forums.mjs
         <p class="dg-forum-status" data-new-status role="status"></p>
       </form>
     </section>
+    <ThreadsSidebar active=""/>
   </div>
   <script>import '../../scripts/threads.js';</script>
 </Platform>

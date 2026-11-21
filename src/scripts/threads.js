@@ -1,5 +1,5 @@
 // Threads (Product Hunt-style forums): list, thread page and new-thread form.
-import { forums, forumBySlug } from '../data/forums.mjs';
+import { forumBySlug } from '../data/forums.mjs';
 import { api, avatar, mountDiscussion, personName, session, signInPrompt, timeAgo } from './discussion.js';
 import { cardIconMarkup } from '../lib/card-icons.mjs';
 
@@ -29,7 +29,7 @@ function byline(thread, withForum = true) {
   const p = el('p', null, 'dg-thread-meta');
   p.append(avatar(thread.author, 20), personName(thread.author, 'span'));
   const time = el('time', timeAgo(thread.createdAt)); time.dateTime = thread.createdAt; time.title = new Date(thread.createdAt).toLocaleString(); p.append(time);
-  if (withForum && forumBySlug[thread.forum]) { const forum = el('a', `/${thread.forum}`, 'dg-thread-forum'); forum.href = `/threads?forum=${thread.forum}`; p.append(forum); }
+  if (withForum && forumBySlug[thread.forum]) { const forum = el('a', forumBySlug[thread.forum].name, 'dg-thread-forum'); forum.href = `/threads?forum=${thread.forum}`; p.append(forum); }
   return p;
 }
 
@@ -41,6 +41,7 @@ async function listPage() {
   const query = (params.get('q') || '').slice(0, 80);
   let sort = ['trending', 'new', 'top'].includes(params.get('sort')) ? params.get('sort') : 'trending';
   let offset = 0;
+  let requestVersion = 0;
   const list = $('[data-thread-list]'), status = $('[data-forum-status]'), more = $('[data-forum-more]');
   const active = view === 'recent' ? 'recent' : forum || (query ? '' : 'home');
   document.querySelectorAll('[data-forum-link]').forEach(link => { if (link.dataset.forumLink === active) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current'); });
@@ -48,7 +49,6 @@ async function listPage() {
   const info = forum ? forumBySlug[forum] : null;
   $('[data-forum-title]').textContent = view === 'recent' ? 'Recent comments' : query ? `Search: “${query}”` : info ? info.name : 'Threads';
   $('[data-forum-description]').textContent = view === 'recent' ? 'The latest replies across threads and product discussions.' : query ? 'Threads whose title or text match your search.' : info ? info.description : 'Ask questions, get feedback and talk about building with other makers.';
-  $('[data-forum-glyph]').textContent = view === 'recent' ? '*' : query ? '/' : info ? info.glyph : '~';
   if (info) $('[data-forum-new]').href = `/threads/new?forum=${forum}`;
   document.title = `${view === 'recent' ? 'Recent comments' : info ? info.name : 'Threads'} · Digivated`;
 
@@ -57,7 +57,6 @@ async function listPage() {
     try {
       const { comments } = await api('/api/threads?view=recent');
       status.textContent = comments.length ? '' : 'No comments yet.'; status.hidden = !!comments.length;
-      list.classList.add('is-recent');
       list.replaceChildren(...comments.map(c => {
         const li = el('li', null, 'dg-thread-row dg-recent-row');
         const meta = el('p', null, 'dg-thread-meta'); meta.append(avatar(c.author, 20), personName(c.author, 'span'), el('span', c.subject.type === 'project' ? 'on product' : 'in', 'dg-muted'));
@@ -92,11 +91,13 @@ async function listPage() {
     return li;
   }
   async function load(append) {
+    const version = ++requestVersion;
     more.hidden = true;
     if (!append) { status.hidden = false; status.textContent = 'Loading threads…'; list.replaceChildren(); }
     try {
       const qs = new URLSearchParams({ sort, offset: String(offset), ...(forum ? { forum } : {}), ...(query ? { q: query } : {}) });
       const data = await api(`/api/threads?${qs}`);
+      if (version !== requestVersion) return;
       $('[data-forum-total]').textContent = data.total ? `${data.total} ${data.total === 1 ? 'thread' : 'threads'}` : '';
       list.append(...data.threads.map(row));
       status.hidden = !!list.children.length;
@@ -105,7 +106,11 @@ async function listPage() {
         const start = el('a', 'Start the first one →'); start.href = forum ? `/threads/new?forum=${forum}` : '/threads/new'; status.append(start);
       }
       offset = data.next ?? offset; more.hidden = data.next == null;
-    } catch (error) { status.hidden = false; status.textContent = error.message; }
+    } catch (error) {
+      if (version !== requestVersion) return;
+      status.hidden = false; status.textContent = error.message;
+      if (append) more.hidden = false;
+    }
   }
   more.addEventListener('click', () => load(true));
   load(false);
@@ -165,7 +170,6 @@ async function newPage() {
       status.textContent = error.message; submit.disabled = false;
     } finally { submit.removeAttribute('aria-busy'); }
   });
-  void forums;
 }
 
 if (page === 'list') listPage();

@@ -2,18 +2,17 @@
 import Platform from '../../layouts/Platform.astro';
 import ThreadsSidebar from '../../components/ThreadsSidebar.astro';
 ---
-<Platform title="Threads" description="Ask questions, get feedback and talk about building with other independent makers on Digivated Threads." canonicalPath="/threads">
+<Platform showBreadcrumb={false} title="Threads" description="Ask questions, get feedback and talk about building with other independent makers on Digivated Threads." canonicalPath="/threads">
   <div class="dg-forum" data-threads-page="list">
+    <header class="dg-forum-header">
+      <div>
+        <h1 id="dg-forum-title" data-forum-title>Threads</h1>
+        <p data-forum-description>Ask questions, get feedback and talk about building with other makers.</p>
+      </div>
+      <a class="dg-btn dg-btn-primary" href="/threads/new" data-forum-new>Start a thread</a>
+    </header>
     <ThreadsSidebar/>
     <section class="dg-forum-main" aria-labelledby="dg-forum-title">
-      <header class="dg-forum-header">
-        <span class="dg-forum-mark" data-forum-glyph aria-hidden="true">~</span>
-        <div>
-          <h1 id="dg-forum-title" data-forum-title>Threads</h1>
-          <p data-forum-description>Ask questions, get feedback and talk about building with other makers.</p>
-        </div>
-        <a class="dg-btn dg-btn-primary dg-forum-header-new" href="/threads/new" data-forum-new>Start new thread</a>
-      </header>
       <div class="dg-forum-toolbar" data-forum-toolbar>
         <div class="dg-forum-sort" role="group" aria-label="Sort threads">
           <button type="button" data-sort="trending" aria-pressed="true">Trending</button>

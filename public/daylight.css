@@ -55,12 +55,12 @@
 
   html[data-theme="daylight"] body :where(*) { font-family: var(--fl-sans) !important; }
   html[data-theme="daylight"] body :is(code,pre,kbd,samp,.dg-dot,.fl-badge-code *) { font-family: var(--fl-mono) !important; }
-  html[data-theme="daylight"] body :is(.platform-footer .footer-inner,#main) { background-image: none !important; }
+  html[data-theme="daylight"] body #main { background-image: none !important; }
   html[data-theme="daylight"] body :is(.site-breadcrumbs,.creator-back) {
     letter-spacing: 0 !important;
     text-transform: none !important;
   }
-  html[data-theme="daylight"] body :is(.page-intro,.page-heading,.fl-auth-heading,.news-masthead,.dg-forum-header,.dg-hero-copy) h1 {
+  html[data-theme="daylight"] body :is(.page-intro,.page-heading,.fl-auth-heading,.news-masthead,.dg-hero-copy) h1 {
     font-size: clamp(30px,4.2vw,48px) !important;
     font-weight: 650 !important;
     line-height: 1.12 !important;
@@ -110,7 +110,7 @@
   }
   html[data-theme="daylight"] body :is(.fl-link,.fl-switch .fl-link) { color: var(--fl-accent) !important; }
 
-  html[data-theme="daylight"] body :is(.topbar,.platform-footer,.packet-workspace footer) {
+  html[data-theme="daylight"] body .topbar {
     background: var(--fl-bg) !important;
     color: var(--fl-copy) !important;
     border-color: var(--fl-line) !important;
@@ -134,11 +134,10 @@
     box-shadow: var(--fl-shadow) !important;
   }
   html[data-theme="daylight"] body .dg-bell-panel { top: var(--bell-top,82px) !important; right: var(--bell-right,12px) !important; }
-  html[data-theme="daylight"] body :is(.site-breadcrumbs,.site-breadcrumbs a,.platform-footer a,.platform-footer p) {
+  html[data-theme="daylight"] body :is(.site-breadcrumbs,.site-breadcrumbs a) {
     color: var(--fl-copy) !important;
     font-family: var(--fl-sans) !important;
   }
-  html[data-theme="daylight"] body .platform-footer a:hover { color: var(--fl-accent) !important; }
   html[data-theme="daylight"] dialog::backdrop { background: #1f282569 !important; }
 
   html[data-theme="daylight"] body.home-refresh #main { width: min(100%,var(--daylight-content)) !important; padding-inline: var(--daylight-gutter) !important; }
@@ -150,6 +149,7 @@
     gap: clamp(30px,5vw,56px) !important;
     margin: 0 !important;
   }
+  html[data-theme="daylight"] body.home-refresh #main > .dg-about { margin-top: 28px !important; }
   html[data-theme="daylight"] body .dg-home-extras { display: grid; gap: 16px; border-top: 1px solid var(--fl-line) !important; padding-top: 20px; }
   html[data-theme="daylight"] body .dg-home-extras h2 { margin: 0 !important; font-size: 21px !important; }
   html[data-theme="daylight"] body .dg-home-extras h3 { margin: 0 !important; font-size: 15px !important; }
@@ -196,11 +196,11 @@
   html[data-theme="daylight"] body .news-story h3 { font-size: 18px !important; line-height: 1.35 !important; }
   html[data-theme="daylight"] body :is(.news-story p,.submission-account-callout p,.creator-post p,.dg-d-body) { font-size: 15px !important; line-height: 1.6 !important; }
 
-  html[data-theme="daylight"] body :is(.dg-row,.dg-thread-row) {
+  html[data-theme="daylight"] body .dg-row {
     border-bottom: 1px solid var(--fl-line) !important;
     background-image: none !important;
   }
-  html[data-theme="daylight"] body :is(.dg-row,.dg-thread-row,.dg-spot,.rl-card,.dg-rising-item,.dg-note):hover { background: var(--daylight-hover) !important; }
+  html[data-theme="daylight"] body :is(.dg-row,.dg-spot,.rl-card,.dg-rising-item,.dg-note):hover { background: var(--daylight-hover) !important; }
   html[data-theme="daylight"] body .dg-row::before { content: none !important; }
   html[data-theme="daylight"] body :is(.dg-logo,.dg-spot-logo,.dg-rising-logo,.dg-review-logo,.launch-featured-art) img { background-color: var(--fl-raised) !important; }
   html[data-theme="daylight"] body :is(.dg-logo,.dg-spot-logo,.dg-rising-logo,.dg-review-logo,.dg-avatar) {
@@ -269,13 +269,13 @@
     background: var(--fl-raised) !important;
     color: var(--fl-ink) !important;
   }
-  html[data-theme="daylight"] body :is(.login-tabs button,.fl-label-row label,.submission-disclosure summary,.fl-badges-page details summary,.dg-forum-sort button,.dg-dir-collection button,.rl-status,.rl-description,.dg-menu-title,.site-breadcrumbs [aria-current="page"],.footer-bottom,.dg-note-link,.fl-badges-intro,.rl-cats button,.shop-for,.shop-note,.shop-price span) {
+  html[data-theme="daylight"] body :is(.login-tabs button,.fl-label-row label,.submission-disclosure summary,.fl-badges-page details summary,.dg-dir-collection button,.rl-status,.rl-description,.dg-menu-title,.site-breadcrumbs [aria-current="page"],.dg-note-link,.fl-badges-intro,.rl-cats button,.shop-for,.shop-note,.shop-price span) {
     color: var(--fl-muted) !important;
   }
-  html[data-theme="daylight"] body :is(.fl-badges-intro a,.fl-badges-notes a,.dg-forum-status a,.submission-account-actions a:not(.primary),.dg-rail-threads h2 a) {
+  html[data-theme="daylight"] body :is(.fl-badges-intro a,.fl-badges-notes a,.submission-account-actions a:not(.primary),.dg-rail-threads h2 a) {
     color: var(--fl-accent) !important;
   }
-  html[data-theme="daylight"] body :is(.login-tabs button[aria-selected="true"],.dg-forum-sort button[aria-pressed="true"],.navigation-panel a[aria-current="page"],.dg-tier:has(input:checked),#project-import.dg-import,.fl-badge-tag,.dg-fp-icon,.dg-fp-toggle,.dg-fp-node,.dg-fp-reward,.rl-cats button[aria-current="true"],.rl-cats button:hover) {
+  html[data-theme="daylight"] body :is(.login-tabs button[aria-selected="true"],.navigation-panel a[aria-current="page"],.dg-tier:has(input:checked),#project-import.dg-import,.fl-badge-tag,.dg-fp-icon,.dg-fp-toggle,.dg-fp-node,.dg-fp-reward,.rl-cats button[aria-current="true"],.rl-cats button:hover) {
     border-color: var(--dg-acc-line) !important;
     border-radius: var(--fl-radius) !important;
     background: var(--daylight-wash) !important;
@@ -302,14 +302,13 @@
   html[data-theme="daylight"] body .rl-mono.has-icon { color: transparent !important; }
 
   /* Shared interaction states for older public components. */
-  html[data-theme="daylight"] body :is(.creator-public-intro,.creator-profile-editor,.creator-post,.creator-projects article,.creator-inbox-list,.creator-inbox-thread,.inbox-picker,.creator-cover,.news-masthead,.packet-workspace .panel,.packet-workspace #site-navigation,.packet-workspace .start-steps li) {
+  html[data-theme="daylight"] body :is(.creator-public-intro,.creator-profile-editor,.creator-post,.creator-projects article,.creator-inbox-list,.creator-inbox-thread,.inbox-picker,.news-masthead,.packet-workspace .panel,.packet-workspace #site-navigation,.packet-workspace .start-steps li) {
     background: var(--fl-surface) !important;
     border-color: var(--fl-line) !important;
     color: var(--fl-copy) !important;
   }
-  html[data-theme="daylight"] body .creator-cover { background: var(--fl-raised) !important; }
   html[data-theme="daylight"] body :is(.creator-public-intro .creator-avatar,.creator-tabs,.creator-timeline,.creator-projects,.creator-inbox-list-head,.fl-badge-bar,.saved-backup) { border-color: var(--fl-line) !important; }
-  html[data-theme="daylight"] body :is(.creator-cover span,.creator-back,#creator-bio,.creator-followers,#creator-public-status,.creator-tabs button,.creator-inbox-list-head button,.dg-winners-label,.saved-backup summary,#main form label,.dg-fp-strip-copy span,.packet-context a) { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body :is(.creator-back,#creator-bio,.creator-followers,#creator-public-status,.creator-tabs button,.creator-inbox-list-head button,.dg-winners-label,.saved-backup summary,#main form label,.dg-fp-strip-copy span,.packet-context a) { color: var(--fl-muted) !important; }
   html[data-theme="daylight"] body :is(.creator-tabs .active,.dg-moved a,.creator-profile-links a,.fl-menu-points,.fl-menu-points b,.dg-dir-needs a,.dg-dir-dialog-hint) { color: var(--fl-accent) !important; }
   html[data-theme="daylight"] body .creator-tabs .active { border-bottom-color: var(--fl-accent) !important; }
   html[data-theme="daylight"] body :is(.dg-moved,.dg-dir-needs) { color: var(--fl-copy) !important; background: var(--fl-raised) !important; border-color: var(--fl-line) !important; border-radius: var(--fl-radius) !important; }

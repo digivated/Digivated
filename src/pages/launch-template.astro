@@ -1,4 +1,5 @@
 ---
+import '../styles/launch-profile.css';
 import Platform from '../layouts/Platform.astro';
 ---
-<Platform title="LAUNCH_TITLE" description="LAUNCH_DESCRIPTION"><Fragment set:html="<!--LAUNCH_BODY-->"/><script>import '../scripts/launch-page.js'; import '../scripts/visit-feedback.js';</script></Platform>
+<Platform showBreadcrumb={false} title="LAUNCH_TITLE" description="LAUNCH_DESCRIPTION"><Fragment set:html="<!--LAUNCH_BODY-->"/><script>import '../scripts/launch-page.js'; import '../scripts/visit-feedback.js';</script></Platform>

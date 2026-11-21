@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import '../styles/reference-design.css';
 import '../styles/packet-theme.css';
+import SiteFooter from '../components/SiteFooter.astro';
 const {title='UI Prompt Package',section='home',description}=Astro.props;
 const workspace=['library','fixes','builder','workflows','checklists','learn','toolkit'].includes(section);
 const links=[['start','Start Here'],['library','Prompt library'],['fixes','Help me choose'],['builder','Customize a prompt'],['workflows','Step-by-step guides'],['checklists','Review checklists'],['learn','Learn the basics'],['toolkit','My saved work']];
@@ -19,7 +20,7 @@ import '../styles/readability.css';
 <header class="topbar"><a class="brand" href="/ui-ux-prompt-packet" aria-label="Prompt Packet overview"><span class="brand-logo-wrap"><img class="brand-logo" src="/digivated-daylight-mark.png" width="43" height="43" alt=""/></span><span>Digivated<span class="brand-caption">UI/UX Prompt Packet</span></span></a><nav class="public-nav" aria-label="Packet navigation"><a href="/start">Start Here</a><a href="/library">Prompt Library</a></nav><span class="edition" id="edition-label">Free edition</span><a href="/access" class="button small access-link">Packet Access</a><a href="/membership" class="button primary small purchase-link">Membership</a><button id="menu-toggle" class="button small menu-toggle" aria-expanded="false" aria-controls="site-navigation">Tools</button></header>
 <div class="packet-context"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/ui-ux-prompt-packet">Prompt Packet</a></div>
 <div class="shell"><aside id="site-navigation"><nav aria-label="Packet tools"><a href="/ui-ux-prompt-packet">Packet overview</a>{links.map(([slug,label])=><a href={'/'+slug} aria-current={section===slug?'page':undefined}>{label}</a>)}</nav><a class="return-access" href="/access">Already purchased? Activate your packet</a><div class="side-note"><span class="tiny">NEW TO AI PROMPTS?</span><p>Start with one screen and one thing to improve.</p><a href="/start">Follow the quick guide</a></div></aside>
-<main id="main" tabindex="-1"><slot/></main></div><div class="ascii-rule" aria-hidden="true">--[ + ]------[ / / / ]------[ + ]--</div><footer><a class="footer-brand" href="/">Back to Digivated</a><span>Useful tools and independent projects.</span><a class="footer-social" href="https://www.threads.com/@digivated" target="_blank" rel="noopener noreferrer" aria-label="Digivated on Threads, @digivated"><span class="footer-logo-wrap"><img class="footer-logo" src="/digivated-daylight-mark.png" width="34" height="34" alt=""/></span>@digivated</a><div class="footer-links"><a href="/membership">Membership</a><a href="/about">About Digivated</a><a href="/privacy">Privacy & Data</a><a href="/terms">Terms of Use</a></div></footer>
+<main id="main" tabindex="-1"><slot/></main></div><div class="ascii-rule" aria-hidden="true">--[ + ]------[ / / / ]------[ + ]--</div><SiteFooter compact />
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script is:inline src="/analytics.js"></script>
 <script is:inline defer src="/_vercel/insights/script.js"></script>
@@ -27,8 +28,6 @@ import '../styles/readability.css';
 <style>
 .brand-logo-wrap{display:block;width:43px;height:43px;overflow:hidden;flex:none;border-radius:0;background:transparent}
 .brand-logo{display:block;width:43px;height:43px;object-fit:contain;filter:none}
-.footer-logo-wrap{display:block;width:34px;height:34px;overflow:hidden;border-radius:0;background:transparent}
-.footer-logo{display:block;width:34px;height:34px;object-fit:contain;filter:none}
 .header-social{color:var(--muted);font-size:.8125rem;font-weight:600;text-decoration:none;white-space:nowrap;padding:8px 10px;border:1px solid var(--line);border-radius:999px}
 .header-social:hover{color:var(--accent);border-color:var(--accent)}
 @media(max-width:600px){.brand-logo-wrap{width:36px;height:36px;border-radius:0}.brand-logo{width:36px;height:36px}.topbar .header-social{grid-column:1;grid-row:2;justify-self:start;padding:5px 9px}.topbar .purchase-link{grid-row:3}}

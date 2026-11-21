@@ -41,7 +41,6 @@ html body.platform,html body.platform.home-refresh {
   background:radial-gradient(ellipse at 60% 45%,#ffffff0f 0%,#ffffff06 48%,transparent 72%);
 }
 /* The background is decorative; opaque reading surfaces retain their contrast. */
-html body.platform .platform-footer { background:#101010e8; }
 @media(max-width:767px) {
   .site-atmosphere {
     background:

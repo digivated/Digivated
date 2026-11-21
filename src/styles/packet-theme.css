@@ -6,8 +6,8 @@ body.packet-workspace { --accent:#d0d0d0; --muted:#a2a2a2; --line:#3a3a3a; --pap
 .packet-context a { display:inline-flex; align-items:center; min-height:32px; text-decoration:none; }
 .packet-context a:hover { text-decoration:underline; }
 .packet-workspace .topbar { max-width:1520px; min-height:88px; }
-.packet-workspace .brand-logo-wrap,.packet-workspace .footer-logo-wrap { background:transparent; border-radius:0; }
-.packet-workspace .brand-logo,.packet-workspace .footer-logo { object-fit:contain; transform:scale(1.35); }
+.packet-workspace .brand-logo-wrap { background:transparent; border-radius:0; }
+.packet-workspace .brand-logo { object-fit:contain; transform:scale(1.35); }
 .packet-workspace .brand-caption { color:var(--muted); }
 body.packet-workspace .shell { background:#121212; border-color:var(--line); box-shadow:none; }
 body.packet-workspace aside,body.packet-workspace[data-surface=editorial] aside.is-open { background:#181818; border-color:var(--line); }
@@ -55,8 +55,8 @@ body.packet-workspace,body.packet-workspace[data-surface=workspace] {
 }
 .packet-workspace .brand { min-width:190px; font-weight:700; letter-spacing:-.04em; color:#f4f4f4; }
 .packet-workspace .brand-caption { color:#a6a6a6; font-size:.69rem; letter-spacing:0; }
-.packet-workspace .brand-logo-wrap,.packet-workspace .footer-logo-wrap { display:grid; place-items:center; flex:none; background:transparent; border-radius:0; }
-.packet-workspace .brand-logo,.packet-workspace .footer-logo { object-fit:contain; filter:invert(1); transform:none; }
+.packet-workspace .brand-logo-wrap { display:grid; place-items:center; flex:none; background:transparent; border-radius:0; }
+.packet-workspace .brand-logo { object-fit:contain; filter:invert(1); transform:none; }
 .packet-workspace .public-nav a { color:#b3b3b3; text-decoration:none; font-size:.875rem; }
 .packet-workspace .public-nav a:hover { color:#fff; }
 .packet-workspace .edition { color:#a6a6a6; font-size:.75rem; white-space:nowrap; }
@@ -104,7 +104,6 @@ body.packet-workspace .fix-choice:hover { background:#2b2b2b; border-color:#d0d0
 .packet-workspace .toast { background:#252525; border-color:#515151; color:#fff; }
 .packet-workspace .breadcrumbs { color:#a6a6a6; }
 body.packet-workspace footer { background:#0c0c0c; border-color:#363636; padding-inline:max(24px,calc((100vw - 1160px)/2)); }
-.packet-workspace .footer-logo-wrap img { border:0; border-radius:0; }
 
 @media(max-width:850px) {
   body.packet-workspace[data-surface=workspace] .shell { display:block; }

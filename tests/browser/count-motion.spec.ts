@@ -3,7 +3,7 @@ const base='http://127.0.0.1:4321';
 async function setup(page){
  await page.route('**/api/**',r=>r.fulfill({json:{items:[],next:null,ready:false}}));
  await page.goto(base+'/');await page.waitForTimeout(250);
- const counter=page.locator('[data-site-visits]');await counter.evaluate(e=>e.textContent='1,234');await page.waitForTimeout(30);return counter;
+ const counter=page.locator('[data-site-visits]');await counter.scrollIntoViewIfNeeded();await expect(counter).toBeInViewport();await counter.evaluate(e=>e.textContent='1,234');await page.waitForTimeout(30);return counter;
 }
 test('a changed live total settles and highlights once, without replacing its content',async({page})=>{
  const counter=await setup(page);await counter.evaluate(e=>e.textContent='1,235');
@@ -15,7 +15,7 @@ test('a changed live total settles and highlights once, without replacing its co
 });
 test('reduced motion and offscreen counters update immediately without animation',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});const counter=await setup(page);await counter.evaluate(e=>e.textContent='1,235');await page.waitForTimeout(30);await expect(counter).toHaveText('1,235');expect(await counter.evaluate(e=>e.getAnimations().length)).toBe(0);
- await page.emulateMedia({reducedMotion:'no-preference'});await page.locator('.platform-footer').scrollIntoViewIfNeeded();await counter.evaluate(e=>e.textContent='1,236');await page.waitForTimeout(30);expect(await counter.evaluate(e=>e.getAnimations().length)).toBe(0);
+ await page.emulateMedia({reducedMotion:'no-preference'});await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));await expect(counter).not.toBeInViewport();await counter.evaluate(e=>e.textContent='1,236');await page.waitForTimeout(30);expect(await counter.evaluate(e=>e.getAnimations().length)).toBe(0);
 });
 test('project view updates retain icons and honor a reduced-motion change mid-effect',async({page})=>{
  const counter=await setup(page);

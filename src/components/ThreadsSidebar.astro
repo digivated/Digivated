@@ -1,21 +1,22 @@
 ---
+import '../styles/threads.css';
 import { forums } from '../data/forums.mjs';
-const { active = 'home' } = Astro.props;
+const { active = 'home', showStart = false } = Astro.props;
 ---
 <aside class="dg-forum-nav" aria-label="Threads navigation">
   <nav class="dg-forum-links" aria-label="Threads">
-    <a href="/threads" data-forum-link="home" aria-current={active === 'home' ? 'page' : undefined}><span aria-hidden="true">~</span>Home</a>
-    <a href="/threads?view=recent" data-forum-link="recent" aria-current={active === 'recent' ? 'page' : undefined}><span aria-hidden="true">*</span>Recent comments</a>
+    <a href="/threads" data-forum-link="home" aria-current={active === 'home' ? 'page' : undefined}>All threads</a>
+    <a href="/threads?view=recent" data-forum-link="recent" aria-current={active === 'recent' ? 'page' : undefined}>Recent comments</a>
   </nav>
   <form class="dg-forum-search" action="/threads" method="get" role="search">
     <label class="sr-only" for="dg-forum-search">Search all threads</label>
-    <input id="dg-forum-search" name="q" type="search" placeholder="Search all threads" maxlength="80" autocomplete="off"/>
+    <input id="dg-forum-search" name="q" type="search" placeholder="Search threads" maxlength="80" autocomplete="off"/>
+    <button class="dg-btn" type="submit">Search</button>
   </form>
-  <a class="dg-btn dg-btn-primary dg-forum-new" href="/threads/new">+ Start new thread</a>
   <p class="dg-forum-heading">Topic forums</p>
   <nav class="dg-forum-list" aria-label="Topic forums">
     {forums.map(forum => <a href={`/threads?forum=${forum.slug}`} data-forum-link={forum.slug} aria-current={active === forum.slug ? 'page' : undefined}><span class="dg-forum-glyph" aria-hidden="true">{forum.glyph}</span><span>{forum.name}</span></a>)}
   </nav>
-  <p class="dg-forum-heading">Product forums</p>
-  <p class="dg-forum-aside">Every launch has its own discussion. Open any project and scroll to <a href="/discover">Discussion</a>.</p>
+  {showStart && <a href="/threads/new" class="dg-forum-start">Start a thread</a>}
+  <a class="dg-forum-directory" href="/discover">Browse product discussions <span aria-hidden="true">↗</span></a>
 </aside>

@@ -49,6 +49,19 @@ const to = 'digivatedbiz@gmail.com';
   }
 </script>
 <style is:global>
+  @layer daylight {
+    html[data-theme="daylight"] body .dg-bug :is(label,.dg-bug-note,.dg-bug-note span,label span) {
+      color: var(--fl-copy) !important;
+    }
+    html[data-theme="daylight"] body .dg-bug h2 {
+      color: var(--fl-ink) !important;
+      font-size: 18px !important;
+      letter-spacing: -.015em !important;
+      text-transform: none !important;
+    }
+    html[data-theme="daylight"] body .dg-bug-close { color: var(--fl-muted) !important; }
+  }
+
   html[data-ascii] body dialog.dg-bug{width:min(520px,calc(100% - 32px));max-height:calc(100svh - 48px);overflow:auto;margin:auto;padding:22px!important;border:1px solid #3b2f52!important;border-radius:0!important;background:#0b0a0e!important;background-image:radial-gradient(70% 120% at 100% 0%,#c3a0ff14,transparent 60%)!important;color:#e8e8e8;box-shadow:0 24px 80px #000c}
   html[data-ascii] body dialog.dg-bug::backdrop{background:#000000b8;backdrop-filter:blur(2px)}
   html[data-ascii] body .dg-bug-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}

@@ -120,16 +120,12 @@ for (const width of [1100, 390]) {
   await expect(page.locator('#creator-public-status')).toBeVisible();
   // Sample the layout in one frame so entrance motion cannot skew comparisons.
   await page.evaluate(()=>document.fonts.ready);
-  const [avatar,label,tabs,status,cover]=await page.evaluate(()=>
-   ['#creator-avatar','.creator-cover>span','.creator-public>.creator-tabs','#creator-public-status','.creator-cover'].map(selector=>{
-    const el=document.querySelector(selector)!;const r=el.getBoundingClientRect();
-    return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,visible:getComputedStyle(el).display!=='none'};
-   }));
-  expect(cover.bottom-cover.top).toBeGreaterThan(80);
-  if(label.visible){
-   const overlaps=!(avatar.right<=label.left||avatar.left>=label.right||avatar.bottom<=label.top||avatar.top>=label.bottom);
-   expect(overlaps,'avatar must not cover the banner label').toBe(false);
-  }
+  const [avatar, title, tabs, status, intro] = await page.evaluate(() =>
+   ['#creator-avatar', '#creator-title', '.creator-public > .creator-tabs', '#creator-public-status', '.creator-public-intro'].map(selector =>
+    document.querySelector(selector)!.getBoundingClientRect().toJSON()));
+  expect(avatar.top).toBeGreaterThanOrEqual(intro.top);
+  expect(avatar.right).toBeLessThanOrEqual(title.left);
+  expect((await page.locator('.creator-cover').count())).toBe(0);
   expect(status.top,'status text sits under the tabs').toBeGreaterThanOrEqual(tabs.bottom-1);
   const message=page.getByRole('link',{name:'Message'});
   // The message link uses the shared primary action colors.
