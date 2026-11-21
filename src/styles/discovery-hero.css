@@ -1,80 +1,45 @@
 @layer daylight {
   html[data-theme="daylight"] body #main > .dg-home-hero {
     display: grid !important;
-    justify-items: center !important;
-    align-content: start;
-    isolation: isolate;
+    grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+    align-items: center;
     position: relative;
-    min-block-size: clamp(440px, 60svh, 580px);
-    margin: 0 0 clamp(10px, 2vw, 24px) !important;
-    padding: clamp(36px, 7svh, 76px) 12px 0 !important;
-    background: var(--fl-bg) !important;
-    border: 0 !important;
+    isolation: isolate;
+    min-height: clamp(430px, 57svh, 600px);
+    margin: clamp(12px, 3vw, 30px) 0 clamp(16px, 3vw, 30px) !important;
+    padding: clamp(22px, 4vw, 52px) !important;
+    border: 1px solid var(--fl-line) !important;
+    border-radius: clamp(20px, 3vw, 36px) !important;
+    background: radial-gradient(ellipse at 76% 38%, #fbfbf8 0, #edede6 62%, #e9eae1 100%) !important;
     overflow: hidden;
   }
-  .dg-discovery-scene,
-  .dg-discovery-poster,
-  .dg-discovery-poster img,
-  .dg-discovery-lights {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-  .dg-discovery-scene {
-    z-index: -1;
-    mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
-  }
-  .dg-discovery-poster img { display: block; object-fit: fill; }
-  .dg-discovery-lights { visibility: hidden; }
-  [data-halftone-ready] .dg-discovery-lights { visibility: visible; }
-  [data-halftone-ready] .dg-discovery-poster { visibility: hidden; }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-copy {
-    justify-items: center !important;
-    gap: 14px !important;
-    max-width: 590px !important;
-    text-align: center;
+    gap: 18px !important;
+    min-width: 0;
+    max-width: 560px;
+    z-index: 1;
   }
   html[data-theme="daylight"] body .dg-home-hero #dg-home-title {
-    max-width: 100%;
     margin: 0 !important;
-    color: var(--fl-ink) !important;
-    font-size: clamp(42px, 5.9vw, 78px) !important;
-    font-weight: 550 !important;
-    line-height: .99 !important;
-    letter-spacing: -.065em !important;
+    font-size: clamp(55px, 6.9vw, 98px) !important;
+    font-weight: 570 !important;
+    line-height: .91 !important;
+    letter-spacing: -.087em !important;
+    text-wrap: initial;
   }
-  .dg-home-hero #dg-home-title span { display: block; color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body .dg-home-hero #dg-home-title span {
+    color: #5b5e53 !important;
+  }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-lede {
+    max-width: 32ch;
     margin: 0 !important;
-    max-width: 38ch;
     color: var(--fl-copy) !important;
-    font-size: clamp(14px, 1.25vw, 17px) !important;
+    font-size: clamp(15px, 1.4vw, 18px) !important;
     line-height: 1.55 !important;
   }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions {
-    justify-content: center !important;
-    align-items: center;
-    gap: 8px 12px;
-    margin-top: 12px !important;
-  }
-  .dg-hero-glow {
-    position: relative;
-    isolation: isolate;
-    display: inline-flex;
-  }
-  .dg-home-hero .dg-hero-glow::before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    inset: auto 10% -5px;
-    height: 15px;
-    border-radius: 50%;
-    background: linear-gradient(90deg,#e6af4e,#86d4a0,#78bfd9,#aa8cdd,#ed85bf,#f3aa77) !important;
-    filter: blur(9px);
-    opacity: .82;
-    pointer-events: none;
+    gap: 8px;
+    margin-top: 8px !important;
   }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions .dg-btn {
     min-height: 44px !important;
@@ -83,20 +48,62 @@
     white-space: nowrap;
   }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-secondary {
-    background: var(--fl-bg) !important;
+    background: #f9f9f380 !important;
     border-color: var(--fl-line-hi) !important;
   }
-  html[data-theme="daylight"] body .dg-home-hero .dg-hero-secondary:hover { background: var(--fl-raised) !important; }
-  @media (max-width: 640px) {
-    html[data-theme="daylight"] body #main > .dg-home-hero {
-      min-block-size: clamp(410px, 59svh, 485px);
-      padding-inline: 0 !important;
-    }
-    html[data-theme="daylight"] body .dg-home-hero #dg-home-title { font-size: clamp(38px, 11vw, 58px) !important; }
-    html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions .dg-btn { padding-inline: 11px !important; }
+  html[data-theme="daylight"] body .dg-home-hero .dg-hero-secondary:hover { background: var(--fl-surface) !important; }
+
+  .dg-scene-stage {
+    position: relative;
+    min-width: 0;
+    height: 100%;
+    min-height: 320px;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .dg-discovery-lights { display: none; }
-    [data-halftone-ready] .dg-discovery-poster { visibility: visible; }
+  .dg-scene-stage::before,
+  .dg-scene-stage::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+  }
+  .dg-scene-stage::before {
+    inset: 0;
+    background-image: radial-gradient(circle, #35392a55 .65px, transparent 1px);
+    background-size: 8px 8px;
+    mask-image: radial-gradient(ellipse at center, #000 5%, transparent 68%);
+  }
+  .dg-scene-stage::after {
+    inset: 8% 11%;
+    border-block: 1px solid #23261b1f;
+    mask-image: linear-gradient(90deg, black 6%, transparent 6%, transparent 94%, black 94%);
+  }
+  .dg-scene-stage .dg-launch-scene-hero {
+    position: absolute;
+    inset: -8% -9%;
+  }
+  @media (max-width: 850px) {
+    html[data-theme="daylight"] body #main > .dg-home-hero {
+      grid-template-columns: minmax(0, 1fr);
+      padding: clamp(18px, 5vw, 34px) !important;
+    }
+    html[data-theme="daylight"] body .dg-home-hero .dg-hero-copy {
+      justify-items: center !important;
+      max-width: none;
+      text-align: center;
+      gap: 12px !important;
+    }
+    html[data-theme="daylight"] body .dg-home-hero #dg-home-title {
+      font-size: clamp(49px, 11vw, 86px) !important;
+    }
+    html[data-theme="daylight"] body .dg-home-hero #dg-home-title br { display: none; }
+    html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions { justify-content: center; }
+    .dg-scene-stage { min-height: clamp(194px, 53vw, 300px); }
+    .dg-scene-stage .dg-launch-scene-hero { inset: -7% -6%; }
+  }
+  @media (max-width: 420px) {
+    html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions .dg-btn {
+      padding-inline: 10px !important;
+      font-size: 12px !important;
+    }
+    html[data-theme="daylight"] body .dg-scene-toggle { right: -3px; bottom: -3px; }
   }
 }

@@ -1,24 +1,21 @@
 ---
 import UiIcon from './UiIcon.astro';
+import LaunchScene from './LaunchScene.astro';
+import SceneToggle from './SceneToggle.astro';
 import '../styles/discovery-hero.css';
 ---
 
 <section class="dg-hero dg-home-hero" aria-labelledby="dg-home-title" data-discovery-hero>
-  <div class="dg-discovery-scene" aria-hidden="true">
-    <picture class="dg-discovery-poster">
-      <source media="(max-width: 640px)" srcset="/media/launch-hands-mobile.webp"/>
-      <img src="/media/launch-hands.webp" width="1120" height="590" fetchpriority="high" alt=""/>
-    </picture>
-    <canvas class="dg-discovery-lights" data-discovery-lights></canvas>
-  </div>
   <div class="dg-hero-copy">
-    <h1 id="dg-home-title"><span>Discover</span> new products</h1>
-    <p class="dg-hero-lede">Find useful tools from independent makers. Launch your own for free.</p>
+    <h1 id="dg-home-title">Find what’s<br/> <span>next.</span></h1>
+    <p class="dg-hero-lede">Discover useful products from independent makers. Launch your own for free.</p>
     <div class="dg-hero-actions">
-      <span class="dg-hero-glow"><a class="dg-btn dg-btn-primary" href="#this-week">Browse launches <UiIcon name="arrow" size={16}/></a></span>
+      <a class="dg-btn dg-btn-primary" href="#this-week">Browse launches <UiIcon name="arrow" size={16}/></a>
       <a class="dg-btn dg-hero-secondary" href="/submit-project">Submit your product</a>
     </div>
   </div>
+  <div class="dg-scene-stage">
+    <LaunchScene mode="lens" size="hero"/>
+    <SceneToggle/>
+  </div>
 </section>
-
-<script>import '../scripts/discovery-hero.js';</script>

@@ -46,10 +46,9 @@ test('editorial details animate during scrolling and menu interaction', async ({
   await page.route('**/api/**', route => route.fulfill({ json: { items: [], next: null, ready: false } }));
   await page.goto(base + '/discover');
 
-  const art = page.locator('.dg-motion-field');
-  await expect(art).toHaveAttribute('data-motion-entered', '');
-  const scene = await art.evaluate(node => getComputedStyle(node, '::before').animationName);
-  expect(scene).toBe('dg-halftone-arrive');
+  const art = page.locator('.dg-launch-scene-masthead');
+  await expect(art).toHaveAttribute('data-scene-ready', '');
+  await expect(art.locator('canvas')).toBeVisible();
 
   const menu = page.locator('.site-menu-trigger');
   await menu.click();
@@ -62,9 +61,11 @@ test('editorial details animate during scrolling and menu interaction', async ({
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await expect.poll(() => track.evaluate(node => Number((node as HTMLElement).style.getPropertyValue('--reading-progress')))).toBeGreaterThan(.95);
   await expect(page.locator('.dg-footer-imprint')).toHaveAttribute('data-motion-entered', '');
+  await expect(page.locator('.dg-launch-scene-footer canvas')).toBeVisible();
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(track).toBeHidden();
   await expect(page.locator('html')).not.toHaveAttribute('data-motion-ready', '');
-  expect(await art.evaluate(node => getComputedStyle(node, '::before').animationName)).toBe('none');
+  await expect(art.locator('canvas')).toBeHidden();
+  await expect(art.locator('img')).toBeVisible();
 });
