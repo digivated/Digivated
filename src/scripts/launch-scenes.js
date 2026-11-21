@@ -38,6 +38,7 @@ function render(now) {
 
 function sync() {
   const allowed = permitted();
+  document.documentElement.toggleAttribute('data-artwork-paused', paused);
   const canAnimate = !preference.matches && !connection?.saveData;
   controls.forEach(button => {
     button.hidden = !canAnimate;

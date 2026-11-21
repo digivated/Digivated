@@ -53,8 +53,12 @@ test('homepage stats fit at narrow sizes and between the desktop sidebars', asyn
             range.selectNodeContents(element);
             return [...range.getClientRects()];
           });
-          const meter = stat.querySelector('.dg-dot');
-          if (meter) text.push(meter.getBoundingClientRect());
+          const meter = stat.querySelector('.dg-activity-mark');
+          if (meter) {
+            const mark = meter.getBoundingClientRect();
+            text.push(mark);
+            if (counter.getBoundingClientRect().right > mark.left + 1) return { aligned: false, fits: false, row: 0, valueTop: 0 };
+          }
           return {
             aligned: cell.left >= bounds.left - 1 && cell.right <= bounds.right + 1,
             fits: text.every(rect => rect.left >= cell.left - 1 && rect.right <= cell.right + 1),

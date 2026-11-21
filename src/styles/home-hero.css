@@ -63,7 +63,55 @@
     block-size: 100%;
     background: var(--fl-accent);
   }
-  html[data-theme="daylight"] body .dg-hero-activity .dg-dot { font-size: 9px !important; }
+  .home-refresh .dg-activity-mark {
+    position: relative;
+    display: block;
+    align-self: center;
+    flex: 0 0 28px;
+    height: 15px;
+    color: #575361 !important;
+    pointer-events: none;
+  }
+  .home-refresh .dg-activity-dot,
+  .home-refresh .dg-activity-mark-orbit::before {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50% !important;
+    background-color: currentColor !important;
+  }
+  .home-refresh .dg-activity-dot {
+    color: inherit !important;
+    top: var(--dot-y);
+    left: var(--dot-x);
+    opacity: .55;
+  }
+  .home-refresh .dg-activity-mark-orbit { color: #396456 !important; }
+  .home-refresh .dg-activity-mark-orbit::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    top: 5.5px;
+    left: 13px;
+    opacity: .85;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html[data-motion-ready] .dg-activity-mark-orbit .dg-activity-dot {
+      animation: dg-orbit-signal 2.5s ease-in-out var(--dot-delay) infinite;
+    }
+    html[data-motion-ready] .dg-activity-mark-ribbon .dg-activity-dot {
+      animation: dg-ribbon-signal 3.4s ease-in-out var(--dot-delay) infinite;
+    }
+    html[data-artwork-paused] .dg-activity-mark .dg-activity-dot { animation-play-state: paused; }
+    @keyframes dg-orbit-signal {
+      0%, 100% { opacity: .4; scale: .8; }
+      32% { opacity: 1; scale: 1.55; }
+    }
+    @keyframes dg-ribbon-signal {
+      0%, 100% { opacity: .43; translate: 0 1px; }
+      42% { opacity: .92; translate: 0 -1px; }
+    }
+  }
 
   .home-refresh .dg-board { gap: var(--section-space); }
   html[data-theme="daylight"] body.home-refresh .dg-board > .dg-list:not(:first-child) {

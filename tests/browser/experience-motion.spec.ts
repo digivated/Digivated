@@ -20,6 +20,7 @@ test('reduced motion keeps all content visible and native search focus working',
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:900});await page.goto(base+'/');
  await expect(page.locator('#dg-home-title')).toBeVisible();
  await expect(page.locator('.dg-launch-scene-hero canvas')).toBeHidden();
+ await expect(page.locator('.dg-activity-dot').first()).toHaveCSS('animation-name', 'none');
  const [hero, title, actions] = await Promise.all(['[data-discovery-hero]', '#dg-home-title', '.dg-hero-actions'].map(selector => page.locator(selector).boundingBox()));
  for (const bounds of [title, actions]) {
   expect(bounds!.x).toBeCloseTo(hero!.x, 0);
@@ -67,6 +68,12 @@ test('the shared current moves, pauses, and keeps native launch links usable', a
  const hero = page.locator('[data-discovery-hero]');
  const canvas = page.locator('.dg-launch-scene-hero canvas');
  await expect(canvas).toBeVisible();
+ const orbit = page.locator('.dg-activity-mark-orbit .dg-activity-dot').first();
+ const ribbon = page.locator('.dg-activity-mark-ribbon .dg-activity-dot').first();
+ await expect(orbit).toHaveCSS('background-color', 'rgb(57, 100, 86)');
+ await expect(ribbon).toHaveCSS('background-color', 'rgb(87, 83, 97)');
+ await expect(orbit).toHaveCSS('animation-name', 'dg-orbit-signal');
+ await expect(ribbon).toHaveCSS('animation-name', 'dg-ribbon-signal');
  const capture = () => canvas.evaluate(element => (element as HTMLCanvasElement).toDataURL());
  const first = await capture();
  await page.clock.runFor(8000);
@@ -74,12 +81,15 @@ test('the shared current moves, pauses, and keeps native launch links usable', a
 
  const pause = hero.getByRole('button', { name: 'Pause animation' });
  await pause.click();
+ await expect(orbit).toHaveCSS('animation-play-state', 'paused');
+ await expect(ribbon).toHaveCSS('animation-play-state', 'paused');
  const frozen = await capture();
  await page.clock.runFor(1200);
  expect(await capture()).toBe(frozen);
  await hero.getByRole('button', { name: 'Play animation' }).click();
  await page.clock.runFor(1200);
  expect(await capture()).not.toBe(frozen);
+ await expect(ribbon).toHaveCSS('animation-play-state', 'running');
 
  await page.getByRole('link', { name: 'Browse launches', exact: true }).focus();
  await page.keyboard.press('Enter');
