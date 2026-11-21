@@ -21,6 +21,7 @@
   .launch-page .launch-creator { display: block !important; }
   .launch-page [hidden] { display: none !important; }
   .launch-hero { display: flex; align-items: flex-start; gap: 14px; }
+  .launch-page a > svg { width: 1em; height: 1em; flex: none; vertical-align: -.15em; }
   .launch-hero-copy { min-width: 0; }
   .launch-identity {
     position: relative; isolation: isolate; display: grid; place-items: center;
@@ -129,6 +130,12 @@
     .launch-layout { grid-template-columns: minmax(0, 1fr); }
   }
   @media (max-width: 480px) {
-    .launch-hero { flex-direction: column; }
+    .launch-hero { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 5px 12px; }
+    .launch-hero-copy { display: contents; }
+    .launch-hero .launch-identity { grid-column: 1; grid-row: 1 / span 3; }
+    .launch-hero :is(.launch-labels, h1, .launch-byline) { grid-column: 2; margin: 0 !important; }
+    .launch-hero :is(.actions, [data-share-status]) { grid-column: 1 / -1; }
+    .launch-hero .actions { margin-top: 8px; }
+    .launch-hero [data-share-status] { margin-block: 0; }
   }
 }

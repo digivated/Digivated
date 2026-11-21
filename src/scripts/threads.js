@@ -172,6 +172,14 @@ async function newPage() {
   });
 }
 
+const topics = $('.dg-forum-topics');
+if (topics) {
+  const narrow = matchMedia('(max-width: 760px)');
+  const syncTopics = () => { topics.open = !narrow.matches; };
+  syncTopics();
+  narrow.addEventListener('change', syncTopics);
+}
+
 if (page === 'list') listPage();
 else if (page === 'thread') threadPage();
 else if (page === 'new') newPage();

@@ -85,3 +85,15 @@ test('the menu opens without JavaScript', async ({ browser }) => {
     await context.close();
   }
 });
+
+test('the phone menu stays inside a short viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 360 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(base + '/');
+  await page.locator('.site-menu-trigger').click();
+  const menu = page.locator('#explore-navigation');
+  const bounds = (await menu.boundingBox())!;
+  expect(bounds.y + bounds.height).toBeLessThanOrEqual(360);
+  await menu.getByRole('link', { name: 'About', exact: true }).click();
+  await expect(page).toHaveURL(/\/about$/);
+});

@@ -37,6 +37,13 @@ for (const width of [320, 768, 1440]) {
     const area = page.locator('[data-threads-page]');
     await expect(area.getByRole('heading', { name: 'Threads', exact: true })).toBeVisible();
     await expect(area.getByRole('link', { name: 'Start a thread', exact: true })).toHaveCount(1);
+    const topics = area.locator('.dg-forum-topics');
+    if (width <= 760) {
+      await expect(topics.getByRole('navigation')).toBeHidden();
+      await topics.locator('summary').click();
+    }
+    await expect(topics.getByRole('link', { name: 'General' })).toBeVisible();
+
     const row = area.locator('.dg-thread-row').first();
     await expect(row.getByRole('link', { name: thread.title })).toHaveAttribute('href', '/threads/' + thread.slug);
     await expect(row.getByRole('link', { name: '1 reply' })).toHaveAttribute('href', '/threads/' + thread.slug + '#replies');
@@ -84,7 +91,7 @@ test('signed-in composer keeps its forum selection, publishes and opens replies'
     return route.fulfill({ json: { thread } });
   });
   await page.route('**/api/threads?slug=fixture-thread-1', route => route.fulfill({ json: { thread } }));
-  await page.route('**/api/discussions?**', route => route.fulfill({ json: { comments: [reply] } }));
+  await page.route('**/api/discussions?**', route => route.fulfill({ json: { comments: [reply], viewer: { signedIn: true, name: 'Example maker', needsName: true } } }));
   await page.route(base + '/threads/' + thread.slug, route => route.fulfill({
     path: 'dist/threads/thread/index.html', contentType: 'text/html',
   }));
@@ -100,6 +107,11 @@ test('signed-in composer keeps its forum selection, publishes and opens replies'
   expect(post).toMatchObject({ action: 'create', forum: 'feedback', title: thread.title, body: thread.body });
   await page.locator('[data-thread-actions]').getByRole('link', { name: 'Reply' }).click();
   await expect(page.getByText(reply.body)).toBeVisible();
+  for (const field of [page.getByRole('textbox', { name: 'Write a comment' }), page.getByRole('textbox', { name: 'Display name (shown with your posts)' })]) {
+    await expect(field).toBeVisible();
+    expect(await field.evaluate(element => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(16);
+  }
+
   await expect(page).toHaveURL(/#replies$/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
@@ -157,6 +169,18 @@ for (const width of [320, 1440]) {
     await expect(card).toHaveCSS('background-color', 'rgb(255, 255, 255)');
     await expect(card.getByRole('link', { name: /Creator profile/ })).toHaveAttribute('href', 'https://example.com/creator');
     await expect(page.getByRole('link', { name: /Visit project/ })).toHaveAttribute('href', 'https://example.com');
+    await expect(page.getByRole('link', { name: /Visit project/ }).locator('svg')).toHaveCount(1);
+    if (width <= 480) {
+      const [logo, title, actions] = await Promise.all([
+        page.locator('.launch-identity').boundingBox(),
+        page.getByRole('heading', { name: 'Product fixture' }).boundingBox(),
+        page.locator('.launch-hero .actions').boundingBox(),
+      ]);
+      expect(logo!.x + logo!.width).toBeLessThanOrEqual(title!.x);
+      expect(actions!.x).toBeCloseTo(logo!.x);
+      expect(actions!.y).toBeGreaterThanOrEqual(title!.y + title!.height);
+    }
+
     await page.getByRole('link', { name: 'Join the discussion' }).click();
     await expect(page.locator('#feedback .dg-signin')).toHaveCSS('background-color', 'rgb(240, 240, 235)');
     await expect(page.locator('#feedback').getByRole('link', { name: 'Log in' })).toBeVisible();

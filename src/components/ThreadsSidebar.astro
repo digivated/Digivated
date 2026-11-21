@@ -13,10 +13,12 @@ const { active = 'home', showStart = false } = Astro.props;
     <input id="dg-forum-search" name="q" type="search" placeholder="Search threads" maxlength="80" autocomplete="off"/>
     <button class="dg-btn" type="submit">Search</button>
   </form>
-  <p class="dg-forum-heading">Topic forums</p>
-  <nav class="dg-forum-list" aria-label="Topic forums">
-    {forums.map(forum => <a href={`/threads?forum=${forum.slug}`} data-forum-link={forum.slug} aria-current={active === forum.slug ? 'page' : undefined}><span class="dg-forum-glyph" aria-hidden="true">{forum.glyph}</span><span>{forum.name}</span></a>)}
-  </nav>
+  <details class="dg-forum-topics" open>
+    <summary>Topic forums</summary>
+    <nav class="dg-forum-list" aria-label="Topic forums">
+      {forums.map(forum => <a href={`/threads?forum=${forum.slug}`} data-forum-link={forum.slug} aria-current={active === forum.slug ? 'page' : undefined}><span class="dg-forum-glyph" aria-hidden="true">{forum.glyph}</span><span>{forum.name}</span></a>)}
+    </nav>
+  </details>
   {showStart && <a href="/threads/new" class="dg-forum-start">Start a thread</a>}
   <a class="dg-forum-directory" href="/discover">Browse product discussions <span aria-hidden="true">↗</span></a>
 </aside>

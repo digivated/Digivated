@@ -74,6 +74,7 @@ html#digivated-root body.platform .creator-inbox-page :is(a,button,input,textare
     font-size: clamp(26px, 4vw, 38px) !important;
     line-height: 1.12 !important;
   }
+  .creator-public .creator-profile-links a svg { vertical-align: -.1em; }
   .creator-public #creator-bio { max-width: 64ch; margin: 0 !important; }
   .creator-public .creator-followers { margin: 8px 0 !important; }
   .creator-public .creator-profile-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0 !important; }

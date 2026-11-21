@@ -360,6 +360,11 @@
       white-space: normal !important;
     }
   }
+  @media (max-width: 480px), (pointer: coarse) {
+    html[data-theme="daylight"] body :is(input:not([type="checkbox"],[type="radio"],[type="range"],[type="file"],[type="hidden"]), textarea, select) {
+      font-size: max(16px, 1em) !important;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     html[data-theme="daylight"] body :is(.dg-row .dg-logo,.dg-spot,.news-story,.rl-card,.resource-card) { transition: none !important; }
   }

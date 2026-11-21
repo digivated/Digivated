@@ -207,7 +207,7 @@
     .dg-shell .site-menu-primary .site-menu-links { grid-template-columns: repeat(2,minmax(0,1fr)); }
   }
   @media (max-width: 550px) {
-    .dg-shell { top: 6px; width: calc(100% - 16px); margin-top: 6px !important; }
+    .dg-shell { top: max(6px, env(safe-area-inset-top)); width: calc(100% - 16px); margin-top: 6px !important; }
     .dg-shell .dg-shell-bar { gap: 4px; min-height: 56px; padding: 5px 6px !important; border-radius: 17px !important; }
     .dg-shell .dg-shell-tools { gap: 2px; }
     .dg-shell .dg-shell-brand { padding-inline: 3px !important; }
@@ -217,7 +217,7 @@
     .dg-shell .dg-header-submit svg { display: none; }
     .dg-shell :is(.dg-shell-disclosure,.dg-shell-account) { position: static; }
     .dg-shell :is(.site-menu-panel,.dg-shell-account-panel) { top: calc(100% + 7px); right: 0; }
-    .dg-shell .site-menu-panel { left: 0; width: auto; max-height: min(82dvh,660px); }
+    .dg-shell .site-menu-panel { left: 0; width: auto; max-height: min(82dvh, 660px, calc(100dvh - 78px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); }
   }
   @media (max-width: 359px) {
     .dg-shell .site-menu-trigger-label,
