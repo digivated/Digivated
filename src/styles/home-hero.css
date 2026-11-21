@@ -109,12 +109,12 @@
   .home-refresh .dg-home-side { container: home-community / inline-size; }
   @container home-community (max-width: 410px) {
     html[data-theme="daylight"] body.home-refresh .dg-home-side .dg-fp-strip summary {
-      grid-template-columns: auto minmax(0, 1fr) auto;
-      grid-template-areas: "icon copy copy" ". me toggle";
+      grid-template-columns: auto minmax(0, 1fr) auto !important;
+      grid-template-areas: "icon copy copy" ". me toggle" !important;
     }
     html[data-theme="daylight"] body.home-refresh .dg-home-side .dg-fp-toggle { justify-self: end; }
     html[data-theme="daylight"] body.home-refresh .dg-home-side .dg-fp-step {
-      grid-template-columns: 30px minmax(0, 1fr);
+      grid-template-columns: 30px minmax(0, 1fr) !important;
     }
     .home-refresh .dg-home-side .dg-fp-reward { grid-column: 2; justify-self: start; }
   }
