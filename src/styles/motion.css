@@ -1,15 +1,3 @@
-/* Figma: Atmosphere / 24s gentle drift. Translate avoids repainting the gradient. */
-@keyframes digivated-atmosphere {
-  0% { animation-timing-function:ease-in-out; translate:0 0; }
-  50% { animation-timing-function:ease-in-out; translate:18px -12px; }
-  100% { translate:0 0; }
-}
-@media(prefers-reduced-motion:no-preference) {
-  html body.platform.light-theme .site-atmosphere {
-    inset:-24px;
-    animation:digivated-atmosphere 24s linear infinite;
-  }
-}
 html body.platform.light-theme :is(.project-collections,.resource-topics) { position:relative; }
 html body.platform.light-theme .has-motion-tabs button[aria-pressed=true]::after { display:none; }
 html body.platform.light-theme .motion-tab-indicator {
@@ -40,7 +28,6 @@ html body.platform.light-theme .motion-toast {
 }
 html body.platform.light-theme .motion-toast[hidden] { display:none; }
 @media(prefers-reduced-motion:reduce) {
-  html body.platform.light-theme .site-atmosphere { animation:none; translate:none; }
   html body.platform.light-theme .has-motion-tabs .motion-tab-indicator,
   html body.platform.light-theme :is(.project-collections,.resource-topics) button,
   html body.platform.light-theme [data-like-id],html body.platform.light-theme [data-save-id] { transition:none; }

@@ -1,10 +1,11 @@
 // Progressive, one-shot entrances: content never depends on JavaScript to be visible.
-// Only small, static headings move; the reel, fixed navigation and dialogs
-// retain their own positioning, animation and focus behavior.
+// Individual headings move, so sticky elements, dialogs and form controls
+// retain their own positioning and focus behavior.
+const main = document.querySelector('main#main');
 const preference = matchMedia('(prefers-reduced-motion: reduce)');
-const groups = [
-  ...document.querySelectorAll('#home-title,.page-intro h1,#creators-title,#news-title,.resources-hero h1,.home-featured-heading,.project-reel-heading,.news-section-heading h2,.ranking-personal-heading h2,.launch-list-heading h2'),
-].slice(0, 12);
+const headings = [...(main?.querySelectorAll('h1, [role="heading"][aria-level="1"]') || [])].slice(0, 2);
+const sections = [...(main?.querySelectorAll('h2:not(.sr-only):not([hidden])') || [])].slice(0, 5);
+const groups = [...headings, ...sections];
 const pending = new Set(groups);
 const active = new Map();
 let observer;
@@ -22,9 +23,9 @@ function reveal(element) {
   // No fill mode or inline opacity: cancellation and failures restore the base UI.
   try {
     const animation = element.animate([
-      { opacity: .9, transform: 'translateY(3px)' },
+      { opacity: .91, transform: 'translateY(4px)' },
       { opacity: 1, transform: 'translateY(0)' },
-    ], { duration: 180, easing: 'cubic-bezier(.2,.75,.25,1)' });
+    ], { duration: 240, easing: 'cubic-bezier(.2,.75,.25,1)' });
     animation.id = 'digivated-content-entrance';
     active.set(element, animation);
     animation.finished.then(() => finish(element), () => {
@@ -41,7 +42,11 @@ function start() {
   }
   for (const element of pending) {
     const bounds = element.getBoundingClientRect();
-    if (!bounds.width || !bounds.height) { pending.delete(element); continue; }
+    if (!bounds.width || !bounds.height) {
+      if (observer) observer.observe(element);
+      else pending.delete(element);
+      continue;
+    }
     if (bounds.bottom <= 0) { pending.delete(element); continue; }
     if (bounds.top < innerHeight) reveal(element);
     else if (observer) observer.observe(element);
@@ -58,6 +63,8 @@ preference.addEventListener('change', () => {
   else start();
 });
 document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+window.addEventListener('pagehide', stop);
+window.addEventListener('pageshow', event => { if (event.persisted) start(); });
 // A control is immediately stable when tabbed to, even during its entrance.
 document.addEventListener('focusin', event => {
   for (const element of active.keys()) if (element.contains(event.target)) finish(element);

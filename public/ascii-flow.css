@@ -277,9 +277,6 @@ html[data-ascii] body .compact-site-header .header-inner::before{left:calc(var(-
 html[data-ascii] body .compact-site-header .header-inner::after{right:calc(var(--canvas-gutter) - 28px)}
 @media (max-width:760px){html[data-ascii] body :is(.compact-site-header .header-inner,.platform:not(.owner) #main){background-image:none!important}html[data-ascii] body .compact-site-header .header-inner::before,html[data-ascii] body .compact-site-header .header-inner::after{display:none}}
 
-/* Page intros end in a ruled, hatched band. */
-html[data-ascii] body #main :is(.page-intro,.notifications-heading){position:relative;padding-bottom:64px!important;margin-bottom:40px!important}
-html[data-ascii] body #main :is(.page-intro,.notifications-heading)::after{content:'';position:absolute;left:-24px;right:-24px;bottom:0;height:22px;border-top:1px solid var(--fl-rule)!important;border-bottom:1px solid var(--fl-rule)!important;background-image:repeating-linear-gradient(135deg,transparent 0 6px,#191919 6px 7px)!important}
 html[data-ascii] body #main .notifications-heading{display:flex!important;align-items:flex-end;justify-content:space-between}
 
 /* Header: brand, ruled nav, quiet utilities. */
@@ -321,7 +318,6 @@ html[data-ascii] body .compact-site-header .header-primary>a::after{content:none
 /* ---- Submit form rhythm ---- */
 html[data-ascii] body #main .submission-intro{padding-block:8px 26px!important;margin-bottom:12px!important}
 html[data-ascii] body #main .submission-intro h1{font-size:clamp(32px,4vw,46px)!important;margin-block:0 6px!important}
-html[data-ascii] body #main .submission-intro::after{height:10px}
 html[data-ascii] body #main:has(:is(.submission-intro,.dg-dir,.news-page))>.site-breadcrumbs{padding-block:8px!important}
 html[data-ascii] body #project-form #submission-progress{margin-bottom:8px!important}
 
@@ -350,9 +346,6 @@ html[data-ascii] body .fl-notify .notifications-choice-list{display:grid!importa
 html[data-ascii] body .fl-notify .notifications-choice-list label{display:flex!important;align-items:center;justify-content:space-between;margin:0!important;padding:12px 0!important;border-top:1px solid var(--fl-rule)!important;font-family:var(--fl-sans)!important;text-transform:none!important;letter-spacing:normal!important}
 html[data-ascii] body .fl-notify .notifications-choice-list label *{text-transform:none!important;letter-spacing:normal!important}
 
-/* ---- Directory, rankings and other intros share the ruled band ---- */
-html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.creator-social-heading,.membership-heading,.creator-directory-intro){position:relative;padding-bottom:56px!important;margin-bottom:32px!important}
-html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.creator-social-heading,.membership-heading,.creator-directory-intro)::after{content:'';position:absolute;left:0;right:0;bottom:0;height:22px;border-top:1px solid var(--fl-rule)!important;border-bottom:1px solid var(--fl-rule)!important;background-image:repeating-linear-gradient(135deg,transparent 0 6px,#191919 6px 7px)!important}
 html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.membership-heading) h1{font-size:clamp(36px,5vw,60px)!important}
 
 /* Directory rows: ruled list, like the reference project index. */

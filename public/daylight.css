@@ -61,7 +61,7 @@
     letter-spacing: 0 !important;
     text-transform: none !important;
   }
-  html[data-theme="daylight"] body :is(.page-intro,.page-heading,.fl-auth-heading,.news-masthead,.dg-hero-copy) h1 {
+  html[data-theme="daylight"] body :is(.fl-auth-heading,.dg-hero-copy) h1 {
     font-size: clamp(30px,4.2vw,48px) !important;
     font-weight: 650 !important;
     line-height: 1.12 !important;
@@ -303,7 +303,7 @@
   html[data-theme="daylight"] body .rl-mono.has-icon { color: transparent !important; }
 
   /* Shared interaction states for older public components. */
-  html[data-theme="daylight"] body :is(.creator-public-intro,.creator-profile-editor,.creator-post,.creator-projects article,.creator-inbox-list,.creator-inbox-thread,.inbox-picker,.news-masthead,.packet-workspace .panel,.packet-workspace #site-navigation,.packet-workspace .start-steps li) {
+  html[data-theme="daylight"] body :is(.creator-public-intro,.creator-profile-editor,.creator-post,.creator-projects article,.creator-inbox-list,.creator-inbox-thread,.inbox-picker,.packet-workspace .panel,.packet-workspace #site-navigation,.packet-workspace .start-steps li) {
     background: var(--fl-surface) !important;
     border-color: var(--fl-line) !important;
     color: var(--fl-copy) !important;
@@ -373,5 +373,94 @@
     html[data-theme="daylight"] body .dg-home-extras-grid { grid-template-columns: minmax(0,1fr); }
     html[data-theme="daylight"] body .dg-hero-stats { grid-template-columns: minmax(0,1fr) !important; }
     html[data-theme="daylight"] body .dg-hero-stat { grid-row: auto !important; grid-template-rows: auto !important; grid-template-columns: minmax(0,1fr) auto; align-items: baseline; column-gap: 8px; }
+  }
+}
+
+@layer daylight {
+  html[data-theme="daylight"] {
+    --editorial-title: clamp(32px, 4.5vw, 56px);
+    --editorial-space: clamp(20px, 3vw, 34px);
+  }
+
+  /* Align the public reading rail while allowing focused forms to stay narrower. */
+  html[data-theme="daylight"] body.platform:not(.home-refresh) #main {
+    width: min(100%, var(--daylight-content)) !important;
+    padding-inline: max(var(--daylight-gutter), env(safe-area-inset-left), env(safe-area-inset-right)) !important;
+  }
+  html[data-theme="daylight"] body.platform #main > .site-breadcrumbs {
+    padding-block: 12px !important;
+  }
+  html[data-theme="daylight"] body #main > :is(.dg-dir, .news-page, .creator-social) {
+    width: 100% !important;
+    margin-inline: auto !important;
+  }
+  html[data-theme="daylight"] body #main > :is(.page-intro, .news-page, .creator-social, .dg-forum) {
+    margin-block-start: 0 !important;
+  }
+
+  html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .creator-social-heading, .notifications-heading, .creator-inbox-heading, .invstr-heading, .membership-heading, .news-masthead, .dg-forum-header) {
+    min-width: 0;
+    padding-block-end: 16px !important;
+    margin-bottom: var(--editorial-space) !important;
+  }
+  html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .creator-social-heading, .notifications-heading, .creator-inbox-heading, .invstr-heading, .membership-heading) {
+    border-bottom: 1px solid var(--fl-line) !important;
+  }
+  html[data-theme="daylight"] body #main :is(.news-masthead, .dg-dir .dg-hero, .rl > .dg-hero) {
+    background: transparent !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--fl-line) !important;
+    border-radius: 0 !important;
+    padding-inline: 0 !important;
+  }
+  html[data-theme="daylight"] body #main .rl > .dg-hero { padding-block: 8px 18px !important; }
+  html[data-theme="daylight"] body .news-page .news-toolbar { border-block-start: 0 !important; }
+  html[data-theme="daylight"] body #main .dg-forum .dg-forum-header { margin-bottom: 0 !important; }
+  html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .creator-social-heading, .notifications-heading, .creator-inbox-heading, .invstr-heading, .membership-heading, .news-masthead, .dg-forum-header, .dg-dir, .rl) h1 {
+    margin-block: 0 8px !important;
+    font-size: var(--editorial-title) !important;
+    font-weight: 560 !important;
+    letter-spacing: -.058em !important;
+    line-height: 1.07 !important;
+    overflow-wrap: anywhere;
+  }
+  html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .creator-social-heading, .notifications-heading, .news-masthead, .dg-forum-header, .dg-dir, .rl) h1::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 4px;
+    margin-top: 8px;
+    background: radial-gradient(circle, var(--fl-muted) 1px, transparent 1.5px) left center / 6px 4px repeat-x !important;
+    opacity: .7;
+    pointer-events: none;
+  }
+  html[data-theme="daylight"] body #main :is(.page-intro .lede, .page-heading .lede, .news-intro, .creator-social-heading-copy > p:last-child, .dg-forum-header p) {
+    max-width: 58ch;
+    margin-block: 0 !important;
+    color: var(--fl-copy) !important;
+    line-height: 1.55 !important;
+  }
+
+  html[data-theme="daylight"] body #main .login-heading { margin-bottom: 18px !important; }
+  html[data-theme="daylight"] body #main .login-page { margin-block: var(--editorial-space) !important; }
+  html[data-theme="daylight"] body #main .fl-dash { padding-block: 16px !important; }
+  html[data-theme="daylight"] body #main .dg-fp-account { max-width: 900px; margin-inline: auto; }
+  html[data-theme="daylight"] body #main :is(.news-filters button[aria-pressed="true"], .creator-hub-rail a[aria-current="page"]) {
+    border-color: var(--dg-acc-line) !important;
+    background: var(--daylight-wash) !important;
+    color: var(--fl-ink) !important;
+  }
+  html[data-theme="daylight"] body #main :is(.creator-hub-panel, .creator-social-main > .creator-tabs, .news-standards) {
+    border-color: var(--fl-line) !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+  }
+  html[data-theme="daylight"] body #main :is(.creator-hub-rail a, .creator-hub-panel p, .creator-hub-panel button, .creator-hub-about a, .creator-hub-rail-note) {
+    color: var(--fl-copy) !important;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html[data-theme="daylight"] body :is(.dg-shell a, .dg-shell button, .site-menu-trigger, .dg-site-footer a, #main .button, #main .fl-btn, #main .dg-btn) {
+      transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease !important;
+    }
   }
 }
