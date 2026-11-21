@@ -37,6 +37,12 @@ for (const width of [320, 390, 768, 920, 921, 1440]) {
       expect(groupBounds.y).toBeGreaterThanOrEqual(primaryBounds.y + primaryBounds.height);
       expect(Math.abs(groupBounds.width - primaryBounds.width)).toBeLessThanOrEqual(1);
     }
+    if (width > 920) {
+      const primary = page.locator('.dg-shell-primary');
+      await expect(primary).toHaveCSS('display', 'flex');
+      const headerBounds = (await page.locator('.dg-shell-bar').boundingBox())!;
+      expect(headerBounds.height).toBeLessThanOrEqual(76);
+    }
     const bounds = (await menu.boundingBox())!;
     expect(bounds.x).toBeGreaterThanOrEqual(0);
     expect(bounds.x + bounds.width).toBeLessThanOrEqual(width + 1);

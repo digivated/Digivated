@@ -10,7 +10,7 @@ test('mobile glass menu remains readable and routes correctly',async({page})=>{
  const menu=page.locator('#explore-navigation');await expect(menu).toBeVisible();
  const material=await menu.evaluate(element=>({filter:getComputedStyle(element).backdropFilter,background:getComputedStyle(element).backgroundColor}));
  expect(material.filter).toContain('blur(');
- expect(material.background).toMatch(/0\.8/);
+ expect(material.background).toMatch(/0\.9/);
  await menu.getByRole('link',{name:'Resources'}).click();
  await expect(page).toHaveURL(/\/resources\/?$/);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

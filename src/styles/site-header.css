@@ -46,7 +46,7 @@
     letter-spacing: -.035em;
     text-decoration: none !important;
   }
-  .dg-shell .dg-shell-primary { grid-column: 2; grid-row: 1; gap: 2px; }
+  .dg-shell .dg-shell-primary { display: flex !important; grid-column: 2; grid-row: 1; gap: 2px; }
   .dg-shell .dg-shell-tools { grid-column: -2; grid-row: 1; justify-self: end; gap: 5px; }
 
   .dg-shell .dg-shell-primary a,
@@ -139,7 +139,7 @@
     align-items: center;
     justify-content: flex-start;
     gap: 8px;
-    min-height: 39px;
+    min-height: 40px !important;
     padding: 6px 10px !important;
     border: 0 !important;
     border-radius: 10px !important;
@@ -190,9 +190,10 @@
 
   @supports (backdrop-filter: blur(1px)) {
     .dg-shell :is(.dg-shell-bar,.site-menu-panel,.dg-shell-account-panel) {
-      --shell-glass: #fffC;
+      --shell-glass: #fffffff2;
       backdrop-filter: blur(22px) saturate(1.35) !important;
     }
+    .dg-shell .dg-shell-bar { --shell-glass: #ffffffdf; }
   }
   @media (prefers-reduced-motion: no-preference) {
     .dg-shell .dg-shell-disclosure[open] .site-menu-panel,
@@ -216,7 +217,7 @@
     .dg-shell .dg-header-submit svg { display: none; }
     .dg-shell :is(.dg-shell-disclosure,.dg-shell-account) { position: static; }
     .dg-shell :is(.site-menu-panel,.dg-shell-account-panel) { top: calc(100% + 7px); right: 0; }
-    .dg-shell .site-menu-panel { left: 0; width: auto; max-height: min(74dvh,630px); }
+    .dg-shell .site-menu-panel { left: 0; width: auto; max-height: min(82dvh,660px); }
   }
   @media (max-width: 359px) {
     .dg-shell .site-menu-trigger-label,
