@@ -51,11 +51,12 @@ test('editorial details animate during scrolling and menu interaction', async ({
   const scene = await art.evaluate(node => getComputedStyle(node, '::before').animationName);
   expect(scene).toBe('dg-halftone-arrive');
 
-  const menu = page.getByRole('button', { name: 'Open navigation menu' });
+  const menu = page.locator('.site-menu-trigger');
   await menu.click();
   await expect(page.getByRole('navigation', { name: 'Site menu' })).toHaveCSS('animation-name', 'dg-panel-arrive');
   await page.keyboard.press('Escape');
   await expect(menu).toBeFocused();
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
 
   const track = page.locator('[data-reading-progress]');
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
