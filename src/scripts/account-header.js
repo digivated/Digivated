@@ -1,6 +1,6 @@
 import { accountSession } from './account-session.js';
 
-const header=document.querySelector('.compact-site-header');
+const header=document.querySelector('[data-site-header]');
 const link=document.getElementById('header-account-link');
 const signup=document.getElementById('header-signup-link');
 const menu=document.getElementById('header-account-menu');

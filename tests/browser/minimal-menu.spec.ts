@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await page.route('**/api/**', route => route.fulfill({ json: { ready: false, items: [], next: null } }));
 });
 
-for (const width of [320, 390, 768, 1000, 1024, 1440]) {
+for (const width of [320, 390, 768, 920, 921, 1440]) {
   test(`site menu fits and keeps its destinations at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -15,22 +15,23 @@ for (const width of [320, 390, 768, 1000, 1024, 1440]) {
     const menu = page.locator('#explore-navigation');
 
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
-    await expect(trigger.locator('.navigation-trigger-menu')).toBeVisible();
+    await expect(trigger.locator('.dg-shell-menu-open')).toBeVisible();
     await expect(page.locator('.dg-header-submit')).toHaveAttribute('href', '/submit-project');
     await expect(menu).toBeHidden();
     await trigger.click();
-    await expect(trigger.locator('.navigation-trigger-close')).toBeVisible();
+    await expect(trigger.locator('.dg-shell-menu-close')).toBeVisible();
     await expect(menu).toBeVisible();
+    await expect(menu).toHaveCSS('backdrop-filter', /blur/);
     await expect(menu.locator('.site-menu-group a')).toHaveText([
       'Submit a project', 'Shop', 'Feedback points', 'Embed badges',
       'Weekly winners', 'Resources', 'For Investors',
     ]);
     await expect(menu.locator('.site-menu-footer a')).toHaveText(['Your projects', 'About', 'Log in or sign up']);
     await expect(menu.locator('.site-menu-primary a')).toHaveText(['Launches', 'Directory', 'Threads', 'News']);
-    await expect(menu.locator('.site-menu-primary')).toBeVisible({ visible: width <= 1000 });
-    await expect(page.locator('.header-primary')).toBeVisible({ visible: width > 1000 });
+    await expect(menu.locator('.site-menu-primary')).toBeVisible({ visible: width <= 920 });
+    await expect(page.locator('.dg-shell-primary')).toBeVisible({ visible: width > 920 });
 
-    if (width <= 1000) {
+    if (width <= 920) {
       const primaryBounds = (await menu.locator('.site-menu-primary').boundingBox())!;
       const groupBounds = (await menu.locator('.site-menu-groups').boundingBox())!;
       expect(groupBounds.y).toBeGreaterThanOrEqual(primaryBounds.y + primaryBounds.height);

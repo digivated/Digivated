@@ -47,7 +47,7 @@ if (featuredPanel) {
         art.className = 'launch-featured-art';
         art.setAttribute('aria-hidden', 'true');
         art.textContent = project.name.slice(0, 2).toUpperCase();
-        if (project.image === '/api/projects?image=' + project.id) {
+        if (project.image === '/api/projects?image=' + project.id || project.image === '/media/project-logos/' + project.id + '.webp') {
           const image = document.createElement('img');
           image.src = project.image;
           image.alt = '';

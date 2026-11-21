@@ -4,8 +4,8 @@
     align-items: center;
     isolation: isolate;
     position: relative;
-    min-block-size: clamp(320px,38vw,418px);
-    margin: 0 0 clamp(20px,3vw,34px) !important;
+    min-block-size: clamp(320px,37vw,410px);
+    margin: 0 0 clamp(18px,2.4vw,28px) !important;
     padding: clamp(28px,5vw,54px) 0 !important;
     background: var(--fl-bg) !important;
     border: 0 !important;

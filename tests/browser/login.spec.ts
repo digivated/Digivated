@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test('login entry point exposes sign-in and sign-up email flows', async ({ page }) => {
   await page.route('**/api/project-account?action=config', route => route.fulfill({ json: { ready: false } }));
   await page.goto('http://127.0.0.1:4321/');
-  await page.locator('.notebook-navigation>summary').click();
+  await page.locator('.site-menu-trigger').click();
   await expect(page.getByRole('link', { name: 'Log in or sign up', exact: true })).toHaveAttribute('href', '/login');
   await page.keyboard.press('Escape');
   await page.getByRole('link', { name: 'Log In', exact: true }).click();
@@ -46,6 +46,7 @@ test('verified account shows a named mobile account menu, welcome, account, and 
     body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a3foAAAAASUVORK5CYII=', 'base64'),
   } : { status: 204 }));
   await page.route('https://fixture.supabase.co/auth/v1/**', route => route.fulfill({ json: user }));
+  await page.route('**/api/notifications?action=list', route => route.fulfill({ json: { items: [] } }));
   await page.goto('http://127.0.0.1:4321/discover?view=featured&signed_in=1');
   const menu = page.getByRole('button', { name: `Account menu for ${email}` });
   await expect(menu).toBeVisible();
@@ -54,6 +55,12 @@ test('verified account shows a named mobile account menu, welcome, account, and 
   avatarAvailable = false;
   await page.evaluate(() => document.dispatchEvent(new Event('digivated:profile-logo-updated')));
   await expect(avatar).toHaveText('V');
+  await page.locator('#header-notifications-link').click();
+  const notifications = page.getByRole('dialog', { name: 'Notifications', exact: true });
+  await expect(notifications).toContainText('You’re all caught up.');
+  await expect(page).toHaveURL(/\/discover\?/);
+  await page.keyboard.press('Escape');
+  await expect(notifications).toBeHidden();
   await menu.click();
   await expect(page.getByRole('menu')).toContainText(email);
   await page.getByRole('menuitem', { name: 'Dashboard' }).click();
