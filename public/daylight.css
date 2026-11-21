@@ -130,7 +130,7 @@
 
   html[data-theme="daylight"] body #main > .dg-home-hero {
     margin: clamp(22px,4vw,48px) 0 0 !important;
-    padding: clamp(24px,5vw,62px) !important;
+    padding: clamp(24px,4.2vw,52px) !important;
     border-color: #e1e4de !important;
     border-radius: 20px !important;
     background: linear-gradient(115deg,#fcfbf7 15%,#edf1e9 100%) !important;
@@ -228,7 +228,7 @@
   html[data-theme="daylight"] body .dg-dir-stats strong { color: var(--fl-ink) !important; }
 
   /* Shared cards in sign-in, submission, listings, resources, and badges. */
-  html[data-theme="daylight"] body :is(.fl-card,.submission-account-callout,.submission-review,.submission-option-detail,.free-launch-guide,.fl-badge-card,.fl-badge-stage,.shop-card,.rl-card,.dg-fp,.dg-d-composer) {
+  html[data-theme="daylight"] body :is(.fl-card,.submission-account-callout,.submission-review,.submission-option-detail,.free-launch-guide,.fl-badge-card,.fl-badge-stage,.shop-card,.membership-access .carousel-access,.rl-card,.dg-fp,.dg-d-composer) {
     border-color: var(--fl-line) !important;
     border-radius: var(--fl-radius-card) !important;
     background: var(--fl-surface) !important;
@@ -239,13 +239,13 @@
     background: var(--fl-raised) !important;
     color: var(--fl-ink) !important;
   }
-  html[data-theme="daylight"] body :is(.login-tabs button,.submission-disclosure summary,.fl-badges-notes summary,.dg-forum-sort button,.dg-dir-collection button,.dg-dir-chip,.rl-status,.rl-description,.dg-menu-title,.site-breadcrumbs [aria-current="page"],.footer-bottom,.dg-note-link,.fl-badges-intro) {
+  html[data-theme="daylight"] body :is(.login-tabs button,.fl-label-row label,.submission-disclosure summary,.fl-badges-page details summary,.dg-forum-sort button,.dg-dir-collection button,.dg-dir-chip,.rl-status,.rl-description,.dg-menu-title,.site-breadcrumbs [aria-current="page"],.footer-bottom,.dg-note-link,.fl-badges-intro,.rl-cats button,.shop-for,.shop-note,.shop-price span) {
     color: var(--fl-muted) !important;
   }
   html[data-theme="daylight"] body :is(.fl-badges-intro a,.fl-badges-notes a,.dg-forum-status a,.submission-account-actions a:not(.primary),.dg-rail-threads h2 a) {
     color: var(--fl-accent) !important;
   }
-  html[data-theme="daylight"] body :is(.login-tabs button[aria-selected="true"],.dg-forum-sort button[aria-pressed="true"],.navigation-panel a[aria-current="page"],.dg-tier:has(input:checked),#project-import.dg-import,.fl-badge-tag,.dg-fp-icon,.dg-fp-toggle,.dg-fp-node,.dg-fp-reward) {
+  html[data-theme="daylight"] body :is(.login-tabs button[aria-selected="true"],.dg-forum-sort button[aria-pressed="true"],.navigation-panel a[aria-current="page"],.dg-tier:has(input:checked),#project-import.dg-import,.fl-badge-tag,.dg-fp-icon,.dg-fp-toggle,.dg-fp-node,.dg-fp-reward,.rl-cats button[aria-current="true"],.rl-cats button:hover) {
     border-color: var(--dg-acc-line) !important;
     border-radius: var(--fl-radius) !important;
     background: var(--daylight-wash) !important;
@@ -255,18 +255,23 @@
   html[data-theme="daylight"] body :is(.dg-dir-chip:not([aria-pressed="true"]),.dg-fp-strip .dg-fp-steps) { border-color: var(--fl-line) !important; }
   html[data-theme="daylight"] body .dg-dir-chip:not([aria-pressed="true"]) { border-radius: 6px !important; }
   html[data-theme="daylight"] body .dg-dir-chip span { color: inherit !important; }
-  html[data-theme="daylight"] body :is(.dg-fp-strip-copy strong,.dg-fp-step-copy strong,.dg-spot.is-open strong,.shop-card h2) { color: var(--fl-ink) !important; }
-  html[data-theme="daylight"] body :is(.dg-fp-strip-copy span,.dg-fp-step-copy span,.dg-tier-sub,.rl-name,.rl-meta) { color: var(--fl-copy) !important; }
+  html[data-theme="daylight"] body :is(.dg-fp-strip-copy strong,.dg-fp-step-copy strong,.dg-spot.is-open strong,.shop-card h2,.shop-price strong,.fl-badge-bar strong,.rl-text strong) { color: var(--fl-ink) !important; }
+  html[data-theme="daylight"] body :is(.dg-fp-strip-copy span,.dg-fp-step-copy span,.dg-tier-sub,.rl-name,.rl-meta,.shop-list li) { color: var(--fl-copy) !important; }
   html[data-theme="daylight"] body .dg-fp::before { content: none !important; }
   html[data-theme="daylight"] body .dg-home-sidebar .dg-fp-strip summary {
-    grid-template-columns: auto minmax(0,1fr) auto;
-    grid-template-areas: "icon copy copy" "me me toggle";
+    grid-template-columns: auto minmax(0,1fr) auto !important;
+    grid-template-areas: "icon copy copy" "me me toggle" !important;
   }
   html[data-theme="daylight"] body .dg-home-sidebar .dg-fp-strip .dg-fp-step {
     grid-template-columns: 30px minmax(0,1fr);
     row-gap: 5px;
   }
   html[data-theme="daylight"] body .dg-home-sidebar .dg-fp-reward { grid-column: 2; justify-self: start; }
+
+  html[data-theme="daylight"] body :is(.dg-fp-head .dg-label,.shop-kicker-member) { color: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body .shop-kicker:not(.shop-kicker-member) { color: var(--fl-warn) !important; }
+  html[data-theme="daylight"] body .dg-fp-px path { fill: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body .rl-mono.has-icon { color: transparent !important; }
 
   @media (max-width: 1180px) {
     html[data-theme="daylight"] body.home-refresh #main>.dg-home { grid-template-columns: minmax(0,1fr) !important; }
