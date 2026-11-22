@@ -1,0 +1,128 @@
+/* Clean board theme (November 22, 2026)
+   Soft gray canvas, white cards with gentle shadows, compact type, black accents.
+   Everything sits in @layer clean-first, which Platform/Shell declare before the
+   older theme layers, so these declarations win without selector fights.
+   Paint and spacing only: no markup, script hook or behavior changes.
+   Roll back by removing the <link href="/clean.css"> from the layouts. */
+@layer clean-first {
+
+
+/* Design tokens: the older themes read these, so every page picks them up */
+#digivated-root {
+  --fl-bg: #f6f6f8 !important;
+  --fl-panel: #ffffff !important;
+  --fl-raised: #f3f3f6 !important;
+  --fl-surface: #ffffff !important;
+  --fl-line: #ececf0 !important;
+  --fl-rule: #ececf0 !important;
+  --fl-outline: #e4e4e9 !important;
+  --fl-line-hi: #c9c9d0 !important;
+  --fl-ink: #0b0b0c !important;
+  --fl-copy: #2a2a2e !important;
+  --fl-muted: #71717a !important;
+  --fl-accent: #0b0b0c !important;
+  --fl-accent-hover: #26262b !important;
+  --fl-radius: 10px !important;
+  --fl-radius-card: 16px !important;
+  --fl-shadow: 0 1px 2px rgba(17,17,26,.04), 0 6px 20px rgba(17,17,26,.045) !important;
+  --daylight-hover: #fafafb !important;
+  --daylight-wash: #f3f3f6 !important;
+  --dg-acc: #0b0b0c !important;
+  --dg-acc-ink: #26262b !important;
+  --dg-acc-text: #0b0b0c !important;
+  --dg-acc-line: #d4d4d8 !important;
+  --cl-faint: #a1a1aa !important;
+  --cl-shadow: 0 1px 2px rgba(17,17,26,.04), 0 6px 20px rgba(17,17,26,.045) !important;
+  background: #f6f6f8 !important;
+}
+#digivated-root body { background: #f6f6f8 !important; -webkit-font-smoothing: antialiased !important; }
+
+/* Header */
+#digivated-root .dg-shell-material { background: rgba(255,255,255,.94) !important; border-bottom: 1px solid #ececf0 !important; box-shadow: none !important; }
+#digivated-root .dg-shell-brand { font-size: 15px !important; font-weight: 650 !important; letter-spacing: -.01em !important; }
+#digivated-root .dg-shell-brand img { width: 28px !important; height: 28px !important; }
+#digivated-root :is(.dg-shell-login, .dg-shell-menu-label) { font-size: 13.5px !important; font-weight: 550 !important; }
+
+/* Homepage intro */
+#digivated-root .launch-welcome-mark { width: 36px !important; height: 36px !important; }
+#digivated-root .dg-home-hero h1 { font-size: clamp(27px, 6.6vw, 40px) !important; line-height: 1.12 !important; letter-spacing: -.03em !important; font-weight: 700 !important; color: #0b0b0c !important; }
+#digivated-root .dg-home-hero .board-introduction { font-size: 14.5px !important; color: #71717a !important; }
+#digivated-root .dg-launch-search { min-height: 44px !important; border: 1px solid #ececf0 !important; border-radius: 12px !important; background: #fff !important; box-shadow: 0 1px 2px rgba(17,17,26,.04) !important; }
+#digivated-root .dg-launch-search:focus-within { border-color: #c9c9d0 !important; box-shadow: 0 0 0 3px rgba(11,11,12,.06) !important; }
+#digivated-root .dg-launch-search input { font-size: 14px !important; }
+#digivated-root .dg-btn-primary { min-height: 44px !important; padding-inline: 16px !important; border-radius: 12px !important; border-color: #0b0b0c !important; background: #0b0b0c !important; color: #fff !important; font-size: 14px !important; font-weight: 600 !important; box-shadow: 0 1px 2px rgba(0,0,0,.14) !important; }
+#digivated-root .dg-btn-primary:hover { background: #26262b !important; }
+
+/* Stats card */
+#digivated-root .dg-hero-stats { border: 1px solid #ececf0 !important; border-radius: 16px !important; background: #fff !important; box-shadow: var(--cl-shadow) !important; overflow: hidden !important; }
+#digivated-root .dg-hero-stat { border-color: #ececf0 !important; padding-block: 12px !important; }
+#digivated-root .dg-hero-stat dt { font-size: 11.5px !important; color: #71717a !important; font-weight: 500 !important; }
+#digivated-root .dg-hero-stat dd { font-size: 17px !important; font-weight: 650 !important; color: #0b0b0c !important; letter-spacing: -.01em !important; }
+
+/* Sort control: gray track with a white thumb */
+#digivated-root .board-sort { gap: 2px !important; padding: 3px !important; border-radius: 11px !important; background: #ebebef !important; }
+#digivated-root .board-sort button { min-height: 30px !important; padding: 0 12px !important; border: 0 !important; border-radius: 8px !important; background: transparent !important; color: #71717a !important; font-size: 13px !important; font-weight: 550 !important; box-shadow: none !important; }
+#digivated-root .board-sort button[aria-pressed="true"] { background: #fff !important; color: #0b0b0c !important; box-shadow: 0 1px 2px rgba(17,17,26,.1) !important; }
+#digivated-root .board-sort [data-board-results] { font-size: 12px !important; color: #71717a !important; padding-inline: 10px 8px !important; }
+
+/* Category chips */
+#digivated-root .board-categories { gap: 6px !important; }
+#digivated-root .board-categories button { min-height: 30px !important; padding: 0 11px !important; border: 1px solid #ececf0 !important; border-radius: 999px !important; background: #fff !important; color: #2a2a2e !important; font-size: 12.5px !important; font-weight: 500 !important; box-shadow: none !important; }
+#digivated-root .board-categories button[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
+#digivated-root .board-category-count { font-size: 11px !important; color: #a1a1aa !important; }
+#digivated-root .board-categories button[aria-pressed="true"] .board-category-count { color: rgba(255,255,255,.6) !important; }
+
+/* Launch lists: one soft card per day, rows split by hairlines */
+#digivated-root .dg-list-title { font-size: 17px !important; font-weight: 650 !important; letter-spacing: -.015em !important; }
+#digivated-root :is(.dg-list-count, .dg-list-note) { font-size: 12px !important; color: #71717a !important; }
+#digivated-root .dg-list-rows { gap: 0 !important; }
+#digivated-root .board-date-divider { margin: 18px 2px 8px !important; padding: 0 !important; border: 0 !important; background: none !important; font-size: 13px !important; font-weight: 600 !important; color: #0b0b0c !important; }
+#digivated-root .board-date-divider:first-child { margin-top: 8px !important; }
+
+#digivated-root .dg-row:not(.dg-dir-row) {
+  grid-template-columns: 40px auto auto minmax(0, 1fr) auto !important;
+  grid-template-areas: "logo main main main vote" "logo visit comments . vote" !important;
+  column-gap: 12px !important;
+  row-gap: 5px !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 12px 12px 12px 14px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 1px #ececf0 !important;
+  transform: none !important;
+}
+#digivated-root .dg-row:not(.dg-dir-row):not(.is-loading) { padding-block: 12px !important; }
+#digivated-root .dg-list-rows > .dg-row:first-child,
+#digivated-root .board-date-divider + .dg-row { border-top-left-radius: 16px !important; border-top-right-radius: 16px !important; }
+#digivated-root .dg-list-rows > .dg-row:last-child,
+#digivated-root .dg-list-rows > .dg-row:has(+ :not(.dg-row)) { border-bottom-left-radius: 16px !important; border-bottom-right-radius: 16px !important; box-shadow: 0 0 0 1px #ececf0, 0 8px 18px -10px rgba(17,17,26,.12) !important; }
+#digivated-root .dg-row:not(.dg-dir-row):hover { background: #fafafb !important; }
+
+#digivated-root .dg-row:not(.dg-dir-row) .dg-logo-link { grid-area: logo !important; align-self: start !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-logo { width: 40px !important; height: 40px !important; border-radius: 10px !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-main { grid-area: main !important; min-width: 0 !important; }
+#digivated-root .dg-row .dg-main h3 { margin: 0 !important; font-size: 14.5px !important; line-height: 1.3 !important; font-weight: 650 !important; letter-spacing: -.01em !important; }
+#digivated-root .dg-row .dg-tagline { margin-top: 2px !important; font-size: 13px !important; line-height: 1.4 !important; color: #71717a !important; display: -webkit-box !important; -webkit-line-clamp: 1 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
+#digivated-root .dg-row .dg-meta { margin-top: 3px !important; font-size: 11.5px !important; color: #a1a1aa !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-actions { display: contents !important; }
+#digivated-root .dg-row :is(.dg-visit, .dg-comments) { min-height: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; font-size: 12px !important; font-weight: 500 !important; color: #71717a !important; gap: 4px !important; justify-self: start !important; }
+#digivated-root .dg-row :is(.dg-visit, .dg-comments):hover { color: #0b0b0c !important; }
+#digivated-root .dg-row :is(.dg-visit, .dg-comments) svg { width: 13px !important; height: 13px !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-visit { grid-area: visit !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-comments { grid-area: comments !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-actions > :is(button, .dg-notify, [data-notify]) { grid-area: vote !important; justify-self: end !important; }
+#digivated-root .dg-row .dg-vote { flex-direction: column !important; gap: 1px !important; width: 44px !important; min-width: 44px !important; height: 50px !important; min-height: 0 !important; padding: 0 !important; border: 1px solid #ececf0 !important; border-radius: 12px !important; background: #fff !important; color: #0b0b0c !important; font-size: 13px !important; }
+#digivated-root .dg-row .dg-vote:hover { border-color: #c9c9d0 !important; background: #fafafb !important; color: #0b0b0c !important; }
+#digivated-root .dg-row .dg-vote[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
+#digivated-root .dg-row .dg-vote .dg-vote-caret { font-size: 10px !important; line-height: 1 !important; }
+#digivated-root .dg-row .dg-vote strong { font-size: 13px !important; font-weight: 650 !important; }
+
+/* Upcoming launches: compact notify pill in the vote slot */
+#digivated-root .dg-row .dg-watch { min-height: 32px !important; height: 32px !important; padding: 0 11px !important; gap: 5px !important; border: 1px solid #ececf0 !important; border-radius: 999px !important; background: #fff !important; color: #2a2a2e !important; font-size: 12px !important; font-weight: 550 !important; box-shadow: none !important; white-space: nowrap !important; }
+#digivated-root .dg-row .dg-watch small { font-size: 11px !important; color: #a1a1aa !important; }
+#digivated-root .dg-row .dg-watch[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
+#digivated-root .dg-row .dg-badge-date { font-size: 11px !important; color: #a1a1aa !important; font-weight: 500 !important; }
+
+}
