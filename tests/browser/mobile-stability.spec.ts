@@ -34,6 +34,7 @@ test('homepage stats fit at narrow sizes and between the desktop sidebars', asyn
   await page.route('**/api/**', route => route.fulfill({ json: { items: [], next: null } }));
   await page.goto(base + '/');
   await page.evaluate(() => document.fonts.ready);
+  await page.getByText('Launch calendar and activity', { exact: true }).click();
   const stats = page.locator('.dg-hero-stats');
   await expect(stats.locator('time')).toHaveText(/\d+d \d+h \d+m/);
 

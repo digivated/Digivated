@@ -23,14 +23,19 @@ import '../styles/submission-flow.css';
 
       <div id="instant-launch-resume" class="submission-review" hidden><h2 id="instant-launch-title">Complete your payment</h2><p id="instant-launch-copy">Your project is saved. Pay in the checkout tab using <strong id="instant-launch-email">your account email</strong>. This page publishes it automatically as soon as payment goes through.</p><div class="submission-account-actions"><a id="instant-launch-checkout" class="button primary" target="_blank" rel="noopener">Open checkout ↗</a><button id="instant-launch-verify" class="button" type="button">I’ve paid — check now</button></div><p id="instant-launch-cancel-note" class="field-help">Changed your mind? You’re only charged if you finish checkout. <button id="instant-launch-cancel" class="dg-link-button" type="button">← Cancel and change launch option</button></p><p id="instant-launch-status" role="status" aria-live="polite"></p><a id="instant-launch-listing" hidden>View your live project →</a></div>
       <div id="submission-details" hidden>
+        <fieldset class="launch-start">
+          <legend>Start with your website</legend>
+            <div class="submission-url-row">
+              <label>Project URL<input name="url" type="url" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="yourproduct.com" maxlength="500" required/></label>
+              <button type="button" id="project-import" class="dg-import"><span class="dg-import-icon" aria-hidden="true">⇣</span><span class="dg-import-label">Draft from link</span></button>
+            </div>
+            <p id="project-import-status" class="dg-import-status" role="status" aria-live="polite" hidden></p>
+          <button type="button" class="manual-launch" id="manual-launch">Enter details manually</button>
+        </fieldset>
+        <div id="launch-editor" hidden>
         <div class="submission-project-fields">
           <fieldset id="sub-step-details">
             <legend>Project details</legend>
-            <div class="submission-url-row">
-              <label>Project URL<input name="url" type="url" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="yourproduct.com" maxlength="500" required/></label>
-              <button type="button" id="project-import" class="dg-import"><span class="dg-import-icon" aria-hidden="true">⇣</span><span class="dg-import-label">Autofill</span></button>
-            </div>
-            <p id="project-import-status" class="dg-import-status" role="status" aria-live="polite" hidden></p>
             <div class="form-row">
               <label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
               <label>
@@ -133,10 +138,11 @@ import '../styles/submission-flow.css';
             <p class="fl-status" id="submission-badge-status" role="status" aria-live="polite"></p>
           </section>
         </div>
+        </div>
       </div>
     </form>
 
-    <details class="submission-preview-panel submission-disclosure">
+    <details hidden class="submission-preview-panel submission-disclosure">
       <summary>Preview your public listing</summary>
       <article class="submission-listing-preview"><div class="listing-preview-cover"><img data-listing-image alt="" hidden/><span data-listing-placeholder>Your project logo</span></div><div class="listing-preview-copy"><span data-listing-category>Category</span><h3 data-listing-name>Your project name</h3><p data-listing-description>A clear description of what your project does and who it helps.</p><span data-listing-domain>your-project.com</span></div><div class="listing-preview-footer"><span>Feedback <b>0</b></span><span>↑ Upvote <b>0</b></span></div></article>
       <p class="field-help">Your email, order details, and review notes stay private.</p>

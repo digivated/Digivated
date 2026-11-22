@@ -66,6 +66,7 @@ test('Share a Product offers all activity alerts and submits the exact checkbox 
   ? {ok:true,id:'test-project',activityNotifications:false}
   : {instant:null}}));
  await page.goto('http://127.0.0.1:4321/submit-project');
+ await page.getByRole('button', { name: 'Enter details manually' }).click();
  const checkbox=page.getByRole('checkbox',{name:/Turn on all activity notifications/});
  await expect(checkbox).toBeVisible();
  await expect(checkbox).toBeChecked();
@@ -109,6 +110,7 @@ for (const width of [390, 1440]) test(`free launch can verify the badge and subm
   return route.fulfill({ status: 201, json: { ok: true, id: reservedId, status: 'pending', launch: { kind: 'free', scheduledAt: '2026-11-30T14:00:00.000Z', badgeVerifiedAt: '2026-11-19T00:00:00.000Z' } } });
  });
  await page.goto('http://127.0.0.1:4321/submit-project');
+ await page.getByRole('button', { name: 'Enter details manually' }).click();
  await expect(page.locator('[data-tier=founding-feature] .dg-tier-head b')).toHaveText('$5');
  await expect(page.locator('#badge-first')).toBeVisible();
  const badgePanel = page.locator('#badge-first');
@@ -196,8 +198,8 @@ test('signed-in overview keeps launch details and profile within reach', async (
  const project = page.locator('#project-studio-notes');
  await expect(project.getByRole('link', { name: 'View project and feedback' })).toHaveAttribute('href', '/projects/listing/studio-notes');
  expect(analyticsRequests).toBe(0);
- await project.getByText('Launch stats', { exact: true }).click();
- await expect(project.getByRole('region', { name: 'Launch stats for Studio Notes' }).getByText('Views')).toBeVisible();
+ await page.getByRole('tab', { name: 'Analytics' }).click();
+ await expect(page.getByRole('region', { name: 'Launch stats for Studio Notes' }).getByText('Views')).toBeVisible();
  expect(analyticsRequests).toBe(1);
  await page.getByRole('tab', { name: 'Profile' }).click();
  await expect(page.getByLabel('Display name')).toHaveValue('Studio North');

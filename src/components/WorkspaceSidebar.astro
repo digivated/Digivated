@@ -6,7 +6,7 @@ import ReactBits from './ReactBits.astro';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const current = (href: string) => isNavigationCurrent(path, href);
-const icons: Record<string, string> = { '/': 'layers', '/discover': 'grid', '/threads': 'comment' };
+const icons: Record<string, string> = { '/': 'layers', '/discover': 'grid', '/threads': 'comment', '/news': 'book' };
 const links = primaryLinks.map(([href, label]) => ({ href, label, current: current(href), icon: icons[href] || 'arrow' }));
 ---
 <aside class="dg-workspace-rail" aria-label="Digivated sidebar">

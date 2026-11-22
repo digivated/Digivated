@@ -226,7 +226,6 @@
     .dg-rail-navigation .line-sidebar { padding-inline: 0 !important; }
     .dg-rail-navigation .line-sidebar__list { width: 100%; padding: 0 !important; margin: 0 !important; list-style: none !important; }
     .dg-rail-navigation .line-sidebar__item { padding: 0 !important; margin: 0 !important; }
-    .dg-rail-navigation .line-sidebar__item::before { content: none; }
     .dg-rail-navigation .line-sidebar__item::after { display: none; }
     .dg-rail-navigation .line-sidebar__label { align-items: center; gap: 8px; font-size: inherit !important; }
     .dg-rail-navigation .line-sidebar__marker {
@@ -466,12 +465,12 @@
   .dg-launch-search button:focus-visible { outline-offset: -3px !important; }
 
   .home-refresh .dg-hero-panel {
-    margin-block: 0 clamp(16px, 2.4vw, 26px) !important;
-    padding-inline: 12px !important;
-    border: 1px solid var(--fl-line) !important;
-    border-radius: var(--fl-radius-card) !important;
-    background: var(--glass-light) !important;
-    box-shadow: var(--glass-edge) !important;
+    margin:0 auto 10px !important;
+    max-width:880px;
+    padding:0 !important;
+    border:0 !important;
+    background:none !important;
+    box-shadow:none !important;
   }
   .home-refresh .dg-hero-stat { padding-block: 10px !important; }
   .home-refresh .dg-board { gap: clamp(22px, 3.5vw, 40px); }
@@ -525,12 +524,27 @@
   }
   .dg-workspace .shop .membership-faq summary { padding: 12px 0 !important; }
   .dg-workspace .shop .membership-faq details p { margin: 0 0 13px !important; }
-  .home-refresh .dg-board .dg-list-rows, .dg-dir .dg-dir-list {
+  .home-refresh .dg-board .dg-list-rows {
+    display: grid !important;
+    gap: 0 !important;
+    border: 1px solid var(--fl-line) !important;
+    border-radius: 14px !important;
+    background: #fff !important;
+  }
+  .home-refresh .dg-board .dg-list-rows > .dg-row {
+    margin: 0 !important;
+    padding: 12px clamp(10px, 2vw, 18px) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .home-refresh .dg-board .dg-list-rows > .dg-row + .dg-row { border-block-start: 1px solid var(--fl-line) !important; }
+  .dg-dir .dg-dir-list {
     display: grid !important;
     gap: 6px !important;
     border-block-start: 0 !important;
   }
-  .home-refresh .dg-board .dg-list-rows .dg-row:not(.dg-row-empty),
   .dg-dir .dg-dir-list .dg-dir-row {
     padding-inline: clamp(10px, 1.3vw, 14px) !important;
     border: 1px solid var(--fl-line) !important;
@@ -538,7 +552,6 @@
     background: var(--glass-light) !important;
     box-shadow: none !important;
   }
-  .home-refresh .dg-board .dg-list-rows .dg-row:not(.dg-row-empty):is(:hover,:focus-within),
   .dg-dir .dg-dir-list .dg-dir-row:is(:hover,:focus-within) {
     border-color: #ababab !important;
   }
@@ -607,12 +620,28 @@
   }
   .dg-workspace-content #main { min-width: 0; }
   @media (max-width: 520px) {
-    .dg-launch-search { flex-basis: 100%; max-width: none; }
+    .dg-home-hero .dg-hero-actions { display:grid !important; grid-template-columns:minmax(0,1fr) auto; align-items:center; }
+    .dg-launch-search { min-width:0 !important; max-width:none; }
     .dg-home-hero .dg-hero-actions .dg-btn { padding-inline: 14px !important; }
   }
   @media (prefers-reduced-motion: no-preference) {
     .dg-workspace :is(.dg-rail-navigation a,.dg-rail-submit,.dg-row) {
       transition: background-color var(--dg-motion-quick) var(--dg-motion-ease), border-color var(--dg-motion-quick) var(--dg-motion-ease) !important;
     }
+  }
+}
+
+@layer workspace-preview {
+  .dg-workspace :is(.news-masthead,.dg-forum-header) h1 {
+    font-size:clamp(30px,3.5vw,44px) !important;
+    line-height:1.1 !important;
+    letter-spacing:-.045em !important;
+  }
+  .dg-workspace :is(.news-intro,[data-forum-description]) { color:var(--fl-copy) !important; }
+  .dg-workspace :is(.news-feed,.dg-thread-list):not(:empty) {
+    background:var(--fl-surface) !important;
+    border:1px solid var(--fl-line) !important;
+    border-radius:14px !important;
+    padding:clamp(10px,2vw,18px) !important;
   }
 }

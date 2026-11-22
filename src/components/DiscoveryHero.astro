@@ -6,11 +6,12 @@ import ReactBits from './ReactBits.astro';
 <section class="dg-hero dg-home-hero" aria-labelledby="dg-home-title" data-discovery-hero>
   <div class="dg-hero-copy">
     <h1 id="dg-home-title">Discover indie <span>launches.</span></h1>
+    <p class="board-introduction">Explore this week’s products, or share what you’re building.</p>
     <div class="dg-hero-actions">
       <form class="dg-launch-search" action="/discover" method="get" role="search" aria-label="Find a product" data-launch-search>
         <UiIcon name="search" size={18}/>
         <label class="sr-only" for="dg-launch-search">Search products or makers</label>
-        <input type="search" id="dg-launch-search" name="q" placeholder="Search launches" maxlength="120" autocomplete="off" enterkeyhint="search"/>
+        <input type="search" id="dg-launch-search" name="q" placeholder="Search" maxlength="120" autocomplete="off" enterkeyhint="search"/>
         <button type="button" data-clear-launch-search aria-label="Clear launch search" hidden><UiIcon name="close" size={16}/></button>
         <button type="submit" aria-label="Search products"><UiIcon name="arrow" size={16}/></button>
       </form>

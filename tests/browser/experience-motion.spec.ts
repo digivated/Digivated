@@ -65,6 +65,7 @@ test('resources search and home hero actions stay usable',async({page})=>{
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.goto(base+'/');
  await expect(page.locator('[data-ascii-field],.ascii-ambient')).toHaveCount(0);
+ await page.locator('.dg-hero-panel summary').click();
  await expect(page.locator('.dg-hero-panel [role=timer]')).toBeVisible();
  await page.getByRole('link',{name:'Submit launch',exact:true}).click();
  await expect(page).toHaveURL(base + '/submit-project');

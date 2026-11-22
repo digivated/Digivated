@@ -303,16 +303,14 @@ html#digivated-root body.platform .creator-feed-shell .creator-project-picks{gri
   }
   .fl-dash .fl-tabs > button:is(:hover,:focus-visible) { color: var(--fl-ink) !important; }
   .fl-dash .fl-empty h2 { margin-block: 0 5px !important; font-size: 20px !important; }
-  .fl-dash :is(.account-project-stats,.account-points) > summary {
+  .fl-dash .account-points > summary {
     align-content: center;
     min-height: 44px;
     cursor: pointer;
     color: var(--fl-ink) !important;
     font-size: 14px !important;
   }
-  .fl-dash .account-project-stats { border-block-start: 1px solid var(--fl-line); }
-  .fl-dash .account-points > summary:hover,
-  .fl-dash .account-project-stats > summary:hover { text-decoration: underline; }
+  .fl-dash .account-points > summary:hover { text-decoration: underline; }
   .fl-dash .fl-settings {
     gap: 0;
     border: 1px solid var(--fl-line);
@@ -345,4 +343,12 @@ html#digivated-root body.platform .creator-feed-shell .creator-project-picks{gri
     .fl-dash .fl-settings .fl-setting { grid-template-columns: minmax(0, 1fr); }
     .fl-dash .fl-settings .fl-btn { justify-self: start; }
   }
+}
+
+@layer workspace-preview {
+  .launch-totals:not([hidden]) { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:12px 0; }
+  .launch-totals > div { background:#fff; padding:clamp(10px,2vw,18px); border:1px solid var(--fl-line); border-radius:12px; }
+  .launch-totals dt { font-size:13px; color:var(--fl-muted); }
+  .launch-totals dd { margin:4px 0 0; font-size:24px; font-variant-numeric:tabular-nums; }
+  .fl-dash .fl-tabs { display:flex !important; flex-wrap:wrap !important; }
 }

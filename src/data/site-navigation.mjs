@@ -3,9 +3,9 @@ export const primaryLinks = [
   ['/', 'Launches'],
   ['/discover', 'Directory'],
   ['/threads', 'Threads'],
+  ['/news', 'News'],
 ];
 const moreExploreLinks = [
-  ['/news', 'News'],
   ['/resources', 'Resources'],
   ['/winners', 'Weekly winners'],
   ['/invstr', 'For Investors'],

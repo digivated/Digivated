@@ -32,14 +32,14 @@ for (const width of [320, 390, 768, 920, 921, 1119]) {
     if (mobile) await expect(menuSubmit).toHaveAttribute('href', '/submit-project');
     await expect(menu).toHaveCSS('background-color', 'rgb(0, 0, 0)');
     await expect(menu.locator('.site-menu-branch-trigger')).toHaveText(['Explore', 'For makers']);
-    await expect(menu.getByRole('link', { name: 'News', exact: true })).toBeVisible();
+    await expect((mobile ? menu : primary).getByRole('link', { name: 'News', exact: true })).toBeVisible();
     await expect(menu.getByRole('link', { name: 'Embed badges', exact: true })).toBeHidden();
     await expect(menu.locator('.site-menu-secondary a')).toHaveText([
-      'News', 'Resources', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
+      'Resources', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
     ]);
     await expect(menu.locator('.site-menu-primary')).toBeVisible({ visible: mobile });
     const mainLinks = mobile ? menu.locator('.site-menu-primary') : primary;
-    await expect(mainLinks.getByRole('link')).toHaveText(['Launches', 'Directory', 'Threads']);
+    await expect(mainLinks.getByRole('link')).toHaveText(['Launches', 'Directory', 'Threads', 'News']);
     const destinations = await page.locator('.dg-shell-primary a:visible, .dg-shell-tools a:visible').evaluateAll(
       links => links.map(link => link.getAttribute('href')),
     );
@@ -112,7 +112,7 @@ test('the compact header branches are keyboard operable and open to the current 
   await expect(badges).toHaveAttribute('aria-current', 'page');
   const explore = menu.locator('summary', { hasText: 'Explore' });
   await explore.press('ArrowDown');
-  await expect(menu.getByRole('link', { name: 'News', exact: true })).toBeFocused();
+  await expect(menu.getByRole('link', { name: 'Resources', exact: true })).toBeFocused();
   await expect(menu.locator('.site-menu-connector').first()).toHaveCSS('stroke', 'rgb(160, 160, 160)');
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
@@ -179,7 +179,7 @@ test('navigation surfaces stay opaque over a bright backdrop', async ({ page }) 
   const menu = page.locator('#explore-navigation');
   await expect(menu).toHaveCSS('background-color', 'rgb(0, 0, 0)');
   await expect(menu).toHaveCSS('backdrop-filter', 'none');
-  await expect(menu.getByRole('link', { name: 'News' })).toHaveCSS('color', 'rgb(248, 248, 248)');
+  await expect(menu.getByRole('link', { name: 'Resources' })).toHaveCSS('color', 'rgb(248, 248, 248)');
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
 });
