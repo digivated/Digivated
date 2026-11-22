@@ -72,7 +72,7 @@ test('activity indicators follow system motion preferences and launch links stay
  const orbit = page.locator('.dg-activity-mark-orbit .dg-activity-dot').first();
  const ribbon = page.locator('.dg-activity-mark-ribbon .dg-activity-dot').first();
  await expect(orbit).toHaveCSS('background-color', 'rgb(68, 68, 68)');
- await expect(ribbon).toHaveCSS('background-color', 'rgb(84, 84, 84)');
+ await expect(ribbon).toHaveCSS('background-color', 'rgb(73, 73, 73)');
  await expect(orbit).toHaveCSS('animation-name', 'dg-orbit-signal');
  await expect(ribbon).toHaveCSS('animation-name', 'dg-ribbon-signal');
  await expect(page.locator('[data-scene-toggle]')).toHaveCount(0);
@@ -153,4 +153,29 @@ test('the search panel catches light on desktop and stays still with reduced mot
   await expect(panel).not.toHaveAttribute('data-reflecting', '');
   await expect.poll(() => panel.evaluate(element => getComputedStyle(element, '::after').content)).toBe('none');
   await expect(panel.getByRole('searchbox')).toBeVisible();
+});
+
+test('React Bits sidebar and action effects animate without changing link targets', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(base + '/');
+  const nav = page.getByRole('navigation', { name: 'Workspace navigation' });
+  const directory = nav.getByRole('link', { name: 'Directory', exact: true });
+  const row = nav.locator('.line-sidebar__item').filter({ has: directory });
+  await directory.hover();
+  await expect.poll(() => row.evaluate(element => Number(element.style.getPropertyValue('--effect')))).toBeGreaterThan(.6);
+
+  const action = page.getByRole('link', { name: 'Browse launches', exact: true });
+  const band = action.locator('.glare-hover__band').first();
+  const resting = await band.evaluate(element => element.style.transform);
+  expect(resting).toContain('translateX');
+  await action.hover();
+  await expect.poll(() => band.evaluate(element => element.style.transform)).not.toBe(resting);
+  await expect(action).toHaveAttribute('href', '#this-week');
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(action.locator('.glare-hover__glare')).toBeHidden();
+  await expect(directory.locator('.line-sidebar__label')).toHaveCSS('transform', 'none');
+  await directory.press('Enter');
+  await expect(page).toHaveURL(base + '/discover');
+  await expect(directory).toHaveAttribute('aria-current', 'page');
 });
