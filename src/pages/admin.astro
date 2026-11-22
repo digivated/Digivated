@@ -2,51 +2,57 @@
 import Admin from '../layouts/Admin.astro';
 import UiIcon from '../components/UiIcon.astro';
 ---
-<Admin><section id="owner-login" class="owner-login"><p class="eyebrow">DIGIVATED ADMIN</p><h1>Welcome back.</h1><p>Sign in to review projects, manage content, and oversee your workspace.</p><form id="owner-login-form"><label for="owner-password">Owner password</label><input id="owner-password" name="password" type="password" autocomplete="current-password" minlength="10" maxlength="200" required/><button class="button primary" type="submit" disabled>Sign in</button></form><p class="quiet">Owner access only. Use your separate dashboard password.</p><noscript>Enable JavaScript to use the owner dashboard.</noscript></section>
+<Admin>
+<section id="owner-login" class="owner-login">
+  <img class="owner-login-mark" src="/digivated-daylight-mark.png" width="40" height="40" alt=""/>
+  <p class="eyebrow">Digivated owner</p>
+  <h1>Welcome back.</h1>
+  <p class="owner-login-copy">Sign in to review launches, publish content and run the site.</p>
+  <form id="owner-login-form"><label for="owner-password">Owner password</label><input id="owner-password" name="password" type="password" autocomplete="current-password" minlength="10" maxlength="200" required/><button class="button primary" type="submit" disabled>Sign in</button></form>
+  <p class="quiet">Owner access only. Use your separate dashboard password.</p>
+  <noscript>Enable JavaScript to use the owner dashboard.</noscript>
+</section>
 <p id="owner-status" class="owner-status" role="status" aria-live="polite" tabindex="-1">Checking owner access…</p>
 
 <section id="owner-dashboard" hidden>
-  <header class="owner-workspace-heading"><div><p class="eyebrow">[ DIGIVATED / OWNER ]</p><h1>Site desk.</h1><p>Free launches lock in when the badge checks out. You step in for member spotlights, comments, and news.</p></div><div class="owner-quick"><button class="button primary" type="button" id="owner-quick-review">Review projects</button><a class="button" href="/admin/news">News desk</a><a class="button" href="/admin/analytics">Analytics</a></div></header>
+  <h1 class="sr-only">Owner dashboard</h1>
   <div class="owner-workspace-grid">
     <aside class="owner-sidebar" aria-label="Workspace navigation">
-      <nav class="owner-tabs" aria-label="Manage content">
-        <button class="button" type="button" data-owner-panel="overview" aria-pressed="true"><UiIcon name="grid" size={18}/><span>Home</span></button>
+      <nav class="owner-tabs" aria-label="Manage the site">
+        <button type="button" data-owner-panel="overview" aria-pressed="true"><UiIcon name="grid" size={17}/><span>Home</span></button>
         <p class="owner-nav-group">Review</p>
-        <button type="button" class="button" data-kind="submission" aria-pressed="false"><UiIcon name="layers" size={18}/><span>Submissions</span><b class="owner-nav-count" data-nav-count="pending" hidden></b></button>
-        <button type="button" class="button" data-kind="comments" aria-pressed="false"><UiIcon name="comment" size={18}/><span>Comments</span><b class="owner-nav-count" data-nav-count="comments" hidden></b></button>
-        <button type="button" class="button" data-kind="threads" aria-pressed="false"><UiIcon name="layers" size={18}/><span>Threads</span></button>
+        <button type="button" data-kind="submission" aria-pressed="false"><UiIcon name="layers" size={17}/><span>Submissions</span><b class="owner-nav-count" data-nav-count="pending" hidden></b></button>
+        <button type="button" data-kind="comments" aria-pressed="false"><UiIcon name="comment" size={17}/><span>Comments</span><b class="owner-nav-count" data-nav-count="comments" hidden></b></button>
+        <button type="button" data-kind="threads" aria-pressed="false"><UiIcon name="message" size={17}/><span>Threads</span></button>
         <p class="owner-nav-group">Publish</p>
-        <a href="/admin/news"><UiIcon name="book" size={18}/><span>News desk</span><b class="owner-nav-count" data-nav-count="newsReview" hidden></b></a>
-        <button type="button" class="button" data-kind="resource" aria-pressed="false"><UiIcon name="tool" size={18}/><span>Articles</span></button>
-        <button type="button" class="button" data-kind="carousel" aria-pressed="false"><UiIcon name="layers" size={18}/><span>Carousels</span></button>
-        <button type="button" class="button" data-kind="product" aria-pressed="false"><UiIcon name="grid" size={18}/><span>Products</span></button>
+        <a href="/admin/news"><UiIcon name="bell" size={17}/><span>News desk</span><b class="owner-nav-count" data-nav-count="newsReview" hidden></b></a>
+        <button type="button" data-kind="resource" aria-pressed="false"><UiIcon name="book" size={17}/><span>Articles</span></button>
+        <button type="button" data-kind="carousel" aria-pressed="false"><UiIcon name="sparkle" size={17}/><span>Carousels</span></button>
+        <button type="button" data-kind="product" aria-pressed="false"><UiIcon name="save" size={17}/><span>Products</span></button>
         <p class="owner-nav-group">People &amp; data</p>
-        <button type="button" class="button" data-kind="accounts" aria-pressed="false"><UiIcon name="profile" size={18}/><span>Accounts</span></button>
-        <a href="/admin/analytics"><UiIcon name="chart" size={18}/><span>Analytics</span></a>
-        <button class="button" type="button" data-owner-panel="settings" aria-pressed="false"><UiIcon name="tool" size={18}/><span>Store setup</span></button>
+        <button type="button" data-kind="accounts" aria-pressed="false"><UiIcon name="profile" size={17}/><span>Accounts</span></button>
+        <a href="/admin/analytics"><UiIcon name="chart" size={17}/><span>Analytics</span></a>
+        <button type="button" data-owner-panel="settings" aria-pressed="false"><UiIcon name="sliders" size={17}/><span>Settings</span></button>
       </nav>
-      <p class="owner-sidebar-note"><span class="owner-session-dot" aria-hidden="true"></span><span>Press <kbd>/</kbd> to search a list</span></p>
+      <p class="owner-sidebar-note"><span>Press <kbd>/</kbd> to search any list</span></p>
     </aside>
+
     <div class="owner-workspace-main">
       <section id="owner-overview" aria-labelledby="owner-overview-title">
-        <header class="owner-section-heading"><div><h2 id="owner-overview-title">Needs you</h2><p id="owner-overview-updated">Loading…</p></div><button class="button" id="owner-overview-refresh" type="button">Refresh</button></header>
-        <p id="owner-overview-status" role="status" aria-live="polite"></p>
+        <header class="owner-section-heading">
+          <div><p class="eyebrow">Home</p><h2 id="owner-overview-title">Needs you</h2><p id="owner-overview-updated">Loading…</p></div>
+          <div class="owner-heading-actions"><button class="button" id="owner-overview-refresh" type="button">Refresh</button><button class="button primary" type="button" id="owner-quick-review">Review projects</button></div>
+        </header>
+        <p id="owner-overview-status" class="owner-inline-status" role="status" aria-live="polite"></p>
         <ul class="owner-todo" aria-label="Things that need you">
-          <li data-todo="review"><button type="button" data-open-kind="submission" data-open-stage="review"><strong data-overview-number="review">0</strong><span><b>Still waiting on you</b><small>Promos and anything that is not on the automatic path</small></span><em>Open</em></button></li>
+          <li data-todo="review"><button type="button" data-open-kind="submission" data-open-stage="review"><strong data-overview-number="review">0</strong><span><b>Still waiting on you</b><small>Promos and anything off the automatic path</small></span><em>Open</em></button></li>
           <li data-todo="spotlight"><button type="button" data-open-kind="submission" data-open-stage="spotlight"><strong data-overview-number="spotlight">0</strong><span><b>Member spotlights</b><small>One reviewed spotlight per membership</small></span><em>Review</em></button></li>
           <li data-todo="comments"><button type="button" data-open-kind="comments" data-open-status="pending"><strong data-overview-number="comments">0</strong><span><b>Comments to approve</b><small>Held until you say yes</small></span><em>Moderate</em></button></li>
           <li data-todo="newsReview"><a href="/admin/news"><strong data-overview-number="newsReview">0</strong><span><b>News to review</b><small>Drafts on the news desk</small></span><em>Open</em></a></li>
           <li data-todo="payment"><button type="button" data-open-kind="submission" data-open-stage="payment"><strong data-overview-number="payment">0</strong><span><b>Instant checkouts</b><small>Saved, payment not in yet</small></span><em>See</em></button></li>
         </ul>
-        <p class="owner-allclear" data-allclear hidden><span aria-hidden="true">[ ok ]</span> All clear. Nothing needs you right now.</p>
-        <h3 class="owner-subhead">Launch path</h3>
-        <p class="owner-flow-note">Free: copy the badge, paste it, press Verify badge and submit. A verified badge locks the Monday date and goes live on its own.</p>
-        <ol class="owner-flow" aria-label="Automatic launch path">
-          <li><button type="button" data-open-kind="submission" data-open-stage="badge"><span>1</span><b>Badge missing</b><small data-flow-number="badge">0</small></button></li>
-          <li><button type="button" data-open-kind="submission" data-open-stage="scheduled"><span>2</span><b>Date locked</b><small data-flow-number="scheduled">0</small></button></li>
-          <li><button type="button" data-open-kind="submission" data-open-status="live"><span>3</span><b>Live</b><small data-flow-number="published">0</small></button></li>
-          <li><button type="button" data-open-kind="submission" data-open-status="featured"><span>M</span><b>Member</b><small data-flow-number="featured">0</small></button></li>
-        </ol>
+        <p class="owner-allclear" data-allclear hidden><span class="owner-allclear-icon" aria-hidden="true"><UiIcon name="check" size={16}/></span><span><b>All clear.</b> Nothing needs you right now.</span></p>
+
         <h3 class="owner-subhead">At a glance</h3>
         <div class="owner-metrics">
           <button type="button" data-open-kind="submission" data-open-status="live" class="owner-metric"><span>Live</span><strong data-overview-number="published">0</strong></button>
@@ -56,22 +62,67 @@ import UiIcon from '../components/UiIcon.astro';
           <button type="button" data-open-kind="submission" data-open-stage="scheduled" class="owner-metric"><span>Date locked</span><strong data-overview-number="scheduled">0</strong></button>
           <button type="button" data-open-kind="submission" class="owner-metric"><span>All submissions</span><strong data-overview-number="total">0</strong></button>
         </div>
-        <h3 class="owner-subhead">The rest of the site</h3>
-        <div class="owner-sections">
-          <button type="button" class="owner-section-card" data-open-kind="resource"><span>Articles</span><strong data-overview-number="articles">0</strong></button>
-          <button type="button" class="owner-section-card" data-open-kind="carousel"><span>Full carousels</span><strong data-overview-number="carousels">0</strong></button>
-          <button type="button" class="owner-section-card" data-open-kind="product"><span>Products</span><strong data-overview-number="products">0</strong></button>
-          <a class="owner-section-card" href="/admin/news"><span>News published</span><strong data-overview-number="newsPublished">0</strong></a>
-          <button type="button" class="owner-section-card" data-open-kind="accounts"><span>Accounts</span><strong>Open</strong></button>
-          <a class="owner-section-card" href="/admin/analytics"><span>Analytics</span><strong>Open</strong></a>
-        </div>
+
         <div class="owner-overview-panels">
           <section class="owner-dashboard-panel"><header><div><h3>New submissions</h3><p>Last 7 days (UTC)</p></div><strong id="owner-activity-total">0</strong></header><ol id="owner-activity-chart" class="owner-activity-chart" aria-label="Daily submissions over the last seven days"></ol></section>
           <section class="owner-dashboard-panel"><header><div><h3>By status</h3><p>Every submission</p></div></header><div id="owner-pipeline" class="owner-pipeline"></div></section>
         </div>
+
+        <h3 class="owner-subhead">Launch path</h3>
+        <p class="owner-flow-note">Free launches run themselves: the maker pastes the badge, presses Verify, and a verified badge locks the Monday date and goes live on its own.</p>
+        <ol class="owner-flow" aria-label="Automatic launch path">
+          <li><button type="button" data-open-kind="submission" data-open-stage="badge"><span>1</span><b>Badge missing</b><small data-flow-number="badge">0</small></button></li>
+          <li><button type="button" data-open-kind="submission" data-open-stage="scheduled"><span>2</span><b>Date locked</b><small data-flow-number="scheduled">0</small></button></li>
+          <li><button type="button" data-open-kind="submission" data-open-status="live"><span>3</span><b>Live</b><small data-flow-number="published">0</small></button></li>
+          <li><button type="button" data-open-kind="submission" data-open-status="featured"><span>M</span><b>Member</b><small data-flow-number="featured">0</small></button></li>
+        </ol>
+
+        <h3 class="owner-subhead">Everything else</h3>
+        <div class="owner-sections">
+          <button type="button" class="owner-section-card" data-open-kind="resource"><span><UiIcon name="book" size={16}/>Articles</span><strong data-overview-number="articles">0</strong></button>
+          <button type="button" class="owner-section-card" data-open-kind="carousel"><span><UiIcon name="sparkle" size={16}/>Full carousels</span><strong data-overview-number="carousels">0</strong></button>
+          <button type="button" class="owner-section-card" data-open-kind="product"><span><UiIcon name="save" size={16}/>Products</span><strong data-overview-number="products">0</strong></button>
+          <a class="owner-section-card" href="/admin/news"><span><UiIcon name="bell" size={16}/>News published</span><strong data-overview-number="newsPublished">0</strong></a>
+          <button type="button" class="owner-section-card" data-open-kind="accounts"><span><UiIcon name="profile" size={16}/>Accounts</span><strong>Open</strong></button>
+          <a class="owner-section-card" href="/admin/analytics"><span><UiIcon name="chart" size={16}/>Analytics</span><strong>Open</strong></a>
+        </div>
       </section>
-      <section id="owner-content" hidden aria-labelledby="owner-content-title"><header class="owner-section-heading"><div><h2 id="owner-content-title">Submissions</h2><p id="owner-content-description">Free launches go live on their date once the badge is verified. Open a project to feature, archive, or fix a stuck one.</p></div></header><div class="owner-toolbar"><label><span id="owner-search-label">Search loaded items</span><input id="owner-search" type="search" placeholder="Name, title, or creator  ( / )"/></label><label>Filter status<select id="owner-filter"><option value="">All statuses</option></select></label><label id="owner-stage-control" hidden>Launch stage<select id="owner-stage"><option value="">All launch stages</option></select></label><button id="owner-refresh" class="button" type="button">Refresh</button><button class="button" id="owner-duplicates" type="button" hidden>Check duplicate projects</button><button id="owner-create" class="button primary" type="button" hidden>New article</button></div><p id="owner-search-note" class="quiet" hidden>Search filters loaded accounts. Use Load more to see older accounts.</p><p class="quiet" id="owner-list-updated"></p><p class="quiet" id="owner-count" role="status"></p><article class="owner-protected panel" id="owner-protected" hidden><div><span class="tag">Protected product</span><h2>UI/UX Prompt Packet</h2><p>Existing purchase access is preserved. The public shop now presents only Digivated Membership.</p></div><a class="button" href="/ui-ux-prompt-packet">View packet →</a></article><div id="owner-list" class="owner-list"></div><div id="owner-empty" class="community-empty" hidden><h2>No items found</h2><p>Try another filter or refresh the list.</p></div><button id="owner-more" class="button" type="button" hidden>Load more</button><p class="quiet owner-publish-note">A verified free badge goes live on its Monday by itself. Approving or publishing anything else updates the site on the next page load. Project feedback shows right away. Resource comments still need approval. Email and private notes stay private.</p></section>
-      <section id="owner-settings" hidden aria-labelledby="owner-settings-title"><header class="owner-section-heading"><div><h2 id="owner-settings-title">Store setup</h2><p>Membership checkout and seller configuration.</p></div></header><details id="gumroad-setup" class="owner-private owner-gumroad-setup"><summary>Gumroad membership setup</summary><p>Apply the prepared listings: the $5 one-time Membership (unlimited instant project uploads and full site access) and the $3 Starter copy (3 projects; its price is not changed). This updates the membership listing and black/purple branding, uses a matching custom storefront if your Gumroad account supports it, and unpublishes the old packet, promotion, and tip offers. Existing purchases and files are preserved.</p><button id="owner-gumroad-rerun" class="button" type="button" hidden>Reapply Gumroad branding</button><form id="owner-gumroad-form" autocomplete="off"><label for="owner-gumroad-token">Gumroad seller API key<input id="owner-gumroad-token" name="gumroadToken" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" minlength="20" maxlength="500" data-private data-sentry-mask required aria-describedby="owner-gumroad-help"/></label><p id="owner-gumroad-help" class="quiet">Use a seller OAuth access token with product editing access (edit_products), not an application ID or client secret. Profile editing access is optional. Enter it here on digivated.com, not in chat. The key is sent over HTTPS to this site's authenticated server for this operation. It is not saved, logged, or returned.</p><button id="owner-gumroad-apply" class="button primary" type="submit">Update Gumroad and open checkout</button></form><p id="owner-gumroad-status" role="status" aria-live="polite"></p><p class="quiet"><a href="/membership" target="_blank" rel="noopener noreferrer">Review the membership page ↗</a> · <a href="/membership-cover.png" target="_blank" rel="noopener noreferrer">Preview the prepared cover ↗</a></p></details></section>
+
+      <section id="owner-content" hidden aria-labelledby="owner-content-title">
+        <header class="owner-section-heading"><div><p class="eyebrow">Manage</p><h2 id="owner-content-title">Submissions</h2><p id="owner-content-description">Free launches go live on their date once the badge is verified. Open a project to feature, archive, or fix a stuck one.</p></div></header>
+        <div class="owner-toolbar">
+          <label class="owner-search-field"><span id="owner-search-label">Search loaded items</span><input id="owner-search" type="search" placeholder="Name, title, or creator"/></label>
+          <label>Filter status<select id="owner-filter"><option value="">All statuses</option></select></label>
+          <label id="owner-stage-control" hidden>Launch stage<select id="owner-stage"><option value="">All launch stages</option></select></label>
+          <div class="owner-toolbar-actions"><button id="owner-refresh" class="button" type="button">Refresh</button><button class="button" id="owner-duplicates" type="button" hidden>Check duplicate projects</button><button id="owner-create" class="button primary" type="button" hidden>New article</button></div>
+        </div>
+        <p id="owner-search-note" class="quiet" hidden>Search filters loaded accounts. Use Load more to see older accounts.</p>
+        <div class="owner-list-meta"><p class="quiet" id="owner-count" role="status"></p><p class="quiet" id="owner-list-updated"></p></div>
+        <article class="owner-protected panel" id="owner-protected" hidden><div><span class="tag">Protected product</span><h2>UI/UX Prompt Packet</h2><p>Existing purchase access is preserved. The public shop now presents only Digivated Membership.</p></div><a class="button" href="/ui-ux-prompt-packet">View packet →</a></article>
+        <div id="owner-list" class="owner-list"></div>
+        <div id="owner-empty" class="community-empty" hidden><h2>No items found</h2><p>Try another filter or refresh the list.</p></div>
+        <button id="owner-more" class="button" type="button" hidden>Load more</button>
+        <p class="quiet owner-publish-note">A verified free badge goes live on its Monday by itself. Approving or publishing anything else updates the site on the next page load. Project feedback shows right away. Resource comments still need approval. Email and private notes stay private.</p>
+      </section>
+
+      <section id="owner-settings" hidden aria-labelledby="owner-settings-title">
+        <header class="owner-section-heading"><div><p class="eyebrow">Settings</p><h2 id="owner-settings-title">Store and site</h2><p>Membership checkout, seller setup and quick links to every public page.</p></div></header>
+        <details id="gumroad-setup" class="owner-private owner-gumroad-setup"><summary>Gumroad membership setup</summary><p>Apply the prepared listings: the $5 one-time Membership (unlimited instant project uploads and full site access) and the $3 Starter copy (3 projects; its price is not changed). This updates the membership listing and black/purple branding, uses a matching custom storefront if your Gumroad account supports it, and unpublishes the old packet, promotion, and tip offers. Existing purchases and files are preserved.</p><button id="owner-gumroad-rerun" class="button" type="button" hidden>Reapply Gumroad branding</button><form id="owner-gumroad-form" autocomplete="off"><label for="owner-gumroad-token">Gumroad seller API key<input id="owner-gumroad-token" name="gumroadToken" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" minlength="20" maxlength="500" data-private data-sentry-mask required aria-describedby="owner-gumroad-help"/></label><p id="owner-gumroad-help" class="quiet">Use a seller OAuth access token with product editing access (edit_products), not an application ID or client secret. Profile editing access is optional. Enter it here on digivated.com, not in chat. The key is sent over HTTPS to this site's authenticated server for this operation. It is not saved, logged, or returned.</p><button id="owner-gumroad-apply" class="button primary" type="submit">Update Gumroad and open checkout</button></form><p id="owner-gumroad-status" role="status" aria-live="polite"></p><p class="quiet"><a href="/membership" target="_blank" rel="noopener noreferrer">Review the membership page ↗</a> · <a href="/membership-cover.png" target="_blank" rel="noopener noreferrer">Preview the prepared cover ↗</a></p></details>
+        <section class="owner-shortcuts" aria-labelledby="owner-shortcuts-title">
+          <h3 id="owner-shortcuts-title">Public pages</h3>
+          <p>Open what visitors see, in a new tab.</p>
+          <ul>
+            <li><a href="/" target="_blank" rel="noopener"><span>Homepage</span><small>Today's launches</small></a></li>
+            <li><a href="/discover" target="_blank" rel="noopener"><span>Directory</span><small>Every live project</small></a></li>
+            <li><a href="/threads" target="_blank" rel="noopener"><span>Threads</span><small>Creators forum</small></a></li>
+            <li><a href="/news" target="_blank" rel="noopener"><span>News</span><small>Published briefings</small></a></li>
+            <li><a href="/resources" target="_blank" rel="noopener"><span>Extra Tools</span><small>Articles and guides</small></a></li>
+            <li><a href="/membership" target="_blank" rel="noopener"><span>Membership</span><small>Plans and checkout</small></a></li>
+            <li><a href="/submit-project" target="_blank" rel="noopener"><span>New launch</span><small>The submit form</small></a></li>
+            <li><a href="/account" target="_blank" rel="noopener"><span>Maker dashboard</span><small>What makers see</small></a></li>
+          </ul>
+        </section>
+      </section>
     </div>
   </div>
 </section>
