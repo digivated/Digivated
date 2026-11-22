@@ -60,6 +60,9 @@ async function renderSaved(){
  heading.textContent=active==='saved'?'Collection items':current.name;
  heading.classList.toggle('sr-only',active==='saved');
  document.getElementById('saved-count').textContent=`${current.items.length} saved ${current.items.length===1?'item':'items'}`;
+ const empty=current.items.length===0;
+ document.getElementById('saved-filters').hidden=empty;
+ document.getElementById('refresh-saved').hidden=empty;
  document.getElementById('rename-collection').hidden=active==='saved';document.getElementById('delete-collection').hidden=active==='saved';
  const query=document.getElementById('saved-search').value.toLowerCase().trim(), type=document.getElementById('saved-type').value;
  const list=document.getElementById('saved-items');list.replaceChildren();let shown=0;

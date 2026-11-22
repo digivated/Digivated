@@ -63,6 +63,8 @@
     gap: 8px;
   }
   .saved-workspace #refresh-saved { margin-inline-start: auto; }
+  #saved-root :is(#saved-filters,#refresh-saved)[hidden] { display: none !important; }
+  .saved-workspace .saved-feedback:has(#saved-status:empty):has(#refresh-saved[hidden]) { margin-block-start: 0; }
   .saved-workspace :is(.saved-empty-panel,.saved-card) {
     display: grid;
     gap: 8px;
