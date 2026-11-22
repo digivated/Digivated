@@ -2,19 +2,22 @@ import {test,expect} from '@playwright/test';
 const base='http://127.0.0.1:4321';
 test.beforeEach(async({page})=>{
  await page.addInitScript(()=>sessionStorage.setItem('digivated-announcement-seen-v2','1'));
- await page.route('**/api/**',r=>r.fulfill({json:{ready:false,items:[{id:'motion-fixture',name:'Motion project',creator:'Builder',category:'Apps',status:'featured',url:'https://example.invalid',image:'/digivated-dark-mark.svg',description:'An independent project.'}],next:null,views:{},counts:{}}}));
+ await page.route('**/api/**',r=>{
+  const items=new URL(r.request().url()).pathname==='/api/projects'?[{id:'motion-fixture',name:'Motion project',creator:'Builder',category:'Apps',status:'featured',date:new Date().toISOString(),pageUrl:'/projects/listing/motion-fixture',url:'https://example.invalid',image:'/digivated-dark-mark.svg',description:'An independent project.'}]:[];
+  return r.fulfill({json:{ready:false,items,next:null,views:{},counts:{}}});
+ });
 });
-test('spot cards and launch rows stay lightweight and calm under reduced motion',async({page})=>{
+test('launch rows stay lightweight and calm under reduced motion',async({page})=>{
  await page.setViewportSize({width:1440,height:950});await page.goto(base+'/');
- const spot=page.locator('[data-spot-grid] .dg-spot').first();await expect(spot).toBeVisible();await spot.hover();
- await expect(page.locator('[data-spot-grid] .dg-spot.is-open')).toHaveCount(1);
- await expect(page.locator('[data-spot-grid] .dg-spot.is-open')).toHaveAttribute('href','/submit-project?spot=1#project-form');
- const costs=await page.locator('.dg-spot,.dg-row,.dg-vote').evaluateAll(elements=>elements.map(e=>getComputedStyle(e).backdropFilter));
+ const row=page.locator('[data-launch-id="motion-fixture"]');
+ await expect(row).toBeVisible();
+ await row.hover();
+ const costs=await page.locator('.dg-row,.dg-vote').evaluateAll(elements=>elements.map(e=>getComputedStyle(e).backdropFilter));
  expect(costs.length).toBeGreaterThan(0);
  expect(costs.every(blur=>blur==='none')).toBe(true);
  await page.emulateMedia({reducedMotion:'reduce'});
- expect(await spot.evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
- await expect(spot).toBeVisible();
+ expect(await row.evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
+ await expect(row).toBeVisible();
 });
 test('reduced motion keeps all content visible and native search focus working',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:900});await page.goto(base+'/');

@@ -1,5 +1,4 @@
 import { requestCardInteraction } from './card-actions.js';
-import { observeProjectViews } from './project-views.js';
 import { homeLaunchGroups } from '../lib/home-launches.mjs';
 import { fairOrder, freeLaunchDay, launchBounds, launchTimestamp } from '../lib/launch-calendar.mjs';
 import { api, session } from './discussion.js';
@@ -10,11 +9,8 @@ import { projectMarks } from '../lib/project-marks.mjs';
 import { projectLogo } from './project-logo.js';
 import { matchesQuery } from '../lib/directory-sort.mjs';
 
-// One catalogue supplies the launch lists and featured products.
 const board = document.querySelector('[data-board]');
-const home = document.querySelector('[data-spots]');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-const WEEK = 7 * 86_400_000;
 const PAGE = 10;
 const defaultLimits = { current: PAGE, upcoming: 5, previous: 5, archive: 5, top: PAGE };
 
@@ -28,7 +24,6 @@ const markBadge = key => {
   return el('span', rising ? '↗ Rising' : key === 'fresh' ? 'New this week' : 'Spot', rising ? 'dg-badge dg-badge-boost' : 'dg-badge');
 };
 const appendMarks = (title, project) => { for (const key of projectMarks(project)) title.append(markBadge(key)); };
-const memberTag = () => { const tag = el('em', null, 'dg-spot-tag dg-spot-member'); tag.append(el('span', null, 'dg-member-mark'), 'Member'); return tag; };
 const icon = name => { const t = document.createElement('template'); t.innerHTML = cardIconMarkup(name); return t.content.firstElementChild; };
 const local = value => { const href = safeSearchHref(value); return href && href.startsWith('/') ? href : ''; };
 const outbound = value => { try { const url = new URL(safeSearchHref(value)); if (!/^https?:$/.test(url.protocol)) return ''; if (!url.searchParams.has('ref')) url.searchParams.set('ref', 'digivated'); return url.href; } catch { return ''; } };
@@ -52,39 +47,6 @@ function launchExcerpt(description) {
   const excerpt = characters.slice(0, 80).join('');
   const wordEnd = excerpt.lastIndexOf(' ');
   return (wordEnd > 54 ? excerpt.slice(0, wordEnd) : excerpt).trimEnd() + '…';
-}
-
-/* ---------- Spots ---------- */
-function spotCard(item, price) {
-  const card = el('a', null, 'dg-spot dg-project-tile' + (item ? '' : ' is-open'));
-  if (!item) {
-    // Open cards are paid spots only: they always lead to $3 Instant Publishing.
-    card.href = '/submit-project?spot=1#project-form';
-    card.append(el('strong', 'Feature your product'), el('span', 'Instant publishing →'));
-    card.setAttribute('aria-label', `Feature your product with instant publishing${price ? ` for ${price}` : ''}`);
-    return card;
-  }
-  if (outbound(item.url)) visitAttrs(card, item); else card.href = local(item.pageUrl) || '/discover';
-  card.dataset.projectId = item.id;
-  card.append(projectLogo(item, 'dg-spot-logo'), el('strong', item.name, 'dg-spot-name'), el('span', launchExcerpt(item.description || item.category || 'Independent project'), 'dg-spot-copy'), item.spot === 'Member' ? memberTag() : el('em', item.spot, 'dg-spot-tag'));
-  card.setAttribute('aria-label', `${item.name}, ${item.spot === 'Member' ? 'Digivated member' : 'featured product'}${card.target === '_blank' ? '. Opens in a new tab.' : ''}`);
-  return card;
-}
-
-let spotsSignature = '';
-function renderSpots(featured, sponsored, instant) {
-  if (!home) return;
-  const seen = new Set();
-  // Every member project always appears, then paid spots from the last 7 days.
-  const filled = [...featured.map(p => ({ ...p, spot: 'Member' })), ...sponsored.map(p => ({ ...p, spot: 'Spot' }))]
-    .filter(p => !seen.has(p.id) && seen.add(p.id));
-  const price = instant ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }).format(instant.price / 100) : '';
-  // Cached spots are painted first; skip the rebuild when the fresh data matches.
-  const signature = JSON.stringify([price, filled.map(p => [p.id, p.spot, p.name, p.description, p.category, p.image, p.url, p.pageUrl])]);
-  if (signature === spotsSignature) return;
-  spotsSignature = signature;
-  home.querySelector('[data-spot-grid]')?.replaceChildren(...filled.map(item => spotCard(item, price)), spotCard(null, price));
-  observeProjectViews();
 }
 
 /* ---------- Launch lists ---------- */
@@ -425,30 +387,6 @@ async function loadLaunches(view) {
     return response.ok ? await response.json() : null;
   } catch { return null; }
 }
-async function loadInstant() {
-  try {
-    const response = await fetch('/api/submissions?action=launch-options', { cache: 'no-store', signal: AbortSignal.timeout(10000) });
-    return response.ok ? (await response.json()).instant || null : null;
-  } catch { return null; }
-}
-
-async function railThreads() {
-  const box = document.querySelector('[data-rail-threads]');
-  if (!box) return;
-  try {
-    const response = await fetch('/api/threads?sort=trending', { cache: 'no-store', credentials:'same-origin', signal: AbortSignal.timeout(10000) });
-    if (!response.ok) return;
-    const { threads = [] } = await response.json();
-    if (!threads.length) return;
-    box.querySelector('[data-rail-thread-list]').replaceChildren(...threads.slice(0, 4).map(thread => {
-      const li = el('li'); const a = el('a', thread.title); a.href = `/threads/${thread.slug}`;
-      li.append(a, el('small', `▲ ${thread.votes} · ${thread.comments} ${thread.comments === 1 ? 'reply' : 'replies'}`));
-      return li;
-    }));
-    box.hidden = false;
-  } catch { /* The box stays hidden. */ }
-}
-
 // The last good feed is kept on this device so a return visit paints at once;
 // fresh data replaces it quietly a moment later.
 const CACHE_KEY = 'digivated:home-board:v1';
@@ -466,9 +404,6 @@ function writeCache(patch) {
     localStorage.setItem(CACHE_KEY, JSON.stringify({ ...saved, ...patch }));
   } catch { /* Storage is optional. */ }
 }
-const featuredFrom = projects => projects.filter(p => p.status === 'featured').sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
-const sponsoredFrom = projects => { const now = Date.now(); return projects.filter(p => p.sponsored && p.status !== 'featured' && now - launchTimestamp(p) < WEEK).sort((a, b) => launchTimestamp(b) - launchTimestamp(a)); };
-
 if (board) {
   document.querySelector('[data-board-filters]')?.addEventListener('click', event => {
     const field = event.target;
@@ -530,7 +465,6 @@ if (board) {
       }
     });
   }
-  railThreads();
   const cached = readCache();
   if (cached) {
     state.projects = cached.projects;
@@ -538,7 +472,6 @@ if (board) {
     state.fair = cached.fair || state.fair;
     if (cached.podium?.order) state.podium = cached.podium;
     render();
-    if (home) renderSpots(featuredFrom(cached.projects), sponsoredFrom(cached.projects), cached.instant || null);
   }
   const catalogue = loadCatalogue();
   // Refresh just the section a late response affects.
@@ -556,18 +489,4 @@ if (board) {
       section.querySelector('[data-section-note]').replaceChildren(error.message + ' ', Object.assign(el('a', 'Browse the directory →'), { href: '/discover' }));
     });
   });
-  if (home) {
-    // The catalogue already carries every featured project (same records and view
-    // counts as the old separate featured request), so spots come from it.
-    Promise.all([catalogue.then(projects => ({ projects, ok: true }), () => ({ projects: cached?.projects || [], ok: false })), loadInstant()]).then(([{ projects, ok }, instant]) => {
-      const featured = featuredFrom(projects);
-      const status = home.querySelector('[data-featured-status]');
-      if (status) {
-        status.hidden = !!featured.length || ok;
-        if (!status.hidden) status.textContent = 'Spots didn’t load. Browse the directory instead.';
-      }
-      if (instant) writeCache({ instant });
-      renderSpots(featured, sponsoredFrom(projects), instant || cached?.instant || null);
-    });
-  }
 }
