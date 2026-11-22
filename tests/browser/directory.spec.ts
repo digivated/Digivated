@@ -73,15 +73,15 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(base + '/');
   const rail = page.getByRole('complementary', { name: 'Digivated sidebar' });
-  const activeLaunches = rail.getByRole('link', { name: 'Launches', exact: true });
+  const activeLaunches = rail.getByRole('link', { name: 'Home', exact: true });
   await expect(activeLaunches).toHaveAttribute('aria-current', 'page');
   await expect(activeLaunches).toHaveCSS('box-shadow', /inset/);
-  await expect(rail.getByRole('link', { name: 'Submit a launch' })).toHaveAttribute('href', '/submit-project');
+  await expect(rail.getByRole('link', { name: 'New Launch' })).toHaveAttribute('href', '/submit-project');
   await expect(rail).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(rail).toHaveCSS('background-image', 'none');
   const workspace = rail.getByRole('navigation', { name: 'Workspace navigation' });
   await expect(workspace.locator('a')).toHaveText([
-    'Launches', 'Categories', 'Threads', 'News', 'Directory', 'Resources', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
+    'New Launch', 'Home', 'Directory', 'Dashboard', 'News', 'Extra Tools', 'Categories', 'Threads', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
   ]);
   await expect(workspace.getByRole('link', { name: 'News', exact: true })).toBeVisible();
   await expect(workspace.locator('a[href="/badges"]')).toBeHidden();
@@ -95,7 +95,7 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   const login = rail.getByRole('link', { name: 'Log In', exact: true });
   await expect(login).toHaveAttribute('href', '/login');
   await expect(rail.locator('[data-open-search]')).toHaveCount(0);
-  const submit = rail.getByRole('link', { name: 'Submit a launch' });
+  const submit = rail.getByRole('link', { name: 'New Launch' });
   const [loginBox, submitBox] = await Promise.all([login.boundingBox(), submit.boundingBox()]);
   expect(loginBox!.x).toBeCloseTo(submitBox!.x, 0);
   expect(loginBox!.width).toBeCloseTo(submitBox!.width, 0);
@@ -156,11 +156,11 @@ test('the desktop sidebar opens the current branch and scrolls in a short viewpo
   const nav = rail.getByRole('navigation', { name: 'Workspace navigation' });
   await expect(nav.getByRole('link', { name: 'Embed badges' })).toHaveAttribute('aria-current', 'page');
   await expect(nav.locator('a[href="/news"]')).toBeVisible();
-  await expect(nav.locator('a[href="/resources"]')).toBeHidden();
+  await expect(nav.locator('a[href="/categories"]')).toBeHidden();
   await expect(nav.locator('.site-menu-branch[open] .site-menu-connector').first()).toHaveCSS('animation-name', 'none');
   await nav.locator('summary', { hasText: 'Explore' }).press('Enter');
   await expect(nav.getByRole('link', { name: 'Weekly winners' })).toHaveAttribute('href', '/winners');
-  const action = rail.getByRole('link', { name: 'Submit a launch' });
+  const action = rail.getByRole('link', { name: 'New Launch' });
   await action.scrollIntoViewIfNeeded();
   await expect(action).toBeInViewport();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1120);
@@ -185,7 +185,7 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   await expect(page).toHaveURL(base + '/#launching-next');
   await expect(nav.getByRole('link', { name: 'Browse by category' })).toHaveAttribute('href', '/categories');
   await expect(page.getByRole('region', { name: 'Launching next' })).toContainText('Mon, Nov 23 · 9:00 AM Eastern');
-  await expect(page.locator('#launching-next .dg-list-rows')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(page.locator('#launching-next .dg-row').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.getByRole('button', { name: 'Notify me when Scheduled fixture launches' })).toBeVisible();
   const upcoming = page.locator('[data-upcoming-id="upcoming-fixture"] img');
   await expect(upcoming).toHaveAttribute('src', '/digivated-daylight-mark.png');

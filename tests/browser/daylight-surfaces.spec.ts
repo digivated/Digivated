@@ -134,10 +134,10 @@ for (const width of [320, 1440]) {
       }
       const height = (await footer.boundingBox())!.height;
       expect(height, path).toBeLessThan(width === 320 ? 850 : 550);
-      const action = footer.getByRole('link', { name: 'Submit a launch', exact: true });
+      const action = footer.getByRole('link', { name: 'New Launch', exact: true });
       await expect(action).toHaveCount(1);
       await expect(footer).toHaveCSS('background-color', 'rgb(16, 16, 16)');
-      await expect(footer.locator('.dg-footer-group').filter({ has: page.getByRole('link', { name: 'Submit a launch', exact: true }) })).toHaveText(/For makers/);
+      await expect(footer.locator('.dg-footer-group').filter({ has: page.getByRole('link', { name: 'New Launch', exact: true }) })).toHaveText(/For makers/);
       await expect(footer.locator('[data-scene-toggle]')).toHaveCount(0);
       const grid = footer.locator('.dg-footer-groups');
       const positions = await grid.locator('h2').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().toJSON()));

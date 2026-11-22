@@ -7,13 +7,12 @@ const nice = new Intl.NumberFormat('en-US');
 const parts = link => { const url = new URL(link.href); return { name: url.hostname.replace(/^www\./,''), path: url.pathname === '/' ? '' : url.pathname.replace(/\/$/,'') }; };
 const mono = name => name.replace(/^(app|get|use|try|go)\.|^the/,'').replace(/[^a-z0-9]/gi,'').slice(0,2).toUpperCase() || '··';
 ---
-<Platform title="Resources for makers: 1,259 handpicked tools" description="1,259 handpicked tools and sites for designers, makers, and founders. Upvote the ones that helped you." canonicalPath="/resources">
+<Platform title="Extra Tools for makers" description="1,259 handpicked tools and sites for designers, makers, and founders. Upvote the ones that helped you." canonicalPath="/resources">
 <div class="rl" data-link-directory>
   <section class="dg-hero" aria-labelledby="links-title">
     <div class="dg-hero-copy">
-      <p class="dg-pill"><span class="dg-dot" aria-hidden="true"></span>The useful internet</p>
-      <h1 id="links-title">Tools worth <span class="dg-hero-accent">bookmarking.</span></h1>
-      <p class="dg-hero-lede">Handpicked sites for designing, building, and growing. Upvote the ones that helped you, and the best rise to the top.</p>
+      <h1 id="links-title">Extra Tools</h1>
+      <p class="dg-hero-lede">Tools for designing, building, and growing.</p>
       <ul class="dg-dir-stats" aria-label="Resource totals">
         <li><strong>{nice.format(resourceLinkCount)}</strong><span>links</span></li>
         <li><strong>{resourceGroups.length}</strong><span>categories</span></li>
@@ -28,7 +27,7 @@ const mono = name => name.replace(/^(app|get|use|try|go)\.|^the/,'').replace(/[^
   </section>
 
   <div class="rl-controls">
-    <label class="dg-dir-search"><span class="sr-only">Search resources</span><input data-link-search type="search" placeholder="search 1,259 resources" autocomplete="off" enterkeyhint="search"/></label>
+    <label class="dg-dir-search"><span class="sr-only">Search resources</span><input data-link-search type="search" placeholder="Search tools" autocomplete="off" enterkeyhint="search"/></label>
     <div class="rl-sorts" role="group" aria-label="Sort resources">
       <button type="button" class="dg-dir-sort" data-rl-sort="top" aria-pressed="true">most helpful</button>
       <button type="button" class="dg-dir-sort" data-rl-sort="az" aria-pressed="false">a–z</button>

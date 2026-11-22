@@ -5,7 +5,7 @@ import UiIcon from './UiIcon.astro';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const current = (href: string) => isNavigationCurrent(path, href);
-const icons: Record<string, string> = { '/': 'layers', '/categories': 'grid', '/threads': 'comment', '/news': 'book' };
+const icons: Record<string, string> = { '/submit-project': 'upload', '/': 'layers', '/discover': 'grid', '/account': 'profile', '/news': 'book', '/resources': 'tool' };
 const links = primaryLinks.map(([href, label]) => ({ href, label, current: current(href), icon: icons[href] || 'arrow' }));
 ---
 <aside class="dg-workspace-rail" aria-label="Digivated sidebar">
@@ -20,6 +20,5 @@ const links = primaryLinks.map(([href, label]) => ({ href, label, current: curre
   </nav>
   <div class="dg-rail-footer">
     <a class="dg-rail-about" href="/about" aria-current={current('/about') ? 'page' : undefined}>About Digivated <UiIcon name="arrow" size={14}/></a>
-    <a class="dg-rail-submit" href="/submit-project" aria-current={current('/submit-project') ? 'page' : undefined}>Submit a launch <UiIcon name="arrow" size={16}/></a>
   </div>
 </aside>

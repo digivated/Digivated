@@ -19,27 +19,21 @@ for (const width of [320, 390, 768, 920, 921, 1119]) {
     await expect(trigger).toHaveAccessibleName(mobile ? 'Menu' : 'More');
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
     await expect(trigger.locator(mobile ? '.dg-shell-menu-open' : '.dg-shell-more-arrow')).toBeVisible();
-    const headerSubmit = page.locator('.dg-header-submit');
-    await expect(headerSubmit).toBeVisible({ visible: !mobile });
     if (mobile) await expect(page.locator('.dg-shell-tools > a:visible')).toHaveText(['Log In']);
-    else await expect(headerSubmit).toHaveAttribute('href', '/submit-project');
     await expect(menu).toBeHidden();
     await trigger.click();
     if (mobile) await expect(trigger.locator('.dg-shell-menu-close')).toBeVisible();
     await expect(menu).toBeVisible();
-    const menuSubmit = menu.locator('.site-menu-submit a');
-    await expect(menuSubmit).toBeVisible({ visible: mobile });
-    if (mobile) await expect(menuSubmit).toHaveAttribute('href', '/submit-project');
     await expect(menu).toHaveCSS('background-color', 'rgb(255, 255, 255)');
     await expect(menu.locator('.site-menu-branch-trigger')).toHaveText(['Explore', 'For makers']);
     await expect((mobile ? menu : primary).getByRole('link', { name: 'News', exact: true })).toBeVisible();
     await expect(menu.getByRole('link', { name: 'Embed badges', exact: true })).toBeHidden();
     await expect(menu.locator('.site-menu-secondary a')).toHaveText([
-      'Directory', 'Resources', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
+      'Categories', 'Threads', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
     ]);
     await expect(menu.locator('.site-menu-primary')).toBeVisible({ visible: mobile });
     const mainLinks = mobile ? menu.locator('.site-menu-primary') : primary;
-    await expect(mainLinks.getByRole('link')).toHaveText(['Launches', 'Categories', 'Threads', 'News']);
+    await expect(mainLinks.getByRole('link')).toHaveText(['New Launch', 'Home', 'Directory', 'Dashboard', 'News', 'Extra Tools']);
     const destinations = await page.locator('.dg-shell-primary a:visible, .dg-shell-tools a:visible').evaluateAll(
       links => links.map(link => link.getAttribute('href')),
     );
@@ -71,7 +65,7 @@ test('header supports keyboard navigation and search', async ({ page }) => {
   await trigger.focus();
   await page.keyboard.press('ArrowDown');
   const menu = page.locator('#explore-navigation');
-  await expect(menu.getByRole('link', { name: 'Launches', exact: true })).toBeFocused();
+  await expect(menu.getByRole('link', { name: 'New Launch', exact: true })).toBeFocused();
   await expect(menu.getByRole('link', { name: 'Threads', exact: true })).toHaveAttribute('aria-current', 'page');
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await page.keyboard.press('Escape');
@@ -112,7 +106,7 @@ test('the compact header branches are keyboard operable and open to the current 
   await expect(badges).toHaveAttribute('aria-current', 'page');
   const explore = menu.locator('summary', { hasText: 'Explore' });
   await explore.press('ArrowDown');
-  await expect(menu.getByRole('link', { name: 'Directory', exact: true })).toBeFocused();
+  await expect(menu.getByRole('link', { name: 'Categories', exact: true })).toBeFocused();
   await expect(menu.locator('.site-menu-connector').first()).toHaveCSS('stroke', 'rgb(160, 160, 160)');
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
@@ -145,7 +139,7 @@ test('navigation surfaces stay opaque over a bright backdrop', async ({ page }) 
   const menu = page.locator('#explore-navigation');
   await expect(menu).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(menu).toHaveCSS('backdrop-filter', 'none');
-  await expect(menu.getByRole('link', { name: 'Resources' })).toHaveCSS('color', 'rgb(23, 23, 23)');
+  await expect(menu.getByRole('link', { name: 'Categories' })).toHaveCSS('color', 'rgb(23, 23, 23)');
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
 });

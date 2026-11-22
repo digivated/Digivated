@@ -6,7 +6,7 @@ test('shared public destinations use canonical current routes without repeated f
  const header=[...primaryLinks,...menuLinks];
  const footer=footerGroups.flatMap(group=>group.links);
  assert.equal(new Set(header.map(([href])=>href)).size,header.length);
- for(const href of ['/login','/account','/submit-project'])assert.ok(!header.some(([link])=>link===href));
+ assert.deepEqual(primaryLinks.map(([href])=>href),['/submit-project','/','/discover','/account','/news','/resources']);
  assert.equal(new Set(footer.map(([href])=>href)).size,footer.length);
  for(const [link] of [...header,...footer]){
   if(!link.startsWith('/'))continue;

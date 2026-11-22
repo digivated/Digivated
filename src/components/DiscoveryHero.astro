@@ -5,7 +5,7 @@ import UiIcon from './UiIcon.astro';
 <section class="dg-hero dg-home-hero" aria-labelledby="dg-home-title" data-discovery-hero>
   <div class="dg-hero-copy">
     <h1 id="dg-home-title">Discover indie launches</h1>
-    <p class="board-introduction">Find independent products and the makers behind them. Free launches go live every Monday.</p>
+    <p class="board-introduction">Find products by independent makers.</p>
     <div class="dg-hero-actions">
       <form class="dg-launch-search" action="/discover" method="get" role="search" aria-label="Find a product" data-launch-search>
         <UiIcon name="search" size={18}/>
@@ -14,7 +14,7 @@ import UiIcon from './UiIcon.astro';
         <button type="button" data-clear-launch-search aria-label="Clear launch search" hidden><UiIcon name="close" size={16}/></button>
         <button type="submit" aria-label="Search products"><UiIcon name="arrow" size={16}/></button>
       </form>
-      <a class="dg-btn dg-btn-primary" href="/submit-project">Submit launch <UiIcon name="arrow" size={15}/></a>
+      <a class="dg-btn dg-btn-primary" href="/submit-project">New Launch <UiIcon name="arrow" size={15}/></a>
     </div>
     <p class="dg-launch-search-status" data-launch-search-status role="status" hidden></p>
   </div>

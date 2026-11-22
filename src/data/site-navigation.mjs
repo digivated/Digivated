@@ -1,13 +1,15 @@
 // The bar holds the main destinations. On smaller screens they move into the menu.
 export const primaryLinks = [
-  ['/', 'Launches'],
-  ['/categories', 'Categories'],
-  ['/threads', 'Threads'],
+  ['/submit-project', 'New Launch'],
+  ['/', 'Home'],
+  ['/discover', 'Directory'],
+  ['/account', 'Dashboard'],
   ['/news', 'News'],
+  ['/resources', 'Extra Tools'],
 ];
 const moreExploreLinks = [
-  ['/discover', 'Directory'],
-  ['/resources', 'Resources'],
+  ['/categories', 'Categories'],
+  ['/threads', 'Threads'],
   ['/winners', 'Weekly winners'],
   ['/invstr', 'For Investors'],
 ];
@@ -29,9 +31,9 @@ export function isNavigationCurrent(path, href) {
 export const menuLinks = menuGroups.flatMap(group => group.links);
 // Footer: the same destinations as the header and menu, plus account pages and socials.
 export const footerGroups = [
-  { title: 'Explore', links: [...primaryLinks, ['/discover', 'All products']] },
+  { title: 'Explore', links: [...primaryLinks.filter(([href]) => !['/submit-project', '/account'].includes(href)), ['/categories', 'Categories'], ['/threads', 'Threads']] },
   { title: 'For makers', links: [
-    ['/submit-project', 'Submit a launch'], ['/account', 'Dashboard'], ['/badges', 'Embed badges'], ['/points', 'Feedback points'],
+    ['/submit-project', 'New Launch'], ['/account', 'Dashboard'], ['/badges', 'Embed badges'], ['/points', 'Feedback points'],
   ] },
   { title: 'Company', links: [
     ['/about', 'About'], ['/privacy', 'Privacy'], ['/terms', 'Terms'],
