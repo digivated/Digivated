@@ -72,8 +72,7 @@
   .category-index li a {display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:14px;padding:14px;background:#fff !important;border:1px solid #ddd;border-radius:12px;text-decoration:none !important;color:#171717 !important;}
   .category-index li a:hover strong {text-decoration:underline}
   .category-index small {display:block;line-height:1.5;color:#505050 !important}
-  .category-logo {position:relative;display:grid;place-items:center;height:40px;border-radius:8px;background:#f2f2f2;overflow:hidden}
-  .category-logo img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:white}
+  .category-logo {height:40px}
   @media(max-width:1119px) {
     .dg-workspace .dg-shell {width:100% !important;max-width:none !important;padding-inline:0 !important;}
     .dg-workspace .dg-shell-bar {padding-inline:clamp(12px,3vw,36px) !important;}

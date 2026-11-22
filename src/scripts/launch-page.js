@@ -1,4 +1,5 @@
 import { mountDiscussion } from './discussion.js';
+import { projectLogo, resolveProjectLogo } from './project-logo.js';
 
 const comments = document.querySelector('[data-project-comments]');
 // The server renders a placeholder; the discussion replaces it once scripts run.
@@ -28,11 +29,8 @@ for (const image of document.querySelectorAll('.launch-shot img')) {
   else image.addEventListener('error', showUnavailable, { once: true });
 }
 
-const logo = document.querySelector('.launch-identity img');
-if (logo) {
-  if (logo.complete && !logo.naturalWidth) logo.remove();
-  else logo.addEventListener('error', () => logo.remove(), { once: true });
-}
+const identity = document.querySelector('.launch-identity');
+if (identity) resolveProjectLogo(identity);
 
 const relatedPanel = document.querySelector('[data-launch-related]');
 function loadRelatedProjects() {
@@ -50,21 +48,7 @@ function loadRelatedProjects() {
         const link = document.createElement('a');
         link.href = project.pageUrl;
         link.setAttribute('aria-label', project.name);
-        const art = document.createElement('span');
-        art.className = 'launch-related-art';
-        art.setAttribute('aria-hidden', 'true');
-        art.textContent = project.name.slice(0, 2).toUpperCase();
-        if (project.image === '/api/projects?image=' + project.id || project.image === '/media/project-logos/' + project.id + '.webp') {
-          const image = document.createElement('img');
-          image.src = project.image;
-          image.alt = '';
-          image.width = 40;
-          image.height = 40;
-          image.decoding = 'async';
-          image.loading = 'lazy';
-          image.addEventListener('error', () => image.remove(), { once: true });
-          art.append(image);
-        }
+        const art = projectLogo(project, 'launch-related-art');
         const copy = document.createElement('span');
         const name = document.createElement('strong');
         name.textContent = project.name;

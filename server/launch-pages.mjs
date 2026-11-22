@@ -38,7 +38,7 @@ export function pageSlug(record) {
 export function launchPublic(record, draft = false) {
   if (!record || (!draft && ((record.promotion?.requested && !record.promotion.verified) || !record.pagePublished || !record.page?.consent || !record.consent || !['approved','featured'].includes(record.status)))) return null;
   const page = record.page || {};
-  return { sponsored:record.promotion?.verified === true, featured:record.status === 'featured', id:record.id, slug:record.slug || pageSlug(record), name:record.name, description:record.description, creator:record.creator, category:projectCategory(record), website:safeUrl(record.url), pricing:record.pricing, date:record.date, publishedAt:record.publishedAt, bio:page.bio || '', logo:draft ? '' : projectDisplayLogo(record), ctaLabel:page.ctaLabel || 'Visit project', ctaUrl:safeUrl(page.ctaUrl || record.url), socialUrl:safeUrl(record.socialUrl), image:record.image ? (draft ? record.image : `/api/project-page?slug=${record.slug}&asset=primary`) : '', alt:page.alt || `${record.name} screenshot`, gallery:(page.gallery || []).map((item,index)=>({alt:item.alt,image:draft?item.image:`/api/project-page?slug=${record.slug}&asset=${index}`})) };
+  return { sponsored:record.promotion?.verified === true, featured:record.status === 'featured', id:record.id, slug:record.slug || pageSlug(record), name:record.name, description:record.description, creator:record.creator, category:projectCategory(record), website:safeUrl(record.url), pricing:record.pricing, date:record.date, publishedAt:record.publishedAt, bio:page.bio || '', logo:draft ? '' : projectDisplayLogo(record), ctaLabel:page.ctaLabel || 'Visit project', ctaUrl:safeUrl(page.ctaUrl || record.url), socialUrl:safeUrl(record.socialUrl), image:record.image ? (draft ? record.image : `/api/project-page?slug=${record.slug}&asset=primary`) : '', alt:page.alt || `${record.name} screenshot`, hasPrimaryScreenshot: Boolean(record.image && page.alt), gallery:(page.gallery || []).map((item,index)=>({alt:item.alt,image:draft?item.image:`/api/project-page?slug=${record.slug}&asset=${index}`})) };
 }
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export async function renderLaunch(item, { draft = false, origin = 'https://digivated.com', template } = {}) {
@@ -47,6 +47,8 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
     ...(item.image ? [{ image: item.image, alt: item.alt }] : []),
     ...item.gallery,
   ];
+  // A primary upload can be a logo. The page editor can identify it as a screenshot.
+  const cover = item.hasPrimaryScreenshot ? screenshots[0] : item.gallery[0];
   const website = safeUrl(item.website || item.ctaUrl);
   const destination = safeUrl(item.ctaUrl) || website;
   // Outbound clicks from a published page count as a visit for feedback points (visit-feedback.js).
@@ -104,9 +106,9 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
   const body = `${draftNotice}<article class="launch-page">
     <nav class="launch-breadcrumb" aria-label="Breadcrumb"><a href="/discover">Projects</a><span aria-hidden="true">/</span><a href="${e(categoryHref)}">${e(item.category)}</a></nav>
     <header class="launch-panel launch-intro">
-      <div class="launch-cover" aria-hidden="true">${screenshots.length ? `<img src="${e(screenshots[0].image)}" alt="" width="1200" height="750" fetchpriority="high" decoding="async">` : ''}</div>
+      ${cover ? `<div class="launch-cover" aria-hidden="true"><img src="${e(cover.image)}" alt="" width="1200" height="750" fetchpriority="high" decoding="async"></div>` : ''}
       <div class="launch-hero">
-        <div class="launch-identity" aria-hidden="true"><span>${e(item.name.slice(0,2).toUpperCase())}</span>${item.logo ? `<img src="${e(item.logo)}" alt="" width="96" height="96">` : ''}</div>
+        <div class="launch-identity dg-project-art" aria-hidden="true"><span class="dg-monogram">${e(item.name.slice(0,2).toUpperCase())}</span>${item.logo ? `<img src="${e(item.logo)}" alt="" width="96" height="96" decoding="async">` : ''}</div>
         <div class="launch-hero-copy">
           <h1>${e(item.name)}</h1>
           <p class="launch-byline">By ${e(item.creator)}</p>

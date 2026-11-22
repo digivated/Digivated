@@ -225,6 +225,8 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   await upcoming.scrollIntoViewIfNeeded();
   await expect.poll(() => upcoming.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   await expect(upcoming).toHaveCSS('object-fit', 'contain');
+  await expect(upcoming).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(upcoming.locator('..')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.locator('[data-upcoming-id="upcoming-fixture"] .dg-monogram')).toBeHidden();
   const missingLogo = page.locator('[data-upcoming-id="missing-logo"] .dg-logo');
   await missingLogo.scrollIntoViewIfNeeded();
