@@ -23,10 +23,10 @@
     --fl-bad: #292929 !important;
     --glass-light: var(--fl-surface);
     --glass-dark: #171717;
-    --glass-edge: none;
-    --glass-dark-edge: none;
+    --glass-edge: 0 1px 2px #11111108, 0 6px 18px -16px #11111155;
+    --glass-dark-edge: inset 0 1px 0 #ffffff22, 0 2px 4px #00000020;
   }
-  html[data-theme="daylight"] body { background: var(--fl-bg) !important; }
+  html[data-theme="daylight"] body { background: linear-gradient(180deg, #fcfcfc, var(--fl-bg) 520px) !important; }
   html[data-theme="daylight"] body.home-refresh .dg-activity-mark-orbit { color: #444 !important; }
 
   :is(.dg-workspace,.packet-workspace) :is(.fl-card,.submission-review,.submission-account-callout,.shop-card,.notifications-preferences,.creator-hub-panel,.rl-card,.dg-fp-meter) {
@@ -387,7 +387,7 @@
     border: 1px solid var(--fl-line) !important;
     border-radius: 12px !important;
     background: var(--fl-surface) !important;
-    box-shadow: none !important;
+    box-shadow: var(--glass-edge) !important;
   }
   .dg-workspace :is(.dg-row,.dg-spot):is(:hover,:focus-within) { border-color: #a9a9a9 !important; }
   .dg-workspace :is(.dg-row,.dg-spot) :is(.dg-tagline,.dg-spot-copy) {

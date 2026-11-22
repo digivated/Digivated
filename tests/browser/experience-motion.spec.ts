@@ -95,12 +95,12 @@ test('activity indicators follow system motion preferences and launch links stay
 });
 
 
-test('public and account layouts use a plain background without decorative canvas', async ({ page }) => {
+test('public and account layouts use a static background without decorative canvas', async ({ page }) => {
  await page.setViewportSize({ width: 1440, height: 900 });
  for (const path of ['/', '/discover', '/threads', '/news', '/resources', '/login', '/account', '/start', '/submit-project']) {
   await page.goto(base + path);
   await expect(page.locator('[data-site-backdrop], [data-ascii-field], .ascii-ambient, .ascii-rule')).toHaveCount(0);
-  await expect(page.locator('body')).toHaveCSS('background-image', 'none');
+  await expect(page.locator('body')).toHaveCSS('background-image', /^linear-gradient/);
  }
 });
 
@@ -116,7 +116,7 @@ test('the centered homepage search sits directly on the page background', async 
   await page.goto(base + '/');
   const hero = page.locator('[data-discovery-hero]');
   await expect(hero).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-  await expect(hero).toHaveCSS('background-image', 'none');
+  await expect(hero).toHaveCSS('background-image', /^radial-gradient/);
   await expect(hero).toHaveCSS('border-top-width', '0px');
   await expect(hero).toHaveCSS('box-shadow', 'none');
   await expect(hero).not.toHaveAttribute('data-nav-reflection', '');
