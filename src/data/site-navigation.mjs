@@ -26,8 +26,6 @@ export const footerGroups = [
   ] },
   { title: 'Follow', links: [
     ['https://x.com/digivatedx', 'X'],
-    ['https://www.threads.com/@digivated', 'Threads app'],
-    ['https://www.instagram.com/digivated/', 'Instagram'],
     ['https://www.pinterest.com/digivated/', 'Pinterest'],
   ] },
 ];
