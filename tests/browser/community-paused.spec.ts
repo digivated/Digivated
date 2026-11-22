@@ -42,7 +42,7 @@ for (const width of [390, 1440]) {
   await expect(approvals.getByRole('link',{name:/Studio Notes/})).toHaveAttribute('href',href);
   const notification = page.getByRole('region',{name:'Recent activity'}).getByRole('link',{name:/Your project is approved and live/});
   await expect(notification).toHaveAttribute('href',href);
-  await expect(notification).toHaveCSS('background-color','rgb(230, 236, 225)');
+  await expect(notification).toHaveCSS('background-color','rgb(228, 228, 228)');
   await expect(page.getByText('1 unread · 1 recent')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
  });

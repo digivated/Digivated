@@ -195,7 +195,7 @@ for (const width of [320, 1440]) {
     await expect(page.locator('.launch-shot img')).toHaveCount(0);
     const card = page.locator('.launch-creator');
     await expect(card.getByText(creator)).toBeVisible();
-    await expect(card.getByText(creator)).toHaveCSS('color', 'rgb(34, 40, 35)');
+    await expect(card.getByText(creator)).toHaveCSS('color', 'rgb(27, 27, 27)');
     await expect(card).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     const [intro, overview, maker, discussion] = await Promise.all([
       page.locator('.launch-intro').boundingBox(), page.locator('.launch-overview').boundingBox(),
