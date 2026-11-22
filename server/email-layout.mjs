@@ -5,8 +5,12 @@ const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': 
 const MONO = "'Courier New',Courier,monospace";
 const SANS = 'Arial,Helvetica,sans-serif';
 
+export function renderEmailAvatar() {
+  return '<img src="https://digivated.com/email/digivated-profile.jpg" width="48" height="48" alt="" style="display:inline-block;vertical-align:middle;margin-right:10px;border:0;border-radius:50%;background:#111111">';
+}
+
 // paragraphs: strings (escaped). list: [{label, href?, note?}]. cta: {label, href}.
-export function renderEmail({ label = 'DIGIVATED', title, preheader = '', paragraphs = [], list = [], cta, after = [], footer = [] }) {
+export function renderEmail({ label = 'DIGIVATED', title, preheader = '', showAvatar = false, paragraphs = [], list = [], cta, after = [], footer = [] }) {
   const p = text => `<p style="margin:0 0 16px;color:#c8c8c8;font:15px/1.65 ${SANS}">${escape(text)}</p>`;
   const items = list.length ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:4px 0 22px;border-top:1px dashed #2e2e2e">${list.map(item => `<tr><td style="padding:12px 0;border-bottom:1px dashed #2e2e2e;font:15px/1.5 ${SANS}">${item.href ? `<a href="${escape(item.href)}" style="color:#f1f1f1;font-weight:700;text-decoration:none">${escape(item.label)}</a>` : `<span style="color:#f1f1f1;font-weight:700">${escape(item.label)}</span>`}${item.note ? `<br><span style="color:#9a9a9a;font:13px/1.5 ${SANS}">${escape(item.note)}</span>` : ''}</td></tr>`).join('')}</table>` : '';
   const button = cta ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:6px 0 26px"><tr><td bgcolor="#ececec" style="background-color:#ececec;border:1px solid #ececec"><a href="${escape(cta.href)}" style="display:inline-block;padding:12px 20px;color:#0a0a0a;font:700 14px/1 ${SANS};text-decoration:none">${escape(cta.label)} &rarr;</a></td></tr></table>` : '';
@@ -19,7 +23,7 @@ export function renderEmail({ label = 'DIGIVATED', title, preheader = '', paragr
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#0b0b0b" style="background-color:#0b0b0b"><tr><td align="center" style="padding:0 12px">
 <!--[if mso]><table role="presentation" width="560" cellpadding="0" cellspacing="0"><tr><td><![endif]-->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;text-align:left;background-color:#0b0b0b">
-<tr><td style="padding:34px 12px 8px"><a href="https://digivated.com/" style="color:#bfc2c5;font:700 12px/1.5 ${MONO};letter-spacing:1.5px;text-decoration:none">[ ${escape(label)} ]</a></td></tr>
+<tr><td style="padding:34px 12px 8px">${showAvatar ? renderEmailAvatar() : ''}<a href="https://digivated.com/" style="color:#bfc2c5;font:700 12px/1.5 ${MONO};letter-spacing:1.5px;text-decoration:none">[ ${escape(label)} ]</a></td></tr>
 <tr><td style="padding:10px 12px 0">
 <h1 style="margin:0 0 16px;color:#f4f4f4;font:700 24px/1.3 ${SANS};letter-spacing:-.3px">${escape(title)}</h1>
 ${paragraphs.map(p).join('')}${items}${button}${after.map(p).join('')}

@@ -134,6 +134,9 @@ test('weekly confirmation and digest use the same verified sending credentials',
  const digest=makeWeeklyDigestHandler({...deps,now:()=>Date.parse('2026-11-23T15:01:00Z')});
  assert.deepEqual((await f.invoke(digest,'GET','/api/weekly-digest',undefined,{authorization:`Bearer ${env.CRON_SECRET}`})).body,{sent:1,failed:0,skipped:0});
  assert.equal(f.sent.length,2);
+ for (const email of f.sent) {
+  assert.match(email.html, /<img src="https:\/\/digivated\.com\/email\/digivated-profile\.jpg" width="48" height="48" alt=""/);
+ }
 });
 
 test('temporary account and provider failures are visible and preserve subscriptions',async()=>{
