@@ -17,7 +17,7 @@ test('public crawl files list canonical pages and exclude private routes',async(
 
 for(const width of [390,1366]) test(`home shows launches without the extra panels at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});
- await page.route('**/api/projects?*',route=>route.fulfill({json:{items:[{id:'audit-fixture',name:'Example project',description:'A useful independent project.',category:'Apps',status:'featured',date:new Date().toISOString(),views:12,image:'/digivated-logo.webp',url:'https://example.com'}],next:null}}));
+ await page.route('**/api/projects?*',route=>route.fulfill({json:{items:[{id:'audit-fixture',name:'Example project',description:'A useful independent project.',category:'Apps',status:'featured',date:new Date().toISOString(),pageUrl:'/projects/listing/audit-fixture',views:12,image:'/digivated-logo.webp',url:'https://example.com'}],next:null}}));
  const panelRequests: string[] = [];
  page.on('request', request => {
   const { pathname, searchParams } = new URL(request.url());

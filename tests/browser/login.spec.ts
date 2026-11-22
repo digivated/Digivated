@@ -117,7 +117,9 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await expect(page.locator('#account-state')).toContainText(`You're logged in as ${email}.`);
   await expect(page.locator('#creator-profile-link')).toHaveAttribute('href', `/creator?id=${user.id}`);
   await expect(page.locator('#account-submissions')).toContainText('Submissions unavailable.');
+  await page.locator('.account-points summary').click();
   const points = page.locator('main [data-feedback-points]');
+  await expect(points.locator('[data-fp-me]')).toBeVisible();
   await expect(points.locator('[data-fp-me]')).toHaveText('✦ 12 pts');
   await expect(points.locator('[data-fp-progress-copy]')).toContainText('4 points this week');
   await expect(points.getByRole('link', { name: /feedback/i })).toHaveAttribute('href', '/discover?sort=needs');

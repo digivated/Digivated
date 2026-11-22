@@ -2,7 +2,10 @@ import {test,expect} from '@playwright/test';
 const base='http://127.0.0.1:4321';
 test.beforeEach(async({page})=>{
  await page.addInitScript(()=>sessionStorage.setItem('digivated-announcement-seen-v2','1'));
- await page.route('**/api/**',r=>r.fulfill({json:{ready:false,items:[{id:'motion-fixture',name:'Motion project',creator:'Builder',category:'Apps',status:'featured',date:new Date().toISOString(),url:'https://example.invalid',image:'/digivated-dark-mark.svg',description:'An independent project.'}],next:null,views:{},counts:{}}}));
+ await page.route('**/api/**',r=>{
+  const items=new URL(r.request().url()).pathname==='/api/projects'?[{id:'motion-fixture',name:'Motion project',creator:'Builder',category:'Apps',status:'featured',date:new Date().toISOString(),pageUrl:'/projects/listing/motion-fixture',url:'https://example.invalid',image:'/digivated-dark-mark.svg',description:'An independent project.'}]:[];
+  return r.fulfill({json:{ready:false,items,next:null,views:{},counts:{}}});
+ });
 });
 test('launch rows stay lightweight and calm under reduced motion',async({page})=>{
  await page.setViewportSize({width:1440,height:950});await page.goto(base+'/');
