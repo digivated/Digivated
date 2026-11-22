@@ -7,6 +7,20 @@ import { ownedSubmissions, verifiedAccount } from './project-account.mjs';
 import { allTimeStats, batchProjects, bestPlace, launchScores, readStats, podiumProjectKey } from './launch-score.mjs';
 import { fairStart, inLaunchBatch, launchBounds } from '../src/lib/launch-calendar.mjs';
 import { awardBadgeSnippet } from './badge-snippets.mjs';
+import { commentKey } from './card-interactions.mjs';
+
+// The three newest published comments, so the maker can see what to reply to.
+async function latestComments(redis, id) {
+  const ids = await redis(['ZREVRANGE', `digivated:card:comments:project:${id}`, 0, 2]);
+  if (!Array.isArray(ids) || !ids.length) return [];
+  const rows = await redis(['MGET', ...ids.map(commentKey)]);
+  return (Array.isArray(rows) ? rows : []).flatMap(raw => {
+    try {
+      const row = JSON.parse(raw);
+      return row && row.status === 'approved' ? [{ name: String(row.name || 'Guest').slice(0, 80), body: String(row.body || '').slice(0, 280), date: row.date || '' }] : [];
+    } catch { return []; }
+  });
+}
 
 export function makeMakerStatsHandler(deps = {}) {
   return async (req, res) => {
@@ -30,8 +44,13 @@ export function makeMakerStatsHandler(deps = {}) {
       if (!owned) return send(404, { error: 'Project not found.' });
       const project = projectPublic(owned);
       const now = deps.now ? deps.now() : Date.now();
-      const [days, allTime] = await Promise.all([readStats(redis, id, now), allTimeStats(redis, id)]);
-      const totals = days.reduce((sum, day) => ({ views: sum.views + day.views, visits: sum.visits + day.visits, upvotes: sum.upvotes + day.upvotes, comments: sum.comments + day.comments }), { views: 0, visits: 0, upvotes: 0, comments: 0 });
+      // ?range=7|14|30 returns that many days plus the period before it, so the panel can
+      // switch periods and show trends from one request. Without it the response is unchanged.
+      const range = [7, 14, 30].includes(Number(url.searchParams.get('range'))) ? Number(url.searchParams.get('range')) : null;
+      const [history, allTime, comments] = await Promise.all([readStats(redis, id, now, range ? range * 2 : undefined), allTimeStats(redis, id), latestComments(redis, id)]);
+      const days = range ? history.slice(range) : history;
+      const sum = list => list.reduce((total, day) => ({ views: total.views + day.views, visits: total.visits + day.visits, upvotes: total.upvotes + day.upvotes, comments: total.comments + day.comments }), { views: 0, visits: 0, upvotes: 0, comments: 0 });
+      const totals = sum(days);
 
       let week = null;
       if (project && inLaunchBatch(project, 'current', now)) {
@@ -50,7 +69,7 @@ export function makeMakerStatsHandler(deps = {}) {
       for (let i = 0; i < (rows?.length || 0); i += 2) places.push({ week: rows[i], rank: Number(rows[i + 1]) });
       places.sort((a, b) => b.week.localeCompare(a.week));
       const best = places.length ? await bestPlace(redis, id) : null;
-      return send(200, { days, totals, allTime, week, places, ...(best ? { award: { ...best, snippets: { dark: awardBadgeSnippet(id, 'dark'), light: awardBadgeSnippet(id, 'light'), terminal: awardBadgeSnippet(id, 'terminal') } } } : {}) });
+      return send(200, { days, totals, allTime, week, places, comments, ...(range ? { range, history, previous: sum(history.slice(0, range)) } : {}), ...(best ? { award: { ...best, snippets: { dark: awardBadgeSnippet(id, 'dark'), light: awardBadgeSnippet(id, 'light'), terminal: awardBadgeSnippet(id, 'terminal') } } } : {}) });
     } catch { return send(503, { error: 'Stats are temporarily unavailable. Please try again shortly.' }); }
   };
 }

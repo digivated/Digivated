@@ -1,4 +1,5 @@
 import { accountSession } from './account-session.js';
+import { statsPanel } from './maker-stats-panel.js';
 import { projectStage, trackerElement, badgeSteps, nextStepCopy, badgeLater } from './launch-tracker.js';
 
 const state=document.getElementById('account-state');
@@ -69,7 +70,7 @@ if(state){
   function showAnalytics() {
    if (!panel.querySelector('#account-panel-analytics').hidden && projects.has(selector.value)) {
     const id = selector.value;
-    if (!statsCache.has(id)) statsCache.set(id, statsPanel(projects.get(id)));
+    if (!statsCache.has(id)) statsCache.set(id, statsPanel(projects.get(id), session));
     result.replaceChildren(statsCache.get(id));
    }
   }
@@ -201,49 +202,6 @@ if(state){
     card.append(feedback);
    }
    return card;
-  }
-  // Launch stats: 14 days of views, visits, upvotes and comments as ASCII sparklines,
-  // this week's launch score and rank, and any weekly podium places with the award badge.
-  function statsPanel(item){
-   const el=(tag,text,cls)=>{const node=document.createElement(tag);if(text!=null)node.textContent=text;if(cls)node.className=cls;return node;};
-   const box=el('section',null,'dg-stats');box.setAttribute('aria-label',`Launch stats for ${item.name}`);
-   const head=el('p','All-time totals · bars show the last 14 days','dg-stats-head');
-   const status=el('p','Loading stats…','dg-stats-status');status.setAttribute('role','status');
-   box.append(head,status);
-   const BARS='▁▂▃▄▅▆▇█';
-   const spark=values=>{const max=Math.max(...values);return values.map(v=>max?BARS[Math.min(7,Math.round(v/max*7))]:BARS[0]).join('');};
-   fetch('/api/maker-stats?id='+encodeURIComponent(item.id),{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store',signal:AbortSignal.timeout(20000)}).then(async response=>{
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok)throw Error(data.error||'Stats are temporarily unavailable.');
-    status.remove();
-    const grid=el('div',null,'dg-stats-grid');
-    for(const [key,label] of [['views','Views'],['visits','Visits'],['upvotes','Upvotes'],['comments','Comments']]){
-     const tile=el('div',null,'dg-stat');const values=data.days.map(day=>day[key]);
-     const total=data.allTime?Math.max(data.allTime[key],data.totals[key]):data.totals[key];tile.append(el('span',label,'dg-stat-label'),el('strong',String(total)),el('small',`+${data.totals[key]} in 14 days`,'dg-stat-recent'),Object.assign(el('span',spark(values),'dg-stat-spark'),{title:`${label} per day, oldest first`}));
-     tile.lastChild.setAttribute('aria-hidden','true');grid.append(tile);
-    }
-    box.append(grid);
-    const week=el('p',null,'dg-stats-week');
-    if(data.week?.fresh)week.textContent=`This week: fresh start. Your rank shows ${new Date(data.week.endsAt).toLocaleString(undefined,{weekday:'short',hour:'numeric',minute:'2-digit'})}.`;
-    else if(data.week){week.append('This week: ',el('b',`#${data.week.rank} of ${data.week.of}`),` · launch score ${data.week.score} (${data.week.upvotes} upvote${data.week.upvotes===1?'':'s'}, ${data.week.commenters} commenter${data.week.commenters===1?'':'s'}${data.week.points?`, ${data.week.points} feedback pts`:''}) · `);const how=el('a','How ranking works');how.href='/winners#how-ranking-works';week.append(how);}
-    if(week.childNodes.length)box.append(week);
-    if(data.places?.length){
-     const places=el('p',null,'dg-stats-places');
-     for(const place of data.places)places.append(el('span',`★ #${place.rank} · week of ${new Date(place.week).toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'})}`,'dg-badge dg-badge-medal is-'+({1:'gold',2:'silver',3:'bronze'}[place.rank])));
-     box.append(places);
-    }
-    if(data.award){
-     const award=el('div',null,'dg-stats-award');let theme='dark';
-     const preview=el('img');preview.width=250;preview.height=54;preview.alt=`#${data.award.rank} launch of the week badge`;
-     const code=el('pre',null,'dg-stats-code');const copy=el('button','Copy badge code','dg-btn');copy.type='button';
-     const picker=el('div',null,'dg-stats-themes');picker.setAttribute('role','group');picker.setAttribute('aria-label','Badge style');
-     const show=()=>{preview.src=`/badge/${encodeURIComponent(item.id)}?theme=${theme}&award=week`;code.textContent=data.award.snippets[theme];picker.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.theme===theme)));};
-     for(const key of ['dark','light','terminal']){const b=el('button',key[0].toUpperCase()+key.slice(1));b.type='button';b.dataset.theme=key;b.onclick=()=>{theme=key;show();};picker.append(b);}
-     copy.onclick=async()=>{try{await navigator.clipboard.writeText(data.award.snippets[theme]);copy.textContent='Copied';setTimeout(()=>{copy.textContent='Copy badge code';},1600);}catch{copy.textContent='Select the code to copy';}};
-     award.append(el('p','Show your podium place on your site:','dg-stats-award-title'),preview,picker,code,copy);show();box.append(award);
-    }
-   }).catch(error=>{status.textContent=error.message||'Stats are temporarily unavailable.';});
-   return box;
   }
   async function verifyBadge(item,message){
    const {data:{session:current}}=await client.auth.getSession();if(!current)throw Error('Your session expired. Sign in again to verify your badge.');
