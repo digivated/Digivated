@@ -95,6 +95,26 @@ export function makeProjectAccountHandler(deps={}) {
         };
         return await handleSignup({body,ip,env,redis,createUser,fetcher:deps.fetcher||fetch,send});
       }
+      if(req.method==='POST'&&url.searchParams.get('action')==='delete-account'){
+        // Self-service deletion: same-site only, a verified session, and the word DELETE typed to confirm.
+        if(!cfg||!env.COMMUNITY_SUPABASE_SECRET_KEY||!env.SUBMISSIONS_REDIS_REST_TOKEN)return send(503,{error:'Account deletion is temporarily unavailable. Please try again later.'});
+        if(req.headers.origin!=='https://digivated.com'||req.headers['sec-fetch-site']==='cross-site'||!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))return send(403,{error:'Open your account settings on Digivated to delete your account.'});
+        let body;
+        try { body=typeof req.body==='string'?JSON.parse(req.body):req.body; }
+        catch { return send(400,{error:'Invalid request.'}); }
+        if(body?.confirm!=='DELETE')return send(400,{error:'Type DELETE to confirm.'});
+        const account=await (deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch);
+        if(!account)return send(401,{error:'Sign in again, then delete your account.'});
+        const redis=deps.redis||redisClient(env);
+        const admin=deps.adminClient||createClient(cfg.url,env.COMMUNITY_SUPABASE_SECRET_KEY,{auth:{autoRefreshToken:false,persistSession:false,detectSessionInUrl:false}});
+        const { deleteAccount }=deps.deleteAccount?{deleteAccount:deps.deleteAccount}:await import('./account-deletion.mjs');
+        try {
+          const result=await deleteAccount({redis,account,secret:env.SUBMISSIONS_REDIS_REST_TOKEN,deleteUser:id=>admin.auth.admin.deleteUser(id)});
+          return send(200,{deleted:true,...result});
+        } catch(error) {
+          return send(503,{error:error?.message?.startsWith('One of your launches')||error?.message?.startsWith('Your account could not')?error.message:'Your account could not be deleted. Please try again.'});
+        }
+      }
       if(req.method!=='GET'){res.setHeader('Allow','GET, POST');return send(405,{error:'Method not allowed.'});}
       if(url.searchParams.get('action')==='config')return send(200,{ready:!!cfg,...(cfg?{url:cfg.url,key:cfg.key,...(env.COMMUNITY_GOOGLE_ENABLED==='true'?{google:true}:{})}:{})});
       const accountStatus=url.searchParams.get('action')==='me';

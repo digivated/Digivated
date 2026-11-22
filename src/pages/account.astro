@@ -102,6 +102,22 @@ import SettingsMasthead from '../components/SettingsMasthead.astro';
               </div>
             </div>
           </section>
+          <section class="account-setting-group account-delete" aria-labelledby="account-delete-title">
+            <div class="account-setting-copy">
+              <h3 id="account-delete-title">Delete your account</h3>
+              <p>Removes your sign-in, maker profile and photo, notifications and alert settings, weekly email, Notify me sign-ups, follows and feedback points, and unlinks Google. Your launches are taken off the site. Your comments and threads stay in their conversations but show as “Deleted account”. Payment records stay, as tax law requires. This can’t be undone. See the <a href="/privacy">privacy policy</a> for what we keep and why.</p>
+            </div>
+            <button class="account-delete-open" id="account-delete-open" type="button"><UiIcon name="close" size={15}/>Delete my account</button>
+            <form class="account-delete-form" id="account-delete-form" hidden>
+              <label for="account-delete-confirm">Type <strong>DELETE</strong> to confirm</label>
+              <input id="account-delete-confirm" name="confirm" autocomplete="off" autocapitalize="characters" spellcheck="false" required/>
+              <div class="account-delete-actions">
+                <button class="account-delete-confirm" type="submit">Permanently delete my account</button>
+                <button class="fl-btn" id="account-delete-cancel" type="button">Cancel</button>
+              </div>
+              <p id="account-delete-status" class="fl-status" role="status" aria-live="polite"></p>
+            </form>
+          </section>
         </div>
       </section>
     </div>

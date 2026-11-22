@@ -91,6 +91,27 @@ if(state){
    else showAnalytics();
   }
   setupTabs(name => { if (name === 'analytics') showAnalytics(); });
+  // Delete account: open, type DELETE, confirm. The server clears site data, then removes the sign-in.
+  const deleteOpen=document.getElementById('account-delete-open'),deleteForm=document.getElementById('account-delete-form'),deleteInput=document.getElementById('account-delete-confirm'),deleteStatus=document.getElementById('account-delete-status');
+  if(deleteOpen&&deleteForm){
+   deleteOpen.onclick=()=>{deleteForm.hidden=false;deleteOpen.hidden=true;deleteInput.focus();};
+   document.getElementById('account-delete-cancel').onclick=()=>{deleteForm.reset();deleteStatus.textContent='';deleteForm.hidden=true;deleteOpen.hidden=false;deleteOpen.focus();};
+   deleteForm.onsubmit=async event=>{
+    event.preventDefault();
+    if(deleteInput.value.trim()!=='DELETE'){deleteStatus.dataset.tone='error';deleteStatus.textContent='Type DELETE in capital letters to confirm.';deleteInput.focus();return;}
+    const buttons=[...deleteForm.querySelectorAll('button')];buttons.forEach(button=>{button.disabled=true;});
+    deleteStatus.dataset.tone='';deleteStatus.textContent='Deleting your account…';
+    try{
+     const current=(await client.auth.getSession())?.data?.session||session;
+     const response=await fetch('/api/project-account?action=delete-account',{method:'POST',headers:{Authorization:`Bearer ${current.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({confirm:'DELETE'}),cache:'no-store'});
+     const result=await response.json().catch(()=>({}));
+     if(!response.ok||!result.deleted)throw new Error(result.error||'Your account could not be deleted. Please try again.');
+     deleteStatus.dataset.tone='ok';deleteStatus.textContent='Your account was deleted. Taking you to the homepage…';
+     try{await client.auth.signOut({scope:'local'});}catch{}
+     setTimeout(()=>location.replace('/'),1600);
+    }catch(error){deleteStatus.dataset.tone='error';deleteStatus.textContent=error.message||'Your account could not be deleted. Please try again.';buttons.forEach(button=>{button.disabled=false;});}
+   };
+  }
   document.getElementById('account-reset-link').onclick=async event=>{
    const button=event.currentTarget,message=document.getElementById('account-reset-status');button.disabled=true;
    try{const {error}=await client.auth.resetPasswordForEmail(email||session.user.email,{redirectTo:`${location.origin}/account`});if(error)throw error;message.dataset.tone='ok';message.textContent='Check your inbox for a reset link.';}

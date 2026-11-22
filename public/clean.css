@@ -496,4 +496,24 @@
 #digivated-root #main > .submission-intro, #digivated-root #main:has(> .submission-intro) > .site-breadcrumbs, #digivated-root #main > .submission-layout { width: 100% !important; max-width: 740px !important; margin-inline: auto !important; }
 #digivated-root #main > .submission-intro { padding-top: 18px !important; }
 
+/* Delete account: a calm card with a red outline action, then a typed confirmation */
+#digivated-root .account-delete { border-color: #f2d3d7 !important; }
+#digivated-root .account-delete .account-setting-copy p { max-width: 78ch !important; }
+#digivated-root .account-delete .account-setting-copy a { color: #0b0b0c !important; text-decoration: underline !important; text-underline-offset: 2px !important; }
+#digivated-root .account-delete-open { display: inline-flex !important; align-items: center !important; gap: 8px !important; min-height: 40px !important; margin-top: 14px !important; padding: 0 16px !important; border: 1px solid #efc4ca !important; border-radius: 12px !important; background: #fff !important; color: #b42318 !important; font-size: 14px !important; font-weight: 600 !important; box-shadow: none !important; cursor: pointer !important; }
+#digivated-root .account-delete-open:hover { background: #fdf3f4 !important; }
+#digivated-root .account-delete-open[hidden], #digivated-root .account-delete-form[hidden] { display: none !important; }
+#digivated-root .account-delete-form { display: grid !important; gap: 10px !important; max-width: 440px !important; margin-top: 16px !important; padding: 16px !important; border: 1px solid #f2d3d7 !important; border-radius: 16px !important; background: #fffafa !important; }
+#digivated-root .account-delete-form label { font-size: 13.5px !important; font-weight: 550 !important; color: #2a2a2e !important; text-transform: none !important; letter-spacing: 0 !important; }
+#digivated-root .account-delete-form input { min-height: 44px !important; border: 1px solid #ececf0 !important; background-color: #fff !important; font-weight: 600 !important; letter-spacing: .04em !important; }
+#digivated-root .account-delete-actions { display: flex !important; flex-wrap: wrap !important; gap: 10px !important; }
+#digivated-root .account-delete-confirm { min-height: 40px !important; padding: 0 16px !important; border: 0 !important; border-radius: 12px !important; background: #b42318 !important; color: #fff !important; font-size: 14px !important; font-weight: 600 !important; box-shadow: none !important; cursor: pointer !important; }
+#digivated-root .account-delete-confirm:hover { background: #912018 !important; }
+#digivated-root .account-delete-form :is(button):disabled { opacity: .55 !important; cursor: progress !important; }
+#digivated-root .account-delete-form .fl-btn { min-height: 40px !important; padding: 0 16px !important; border: 1px solid #e4e4e9 !important; border-radius: 12px !important; background: #fff !important; color: #0b0b0c !important; font-size: 14px !important; font-weight: 600 !important; }
+#digivated-root .account-delete-form .fl-status { margin: 0 !important; font-size: 13px !important; color: #52525b !important; }
+#digivated-root .account-delete-form .fl-status:empty { display: none !important; }
+#digivated-root .account-delete-form .fl-status[data-tone="error"] { color: #b42318 !important; }
+#digivated-root .account-delete-form .fl-status[data-tone="ok"] { color: #0b0b0c !important; font-weight: 600 !important; }
+
 }
