@@ -87,6 +87,6 @@ test('an older unpaid instant draft can still be cancelled',async({page})=>{
  await expect(page.locator('#instant-launch-resume')).toBeVisible();
  await page.locator('#instant-launch-cancel').click();
  await expect(page.locator('#instant-launch-resume')).toBeHidden();
- await expect(page.locator('#submission-status')).toContainText('you weren’t charged');
+ await expect(page.locator('#submission-status')).toContainText('You weren’t charged');
  expect(calls.cancel).toBe(1);
 });

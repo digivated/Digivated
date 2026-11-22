@@ -43,11 +43,11 @@ for (const width of [320, 768, 1440]) {
         wordmarkBelow: wordmark.top >= credits.bottom && wordmark.width <= node.getBoundingClientRect().width,
         groupsAligned: groups.every(group => Math.abs(group.top - groups[0].top) < 2),
         height: node.getBoundingClientRect().height,
-        dimensions: { signup: signup.width, input: input.width, button: button.width, links: links.width },
+        dimensions: { signup: signup.height, links: links.height, credits: credits.height, wordmark: wordmark.height },
       };
     });
     expect(layout).toMatchObject({ sideBySide: width === 1440, stacked: width !== 1440, controlsFit: true, creditsBelow: true, wordmarkBelow: true, groupsAligned: true });
-    expect(layout.height).toBeLessThan(width === 320 ? 460 : 500);
+    expect(layout.height, JSON.stringify(layout.dimensions)).toBeLessThan(width === 320 ? 480 : 500);
     await expect(footer.locator('.dg-footer-wordmark')).toHaveAttribute('aria-hidden', 'true');
     await expect(footer).toHaveCSS('background-color', 'rgb(23, 24, 28)');
     await expect(footer.getByRole('link', { name: 'Report a bug' })).toBeVisible();

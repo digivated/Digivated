@@ -9,7 +9,7 @@
     width: auto !important;
     max-width: none !important;
     margin: 24px clamp(8px, 2vw, 16px) 12px !important;
-    padding: clamp(18px, 2.5vw, 32px) clamp(14px, 4vw, 48px) !important;
+    padding: clamp(14px, 2.5vw, 32px) clamp(14px, 4vw, 48px) !important;
     border: 0 !important;
     border-radius: 18px !important;
     background: var(--footer-surface) !important;
@@ -181,6 +181,21 @@
     .dg-site-footer .dg-footer-wordmark { display: none !important; }
   }
 
+  @container footer-content (max-width: 739px) {
+    .dg-footer-main { gap: 10px; }
+    .dg-footer-signup form { margin-top: 8px !important; }
+    .dg-site-footer .dg-footer-group h2 { line-height: 1.35 !important; }
+    #digivated-root .dg-site-footer :is(.dg-footer-group, .dg-footer-utility) a {
+      box-sizing: border-box;
+      min-height: 28px !important;
+      padding-block: 2px !important;
+    }
+    .dg-footer-bottom { margin-top: 8px; padding-top: 6px; }
+    .dg-site-footer .dg-footer-wordmark {
+      block-size: clamp(26px, 7cqi, 48px);
+      margin-top: 5px;
+    }
+  }
   @container footer-content (max-width: 399px) {
     .dg-site-footer .dg-footer-groups { column-gap: 8px; }
     .dg-site-footer .dg-footer-group a { overflow-wrap: anywhere; }
