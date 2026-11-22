@@ -73,6 +73,21 @@ html#digivated-root[data-ascii] body .rl-empty{margin:0!important;padding:28px!i
 /* Keep the vote feedback independent of the resource row. */
 html#digivated-root[data-ascii] body .rl-vote[aria-pressed=true] .rl-caret{animation:dg-vote-pop .38s cubic-bezier(.2,.8,.2,1)}
 @layer daylight {
+  .rl-sorts button {
+    min-height: 44px;
+    padding-inline: 12px;
+    border: 1px solid var(--fl-line-hi) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+    text-decoration: none !important;
+  }
+  .rl-sorts button:hover { background: var(--fl-raised) !important; }
+  .rl-sorts button[aria-pressed="true"] {
+    border-color: var(--fl-ink) !important;
+    background: var(--fl-ink) !important;
+    color: var(--fl-surface) !important;
+  }
   html[data-theme="daylight"] body .rl-grid > li > .rl-card {
     border: 0 !important;
     padding-inline: 4px 8px !important;

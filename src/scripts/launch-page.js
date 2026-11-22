@@ -3,14 +3,6 @@ import { mountDiscussion } from './discussion.js';
 const comments = document.querySelector('[data-project-comments]');
 // The server renders a placeholder; the discussion replaces it once scripts run.
 if (comments) mountDiscussion(comments, { type: 'project', id: comments.dataset.projectComments });
-// Point people at feedback points right where they write comments.
-if (comments) {
-  const hint = document.createElement('p'); hint.className = 'launch-points-hint';
-  const link = document.createElement('a'); link.href = '/points'; link.textContent = 'feedback points';
-  hint.append('Tried this product? Share what worked or what could improve to earn ', link, '.');
-  comments.querySelector('.dg-d-head')?.after(hint);
-}
-
 const status = document.querySelector('[data-share-status]');
 const url = location.origin + location.pathname;
 document.querySelector('[data-copy-link]')?.addEventListener('click',async()=>{

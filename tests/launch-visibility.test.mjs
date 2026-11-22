@@ -121,7 +121,7 @@ test('real Redis: last week freezes once, the podium is notified and badges only
     assert.equal(await bestPlace(redis, 'delta'), null);
     const samFeed = await listNotifications(redis, people.sam.id);
     assert.equal(samFeed.items.filter(i => i.type === 'award').length, 1);
-    assert.equal(samFeed.items[0].href, '/winners');
+    assert.equal(samFeed.items[0].href, '/#last-week');
     assert.match(samFeed.items[0].verb, /placed #1/);
 
     // Badges: the award is drawn only for an earned place.

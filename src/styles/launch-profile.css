@@ -168,7 +168,6 @@
 .launch-facts dd { margin: 0; font-size: 14px; font-weight: 625; }
 .launch-creator { margin-top: 18px; padding-top: 15px; }
 .launch-page .launch-creator .creator-name { font-weight: 700; }
-.launch-page .launch-points-hint { margin: 0; color: var(--fl-muted); font-size: 14px; }
 .launch-related-list { margin: 0; padding: 0; list-style: none; }
 .launch-page .launch-related-list a {
   display: grid;

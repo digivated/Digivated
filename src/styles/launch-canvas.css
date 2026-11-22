@@ -66,11 +66,6 @@
     justify-self: end;
   }
 
-  .home-refresh .dg-board .dg-list-head .dg-points {
-    grid-column: 1 / -1;
-    justify-self: start;
-  }
-
   .home-refresh .board-filters button[aria-pressed="true"] { text-decoration: none !important; }
 }
 

@@ -19,6 +19,8 @@ test('homepage activity, launches and community sections stay in reading order',
   });
   await page.goto(base + '/');
   await expect(page.locator('[data-launch-id="launch-fixture"]')).toBeVisible();
+  await expect(page.locator('a[href^="/winners"], a[href="/points"], .dg-dot, [data-points-chip]')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /how (launches are ranked|ranking works)/i })).toHaveCount(0);
   const featured = page.locator('[data-spot-grid] .dg-spot:not(.is-open)');
   await expect(featured.locator('.dg-spot-name')).toContainText('An unusually long name');
   const titleBounds = (await featured.locator('.dg-spot-name').boundingBox())!;
@@ -56,7 +58,11 @@ test('homepage activity, launches and community sections stay in reading order',
     feedback.locator('.dg-fp-toggle').boundingBox(),
   ]);
   expect(toggle!.y).toBeGreaterThanOrEqual(description!.y + description!.height);
-  await feedback.locator('summary').click();
+  const feedbackSummary = feedback.locator('summary');
+  await feedbackSummary.focus();
+  await expect(feedbackSummary).toHaveCSS('outline-color', 'rgb(36, 36, 36)');
+  await expect(feedbackSummary).toHaveCSS('outline-style', 'solid');
+  await feedbackSummary.press('Enter');
   await expect(feedback.getByRole('link', { name: 'Find a product that needs feedback' })).toHaveAttribute('href', '/discover?sort=needs');
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.getByRole('navigation', { name: 'Browse launches' }).getByRole('link', { name: 'This week', exact: true }).click();
@@ -75,6 +81,12 @@ test('resource icons replace initials in one slot and votes stay separate', asyn
   });
 
   await page.goto(base + '/resources');
+  const alphabeticalSort = page.getByRole('button', { name: 'a–z' });
+  await expect(alphabeticalSort).toHaveCSS('color', 'rgb(27, 27, 27)');
+  await alphabeticalSort.click();
+  await expect(alphabeticalSort).toHaveAttribute('aria-pressed', 'true');
+  await expect(alphabeticalSort).toHaveCSS('color', 'rgb(255, 255, 255)');
+  await page.getByRole('group', { name: 'Sort resources' }).getByRole('button', { name: 'most helpful' }).click();
   const link = page.locator('a[href="https://60fps.design"]').first();
   await expect(link.locator('.rl-icon')).toBeVisible();
   await expect(link.locator('.rl-fallback')).toBeHidden();

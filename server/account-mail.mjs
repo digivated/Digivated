@@ -89,9 +89,9 @@ export function awardEmail(record, rank, weekStart) {
     ...renderEmail({
       label: 'DIGIVATED / WEEKLY PODIUM', title: `★ ${place} launch of the week.`,
       preheader: `${record.name || 'Your project'} finished ${place} in the week of ${week}.`,
-      paragraphs: [`${record.name || 'Your project'} finished ${place} in Digivated’s launches for the week of ${week}. It’s now on the Weekly winners page.`, 'Your dashboard has an award badge you can add to your site.'],
+      paragraphs: [`${record.name || 'Your project'} finished ${place} in Digivated’s launches for the week of ${week}. See the result in Last week’s launches.`, 'Your dashboard has an award badge you can add to your site.'],
       cta: { label: 'Get your award badge', href: ACCOUNT },
-      footer: [{ label: 'Weekly winners', href: 'https://digivated.com/winners' }, ...footer],
+      footer: [{ label: 'Last week’s launches', href: 'https://digivated.com/#last-week' }, ...footer],
     }),
     idempotencyKey: `digivated-award-${record.id}-${new Date(weekStart).toISOString().slice(0, 10)}`,
   };

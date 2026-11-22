@@ -187,7 +187,7 @@ export async function finalizeLastWeek(redis, now = Date.now()) {
       const project = byId.get(place.id);
       try {
         const record = JSON.parse(await redis(['GET', storageKey('submission', place.id)]));
-        if (record?.accountId && project) await addNotification(redis, { recipientId: record.accountId, type: 'award', link: '/winners', actorName: project.name, verb: `placed #${place.rank} in last week’s launches` });
+        if (record?.accountId && project) await addNotification(redis, { recipientId: record.accountId, type: 'award', link: '/#last-week', actorName: project.name, verb: `placed #${place.rank} in last week’s launches` });
         if (record?.accountId) await sendAwardEmail(record, place.rank, start).catch(() => 'failed');
       } catch { /* The podium is saved either way. */ }
     }

@@ -7,7 +7,7 @@ import UiIcon from './UiIcon.astro';
 const sections = [
   { key: 'current', id: 'this-week', navLabel: 'This week', title: 'This week’s launches', live: true },
   { key: 'upcoming', id: 'launching-next', navLabel: 'Upcoming', title: 'Launching next', live: false, more: '/submit-project', moreLabel: 'Get a free launch date' },
-  { key: 'previous', id: 'last-week', navLabel: 'Last week', title: 'Last week’s launches', live: false, more: '/winners', moreLabel: 'See weekly winners' },
+  { key: 'previous', id: 'last-week', navLabel: 'Last week', title: 'Last week’s launches', live: false },
   { key: 'top', id: 'top-voted', title: 'Top voted', live: false },
   { key: 'archive', id: 'earlier', navLabel: 'Earlier', title: 'Earlier launches', live: false, more: '/discover', moreLabel: 'Browse the directory' },
 ];
@@ -28,10 +28,9 @@ const sections = [
   {sections.map(section => (<>
     <section id={section.id} class="dg-list" data-section-reveal data-board-section={section.key} aria-labelledby={`dg-list-${section.key}`} hidden={section.key === 'upcoming' || section.key === 'top'}>
       <header class="dg-list-head">
-        <h2 id={`dg-list-${section.key}`}>{section.live && <span class="dg-dot" aria-hidden="true"></span>}<span class="dg-list-title">{section.title}</span></h2>
+        <h2 id={`dg-list-${section.key}`}><span class="dg-list-title">{section.title}</span></h2>
 
         <span class="dg-list-count" data-section-count></span>
-        {section.live && <a class="dg-points" href="/points" data-points-chip><span aria-hidden="true">✦</span> <span data-points-label>Feedback points</span><span hidden data-points-have><strong data-points-total>0</strong> pts</span><span class="sr-only"> How feedback points work.</span></a>}
       </header>
       <p class="dg-list-note" data-section-note>{section.key === 'upcoming' ? '' : 'Loading launches…'}</p>
       <ul class="dg-list-rows" data-section-list>
@@ -47,7 +46,6 @@ const sections = [
         <header class="dg-rising-head">
           <h2 id="dg-rising-title"><span class="dg-rising-arrow" aria-hidden="true">↗</span> Rising now</h2>
           <p class="dg-rising-sub">Most active in the past 24 hours</p>
-          <a class="dg-quiet-link dg-rising-how" href="/winners#how-ranking-works">How ranking works <span aria-hidden="true">→</span></a>
         </header>
         <ol class="dg-rising-list" data-rising-list></ol>
       </section>
