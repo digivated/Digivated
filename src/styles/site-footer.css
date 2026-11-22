@@ -156,6 +156,27 @@
   .dg-footer-credit img { width: 16px; height: 16px; }
   .dg-footer-bottom small { margin: 0 !important; }
 
+  .dg-site-footer .dg-footer-wordmark {
+    block-size: clamp(36px, 11cqi, 84px);
+    margin-top: 12px;
+    overflow: hidden;
+    color: #fff !important;
+    font-size: clamp(46px, 20cqi, 200px) !important;
+    font-weight: 800 !important;
+    letter-spacing: -.06em !important;
+    line-height: .8 !important;
+    text-align: center;
+    white-space: nowrap;
+    opacity: .15;
+    mask-image: linear-gradient(#000 15%, transparent 100%);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @media (forced-colors: active) {
+    .dg-site-footer .dg-footer-wordmark { display: none !important; }
+  }
+
   @container footer-content (min-width: 400px) {
     .dg-site-footer .dg-footer-groups { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }

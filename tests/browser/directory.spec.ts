@@ -33,15 +33,18 @@ for (const width of [320, 768, 1440]) {
       const input = box('#footer-digest-email');
       const button = box('[data-footer-digest] button');
       const credits = box('.dg-footer-bottom');
+      const wordmark = box('.dg-footer-wordmark');
       return {
         sideBySide: links.left > signup.right && Math.abs(links.top - title.top) < 2,
         stacked: links.top >= signup.bottom && Math.abs(signup.left - links.left) < 2,
         controlsFit: input.width >= 128 && input.right <= button.left + 1 && button.right <= signup.right,
         creditsBelow: credits.top > Math.max(signup.bottom, links.bottom),
+        wordmarkBelow: wordmark.top >= credits.bottom && wordmark.width <= node.getBoundingClientRect().width,
         dimensions: { signup: signup.width, input: input.width, button: button.width, links: links.width },
       };
     });
-    expect(layout).toMatchObject({ sideBySide: width === 1440, stacked: width !== 1440, controlsFit: true, creditsBelow: true });
+    expect(layout).toMatchObject({ sideBySide: width === 1440, stacked: width !== 1440, controlsFit: true, creditsBelow: true, wordmarkBelow: true });
+    await expect(footer.locator('.dg-footer-wordmark')).toHaveAttribute('aria-hidden', 'true');
     await expect(footer).toHaveCSS('background-color', 'rgb(23, 24, 28)');
     await expect(footer.getByRole('link', { name: 'Report a bug' })).toBeVisible();
     await expect(footer.locator('[data-launchai-badge]')).toHaveAttribute('href', 'https://launchai.tools');
