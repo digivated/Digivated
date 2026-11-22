@@ -370,7 +370,7 @@
   html[data-theme="daylight"] body :is(.fl-badge-code,.packet-workspace .example,.packet-workspace pre) { background: var(--fl-raised) !important; color: var(--fl-copy) !important; }
   html[data-theme="daylight"] body :is(.dg-spot,.dg-row .dg-logo,.dg-rising-item,.news-story,.news-feature,.rl-card,.resource-card,.dg-btn,.dg-header-submit):hover { transform: none !important; }
   html[data-theme="daylight"] body :is(.dg-row .dg-logo,.dg-spot,.news-story,.rl-card,.resource-card) {
-    transition: background-color .18s ease, border-color .18s ease !important;
+    transition: background-color var(--dg-motion-quick) var(--dg-motion-ease), border-color var(--dg-motion-quick) var(--dg-motion-ease) !important;
   }
   html[data-theme="daylight"] body .dg-row:hover .dg-logo { transform: none !important; }
   html[data-theme="daylight"] body :is(.dg-fp-spark,.dg-fp-px-arrow,.dg-rising-arrow,.dg-award strong,.dg-sparks span) { animation: none !important; }
@@ -517,7 +517,7 @@
   }
   @media (prefers-reduced-motion: no-preference) {
     html[data-theme="daylight"] body :is(.dg-shell a, .dg-shell button, .site-menu-trigger, .dg-site-footer a, #main .button, #main .fl-btn, #main .dg-btn) {
-      transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease !important;
+      transition: background-color var(--dg-motion-quick) var(--dg-motion-ease), color var(--dg-motion-quick) var(--dg-motion-ease), border-color var(--dg-motion-quick) var(--dg-motion-ease) !important;
     }
   }
 }

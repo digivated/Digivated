@@ -22,9 +22,6 @@ async function signedIn(page){
 for(const width of [390,1440])test(`free launch instructions, saved badge and verified state at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});await signedIn(page);
  await page.goto(base+'/submit-project');
- await expect(page.locator('.free-launch-guide ol>li')).toHaveCount(4);
- await expect(page.locator('.free-launch-guide')).toContainText('Launches go out every Monday');
- await expect(page.locator('.free-launch-guide')).toContainText('Monday at 9:00 AM Eastern');
  await expect(page.locator('#submission-details')).toBeVisible();
  await expect(page.locator('#submission-progress li.is-current')).toContainText('Project');
  const projectBox = (await page.locator('#sub-step-details').boundingBox())!;
@@ -44,6 +41,8 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await expect(page.locator('.free-launch-guide')).toBeHidden();
  await guide.click();
  await expect(page.locator('.free-launch-guide')).toBeVisible();
+ await expect(page.locator('.free-launch-guide')).toContainText('Mondays at 9:00 AM Eastern');
+ await expect(page.locator('.free-launch-guide a')).toHaveAttribute('href', '/account#account-submissions');
  await guide.click();
  const preview = page.getByText('Preview your public listing', { exact: true });
  await expect(page.locator('[data-listing-name]')).toBeHidden();

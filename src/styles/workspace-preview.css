@@ -338,7 +338,7 @@
       mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       mask-composite: exclude;
       opacity: 0;
-      transition: opacity 180ms ease;
+      transition: opacity var(--dg-motion-quick) var(--dg-motion-ease);
     }
     .dg-home-hero[data-reflecting]::after { opacity: 1; }
   }
@@ -532,7 +532,7 @@
   }
   @media (prefers-reduced-motion: no-preference) {
     .dg-workspace :is(.dg-rail-group a,.dg-rail-submit,.dg-row) {
-      transition: background-color 160ms ease, border-color 160ms ease !important;
+      transition: background-color var(--dg-motion-quick) var(--dg-motion-ease), border-color var(--dg-motion-quick) var(--dg-motion-ease) !important;
     }
   }
 }

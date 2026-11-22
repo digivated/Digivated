@@ -2,28 +2,28 @@ html body.platform.light-theme :is(.project-collections,.resource-topics) { posi
 html body.platform.light-theme .has-motion-tabs button[aria-pressed=true]::after { display:none; }
 html body.platform.light-theme .motion-tab-indicator {
   position:absolute; left:0; bottom:0; height:2px; border-radius:2px;
-  background:#171717; pointer-events:none;
+  background:var(--fl-ink); pointer-events:none;
 }
 html body.platform.light-theme .has-motion-tabs .motion-tab-indicator {
-  transition:translate 240ms ease-out,width 240ms ease-out;
+  transition:translate var(--dg-motion-panel) var(--dg-motion-ease),width var(--dg-motion-panel) var(--dg-motion-ease);
 }
 html body.platform.light-theme :is(.project-collections,.resource-topics) button {
-  transition:color 240ms ease-out;
+  transition:color var(--dg-motion-panel) var(--dg-motion-ease);
 }
 html body.platform.light-theme [data-like-id],html body.platform.light-theme [data-save-id] {
-  transition:background-color 160ms ease-out,color 160ms ease-out,opacity 160ms ease-out;
+  transition:background-color var(--dg-motion-quick) var(--dg-motion-ease),color var(--dg-motion-quick) var(--dg-motion-ease),opacity var(--dg-motion-quick) var(--dg-motion-ease);
 }
 html body.platform.light-theme [data-like-id][aria-pressed=true],
 html body.platform.light-theme [data-save-id].is-saved {
-  color:#171717; background:#eaeaea; border-radius:7px;
+  color:var(--fl-ink); background:var(--fl-raised); border-radius:7px;
 }
 html body.platform.light-theme [data-like-id] svg,
 html body.platform.light-theme [data-save-id] svg { transform-origin:center; }
 html body.platform.light-theme .motion-toast {
   position:fixed; z-index:1100; left:50%; bottom:max(22px,env(safe-area-inset-bottom));
   transform:translateX(-50%); max-width:calc(100vw - 32px); margin:0;
-  padding:12px 18px; border:1px solid #ddd; border-radius:12px;
-  background:#fffffff2; color:#171717; box-shadow:0 8px 30px #00000014;
+  padding:12px 18px; border:1px solid var(--fl-line); border-radius:var(--fl-radius);
+  background:var(--fl-surface); color:var(--fl-ink); box-shadow:var(--fl-shadow);
   font-size:.8125rem; font-weight:500; pointer-events:none;
 }
 html body.platform.light-theme .motion-toast[hidden] { display:none; }
