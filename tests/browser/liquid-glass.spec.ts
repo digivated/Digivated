@@ -34,9 +34,9 @@ test('glass search stays usable at desktop and narrow widths',async({page,browse
 
 test('reduced motion keeps the glass surfaces and readable controls',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:844});await page.goto(base+'/');
- const launch = page.getByRole('link', { name: 'Browse launches', exact: true });
+ const launch = page.getByRole('link', { name: 'Submit launch', exact: true });
  await expect(launch).toBeVisible();
- await expect(launch).toHaveAttribute('href', '#this-week');
+ await expect(launch).toHaveAttribute('href', '/submit-project');
  await expect(launch).toHaveCSS('transition-duration', '0s');
  await page.locator('.site-menu-trigger').click();
  await expect(page.locator('#explore-navigation')).toBeVisible();

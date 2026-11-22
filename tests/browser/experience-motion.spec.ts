@@ -66,8 +66,8 @@ test('the new backdrop leaves resources search and home hero actions usable',asy
  await page.goto(base+'/');
  await expect(page.locator('[data-ascii-field],.ascii-ambient')).toHaveCount(0);
  await expect(page.locator('.dg-hero-panel [role=timer]')).toBeVisible();
- await page.getByRole('link',{name:'Browse launches',exact:true}).click();
- await expect(page).toHaveURL(/#this-week$/);
+ await page.getByRole('link',{name:'Submit launch',exact:true}).click();
+ await expect(page).toHaveURL(base + '/submit-project');
 });
 
 test('activity indicators follow system motion preferences and launch links stay usable', async ({ page }) => {
@@ -88,9 +88,9 @@ test('activity indicators follow system motion preferences and launch links stay
  await page.emulateMedia({ reducedMotion: 'no-preference' });
  await expect(ribbon).toHaveCSS('animation-name', 'dg-ribbon-signal');
 
- await page.getByRole('link', { name: 'Browse launches', exact: true }).focus();
+ await page.getByRole('link', { name: 'Submit launch', exact: true }).focus();
  await page.keyboard.press('Enter');
- await expect(page).toHaveURL(/#this-week$/);
+ await expect(page).toHaveURL(base + '/submit-project');
 });
 
 
@@ -166,7 +166,7 @@ test('React Bits sidebar and action effects animate without changing link target
   const nav = page.getByRole('navigation', { name: 'Workspace navigation' });
   const directory = nav.getByRole('link', { name: 'Directory', exact: true });
   const row = nav.locator('.line-sidebar__item').filter({ has: page.getByRole('link', { name: 'Directory', exact: true }) });
-  const action = page.getByRole('link', { name: 'Browse launches', exact: true });
+  const action = page.getByRole('link', { name: 'Submit launch', exact: true });
   const band = action.locator('.glare-hover__band').first();
   const bandTransform = () => band.evaluate(element => element.style.transform);
   await expect.poll(bandTransform).toContain('translateX');
@@ -177,7 +177,7 @@ test('React Bits sidebar and action effects animate without changing link target
   const resting = await bandTransform();
   await action.hover();
   await expect.poll(bandTransform).not.toBe(resting);
-  await expect(action).toHaveAttribute('href', '#this-week');
+  await expect(action).toHaveAttribute('href', '/submit-project');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(action.locator('.glare-hover__glare')).toBeHidden();

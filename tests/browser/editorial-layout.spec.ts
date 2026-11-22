@@ -54,7 +54,7 @@ test('homepage activity, launches and community sections stay in reading order',
   await feedback.locator('summary').click();
   await expect(feedback.getByRole('link', { name: 'Find a product that needs feedback' })).toHaveAttribute('href', '/discover?sort=needs');
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.getByRole('link', { name: 'Browse launches' }).click();
+  await page.getByRole('navigation', { name: 'Browse launches' }).getByRole('link', { name: 'This week', exact: true }).click();
   await expect(page).toHaveURL(/#this-week$/);
 });
 

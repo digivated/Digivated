@@ -113,6 +113,35 @@
     }
   }
 
+  .dg-launch-feed { min-inline-size: 0; }
+  .dg-launch-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: clamp(12px, 2vw, 24px);
+    margin-block-end: 16px;
+    border-block-end: 1px solid var(--fl-line);
+  }
+  html[data-theme="daylight"] body.home-refresh .dg-launch-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: .3em;
+    min-height: 44px;
+    color: var(--fl-copy) !important;
+    font-size: 13px !important;
+    font-weight: 550 !important;
+    text-decoration: none !important;
+  }
+  html[data-theme="daylight"] body.home-refresh .dg-launch-nav a:is(:hover,:focus-visible) {
+    color: var(--fl-ink) !important;
+    text-decoration: underline !important;
+    text-underline-offset: .25em;
+  }
+  .dg-launch-feed:has(#this-week[hidden]) .dg-launch-nav a[href="#this-week"],
+  .dg-launch-feed:has(#launching-next[hidden]) .dg-launch-nav a[href="#launching-next"],
+  .dg-launch-feed:has(#last-week[hidden]) .dg-launch-nav a[href="#last-week"],
+  .dg-launch-feed:has(#earlier[hidden]) .dg-launch-nav a[href="#earlier"] { display: none !important; }
+
   html[data-theme="daylight"] body.home-refresh .dg-board {
     gap: var(--section-space);
     min-inline-size: 0;
