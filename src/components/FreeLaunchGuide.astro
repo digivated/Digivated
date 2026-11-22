@@ -1,25 +1,14 @@
-<section class="free-launch-guide fl-card" aria-labelledby="free-launch-guide-title">
-  <header><p class="eyebrow">HOW A FREE LAUNCH WORKS</p><h2 id="free-launch-guide-title">Free launch in four steps.</h2></header>
-  <ol>
-    <li><strong>Save your project</strong><span>You get a badge and a Monday launch date.</span></li>
-    <li><strong>Add the badge</strong><span>Paste it into your site and publish. <a href="/badges">See styles</a></span></li>
-    <li><strong>We verify it</strong><span>We check daily. Or hit “Check my website” for an instant answer.</span></li>
-    <li><strong>Go live automatically</strong><span>Your project goes live on launch day.</span></li>
-  </ol>
-  <p class="free-launch-cycle">Launches go out every Monday at 9:00 AM Eastern.</p>
-</section>
+<div class="free-launch-guide">
+  <p>Verified projects launch on Mondays at 9:00 AM Eastern. We check badges daily. You can also run a check from <a href="/account#account-submissions">Your projects</a>.</p>
+</div>
 <style>
-  .free-launch-guide{padding:24px;margin:0 0 32px}
-  .free-launch-guide header{display:block}
-  .free-launch-guide .eyebrow{font-size:10px;letter-spacing:.12em;margin:0 0 8px}
-  .free-launch-guide h2{font-size:clamp(16px,2vw,21px);line-height:1.4;margin:0}
-  .free-launch-guide ol{counter-reset:launch-step;list-style:none;padding:0;margin:22px 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
-  .free-launch-guide li{counter-increment:launch-step;min-width:0;font-size:12px;line-height:1.7}
-  .free-launch-guide li::before{content:'[' counter(launch-step) ']';display:block;font-size:11px;opacity:.75;margin-bottom:6px}
-  .free-launch-guide li strong,.free-launch-guide li span{display:block}
-  .free-launch-guide li span{color:var(--dg-muted,var(--muted,#999));margin-top:4px}
-  .free-launch-cycle{margin:0;padding-top:16px;border-top:1px solid #2a2a2a;font-size:12px;line-height:1.8;color:var(--dg-muted,var(--muted,#999))}
-  .free-launch-cycle strong{color:var(--dg-text,inherit)}
-  @media(max-width:760px){.free-launch-guide ol{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.free-launch-guide{padding:20px}}
-  @media(max-width:380px){.free-launch-guide ol{grid-template-columns:1fr;gap:14px}}
+  .free-launch-guide {
+    padding: 0 14px 12px;
+  }
+  .free-launch-guide p {
+    margin: 0;
+    color: var(--fl-copy);
+    font-size: 14px;
+    line-height: 1.55;
+  }
 </style>

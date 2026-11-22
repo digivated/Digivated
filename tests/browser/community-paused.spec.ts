@@ -82,8 +82,8 @@ test('Share a Product offers all activity alerts and submits the exact checkbox 
  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });
 
-test('free launch can verify the badge and submit in one step', async ({ page }) => {
- await page.setViewportSize({ width: 390, height: 900 });
+for (const width of [390, 1440]) test(`free launch can verify the badge and submit in one step at ${width}px`, async ({ page }) => {
+ await page.setViewportSize({ width, height: 900 });
  await page.addInitScript(() => {
   localStorage.setItem('sb-fixture-auth-token', JSON.stringify({
    access_token:'fixture-token', refresh_token:'fixture-refresh',
@@ -104,9 +104,27 @@ test('free launch can verify the badge and submit in one step', async ({ page })
  await page.goto('http://127.0.0.1:4321/submit-project');
  await expect(page.locator('[data-tier=founding-feature] .dg-tier-head b')).toHaveText('$5');
  await expect(page.locator('#badge-first')).toBeVisible();
+ const badgePanel = page.locator('#badge-first');
+ await expect(badgePanel).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+ for (const step of await badgePanel.locator('.dg-badge-first-steps li').all()) {
+  await expect(step.locator('strong')).toHaveCSS('color', 'rgb(27, 27, 27)');
+  await expect(step.locator(':scope > span')).toHaveCSS('background-color', 'rgb(27, 27, 27)');
+  await expect(step.locator(':scope > span')).toHaveCSS('color', 'rgb(255, 255, 255)');
+ }
+ const disclosures = badgePanel.locator('summary:visible');
+ await expect(disclosures).toHaveCount(2);
+ for (const disclosure of await disclosures.all()) {
+  await expect(disclosure).toHaveCSS('color', 'rgb(27, 27, 27)');
+ }
+
  await expect(page.locator('#badge-first .dg-badge-tip')).toContainText('ask your AI coding assistant');
  await expect(page.locator('#badge-first-later, #badge-first-later-note')).toHaveCount(0);
- await expect(page.getByRole('button', { name: 'Copy an AI prompt for the Dark badge' })).toBeVisible();
+ const copyPrompt = page.getByRole('button', { name: 'Copy an AI prompt for the Dark badge' });
+ await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+ await copyPrompt.click();
+ await expect(copyPrompt).toHaveText('Copied ✓');
+ expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(reservedId);
+
  const badgeCode = page.locator('#badge-first [data-badge-style=dark] code');
  await expect(badgeCode).toContainText(reservedId);
  await expect(badgeCode).toBeHidden();

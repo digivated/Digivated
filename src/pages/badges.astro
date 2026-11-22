@@ -1,41 +1,30 @@
 ---
 import Platform from '../layouts/Platform.astro';
-import { BADGE_STYLES } from '../../server/badge-snippets.mjs';
+import { BADGE_HEIGHT, BADGE_STYLES, BADGE_WIDTH, badgeSnippet } from '../../server/badge-snippets.mjs';
 import { renderBadge } from '../../server/badge-render.mjs';
 const example = 'YOUR_PROJECT_ID';
 const src = (style: string) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(renderBadge(style, 482));
-const code = (style: string) => style === 'text'
-  ? `<a href="https://digivated.com/projects/listing/${example}" data-digivated-project="${example}">[ listed on Digivated ]</a>`
-  : `<a href="https://digivated.com/projects/listing/${example}" data-digivated-project="${example}" target="_blank" rel="noopener">\n  <img src="https://digivated.com/badge/${example}?theme=${style}" alt="Featured on Digivated" width="250" height="54">\n</a>`;
 ---
 <Platform title="Embed badges" description="Add a Featured on Digivated badge to your website. It shows your live upvotes and links to your project listing.">
-  <header class="page-intro"><h1>Embed badges</h1><p class="lede">Add a badge to your site to share your listing and show live upvotes. A verified badge also qualifies your product for a free launch.</p></header>
+  <header class="page-intro"><h1>Embed badges</h1><p class="lede">Link to your listing, show live upvotes, and qualify for a free launch.</p></header>
   <section class="fl-badges-page" aria-label="Badge styles">
-    <p class="fl-badges-intro">Pick a style below. Get the code for your product from <a href="/account">Your projects</a>.</p>
+    <p class="fl-badges-intro"><a class="button primary" href="/account#account-submissions">Get your badge code</a></p>
     <div class="fl-badges" data-badge-examples>
       {BADGE_STYLES.filter(style => style.key !== 'text').map(style => (
         <article class="fl-badge-card" data-badge-style={style.key}>
-          <div class={`fl-badge-stage is-${style.key}`}><img src={src(style.key)} width="250" height="54" alt={`${style.label} badge example`} /></div>
-          <div class="fl-badge-bar"><div>{style.key === 'dark' && <em class="fl-badge-tag">Recommended</em>}<strong>{style.label}</strong><span>{style.note}</span></div><a class="fl-btn fl-btn-small" href="/account">Get your code →</a></div>
-          <pre class="fl-badge-code"><code>{code(style.key)}</code></pre>
+          <div class={`fl-badge-stage is-${style.key}`}><img src={src(style.key)} width={BADGE_WIDTH} height={BADGE_HEIGHT} alt={`${style.label} badge example`} /></div>
+          <div class="fl-badge-bar"><div>{style.key === 'dark' && <em class="fl-badge-tag">Recommended</em>}<strong>{style.label}</strong><span>{style.note}</span></div></div>
+          <details class="fl-badge-more fl-badge-code-details"><summary>Example embed code</summary><pre class="fl-badge-code"><code>{badgeSnippet(example, style.key)}</code></pre></details>
         </article>
       ))}
       <details class="fl-badge-more"><summary>Use a text badge</summary>
         <article class="fl-badge-card" data-badge-style="text">
           <div class="fl-badge-stage is-text"><span class="fl-badge-preview">[ listed on Digivated ]</span></div>
-          <div class="fl-badge-bar"><div><strong>Text link</strong><span>No image, just a link</span></div><a class="fl-btn fl-btn-small" href="/account">Get your code →</a></div>
-          <pre class="fl-badge-code"><code>{code('text')}</code></pre>
+          <div class="fl-badge-bar"><div><strong>Text link</strong><span>No image, just a link</span></div></div>
+          <details class="fl-badge-more fl-badge-code-details"><summary>Example embed code</summary><pre class="fl-badge-code"><code>{badgeSnippet(example, 'text')}</code></pre></details>
         </article>
       </details>
     </div>
-    <div class="fl-badges-notes">
-      <h2>Good to know</h2>
-      <ul>
-        <li>Every style counts for verification. Pick the one that suits your site.</li>
-        <li>The count updates on its own, every few minutes. No script to add.</li>
-        <li>Keep the badge visible on the page you submitted, for example in the footer.</li>
-        <li>Already added the old text link? It still works. Switch styles any time.</li>
-      </ul>
-    </div>
+    <p class="fl-badges-notes">Any style verifies. Keep the badge visible on the page you submitted.</p>
   </section>
 </Platform>

@@ -120,3 +120,22 @@ test('saved screen verifies the badge without leaving the page',async({page})=>{
  await expect(verify).toBeHidden();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });
+
+test('badge examples stay optional and share one account link', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('http://127.0.0.1:4321/badges');
+  const styles = page.getByRole('region', { name: 'Badge styles' });
+  const accountLinks = styles.locator('a[href^="/account"]');
+  await expect(accountLinks).toHaveCount(1);
+  await expect(accountLinks.first()).toHaveAttribute('href', '/account#account-submissions');
+
+  const darkBadge = styles.locator('[data-badge-style=dark]');
+  await expect(darkBadge.locator('img')).toBeVisible();
+  await expect(darkBadge.locator('code')).toBeHidden();
+  await darkBadge.getByText('Example embed code', { exact: true }).click();
+  await expect(darkBadge.locator('code')).toContainText('YOUR_PROJECT_ID?theme=dark');
+  await expect(darkBadge.locator('code')).toBeVisible();
+  await styles.getByText('Use a text badge', { exact: true }).click();
+  await expect(styles.locator('[data-badge-style=text]')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});

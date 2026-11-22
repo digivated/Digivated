@@ -33,7 +33,7 @@
 .platform .page-intro { max-width:830px; padding-top:76px; }
 .platform .page-intro h1 { font-size:clamp(2.8rem,6vw,5rem); line-height:1.04; letter-spacing:-.06em; font-weight:520; }
 .platform .page-intro .lede { max-width:680px; }
-.platform .project-card,.platform .resource-card,.platform .submission-form,.platform .product-feature,.platform .about-values>div,.platform .about-values>div:nth-child(n),.platform .promo-details>div,.platform .resource-grid>.resource-card:first-child { background:#1c1c1c; border:1px solid #373737; box-shadow:none; border-radius:10px; }
+.platform .project-card,.platform .resource-card,.platform .submission-form,.platform .product-feature,.platform .promo-details>div,.platform .resource-grid>.resource-card:first-child { background:#1c1c1c; border:1px solid #373737; box-shadow:none; border-radius:10px; }
 .platform .project-image,.platform .project-image:has(>.tiny),.platform .product-art { background:#252525; }
 .platform .browse-controls,.platform .submission-note{ background:#1c1c1c; border:1px solid #373737; border-radius:10px; }
 .platform .community-empty,.platform .community-empty.compact,.platform .saved-empty-panel { background:#1c1c1c; border:1px solid #373737; box-shadow:none; border-radius:10px; }

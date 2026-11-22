@@ -220,3 +220,80 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
   html#digivated-root body.platform #sub-step-launch {border-inline-start:1px solid var(--fl-rule, var(--dg-line))}
   html#digivated-root .submission-form .form-row {grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 }
+
+
+@layer workspace-preview {
+  .submission-form .dg-badge-first {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--fl-line);
+    border-radius: var(--fl-radius);
+    background: var(--fl-surface) !important;
+  }
+
+  .submission-form .dg-badge-first[hidden] { display: none !important; }
+
+  .dg-badge-first .dg-badge-first-steps {
+    display: grid;
+    gap: 10px;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+
+  .dg-badge-first .dg-badge-first-steps li {
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr);
+    align-items: start;
+    gap: 9px;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .dg-badge-first .dg-badge-first-steps li > span {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: var(--fl-ink) !important;
+    color: var(--fl-surface) !important;
+    font-size: 13px;
+    font-weight: 650;
+  }
+
+  .dg-badge-first .dg-badge-first-steps p,
+  .dg-badge-first .dg-badge-tip {
+    margin: 0 !important;
+    color: var(--fl-copy) !important;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .dg-badge-first .dg-badge-first-steps :is(strong,b) {
+    color: var(--fl-ink) !important;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+  }
+
+  .dg-badge-first :is(#badge-first-picker,.fl-badge-card,.fl-badges) { min-width: 0; }
+  .dg-badge-first .fl-badges { margin: 0 !important; }
+  .dg-badge-first .fl-badge-stage { min-height: 0 !important; padding: 10px !important; }
+
+  .dg-badge-first .fl-badge-bar {
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    row-gap: 8px !important;
+  }
+
+  .dg-badge-first .fl-badge-bar > div:not(.fl-badge-actions) { flex: 1 1 100% !important; }
+  .dg-badge-first .fl-badge-bar > .fl-badge-actions {
+    flex: 1 1 100% !important;
+    margin-inline: 0 !important;
+    justify-content: flex-start !important;
+  }
+
+  .dg-badge-first .fl-badge-actions .fl-btn { min-height: 44px !important; }
+}

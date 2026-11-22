@@ -299,21 +299,21 @@
   html[data-theme="daylight"] body .dg-dir-stats strong { color: var(--fl-ink) !important; }
 
   /* Shared cards in sign-in, submission, listings, resources, and badges. */
-  html[data-theme="daylight"] body :is(.fl-card,.submission-account-callout,.submission-review,.submission-option-detail,.free-launch-guide,.fl-badge-card,.fl-badge-stage,.shop-card,.membership-access .carousel-access,.rl-card,.dg-fp,.dg-d-composer) {
+  html[data-theme="daylight"] body :is(.fl-card,.submission-account-callout,.submission-review,.submission-option-detail,.fl-badge-card,.fl-badge-stage,.shop-card,.membership-access .carousel-access,.rl-card,.dg-fp,.dg-d-composer) {
     border-color: var(--fl-line) !important;
     border-radius: var(--fl-radius-card) !important;
     background: var(--fl-surface) !important;
   }
-  html[data-theme="daylight"] body :is(.dg-tier,.dg-badge-first,.fl-code,.submission-disclosure,.rl-mono,.dg-note-icon,.fl-avatar) {
+  html[data-theme="daylight"] body :is(.dg-tier,.fl-code,.submission-disclosure,.rl-mono,.dg-note-icon,.fl-avatar) {
     border-color: var(--fl-line) !important;
     border-radius: var(--fl-radius) !important;
     background: var(--fl-raised) !important;
     color: var(--fl-ink) !important;
   }
-  html[data-theme="daylight"] body :is(.login-tabs button,.fl-label-row label,.submission-disclosure summary,.fl-badges-page details summary,.rl-status,.rl-description,.dg-menu-title,.site-breadcrumbs [aria-current="page"],.dg-note-link,.fl-badges-intro,.rl-cats button,.shop-for,.shop-note,.shop-price span) {
+  html[data-theme="daylight"] body :is(.login-tabs button,.fl-label-row label,.submission-disclosure summary,.rl-status,.rl-description,.dg-menu-title,.site-breadcrumbs [aria-current="page"],.dg-note-link,.fl-badges-intro,.rl-cats button,.shop-for,.shop-note,.shop-price span) {
     color: var(--fl-muted) !important;
   }
-  html[data-theme="daylight"] body :is(.fl-badges-intro a,.fl-badges-notes a,.submission-account-actions a:not(.primary),.dg-rail-threads h2 a) {
+  html[data-theme="daylight"] body :is(.submission-account-actions a:not(.primary),.dg-rail-threads h2 a) {
     color: var(--fl-accent) !important;
   }
   html[data-theme="daylight"] body :is(.login-tabs button[aria-selected="true"],.navigation-panel a[aria-current="page"],.dg-tier:has(input:checked),#project-import.dg-import,.fl-badge-tag,.dg-fp-icon,.dg-fp-toggle,.dg-fp-node,.dg-fp-reward,.rl-cats button[aria-current="true"],.rl-cats button:hover) {
@@ -324,7 +324,7 @@
     box-shadow: none !important;
   }
   html[data-theme="daylight"] body .dg-fp-strip .dg-fp-steps { border-color: var(--fl-line) !important; }
-  html[data-theme="daylight"] body :is(.dg-fp-strip-copy strong,.dg-fp-step-copy strong,.dg-spot.is-open strong,.shop-card h2,.shop-price strong,.fl-badge-bar strong,.rl-text strong) { color: var(--fl-ink) !important; }
+  html[data-theme="daylight"] body :is(.dg-fp-strip-copy strong,.dg-fp-step-copy strong,.dg-spot.is-open strong,.shop-card h2,.shop-price strong,.rl-text strong) { color: var(--fl-ink) !important; }
   html[data-theme="daylight"] body :is(.dg-fp-strip-copy span,.dg-fp-step-copy span,.dg-tier-sub,.rl-name,.rl-meta,.shop-list li) { color: var(--fl-copy) !important; }
   html[data-theme="daylight"] body :is(.dg-fp,.dg-rising)::before { content: none !important; }
 
@@ -361,7 +361,7 @@
     border-color: var(--fl-line) !important;
     color: var(--fl-copy) !important;
   }
-  html[data-theme="daylight"] body :is(.creator-public-intro .creator-avatar,.creator-tabs,.creator-timeline,.creator-projects,.creator-inbox-list-head,.fl-badge-bar,.saved-backup) { border-color: var(--fl-line) !important; }
+  html[data-theme="daylight"] body :is(.creator-public-intro .creator-avatar,.creator-tabs,.creator-timeline,.creator-projects,.creator-inbox-list-head,.saved-backup) { border-color: var(--fl-line) !important; }
   html[data-theme="daylight"] body :is(.creator-back,#creator-bio,.creator-followers,#creator-public-status,.creator-tabs button,.creator-inbox-list-head button,.dg-winners-label,.saved-backup summary,#main form label,.dg-fp-strip-copy span,.packet-context a) { color: var(--fl-muted) !important; }
   html[data-theme="daylight"] body :is(.creator-tabs .active,.dg-moved a,.creator-profile-links a,.fl-menu-points,.fl-menu-points b,.dg-dir-needs a,.dg-dir-dialog-hint) { color: var(--fl-accent) !important; }
   html[data-theme="daylight"] body .creator-tabs .active { border-bottom-color: var(--fl-accent) !important; }
@@ -467,17 +467,6 @@
   }
   html[data-theme="daylight"] body #main .dg-dir-overview .dg-dir-stats {
     padding: 0 !important;
-  }
-  html[data-theme="daylight"] body #main .dg-tier-flag {
-    position: static;
-    order: 1;
-    justify-self: start;
-    margin-block-start: 4px !important;
-    border: 0 !important;
-    padding: 0 !important;
-    background: transparent !important;
-    color: var(--fl-muted) !important;
-    text-transform: none !important;
   }
   html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .creator-social-heading, .notifications-heading, .creator-inbox-heading, .invstr-heading, .membership-heading) h1 {
     margin-block: 0 8px !important;

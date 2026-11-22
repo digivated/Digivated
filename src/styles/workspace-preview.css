@@ -408,7 +408,7 @@
   .home-refresh .dg-board { gap: clamp(22px, 3.5vw, 40px); }
   .home-refresh .dg-board .dg-list-note:empty { display: none !important; }
   .dg-workspace .dg-fp-strip summary { color: var(--fl-ink) !important; }
-  .dg-workspace-content :is(.fl-badge-bar > div > span,.creator-post-head .creator-post-permalink,.site-breadcrumbs,.site-breadcrumbs a),
+  .dg-workspace-content :is(.creator-post-head .creator-post-permalink,.site-breadcrumbs,.site-breadcrumbs a),
   .packet-workspace :is(.packet-context,.packet-context a) {
     color: var(--fl-muted) !important;
   }

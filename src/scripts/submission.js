@@ -256,7 +256,6 @@ if (form) {
     const help = {directory:'free-launch-help',instant:'instant-launch-help','founding-feature':'membership-fields'};
     intent.setAttribute('aria-describedby', help[intent.value] || help.directory);
     document.getElementById('free-launch-help').hidden = intent.value !== 'directory';
-    document.getElementById('instant-launch-help').hidden = intent.value !== 'instant';
     if (membershipFields) membershipFields.hidden = intent.value !== 'founding-feature';
     syncTiers();
   };
