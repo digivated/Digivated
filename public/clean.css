@@ -270,4 +270,9 @@
   #digivated-root .dg-footer-group a { font-size: 13.5px !important; }
 }
 
+/* iOS Safari zooms into any field under 16px when tapped, so phones and tablets get 16px text in inputs */
+@media (max-width: 1119px), (pointer: coarse) {
+  #digivated-root :is(input, textarea, select):not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"]) { font-size: 16px !important; }
+}
+
 }

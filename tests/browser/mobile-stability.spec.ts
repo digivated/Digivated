@@ -100,7 +100,7 @@ test('touch devices keep static navigation and skip pointer effects', async ({ b
     await page.goto('http://127.0.0.1:4321/saved');
     await expect(page.getByRole('heading', { name: 'Saved items', exact: true })).toHaveCount(1);
     await expect(page.getByRole('button', { name: 'Saved items (0)' })).toHaveCSS('color', 'rgb(255, 255, 255)');
-    await expect(page.getByRole('button', { name: 'New collection' })).toHaveCSS('color', 'rgb(27, 27, 27)');
+    await expect(page.getByRole('button', { name: 'New collection' })).toHaveCSS('color', 'rgb(11, 11, 12)');
     await expect(page.getByRole('heading', { name: 'Nothing saved yet.' })).toBeVisible();
     await expect(page.getByLabel('Search saved items')).toBeHidden();
     await page.getByRole('button', { name: 'New collection' }).click();
