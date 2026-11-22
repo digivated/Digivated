@@ -4,8 +4,8 @@
     --shell-bar-glass: #f7f7f5f5;
     --shell-panel-glass: #f7f7f5fa;
     --shell-shadow: 0 14px 30px -12px #191a183d, 0 4px 10px -7px #191a182a;
-    --shell-rim: inset 0 1px 0 #fffe, inset 0 -1px 0 #2525211e, inset 1px 0 0 #ffffffa6, inset -1px 0 0 #fff8;
-    --shell-bar-edge: 23px;
+    --shell-rim: inset 0 1px 0 #fffe, inset 0 -1px 0 #25252123, inset 1px 0 0 #ffffffa6, inset -1px 0 0 #fff8;
+    --shell-bar-edge: 32px;
     --shell-label-shadow: 0 0 4px #faf9f5, 0 0 9px #faf9f5;
     --shell-border: var(--fl-line);
     --shell-accent: var(--fl-accent);
@@ -138,7 +138,7 @@
     overscroll-behavior: contain;
     padding: 12px !important;
     border: 1px solid var(--shell-border) !important;
-    border-radius: 20px !important;
+    border-radius: 23px !important;
     background-color: var(--shell-panel-glass) !important;
     color: var(--shell-ink) !important;
     box-shadow: var(--shell-rim), var(--shell-shadow) !important;
@@ -291,12 +291,12 @@
     }
   }
   .dg-shell .dg-shell-bar[data-glass-refraction]::before {
-    background-color: #f7f7f514 !important;
-    backdrop-filter: blur(4.5px) contrast(.58) brightness(1.29) var(--shell-lens) !important;
+    background-color: #f7f7f519 !important;
+    backdrop-filter: blur(3px) contrast(.58) brightness(1.29) var(--shell-lens) !important;
   }
   .dg-shell :is(.site-menu-panel,.dg-shell-account-panel)[data-glass-refraction] {
-    background-color: #f7f7f54f !important;
-    backdrop-filter: blur(11px) var(--shell-lens) !important;
+    background-color: #f7f7f561 !important;
+    backdrop-filter: blur(11px) contrast(.68) brightness(1.17) var(--shell-lens) !important;
   }
   .dg-glass-definitions { position: absolute; width: 0; height: 0; pointer-events: none; }
 

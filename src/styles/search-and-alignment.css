@@ -98,3 +98,25 @@ html body.platform.light-theme.moments-theme .launch-directory { max-width:100%;
   #discovery-search .unified-result-copy small { font-size:11px; }
   #discovery-search .search-footnote { padding:12px 18px; font-size:9px; }
 }
+
+
+@layer daylight {
+  html[data-theme="daylight"] body #discovery-search[data-glass-surface] {
+    border-radius: 22px !important;
+    box-shadow: 0 24px 72px #191a1838, inset 0 1px 0 #fffe !important;
+  }
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    html[data-theme="daylight"] body #discovery-search[data-glass-surface] {
+      background: #f7f7f5e6 !important;
+      -webkit-backdrop-filter: blur(14px) !important;
+      backdrop-filter: blur(14px) !important;
+    }
+    html[data-theme="daylight"] #discovery-search::backdrop {
+      background: #191a184a !important;
+      backdrop-filter: blur(3px) !important;
+    }
+  }
+  html[data-theme="daylight"] body #discovery-search[data-glass-refraction] {
+    backdrop-filter: blur(11px) var(--shell-lens) !important;
+  }
+}

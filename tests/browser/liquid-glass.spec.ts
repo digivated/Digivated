@@ -16,11 +16,15 @@ test('mobile glass menu remains readable and routes correctly',async({page})=>{
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 
-test('glass search stays usable at desktop and narrow widths',async({page})=>{
+test('glass search stays usable at desktop and narrow widths',async({page,browserName})=>{
  for(const width of [390,1440]){
   await page.setViewportSize({width,height:900});await page.goto(base+'/');
   await page.locator('[data-open-search]').click();
   const dialog=page.locator('#discovery-search');await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveCSS('backdrop-filter', /blur/);
+  if (browserName === 'chromium') await expect(dialog).toHaveCSS('backdrop-filter', /url\(/);
+  const tint = await dialog.evaluate(element => Number(getComputedStyle(element).backgroundColor.split(',').at(-1)?.replace(')', '')));
+  expect(tint).toBeGreaterThan(.8);
   await expect(page.locator('#unified-search-input')).toBeFocused();
   await page.keyboard.press('Escape');await expect(dialog).toBeHidden();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

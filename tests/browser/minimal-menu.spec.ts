@@ -172,15 +172,24 @@ test('the bevel optically displaces a real backdrop and keeps the labels outside
     const id = (el as HTMLElement).style.getPropertyValue('--shell-lens').match(/#([^"]+)/)?.[1];
     const filter = id && document.getElementById(id);
     const glass = getComputedStyle(el, '::before');
-    return { id, scale: Number(filter && filter.lastElementChild?.getAttribute('scale')), backdrop: glass.backdropFilter, tint: Number(glass.backgroundColor.split(',').at(-1)?.replace(')', '')), foreground: getComputedStyle(el.querySelector('nav')!).filter };
+    const scales = filter ? [...filter.querySelectorAll('feDisplacementMap')].map(lens => Number(lens.getAttribute('scale'))) : [];
+    return { id, scales, backdrop: glass.backdropFilter, tint: Number(glass.backgroundColor.split(',').at(-1)?.replace(')', '')), foreground: getComputedStyle(el.querySelector('nav')!).filter };
   });
-  expect(optics.scale).toBeGreaterThan(0);
+  expect(optics.scales).toHaveLength(3);
+  expect(new Set(optics.scales).size).toBe(3);
+  expect(Math.min(...optics.scales)).toBeGreaterThan(0);
   expect(optics.backdrop).toContain('url(');
   expect(optics.tint).toBeLessThan(.12);
   expect(optics.foreground).toBe('none');
 
   const refracted = await bar.screenshot();
-  await page.evaluate(id => document.getElementById(id!)?.lastElementChild?.setAttribute('scale', '0'), optics.id);
+  const setScale = (scale: number) => page.evaluate(({ id, scale }) => {
+    document.getElementById(id!)?.querySelectorAll('feDisplacementMap').forEach(lens => lens.setAttribute('scale', String(scale)));
+  }, { id: optics.id, scale });
+  await setScale(optics.scales[1]);
+  const singleColorBend = await bar.screenshot();
+  expect(refracted.equals(singleColorBend)).toBe(false);
+  await setScale(0);
   const flat = await bar.screenshot();
   expect(refracted.equals(flat)).toBe(false);
 
