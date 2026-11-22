@@ -2,6 +2,7 @@
 import Platform from '../layouts/Platform.astro';
 import UiIcon from './UiIcon.astro';
 import { membership } from '../data/membership.mjs';
+import { PLANS } from '../lib/plans.mjs';
 import '../styles/membership.css';
 ---
 <Platform canonicalPath="/shop" title="Plans and membership" description="Digivated plans: 1 project free, Starter for 3 projects, or Membership for unlimited projects and full site access.">
@@ -9,49 +10,44 @@ import '../styles/membership.css';
   <section class="dg-hero shop-hero" aria-labelledby="shop-title">
     <div class="dg-hero-copy">
       <h1 id="shop-title">Plans and membership</h1>
-      <p class="dg-hero-lede">Every account gets 1 project free. Need more? Pay once, never again.</p>
+      <p class="dg-hero-lede">Your first project is free. Upgrade with a one-time payment.</p>
     </div>
   </section>
 
   <div class="shop-grid">
     <article class="shop-card shop-free" aria-labelledby="shop-free-title">
       <h2 id="shop-free-title">Free</h2>
-      <p class="shop-for">Your first project, on the house.</p>
-      <div class="shop-price"><strong>$0</strong><span>forever</span></div>
+      <div class="shop-price"><strong>${PLANS.free.priceUSD}</strong></div>
       <ul class="shop-list">
-        <li>1 project on Digivated</li>
-        <li>Add the badge, launch on Monday</li>
-        <li>Public listing and project page</li>
+        <li>{PLANS.free.limit} project on Digivated</li>
+        <li>Launch Monday at 9 AM Eastern</li>
+        <li>Requires the Digivated badge</li>
       </ul>
       <a class="button shop-cta" href="/submit-project#project-form"><span class="dg-glass-action-label"><span>Start free</span><UiIcon name="arrow" size={16}/></span></a>
-      <p class="shop-note">Launches Mondays at 9 AM Eastern.</p>
     </article>
 
     <article class="shop-card shop-spot" aria-labelledby="shop-spot-title" data-shop-spot>
       <h2 id="shop-spot-title">Starter</h2>
-      <p class="shop-for">For makers with a few things to show.</p>
-      <div class="shop-price"><strong data-shop-spot-price>$3</strong><span>once</span></div>
+      <div class="shop-price"><strong data-shop-spot-price>${PLANS.starter.priceUSD}</strong><span>once</span></div>
       <ul class="shop-list">
-        <li>Up to 3 projects on Digivated</li>
-        <li>Live the moment you publish</li>
-        <li>No queue, no badge needed</li>
+        <li>Up to {PLANS.starter.limit} projects</li>
+        <li>Instant publishing after payment verification</li>
+        <li>Skip the queue and badge</li>
       </ul>
       <a class="button primary shop-cta" href="/submit-project?spot=1#project-form" data-shop-spot-cta><span class="dg-glass-action-label"><span data-shop-spot-label>Get Starter</span><UiIcon name="arrow" size={16}/></span></a>
-      <p class="shop-note" data-shop-spot-note>One-time. No renewals.</p>
+      <p class="shop-note" data-shop-spot-note role="status" hidden></p>
     </article>
 
     <article class="shop-card membership-offer" aria-labelledby="shop-member-title">
       <h2 id="shop-member-title">Membership</h2>
-      <p class="shop-for">Unlimited projects and full access to Digivated.</p>
       <div class="shop-price membership-price"><strong>${membership.priceUSD}</strong><span>once</span></div>
       <ul class="shop-list membership-benefits">
-        <li>Unlimited projects, live instantly</li>
-        <li>Member mark on your projects</li>
+        <li>Unlimited instant launches</li>
+        <li>Full site access</li>
         <li>Full News archive</li>
-        <li>UI/UX Playbook and member guides</li>
+        <li>UI/UX Playbook, prompt builder and workflows</li>
       </ul>
       {membership.checkoutReady ? <a class="button primary membership-checkout shop-cta" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get membership · $5 once <UiIcon name="external" size={17}/></a> : <><button class="button primary membership-checkout shop-cta" disabled>Checking checkout…</button><p class="membership-checkout-note shop-note" role="status">Loading checkout. Give it a second.</p></>}
-      <p class="shop-note">Checkout is on Gumroad. Use your Digivated account email.</p>
     </article>
   </div>
 

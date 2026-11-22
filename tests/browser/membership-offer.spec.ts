@@ -24,6 +24,38 @@ test('verified one-time checkout exposes the correct Gumroad purchase link',asyn
  await expect(checkout).toHaveAttribute('href','https://digivated.gumroad.com/l/founding-member-pass');
  await expect(checkout).toHaveAttribute('target','_blank');
 });
+for (const width of [390, 1440]) test(`shop plans lead to the correct launch paths at ${width}px`, async ({ page }) => {
+ await page.setViewportSize({ width, height: 950 });
+ await page.route('**/api/submissions?action=launch-options', route => route.fulfill({ json: { instant: { price: 300 } } }));
+ await page.goto(base + '/shop');
+ const free = page.getByRole('article', { name: 'Free', exact: true });
+ const starter = page.getByRole('article', { name: 'Starter', exact: true });
+ const membership = page.getByRole('article', { name: 'Membership', exact: true });
+ await expect(free.locator('.shop-price')).toHaveText('$0');
+ await expect(starter.locator('[data-shop-spot-price]')).toHaveText('$3');
+ await expect(free.getByRole('link', { name: 'Start free' })).toHaveAttribute('href', '/submit-project#project-form');
+ await expect(starter.getByRole('link', { name: 'Get Starter' })).toHaveAttribute('href', '/submit-project?spot=1#project-form');
+
+ const bounds = await Promise.all([free.boundingBox(), starter.boundingBox(), membership.boundingBox()]);
+ const [freeBox, starterBox, memberBox] = bounds;
+ expect(freeBox && starterBox && memberBox).toBeTruthy();
+ if (!freeBox || !starterBox || !memberBox) throw new Error('Expected all three plan cards to be visible');
+ if (width === 390) {
+  expect(starterBox.y).toBeGreaterThan(freeBox.y);
+  expect(memberBox.y).toBeGreaterThan(starterBox.y);
+ } else {
+  expect(starterBox.y).toBe(freeBox.y);
+  expect(memberBox.y).toBe(freeBox.y);
+ }
+});
+
+test('paused Starter checkout still points to the free launch', async ({ page }) => {
+ await page.route('**/api/submissions?action=launch-options', route => route.fulfill({ json: { instant: null } }));
+ await page.goto(base + '/shop');
+ const starter = page.getByRole('article', { name: 'Starter', exact: true });
+ await expect(starter.getByRole('status')).toContainText('Starter is paused');
+ await expect(starter.getByRole('link', { name: 'Launch free' })).toHaveAttribute('href', '/submit-project#project-form');
+});
 test('previous purchase pages keep working without standalone buy links',async({page})=>{
  for(const path of ['/access','/library','/ui-ux-prompt-packet','/resources','/carousels','/submit-project']){
   await page.goto(base+path);await expect(page.locator('main')).toBeVisible();
