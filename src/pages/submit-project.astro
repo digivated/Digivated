@@ -25,8 +25,7 @@ import '../styles/submission-flow.css';
 
       <div id="instant-launch-resume" class="submission-review" hidden><h2 id="instant-launch-title">Complete your payment</h2><p id="instant-launch-copy">Your project is saved. Pay in the checkout tab using <strong id="instant-launch-email">your account email</strong>. This page publishes it automatically as soon as payment goes through.</p><div class="submission-account-actions"><a id="instant-launch-checkout" class="button primary" target="_blank" rel="noopener">Open checkout ↗</a><button id="instant-launch-verify" class="button" type="button">I’ve paid — check now</button></div><p id="instant-launch-cancel-note" class="field-help">Changed your mind? You’re only charged if you finish checkout. <button id="instant-launch-cancel" class="dg-link-button" type="button">← Cancel and change launch option</button></p><p id="instant-launch-status" role="status" aria-live="polite"></p><a id="instant-launch-listing" hidden>View your live project →</a></div>
       <div id="submission-details" hidden>
-        <fieldset class="launch-start">
-          <legend class="sr-only">Draft your launch</legend>
+        <fieldset class="launch-start" aria-label="Draft your launch">
           <div class="submission-url-row">
             <label>Project URL<input name="url" type="url" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="yourproduct.com" maxlength="500" required/></label>
           </div>

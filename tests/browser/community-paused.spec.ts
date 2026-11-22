@@ -80,10 +80,7 @@ test('Share a Product offers all activity alerts and submits the exact checkbox 
  const request=page.waitForRequest(req=>req.method()==='POST' && req.url().endsWith('/api/submissions'));
  await page.getByRole('button',{name:'Save and get your badge'}).click();
  expect((await request).postDataJSON().activityNotifications).toBe(false);
- const overflow = await page.evaluate(() => [...document.querySelectorAll('#main *')]
-  .filter(node => node.getBoundingClientRect().right > innerWidth + 1)
-  .map(node => node.id || node.className).slice(0, 8));
- expect(await page.evaluate(()=>document.documentElement.scrollWidth), JSON.stringify(overflow)).toBeLessThanOrEqual(390);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });
 
 for (const width of [390, 1440]) test(`free launch can verify the badge and submit in one step at ${width}px`, async ({ page }) => {
