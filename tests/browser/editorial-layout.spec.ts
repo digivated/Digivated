@@ -24,7 +24,7 @@ test('homepage activity, launches and community sections stay in reading order',
   await expect(launch).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(launch.locator('.dg-project-art img')).toHaveCSS('object-fit', 'contain');
   const excerpt = await launch.locator('.dg-tagline').textContent();
-  expect(excerpt!.length).toBeLessThan(fullDescription.length);
+  expect(excerpt!.length).toBeLessThanOrEqual(81);
   expect(excerpt).toMatch(/…$/);
   await expect(page.locator('a[href^="/winners"], a[href="/points"], .dg-dot, [data-points-chip]')).toHaveCount(0);
   await expect(page.getByRole('link', { name: /how (launches are ranked|ranking works)/i })).toHaveCount(0);
@@ -49,8 +49,12 @@ test('homepage activity, launches and community sections stay in reading order',
         separated: art.right <= copy.left && (stackActions ? copy.bottom <= controls.top + 1 : copy.right <= controls.left),
         overflow: document.documentElement.scrollWidth - innerWidth,
       };
-    }, width <= 480 || width >= 1240);
+    }, width <= 480);
     expect(layout, `Layout at ${width}px`).toEqual({ ordered: true, separated: true, overflow: 0 });
+    if (width >= 1120) {
+      await expect(launch.locator('.dg-tagline')).toHaveCSS('white-space', 'nowrap');
+      expect((await launch.boundingBox())!.height).toBeLessThanOrEqual(66);
+    }
   }
   await page.setViewportSize({ width: 320, height: 900 });
   const launchNav = page.getByRole('navigation', { name: 'Browse launches' });

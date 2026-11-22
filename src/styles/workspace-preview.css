@@ -453,17 +453,44 @@
   }
   .dg-workspace #main .dg-home-spots .dg-spot-grid { gap: 8px; }
 
-  @media (min-width: 1240px) {
-    .dg-workspace #main .dg-project-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .dg-project-list > :not(.dg-project-tile, .is-loading) { grid-column: 1 / -1; }
-    .dg-project-list > .dg-project-tile:only-child { grid-column: 1 / -1; }
+  @media (min-width: 1120px) {
+    .dg-workspace #main .dg-project-list { gap: 6px !important; }
+    .dg-workspace #main :is(.dg-row.dg-project-tile, .dg-project-list > .is-loading) {
+      --project-logo-size: 36px;
+      padding-block: 7px !important;
+      align-items: center !important;
+    }
+    .dg-workspace #main .dg-row.dg-project-tile .dg-meta { display: none !important; }
+    .dg-workspace #main .dg-row.dg-project-tile h3 {
+      flex-wrap: nowrap !important;
+      font-size: 16px !important;
+    }
+    .dg-workspace #main .dg-row.dg-project-tile h3 :is(a, .dg-dir-open, .dg-upcoming-name),
+    .dg-workspace #main .dg-row.dg-project-tile .dg-tagline {
+      display: block !important;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap !important;
+      text-overflow: ellipsis;
+    }
+    .dg-workspace #main .dg-row.dg-project-tile .dg-tagline { max-width: 56ch; }
+    .dg-workspace #main .dg-project-tile .dg-spot-copy { -webkit-line-clamp: 1; }
+    .dg-workspace #main .dg-row.dg-project-tile .dg-tagline:empty { display: none !important; }
+    .dg-workspace #main .dg-row.dg-project-tile .dg-vote {
+      grid-auto-flow: column;
+      gap: 5px;
+      width: auto !important;
+      min-width: 44px;
+      min-height: 44px !important;
+      padding-inline: 9px !important;
+    }
   }
 
   @media (max-width: 640px) {
     .dg-workspace #main .dg-row.dg-project-tile { --project-logo-size: 40px; }
   }
 
-  @media (max-width: 480px), (min-width: 1240px) {
+  @media (max-width: 480px) {
     .dg-workspace #main .dg-row.dg-project-tile {
       grid-template-columns: var(--project-rank, ) var(--project-logo-size) minmax(0, 1fr) !important;
       grid-template-rows: 1fr auto;

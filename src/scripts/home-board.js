@@ -48,10 +48,10 @@ function visitAttrs(link, p) {
 function launchExcerpt(description) {
   const text = String(description || '').trim().replace(/\s+/g, ' ');
   const characters = Array.from(text);
-  if (characters.length <= 105) return text;
-  const excerpt = characters.slice(0, 105).join('');
+  if (characters.length <= 80) return text;
+  const excerpt = characters.slice(0, 80).join('');
   const wordEnd = excerpt.lastIndexOf(' ');
-  return (wordEnd > 72 ? excerpt.slice(0, wordEnd) : excerpt).trimEnd() + '…';
+  return (wordEnd > 54 ? excerpt.slice(0, wordEnd) : excerpt).trimEnd() + '…';
 }
 
 /* ---------- Spots ---------- */
