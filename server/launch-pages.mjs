@@ -1,3 +1,4 @@
+import { shareLinks } from '../src/lib/share-links.mjs';
 import { cardIconMarkup } from '../src/lib/card-icons.mjs';
 import { projectDisplayLogo } from './project-display-logo.mjs';
 import { projectPricingOptions } from '../src/lib/project-pricing.mjs';
@@ -69,11 +70,17 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
     ? '<p class="launch-draft" role="status">Private draft preview · Only an explicit Publish launch page action makes this public.</p>'
     : '';
   const vote = draft ? '' : `<button type="button" class="launch-vote" data-like-type="project" data-like-id="${e(item.id)}" data-show-zero aria-pressed="false" aria-label="Upvote this project"><span aria-hidden="true">↑</span><span data-like-count>–</span></button>`;
+  const coverImage = cover && /^(?:\/[^/]|https?:)/.test(cover.image || '') ? cover.image : '';
+  const shareTo = draft ? '' : `<nav class="launch-share-to" aria-label="Share ${e(item.name)}"><span>Share on</span>${shareLinks({
+    url: canonical, title: `${item.name} on Digivated`,
+    text: `${item.name}: ${String(item.description || '').replace(/\s+/g, ' ').trim().slice(0, 140)}`, image: coverImage,
+  }).map(link => `<a href="${e(link.href)}"${link.key === 'email' ? '' : ' target="_blank" rel="noopener noreferrer"'} data-share-to="${link.key}">${e(link.label)}</a>`).join('')}</nav>`;
   const shareControls = draft ? '' : `<div class="launch-share">
     <button type="button" data-save-type="project" data-save-id="${e(item.id)}">Save</button>
     <button type="button" data-copy-link>Copy link</button>
     <button type="button" data-native-share hidden>Share</button>
     <p role="status" data-share-status></p>
+    ${shareTo}
   </div>`;
   const gallery = screenshots.length ? `<section id="gallery" class="launch-panel launch-media" aria-labelledby="launch-gallery-title">
     <h2 id="launch-gallery-title">Gallery</h2>
