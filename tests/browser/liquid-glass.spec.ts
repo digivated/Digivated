@@ -10,7 +10,7 @@ test('white mobile menu remains readable and routes correctly',async({page})=>{
  const menu=page.locator('#explore-navigation');await expect(menu).toBeVisible();
  const material=await menu.evaluate(element=>({filter:getComputedStyle(element).backdropFilter,background:getComputedStyle(element).backgroundColor}));
  expect(material).toEqual({filter:'none',background:'rgb(255, 255, 255)'});
- await menu.getByRole('link',{name:'Extra Tools'}).click();
+ await menu.getByRole('link',{name:'Tools'}).click();
  await expect(page).toHaveURL(/\/resources\/?$/);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
