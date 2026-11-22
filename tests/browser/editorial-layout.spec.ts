@@ -56,6 +56,7 @@ test('homepage activity, launches and community sections stay in reading order',
       await expect(launch.locator('.dg-meta')).toBeVisible();
       const [board, about] = await Promise.all(['.dg-home', '.dg-about'].map(selector => page.locator(selector).boundingBox()));
       expect(board!.x).toBeCloseTo(about!.x, 0);
+      expect(board!.width).toBeCloseTo(1120, 0);
       expect(board!.width).toBeCloseTo(about!.width, 0);
     }
   }

@@ -104,6 +104,7 @@
     }
     html[data-theme="daylight"] body.home-refresh.platform #main {
       width: min(100%, calc(var(--launch-board-width) + 2 * var(--daylight-inset))) !important;
+      max-width: none !important;
     }
     .platform.home-refresh #main > .dg-home-hero { padding: 42px 0 8px !important; }
     .home-refresh .launch-welcome #dg-home-title { font-size: clamp(46px, 4.1vw, 58px) !important; }
