@@ -117,7 +117,7 @@ for (const width of [390, 1440]) test(`free launch can verify the badge and subm
  await expect(badgePanel).toHaveCSS('background-color', 'rgb(255, 255, 255)');
  for (const step of await badgePanel.locator('.dg-badge-first-steps li').all()) {
   await expect(step.locator('strong')).toHaveCSS('color', 'rgb(11, 11, 12)');
-  await expect(step.locator(':scope > span')).toHaveCSS('background-color', 'rgb(27, 27, 27)');
+  await expect(step.locator(':scope > span')).toHaveCSS('background-color', 'rgb(11, 11, 12)');
   await expect(step.locator(':scope > span')).toHaveCSS('color', 'rgb(255, 255, 255)');
  }
  const disclosures = badgePanel.locator('summary:visible');
