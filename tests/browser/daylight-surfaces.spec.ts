@@ -179,7 +179,7 @@ for (const width of [320, 1440]) {
     const html = await renderLaunch({
       id: 'fixture-product', path: listing, name: 'Product fixture', creator,
       logo: '/digivated-daylight-mark.png', category: 'Apps',
-      image: width > 480 ? '/digivated-tech-markets-banner.png' : '', alt: 'Project dashboard',
+      image: width > 480 ? '/digivated-tech-markets-banner.png' : '', alt: 'Project dashboard', hasPrimaryScreenshot: width > 480,
       gallery: [{ image: '/missing-project-screenshot.png', alt: 'Example project screenshot' }],
       description: 'An independent product with a public discussion.', ctaUrl: 'https://example.com',
       ctaLabel: 'Visit project', socialUrl: 'https://example.com/creator', date,
@@ -220,7 +220,7 @@ for (const width of [320, 1440]) {
       page.locator('.launch-cover').boundingBox(), page.locator('.launch-identity').boundingBox(),
       page.getByRole('heading', { name: 'Product fixture' }).boundingBox(), page.locator('.launch-actions').boundingBox(),
     ]);
-    expect(logo!.y).toBeLessThan(cover!.y + cover!.height);
+    if (cover) expect(logo!.y).toBeGreaterThanOrEqual(cover.y + cover.height);
     expect(title!.y).toBeGreaterThanOrEqual(logo!.y + logo!.height);
     if (width <= 480) expect(actions!.y).toBeGreaterThanOrEqual(title!.y + title!.height);
 

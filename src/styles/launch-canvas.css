@@ -4,7 +4,7 @@
     margin: 0 auto !important;
     max-width: 820px;
     text-align: center;
-    background: radial-gradient(ellipse at 50% 26%, #fff 0%, transparent 70%) !important;
+    background: none !important;
   }
 
   .launch-welcome {
@@ -21,6 +21,12 @@
     line-height: 1.08 !important;
     letter-spacing: -.05em;
     text-wrap: balance;
+  }
+
+  .home-refresh .launch-welcome .board-introduction {
+    color: var(--fl-copy) !important;
+    font-size: clamp(16px, 1.3vw, 18px) !important;
+    line-height: 1.5 !important;
   }
 
   .launch-welcome .dg-hero-actions {
@@ -40,7 +46,7 @@
     margin-inline-start: auto;
     padding-inline-end: 4px;
     color: var(--fl-muted);
-    font-size: 12px;
+    font-size: 13px;
     text-align: end;
   }
 
@@ -90,12 +96,34 @@
     html:has(> body.home-refresh) { scrollbar-width: none; }
     html:has(> body.home-refresh)::-webkit-scrollbar { display: none; }
 
-    .home-refresh {
-      --launch-board-width: 1040px;
+    html[data-theme="daylight"] body.home-refresh {
+      --launch-board-width: 1120px;
       --section-title: clamp(28px, 2.6vw, 34px);
+      --home-accent: #34466b;
+      background: radial-gradient(ellipse at 55% 0%, #eef2fa, transparent 680px), #f6f7f9 !important;
     }
-    .home-refresh .launch-welcome #dg-home-title { font-size: clamp(48px, 4.3vw, 60px) !important; }
-    .home-refresh .launch-welcome .dg-hero-actions { width: min(100%, 610px); }
+    html[data-theme="daylight"] body.home-refresh.platform #main {
+      width: min(100%, calc(var(--launch-board-width) + 2 * var(--daylight-inset))) !important;
+      max-width: none !important;
+    }
+    .platform.home-refresh #main > .dg-home-hero { padding: 42px 0 8px !important; }
+    .home-refresh .launch-welcome #dg-home-title { font-size: clamp(46px, 4.1vw, 58px) !important; }
+    .home-refresh .launch-welcome .dg-hero-actions { width: min(100%, 640px); }
+    .home-refresh #main .dg-hero-panel { width: min(100%, 640px); }
+    .home-refresh #main :is(.dg-home, .dg-about) {
+      width: 100%;
+      max-width: var(--launch-board-width) !important;
+      margin-inline: auto !important;
+    }
+    .home-refresh #main .launch-welcome .dg-btn-primary,
+    .home-refresh #main .board-categories button[aria-pressed="true"] {
+      color: #fff !important;
+      background: var(--home-accent) !important;
+      border-color: var(--home-accent) !important;
+    }
+    .home-refresh #main .launch-welcome .dg-btn-primary:is(:hover,:focus-visible) {
+      background: #283957 !important;
+    }
 
     .home-refresh .board-category-bar {
       display: flex;
@@ -116,7 +144,7 @@
       align-items: center;
       gap: 6px;
       min-height: 44px;
-      color: var(--fl-ink) !important;
+      color: var(--home-accent) !important;
       font-size: 14px;
       font-weight: 600;
       text-decoration: underline;
@@ -124,6 +152,5 @@
     }
     .home-refresh #main .board-filters button { font-size: 14px !important; }
     .home-refresh #main .dg-launch-nav a { font-size: 14px !important; }
-    .home-refresh #main .dg-board .dg-project-tile h3 { font-size: 17px !important; }
   }
 }

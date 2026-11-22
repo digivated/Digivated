@@ -23,9 +23,8 @@ test('homepage activity, launches and community sections stay in reading order',
   await expect(launch).toBeVisible();
   await expect(launch).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(launch.locator('.dg-project-art img')).toHaveCSS('object-fit', 'contain');
-  const excerpt = await launch.locator('.dg-tagline').textContent();
-  expect(excerpt!.length).toBeLessThanOrEqual(81);
-  expect(excerpt).toMatch(/…$/);
+  await expect(launch.locator('.dg-tagline')).toHaveText(fullDescription.trim());
+  await expect(launch.locator('.dg-project-art')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(page.locator('a[href^="/winners"], a[href="/points"], .dg-dot, [data-points-chip]')).toHaveCount(0);
   await expect(page.getByRole('link', { name: /how (launches are ranked|ranking works)/i })).toHaveCount(0);
   const featured = page.locator('[data-spot-grid] .dg-spot:not(.is-open)');
@@ -52,8 +51,13 @@ test('homepage activity, launches and community sections stay in reading order',
     }, width <= 480);
     expect(layout, `Layout at ${width}px`).toEqual({ ordered: true, separated: true, overflow: 0 });
     if (width >= 1120) {
-      await expect(launch.locator('.dg-tagline')).toHaveCSS('white-space', 'nowrap');
-      expect((await launch.boundingBox())!.height).toBeLessThanOrEqual(66);
+      await expect(launch.locator('.dg-tagline')).toHaveCSS('white-space', 'normal');
+      await expect(launch.locator('.dg-meta')).toContainText('By An independent maker');
+      await expect(launch.locator('.dg-meta')).toBeVisible();
+      const [board, about] = await Promise.all(['.dg-home', '.dg-about'].map(selector => page.locator(selector).boundingBox()));
+      expect(board!.x).toBeCloseTo(about!.x, 0);
+      expect(board!.width).toBeCloseTo(1120, 0);
+      expect(board!.width).toBeCloseTo(about!.width, 0);
     }
   }
   await page.setViewportSize({ width: 320, height: 900 });

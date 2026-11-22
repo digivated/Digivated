@@ -44,7 +44,7 @@ function visitAttrs(link, p) {
   return link;
 }
 
-// Listings have room for a short excerpt. Project pages keep the full description.
+// Featured cards have less room for a description than the launch feed.
 function launchExcerpt(description) {
   const text = String(description || '').trim().replace(/\s+/g, ' ');
   const characters = Array.from(text);
@@ -132,7 +132,7 @@ function row(p, key) {
   appendMarks(title, p);
   const lift = key === 'current' && !fresh ? boostVotes(p.boost) : 0;
   if (lift) { const b = el('span', '⚡ Boosted', 'dg-badge dg-badge-boost'); b.title = `+${lift} from ${p.boost} feedback points this week`; title.append(b); }
-  main.append(title, el('p', launchExcerpt(p.description), 'dg-tagline'));
+  main.append(title, el('p', p.description, 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
   meta.append(el('span', p.category || 'Project'));
   if (p.creator) meta.append(el('span', 'By ' + p.creator));
@@ -175,7 +175,7 @@ function upcomingRow(item) {
   const title = el('h3');
   title.append(el('span', item.name, 'dg-upcoming-name'));
   if (Number.isFinite(Date.parse(item.launchAt))) title.append(el('span', freeLaunchDay(item.launchAt), 'dg-badge dg-badge-date'));
-  main.append(title, el('p', launchExcerpt(item.description), 'dg-tagline'));
+  main.append(title, el('p', item.description, 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
   meta.append(el('span', item.category || 'Project'));
   if (item.creator) meta.append(el('span', 'By ' + item.creator));
@@ -202,7 +202,7 @@ async function toggleWatch(item, button) {
   try {
     const result = await api('/api/launches', { action: item.watching ? 'unwatch' : 'watch', id: item.id });
     item.watching = result.watching; item.watchers = result.watchers;
-  } catch (error) { failure = error.message || 'Could not update this. Try again.'; }
+  } catch (error) { failure = error.message || 'Couldn’t update your launch reminder. Try again.'; }
   finally {
     pendingWatch.delete(item.id);
     const focused = document.activeElement === button;
@@ -374,7 +374,7 @@ function render({ animateSearch = false, only = null } = {}) {
     if (!items.length) {
       const empty = el('li', null, 'dg-row dg-row-empty');
       if (key === 'current') { const cta = el('a', 'Submit a product for this week'); cta.href = '/submit-project'; empty.append(cta); }
-      else empty.textContent = 'No launches to show.';
+      else empty.textContent = 'No launches here yet.';
       list.append(empty);
     }
     const more = section.querySelector('[data-section-more]');

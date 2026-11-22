@@ -123,7 +123,7 @@ if (root) {
     main.append(title, el('p', p.description || 'Explore this project and meet its maker.', 'dg-tagline'));
     const meta = el('p', null, 'dg-meta');
     meta.append(el('span', p.category || 'Project'));
-    if (p.creator) meta.append(el('span', 'by ' + p.creator));
+    if (p.creator) meta.append(el('span', 'By ' + p.creator));
     main.append(meta);
     li.append(rankBox, art, main, actions(p));
     return li;
