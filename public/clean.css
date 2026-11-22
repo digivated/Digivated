@@ -275,4 +275,88 @@
   #digivated-root#digivated-root :is(input, textarea, select):not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"]) { font-size: 16px !important; }
 }
 
+/* ===== Maker dashboard (Nov 22, dashboard pass) ===== */
+/* Section tabs: one white pill track, black pill for the open tab, icons beside labels */
+#digivated-root .maker-navigation { gap: 4px !important; padding: 4px !important; border: 1px solid #ececf0 !important; border-radius: 999px !important; background: #fff !important; box-shadow: 0 1px 2px rgba(17,17,26,.04) !important; scrollbar-width: none !important; }
+#digivated-root .maker-navigation::-webkit-scrollbar { display: none !important; }
+#digivated-root .maker-navigation .maker-navigation-sections { gap: 2px !important; }
+#digivated-root .maker-navigation :is(a, button) { gap: 7px !important; min-height: 38px !important; padding: 0 14px !important; border-radius: 999px !important; color: #52525b !important; font-size: 14px !important; font-weight: 550 !important; }
+#digivated-root .maker-navigation :is(a, button) svg { flex: none !important; opacity: .85 !important; }
+#digivated-root .maker-navigation :is(a, button):hover { background: #f3f3f6 !important; color: #0b0b0c !important; }
+#digivated-root .maker-navigation :is([aria-selected="true"], [aria-current="page"]) { background: #0b0b0c !important; color: #fff !important; }
+#digivated-root .maker-navigation :is([aria-selected="true"], [aria-current="page"]):hover { background: #26262b !important; color: #fff !important; }
+#digivated-root .maker-navigation .maker-navigation-launch:not([aria-current="page"]) { color: #0b0b0c !important; font-weight: 600 !important; }
+
+/* Intro and signed-in bar */
+#digivated-root .fl-dash-intro h1 { font-size: clamp(28px, 6.5vw, 40px) !important; font-weight: 700 !important; letter-spacing: -.03em !important; line-height: 1.1 !important; color: #0b0b0c !important; }
+#digivated-root .fl-dash-intro .lede { font-size: 15px !important; color: #71717a !important; }
+#digivated-root .fl-dash .fl-dash-bar { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; margin: 4px 0 16px !important; padding: 0 !important; border: 0 !important; background: none !important; }
+#digivated-root .fl-dash .fl-dash-bar p { margin: 0 !important; font-size: 14px !important; color: #71717a !important; }
+#digivated-root .fl-dash .fl-dash-bar strong { color: #0b0b0c !important; font-weight: 600 !important; }
+#digivated-root .fl-dash #account-sign-out { min-height: 34px !important; padding: 0 14px !important; border: 1px solid #e4e4e9 !important; border-radius: 999px !important; background: #fff !important; color: #0b0b0c !important; font-size: 13px !important; font-weight: 600 !important; text-decoration: none !important; box-shadow: 0 1px 2px rgba(17,17,26,.04) !important; }
+#digivated-root .fl-dash #account-sign-out:hover { background: #f6f6f8 !important; }
+
+/* Stat cards */
+#digivated-root .launch-totals:not([hidden]) { gap: 10px !important; margin: 0 0 14px !important; }
+#digivated-root .launch-totals > div { padding: 14px 16px !important; border: 1px solid #ececf0 !important; border-radius: 16px !important; background: #fff !important; box-shadow: var(--cl-shadow) !important; }
+#digivated-root .launch-totals dt { font-size: 12.5px !important; font-weight: 500 !important; color: #71717a !important; }
+#digivated-root .launch-totals dd { margin-top: 6px !important; font-size: 26px !important; font-weight: 700 !important; letter-spacing: -.02em !important; color: #0b0b0c !important; }
+
+/* Cards: submissions, points, empty state */
+#digivated-root .fl-dash :is(.account-item, .fl-card) { border: 1px solid #ececf0 !important; border-radius: 18px !important; background: #fff !important; box-shadow: var(--cl-shadow) !important; }
+#digivated-root .fl-dash .account-points { margin-top: 14px !important; padding: 14px 18px !important; border: 1px solid #ececf0 !important; border-radius: 16px !important; background: #fff !important; }
+#digivated-root .fl-dash .account-points > summary { font-size: 14px !important; font-weight: 600 !important; color: #0b0b0c !important; text-decoration: none !important; cursor: pointer !important; }
+#digivated-root .maker-empty-state { display: flex !important; flex-direction: column !important; align-items: center !important; gap: 8px !important; padding: 44px 24px !important; border: 1.5px dashed #dcdce3 !important; border-radius: 22px !important; background: linear-gradient(180deg, #fff, #fafafb) !important; text-align: center !important; box-shadow: none !important; }
+#digivated-root .maker-empty-state img { box-sizing: content-box !important; width: 34px !important; height: 34px !important; padding: 15px !important; margin-bottom: 8px !important; border: 1px solid #ececf0 !important; border-radius: 18px !important; background: #fff !important; box-shadow: 0 8px 20px -10px rgba(17,17,26,.25) !important; }
+#digivated-root .maker-empty-state h3 { margin: 0 !important; font-size: 20px !important; font-weight: 700 !important; letter-spacing: -.02em !important; color: #0b0b0c !important; }
+#digivated-root .maker-empty-state p { max-width: 38ch !important; margin: 0 0 10px !important; font-size: 14.5px !important; color: #71717a !important; }
+#digivated-root .maker-empty-state .button { min-height: 42px !important; padding: 0 18px !important; border-radius: 12px !important; }
+
+/* Panel headings (Analytics, Profile, Settings) */
+#digivated-root .fl-dash .maker-section-heading { margin: 6px 0 16px !important; padding: 0 !important; border: 0 !important; background: none !important; }
+#digivated-root .fl-dash .maker-section-heading h2,
+#digivated-root .settings-masthead-plain :is(h1, h2) { margin: 0 0 6px !important; font-size: clamp(24px, 5.6vw, 32px) !important; font-weight: 700 !important; letter-spacing: -.03em !important; line-height: 1.12 !important; color: #0b0b0c !important; }
+#digivated-root .fl-dash .maker-section-heading p,
+#digivated-root .settings-masthead-plain .settings-masthead-copy p { margin: 0 !important; font-size: 15px !important; line-height: 1.5 !important; color: #71717a !important; }
+
+/* Settings heading: plain text on the page, no dark banner */
+#digivated-root .settings-masthead-plain { display: flex !important; align-items: flex-end !important; justify-content: space-between !important; flex-wrap: wrap !important; gap: 12px 20px !important; margin: 6px 0 16px !important; padding: 0 !important; overflow: visible !important; border: 0 !important; border-radius: 0 !important; background: none !important; color: #0b0b0c !important; box-shadow: none !important; }
+#digivated-root .settings-masthead-plain .settings-masthead-copy { max-width: 60ch !important; }
+#digivated-root .settings-masthead-plain .settings-masthead-actions a { min-height: 38px !important; padding: 0 14px !important; border: 1px solid #e4e4e9 !important; border-radius: 999px !important; background: #fff !important; color: #0b0b0c !important; }
+
+/* Settings cards: stacked white cards, title, one line, one action */
+#digivated-root .account-settings-grid, #digivated-root .account-settings-secondary { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 12px !important; }
+#digivated-root .fl-dash .account-setting-card { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; min-height: 0 !important; padding: 22px 22px 20px !important; border: 1px solid #ececf0 !important; border-radius: 20px !important; background: #fff !important; box-shadow: var(--cl-shadow) !important; color: #0b0b0c !important; }
+#digivated-root .fl-dash .account-setting-card[hidden] { display: none !important; }
+#digivated-root .account-setting-icon { display: none !important; }
+#digivated-root .account-setting-card h3, #digivated-root .account-setting-feature h3 { margin: 0 0 2px !important; font-size: 18px !important; font-weight: 700 !important; letter-spacing: -.015em !important; color: #0b0b0c !important; }
+#digivated-root .account-setting-card p { margin: 0 !important; font-size: 14px !important; line-height: 1.5 !important; color: #71717a !important; }
+#digivated-root .account-setting-card > :is(.button, .fl-btn, button) { margin-top: 10px !important; min-height: 40px !important; padding: 0 16px !important; border-radius: 12px !important; font-size: 14px !important; font-weight: 600 !important; }
+#digivated-root .account-setting-card > .fl-btn { border: 1px solid #e4e4e9 !important; background: #fff !important; color: #0b0b0c !important; }
+#digivated-root .account-setting-card > .fl-btn:hover { background: #f6f6f8 !important; }
+#digivated-root .account-setting-card .account-setting-link { margin-top: 4px !important; font-size: 13.5px !important; color: #52525b !important; }
+#digivated-root .account-setting-card .fl-status:empty { display: none !important; }
+#digivated-root .account-setting-card .fl-status { margin-top: 4px !important; font-size: 13px !important; color: #52525b !important; }
+
+/* Profile form: one white card, round dashed photo drop */
+#digivated-root .creator-profile-editor { padding: 22px !important; border-radius: 22px !important; }
+#digivated-root .creator-profile-editor .fl-form { gap: 14px !important; }
+#digivated-root .creator-logo-editor { display: flex !important; align-items: center !important; gap: 18px !important; }
+#digivated-root .creator-avatar { width: 84px !important; height: 84px !important; flex: none !important; border: 1.5px dashed #d4d4d8 !important; border-radius: 999px !important; background: #fafafb !important; color: #a1a1aa !important; font-size: 22px !important; font-weight: 600 !important; }
+#digivated-root .maker-photo-details label { font-size: 16px !important; font-weight: 700 !important; color: #0b0b0c !important; }
+#digivated-root .maker-photo-details small { display: block !important; margin: 2px 0 8px !important; font-size: 13px !important; color: #71717a !important; }
+#digivated-root .creator-profile-editor label { display: grid !important; gap: 6px !important; font-size: 13.5px !important; font-weight: 550 !important; color: #2a2a2e !important; }
+#digivated-root .creator-profile-editor .maker-field-label small { font-weight: 500 !important; color: #a1a1aa !important; }
+#digivated-root .creator-profile-editor .creator-profile-visibility { display: flex !important; align-items: center !important; gap: 10px !important; font-weight: 500 !important; }
+#digivated-root .creator-profile-actions .button { min-height: 42px !important; padding: 0 18px !important; border-radius: 12px !important; }
+
+/* Analytics stats */
+#digivated-root .fl-dash .dg-stats { border: 1px solid #ececf0 !important; border-radius: 18px !important; background: #fff !important; box-shadow: var(--cl-shadow) !important; }
+#digivated-root .fl-dash .dg-stat { border: 1px solid #ececf0 !important; border-radius: 14px !important; background: #fafafb !important; }
+/* One scroller for all tabs; the section group never overlaps New Launch */
+#digivated-root .maker-navigation { justify-content: flex-start !important; overflow-x: auto !important; overflow-y: hidden !important; }
+#digivated-root .maker-navigation .maker-navigation-sections { flex: none !important; min-width: max-content !important; overflow: visible !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+#digivated-root .maker-navigation .maker-navigation-launch { flex: none !important; margin-left: auto !important; }
+#digivated-root .account-settings-grid { margin-top: 0 !important; }
+
 }
