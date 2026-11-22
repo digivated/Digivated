@@ -40,7 +40,7 @@ test('membership sign-in preserves the verified member spotlight flow',async({pa
  await page.goto(base+'/membership');
  const faq = page.locator('.membership-faq details').first();
  await faq.locator('summary').click();
- await expect(faq.locator('p')).toHaveCSS('color', 'rgb(73, 73, 73)');
+ await expect(faq.locator('p')).toHaveCSS('color', 'rgb(65, 65, 65)');
  await expect(page.getByText('Purchase email', { exact: true })).toHaveCSS('color', 'rgb(27, 27, 27)');
  await page.locator('#founding-access-form input[name=email]').fill('member@example.com');
  await page.locator('#founding-access-form button').click();

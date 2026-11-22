@@ -75,7 +75,11 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   const rail = page.getByRole('complementary', { name: 'Digivated sidebar' });
   await expect(rail.getByRole('link', { name: 'Launches', exact: true })).toHaveAttribute('aria-current', 'page');
   await expect(rail.getByRole('link', { name: 'Submit a launch' })).toHaveAttribute('href', '/submit-project');
-  await expect(rail).toHaveCSS('background-image', /radial-gradient/);
+  await expect(rail).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+  await expect(rail).toHaveCSS('background-image', 'none');
+  await expect(rail.getByRole('navigation', { name: 'Workspace navigation' }).getByRole('link')).toHaveText([
+    'Launches', 'Directory', 'Threads', 'News', 'Resources', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
+  ]);
   const login = rail.getByRole('link', { name: 'Log In', exact: true });
   await expect(login).toHaveAttribute('href', '/login');
   await expect(rail.locator('[data-open-search]')).toHaveCount(0);
@@ -83,6 +87,7 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   const [loginBox, submitBox] = await Promise.all([login.boundingBox(), submit.boundingBox()]);
   expect(loginBox!.x).toBeCloseTo(submitBox!.x, 0);
   expect(loginBox!.width).toBeCloseTo(submitBox!.width, 0);
+  expect(submitBox!.y).toBeGreaterThan(loginBox!.y);
   await expect(page.locator('.dg-workspace-content > header')).toHaveCount(0);
   const [railBox, mainBox] = await Promise.all([rail.boundingBox(), page.locator('#main').boundingBox()]);
   expect(railBox!.x + railBox!.width).toBeLessThanOrEqual(mainBox!.x);
@@ -111,7 +116,8 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
 
   await page.setViewportSize({ width: 390, height: 800 });
   await expect(rail.locator('.dg-rail-navigation')).toBeHidden();
-  await expect(rail.locator('.dg-shell-material')).toHaveCSS('backdrop-filter', /blur/);
+  await expect(rail.locator('.dg-shell-material')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+  await expect(login).toHaveCSS('color', 'rgb(248, 248, 248)');
   await page.locator('.site-menu-trigger').click();
   const directory = page.getByRole('navigation', { name: 'Site menu' }).getByRole('link', { name: 'Directory', exact: true });
   await expect(directory).toBeVisible();
