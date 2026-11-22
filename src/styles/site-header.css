@@ -3,17 +3,17 @@
   .dg-shell {
     --shell-bar-glass: #f7f7f5f5;
     --shell-panel-glass: #f7f7f5fa;
-    --shell-shadow: 0 12px 32px #191a181f;
-    --shell-rim: inset 0 1px 0 #fffc, inset 0 0 0 1px #ffffff48;
-    --shell-sheen: linear-gradient(159deg, #ffffff75, transparent 24%, transparent 78%, #fff7);
-    --shell-bar-edge: 14px;
+    --shell-shadow: 0 14px 30px -12px #191a183d, 0 4px 10px -7px #191a182a;
+    --shell-rim: inset 0 1px 0 #fffe, inset 0 -1px 0 #2525211e, inset 1px 0 0 #ffffffa6, inset -1px 0 0 #fff8;
+    --shell-bar-edge: 23px;
+    --shell-label-shadow: 0 0 4px #faf9f5, 0 0 9px #faf9f5;
     --shell-border: var(--fl-line);
     --shell-accent: var(--fl-accent);
     --shell-ink: var(--fl-ink);
     --shell-muted: var(--fl-muted);
     --shell-active: var(--daylight-wash);
     position: sticky;
-    top: 0;
+    top: 7px;
     z-index: 40;
     width: min(100%, var(--daylight-content));
     margin: 0 auto !important;
@@ -28,8 +28,7 @@
     isolation: isolate;
     gap: 12px;
     min-height: 66px;
-    padding: 5px 0 !important;
-    border-block-end: 1px solid #1a19151f !important;
+    padding: 5px 10px !important;
     background: transparent !important;
   }
   .dg-shell-bar::before {
@@ -39,12 +38,10 @@
     z-index: -1;
     border-radius: var(--shell-bar-edge) !important;
     background-color: var(--shell-bar-glass) !important;
-    background-image: var(--shell-reflection, none), var(--shell-sheen) !important;
-    box-shadow: var(--shell-rim) !important;
+    box-shadow: var(--shell-rim), 0 5px 14px -10px #191a184d, 0 0 0 1px #25252110 !important;
     pointer-events: none;
   }
-  .dg-shell .dg-reading-track { inset-inline: var(--daylight-gutter); }
-  .dg-shell [data-nav-reflection] { --shell-reflection: none; }
+  .dg-shell .dg-reading-track { inset-inline: calc(var(--daylight-gutter) + 18px); }
 
   .dg-shell .dg-shell-brand,
   .dg-shell .dg-shell-primary,
@@ -62,6 +59,7 @@
     color: var(--shell-ink) !important;
     font-size: 16px !important;
     font-weight: 680;
+    text-shadow: var(--shell-label-shadow);
     letter-spacing: -.035em;
     text-decoration: none !important;
   }
@@ -86,10 +84,12 @@
     color: var(--shell-ink) !important;
     font-size: 14px !important;
     font-weight: 550;
+    text-shadow: var(--shell-label-shadow);
     text-decoration: none !important;
     white-space: nowrap;
   }
   .dg-shell .dg-shell-icon { width: 43px; padding: 0 !important; }
+  .dg-shell :is(.dg-shell-icon,.site-menu-trigger) svg { filter: drop-shadow(0 0 2px #faf9f5); }
   .dg-shell[data-account="signed-out"] .dg-shell-notifications { display: none !important; }
   .dg-shell :is(.dg-shell-icon,.dg-shell-login,.dg-shell-primary a,.dg-shell-avatar-trigger,.site-menu-trigger):hover,
   .dg-shell :is(.dg-shell-primary a[aria-current="page"],[aria-expanded="true"].site-menu-trigger,[aria-expanded="true"].dg-shell-avatar-trigger) {
@@ -139,9 +139,8 @@
     overscroll-behavior: contain;
     padding: 12px !important;
     border: 1px solid var(--shell-border) !important;
-    border-radius: 16px !important;
+    border-radius: 20px !important;
     background-color: var(--shell-panel-glass) !important;
-    background-image: var(--shell-reflection, none), var(--shell-sheen) !important;
     color: var(--shell-ink) !important;
     box-shadow: var(--shell-rim), var(--shell-shadow) !important;
   }
@@ -221,36 +220,47 @@
 
   @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     .dg-shell {
-      --shell-bar-glass: #f7f7f580;
-      --shell-panel-glass: #f7f7f5c7;
+      --shell-bar-glass: #f7f7f527;
+      --shell-panel-glass: #f7f7f566;
     }
-    .dg-shell .dg-shell-bar::before,
+    .dg-shell .dg-shell-bar::before {
+      -webkit-backdrop-filter: blur(6px) contrast(.54) brightness(1.31) !important;
+      backdrop-filter: blur(6px) contrast(.54) brightness(1.31) !important;
+    }
     .dg-shell :is(.site-menu-panel,.dg-shell-account-panel) {
-      -webkit-backdrop-filter: blur(18px) !important;
-      backdrop-filter: blur(18px) !important;
+      -webkit-backdrop-filter: blur(14px) saturate(1.12) !important;
+      backdrop-filter: blur(14px) saturate(1.12) !important;
     }
   }
-  .dg-shell .dg-shell-bar[data-glass-refraction]::before,
-  .dg-shell :is(.site-menu-panel,.dg-shell-account-panel)[data-glass-refraction] {
-    backdrop-filter: blur(1.6px) var(--shell-lens) !important;
+  .dg-shell .dg-shell-bar[data-glass-refraction]::before {
+    background-color: #f7f7f514 !important;
+    backdrop-filter: blur(4.5px) contrast(.58) brightness(1.29) var(--shell-lens) !important;
   }
-  .dg-shell .dg-shell-bar[data-glass-refraction]::before { background-color: #f7f7f550 !important; }
   .dg-shell :is(.site-menu-panel,.dg-shell-account-panel)[data-glass-refraction] {
-    background-color: #f7f7f5b6 !important;
+    background-color: #f7f7f54f !important;
+    backdrop-filter: blur(11px) var(--shell-lens) !important;
   }
   .dg-glass-definitions { position: absolute; width: 0; height: 0; pointer-events: none; }
+
   @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    html[data-motion-ready] .dg-shell [data-reflecting] {
-      --shell-reflection:
-        radial-gradient(ellipse 62px 27px at calc(var(--reflection-x) - 46px) var(--reflection-y), #e681b36b, transparent 94%),
-        radial-gradient(ellipse 67px 34px at calc(var(--reflection-x) - 20px) var(--reflection-y), #ecc3595e, transparent 95%),
-        radial-gradient(ellipse 65px 34px at var(--reflection-x) var(--reflection-y), #81d9ac66, transparent 95%),
-        radial-gradient(ellipse 66px 31px at calc(var(--reflection-x) + 26px) var(--reflection-y), #77b9e96b, transparent 94%),
-        radial-gradient(ellipse 65px 24px at calc(var(--reflection-x) + 53px) var(--reflection-y), #b392e668, transparent 94%);
+    .dg-shell [data-nav-reflection]::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      padding: 2px;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 260ms ease-out;
+      background-image: radial-gradient(ellipse 124px 89px at var(--reflection-x, 0px) var(--reflection-y, 0px),
+        #fff7e8 2%, #eca888 22%, #db8dbb 40%, #a294e1b8 59%, #81b8de80 77%, #8bc8be00 100%) !important;
+      mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+      mask-clip: content-box, border-box;
+      mask-composite: exclude;
     }
-    html[data-motion-ready] .dg-shell [data-reflecting] :is(.dg-shell-primary a,.site-menu-links a,.site-menu-footer a):hover {
-      background-color: #ffffff35 !important;
-    }
+    .dg-shell .dg-shell-bar::after { border-radius: var(--shell-bar-edge); }
+    html[data-motion-ready] .dg-shell [data-reflecting]::after { opacity: .85; }
   }
   @media (max-width: 920px) {
     .dg-shell .dg-shell-bar { grid-template-columns: minmax(max-content,1fr) max-content; }
@@ -260,7 +270,7 @@
   }
   @media (max-width: 550px) {
     .dg-shell { top: env(safe-area-inset-top); padding-inline: max(8px, env(safe-area-inset-left), env(safe-area-inset-right)) !important; }
-    .dg-shell .dg-shell-bar { gap: 4px; min-height: 58px; }
+    .dg-shell .dg-shell-bar { gap: 4px; min-height: 58px; padding-inline: 4px !important; }
     .dg-shell .dg-shell-tools { gap: 2px; }
     .dg-shell .dg-shell-brand { padding-inline: 3px !important; }
     .dg-shell .dg-shell-brand > span { display: none; }

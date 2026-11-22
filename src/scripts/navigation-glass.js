@@ -49,8 +49,8 @@ function displacementMap(canvas, width, height, radius, rim) {
         }
       }
       const offset = (row * columns + col) * 4;
-      pixels.data[offset] = 128 + bendX * 127;
-      pixels.data[offset + 1] = 128 + bendY * 127;
+      pixels.data[offset] = 128 - bendX * 127;
+      pixels.data[offset + 1] = 128 - bendY * 127;
       pixels.data[offset + 2] = 128;
       pixels.data[offset + 3] = 255;
     }
@@ -74,13 +74,13 @@ if (surfaces.length && chromium && 'ResizeObserver' in window && CSS.supports('b
       if (surface.dataset.glassSize === geometry) continue;
 
       const id = `dg-glass-${surfaces.indexOf(surface)}`;
-      const url = displacementMap(canvas, width, height, panel ? 16 : 14, panel ? 23 : 17);
+      const url = displacementMap(canvas, width, height, panel ? 20 : 23, panel ? 18 : 15);
       if (!url) continue;
       let filter = document.getElementById(id);
       if (!filter) {
         filter = svgElement('filter', { id, x: 0, y: 0, width: '100%', height: '100%', 'color-interpolation-filters': 'sRGB' }, defs);
         svgElement('feImage', { x: 0, y: 0, preserveAspectRatio: 'none', result: 'normals' }, filter);
-        svgElement('feDisplacementMap', { in: 'SourceGraphic', in2: 'normals', scale: panel ? 43 : 34, xChannelSelector: 'R', yChannelSelector: 'G' }, filter);
+        svgElement('feDisplacementMap', { in: 'SourceGraphic', in2: 'normals', scale: panel ? 46 : 44, xChannelSelector: 'R', yChannelSelector: 'G' }, filter);
       }
       const map = filter.firstElementChild;
       map.setAttribute('width', String(width));

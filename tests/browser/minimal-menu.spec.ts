@@ -107,7 +107,14 @@ test('the glass reflection follows a mouse across the bar and menu and respects 
   const bounds = (await bar.boundingBox())!;
   await page.mouse.move(bounds.x + 100, bounds.y + 20);
   await expect(bar).toHaveAttribute('data-reflecting', '');
-  await expect.poll(() => bar.evaluate(el => getComputedStyle(el, '::before').backgroundImage)).toContain('radial-gradient');
+  const rim = (locator: typeof bar) => locator.evaluate(el => {
+    const style = getComputedStyle(el, '::after');
+    return { opacity: Number(style.opacity), mask: style.maskComposite, highlight: style.backgroundImage };
+  });
+  await expect.poll(async () => (await rim(bar)).opacity).toBeGreaterThan(.7);
+  expect((await rim(bar)).mask).toContain('exclude');
+  expect((await rim(bar)).highlight).toContain('radial-gradient');
+  expect(await bar.evaluate(el => getComputedStyle(el, '::before').backgroundImage)).toBe('none');
   const coordinate = () => bar.evaluate(el => (el as HTMLElement).style.getPropertyValue('--reflection-x'));
   const first = await coordinate();
   await page.mouse.move(bounds.x + 220, bounds.y + 20);
@@ -117,10 +124,12 @@ test('the glass reflection follows a mouse across the bar and menu and respects 
   const panel = page.locator('#explore-navigation');
   await panel.getByRole('link', { name: 'Resources', exact: true }).hover();
   await expect(panel).toHaveAttribute('data-reflecting', '');
-  await expect(panel).toHaveCSS('background-image', /radial-gradient/);
+  await expect.poll(async () => (await rim(panel)).opacity).toBeGreaterThan(.7);
+  expect((await rim(panel)).highlight).toContain('radial-gradient');
+  expect(await panel.evaluate(el => getComputedStyle(el).backgroundImage)).toBe('none');
   await expect(bar).not.toHaveAttribute('data-reflecting', '');
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(panel).not.toHaveCSS('background-image', /radial-gradient/);
+  await expect.poll(() => panel.evaluate(el => getComputedStyle(el, '::after').content)).toBe('none');
   await expect(panel).not.toHaveAttribute('data-reflecting', '');
 });
 
@@ -138,10 +147,11 @@ test('the bevel optically displaces a real backdrop and keeps the labels outside
     const id = (el as HTMLElement).style.getPropertyValue('--shell-lens').match(/#([^"]+)/)?.[1];
     const filter = id && document.getElementById(id);
     const glass = getComputedStyle(el, '::before');
-    return { id, scale: Number(filter && filter.lastElementChild?.getAttribute('scale')), backdrop: glass.backdropFilter, foreground: getComputedStyle(el.querySelector('nav')!).filter };
+    return { id, scale: Number(filter && filter.lastElementChild?.getAttribute('scale')), backdrop: glass.backdropFilter, tint: Number(glass.backgroundColor.split(',').at(-1)?.replace(')', '')), foreground: getComputedStyle(el.querySelector('nav')!).filter };
   });
   expect(optics.scale).toBeGreaterThan(0);
   expect(optics.backdrop).toContain('url(');
+  expect(optics.tint).toBeLessThan(.12);
   expect(optics.foreground).toBe('none');
 
   const refracted = await bar.screenshot();
