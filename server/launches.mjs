@@ -10,10 +10,10 @@ import { freeLaunchSchedule, launchBounds } from '../src/lib/launch-calendar.mjs
 import { guardPost, readJson, DiscussionError } from './discussions.mjs';
 
 const UPCOMING_LIMIT = 60;
+const UPCOMING_GRACE_MS = 2 * 86_400_000;
 const WINNERS_PAGE = 6;
 
-// A scheduled free launch, shown before it goes live. Only fields that will be
-// public on launch day; no logo yet (images are served once a project is live).
+// Use the same public projection and badge requirement for schedule rows and logos.
 async function upcomingRecord(redis, id) {
   let record;
   try { record = JSON.parse(await redis(['GET', storageKey('submission', id)])); } catch { return null; }
@@ -21,7 +21,10 @@ async function upcomingRecord(redis, id) {
   const preview = projectPublic({ ...record, status: 'approved' });
   const { scheduledAt } = freeLaunchSchedule(record);
   if (!preview || !scheduledAt) return null;
-  return { id: record.id, name: preview.name, description: preview.description || '', category: preview.category || '', pricing: preview.pricing || '', creator: preview.creator || '', launchAt: scheduledAt };
+  const logo = typeof record.image === 'string' && record.image.match(/^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/]+={0,2})$/);
+  const { name, description = '', category = '', pricing = '', creator = '' } = preview;
+  const image = logo ? `/api/launches?image=${encodeURIComponent(id)}` : '';
+  return { item: { id: record.id, name, description, category, pricing, creator, launchAt: scheduledAt, image }, logo };
 }
 
 // Current public projection for podium rows; removed projects drop out.
@@ -54,6 +57,22 @@ export function makeLaunchesHandler(deps = {}) {
       if (!deps.redis && (!env.SUBMISSIONS_REDIS_REST_URL || !env.SUBMISSIONS_REDIS_REST_TOKEN)) return send(503, { error: 'Launches are temporarily unavailable.' });
       const redis = deps.redis || redisClient(env);
       const now = deps.now ? deps.now() : Date.now();
+      if (req.method === 'GET' && url.searchParams.has('image')) {
+        const id = url.searchParams.get('image');
+        if (!validId(id)) return send(404, { error: 'Logo not found.' });
+        const [score, upcoming] = await Promise.all([
+          redis(['ZSCORE', QUEUE, id]),
+          upcomingRecord(redis, id),
+        ]);
+        if (score === null || !Number.isFinite(Number(score)) || Number(score) < now - UPCOMING_GRACE_MS || !upcoming?.logo) {
+          return send(404, { error: 'Logo not found.' });
+        }
+        const [, type, bytes] = upcoming.logo;
+        res.setHeader('Content-Type', type);
+        res.setHeader('Content-Disposition', 'inline');
+        res.statusCode = 200;
+        return res.end(Buffer.from(bytes, 'base64'));
+      }
       const account = req.headers.authorization ? await (deps.verifyAccount || verifiedAccount)(req, env, deps.fetcher || fetch) : null;
 
       if (req.method === 'POST') {
@@ -70,8 +89,8 @@ export function makeLaunchesHandler(deps = {}) {
       const view = url.searchParams.get('view');
       if (view === 'upcoming') {
         // Launch day starts at 00:00 UTC and the batch publishes later that morning; keep it listed until then.
-        const ids = await redis(['ZRANGEBYSCORE', QUEUE, now - 2 * 86_400_000, '+inf', 'LIMIT', 0, UPCOMING_LIMIT]);
-        const items = (await Promise.all((ids || []).map(id => upcomingRecord(redis, id)))).filter(Boolean);
+        const ids = await redis(['ZRANGEBYSCORE', QUEUE, now - UPCOMING_GRACE_MS, '+inf', 'LIMIT', 0, UPCOMING_LIMIT]);
+        const items = (await Promise.all((ids || []).map(id => upcomingRecord(redis, id)))).filter(Boolean).map(result => result.item);
         const [counts, watching] = await Promise.all([
           Promise.all(items.map(item => redis(['SCARD', launchWatchersKey(item.id)]))),
           account ? redis(['SMEMBERS', launchWatchingKey(account.id)]) : [],

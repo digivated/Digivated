@@ -163,12 +163,16 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   await page.clock.setFixedTime(new Date('2026-11-22T04:00:00Z'));
   await page.route('**/api/projects*', route => route.fulfill({ json: { items: projects, next: null } }));
   await page.route('**/api/launches?view=upcoming', route => route.fulfill({ json: { items: [{
-    id: 'upcoming-fixture', name: 'Scheduled fixture', launchAt: '2026-11-23T14:00:00.000Z', watchers: 1,
+    id: 'upcoming-fixture', name: 'Scheduled fixture', image: '/digivated-daylight-mark.png', launchAt: '2026-11-23T14:00:00.000Z', watchers: 1,
   }] } }));
   await page.goto(base + '/');
   await expect(page.locator('#queue-countdown')).toHaveAttribute('datetime', '2026-11-23T14:00:00.000Z');
   await expect(page.getByRole('region', { name: 'Launching next' })).toContainText('Mon, Nov 23 · 9:00 AM Eastern');
   await expect(page.getByRole('button', { name: 'Notify me when Scheduled fixture launches' })).toBeVisible();
+  const upcoming = page.locator('[data-upcoming-id="upcoming-fixture"] img');
+  await expect(upcoming).toHaveAttribute('src', '/digivated-daylight-mark.png');
+  await upcoming.scrollIntoViewIfNeeded();
+  await expect.poll(() => upcoming.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
 });
 
 test('sidebar navigation keeps the content and footer aligned across destinations', async ({ page }) => {

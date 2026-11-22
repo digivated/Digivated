@@ -70,3 +70,43 @@ test('verifyBadge without a reserved ID is refused', { skip: !process.env.DIGIVA
   const handler = makeSubmissionHandler({ env: { SUBMISSIONS_ORIGIN: origin }, redis, verifyAccount: async () => ({ id: '123e4567-e89b-42d3-a456-426614174098', email: 'maker@example.com' }), readSite: async () => ({ html: '' }) });
   assert.equal((await call(handler, { ...input, verifyBadge: true })).status, 400);
 });
+
+test('upcoming logos are served only for public, badge-verified projects in the launch queue', async () => {
+  const now = Date.parse('2026-11-22T04:00:00Z');
+  const scheduledAt = '2026-11-23T14:00:00.000Z';
+  const record = { ...input, id: 'queued', status: 'pending', launch: { kind: 'free', scheduledAt, badgeVerifiedAt: new Date(now).toISOString() } };
+  const records = new Map([
+    ['queued', record],
+    ['unverified', { ...record, id: 'unverified', launch: { ...record.launch, badgeVerifiedAt: null } }],
+    ['unqueued', { ...record, id: 'unqueued' }],
+    ['withdrawn', { ...record, id: 'withdrawn', consent: false }],
+  ]);
+  const queue = new Set(['queued', 'unverified', 'withdrawn']);
+  const handler = makeLaunchesHandler({ now: () => now, redis: async ([command, key, id]) => {
+    if (command === 'GET') return JSON.stringify(records.get(key.split(':').at(-1)) ?? null);
+    if (command === 'ZSCORE') return queue.has(id) ? String(Date.parse(scheduledAt)) : null;
+    if (command === 'ZRANGEBYSCORE') return [...queue];
+    if (command === 'SCARD') return 0;
+    assert.fail(`Unexpected Redis command: ${command}`);
+  }});
+  const get = async query => {
+    const headers = {};
+    let body;
+    const res = { statusCode: 0, setHeader(name, value) { headers[name] = value; }, end(value) { body = value; } };
+    await handler({ method: 'GET', url: '/api/launches?' + query, headers: {} }, res);
+    return { body, headers, status: res.statusCode };
+  };
+
+  const list = JSON.parse((await get('view=upcoming')).body);
+  assert.equal(list.items.length, 1);
+  assert.equal(list.items[0].email, undefined);
+  assert.equal(list.items[0].image, '/api/launches?image=queued');
+  const image = await get('image=queued');
+  assert.equal(image.status, 200);
+  assert.equal(image.headers['Content-Type'], 'image/png');
+  assert.equal(image.headers['Cache-Control'], 'private, no-store');
+  assert.deepEqual(image.body, Buffer.from(png.split(',')[1], 'base64'));
+  for (const id of ['unverified', 'unqueued', 'withdrawn', 'absent']) assert.equal((await get('image=' + id)).status, 404);
+  queue.delete('queued');
+  assert.equal((await get('image=queued')).status, 404);
+});
