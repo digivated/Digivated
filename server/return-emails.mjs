@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { verifiedAccount } from './project-account.mjs';
 import { redisClient } from './submissions.mjs';
 import { notificationPreferencesKey } from './notifications.mjs';
-import { renderEmail } from './email-layout.mjs';
+import { renderEmail, renderEmailAvatar } from './email-layout.mjs';
 import { weeklyMembers as MEMBERS, weeklyPreference as preference, emailSubscriberId, isEmailSubscriber, weeklyOptOut, stopWeeklyEmail } from './weekly-subscriptions.mjs';
 
 // Small on-theme pages for the unsubscribe link.
@@ -43,7 +43,7 @@ async function sendConfirmation(redis, { id, email }, mailer, fetcher, logger) {
  const key = tokenKey(token);
  await redis(['SET', key, JSON.stringify({ id, email }), 'EX', 86400]);
  const message = renderEmail({
-  label: 'DIGIVATED / WEEKLY', title: 'Confirm your weekly digest',
+  label: 'DIGIVATED / WEEKLY', showAvatar: true, title: 'Confirm your weekly digest',
   paragraphs: ['Confirm to get a weekly email with new launches on Digivated.'],
   cta: { label: 'Confirm subscription', href: `https://digivated.com/email-preferences?token=${token}` },
   after: ['If you didn’t request this, ignore this email. The link expires in 24 hours.'],
@@ -191,7 +191,7 @@ function digestContent(projects, unsubscribe, address, announce = false) {
 <!--[if mso]><table role="presentation" width="560" cellpadding="0" cellspacing="0"><tr><td><![endif]-->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;text-align:left;background-color:#0b0b0b">
 <tr><td style="padding:36px 24px 32px;color:#e7e7e7;font:16px/1.65 Arial,sans-serif">
-<p style="margin:0 0 22px;color:#bfc2c5;font:700 13px/1.5 'Courier New',monospace;letter-spacing:1px">[ DIGIVATED / WEEKLY ]</p>
+<p style="margin:0 0 22px;color:#bfc2c5;font:700 13px/1.5 'Courier New',monospace;letter-spacing:1px">${renderEmailAvatar()}[ DIGIVATED / WEEKLY ]</p>
 ${announcement}${projectList}
 <p style="margin:0 0 32px;font:700 15px/1.5 'Courier New',monospace"><a href="${directoryUrl}" style="color:#f1f1f1;text-decoration:underline">Browse all projects &rarr;</a></p>
 <p style="margin:0;color:#a9a9a9;font-size:13px;line-height:1.6">Digivated<br>${escapeHtml(address).replace(/\r?\n/g, '<br>')}<br><a style="color:#c8c8c8;text-decoration:underline" href="${escapeHtml(unsubscribe)}">Unsubscribe</a></p>
