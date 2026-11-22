@@ -1,3 +1,4 @@
+import { shareLinks } from '../lib/share-links.mjs';
 // Maker analytics for one launch: totals with a 7 / 14 / 30 day switch, trend against the
 // period before, visit rate, peak day, this week's rank, podium places, the newest comments
 // and quick share actions. One request (range=30 returns 60 days) powers every period.
@@ -114,9 +115,12 @@ export function statsPanel(item, session) {
       const actions = el('div', null, 'dg-stats-share-actions');
       const copy = el('button', 'Copy link', 'dg-share-button'); copy.type = 'button';
       copy.onclick = async () => { try { await navigator.clipboard.writeText(link); copy.textContent = 'Copied'; } catch { copy.textContent = 'Copy failed'; } setTimeout(() => { copy.textContent = 'Copy link'; }, 1600); };
-      const post = el('a', 'Post on X', 'dg-share-button'); post.href = 'https://x.com/intent/post?text=' + encodeURIComponent(`I just launched ${item.name} on Digivated. Check it out and tell me what you think:`) + '&url=' + encodeURIComponent(link); post.target = '_blank'; post.rel = 'noopener noreferrer';
-      const linkedin = el('a', 'LinkedIn', 'dg-share-button'); linkedin.href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(link); linkedin.target = '_blank'; linkedin.rel = 'noopener noreferrer';
-      actions.append(copy, post, linkedin); share.append(actions); box.append(share);
+      const links = shareLinks({ url: link, title: `${item.name} on Digivated`, text: `I just launched ${item.name} on Digivated. Check it out and tell me what you think:` }).map(({ key, label, href }) => {
+        const a = el('a', label, 'dg-share-button'); a.href = href; a.dataset.shareTo = key;
+        if (key !== 'email') { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+        return a;
+      });
+      actions.append(copy, ...links); share.append(actions); box.append(share);
     }
 
     if (data.award) {
