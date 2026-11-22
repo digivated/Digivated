@@ -154,8 +154,17 @@
     background: var(--daylight-hover) !important;
     color: var(--fl-ink) !important;
   }
-  html[data-theme="daylight"] body .notification-item.unread { background: var(--daylight-wash) !important; }
-  html[data-theme="daylight"] body .notification-item:is(:hover,:focus-visible) { background: var(--daylight-hover) !important; }
+  html[data-theme="daylight"] body :is(.notification-item.unread,.dg-note.is-unread) {
+    background: var(--daylight-wash) !important;
+  }
+  html[data-theme="daylight"] body :is(.notification-item,.dg-note):is(:hover,:focus-visible) {
+    background: var(--daylight-hover) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-note-quote,.dg-note time) {
+    border-color: var(--fl-line-hi) !important;
+    color: var(--fl-muted) !important;
+    font-size: 12px !important;
+  }
   html[data-theme="daylight"] body .dg-bell-panel { top: var(--bell-top,82px) !important; right: var(--bell-right,12px) !important; }
   html[data-theme="daylight"] body :is(.site-breadcrumbs,.site-breadcrumbs a) {
     color: var(--fl-copy) !important;
@@ -191,7 +200,7 @@
     border-bottom: 1px solid var(--fl-line) !important;
     background-image: none !important;
   }
-  html[data-theme="daylight"] body :is(.dg-row,.dg-spot,.rl-card,.dg-rising-item,.dg-note):hover { background: var(--daylight-hover) !important; }
+  html[data-theme="daylight"] body :is(.dg-row,.dg-spot,.rl-card,.dg-rising-item):hover { background: var(--daylight-hover) !important; }
   html[data-theme="daylight"] body .dg-row::before { content: none !important; }
   html[data-theme="daylight"] body :is(.dg-logo,.dg-spot-logo,.dg-rising-logo,.dg-review-logo,.launch-featured-art) img { background-color: var(--fl-raised) !important; }
   html[data-theme="daylight"] body :is(.dg-logo,.dg-spot-logo,.dg-rising-logo,.dg-review-logo,.dg-avatar) {

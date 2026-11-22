@@ -2,38 +2,35 @@
   html[data-theme="daylight"] body #main > .dg-home-hero {
     position: relative;
     display: grid !important;
-    align-content: center;
-    min-height: clamp(390px, 54svh, 560px);
     margin: 0 !important;
-    padding: clamp(36px, 7vw, 88px) 0 34px !important;
+    padding-block: clamp(34px, 5vw, 64px) clamp(22px, 3vw, 36px) !important;
+    padding-inline: 0 !important;
     border: 0 !important;
     border-radius: 0 !important;
     background: transparent !important;
     overflow: visible;
   }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-copy {
-    gap: clamp(12px, 2.4vw, 28px) !important;
+    gap: clamp(12px, 1.6vw, 20px) !important;
     min-width: 0;
     max-width: min(100%, 820px) !important;
   }
   html[data-theme="daylight"] body .dg-home-hero #dg-home-title {
     margin: 0 !important;
-    font-size: clamp(64px, 8.65vw, 135px) !important;
+    font-size: clamp(40px, 6vw, 84px) !important;
     font-weight: 560 !important;
-    line-height: .92 !important;
-    letter-spacing: -.085em !important;
-    text-wrap: initial;
+    line-height: 1.02 !important;
+    letter-spacing: -.065em !important;
+    text-wrap: balance;
   }
   html[data-theme="daylight"] body .dg-home-hero #dg-home-title span {
-    display: block;
-    width: max-content;
     padding-inline-end: .13em;
     color: var(--fl-muted) !important;
     font-style: italic;
     font-weight: 490;
   }
   html[data-theme="daylight"] body .dg-home-hero .dg-hero-lede {
-    max-width: 35ch;
+    max-width: 54ch;
     margin: 0 !important;
     color: var(--fl-copy) !important;
     font-size: clamp(15px, 1.5vw, 19px) !important;
@@ -55,16 +52,6 @@
     background: transparent !important;
     text-decoration: underline !important;
     text-underline-offset: 5px;
-  }
-  @media (max-width: 700px) {
-    html[data-theme="daylight"] body #main > .dg-home-hero {
-      min-height: 380px;
-      align-content: start;
-      padding: 36px 0 86px !important;
-    }
-    html[data-theme="daylight"] body .dg-home-hero #dg-home-title {
-      font-size: clamp(51px, 12vw, 85px) !important;
-    }
   }
   @media (max-width: 420px) {
     html[data-theme="daylight"] body .dg-home-hero .dg-hero-actions { gap: 5px; }
