@@ -168,7 +168,7 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await page.reload();
   await expect(emailAlerts).toBeChecked();
   rejectSave = true;
-  await emailAlerts.uncheck();
+  await emailAlerts.click();
   await expect(notificationSettings.getByRole('status')).toHaveText('Please try again.');
   await expect(emailAlerts).toBeChecked();
   await page.setViewportSize({ width: 1440, height: 900 });
