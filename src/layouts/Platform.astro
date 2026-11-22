@@ -55,9 +55,8 @@ import '../styles/search-and-alignment.css';
 <body class:list={['platform', 'light-theme', 'moments-theme', { 'home-refresh': path === '/', 'wall-experience': path === '/' || path === '/discover', 'projects-dashboard': path === '/discover', 'resources-dashboard': path === '/resources/guides', 'community-page': path.startsWith('/community') }]}><a class="skip" href="#main">Skip to content</a>
 <SiteBackdrop/>
 <div class="dg-workspace">
-<WorkspaceSidebar/>
+<WorkspaceSidebar><SiteHeader/></WorkspaceSidebar>
 <div class="dg-workspace-content">
-<SiteHeader/>
 <main id="main" tabindex="-1">{showBreadcrumb && path !== '/' && <nav class="site-breadcrumbs" aria-label="Breadcrumb"><a href="/" aria-label="Digivated home"><svg class="breadcrumb-home-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></a><span class="breadcrumb-separator" aria-hidden="true">›</span>{(path.startsWith('/projects/') || path === '/launch-template') && <><a href="/discover">Projects</a><span class="breadcrumb-separator" aria-hidden="true">›</span></>}{path.startsWith('/resources/') && <><a href="/resources">Resources</a><span class="breadcrumb-separator" aria-hidden="true">›</span></>}{path.startsWith('/threads/') && <><a href="/threads">Threads</a><span class="breadcrumb-separator" aria-hidden="true">›</span></>}<span aria-current="page">{breadcrumb}</span></nav>}<slot/></main>
 <SiteFooter/>
 </div>

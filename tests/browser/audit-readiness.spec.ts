@@ -19,9 +19,9 @@ for(const width of [390,1366]) test(`home has clear content and unique featured 
  await page.setViewportSize({width,height:900});
  await page.route('**/api/projects?*',route=>route.fulfill({json:{items:[{id:'audit-fixture',name:'Example project',description:'A useful independent project.',category:'Apps',status:'featured',views:12,image:'/digivated-logo.webp',url:'https://example.com'}],next:null}}));
  await page.goto(base);
- await expect(page.getByRole('heading',{name:'Good projects deserve to be discovered.'})).toBeVisible();
- await expect(page.getByRole('heading',{name:'How are projects listed?'})).toBeVisible();
- await expect(page.getByRole('region',{name:'Featured project list'})).toBeVisible();
+ await expect(page.getByRole('heading',{level:1,name:'Discover indie launches.'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'How Digivated works'})).toBeVisible();
+ await expect(page.getByRole('region',{name:'Featured products'})).toBeVisible();
  const graph=await page.locator('script[type="application/ld+json"]').first().textContent();
  const types=JSON.parse(graph||'{}')['@graph'].map((node:{'@type':string})=>node['@type']);
  expect(types).toEqual(['Organization','WebSite','WebPage']);

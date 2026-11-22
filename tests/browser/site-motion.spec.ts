@@ -41,7 +41,7 @@ test('the creators heading has no retired decorative underline', async ({ page }
 });
 
 test('editorial details animate during scrolling and menu interaction', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.setViewportSize({ width: 1000, height: 900 });
   await page.addInitScript(() => sessionStorage.setItem('digivated-announcement-seen-v2', '1'));
   await page.route('**/api/**', route => route.fulfill({ json: { items: [], next: null, ready: false } }));
   await page.goto(base + '/discover');
@@ -54,7 +54,7 @@ test('editorial details animate during scrolling and menu interaction', async ({
     page.locator('[data-dir-search]').boundingBox(),
   ]);
   expect(artBounds!.x).toBe(0);
-  expect(artBounds!.width).toBe(1440);
+  expect(artBounds!.width).toBe(1000);
   expect(artBounds!.y + artBounds!.height).toBeGreaterThan(searchBounds!.y);
 
   const menu = page.locator('.site-menu-trigger');

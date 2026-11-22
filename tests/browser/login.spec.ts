@@ -3,11 +3,10 @@ import { test, expect } from '@playwright/test';
 test('login entry point exposes sign-in and sign-up email flows', async ({ page }) => {
   await page.route('**/api/project-account?action=config', route => route.fulfill({ json: { ready: false } }));
   await page.goto('http://127.0.0.1:4321/');
-  await page.locator('.site-menu-trigger').click();
-  await expect(page.getByRole('navigation', { name: 'Site menu' }).locator('a[href="/login"]')).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'Log In', exact: true })).toHaveAttribute('href', '/login');
-  await page.keyboard.press('Escape');
-  await page.getByRole('link', { name: 'Log In', exact: true }).click();
+  await expect(page.locator('.site-menu-trigger')).toBeHidden();
+  const loginLink = page.locator('.dg-workspace-rail').getByRole('link', { name: 'Log In', exact: true });
+  await expect(loginLink).toHaveAttribute('href', '/login');
+  await loginLink.click();
   await expect(page).toHaveURL(/\/login\/?$/);
   await expect(page.getByRole('heading', { name: 'Welcome back.' })).toBeVisible();
   await page.getByRole('link', { name: 'Browse member projects' }).click();
@@ -22,7 +21,7 @@ test('login entry point exposes sign-in and sign-up email flows', async ({ page 
   await expect(page.getByText('Account sign-in is temporarily unavailable.')).toBeVisible();
 });
 
-test('verified account shows a named mobile account menu, welcome, account, and sign-out', async ({ page }) => {
+test('verified account keeps notifications, menu, welcome, and sign-out usable at both layouts', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   const email = 'verified@example.invalid';
   const user = { id: '4ad90c9b-5666-482d-899c-d0d3ef41ee46', email, email_confirmed_at: '2026-10-23T00:00:00Z', role: 'authenticated', aud: 'authenticated' };
@@ -67,7 +66,21 @@ test('verified account shows a named mobile account menu, welcome, account, and 
   await expect(page).toHaveURL(/\/discover\?/);
   await page.keyboard.press('Escape');
   await expect(notifications).toBeHidden();
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const sidebar = page.locator('.dg-workspace-rail');
+  await expect(sidebar.getByRole('button', { name: `Account menu for ${email}` })).toBeVisible();
+  await page.locator('#header-notifications-link').click();
+  await expect(notifications).toContainText('You’re all caught up.');
+  expect((await notifications.boundingBox())!.x).toBeGreaterThanOrEqual(0);
+  await page.keyboard.press('Escape');
+  await expect(notifications).toBeHidden();
   await menu.click();
+  const accountMenu = page.getByRole('menu');
+  await expect(accountMenu).toBeVisible();
+  const rail = (await sidebar.boundingBox())!;
+  const panel = (await accountMenu.boundingBox())!;
+  expect(panel.x).toBeGreaterThanOrEqual(rail.x);
+  expect(panel.x + panel.width).toBeLessThanOrEqual(rail.x + rail.width);
   await expect(page.getByRole('menu')).toContainText(email);
   await page.getByRole('menuitem', { name: 'Your projects' }).click();
   await expect(page.locator('#account-state')).toContainText(`You're logged in as ${email}.`);

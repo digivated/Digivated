@@ -44,7 +44,7 @@ test('hero stays readable when JavaScript is disabled',async({browser})=>{
  const c=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});const p=await c.newPage();await p.goto(base+'/');
  await expect(p.locator('#dg-home-title')).toBeVisible();
  await expect(p.locator('canvas[data-site-backdrop]')).toHaveAttribute('width', '1');
- await expect(p.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
+ await expect(p.getByRole('link',{name:'Submit a product',exact:true})).toHaveAttribute('href','/submit-project');
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
 });
 test('the new backdrop leaves resources search and home hero actions usable',async({page})=>{
@@ -56,7 +56,7 @@ test('the new backdrop leaves resources search and home hero actions usable',asy
  await page.goto(base+'/');
  await expect(page.locator('[data-ascii-field],.ascii-ambient')).toHaveCount(0);
  await expect(page.locator('.dg-hero-panel [role=timer]')).toBeVisible();
- await expect(page.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
+ await expect(page.getByRole('link',{name:'Submit a product',exact:true})).toHaveAttribute('href','/submit-project');
  await page.getByRole('link',{name:'Browse launches',exact:true}).click();
  await expect(page).toHaveURL(/#this-week$/);
 });

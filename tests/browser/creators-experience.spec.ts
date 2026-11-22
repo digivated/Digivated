@@ -67,7 +67,7 @@ test('switching to People does not let an older feed request replace the directo
 });
 test('older creator posts load as the reader reaches the end of the feed',async({page})=>{
  const first='44444444-4444-4444-8444-444444444444',older='55555555-5555-4555-8555-555555555555';
- await page.setViewportSize({width:390,height:700});
+ await page.setViewportSize({width:390,height:440});
  await page.route('**/api/creator-profile*',route=>{
   const url=new URL(route.request().url());
   if(url.searchParams.get('action')==='discover')return route.fulfill({json:{creators:people}});

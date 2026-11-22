@@ -6,16 +6,15 @@ import '../styles/discovery-hero.css';
 <section class="dg-hero dg-home-hero" aria-labelledby="dg-home-title" data-discovery-hero>
   <div class="dg-hero-copy">
     <h1 id="dg-home-title">Discover indie <span>launches.</span></h1>
-    <p class="dg-hero-lede">See what independent makers are building, or put your own product on the board.</p>
     <div class="dg-hero-actions">
-      <form class="dg-launch-search" action="/discover" method="get" role="search" aria-label="Find a product">
+      <form class="dg-launch-search" action="/discover" method="get" role="search" aria-label="Find a product" data-launch-search>
         <UiIcon name="search" size={18}/>
         <label class="sr-only" for="dg-launch-search">Search products or makers</label>
-        <input type="search" id="dg-launch-search" name="q" placeholder="Find a product or maker" maxlength="120" autocomplete="off" enterkeyhint="search"/>
+        <input type="search" id="dg-launch-search" name="q" placeholder="Search launches" maxlength="120" autocomplete="off" enterkeyhint="search"/>
         <button type="submit" aria-label="Search products"><UiIcon name="arrow" size={16}/></button>
       </form>
       <a class="dg-btn dg-btn-primary" data-glass-surface="action" href="#this-week">Browse launches <UiIcon name="arrow" size={16}/></a>
-      <a class="dg-btn dg-hero-secondary" href="/submit-project">Submit your product</a>
     </div>
+    <p class="dg-launch-search-status" data-launch-search-status role="status" hidden></p>
   </div>
 </section>
