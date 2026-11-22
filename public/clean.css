@@ -125,4 +125,37 @@
 #digivated-root .dg-row .dg-watch[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
 #digivated-root .dg-row .dg-badge-date { font-size: 11px !important; color: #a1a1aa !important; font-weight: 500 !important; }
 
+/* Homepage width: keep the board in a calm centered column on wide screens */
+#digivated-root :is(.dg-home, .dg-about, .dg-hero-panel) { max-width: 860px !important; margin-inline: auto !important; }
+
+/* Page titles and breadcrumbs across the site */
+#digivated-root main h1:not(#dg-home-title) { font-size: clamp(26px, 6vw, 34px) !important; line-height: 1.15 !important; letter-spacing: -.028em !important; font-weight: 700 !important; color: #0b0b0c !important; }
+#digivated-root .site-breadcrumbs { gap: 6px !important; font-size: 12px !important; color: #a1a1aa !important; }
+#digivated-root .site-breadcrumbs a { color: #71717a !important; }
+#digivated-root .site-breadcrumbs [aria-current="page"] { padding: 3px 9px !important; border: 1px solid #ececf0 !important; border-radius: 7px !important; background: #fff !important; color: #0b0b0c !important; font-weight: 550 !important; box-shadow: 0 1px 2px rgba(17,17,26,.04) !important; }
+
+/* Form fields: soft filled inputs, sentence-case labels */
+#digivated-root main :is(input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="search"], input:not([type]), textarea, select):not(.dg-launch-search input) { border: 1px solid transparent !important; border-radius: 10px !important; background-color: #f3f3f6 !important; color: #0b0b0c !important; font-size: 14px !important; box-shadow: none !important; }
+#digivated-root main :is(input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="search"], input:not([type]), textarea, select):not(.dg-launch-search input):focus { border-color: #c9c9d0 !important; background-color: #fff !important; box-shadow: 0 0 0 3px rgba(11,11,12,.06) !important; outline: none !important; }
+#digivated-root main :is(input, textarea)::placeholder { color: #a1a1aa !important; }
+#digivated-root main label:not(:has(input[type="checkbox"], input[type="radio"])) { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; font-weight: 550 !important; color: #2a2a2e !important; }
+
+/* Segmented controls (thread sort, tab lists) match the board sort */
+#digivated-root :is(.dg-forum-sort, [role="tablist"]) { gap: 2px !important; padding: 3px !important; border: 0 !important; border-radius: 11px !important; background: #ebebef !important; width: max-content !important; max-width: 100% !important; }
+#digivated-root :is(.dg-forum-sort, [role="tablist"]) > :is(button, a, [role="tab"]) { min-height: 30px !important; padding: 0 12px !important; border: 0 !important; border-radius: 8px !important; background: transparent !important; color: #71717a !important; font-size: 13px !important; font-weight: 550 !important; box-shadow: none !important; }
+#digivated-root :is(.dg-forum-sort, [role="tablist"]) > :is([aria-pressed="true"], [aria-selected="true"], [aria-current="page"]) { background: #fff !important; color: #0b0b0c !important; box-shadow: 0 1px 2px rgba(17,17,26,.1) !important; }
+
+/* Footer: one black card, like a newsletter block */
+#digivated-root .dg-site-footer { background: transparent !important; border: 0 !important; }
+#digivated-root .dg-footer-inner { border-radius: 20px !important; background: #0b0b0c !important; color: #d4d4d8 !important; box-shadow: 0 10px 30px -12px rgba(0,0,0,.35) !important; border: 0 !important; }
+#digivated-root .dg-footer-inner :is(h2, .dg-footer-brand) { color: #fff !important; }
+#digivated-root .dg-footer-brand img { filter: invert(1) !important; }
+#digivated-root .dg-footer-inner :is(p, small, span) { color: #a1a1aa !important; }
+#digivated-root .dg-footer-inner a:not(.dg-footer-brand) { color: #d4d4d8 !important; }
+#digivated-root .dg-footer-inner a:not(.dg-footer-brand):hover { color: #fff !important; }
+#digivated-root .dg-footer-group h2 { font-size: 12px !important; font-weight: 550 !important; color: #71717a !important; text-transform: none !important; letter-spacing: 0 !important; }
+#digivated-root .dg-footer-email-link { border: 1px solid #2e2e33 !important; border-radius: 10px !important; background: #18181b !important; color: #fff !important; }
+#digivated-root .dg-footer-inner :is(.dg-footer-bottom, .dg-footer-groups, .dg-footer-intro) { border-color: #232327 !important; }
+#digivated-root .dg-footer-credit { color: #d4d4d8 !important; }
+
 }
