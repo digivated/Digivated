@@ -4,9 +4,10 @@ import { notificationRow } from './notification-item.js';
 const $ = id => document.getElementById(id);
 const prefInputs = [...document.querySelectorAll('[data-notification-pref]')];
 let token = '', preferences = null, items = [], busy = false, filter = 'all';
+let loadRequest = 0, lastUnread;
 const filterTabs = [...document.querySelectorAll('[data-notification-filter]')];
 filterTabs.forEach((tab, index) => {
-  tab.addEventListener('click', () => { filter = tab.dataset.notificationFilter; filterTabs.forEach(other => { const on = other === tab; other.setAttribute('aria-selected', String(on)); other.tabIndex = on ? 0 : -1; }); if (preferences) render(); });
+  tab.addEventListener('click', () => { filter = tab.dataset.notificationFilter; filterTabs.forEach(other => { const on = other === tab; other.setAttribute('aria-selected', String(on)); other.tabIndex = on ? 0 : -1; }); $('notifications-items').setAttribute('aria-labelledby', tab.id); if (preferences) render(); });
   tab.addEventListener('keydown', event => { if (!['ArrowLeft','ArrowRight'].includes(event.key)) return; event.preventDefault(); const other = filterTabs[(index + 1) % filterTabs.length]; other.click(); other.focus(); });
 });
 
@@ -20,7 +21,13 @@ async function api(action = 'list', body) {
   if (!response.ok) throw new Error(data.error || 'Notifications are unavailable. Try again.');
   return data;
 }
-function status(message) { $('notifications-settings-status').textContent = message; }
+function settingsStatus(message) { $('notifications-settings-status').textContent = message; }
+function feedStatus(message) { $('notifications-feed-status').textContent = message; }
+function announceUnread(count) {
+  if (lastUnread === count) return;
+  lastUnread = count;
+  document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
+}
 function syncPreferences() {
   $('notifications-enabled').checked = preferences.enabled;
   for (const input of prefInputs) input.checked = preferences[input.dataset.notificationPref];
@@ -34,7 +41,6 @@ function itemLink(item) {
 }
 function render() {
   const list = $('notifications-items'); list.replaceChildren();
-  document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
   const safe = items.filter(item => item.href?.startsWith('/') && !item.href.startsWith('//'));
   const unread = safe.filter(item => item.unread).length;
   $('notifications-count').textContent = safe.length ? (unread ? `${unread} unread · ${safe.length} recent` : `You’re all caught up · ${safe.length} recent`) : 'Launch updates and activity will appear here.';
@@ -46,13 +52,13 @@ function render() {
     const title = document.createElement('strong');
     const copy = document.createElement('p');
     if (filter === 'unread' && safe.length) { title.textContent = 'No unread notifications.'; copy.textContent = 'You’re all caught up.'; }
-    else { title.textContent = 'Nothing new right now.'; copy.textContent = preferences.enabled ? 'Comments, replies, upvotes and launch updates will appear here.' : 'Launch updates appear here automatically. Turn on activity notifications below for replies, follows, and messages.'; }
+    else { title.textContent = 'Nothing new right now.'; copy.textContent = preferences.enabled ? 'Comments, replies, upvotes and launch updates will appear here.' : 'Launch updates appear here automatically. Turn on activity alerts in Notification settings to see comments, replies, and other activity.'; }
     empty.append(title,copy); list.append(empty); return;
   }
   const groups = filter === 'unread' ? [['', shown]] : [['New', shown.filter(item => item.unread)], ['Earlier', shown.filter(item => !item.unread)]];
   for (const [heading, group] of groups) {
     if (!group.length) continue;
-    if (heading && groups.some(([, other]) => other !== group && other.length)) { const h = document.createElement('h3'); h.className = 'fl-notify-group'; h.textContent = heading; list.append(h); }
+    if (heading && groups.some(([, other]) => other !== group && other.length)) { const h = document.createElement('h3'); h.className = 'notifications-group'; h.textContent = heading; list.append(h); }
     for (const item of group) list.append(itemLink(item));
   }
 }
@@ -79,42 +85,53 @@ function renderApprovals(approvals) {
   }
 }
 async function load() {
+  const request = ++loadRequest;
   const data = await api();
+  if (request !== loadRequest || busy) return;
   preferences = data.preferences; items = data.items || [];
-  syncPreferences(); renderApprovals(data.approvals); render(); status('');
+  syncPreferences(); renderApprovals(data.approvals); render();
+  announceUnread(data.unread ?? items.filter(item => item.unread).length);
 }
 async function savePreferences() {
   if (busy || !preferences) return;
   const next = {enabled:$('notifications-enabled').checked};
   for (const input of prefInputs) next[input.dataset.notificationPref] = input.checked;
+  loadRequest++;
+  const focused = document.activeElement;
   busy = true; $('notifications-enabled').disabled = true; prefInputs.forEach(input => { input.disabled = true; });
-  status('Saving your choices…');
-  try { const data = await api('preferences',{preferences:next}); preferences = data.preferences; syncPreferences(); render(); status('Preferences saved.'); }
-  catch(error) { syncPreferences(); status(error.message); }
-  finally { busy = false; $('notifications-enabled').disabled = false; prefInputs.forEach(input => { input.disabled = false; }); }
+  settingsStatus('Saving your choices…');
+  try { const data = await api('preferences',{preferences:next}); preferences = data.preferences; syncPreferences(); render(); settingsStatus('Preferences saved.'); }
+  catch(error) { syncPreferences(); settingsStatus(error.message); }
+  finally {
+    busy = false;
+    $('notifications-enabled').disabled = false;
+    prefInputs.forEach(input => { input.disabled = false; });
+    if (document.activeElement === document.body && focused instanceof HTMLInputElement) focused.focus({ preventScroll: true });
+  }
 }
 $('notifications-enabled').addEventListener('change',savePreferences);
 for (const input of prefInputs) input.addEventListener('change',savePreferences);
 $('notifications-read-all').addEventListener('click',async () => {
-  if (busy) return; busy = true; $('notifications-read-all').disabled = true;
-  try { await api('read-all',{}); items.forEach(item => {item.unread = false;}); render(); status('All caught up.'); }
-  catch(error) { status(error.message); }
+  if (busy) return; loadRequest++; busy = true; $('notifications-read-all').disabled = true;
+  try { await api('read-all',{}); items.forEach(item => {item.unread = false;}); render(); announceUnread(0); feedStatus('All caught up.'); filterTabs.find(tab => tab.getAttribute('aria-selected') === 'true')?.focus({ preventScroll: true }); }
+  catch(error) { feedStatus(error.message); }
   finally { busy = false; $('notifications-read-all').disabled = false; }
 });
 $('notifications-clear').addEventListener('click',async () => {
   if (busy || !confirm('Clear your notification history?')) return;
-  busy = true; $('notifications-clear').disabled = true;
-  try { await api('clear',{}); items = []; render(); status('Notification history cleared.'); }
-  catch(error) { status(error.message); }
+  loadRequest++; busy = true; $('notifications-clear').disabled = true;
+  try { await api('clear',{}); items = []; render(); announceUnread(0); feedStatus('Notification history cleared.'); filterTabs.find(tab => tab.getAttribute('aria-selected') === 'true')?.focus({ preventScroll: true }); }
+  catch(error) { feedStatus(error.message); }
   finally { busy = false; $('notifications-clear').disabled = false; }
 });
 (async () => {
   try {
-    const auth = await accountSession();
+    const auth = await accountSession({ optional: true });
     if (auth?.state !== 'signed-in') throw new Error('Sign in to see your notifications.');
     token = auth.session.access_token;
     await load();
     $('notifications-auth').hidden = true; $('notifications-main').hidden = false;
+    if (location.hash === '#notification-preferences') $('notification-preferences').scrollIntoView();
   } catch(error) {
     $('notifications-auth').querySelector('p').textContent = error.message || 'Notifications could not be loaded. Try again.';
     if (!token) $('notifications-auth').querySelector('a').hidden = false;

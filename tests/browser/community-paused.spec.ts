@@ -204,7 +204,7 @@ test('signed-in overview keeps launch details and profile within reach', async (
  await page.getByRole('tab', { name: 'Profile' }).click();
  await expect(page.getByLabel('Display name')).toHaveValue('Studio North');
  await page.getByRole('tab', { name: 'Settings' }).click();
- await expect(page.getByRole('link', { name: 'Manage notifications' })).toHaveAttribute('href', '/notifications');
+ await expect(page.getByRole('link', { name: 'Manage notifications' })).toHaveAttribute('href', '/notifications#notification-preferences');
  await page.locator('#account-submit-cta').click();
  await expect(page).toHaveURL(/\/submit-project$/);
  await expect(page.getByRole('textbox', { name: 'Project URL' })).toBeVisible();

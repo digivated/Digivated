@@ -2,25 +2,79 @@
 import Platform from '../layouts/Platform.astro';
 import UiIcon from '../components/UiIcon.astro';
 import '../styles/notifications.css';
+
+const activityChoices = [
+  ['feedback', 'Project comments', 'When someone comments on your project.'],
+  ['reply', 'Replies', 'When someone replies to your comment or thread.'],
+  ['upvote', 'Upvotes', 'A daily summary of upvotes on your projects, threads, and comments.'],
+  ['launch', 'Launch reminders', 'When a product you asked to hear about goes live.'],
+  ['award', 'Weekly podium', 'When your launch finishes in the top three.'],
+  ['follow', 'New followers', 'When someone follows your profile.'],
+];
 ---
-<Platform title="Notifications" description="Your Digivated activity, on your terms.">
-  <section class="notifications-page fl-notify" aria-labelledby="notifications-title">
-    <header class="notifications-heading"><div><p class="eyebrow">YOUR ACTIVITY</p><h1 id="notifications-title">Notifications</h1><p>Comments, replies, upvotes and launch updates in one place.</p></div><a href="/account">Dashboard <span aria-hidden="true">→</span></a></header>
-    <div id="notifications-auth" class="notifications-auth fl-card fl-panel-pad" role="status"><p>Checking your account…</p><a class="button primary" href="/login?next=%2Fnotifications" hidden>Sign in</a></div>
-    <div id="notifications-main" class="fl-notify-main" hidden>
-      <section class="notifications-feed fl-card" aria-labelledby="notifications-feed-title">
-        <header class="fl-notify-head"><div><h2 id="notifications-feed-title">Recent activity</h2><p id="notifications-count">Your updates will appear here.</p></div><div class="notifications-feed-actions"><button id="notifications-read-all" class="fl-btn fl-btn-small" type="button" hidden>Mark all read</button><button id="notifications-clear" class="fl-link" type="button" hidden>Clear history</button></div></header>
-        <div class="fl-tabs fl-notify-filter" role="tablist" aria-label="Filter notifications"><button type="button" role="tab" aria-selected="true" data-notification-filter="all">All</button><button type="button" role="tab" aria-selected="false" tabindex="-1" data-notification-filter="unread">Unread</button></div>
-        <div id="notifications-items" class="notifications-items" aria-live="polite"></div>
-      </section>
-      <section class="notifications-feed notifications-approvals fl-card" aria-labelledby="notifications-approvals-title">
-        <header class="fl-notify-head"><div><h2 id="notifications-approvals-title">Your live projects</h2><p id="notifications-approval-status">Checking your live projects…</p></div><a class="fl-link" href="/account">Launch status →</a></header>
-        <div id="notifications-approvals" class="notifications-items"></div>
-      </section>
-      <section class="fl-card fl-panel-pad fl-notify-settings" aria-labelledby="notifications-preferences-title">
-        <div class="notifications-preferences"><div class="notifications-preferences-copy"><span class="notifications-setting-icon"><UiIcon name="bell" size={21}/></span><div><h2 id="notifications-preferences-title">Activity notifications</h2><p>Launch and approval updates always arrive. Choose which activity alerts you also want.</p></div></div><label class="notifications-master"><input type="checkbox" id="notifications-enabled"/><span class="notifications-switch" aria-hidden="true"></span><span class="sr-only">Turn on activity notifications</span></label></div>
-        <details class="notifications-choices" open><summary>Choose activity</summary><div class="notifications-choice-list"><label><span><strong>Email me activity alerts</strong><small>Get emails for the activity you select below, except weekly podium emails, which are separate. Upvotes send at most once per item per day. Daily limits apply.</small></span><input type="checkbox" data-notification-pref="emailEnabled"/></label><label><span><strong>Comments on your projects</strong><small>When someone comments in your project’s discussion.</small></span><input type="checkbox" data-notification-pref="feedback"/></label><label><span><strong>Replies</strong><small>When someone replies to your comment or your thread.</small></span><input type="checkbox" data-notification-pref="reply"/></label><label><span><strong>Upvotes</strong><small>One daily summary when your project, thread or comment is upvoted.</small></span><input type="checkbox" data-notification-pref="upvote"/></label><label><span><strong>Launches you follow</strong><small>When a launch you asked to be notified about goes live.</small></span><input type="checkbox" data-notification-pref="launch"/></label><label><span><strong>Weekly podium</strong><small>When your launch finishes in the top three.</small></span><input type="checkbox" data-notification-pref="award"/></label><label><span><strong>New followers</strong><small>When a creator follows you.</small></span><input type="checkbox" data-notification-pref="follow"/></label></div></details>
-        <p id="notifications-settings-status" class="notifications-settings-status fl-status" role="status" aria-live="polite"></p>
+<Platform title="Notifications" description="See your Digivated activity and manage your notification settings.">
+  <section class="notifications-page" aria-labelledby="notifications-title">
+    <header class="notifications-heading">
+      <div><h1 id="notifications-title">Notifications</h1><p>Keep up with your launches and the conversations around them.</p></div>
+      <a class="fl-btn" href="/account?tab=settings">Account settings <span aria-hidden="true">→</span></a>
+    </header>
+
+    <div id="notifications-auth" class="notifications-auth notifications-card" role="status">
+      <p>Checking your account…</p>
+      <a class="button primary" href="/login?next=%2Fnotifications" hidden>Sign in</a>
+    </div>
+
+    <div id="notifications-main" class="notifications-layout" hidden>
+      <div class="notifications-activity">
+        <section class="notifications-feed notifications-card" aria-labelledby="notifications-feed-title">
+          <header class="notifications-section-head">
+            <div><h2 id="notifications-feed-title">Recent activity</h2><p id="notifications-count">Your updates will appear here.</p></div>
+            <div class="notifications-feed-actions">
+              <button id="notifications-read-all" class="fl-btn" type="button" hidden>Mark all read</button>
+              <button id="notifications-clear" class="fl-btn" type="button" hidden>Clear history</button>
+            </div>
+          </header>
+          <div class="notifications-filter" role="tablist" aria-label="Filter notifications">
+            <button id="notifications-all-tab" type="button" role="tab" aria-controls="notifications-items" aria-selected="true" data-notification-filter="all">All</button>
+            <button id="notifications-unread-tab" type="button" role="tab" aria-controls="notifications-items" aria-selected="false" tabindex="-1" data-notification-filter="unread">Unread</button>
+          </div>
+          <p id="notifications-feed-status" class="notifications-status" role="status"></p>
+          <div id="notifications-items" class="notifications-items" role="tabpanel" aria-labelledby="notifications-all-tab" tabindex="0" aria-live="polite"></div>
+        </section>
+
+        <section class="notifications-approvals notifications-card" aria-labelledby="notifications-approvals-title">
+          <header class="notifications-section-head">
+            <div><h2 id="notifications-approvals-title">Your live projects</h2><p id="notifications-approval-status">Checking your live projects…</p></div>
+            <a class="fl-link" href="/account">Launch status →</a>
+          </header>
+          <div id="notifications-approvals" class="notifications-items"></div>
+        </section>
+      </div>
+
+      <section id="notification-preferences" class="notifications-settings notifications-card" aria-labelledby="notifications-preferences-title">
+        <header class="notifications-settings-head">
+          <span class="notifications-setting-icon" aria-hidden="true"><UiIcon name="bell" size={20}/></span>
+          <div><h2 id="notifications-preferences-title">Notification settings</h2><p>Choose which alerts you receive. Your own launch and approval updates stay on.</p></div>
+        </header>
+        <div class="notifications-choice-list">
+          <label class="notifications-master">
+            <span><strong>Activity alerts</strong><small>Turn optional alerts on or off.</small></span>
+            <input type="checkbox" id="notifications-enabled" role="switch" aria-label="Activity alerts"/>
+            <span class="notifications-switch" aria-hidden="true"></span>
+          </label>
+          <label>
+            <span><strong>Email me activity alerts</strong><small>Get selected alerts by email. Weekly podium emails are separate. Daily limits apply.</small></span>
+            <input type="checkbox" data-notification-pref="emailEnabled" aria-label="Email me activity alerts"/>
+          </label>
+          <fieldset>
+            <legend>Activity to follow</legend>
+            {activityChoices.map(([key, label, description]) => <label>
+              <span><strong>{label}</strong><small>{description}</small></span>
+              <input type="checkbox" data-notification-pref={key} aria-label={label}/>
+            </label>)}
+          </fieldset>
+        </div>
+        <p id="notifications-settings-status" class="notifications-status" role="status"></p>
       </section>
     </div>
   </section>
