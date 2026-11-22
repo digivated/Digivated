@@ -103,7 +103,7 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await expect(page.getByText('No launches yet')).toBeVisible();
   await page.setViewportSize({ width: 390, height: 900 });
   const account = page.getByRole('tablist', { name: 'Dashboard sections' });
-  await expect(account.getByRole('tab', { name: 'Following' })).toHaveCSS('color', 'rgb(65, 65, 65)');
+  await expect(account.getByRole('tab')).toHaveText(['Overview', 'Analytics', 'Profile', 'Settings']);
   await account.getByRole('tab', { name: 'Settings' }).click();
   await expect(account.getByRole('tab', { name: 'Settings' })).toHaveCSS('border-bottom-color', 'rgb(27, 27, 27)');
   const settings = page.getByRole('tabpanel', { name: 'Settings' });
