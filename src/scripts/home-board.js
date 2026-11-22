@@ -271,7 +271,13 @@ function revealRows(rows) {
   }
 }
 
-const boardDay = new Intl.DateTimeFormat('en-US', { weekday:'long', month:'short', day:'numeric', year:'numeric', timeZone:'America/New_York' });
+// Launches run in weeks, so Earlier is grouped by week, using the same Monday-to-Sunday
+// (UTC) weeks as the This week and Last week sections.
+const weekLabelFormat = new Intl.DateTimeFormat('en-US', { month:'short', day:'numeric', year:'numeric', timeZone:'UTC' });
+export function boardWeek(stamp) {
+  const monday = launchBounds('current', stamp).start;
+  return 'Week of ' + weekLabelFormat.format(monday).replace(`, ${new Date().getFullYear()}`, '');
+}
 
 function render({ animateSearch = false, only = null } = {}) {
   const g = groups();
@@ -339,16 +345,16 @@ function render({ animateSearch = false, only = null } = {}) {
     const rows = items.slice(0, limit).map(p => key === 'upcoming' ? upcomingRow(p) : row(p, key));
     const ordered = [];
     let lastDay = '';
-    const grouped = state.sort === 'recent' && key !== 'upcoming' && !(key === 'current' && state.fair.active);
-    const thisYear = `, ${new Date().getFullYear()}`;
-    const dayOf = index => { const stamp = launchTimestamp(items[index]); return Number.isFinite(stamp) ? boardDay.format(stamp).replace(thisYear, '') : ''; };
+    // This week and last week are already one week each, so only Earlier gets week headers.
+    const grouped = state.sort === 'recent' && key === 'archive';
+    const dayOf = index => { const stamp = launchTimestamp(items[index]); return Number.isFinite(stamp) ? boardWeek(stamp) : ''; };
     const perDay = new Map();
     if (grouped) items.forEach((_, index) => { const day = dayOf(index); if (day) perDay.set(day, (perDay.get(day) || 0) + 1); });
     for (const [index, node] of rows.entries()) {
       if (grouped) {
         const day = dayOf(index);
         if (day && day !== lastDay) {
-          // Day header: the date on the left, how many launches that day on the right.
+          // Week header: the week on the left, how many launches that week on the right.
           const divider = el('li', null, 'board-date-divider');
           const total = perDay.get(day) || 0;
           divider.append(el('span', day, 'board-date-label'), el('span', `${total} ${total === 1 ? 'launch' : 'launches'}`, 'board-date-count'));
