@@ -201,13 +201,13 @@
     }
     .dg-workspace .dg-workspace-rail .dg-shell :is(.dg-shell-icon,.dg-shell-avatar-trigger) svg { filter: none; }
     .dg-workspace .dg-workspace-rail .dg-shell .dg-shell-account {
-      position: static;
+      position: static !important;
       margin-inline-start: auto;
     }
     .dg-workspace .dg-workspace-rail .dg-shell-account-panel {
-      right: 0;
-      width: min(100%, calc(var(--dg-rail-width) - 35px));
-      max-height: min(300px, 45dvh);
+      right: 0 !important;
+      width: min(100%, calc(var(--dg-rail-width) - 35px)) !important;
+      max-height: min(300px, 45dvh) !important;
       overflow-wrap: anywhere;
     }
     .dg-workspace .dg-shell-bar {
