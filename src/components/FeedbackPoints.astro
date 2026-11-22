@@ -1,9 +1,7 @@
 ---
-// Feedback points, explained where makers will see it. `full` shows the three
-// steps and the visitor's own progress; `strip` is one line that opens the steps.
 import { BOOST_POINTS_PER_VOTE, REVIEW_MIN_SECONDS, DAILY_POINT_CAP } from '../lib/feedback-score.mjs';
 import '../styles/feedback-points.css';
-const { variant = 'full', heading = 'Help other makers. Lift your own launch.', cta = '/discover?sort=needs', ctaLabel = 'Find a product that needs feedback' } = Astro.props;
+const { heading = 'Help other makers. Lift your own launch.', cta = '/discover?sort=needs', ctaLabel = 'Find a product that needs feedback' } = Astro.props;
 const id = `fp-${Math.random().toString(36).slice(2, 8)}`;
 // A short pipeline: glyph on the rail, what to do, and what it's worth.
 const steps = [
@@ -11,42 +9,23 @@ const steps = [
   ['✎', 'Leave feedback', 'Say what worked and what didn’t.', '+5 / +10 pts'],
   ['▲', 'Get bonus upvotes', 'Points this week lift your own launch.', `▲ +1 per ${BOOST_POINTS_PER_VOTE}`],
 ];
-// Pixel icon (13x12): a speech bubble with an upvote arrow inside. Feedback in, lift out.
-const px = rows => rows.flatMap((row, y) => [...row].map((c, x) => c === '#' ? `M${x} ${y}h1v1h-1z` : '')).join('');
-const bubble = px(['.###########.', '#...........#', '#...........#', '#...........#', '#...........#', '#...........#', '#...........#', '#...........#', '#...........#', '.###########.', '.##..........', '.#...........']);
-const arrow = px(['.............', '.............', '......#......', '.....###.....', '....#####....', '...#######...', '.....###.....', '.....###.....']);
-const pipeline = steps.map(([glyph, title, copy, reward], i) => ({ glyph, title, copy, reward, i }));
+const pipeline = steps.map(([glyph, title, copy, reward]) => ({ glyph, title, copy, reward }));
 ---
-{variant === 'strip' ? (
-  <details class="dg-fp dg-fp-strip" data-feedback-points>
-    <summary>
-      <span class="dg-fp-icon" aria-hidden="true"><svg class="dg-fp-px" viewBox="0 0 13 12" width="24" height="22" shape-rendering="crispEdges"><path class="dg-fp-px-bubble" d={bubble}/><path class="dg-fp-px-arrow" d={arrow}/></svg></span>
-      <span class="dg-fp-strip-copy"><strong>Feedback points</strong> <span>Review launches, earn upvotes for yours.</span></span>
-      <span class="dg-fp-summary-actions">
-        <span class="dg-fp-me dg-fp-meter" data-fp-me hidden><span class="dg-fp-meter-top"><b data-fp-count>0</b><small data-fp-goal>/ {BOOST_POINTS_PER_VOTE} to ▲</small></span><span class="dg-fp-meter-bar" data-fp-cells aria-hidden="true"></span></span>
-        <span class="dg-fp-toggle"><span class="dg-fp-toggle-text">How it works</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
-      </span>
-    </summary>
-    <ol class="dg-fp-steps">{pipeline.map(step => <li class="dg-fp-step" style={`--i:${step.i}`}><span class="dg-fp-node" aria-hidden="true">{step.glyph}</span><span class="dg-fp-step-copy"><strong>{step.title}</strong><span>{step.copy}</span></span><span class="dg-fp-reward">{step.reward}</span></li>)}</ol>
-    <p class="dg-fp-foot"><a class="dg-btn dg-btn-primary" href={cta}>{ctaLabel}</a></p>
-  </details>
-) : (
-  <section class="dg-fp dg-fp-full" aria-labelledby={id} data-feedback-points>
-    <header class="dg-fp-head">
-      <p class="dg-label"><span class="dg-fp-spark" aria-hidden="true">✦</span> Feedback points</p>
-      <span class="dg-fp-me dg-fp-meter" data-fp-me hidden><span class="dg-fp-meter-top"><b data-fp-count>0</b><small data-fp-goal>/ {BOOST_POINTS_PER_VOTE} to ▲</small></span><span class="dg-fp-meter-bar" data-fp-cells aria-hidden="true"></span></span>
-    </header>
-    <h2 id={id}>{heading}</h2>
-    <ol class="dg-fp-steps">{pipeline.map(step => <li class="dg-fp-step" style={`--i:${step.i}`}><span class="dg-fp-node" aria-hidden="true">{step.glyph}</span><span class="dg-fp-step-copy"><strong>{step.title}</strong><span>{step.copy}</span></span><span class="dg-fp-reward">{step.reward}</span></li>)}</ol>
-    <div class="dg-fp-progress" data-fp-progress hidden>
-      <span class="dg-fp-meter-bar dg-fp-bar" aria-hidden="true" data-fp-bar></span>
-      <span data-fp-progress-copy></span>
-    </div>
-    <p class="dg-fp-foot">
-      <a class="dg-btn dg-btn-primary" href={cta}>{ctaLabel} →</a>
-      <a class="dg-btn" href="/login?mode=signup&next=%2Fdiscover%3Fsort%3Dneeds" data-fp-signin>Sign up to start earning</a>
-    </p>
-    <p class="dg-fp-fine">Once per product · up to {DAILY_POINT_CAP} points a day · links and spam earn nothing.</p>
-  </section>
-)}
+<section class="dg-fp dg-fp-full" aria-labelledby={id} data-feedback-points>
+  <header class="dg-fp-head">
+    <p class="dg-label"><span class="dg-fp-spark" aria-hidden="true">✦</span> Feedback points</p>
+    <span class="dg-fp-me dg-fp-meter" data-fp-me hidden><span class="dg-fp-meter-top"><b data-fp-count>0</b><small data-fp-goal>/ {BOOST_POINTS_PER_VOTE} to ▲</small></span><span class="dg-fp-meter-bar" data-fp-cells aria-hidden="true"></span></span>
+  </header>
+  <h2 id={id}>{heading}</h2>
+  <ol class="dg-fp-steps">{pipeline.map(step => <li class="dg-fp-step"><span class="dg-fp-node" aria-hidden="true">{step.glyph}</span><span class="dg-fp-step-copy"><strong>{step.title}</strong><span>{step.copy}</span></span><span class="dg-fp-reward">{step.reward}</span></li>)}</ol>
+  <div class="dg-fp-progress" data-fp-progress hidden>
+    <span class="dg-fp-meter-bar dg-fp-bar" aria-hidden="true" data-fp-bar></span>
+    <span data-fp-progress-copy></span>
+  </div>
+  <p class="dg-fp-foot">
+    <a class="dg-btn dg-btn-primary" href={cta}>{ctaLabel} →</a>
+    <a class="dg-btn" href="/login?mode=signup&next=%2Fdiscover%3Fsort%3Dneeds" data-fp-signin>Sign up to start earning</a>
+  </p>
+  <p class="dg-fp-fine">Once per product · up to {DAILY_POINT_CAP} points a day · links and spam earn nothing.</p>
+</section>
 <script>import '../scripts/feedback-points-card.js';</script>

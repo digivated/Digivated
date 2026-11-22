@@ -19,7 +19,8 @@ export function isNavigationCurrent(path, href) {
 export const footerGroups = [
   { title: 'Explore', links: [...primaryLinks.filter(([href]) => href !== '/account'), ['/discover', 'Directory']] },
   { title: 'For makers', links: [
-    ['/submit-project', 'New Launch'], ['/account', 'Dashboard'], ['/badges', 'Embed badges'],
+    ['/submit-project', 'New Launch'], ['/account', 'Dashboard'], ['/notifications', 'Notifications'],
+    ['/saved', 'Saved items'], ['/badges', 'Embed badges'],
   ] },
   { title: 'Company', links: [
     ['/about', 'About'], ['/privacy', 'Privacy'], ['/terms', 'Terms'],

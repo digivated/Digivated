@@ -132,7 +132,7 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await account.getByRole('tab', { name: 'Settings' }).click();
   await expect(account.getByRole('tab', { name: 'Settings' })).toHaveAttribute('aria-selected', 'true');
   const settings = page.getByRole('tabpanel', { name: 'Settings' });
-  await expect(settings.getByRole('link', { name: 'Manage notifications' })).toHaveAttribute('href', '/notifications');
+  await expect(settings.getByRole('link', { name: 'Manage notifications' })).toHaveAttribute('href', '/notifications#notification-preferences');
   await expect(settings.getByRole('link', { name: 'Open inbox' })).toHaveCount(0);
   await expect(settings.getByRole('button', { name: 'Email me a reset link' })).toBeVisible();
   await menu.click();
@@ -140,6 +140,46 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await expect(accountMenu).toHaveCSS('position', 'absolute');
   await accountMenu.getByRole('menuitem', { name: 'Settings' }).press('Escape');
   await expect(accountMenu).toBeHidden();
+
+  let preferences = { enabled: true, emailEnabled: false, feedback: true, reply: true, upvote: true, launch: true, award: true, follow: true };
+  let rejectSave = false;
+  let unread = 1;
+  await page.route('**/api/notifications?action=list', route => route.fulfill({ json: {
+    preferences, unread, approvals: [],
+    items: [{ id: user.id, type: 'feedback', href: '/projects/listing/example#feedback', title: 'New project feedback', unread: !!unread, createdAt: new Date().toISOString() }],
+  } }));
+  await page.route('**/api/notifications?action=preferences', route => {
+    if (rejectSave) return route.fulfill({ status: 503, json: { error: 'Please try again.' } });
+    preferences = route.request().postDataJSON().preferences;
+    return route.fulfill({ json: { preferences } });
+  });
+  await page.route('**/api/notifications?action=read-all', route => {
+    unread = 0;
+    return route.fulfill({ json: { ok: true } });
+  });
+  await settings.getByRole('link', { name: 'Manage notifications' }).click();
+  await expect(page).toHaveURL(/\/notifications#notification-preferences$/);
+  const notificationSettings = page.getByRole('region', { name: 'Notification settings' });
+  await expect(notificationSettings.getByRole('heading')).toBeInViewport();
+  await expect(notificationSettings.getByRole('switch', { name: 'Activity alerts' })).toBeChecked();
+  const emailAlerts = notificationSettings.getByRole('checkbox', { name: 'Email me activity alerts' });
+  await emailAlerts.check();
+  await expect(notificationSettings.getByRole('status')).toHaveText('Preferences saved.');
+  await page.reload();
+  await expect(emailAlerts).toBeChecked();
+  rejectSave = true;
+  await emailAlerts.click();
+  await expect(notificationSettings.getByRole('status')).toHaveText('Please try again.');
+  await expect(emailAlerts).toBeChecked();
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const recent = page.getByRole('region', { name: 'Recent activity' });
+  await recent.getByRole('tab', { name: 'All' }).press('ArrowRight');
+  await expect(recent.getByRole('tab', { name: 'Unread' })).toBeFocused();
+  await expect(recent.getByRole('tabpanel')).toContainText('New project feedback');
+  await recent.getByRole('button', { name: 'Mark all read' }).click();
+  await expect(recent.getByRole('tabpanel')).toContainText('No unread notifications.');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.goto('http://127.0.0.1:4321/account?tab=settings');
   await page.locator('#account-sign-out').click();
   await expect(page).toHaveURL(/\/login\/?$/);
   await expect(page.getByRole('link', { name: 'Log In', exact: true })).toBeVisible();

@@ -28,13 +28,11 @@ html#digivated-root[data-ascii] body .fl-avatar{background-color:#2a2040!importa
 html#digivated-root[data-ascii] body .fl-badge-tag{border-color:#c3a0ff73!important;background:#c3a0ff1a!important;color:var(--dg-acc-ink)!important}
 html#digivated-root[data-ascii] body :is(.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card){transition:border-color .25s,transform .3s var(--dg-spring),box-shadow .3s!important}
 html#digivated-root[data-ascii] body :is(.dg-dir-podium-card,.fl-badge-card,.news-card,.resource-card):hover{border-color:#4a3c66!important;box-shadow:0 14px 34px -22px #c3a0ff80!important}
-html#digivated-root[data-ascii] body .dg-spot.is-open:hover{box-shadow:0 12px 30px -20px #c3a0ff99!important}
 html#digivated-root[data-ascii] body .dg-quiet-link{transition:color .2s!important}
 html#digivated-root[data-ascii] body .dg-quiet-link:hover{color:var(--dg-acc-text)!important}
 html#digivated-root[data-ascii] body :is(a,button,[role=tab],summary):focus-visible{outline:2px solid var(--dg-acc-text)!important}
 html#digivated-root[data-ascii] body .dg-member-mark{display:inline-block!important;flex:none;width:13px!important;height:13px!important;margin:0!important;padding:0!important;background-color:currentColor!important;-webkit-mask:url(/dg-member.svg) center/contain no-repeat;mask:url(/dg-member.svg) center/contain no-repeat}
-html#digivated-root[data-ascii] body :is(.dg-badge-member,.dg-spot-member,.launch-member){display:inline-flex!important;align-items:center!important;gap:5px!important;color:#d9c6ff!important}
-html#digivated-root[data-ascii] body .dg-spot-member .dg-member-mark{width:12px!important;height:12px!important}
+html#digivated-root[data-ascii] body :is(.dg-badge-member,.launch-member){display:inline-flex!important;align-items:center!important;gap:5px!important;color:#d9c6ff!important}
 html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a[aria-current=page]{border-color:#c3a0ff73!important;background:#c3a0ff14!important;color:#f1eaff!important}
 }
 

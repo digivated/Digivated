@@ -157,32 +157,6 @@ html[data-ascii] body #submission-badge .eyebrow{margin:0!important;color:var(--
 html[data-ascii] body .submission-account-callout{padding:20px!important;border:1px solid var(--fl-line)!important;border-radius:10px!important;background-color:var(--fl-panel)!important}
 
 /* ---- Notifications ---- */
-html[data-ascii] body .fl-notify{max-width:820px!important;margin-inline:auto!important}
-html[data-ascii] body .fl-notify-main{display:grid;gap:16px}
-html[data-ascii] body .fl-notify-main[hidden]{display:none!important}
-html[data-ascii] body .fl-notify .notifications-feed{padding:0!important;overflow:hidden}
-html[data-ascii] body .fl-notify-head{display:flex!important;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:18px 20px 12px!important;border:0!important}
-html[data-ascii] body .fl-notify-head h2{margin:0 0 4px!important;font-size:17px!important}
-html[data-ascii] body .fl-notify-head p{margin:0!important;color:var(--fl-muted)!important;font-size:13px}
-html[data-ascii] body .fl-notify .notifications-feed-actions{display:flex;align-items:center;gap:12px}
-html[data-ascii] body .fl-notify-filter{margin:0 20px!important;width:auto}
-html[data-ascii] body .fl-notify-filter>button{flex:0 0 auto!important;padding:8px 14px!important}
-html[data-ascii] body .fl-notify .notifications-items{display:grid;padding:4px 8px 10px!important}
-html[data-ascii] body .fl-notify-group{margin:12px 12px 4px!important;color:var(--fl-muted)!important;font-size:11px!important;letter-spacing:.1em;text-transform:uppercase;font-weight:500!important}
-html[data-ascii] body .fl-notify .notification-item{display:flex!important;align-items:center;gap:12px;padding:12px!important;border:0!important;border-radius:8px!important;text-decoration:none!important}
-html[data-ascii] body .fl-notify .notification-item:is(:hover,:focus-visible){background-color:#161616!important;text-decoration:none!important}
-html[data-ascii] body .fl-notify .notification-item.unread{background-color:#131313!important}
-html[data-ascii] body .fl-notify .notification-copy{flex:1;min-width:0;display:grid;gap:2px}
-html[data-ascii] body .fl-notify .notification-copy small{color:var(--fl-muted)!important;font-size:11px;letter-spacing:.04em}
-html[data-ascii] body .fl-notify .notification-copy strong{color:var(--fl-ink)!important;font-weight:500;font-size:14px}
-html[data-ascii] body .fl-notify .notification-item:not(.unread) .notification-copy strong{color:var(--fl-copy)!important}
-html[data-ascii] body .fl-notify .notification-copy time{color:var(--fl-muted)!important;font-size:11px}
-html[data-ascii] body .fl-notify .notification-item[data-type=scheduled] .notification-mark{color:var(--fl-accent)!important}
-html[data-ascii] body .fl-notify .notification-item[data-type=approved] .notification-mark{color:var(--fl-ok)!important}
-html[data-ascii] body .fl-notify .notifications-empty{padding:28px 12px!important;text-align:center;color:var(--fl-muted)!important}
-html[data-ascii] body .fl-notify .notifications-empty strong{display:block;color:var(--fl-ink)!important;margin-bottom:4px}
-html[data-ascii] body .fl-notify-settings{display:grid;gap:12px}
-html[data-ascii] body .fl-notify .notifications-auth{text-align:center}
 html[data-ascii] body .fl-menu{position:relative}
 html[data-ascii] body .fl-menu[hidden]{display:none!important}
 html[data-ascii] body .fl-menu-trigger{display:inline-flex!important;align-items:center;gap:8px;min-height:40px!important;padding:3px 8px 3px 3px!important;border:1px solid var(--fl-line-hi)!important;border-radius:999px!important;background:none!important;color:var(--fl-ink)!important;text-decoration:none!important;cursor:pointer}
@@ -218,7 +192,7 @@ html[data-ascii] body .fl-menu-trigger #header-account-dot{position:absolute;top
 
 /* Type: clean sans for reading, mono for labels, meta and ASCII. */
 html[data-ascii] body *{font-family:var(--fl-sans)!important}
-html[data-ascii] body :is(pre,pre *,code,kbd,samp,.fl-mono,.fl-mono *,.eyebrow,.eyebrow *,time,.fl-pill,.fl-step-mark,.site-breadcrumbs,.site-breadcrumbs *,.fl-badge-preview,.home-editorial-kicker,.home-about-label,.submission-step-label,.fl-code textarea,.queue-countdown,.queue-countdown *,.fl-menu-count,.fl-unread-dot,.fl-notify-group,.fl-label,.fl-hud,.fl-hud *,.fl-step-copy small,.notification-copy small,.fl-project-meta,.fl-tag){font-family:var(--fl-mono)!important}
+html[data-ascii] body :is(pre,pre *,code,kbd,samp,.fl-mono,.fl-mono *,.eyebrow,.eyebrow *,time,.fl-pill,.fl-step-mark,.site-breadcrumbs,.site-breadcrumbs *,.fl-badge-preview,.home-editorial-kicker,.home-about-label,.submission-step-label,.fl-code textarea,.queue-countdown,.queue-countdown *,.fl-menu-count,.fl-unread-dot,.fl-label,.fl-hud,.fl-hud *,.fl-step-copy small,.notification-copy small,.fl-project-meta,.fl-tag){font-family:var(--fl-mono)!important}
 html[data-ascii] body{font-size:15px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 html[data-ascii] body :is(h1,h2,h3,h4){font-family:var(--fl-sans)!important;font-weight:500!important;color:#f3f3f3!important;-webkit-text-fill-color:currentColor!important}
 html[data-ascii] body h1{letter-spacing:-.04em!important;line-height:1.04!important}
@@ -333,9 +307,6 @@ html[data-ascii] body .submission-form .consent{display:flex!important;gap:10px!
 html[data-ascii] body #main{padding-bottom:64px!important}
 
 /* ---- Notification choices: tighter rows ---- */
-html[data-ascii] body .fl-notify .notifications-choice-list{display:grid!important;gap:0!important}
-html[data-ascii] body .fl-notify .notifications-choice-list label{display:flex!important;align-items:center;justify-content:space-between;margin:0!important;padding:12px 0!important;border-top:1px solid var(--fl-rule)!important;font-family:var(--fl-sans)!important;text-transform:none!important;letter-spacing:normal!important}
-html[data-ascii] body .fl-notify .notifications-choice-list label *{text-transform:none!important;letter-spacing:normal!important}
 
 html[data-ascii] body #main :is(.wall-intro,.launch-heading,.link-directory-head,.membership-heading) h1{font-size:clamp(36px,5vw,60px)!important}
 

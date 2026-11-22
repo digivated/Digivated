@@ -1,4 +1,5 @@
 ---
+import UiIcon from '../components/UiIcon.astro';
 import Platform from '../layouts/Platform.astro';
 import '../styles/project-account.css';
 import MakerNavigation from '../components/MakerNavigation.astro';
@@ -72,7 +73,7 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
       <section id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" class="fl-tabpanel" hidden>
         <header class="maker-section-heading"><h2>Account settings</h2></header>
         <div class="fl-settings">
-          <div class="fl-card fl-panel-pad fl-setting"><div><h3>Notifications</h3><p>Choose which activity sends you an alert.</p></div><a class="fl-btn" href="/notifications">Manage notifications</a></div>
+          <div class="fl-card fl-panel-pad fl-setting"><div><h3>Notifications</h3><p>Manage activity alerts and choose which ones arrive by email.</p></div><a class="fl-btn" href="/notifications#notification-preferences">Manage notifications <UiIcon name="arrow" size={15}/></a></div>
           <section id="weekly-email" class="fl-card fl-panel-pad fl-setting" hidden><div><h3>Weekly email</h3><p>Get new projects by email. Unsubscribe anytime.</p><p id="weekly-status" class="fl-status" role="status" aria-live="polite"></p></div><button class="fl-btn" id="weekly-toggle" type="button">Get weekly emails</button></section>
           <div class="fl-card fl-panel-pad fl-setting"><div><h3>Password</h3><p>Send a reset link to your account email.</p><p id="account-reset-status" class="fl-status" role="status" aria-live="polite"></p></div><button class="fl-btn" id="account-reset-link" type="button">Email me a reset link</button></div>
         </div>

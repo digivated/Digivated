@@ -86,15 +86,19 @@ test('expired activity leaves no stale unread badge', async () => {
   assert.equal(values.has(`digivated:notifications:item:${oldId}`),false);
 });
 
-test('historical notices remain readable without linking to retired pages', async () => {
+test('retired notices stay out of the feed and unread badge while their records are preserved', async () => {
   const {redis,values} = memoryRedis();
   for (const [id,type,href] of [[post,'reply','/creators?post=retired'],[bob,'message','/inbox?id=retired']]) {
     values.set(`digivated:notifications:item:${id}`,JSON.stringify({id,recipientId:alice,type,href}));
     await redis(['ZADD',`digivated:notifications:index:${alice}`,Date.now(),id]);
+    await redis(['SADD',`digivated:notifications:unread:${alice}`,id]);
   }
-  const {items} = await listNotifications(redis,alice);
-  assert.equal(items.length,2);
-  assert.ok(items.every(item=>item.href===null));
+  const feed = await listNotifications(redis,alice);
+  assert.deepEqual(feed.items, []);
+  assert.equal(feed.unread, 0);
+  assert.equal((await notificationSummary(redis,alice)).unread, 0);
+  assert.ok(values.has(`digivated:notifications:item:${post}`));
+  assert.ok(values.has(`digivated:notifications:item:${bob}`));
 });
 
 test('notification API requires sign-in, same-site writes, and ownership', async () => {

@@ -135,16 +135,21 @@ export async function listNotifications(redis, userId) {
   const ids = await redis(['ZREVRANGE', indexKey(userId), 0, 99]);
   const raws = ids.length ? await redis(['MGET', ...ids.map(itemKey)]) : [];
   const unread = new Set(await redis(['SMEMBERS', unreadKey(userId)]));
+  const retiredUnread = [];
   const items = raws.flatMap(raw => {
     try {
       const item = JSON.parse(raw);
       if (item.recipientId !== userId || !UUID.test(item.id) || !TYPES.includes(item.type)) return [];
-      const retiredLink = /^\/(?:inbox|creators)(?:[/?#]|$)/.test(item.href);
-      return [{ id:item.id, type:item.type, title:TITLES[item.type], href:retiredLink ? null : item.href, createdAt:item.createdAt, unread:unread.has(item.id), ...detail({ actorName:item.actor, verb:item.verb, subject:item.subject, excerpt:item.excerpt, count:item.count }) }];
+      if (item.type === 'message' || /^\/(?:inbox|creators)(?:[/?#]|$)/.test(item.href)) {
+        if (unread.delete(item.id)) retiredUnread.push(item.id);
+        return [];
+      }
+      return [{ id:item.id, type:item.type, title:TITLES[item.type], href:item.href, createdAt:item.createdAt, unread:unread.has(item.id), ...detail({ actorName:item.actor, verb:item.verb, subject:item.subject, excerpt:item.excerpt, count:item.count }) }];
     }
     catch { return []; }
   });
-  return { preferences, items, unread: Number(await redis(['SCARD', unreadKey(userId)])) || 0 };
+  if (retiredUnread.length) await redis(['SREM', unreadKey(userId), ...retiredUnread]);
+  return { preferences, items, unread: unread.size };
 }
 
 export async function markNotificationRead(redis, userId, id) {
