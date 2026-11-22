@@ -41,10 +41,15 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   let submissionsAvailable = false;
   await page.route('**/api/project-account', route => submissionsAvailable ? route.fulfill({ json: { email, submissions: [] } }) : route.fulfill({ status: 503, json: { error: 'Submissions unavailable.' } }));
   let avatarStatus = 200;
-  await page.route('**/api/creator-profile?action=avatar', route => route.fulfill(avatarStatus === 200 ? {
-    contentType: 'image/png',
-    body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a3foAAAAASUVORK5CYII=', 'base64'),
-  } : { status: avatarStatus }));
+  let avatarResponseReady: Promise<void> | undefined;
+  await page.route('**/api/creator-profile?action=avatar', async route => {
+    const status = avatarStatus;
+    await avatarResponseReady;
+    return route.fulfill(status === 200 ? {
+      contentType: 'image/png',
+      body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a3foAAAAASUVORK5CYII=', 'base64'),
+    } : { status });
+  });
   await page.route('https://fixture.supabase.co/auth/v1/**', route => route.fulfill({ json: user }));
   await page.route('**/api/notifications?action=list', route => route.fulfill({ json: { items: [] } }));
   await page.route('**/api/feedback-points?action=me', route => route.fulfill({ json: { total: 0, week: 0 } }));
@@ -59,8 +64,16 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   const avatar = page.locator('#header-account-avatar');
   await expect(avatar.locator('img')).toBeVisible();
   avatarStatus = 503;
+  let releaseAvatarResponse!: () => void;
+  avatarResponseReady = new Promise(resolve => { releaseAvatarResponse = resolve; });
   const refresh = page.waitForResponse('**/api/creator-profile?action=avatar');
-  await page.reload();
+  try {
+    await page.reload();
+    await expect(avatar.locator('img')).toBeVisible();
+  } finally {
+    releaseAvatarResponse();
+    avatarResponseReady = undefined;
+  }
   await refresh;
   await expect(avatar.locator('img')).toBeVisible();
   avatarStatus = 204;

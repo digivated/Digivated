@@ -52,7 +52,8 @@ async function updateAvatar(address, session, {verified, refresh}) {
  } else if (!avatar.querySelector('img')) {
   avatar.textContent = initial;
  }
- if (!verified || !session || (avatarLoaded && !refresh)) return;
+ if (refresh) avatarLoaded = false;
+ if (!verified || !session || avatarLoaded) return;
 
  const current = ++avatarRequest;
  try {
