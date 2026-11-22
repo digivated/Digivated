@@ -55,6 +55,11 @@ for (const width of [390, 1440]) {
     await expect(rows).toHaveCount(1);
     await expect(rows.first()).toHaveAttribute('href', '/projects/listing/directory-26');
     await expect(page.locator('[data-dir-list] .dg-comments')).toHaveAttribute('href', '/projects/listing/directory-26#feedback');
+    await page.locator('[data-dir-search]').fill('A search with no matching product');
+    const clearFilters = page.getByRole('button', { name: 'Clear filters' });
+    await expect(clearFilters).toHaveCSS('color', 'rgb(48, 48, 48)');
+    await clearFilters.click();
+    await expect(rows.first()).toHaveText('Directory fixture 26');
     expect(errors).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });

@@ -404,14 +404,14 @@
     padding: 3px;
     object-fit: contain;
   }
-  .dg-workspace #main :is(.dg-board .dg-points,.dg-board .dg-more,.dg-dir .dg-more,.dg-dir .dg-dir-surprise) {
+  .dg-workspace #main :is(.dg-board .dg-more,.dg-dir .dg-more,.dg-dir .dg-dir-surprise) {
     border-color: transparent !important;
     background: none !important;
     box-shadow: none !important;
     color: var(--fl-copy) !important;
     text-decoration: none !important;
   }
-  .dg-workspace #main :is(.dg-board .dg-points,.dg-board .dg-more,.dg-dir .dg-more,.dg-dir .dg-dir-surprise):is(:hover,:focus-visible) {
+  .dg-workspace #main :is(.dg-board .dg-more,.dg-dir .dg-more,.dg-dir .dg-dir-surprise):is(:hover,:focus-visible) {
     color: var(--fl-ink) !important;
     text-decoration: underline !important;
     text-underline-offset: .25em;

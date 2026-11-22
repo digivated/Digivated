@@ -48,6 +48,8 @@ test('sitemap lists public pages and drops private, redirected, and member-only 
   });
   const locs = entries.map(entry => entry.loc);
   assert.ok(locs.includes('https://digivated.com/discover'));
+  assert.ok(!locs.includes('https://digivated.com/winners'));
+  assert.ok(!locs.includes('https://digivated.com/points'));
   assert.ok(locs.includes('https://digivated.com/invstr'));
   assert.ok(locs.includes('https://digivated.com/toolkit'));
   assert.ok(locs.includes('https://digivated.com/access'));

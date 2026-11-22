@@ -17,6 +17,10 @@ test('shared public destinations use canonical current routes without repeated f
  }
  const config=JSON.parse(await readFile(new URL('../vercel.json',import.meta.url),'utf8'));
  assert.equal(config.redirects.find(r=>r.source==='/shop'),undefined,'/shop is the shop page');
+ for(const [source,destination] of [['/winners','/#last-week'],['/points','/discover?sort=needs']]){
+  assert.ok(![...header,...footer].some(([href])=>href===source));
+  assert.deepEqual(config.redirects.find(r=>r.source===source),{source,destination,permanent:true});
+ }
  for(const source of ['/products','/promote','/founding-members']){
   assert.deepEqual(config.redirects.find(r=>r.source===source),{source,destination:'/membership',permanent:true});
  }

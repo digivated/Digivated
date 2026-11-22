@@ -28,7 +28,7 @@ const pipeline = steps.map(([glyph, title, copy, reward], i) => ({ glyph, title,
       </span>
     </summary>
     <ol class="dg-fp-steps">{pipeline.map(step => <li class="dg-fp-step" style={`--i:${step.i}`}><span class="dg-fp-node" aria-hidden="true">{step.glyph}</span><span class="dg-fp-step-copy"><strong>{step.title}</strong><span>{step.copy}</span></span><span class="dg-fp-reward">{step.reward}</span></li>)}</ol>
-    <p class="dg-fp-foot"><a class="dg-btn dg-btn-primary" href={cta}>{ctaLabel}</a><a class="dg-btn dg-fp-rules" href="/points">Full rules</a></p>
+    <p class="dg-fp-foot"><a class="dg-btn dg-btn-primary" href={cta}>{ctaLabel}</a></p>
   </details>
 ) : (
   <section class="dg-fp dg-fp-full" aria-labelledby={id} data-feedback-points>
@@ -45,7 +45,6 @@ const pipeline = steps.map(([glyph, title, copy, reward], i) => ({ glyph, title,
     <p class="dg-fp-foot">
       <a class="dg-btn dg-btn-primary" href={cta}>{ctaLabel} →</a>
       <a class="dg-btn" href="/login?mode=signup&next=%2Fdiscover%3Fsort%3Dneeds" data-fp-signin>Sign up to start earning</a>
-      <a class="dg-quiet-link" href="/points">How points work</a>
     </p>
     <p class="dg-fp-fine">Once per product · up to {DAILY_POINT_CAP} points a day · links and spam earn nothing.</p>
   </section>

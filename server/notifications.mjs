@@ -64,7 +64,7 @@ export async function addNotification(redis, { recipientId, type, actorId, targe
   if (!preferences.enabled || !preferences[type]) return false;
   let href;
   if (['reply', 'feedback', 'launch'].includes(type) && typeof link === 'string' && SAFE_LINK.test(link)) href = link;
-  else if (type === 'award' && link === '/winners') href = link;
+  else if (type === 'award' && link === '/#last-week') href = link;
   else if (type === 'reply' && UUID.test(targetId)) href = `/creators?post=${encodeURIComponent(targetId)}`;
   else if (type === 'follow' && UUID.test(actorId)) href = `/creator?id=${encodeURIComponent(actorId)}`;
   else if (type === 'message' && UUID.test(actorId)) href = `/inbox?id=${encodeURIComponent(actorId)}`;

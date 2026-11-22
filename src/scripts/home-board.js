@@ -237,7 +237,6 @@ async function toggleVote(p, button, li) {
 }
 
 function sectionNote(key, items) {
-  const howLink = () => Object.assign(el('a', 'How launches are ranked', 'dg-note-link'), { href: '/winners#how-ranking-works' });
   if (key === 'archive') return [];
   if (key === 'top') return state.fair.active ? ['This week’s launches join the ranking when voting counts are revealed.'] : [];
   if (key === 'upcoming') {
@@ -248,10 +247,10 @@ function sectionNote(key, items) {
   }
   const bounds = launchBounds(key);
   const dates = `${shortDate(bounds.start)} – ${shortDate(bounds.end - 86_400_000)}`;
-  if (key === 'current') return state.fair.active
-    ? [`${dates} · launches rotate hourly. Upvote counts appear ${localTime(state.fair.endsAt)} · `, howLink()]
-    : [`${dates} · `, howLink()];
-  return state.podium?.order?.length ? [`${dates} · `, Object.assign(el('a', 'Winners', 'dg-note-link'), { href: '/winners' })] : [dates];
+  if (key === 'current' && state.fair.active) {
+    return [`${dates} · launches rotate hourly. Upvote counts appear ${localTime(state.fair.endsAt)}.`];
+  }
+  return [dates];
 }
 
 function renderRising() {
@@ -423,17 +422,6 @@ async function loadInstant() {
   } catch { return null; }
 }
 
-function pointsChip() {
-  const chip = board?.querySelector('[data-points-chip]');
-  if (!chip) return;
-  const show = total => { if (!Number.isFinite(total)) return; chip.querySelector('[data-points-total]').textContent = String(total); chip.querySelector('[data-points-label]')?.setAttribute('hidden', ''); chip.querySelector('[data-points-have]')?.removeAttribute('hidden'); chip.hidden = false; };
-  document.addEventListener('digivated:points', event => show(event.detail?.total));
-  document.addEventListener('digivated:points-awarded', event => {
-    show(event.detail?.total);
-    if (!reduced.matches) chip.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.18)' }, { transform: 'scale(1)' }], { duration: 520, easing: 'cubic-bezier(.2,.9,.3,1.3)' });
-  });
-}
-
 async function railThreads() {
   const box = document.querySelector('[data-rail-threads]');
   if (!box) return;
@@ -532,7 +520,6 @@ if (board) {
       }
     });
   }
-  pointsChip();
   railThreads();
   const cached = readCache();
   if (cached) {
