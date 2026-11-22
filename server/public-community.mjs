@@ -86,24 +86,32 @@ export function makePublicHandler(type, deps = {}) {
       }
       const offset = Number(url.searchParams.get('offset') || 0);
       if (!Number.isInteger(offset) || offset < 0 || offset > 100000) return send(400, { error: 'Invalid page.' });
-      let items = await publicRecords(redis, kind, offset);
+      let [items, projectTotal] = await Promise.all([
+        publicRecords(redis, kind, offset),
+        kind === 'submission' ? redis(['ZCARD', 'digivated:public:submissions']) : null,
+      ]);
       let fair = null;
-      if (kind === 'submission') items = await withProjectViews(redis, items);
       if (kind === 'submission' && url.searchParams.get('ranking') === '1') {
         const now = Date.now();
         const starts = rankingPeriodStarts(now);
-        const counts = await rankingCounts(redis, items.map(item => item.id), starts, now);
-        items=items.map((item,i)=>{
+        const [projects, counts] = await Promise.all([
+          withProjectViews(redis, items),
+          rankingCounts(redis, items.map(item => item.id), starts, now),
+        ]);
+        items=projects.map((item,i)=>{
           const [total,daily,weekly,monthly,comments]=counts[i];
           return {...item,comments:Number(comments||0),votes:{all:Number(total||0),daily:Number(daily||0),weekly:Number(weekly||0),monthly:Number(monthly||0)}};
         });
         ({ items, fair } = await withLaunchScores(redis, items, now));
+      } else if (kind === 'submission') {
+        items = await withProjectViews(redis, items);
+      } else if (kind === 'resource') {
+        items = await withResourceViews(redis, items);
       }
-      if (kind === 'resource') items = await withResourceViews(redis, items);
       // Article bodies are fetched only on the detail page.
       // Filtering incomplete records can make a raw page shorter than 100. Page by
       // the index position so older valid projects are still reachable.
-      const next = kind === 'submission' ? offset + 100 < await redis(['ZCARD', 'digivated:public:submissions']) ? offset + 100 : null : items.length === 100 ? offset + 100 : null;
+      const next = kind === 'submission' ? offset + 100 < projectTotal ? offset + 100 : null : items.length === 100 ? offset + 100 : null;
       return send(200, { items: items.map(({ content, ...item }) => item), next, ...(fair ? { fairStart: fair } : {}) });
     } catch { return send(503, { error: 'This collection is temporarily unavailable. Please try again shortly.' }); }
   };

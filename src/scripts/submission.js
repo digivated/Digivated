@@ -1,6 +1,5 @@
 import { prepareProjectImage } from './submission-image.js';
-import { createClient } from '@supabase/supabase-js';
-import { communityAuthOptions } from './community-auth.js';
+import { accountConnection } from './account-session.js';
 import { projectStage, trackerElement } from './launch-tracker.js';
 import { badgePicker } from './badge-picker.js';
 const form = document.getElementById('project-form');
@@ -179,9 +178,9 @@ if (form) {
   };
   const accountStatus=document.getElementById('submission-account-status');
   const details=document.getElementById('submission-details');
-  fetch('/api/project-account?action=config',{cache:'no-store'}).then(r=>r.json()).then(async config=>{
-    if(!config.ready)return;
-    accountClient=createClient(config.url,config.key,{auth:communityAuthOptions});
+  accountConnection({optional:true}).then(async connection=>{
+    if(!connection)return;
+    accountClient=connection.client;
     const {data:{session}}=await accountClient.auth.getSession();
     if(session?.user?.email_confirmed_at){
       const response=await fetch('/api/project-account',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'});

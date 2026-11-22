@@ -91,7 +91,14 @@ for (const width of [390, 1440]) test(`free launch can verify the badge and subm
    user:{id:'fixture-owner',email:'fixture@example.com',email_confirmed_at:'2026-11-01T00:00:00Z'},
   }));
  });
- await page.route('**/api/project-account**', route => route.fulfill({ json: route.request().url().includes('action=config') ? { ready: true, url: 'https://fixture.supabase.co', key: 'fixture-key' } : { email: 'fixture@example.com', submissions: [], mailboxVerified: true } }));
+ let configRequests = 0;
+ await page.route('**/api/project-account**', route => {
+  if (route.request().url().includes('action=config')) {
+   configRequests++;
+   return route.fulfill({ json: { ready: true, url: 'https://fixture.supabase.co', key: 'fixture-key' } });
+  }
+  return route.fulfill({ json: { email: 'fixture@example.com', submissions: [], mailboxVerified: true } });
+ });
  const reservedId = '123e4567-e89b-42d3-a456-426614174055';
  let submitted = null;
  await page.route('**/api/submissions**', route => {
@@ -154,4 +161,5 @@ for (const width of [390, 1440]) test(`free launch can verify the badge and subm
  await expect(page.locator('#submission-status')).toContainText('Badge verified');
  expect(submitted).toMatchObject({ reservedId, reservedToken: 'signed-fixture', verifyBadge: true, pricing: 'Free' });
  await expect(page.locator('#submission-badge-title')).toHaveText('Badge found. You’re in the launch.');
+ expect(configRequests).toBe(1);
 });

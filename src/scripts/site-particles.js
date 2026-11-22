@@ -14,6 +14,7 @@ function mountParticles(canvas, context) {
   const tau = 2 * Math.PI;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const forcedColors = matchMedia('(forced-colors: active)');
+  const touch = matchMedia('(hover: none) and (pointer: coarse)');
   const particles = Array.from({ length: particleCount }, () => {
     const depth = (Math.random() - 0.5) * spread;
     const perspective = cameraDistance / (cameraDistance - depth);
@@ -90,9 +91,8 @@ function mountParticles(canvas, context) {
   }
 
   function tick(now) {
-    // Thirty draws per second are enough for the slow drift and leave room for page work.
-    if (!last || now - last >= 30) {
-      elapsed += last ? Math.min(50, now - last) : 16;
+    if (!last || now - last >= (touch.matches ? 48 : 38)) {
+      elapsed += last ? Math.min(70, now - last) : 16;
       last = now;
       offsetX += ((pointer ? (pointer.x / width - 0.5) * 18 : 0) - offsetX) * 0.12;
       offsetY += ((pointer ? (pointer.y / height - 0.5) * 18 : 0) - offsetY) * 0.12;
@@ -113,7 +113,7 @@ function mountParticles(canvas, context) {
   function resize() {
     width = canvas.clientWidth;
     height = canvas.clientHeight;
-    const scale = Math.min(window.devicePixelRatio || 1, 1.5);
+    const scale = Math.min(window.devicePixelRatio || 1, touch.matches ? 1.2 : 1.5);
     canvas.width = Math.max(1, Math.round(width * scale));
     canvas.height = Math.max(1, Math.round(height * scale));
     context.setTransform(scale, 0, 0, scale, 0, 0);
@@ -131,7 +131,13 @@ function mountParticles(canvas, context) {
   }, { passive: true });
   window.addEventListener('resize', resize, { passive: true });
   document.addEventListener('visibilitychange', syncMotion);
+  window.addEventListener('pagehide', () => {
+    cancelAnimationFrame(frame);
+    frame = 0;
+  });
+  window.addEventListener('pageshow', event => { if (event.persisted) syncMotion(); });
   reducedMotion.addEventListener('change', syncMotion);
   forcedColors.addEventListener('change', syncMotion);
+  touch.addEventListener('change', resize);
   resize();
 }

@@ -176,8 +176,12 @@ export async function listRecords(redis, kind, offset = 0, status = '', stage = 
 export async function publicRecords(redis, kind, offset = 0, limit = 100) {
   const ids = await redis(['ZREVRANGE', `digivated:public:${kind}s`, offset, offset + limit - 1]);
   if (!ids.length) return [];
-  const projections=await redis(['MGET', ...ids.map(id => `digivated:public:${kind}:${id}`)]);
-  return (await redis(['MGET', ...ids.map(id => storageKey(kind,id))])).filter((raw,index)=>raw && projections[index]).map(JSON.parse).map(record => kind === 'submission' ? projectPublic(record) : contentPublic(kind,record)).filter(Boolean);
+  const [projections, records] = await Promise.all([
+    redis(['MGET', ...ids.map(id => `digivated:public:${kind}:${id}`)]),
+    redis(['MGET', ...ids.map(id => storageKey(kind, id))]),
+  ]);
+  return records.filter((raw, index) => raw && projections[index]).map(JSON.parse)
+    .map(record => kind === 'submission' ? projectPublic(record) : contentPublic(kind, record)).filter(Boolean);
 }
 
 
