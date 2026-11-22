@@ -114,16 +114,23 @@
   }
 
   .dg-launch-feed { min-inline-size: 0; }
-  .dg-launch-nav {
-    display: flex;
-    flex-wrap: wrap;
+  html[data-theme="daylight"] body.home-refresh .dg-launch-nav {
+    display: flex !important;
+    flex-flow: row wrap !important;
     align-items: center;
-    column-gap: clamp(12px, 2vw, 24px);
-    margin-block-end: 16px;
+    gap: 0 clamp(12px, 2vw, 24px) !important;
+    margin: 0 0 16px !important;
+    padding: 0 !important;
     border-block-end: 1px solid var(--fl-line);
   }
   html[data-theme="daylight"] body.home-refresh .dg-launch-nav a {
-    display: inline-flex;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
     align-items: center;
     gap: .3em;
     min-height: 44px;

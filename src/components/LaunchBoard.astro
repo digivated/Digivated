@@ -1,4 +1,6 @@
 ---
+import UiIcon from './UiIcon.astro';
+
 // Rows are rendered by home-board.js from
 // /api/projects?ranking=1 (this week, earlier), /api/launches?view=podium (last
 // week's final results) and /api/launches?view=upcoming (launching next).
@@ -11,7 +13,7 @@ const sections = [
 ---
 <nav class="dg-launch-nav" aria-label="Browse launches">
   {sections.map(section => <a href={`#${section.id}`}>{section.navLabel}</a>)}
-  <a href="/discover#directory-filters">Browse by category <span aria-hidden="true">↗</span></a>
+  <a href="/discover#directory-filters">Browse by category <UiIcon name="external" size={13}/></a>
 </nav>
 <div class="dg-board" data-board>
   {sections.map(section => (<>
