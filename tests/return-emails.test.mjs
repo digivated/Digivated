@@ -61,8 +61,8 @@ test('digest requires the cron secret and configured mailing address',async()=>{
 });
 
 test('digest sends only recent published projects and stops at ten recipients',async()=>{
- const f=fixture(),handler=makeWeeklyDigestHandler(f.deps),issue=new Date();
- issue.setUTCDate(issue.getUTCDate()-issue.getUTCDay());issue.setUTCHours(15,0,0,0);if(+issue>Date.now())issue.setUTCDate(issue.getUTCDate()-7);
+ const f=fixture(),issue=new Date('2026-11-30T15:00:00Z');
+ const handler=makeWeeklyDigestHandler({...f.deps,now:()=>+issue+1000});
  const now=+issue-1000;
  f.entries.set('digivated:submission:recent',JSON.stringify({status:'featured',name:'New tool',url:'https://example.com',publishedAt:new Date(now).toISOString(),reviewedAt:new Date(now-14*86400000).toISOString()}));
  f.entries.set('digivated:submission:private',JSON.stringify({status:'pending',name:'Private project',url:'https://private.example',reviewedAt:new Date(now).toISOString()}));
@@ -112,11 +112,10 @@ test('footer signup verifies the mailbox, deduplicates account delivery, and uns
 
 test('temporary account and provider failures are visible and preserve subscriptions',async()=>{
  const f=fixture();
- const issue=new Date();
- issue.setUTCDate(issue.getUTCDate()-issue.getUTCDay());issue.setUTCHours(15,0,0,0);if(+issue>Date.now())issue.setUTCDate(issue.getUTCDate()-7);
+ const issue=new Date('2026-11-30T15:00:00Z');
  f.entries.set('digivated:submission:recent',JSON.stringify({status:'approved',name:'<A & B>',publishedAt:new Date(+issue-1000).toISOString()}));
  f.entries.set(`digivated:weekly:preference:${id}`,JSON.stringify({email}));f.members.set(id,0);
- const call=deps=>f.invoke(makeWeeklyDigestHandler(deps),'GET','/api/weekly-digest',undefined,{authorization:`Bearer ${env.CRON_SECRET}`});
+ const call=deps=>f.invoke(makeWeeklyDigestHandler({...deps,now:()=>+issue+1000}),'GET','/api/weekly-digest',undefined,{authorization:`Bearer ${env.CRON_SECRET}`});
  const unavailable={auth:{admin:{getUserById:async()=>({error:{status:503}})}}};
  assert.equal((await call({...f.deps,adminClient:unavailable})).status,503);
  const rejected=await call({...f.deps,fetcher:async()=>({ok:false,status:429})});
@@ -126,6 +125,26 @@ test('temporary account and provider failures are visible and preserve subscript
  assert.match(f.sent[0].html,/&lt;A &amp; B&gt;/);
  assert.equal((await call(f.deps)).body.sent,0);
  assert.equal(f.sent.length,1);
+});
+
+test('Monday digest skips the Sunday overlap and carries its cutoff into the next week', async () => {
+ const f=fixture();
+ f.entries.set(`digivated:weekly:preference:${id}`,JSON.stringify({email}));
+ f.members.set(id,Date.parse('2026-11-22T16:00:00Z'));
+ for (const [key,name,publishedAt] of [
+  ['sunday','Already in Sunday’s issue','2026-11-22T14:59:59Z'],
+  ['monday','Monday launch','2026-11-23T14:00:00Z'],
+  ['later','Later launch','2026-11-23T16:00:00Z'],
+ ]) f.entries.set(`digivated:submission:${key}`, JSON.stringify({name,publishedAt,status:'approved'}));
+ const send=now=>f.invoke(makeWeeklyDigestHandler({...f.deps,now:()=>Date.parse(now)}),
+  'GET','/api/weekly-digest',undefined,{authorization:`Bearer ${env.CRON_SECRET}`});
+ assert.equal((await send('2026-11-23T15:01:00Z')).body.sent,1);
+ assert.match(f.sent[0].text,/Monday launch/);
+ assert.doesNotMatch(f.sent[0].text,/Already in Sunday|Later launch/);
+ assert.equal((await send('2026-11-23T17:01:00Z')).body.sent,0);
+ assert.equal((await send('2026-11-30T15:01:00Z')).body.sent,1);
+ assert.match(f.sent[1].text,/Later launch/);
+ assert.doesNotMatch(f.sent[1].text,/Monday launch/);
 });
 
 test('the November update reaches confirmed weekly readers with activity on, once, even without new projects',async()=>{

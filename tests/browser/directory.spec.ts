@@ -12,12 +12,41 @@ test('the footer signs up an email and asks for confirmation on mobile', async (
   });
   await page.goto(base + '/');
   const digest = page.getByRole('region', { name: 'The weekly launch digest' });
+  await expect(digest).toContainText('every Monday');
   await digest.getByRole('textbox', { name: 'Email address' }).fill('reader@example.com');
   await digest.getByRole('button', { name: 'Subscribe' }).click();
   await expect(digest.getByRole('status')).toContainText('Check your inbox to confirm');
   await expect(page.getByRole('contentinfo').getByRole('link', { name: 'Email settings' })).toHaveAttribute('href', '/account?tab=settings');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 });
+
+for (const width of [320, 768, 1440]) {
+  test(`the signup and link columns align in the footer at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(base + '/');
+    const footer = page.getByRole('contentinfo');
+    const layout = await footer.evaluate(node => {
+      const box = (selector: string) => node.querySelector(selector)!.getBoundingClientRect();
+      const signup = box('.dg-footer-signup');
+      const title = box('#footer-digest-title');
+      const links = box('.dg-footer-groups');
+      const input = box('#footer-digest-email');
+      const button = box('[data-footer-digest] button');
+      const credits = box('.dg-footer-bottom');
+      return {
+        sideBySide: links.left > signup.right && Math.abs(links.top - title.top) < 2,
+        stacked: links.top >= signup.bottom && Math.abs(signup.left - links.left) < 2,
+        controlsFit: input.width >= 128 && input.right <= button.left + 1 && button.right <= signup.right,
+        creditsBelow: credits.top > Math.max(signup.bottom, links.bottom),
+        dimensions: { signup: signup.width, input: input.width, button: button.width, links: links.width },
+      };
+    });
+    expect(layout).toMatchObject({ sideBySide: width === 1440, stacked: width !== 1440, controlsFit: true, creditsBelow: true });
+    await expect(footer).toHaveCSS('background-color', 'rgb(23, 24, 28)');
+    await expect(footer.getByRole('link', { name: 'Report a bug' })).toBeVisible();
+    await expect(footer.locator('[data-launchai-badge]')).toHaveAttribute('href', 'https://launchai.tools');
+  });
+}
 
 test('Tools puts search first and keeps the cross-category list available', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
@@ -302,7 +331,7 @@ test('sidebar navigation keeps the content and footer aligned across destination
   await nav.getByRole('link', { name: 'News', exact: true }).click();
   await expect(page).toHaveURL(base + '/news');
   await expect(nav.getByRole('link', { name: 'News', exact: true })).toHaveAttribute('aria-current', 'page');
-  await expect(page.getByRole('contentinfo').locator('.dg-footer-group h2').first()).toHaveCSS('color', 'rgb(113, 113, 122)');
+  await expect(page.getByRole('contentinfo').locator('.dg-footer-group h2').first()).toHaveCSS('color', 'rgb(182, 183, 192)');
   expect(await shell()).toEqual(categories);
 
   await page.goBack();

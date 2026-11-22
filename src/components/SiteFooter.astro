@@ -9,27 +9,20 @@ const socials = footerGroups.find(group => group.title === 'Follow')?.links ?? [
 ---
 <footer class="dg-site-footer">
   <div class="dg-footer-inner">
-    <section class="dg-footer-signup" aria-labelledby="footer-digest-title">
-      <div>
+    <div class="dg-footer-main">
+      <section class="dg-footer-signup" aria-labelledby="footer-digest-title">
         <h2 id="footer-digest-title">The weekly launch digest</h2>
-        <p>Up to three new Digivated launches on Sundays.</p>
-      </div>
-      <form action="/api/return-emails?action=subscribe" method="post" data-footer-digest>
-        <div class="dg-footer-signup-fields">
-          <label class="sr-only" for="footer-digest-email">Email address</label>
-          <input id="footer-digest-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required/>
-          <button class="button primary" type="submit">Subscribe</button>
-        </div>
-        <p role="status" data-footer-digest-status></p>
-        <noscript><p><a href="/account?tab=settings">Subscribe in Email settings</a></p></noscript>
-      </form>
-    </section>
-    <div class="dg-footer-intro">
-      <a class="dg-footer-brand" href="/">
-        <img class="daylight-brand-mark" src="/digivated-daylight-mark.png" width="32" height="32" alt=""/>
-        Digivated
-      </a>
-    </div>
+        <p>Up to three new launches every Monday.</p>
+        <form action="/api/return-emails?action=subscribe" method="post" data-footer-digest>
+          <div class="dg-footer-signup-fields">
+            <label class="sr-only" for="footer-digest-email">Email address</label>
+            <input id="footer-digest-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required/>
+            <button class="button primary" type="submit">Subscribe</button>
+          </div>
+          <p role="status" data-footer-digest-status></p>
+          <noscript><p><a href="/account?tab=settings">Subscribe in Email settings</a></p></noscript>
+        </form>
+      </section>
       <nav class="dg-footer-groups" aria-label="Footer">
         {groups.map(group => <div class="dg-footer-group">
           <h2>{group.title}</h2>
@@ -39,8 +32,9 @@ const socials = footerGroups.find(group => group.title === 'Follow')?.links ?? [
           </ul>
         </div>)}
       </nav>
+    </div>
     <div class="dg-footer-bottom">
-
+      <div class="dg-footer-credits">
         <div class="dg-footer-feature"><span>Featured on</span><a class="dg-footer-credit" href="https://launchai.tools" target="_blank" rel="noopener noreferrer" data-launchai-badge="featured" aria-label="Featured on LaunchAI: Digivated">
           <img src="/media/launchai-rocket-mark.png" alt="" width="18" height="18" loading="lazy" decoding="async"/>
           LaunchAI
@@ -48,8 +42,8 @@ const socials = footerGroups.find(group => group.title === 'Follow')?.links ?? [
         <nav class="dg-footer-utility" aria-label="Digivated social links">
           {socials.map(([href, label]) => <a href={href} target="_blank" rel="noopener noreferrer">{label}</a>)}
         </nav>
-
-      <small>© {new Date().getFullYear()} Digivated</small>
+      </div>
+      <small><a class="dg-footer-brand" href="/">© {new Date().getFullYear()} Digivated</a></small>
     </div>
   </div>
 </footer>

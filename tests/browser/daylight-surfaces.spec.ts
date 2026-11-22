@@ -136,13 +136,7 @@ for (const width of [320, 1440]) {
       expect(height, path).toBeLessThan(width === 320 ? 850 : 550);
       const action = footer.getByRole('link', { name: 'New Launch', exact: true });
       await expect(action).toHaveCount(1);
-      await expect(footer).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-      const glass = await footer.evaluate(element => {
-        const surface = getComputedStyle(element, '::before');
-        return { blur: surface.backdropFilter, fade: surface.maskImage };
-      });
-      expect(glass.blur).toContain('blur(12px)');
-      expect(glass.fade).toContain('linear-gradient');
+      await expect(footer).toHaveCSS('background-color', 'rgb(23, 24, 28)');
       await expect(footer.locator('a[href^="/creators"], a[href^="/inbox"], a[href*="threads.com"], a[href*="instagram.com"]')).toHaveCount(0);
       await expect(footer.locator('.dg-footer-group').filter({ has: page.getByRole('link', { name: 'New Launch', exact: true }) })).toHaveText(/For makers/);
       await expect(footer.getByRole('link', { name: 'Email settings' })).toHaveAttribute('href', '/account?tab=settings');
