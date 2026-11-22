@@ -298,8 +298,9 @@ function render({ animateSearch = false, only = null } = {}) {
   if (jumps) jumps.hidden = top;
   const categories = document.querySelector('[data-board-categories]');
   if (categories) {
+    const activeItems = Object.values(activeGroups).flat();
     const counts = new Map();
-    for (const item of Object.values(activeGroups).flat()) {
+    for (const item of activeItems) {
       if (item.category) counts.set(item.category, (counts.get(item.category) || 0) + 1);
     }
     const names = ['', ...[...counts.keys()].sort((a,b) => counts.get(b) - counts.get(a) || a.localeCompare(b))];
@@ -311,10 +312,17 @@ function render({ animateSearch = false, only = null } = {}) {
         const button = el('button', name || 'All');
         button.type = 'button';
         button.dataset.boardCategory = name;
+        const count = el('span', null, 'board-category-count');
+        count.setAttribute('aria-hidden', 'true');
+        button.append(count);
         return button;
       }));
     }
-    for (const button of categories.children) button.setAttribute('aria-pressed', String(button.dataset.boardCategory === state.category));
+    for (const button of categories.children) {
+      const name = button.dataset.boardCategory;
+      button.setAttribute('aria-pressed', String(name === state.category));
+      button.lastElementChild.textContent = number.format(name ? counts.get(name) || 0 : activeItems.length);
+    }
     const filters = categories.closest('[data-board-filters]');
     for (const button of filters.querySelectorAll('[data-board-sort]')) button.setAttribute('aria-pressed', String(button.dataset.boardSort === state.sort));
     filters.hidden = false;

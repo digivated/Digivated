@@ -85,12 +85,7 @@ if(state){
    if (live.some(item => item.id === selected)) selector.value = selected;
    document.getElementById('analytics-picker').hidden = live.length < 2;
    if (!live.length) {
-    const empty = document.createElement('div');
-    empty.className = 'account-analytics-empty';
-    const heading = document.createElement('strong');
-    heading.textContent = 'No live launches yet';
-    empty.append(heading, 'Analytics appear after your first launch goes live.');
-    result.replaceChildren(empty);
+    result.replaceChildren(emptyLaunchState('No live launches yet', 'Analytics appear after your first launch goes live.'));
    }
    else showAnalytics();
   }
@@ -106,15 +101,33 @@ if(state){
   show(`You're logged in as ${email}.`);
   state.hidden=true; // The dashboard bar already shows who is signed in.
   void loadSubmissions();
+  function emptyLaunchState(title, description) {
+   const card = document.createElement('div');
+   card.className = 'maker-empty-state';
+   const mark = document.createElement('img');
+   mark.src = '/digivated-daylight-mark.png';
+   mark.width = 34;
+   mark.height = 34;
+   mark.alt = '';
+   const heading = document.createElement('h3');
+   heading.textContent = title;
+   const copy = document.createElement('p');
+   copy.textContent = description;
+   const action = document.createElement('a');
+   action.className = 'button primary';
+   action.href = '/submit-project';
+   action.textContent = 'New Launch';
+   card.append(mark, heading, copy, action);
+   return card;
+  }
   function renderSubmissions(submissions){
    projects.clear();
    for (const item of submissions) projects.set(item.id, item);
    updateOverview();
    list.replaceChildren();
    if(!submissions.length){
-    const empty=document.createElement('div');empty.className='fl-card fl-panel-pad fl-empty';
-    empty.innerHTML='<h2>No launches yet</h2><p>Your drafts, scheduled launches and live projects will appear here.</p>';
-    list.append(empty);return;
+    list.append(emptyLaunchState('No launches yet', 'Your drafts, scheduled launches, and live projects will appear here.'));
+    return;
    }
    for(const item of submissions)list.append(projectCard(item));
   }
