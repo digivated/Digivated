@@ -382,6 +382,7 @@
   .home-refresh .board-introduction { margin:0 auto 8px; max-width:45ch; color:var(--fl-muted); text-align:center; }
   .board-all-categories { display: none !important; }
   .board-filters:not([hidden]) {display:grid;gap:8px;min-width:0;padding-block:8px;}
+  .board-category-bar { min-width: 0; }
   .board-sort,.board-categories {display:flex;align-items:center;gap:5px;max-width:100%;min-width:0;}
   .board-categories {
     overflow-x: auto;
