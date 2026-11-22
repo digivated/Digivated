@@ -202,13 +202,3 @@
   .launch-page .dg-signin { background: transparent !important; border-color: var(--fl-line) !important; }
   .launch-related-list li + li { border-block-start: 1px solid var(--fl-line) !important; }
 }
-
-/* Share on: one quiet row of platform pills under Save / Copy link. */
-@layer daylight {
-  .launch-page .launch-share-to { display: flex !important; flex-basis: 100% !important; flex-wrap: wrap !important; align-items: center !important; gap: 6px !important; margin: 2px 0 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
-  .launch-page .launch-share-to > span { margin-right: 4px !important; font-size: 13px !important; font-weight: 550 !important; color: var(--fl-muted) !important; }
-  .launch-page .launch-share-to > a { display: inline-flex !important; align-items: center !important; min-height: 32px !important; padding: 0 12px !important; border: 1px solid var(--fl-line) !important; border-radius: 999px !important; background: var(--fl-surface) !important; color: var(--fl-ink) !important; font-size: 13px !important; font-weight: 600 !important; line-height: 1 !important; text-decoration: none !important; box-shadow: 0 1px 2px #1111110a !important; transition: transform .15s ease, background-color .15s ease, border-color .15s ease !important; }
-  .launch-page .launch-share-to > a:hover { transform: translateY(-1px) !important; border-color: var(--fl-line-hi) !important; background: var(--fl-raised) !important; }
-  .launch-page .launch-share-to > a:active { transform: translateY(0) !important; }
-  @media (prefers-reduced-motion: reduce) { .launch-page .launch-share-to > a { transition: none !important; } .launch-page .launch-share-to > a:hover { transform: none !important; } }
-}
