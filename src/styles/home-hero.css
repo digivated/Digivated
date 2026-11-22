@@ -300,3 +300,16 @@
   .home-refresh .board-date-divider {padding:6px 0 2px !important;margin:0 !important;background:transparent !important;color:#444 !important;font-size:12px !important;font-weight:600;list-style:none;}
   .home-refresh .board-date-divider:first-child {border-radius:0;}
 }
+
+/* Rolling countdown digits (rolling-counter.js). Each digit is a 1.25em window onto a
+   0–9 strip; the edges fade so digits roll in and out softly. */
+.dg-roll { --dg-roll-ease: cubic-bezier(.34, 1.32, .64, 1); display: inline-block; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.dg-roll-track { display: inline-flex; align-items: flex-start; white-space: pre; }
+.dg-roll-slot { position: relative; display: inline-block; inline-size: 1ch; block-size: 1.25em; overflow: hidden; text-align: center;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 30%, #000 70%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0, #000 30%, #000 70%, transparent 100%); }
+.dg-roll-strip { display: flex; flex-direction: column; will-change: transform; }
+.dg-roll-strip > span { display: block; block-size: 1.25em; line-height: 1.25; }
+.dg-roll-strip.is-moving { filter: blur(.4px); }
+.dg-roll-char { display: inline-block; block-size: 1.25em; }
+@media (prefers-reduced-motion: reduce) { .dg-roll-strip { transition: none !important; filter: none !important; } }
