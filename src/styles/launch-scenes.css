@@ -49,18 +49,6 @@
   .dg-scene-play { display: none; width: 0; height: 0; border: 6px solid transparent !important; border-left: 9px solid currentColor !important; margin-left: 6px; }
   .dg-scene-toggle[data-paused="true"] .dg-scene-pause { display: none; }
   .dg-scene-toggle[data-paused="true"] .dg-scene-play { display: block; }
-  html[data-theme="daylight"] body .dg-footer-motion {
-    z-index: 1;
-    top: 0;
-    inset-inline: auto var(--daylight-gutter) !important;
-    bottom: auto;
-  }
-  @media (min-width: 781px) {
-    html[data-theme="daylight"] body .dg-footer-motion {
-      top: 44px;
-      inset-inline: var(--daylight-gutter) auto !important;
-    }
-  }
   @media (max-width: 700px) {
     .dg-launch-scene-hero { --current-height: 620px; }
     .dg-launch-scene-masthead { --current-height: 360px; opacity: .3; }

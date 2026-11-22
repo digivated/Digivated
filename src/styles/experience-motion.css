@@ -20,30 +20,8 @@
   }
   body.packet-workspace .topbar { position: relative; }
   body.packet-workspace .topbar .dg-reading-track { inset-inline: 14px; }
-  .dg-footer-inner { position: relative; }
-  .dg-footer-imprint {
-    display: block;
-    position: absolute;
-    inset-block-start: -13px;
-    inset-inline: var(--daylight-gutter);
-    height: 10px;
-    pointer-events: none;
-  }
-  .dg-footer-imprint::before {
-    content: '';
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, currentColor .8px, transparent 1.4px) 0 0 / 6px 6px;
-    opacity: .26;
-    mask-image: linear-gradient(90deg, #000 0%, #000 19%, transparent 56%);
-    transform-origin: left center;
-  }
   @media (prefers-reduced-motion: no-preference) {
     html[data-motion-ready] .dg-reading-track { display: block; }
-    html[data-motion-ready] .dg-footer-imprint[data-motion-entered]::before {
-      animation: dg-imprint-arrive .85s cubic-bezier(.22,1,.36,1);
-    }
 
     html[data-motion-ready] .dg-shell .dg-shell-disclosure[open] .site-menu-panel,
     html[data-motion-ready] .dg-shell .dg-shell-account-panel:not([hidden]),
@@ -68,10 +46,6 @@
       to { opacity: 1; translate: 0 0; }
     }
 
-    @keyframes dg-imprint-arrive {
-      from { opacity: .08; scale: .42 1; }
-      to { opacity: .26; scale: 1 1; }
-    }
     @supports (animation-timeline: view()) {
       html[data-motion-ready] #main :is(.dg-row:not(.is-loading) .dg-logo, .rl-grid .rl-mono, .dg-thread-row .dg-avatar, .launch-identity, .creator-public-intro .creator-avatar) {
         animation: dg-mark-arrive linear both;
