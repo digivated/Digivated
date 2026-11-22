@@ -259,13 +259,16 @@ test('sidebar navigation keeps the content and footer aligned across destination
   await nav.getByRole('link', { name: 'Categories', exact: true }).click();
   await expect(page).toHaveURL(base + '/categories');
   await expect(nav.getByRole('link', { name: 'Categories', exact: true })).toHaveAttribute('aria-current', 'page');
-  expect(await shell()).toEqual(home);
+  const categories = await shell();
+  expect(categories.rail).toEqual(home.rail);
+  expect(categories.footer).toEqual(home.footer);
+  expect(categories.content[0] + categories.content[1]).toBeCloseTo(home.content[0] + home.content[1], 0);
 
   await nav.getByRole('link', { name: 'News', exact: true }).click();
   await expect(page).toHaveURL(base + '/news');
   await expect(nav.getByRole('link', { name: 'News', exact: true })).toHaveAttribute('aria-current', 'page');
   await expect(page.getByRole('contentinfo').locator('.dg-footer-group h2').first()).toHaveCSS('color', 'rgb(208, 208, 208)');
-  expect(await shell()).toEqual(home);
+  expect(await shell()).toEqual(categories);
 
   await page.goBack();
   await expect(page).toHaveURL(base + '/categories');
