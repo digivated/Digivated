@@ -1,5 +1,20 @@
 import { safeSearchHref } from '../lib/discovery-search.mjs';
 
+export function resolveProjectLogo(art) {
+  const image = art.querySelector('img');
+  if (!image) return;
+
+  const showLogo = () => { art.querySelector('.dg-monogram').hidden = true; };
+  const showFallback = () => { image.remove(); };
+  if (image.complete) {
+    if (image.naturalWidth) showLogo();
+    else showFallback();
+  } else {
+    image.addEventListener('load', showLogo, { once: true });
+    image.addEventListener('error', showFallback, { once: true });
+  }
+}
+
 export function projectLogo(project, className) {
   const wrap = document.createElement('span');
   wrap.className = className + ' dg-project-art';
@@ -18,10 +33,9 @@ export function projectLogo(project, className) {
     image.height = 44;
     image.loading = 'lazy';
     image.decoding = 'async';
-    image.addEventListener('load', () => { initials.hidden = true; }, { once: true });
-    image.addEventListener('error', () => { image.remove(); }, { once: true });
     image.src = src;
     wrap.append(image);
+    resolveProjectLogo(wrap);
   }
   return wrap;
 }

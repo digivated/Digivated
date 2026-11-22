@@ -26,6 +26,19 @@ test('published project pages lead to feedback and further discovery', async () 
  assert.equal(schema.name,'Same name');
  assert.equal(schema.url,'https://digivated.com/projects/same-name-project-one');
 });
+test('project details keep the logo separate from the cover and preserve gallery uploads', async () => {
+ const listing = {...record('project-one'), slug:'sample', status:'approved', pagePublished:true};
+ const logoOnly = launchPublic({...listing, page:{consent:true}});
+ const logoOnlyHtml = await renderLaunch(logoOnly,{template});
+ assert.match(logoOnlyHtml,/class="launch-identity dg-project-art"[^]*src="\/api\/projects\?image=project-one"/);
+ assert.doesNotMatch(logoOnlyHtml,/class="launch-cover"/);
+ assert.match(logoOnlyHtml,/id="gallery"/);
+
+ const annotated = launchPublic({...listing,page});
+ const annotatedHtml = await renderLaunch(annotated,{template});
+ assert.match(annotatedHtml,/class="launch-cover"[^>]*><img src="[^"]*asset=primary"/);
+ assert.match(annotatedHtml,/asset=0" alt="Settings screen"/);
+});
 async function call(handler,url){let body;const headers={};const res={statusCode:200,setHeader:(k,v)=>headers[k]=v,end:x=>body=x};await handler({method:'GET',url,headers:{}},res);return {status:res.statusCode,body:Buffer.isBuffer(body)?body:String(body),headers};}
 test('Redis: explicit page publication, collision-safe stable URLs, private fields, withdrawal and deletion',{skip:!process.env.DIGIVATED_TEST_REDIS_PORT},async()=>{
  const redis=testRedis(11);await redis(['FLUSHDB']);

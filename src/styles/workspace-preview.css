@@ -411,18 +411,32 @@
     height: var(--project-logo-size) !important;
   }
   .dg-workspace #main .dg-project-art {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
     border: 1px solid var(--fl-line) !important;
     border-radius: var(--fl-radius) !important;
-    background: var(--fl-raised) !important;
+    background: var(--fl-surface) !important;
     color: var(--fl-ink) !important;
   }
-  .dg-workspace #main :is(.dg-project-art,.category-logo) img {
+  .dg-workspace #main .dg-project-art img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     box-sizing: border-box;
-    padding: 3px;
+    padding: var(--project-logo-inset, 3px);
     object-fit: contain;
+    background: transparent !important;
   }
-  .dg-workspace #main .dg-project-art img { background: var(--fl-surface) !important; }
-  .dg-project-art:has(.dg-monogram:not([hidden])) img { opacity: 0; }
+  .dg-project-art .dg-monogram[hidden] { display: none !important; }
+  @media (scripting: enabled) {
+    .dg-project-art:has(.dg-monogram:not([hidden])) img { visibility: hidden; }
+  }
+  @media (scripting: none) {
+    .dg-project-art:has(img) .dg-monogram { visibility: hidden; }
+  }
 
   .dg-workspace .dg-project-tile :is(.dg-tagline,.dg-spot-copy) {
     display: -webkit-box !important;
