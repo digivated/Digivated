@@ -105,6 +105,24 @@ html body.platform.light-theme.moments-theme .launch-directory { max-width:100%;
     border-radius: 22px !important;
     box-shadow: 0 24px 72px #191a1838, inset 0 1px 0 #fffe !important;
   }
+  html[data-theme="daylight"] #discovery-search :is(
+    .search-subtitle, .search-count, .search-footnote, .search-empty p, .search-empty-icon,
+    .unified-result-copy small, .search-result-type, .unified-result-arrow,
+    .discovery-close, #clear-discovery-search, .search-scopes button:not([aria-pressed="true"])
+  ) {
+    color: var(--fl-muted) !important;
+  }
+  html[data-theme="daylight"] #discovery-search :is(.search-shortcuts a, #reset-discovery-search, .search-footnote kbd) {
+    color: var(--fl-ink) !important;
+    border-color: var(--fl-line) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-surface) !important;
+  }
+  html[data-theme="daylight"] #discovery-search :is(.search-shortcuts a, #reset-discovery-search):hover {
+    background: var(--daylight-hover) !important;
+    border-color: var(--fl-line-hi) !important;
+  }
+  html[data-theme="daylight"] #discovery-search .search-footnote { border-color: var(--fl-line) !important; }
   @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     html[data-theme="daylight"] body #discovery-search[data-glass-surface] {
       background: #f7f7f5e6 !important;

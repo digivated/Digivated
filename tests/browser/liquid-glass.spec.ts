@@ -25,6 +25,8 @@ test('glass search stays usable at desktop and narrow widths',async({page,browse
   if (browserName === 'chromium') await expect(dialog).toHaveCSS('backdrop-filter', /url\(/);
   const tint = await dialog.evaluate(element => Number(getComputedStyle(element).backgroundColor.split(',').at(-1)?.replace(')', '')));
   expect(tint).toBeGreaterThan(.8);
+  await expect(dialog.locator('.search-subtitle')).toHaveCSS('color', 'rgb(97, 99, 91)');
+  await expect(dialog.getByRole('button',{name:'Guides',exact:true})).toHaveCSS('color', 'rgb(97, 99, 91)');
   await expect(page.locator('#unified-search-input')).toBeFocused();
   await page.keyboard.press('Escape');await expect(dialog).toBeHidden();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
