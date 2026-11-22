@@ -1,8 +1,4 @@
 @layer daylight {
-  html[data-theme="daylight"] body #main:has(> .launch-page) {
-    width: min(100%, var(--daylight-content)) !important;
-    padding-inline: var(--daylight-gutter) !important;
-  }
   html[data-theme="daylight"] body #main > .launch-page { margin: 0 auto !important; }
   .launch-draft { border: 1px solid var(--fl-line); padding: 16px; }
   .launch-back {
@@ -118,6 +114,13 @@
   .launch-media { display: grid; gap: 12px; }
   .launch-shot { margin: 0; border: 1px solid var(--fl-line) !important; border-radius: var(--fl-radius-card) !important; overflow: hidden; }
   .launch-shot img { display: block; width: 100%; height: auto; max-height: 640px; object-fit: contain; }
+  .launch-shot .launch-shot-unavailable {
+    margin: 0 !important;
+    padding: 16px;
+    background: var(--fl-raised) !important;
+    color: var(--fl-muted) !important;
+    font-size: 14px !important;
+  }
   .launch-shot figcaption { padding: 10px 14px; color: var(--fl-muted) !important; font-size: 14px; }
   .launch-page :is(.launch-overview h2, .launch-comments h2) {
     margin: 0 0 8px !important;
@@ -151,13 +154,6 @@
     text-underline-offset: 4px;
   }
   .launch-page .dg-signin { background: transparent !important; border-color: var(--fl-line) !important; }
-  .launch-page .dg-d-sort button[aria-pressed="true"] {
-    border-color: transparent !important;
-    background: transparent !important;
-    color: var(--fl-ink) !important;
-    text-decoration: underline !important;
-    text-underline-offset: 5px;
-  }
   .launch-facts { display: grid; gap: 8px; margin: 0; font-size: 14px; }
   .launch-facts > div { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; }
   .launch-facts dt { color: var(--fl-muted); }

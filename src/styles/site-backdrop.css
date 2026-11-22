@@ -13,6 +13,7 @@
     height: 100%;
     object-fit: cover;
     object-position: right center;
+    opacity: .5;
   }
 
   @media (forced-colors: active) {

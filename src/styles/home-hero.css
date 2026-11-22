@@ -133,7 +133,7 @@
   }
   html[data-theme="daylight"] body.home-refresh .dg-list-note { margin-block: 6px 12px !important; }
   html[data-theme="daylight"] body.home-refresh .dg-list-rows { border-block-start: 0 !important; }
-  html[data-theme="daylight"] body.home-refresh .dg-list-foot { justify-content: start; }
+  html[data-theme="daylight"] body.home-refresh .dg-list-foot { justify-content: start !important; }
   .home-refresh .dg-list-foot:has(> button[hidden]:only-child) { display: none !important; }
 
   html[data-theme="daylight"] body.home-refresh .dg-list-rows .dg-row {
@@ -174,7 +174,10 @@
     text-transform: none !important;
   }
   html[data-theme="daylight"] body.home-refresh .dg-main .dg-badge-medal { color: var(--fl-warn) !important; }
-  html[data-theme="daylight"] body.home-refresh .dg-row-empty { text-align: start; }
+  html[data-theme="daylight"] body.home-refresh .dg-list-rows .dg-row-empty {
+    padding-inline: 0 !important;
+    text-align: start;
+  }
 
   html[data-theme="daylight"] body.home-refresh .dg-board .dg-rising {
     padding: 0 !important;

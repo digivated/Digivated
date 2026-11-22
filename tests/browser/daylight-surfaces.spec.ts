@@ -36,6 +36,7 @@ for (const width of [320, 768, 1440]) {
     await page.goto(base + '/threads');
     const area = page.locator('[data-threads-page]');
     await expect(area.getByRole('heading', { name: 'Threads', exact: true })).toBeVisible();
+    await expect(area.getByRole('button', { name: 'New', exact: true })).toHaveCSS('min-height', '44px');
     await expect(area.getByRole('link', { name: 'Start a thread', exact: true })).toHaveCount(1);
     const topics = area.locator('.dg-forum-topics');
     if (width <= 760) {
@@ -143,6 +144,8 @@ for (const width of [320, 1440]) {
       expect(positions[0].x).toBeLessThan(positions[1].x);
       const credit = footer.locator('[data-launchai-badge]');
       await expect(credit).toHaveAttribute('href', 'https://launchai.tools');
+      await credit.scrollIntoViewIfNeeded();
+      await expect.poll(() => credit.locator('img').evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
       const [bottom, copy, partner, socials] = await Promise.all([
         footer.locator('.dg-footer-bottom').boundingBox(), footer.locator('.dg-footer-bottom > span').boundingBox(),
         credit.boundingBox(), footer.getByRole('navigation', { name: 'Digivated social links' }).boundingBox(),
@@ -179,12 +182,16 @@ for (const width of [320, 1440]) {
     const creator = 'Example Maker with a name long enough to wrap cleanly';
     const html = await renderLaunch({
       id: 'fixture-product', path: listing, name: 'Product fixture', creator,
-      logo: '/digivated-daylight-mark.png', category: 'Apps', gallery: [],
+      logo: '/digivated-daylight-mark.png', category: 'Apps',
+      gallery: [{ image: '/missing-project-screenshot.png', alt: 'Example project screenshot' }],
       description: 'An independent product with a public discussion.', ctaUrl: 'https://example.com',
       ctaLabel: 'Visit project', socialUrl: 'https://example.com/creator', date,
     }, { template });
     await page.route(base + listing, route => route.fulfill({ contentType: 'text/html', body: html }));
+    await page.route(base + '/missing-project-screenshot.png', route => route.fulfill({ status: 404 }));
     await page.goto(base + listing);
+    await expect(page.getByText('Screenshot currently unavailable.')).toBeVisible();
+    await expect(page.locator('.launch-shot img')).toHaveCount(0);
     const card = page.locator('.launch-creator');
     await expect(card.getByText(creator)).toBeVisible();
     await expect(card.getByText(creator)).toHaveCSS('color', 'rgb(25, 26, 24)');
@@ -216,7 +223,7 @@ for (const width of [320, 1440]) {
 
     await page.getByRole('link', { name: 'Join the discussion' }).click();
     await expect(page.locator('#feedback .dg-signin')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.locator('#feedback').getByRole('link', { name: 'Log in' })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Discussion' }).getByRole('link', { name: 'Log in' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 }
