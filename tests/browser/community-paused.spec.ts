@@ -33,14 +33,14 @@ for (const width of [390, 1440]) {
   await page.route('**/api/notifications?*', route => route.fulfill({json:{
    preferences:{enabled:false,reply:true,follow:true,message:true,feedback:true},
    approvals:[{name:'Studio Notes',href}],
-   items:[{id:'fixture-alert',type:'approved',title:'Your project is approved and live',href,createdAt:new Date().toISOString(),unread:true}],
+   items:[{id:'fixture-alert',type:'approved',title:'Your project is live',actor:'Studio Notes',verb:'is live on Digivated',href,createdAt:new Date().toISOString(),unread:true}],
    unread:1,
   }}));
   await page.goto('http://127.0.0.1:4321/notifications');
   const approvals = page.getByRole('region',{name:'Your live projects'});
-  await expect(approvals.getByText('Approved and live',{exact:true})).toBeVisible();
+  await expect(approvals.getByText('Live',{exact:true})).toBeVisible();
   await expect(approvals.getByRole('link',{name:/Studio Notes/})).toHaveAttribute('href',href);
-  const notification = page.getByRole('region',{name:'Recent activity'}).getByRole('link',{name:/Your project is approved and live/});
+  const notification = page.getByRole('region',{name:'Recent activity'}).getByRole('link',{name:/Studio Notes is live on Digivated/});
   await expect(notification).toHaveAttribute('href',href);
   await expect(notification).toHaveCSS('background-color','rgb(243, 243, 246)');
   await expect(page.getByText('1 unread · 1 recent')).toBeVisible();
