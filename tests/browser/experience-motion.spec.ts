@@ -42,7 +42,9 @@ test('section entrances never leave content hidden and stop after completion',as
 });
 test('hero stays readable when JavaScript is disabled',async({browser})=>{
  const c=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});const p=await c.newPage();await p.goto(base+'/');
- await expect(p.locator('#dg-home-title')).toBeVisible();
+ await expect(p.getByRole('heading',{name:'Find what’s next.'})).toBeVisible();
+ await expect(p.locator('#dg-home-title .gradient-text__content')).toHaveCSS('background-image', /^linear-gradient/);
+ await expect(p.getByRole('link',{name:'Browse launches',exact:true})).toHaveAttribute('href','#this-week');
  await expect(p.locator('canvas[data-site-backdrop]')).toHaveAttribute('width', '1');
  await expect(p.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
@@ -67,7 +69,7 @@ test('activity indicators follow system motion preferences and launch links stay
  const orbit = page.locator('.dg-activity-mark-orbit .dg-activity-dot').first();
  const ribbon = page.locator('.dg-activity-mark-ribbon .dg-activity-dot').first();
  await expect(orbit).toHaveCSS('background-color', 'rgb(57, 100, 86)');
- await expect(ribbon).toHaveCSS('background-color', 'rgb(97, 99, 91)');
+ await expect(ribbon).toHaveCSS('background-color', 'rgb(87, 98, 89)');
  await expect(orbit).toHaveCSS('animation-name', 'dg-orbit-signal');
  await expect(ribbon).toHaveCSS('animation-name', 'dg-ribbon-signal');
  await expect(page.locator('[data-scene-toggle]')).toHaveCount(0);

@@ -23,7 +23,7 @@
     letter-spacing: -.065em !important;
     text-wrap: balance;
   }
-  html[data-theme="daylight"] body .dg-home-hero #dg-home-title span {
+  html[data-theme="daylight"] body .dg-home-hero #dg-home-title > .gradient-text {
     padding-inline-end: .13em;
     color: var(--fl-muted) !important;
     font-style: italic;

@@ -139,7 +139,9 @@ if (root) {
     const box = el('div', null, 'dg-actions');
     const visit = visitLink(p, 'dg-visit dg-dir-visit');
     if (visit) {
-      visit.append(el('span', 'Visit'), el('span', '↗', 'dg-visit-arrow'), el('span', '✦', 'dg-dir-visit-pts'));
+      const arrow = icon('external');
+      arrow.classList.add('dg-visit-arrow');
+      visit.append(el('span', 'Visit'), arrow, el('span', '✦', 'dg-dir-visit-pts'));
       visit.setAttribute('aria-label', `Visit ${p.name} (opens in a new tab). Leave specific feedback when you’re back to earn points.`);
       visit.title = 'Visit, then leave specific feedback to earn points';
       box.append(visit);

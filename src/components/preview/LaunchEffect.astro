@@ -1,0 +1,21 @@
+---
+import { renderToString } from 'react-dom/server';
+import { launchEffect, type launchEffects } from './LaunchEffects';
+
+interface Props {
+  name: keyof typeof launchEffects;
+  class?: string;
+  decorative?: boolean;
+}
+const { name, class: className, decorative = false } = Astro.props;
+---
+<div class={className} data-launch-effect={name} aria-hidden={decorative ? 'true' : undefined} set:html={renderToString(launchEffect(name))}/>
+<script>
+  import { hydrateRoot } from 'react-dom/client';
+  import { launchEffect, type launchEffects } from './LaunchEffects';
+
+  for (const node of document.querySelectorAll<HTMLElement>('[data-launch-effect]')) {
+    const name = node.dataset.launchEffect as keyof typeof launchEffects;
+    hydrateRoot(node, launchEffect(name));
+  }
+</script>
