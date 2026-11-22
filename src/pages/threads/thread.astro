@@ -3,9 +3,8 @@ import Platform from '../../layouts/Platform.astro';
 import ThreadsSidebar from '../../components/ThreadsSidebar.astro';
 // Served for /threads/<slug> through a rewrite; the thread loads from its URL.
 ---
-<Platform title="Thread" description="A discussion on Digivated Threads." noindex={false}>
-  <div class="dg-forum" data-threads-page="thread">
-    <ThreadsSidebar active=""/>
+<Platform showBreadcrumb={false} title="Thread" description="A discussion on Digivated Threads." noindex={false}>
+  <div class="dg-forum dg-forum-secondary" data-threads-page="thread">
     <article class="dg-forum-main dg-thread-page" aria-live="polite">
       <p class="dg-forum-status" data-thread-status role="status">Loading thread…</p>
       <div data-thread-root hidden>
@@ -17,6 +16,7 @@ import ThreadsSidebar from '../../components/ThreadsSidebar.astro';
       </div>
       <section class="dg-thread-discussion" data-thread-discussion hidden aria-label="Replies"></section>
     </article>
+    <ThreadsSidebar active="" showStart/>
   </div>
   <script>import '../../scripts/threads.js';</script>
 </Platform>

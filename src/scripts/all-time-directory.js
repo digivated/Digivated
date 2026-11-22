@@ -8,7 +8,7 @@ import { DIRECTORY_SORTS, sortKeys, filterProjects, sortProjects, sectionLabel, 
 import { projectMarks } from '../lib/project-marks.mjs';
 
 // /discover: the all-time index. Same rows as the homepage, plus search, sorts,
-// category chips, and a project dialog. Visiting a product
+// category filters, and a project dialog. Visiting a product
 // from here counts toward feedback points (visit-feedback.js).
 const root = document.querySelector('[data-directory]');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -68,7 +68,7 @@ if (root) {
   const pending = new Set();
   const $ = selector => root.querySelector(selector);
   const list = $('[data-dir-list]'), status = $('[data-dir-status]'), more = $('[data-dir-more]'), shown = $('[data-dir-shown]');
-  const chips = $('[data-dir-chips]'), sorts = $('[data-dir-sorts]'), search = $('[data-dir-search]');
+  const category = $('[data-dir-chips]'), sort = $('[data-dir-sorts]'), search = $('[data-dir-search]');
 
   // ---------- URL state ----------
   function syncUrl() {
@@ -79,15 +79,19 @@ if (root) {
   }
 
   // ---------- Controls ----------
-  for (const [key, label] of DIRECTORY_SORTS) {
-    const button = el('button', null, 'dg-dir-sort' + (key === 'needs' ? ' is-points' : ''));
-    button.type = 'button'; button.dataset.sort = key;
-    if (key === 'needs') button.append(el('span', '✦ ', 'dg-dir-spark'));
-    button.append(label);
-    if (key === 'needs') button.title = 'Projects with the least feedback. Visit one, leave a specific comment, earn points.';
-    button.addEventListener('click', () => { state.sort = key; state.limit = PAGE; syncUrl(); render(); });
-    sorts.append(button);
-  }
+  for (const [key, label] of DIRECTORY_SORTS) sort.add(new Option(label, key));
+  sort.addEventListener('change', () => {
+    state.sort = sort.value;
+    state.limit = PAGE;
+    syncUrl();
+    render();
+  });
+  category.addEventListener('change', () => {
+    state.category = category.value;
+    state.limit = PAGE;
+    syncUrl();
+    render();
+  });
   root.querySelectorAll('[data-dir-collection]').forEach(button => button.addEventListener('click', () => {
     state.featured = button.dataset.dirCollection === 'featured'; state.limit = PAGE; syncUrl(); render();
   }));
@@ -183,27 +187,23 @@ if (root) {
   const live = $('[data-dir-live]');
   const say = text => { live.textContent = ''; requestAnimationFrame(() => { live.textContent = text; }); };
 
-  // ---------- Category chips ----------
-  function renderChips() {
-    const counts = categoryCounts(filterProjects(state.projects, { featured: state.featured }));
+  function renderCategories() {
+    const matching = filterProjects(state.projects, { featured: state.featured });
+    const counts = categoryCounts(matching);
     if (state.category && !counts.some(([name]) => name === state.category)) counts.push([state.category, 0]);
-    const chip = (name, count, label = name) => {
-      const button = el('button', null, 'dg-dir-chip'); button.type = 'button';
-      button.setAttribute('aria-pressed', String(state.category === name));
-      button.append(el('span', label), el('small', String(count)));
-      button.addEventListener('click', () => { state.category = state.category === name && name ? '' : name; state.limit = PAGE; syncUrl(); render(); button.focus({ preventScroll: true }); });
-      return button;
-    };
-    const total = filterProjects(state.projects, { featured: state.featured }).length;
-    chips.replaceChildren(chip('', total, 'All'), ...counts.map(([name, count]) => chip(name, count)));
+    category.replaceChildren(
+      new Option(`All categories (${number.format(matching.length)})`, ''),
+      ...counts.map(([name, count]) => new Option(`${name} (${number.format(count)})`, name)),
+    );
+    category.value = state.category;
   }
 
   // ---------- Render ----------
   function render(animate = true) {
-    sorts.querySelectorAll('[data-sort]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.sort === state.sort)));
+    sort.value = state.sort;
     root.querySelectorAll('[data-dir-collection]').forEach(button => button.setAttribute('aria-pressed', String((button.dataset.dirCollection === 'featured') === state.featured)));
     root.dataset.sort = state.sort;
-    renderChips();
+    renderCategories();
     $('[data-dir-needs]').hidden = state.sort !== 'needs';
     if (!state.loaded) return;
     const items = sortProjects(filterProjects(state.projects, state), state.sort);

@@ -5,6 +5,7 @@ import { notificationRow } from './notification-item.js';
 // Modified clicks (new tab) and signed-out visitors keep the plain /notifications link.
 const bell = document.getElementById('header-notifications-link');
 if (bell) {
+  const siteHeader = bell.closest('[data-site-header]');
   const el = (tag, text, className) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node; };
   const panel = el('section', null, 'dg-bell-panel'); panel.hidden = true; panel.id = 'dg-bell-panel';
   panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Notifications');
@@ -33,6 +34,11 @@ if (bell) {
   }
   const close = (focus = false) => { if (panel.hidden) return; panel.hidden = true; bell.setAttribute('aria-expanded', 'false'); if (focus) bell.focus(); };
   async function open() {
+    const bounds = siteHeader?.getBoundingClientRect();
+    if (bounds) {
+      panel.style.setProperty('--bell-top', `${Math.ceil(bounds.bottom) + 8}px`);
+      panel.style.setProperty('--bell-right', `${Math.max(12, Math.floor(innerWidth - bounds.right))}px`);
+    }
     panel.hidden = false; bell.setAttribute('aria-expanded', 'true');
     list.replaceChildren(el('p', 'Loading…', 'dg-bell-empty'));
     try {
@@ -44,10 +50,13 @@ if (bell) {
     } catch { list.replaceChildren(el('p', 'Notifications are unavailable right now.', 'dg-bell-empty')); }
   }
   bell.addEventListener('click', async event => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button > 0) return;
-    if (!token) { try { const s = await accountSession(); if (s.state === 'signed-in') token = s.session.access_token; } catch { /* plain link */ } }
-    if (!token) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button > 0) return;
+    if (!token && siteHeader?.dataset.account !== 'signed-in') return;
     event.preventDefault();
+    if (!token) {
+      try { const s = await accountSession(); if (s.state === 'signed-in') token = s.session.access_token; } catch { /* Use the notifications page. */ }
+      if (!token) { location.assign(bell.href); return; }
+    }
     if (panel.hidden) open(); else close();
   });
   readAll.addEventListener('click', () => { items.forEach(item => { item.unread = false; }); post('read-all', {}).catch(() => {}); render(); });

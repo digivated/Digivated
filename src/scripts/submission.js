@@ -37,7 +37,7 @@ if (form) {
       });
       const data = await response.json().catch(() => ({}));
       if (response.status === 409 && /could not find an eligible payment/i.test(data.error || '')) {
-        if (!quiet) paymentStatus.textContent = 'Payment not found yet. Finish checkout in the other tab — this page will publish your project as soon as it goes through.';
+        if (!quiet) paymentStatus.textContent = 'Payment hasn’t come through yet. Finish checkout in the other tab and we’ll publish your project once it goes through.';
         if (!pollUntil) pollUntil = Date.now() + 15 * 60000;
         return schedule();
       }
@@ -93,7 +93,7 @@ if (form) {
       resumePanel.hidden = true;
       details.hidden = false;
       if (query.get('resume')) history.replaceState(null, '', location.pathname);
-      status.textContent = 'Payment cancelled — you weren’t charged. Your details are still here: choose a launch option and submit again.';
+      status.textContent = 'Payment was canceled. You weren’t charged. Your details are still here. Choose a launch option to try again.';
       document.getElementById('sub-step-launch').scrollIntoView({ block: 'start' });
       (document.querySelector('[data-tiers] input:checked') || status).focus();
       document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
@@ -349,7 +349,7 @@ if (form) {
   };
   form.elements.url?.addEventListener('change',()=>renderBadgeFirst());
   intent.addEventListener('change',()=>{if(intent.value==='directory')ensureReservation();renderBadgeFirst();});
-  const updateButton = () => { button.disabled = !accountVerified; button.textContent=accountVerified?(intent.value==='instant'?`Continue to payment${instantConfig?.price?` — ${new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',trailingZeroDisplay:'stripIfInteger'}).format(instantConfig.price/100)}`:''} →`:intent.value==='directory'?(reservedBadge?'Verify badge & submit':'Save and get your badge'):'Submit for review'):'Sign in to submit your project'; };
+  const updateButton = () => { button.disabled = !accountVerified; button.textContent=accountVerified?(intent.value==='instant'?`Continue to payment${instantConfig?.price?` (${new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',trailingZeroDisplay:'stripIfInteger'}).format(instantConfig.price/100)})`:''} →`:intent.value==='directory'?(reservedBadge?'Verify badge & submit':'Save and get your badge'):'Submit for review'):'Sign in to submit your project'; };
   updateButton();
   form.addEventListener('submit', async event => {
     event.preventDefault();

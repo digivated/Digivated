@@ -1,0 +1,451 @@
+/* Public theme. Component styles continue to own structure and interaction. */
+@layer daylight {
+  html[data-theme="daylight"] {
+    --fl-bg: #f7f7f5 !important;
+    --fl-panel: #fff !important;
+    --fl-raised: #efefeb !important;
+    --fl-surface: #fff !important;
+    --fl-line: #dfdfda !important;
+    --fl-rule: #dfdfda !important;
+    --fl-outline: #dfdfda !important;
+    --fl-line-hi: #a9aaa4 !important;
+    --fl-ink: #191a18 !important;
+    --fl-copy: #363832 !important;
+    --fl-muted: #61635b !important;
+    --fl-accent: #242620 !important;
+    --fl-accent-hover: #34372e !important;
+    --fl-ok: #126b51 !important;
+    --fl-warn: #78500d !important;
+    --fl-bad: #a13441 !important;
+    --fl-radius: 8px !important;
+    --fl-radius-card: 14px !important;
+    --fl-shadow: 0 8px 24px #2433270c !important;
+    --daylight-hover: #f0f0ec;
+    --daylight-content: 1160px;
+    --daylight-gutter: clamp(16px,3vw,38px);
+    --dg-acc: var(--fl-accent) !important;
+    --dg-acc-ink: var(--fl-accent-hover) !important;
+    --dg-acc-text: var(--fl-accent) !important;
+    --dg-acc-line: #c5c6bc !important;
+    --dg-r: 8px !important;
+    --daylight-wash: #edede8 !important;
+    background: var(--fl-bg) !important;
+    color-scheme: light !important;
+    scrollbar-color: #bcbfb7 var(--fl-bg) !important;
+  }
+
+  html[data-theme="daylight"] body {
+    --accent: var(--fl-accent) !important;
+    --muted: var(--fl-muted) !important;
+    --paper: var(--fl-surface) !important;
+    --line: var(--fl-line) !important;
+    --tint: var(--fl-raised) !important;
+    --color-brand-bg: var(--fl-bg) !important;
+    --color-brand-surface: var(--fl-surface) !important;
+    --color-brand-card: var(--fl-surface) !important;
+    --color-brand-raised: var(--fl-raised) !important;
+    --color-brand-copy: var(--fl-copy) !important;
+    --color-brand-muted: var(--fl-muted) !important;
+    --color-brand-text: var(--fl-ink) !important;
+    --color-brand-line: var(--fl-line) !important;
+    color-scheme: light !important;
+    background: var(--fl-bg) !important;
+    color: var(--fl-copy) !important;
+    font-family: var(--fl-sans) !important;
+  }
+
+  html[data-theme="daylight"] body :where(*) { font-family: var(--fl-sans) !important; }
+  html[data-theme="daylight"] body :is(code,pre,kbd,samp,.dg-dot,.fl-badge-code *) { font-family: var(--fl-mono) !important; }
+  html[data-theme="daylight"] body #main { background-image: none !important; }
+  html[data-theme="daylight"] body :is(.site-breadcrumbs,.creator-back) {
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+  }
+  html[data-theme="daylight"] body :is(.fl-auth-heading,.dg-hero-copy) h1 {
+    font-size: clamp(30px,4.2vw,48px) !important;
+    font-weight: 650 !important;
+    line-height: 1.12 !important;
+    letter-spacing: -.045em !important;
+  }
+  html[data-theme="daylight"] body :is(.page-intro,.page-heading) .lede { line-height: 1.6 !important; }
+
+  html[data-theme="daylight"] body :is(h1,h2,h3,h4,h5,h6) { color: var(--fl-ink) !important; }
+  html[data-theme="daylight"] body :is(.lede,.eyebrow,.quiet,.tiny,small,.field-help) { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body :is(a,button,input,textarea,select,summary,[tabindex]):focus-visible {
+    outline: 2px solid var(--fl-accent) !important;
+    outline-offset: 3px !important;
+  }
+  html[data-theme="daylight"] body :is(button,summary,.button):hover { color: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body input[type="checkbox"],
+  html[data-theme="daylight"] body input[type="radio"],
+  html[data-theme="daylight"] body input[type="range"] { accent-color: var(--fl-accent); }
+
+  html[data-theme="daylight"] body :is(input:not([type="checkbox"],[type="radio"],[type="range"],[type="file"],[type="hidden"]),textarea,select) {
+    border-color: var(--fl-line-hi) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+    caret-color: var(--fl-ink);
+  }
+  html[data-theme="daylight"] body :is(input,textarea)::placeholder { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body :is(input,select,textarea)[aria-invalid="true"] { border-color: var(--fl-bad) !important; }
+
+  html[data-theme="daylight"] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.dg-header-submit):not([data-glass-surface="action"]) {
+    border: 1px solid var(--fl-accent) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-accent) !important;
+    color: white !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+  }
+  html[data-theme="daylight"] body :is(.button.primary,.fl-btn-primary,.dg-btn-primary,.dg-header-submit):not([data-glass-surface="action"]):hover { background: var(--fl-accent-hover) !important; }
+  html[data-theme="daylight"] body :is(.fl-btn:not(.fl-btn-primary),.dg-btn:not(.dg-btn-primary),.dg-more,.fl-btn-oauth) {
+    border-color: var(--fl-line-hi) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+  }
+  html[data-theme="daylight"] body :is(.fl-tabs,.login-tabs) :is([aria-selected="true"],[aria-current="page"],.active) {
+    border-bottom-color: var(--fl-accent) !important;
+    color: var(--fl-accent) !important;
+  }
+  html[data-theme="daylight"] body :is(.fl-link,.fl-switch .fl-link) { color: var(--fl-accent) !important; }
+
+  html[data-theme="daylight"] body .topbar {
+    background: var(--fl-bg) !important;
+    color: var(--fl-copy) !important;
+    border-color: var(--fl-line) !important;
+  }
+  html[data-theme="daylight"] body .daylight-brand-mark {
+    display: block !important;
+    flex: none;
+    width: 32px !important;
+    height: 32px !important;
+    object-fit: contain;
+  }
+  html[data-theme="daylight"] body .platform-brand {
+    color: var(--fl-ink) !important;
+    font-family: var(--fl-sans) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-bell-panel,.dg-bell-head,.wall-focus-panel,dialog) {
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+    border: 1px solid var(--fl-line) !important;
+    border-radius: var(--fl-radius-card) !important;
+    box-shadow: var(--fl-shadow) !important;
+  }
+  html[data-theme="daylight"] body .dg-bell-panel { top: var(--bell-top,82px) !important; right: var(--bell-right,12px) !important; }
+  html[data-theme="daylight"] body :is(.site-breadcrumbs,.site-breadcrumbs a) {
+    color: var(--fl-copy) !important;
+    font-family: var(--fl-sans) !important;
+  }
+  html[data-theme="daylight"] dialog::backdrop { background: #191a1869 !important; }
+
+  html[data-theme="daylight"] body .dg-pill { color: var(--fl-muted) !important; letter-spacing: .02em !important; }
+
+  html[data-theme="daylight"] body .dg-dot { text-shadow: none !important; }
+
+  html[data-theme="daylight"] body .dg-list { scroll-margin-block-start: 92px; }
+  html[data-theme="daylight"] body .dg-list-title { font-size: clamp(21px,2vw,26px) !important; color: var(--fl-ink) !important; }
+  html[data-theme="daylight"] body :is(.dg-list-title,.dg-pill,.dg-badge,.dg-spot-tag,.dg-rail-threads h3 a)::before,
+  html[data-theme="daylight"] body :is(.dg-list-title,.dg-pill,.dg-badge,.dg-spot-tag,.dg-rail-threads h3 a)::after { content: none !important; }
+  html[data-theme="daylight"] body .dg-list-head .dg-dot { display: none !important; }
+  html[data-theme="daylight"] body .dg-list-head > h2 { min-width: 0; margin-inline-end: auto !important; }
+
+  html[data-theme="daylight"] body .dg-dir { width: min(1060px,100%) !important; }
+  html[data-theme="daylight"] body .dg-main h3 { font-size: 16px !important; line-height: 1.32 !important; }
+  html[data-theme="daylight"] body .dg-main h3 > a { min-width: 0; overflow-wrap: anywhere; }
+  html[data-theme="daylight"] body .dg-actions a { flex: none; }
+  html[data-theme="daylight"] body .dg-tagline { font-size: 14.5px !important; }
+  html[data-theme="daylight"] body :is(.dg-meta,.dg-list-count,.dg-list-note) { font-size: 13px !important; }
+  html[data-theme="daylight"] body .dg-list-note { line-height: 1.5 !important; }
+  html[data-theme="daylight"] body .dg-row:not(.is-loading) { padding-block: 16px !important; }
+  html[data-theme="daylight"] body .dg-vote { min-width: 44px; min-height: 44px !important; }
+  html[data-theme="daylight"] body .dg-vote strong { font-size: 14px !important; }
+  html[data-theme="daylight"] body .news-story h3 { font-size: 18px !important; line-height: 1.35 !important; }
+  html[data-theme="daylight"] body :is(.news-story p,.submission-account-callout p,.creator-post p,.dg-d-body) { font-size: 15px !important; line-height: 1.6 !important; }
+
+  html[data-theme="daylight"] body .dg-row {
+    border-bottom: 1px solid var(--fl-line) !important;
+    background-image: none !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-row,.dg-spot,.rl-card,.dg-rising-item,.dg-note):hover { background: var(--daylight-hover) !important; }
+  html[data-theme="daylight"] body .dg-row::before { content: none !important; }
+  html[data-theme="daylight"] body :is(.dg-logo,.dg-spot-logo,.dg-rising-logo,.dg-review-logo,.launch-featured-art) img { background-color: var(--fl-raised) !important; }
+  html[data-theme="daylight"] body :is(.dg-logo,.dg-spot-logo,.dg-rising-logo,.dg-review-logo,.dg-avatar) {
+    border-color: var(--fl-line) !important;
+    border-radius: 9px !important;
+    background-color: var(--fl-raised) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-avatar span,.dg-monogram) { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body .dg-row.is-loading>* {
+    background-image: linear-gradient(90deg,#eeeee8,#e7e8e2,#eeeee8) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-vote,.dg-d-like,.dg-watch,.rl-vote) {
+    border: 1px solid var(--fl-line) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-vote,.dg-d-like,.dg-watch,.rl-vote)[aria-pressed="true"],
+  html[data-theme="daylight"] body :is(.dg-vote,.dg-d-like,.dg-watch,.rl-vote):hover {
+    background: var(--daylight-wash) !important;
+    color: var(--fl-accent) !important;
+    border-color: var(--dg-acc-line) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-row-empty a,.dg-badge-member,.dg-spot-member,.launch-member) { color: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body :is(.dg-list-note,.dg-comment,.dg-visit,.dg-meta,.dg-spot-plus,.dg-rail-threads h2 a) { color: var(--fl-muted) !important; }
+
+  html[data-theme="daylight"] body :is(.dg-spot,.dg-rail-threads,.dg-rising,.dg-rising-item,.dg-how,.dg-review,.dg-stats,.news-feature) {
+    border-radius: var(--fl-radius-card) !important;
+    border-color: var(--fl-line) !important;
+    background: var(--fl-surface) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-points,.news-page .news-filters button[aria-pressed="true"]) {
+    border-color: var(--dg-acc-line) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--daylight-wash) !important;
+    color: var(--fl-accent) !important;
+  }
+  html[data-theme="daylight"] body .dg-dir-search::before { content: none !important; }
+  html[data-theme="daylight"] body .dg-dir-search input { padding-inline: 12px !important; }
+  html[data-theme="daylight"] body .dg-dir-filters { display: flex; flex-wrap: wrap; gap: 10px 16px; }
+  html[data-theme="daylight"] body .dg-dir-filters label { display: grid; gap: 5px; flex: 1 1 130px; max-width: 260px; min-width: 0; color: var(--fl-muted) !important; font-size: 13px; }
+  html[data-theme="daylight"] body .dg-dir-filters select { width: 100%; }
+  html[data-theme="daylight"] body .dg-dir-collection { border: 0 !important; }
+  html[data-theme="daylight"] body .dg-dir-collection button + button { border-inline-start: 0 !important; }
+  html[data-theme="daylight"] body .dg-dir-collection button[aria-pressed="true"] {
+    background: transparent !important;
+    color: var(--fl-ink) !important;
+    text-decoration: underline !important;
+    text-underline-offset: 5px;
+  }
+  html[data-theme="daylight"] body :is(.dg-dir-list,.dg-dir-stats,.dg-dir-stats li,.dg-dir-launchnav,.dg-dir-divider) { border-color: var(--fl-line) !important; }
+  html[data-theme="daylight"] body .dg-dir-divider::before,
+  html[data-theme="daylight"] body .dg-dir-divider::after { content: none !important; }
+  html[data-theme="daylight"] body :is(.dg-dir-launchnav a,.dg-dir-stats span,.dg-dir-divider) { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body .dg-dir-overview { display: grid; gap: 12px; margin-top: 18px; }
+  html[data-theme="daylight"] body .dg-dir-overview h2 { margin: 0 !important; font-size: 18px !important; }
+  html[data-theme="daylight"] body .dg-dir-stats strong { color: var(--fl-ink) !important; }
+
+  /* Shared cards in sign-in, submission, listings, resources, and badges. */
+  html[data-theme="daylight"] body :is(.fl-card,.submission-account-callout,.submission-review,.submission-option-detail,.free-launch-guide,.fl-badge-card,.fl-badge-stage,.shop-card,.membership-access .carousel-access,.rl-card,.dg-fp,.dg-d-composer) {
+    border-color: var(--fl-line) !important;
+    border-radius: var(--fl-radius-card) !important;
+    background: var(--fl-surface) !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-tier,.dg-badge-first,.fl-code,.submission-disclosure,.rl-mono,.dg-note-icon,.fl-avatar) {
+    border-color: var(--fl-line) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-raised) !important;
+    color: var(--fl-ink) !important;
+  }
+  html[data-theme="daylight"] body :is(.login-tabs button,.fl-label-row label,.submission-disclosure summary,.fl-badges-page details summary,.dg-dir-collection button,.rl-status,.rl-description,.dg-menu-title,.site-breadcrumbs [aria-current="page"],.dg-note-link,.fl-badges-intro,.rl-cats button,.shop-for,.shop-note,.shop-price span) {
+    color: var(--fl-muted) !important;
+  }
+  html[data-theme="daylight"] body :is(.fl-badges-intro a,.fl-badges-notes a,.submission-account-actions a:not(.primary),.dg-rail-threads h2 a) {
+    color: var(--fl-accent) !important;
+  }
+  html[data-theme="daylight"] body :is(.login-tabs button[aria-selected="true"],.navigation-panel a[aria-current="page"],.dg-tier:has(input:checked),#project-import.dg-import,.fl-badge-tag,.dg-fp-icon,.dg-fp-toggle,.dg-fp-node,.dg-fp-reward,.rl-cats button[aria-current="true"],.rl-cats button:hover) {
+    border-color: var(--dg-acc-line) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--daylight-wash) !important;
+    color: var(--fl-accent) !important;
+    box-shadow: none !important;
+  }
+  html[data-theme="daylight"] body .dg-fp-strip .dg-fp-steps { border-color: var(--fl-line) !important; }
+  html[data-theme="daylight"] body :is(.dg-fp-strip-copy strong,.dg-fp-step-copy strong,.dg-spot.is-open strong,.shop-card h2,.shop-price strong,.fl-badge-bar strong,.rl-text strong) { color: var(--fl-ink) !important; }
+  html[data-theme="daylight"] body :is(.dg-fp-strip-copy span,.dg-fp-step-copy span,.dg-tier-sub,.rl-name,.rl-meta,.shop-list li) { color: var(--fl-copy) !important; }
+  html[data-theme="daylight"] body :is(.dg-fp,.dg-rising)::before { content: none !important; }
+
+  html[data-theme="daylight"] body :is(.dg-fp-head .dg-label,.shop-kicker-member) { color: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body .shop-kicker:not(.shop-kicker-member) { color: var(--fl-warn) !important; }
+  html[data-theme="daylight"] body .dg-fp-px path { fill: var(--fl-accent) !important; }
+
+  /* Shared interaction states for older public components. */
+  html[data-theme="daylight"] body :is(.creator-profile-editor,.creator-post:not(.creator-public .creator-post),.creator-projects article,.creator-inbox-list,.creator-inbox-thread,.inbox-picker,.packet-workspace .panel,.packet-workspace #site-navigation,.packet-workspace .start-steps li) {
+    background: var(--fl-surface) !important;
+    border-color: var(--fl-line) !important;
+    color: var(--fl-copy) !important;
+  }
+  html[data-theme="daylight"] body :is(.creator-public-intro .creator-avatar,.creator-tabs,.creator-timeline,.creator-projects,.creator-inbox-list-head,.fl-badge-bar,.saved-backup) { border-color: var(--fl-line) !important; }
+  html[data-theme="daylight"] body :is(.creator-back,#creator-bio,.creator-followers,#creator-public-status,.creator-tabs button,.creator-inbox-list-head button,.dg-winners-label,.saved-backup summary,#main form label,.dg-fp-strip-copy span,.packet-context a) { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body :is(.creator-tabs .active,.dg-moved a,.creator-profile-links a,.fl-menu-points,.fl-menu-points b,.dg-dir-needs a,.dg-dir-dialog-hint) { color: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body .creator-tabs .active { border-bottom-color: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body :is(.dg-moved,.dg-dir-needs) { color: var(--fl-copy) !important; background: var(--fl-raised) !important; border-color: var(--fl-line) !important; border-radius: var(--fl-radius) !important; }
+  html[data-theme="daylight"] body :is(.dg-moved strong,.dg-points-faq dt,.fl-badge-preview) { color: var(--fl-ink) !important; }
+  html[data-theme="daylight"] body :is(.fl-badge-code,.packet-workspace .example,.packet-workspace pre) { background: var(--fl-raised) !important; color: var(--fl-copy) !important; }
+  html[data-theme="daylight"] body :is(.dg-spot,.dg-row .dg-logo,.dg-rising-item,.news-story,.news-feature,.rl-card,.resource-card,.dg-btn,.dg-header-submit):hover { transform: none !important; }
+  html[data-theme="daylight"] body :is(.dg-row .dg-logo,.dg-spot,.news-story,.rl-card,.resource-card) {
+    transition: background-color .18s ease, border-color .18s ease !important;
+  }
+  html[data-theme="daylight"] body .dg-row:hover .dg-logo { transform: none !important; }
+  html[data-theme="daylight"] body :is(.dg-fp-spark,.dg-fp-px-arrow,.dg-rising-arrow,.dg-award strong,.dg-sparks span) { animation: none !important; }
+
+  html[data-theme="daylight"] body .dg-points-faq dt::before { content: none !important; }
+  html[data-theme="daylight"] body.packet-workspace summary { color: var(--fl-ink) !important; }
+  html[data-theme="daylight"] body.packet-workspace #site-navigation a[aria-current="page"] {
+    background: var(--daylight-wash) !important;
+    color: var(--fl-accent) !important;
+    border-color: var(--dg-acc-line) !important;
+  }
+  html[data-theme="daylight"] body .dg-note-link { font-size: inherit !important; letter-spacing: 0 !important; }
+  html[data-theme="daylight"] body .dg-list-head .dg-points { padding-inline: 6px !important; }
+  html[data-theme="daylight"] body .dg-list-head .dg-points:not(:has([data-points-have]:not([hidden]))) {
+    border: 0 !important;
+    background: transparent !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-rising h2,.dg-stats-head,.dg-award strong) {
+    color: var(--fl-ink) !important;
+    letter-spacing: 0 !important;
+    background-image: none !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+  html[data-theme="daylight"] body :is(.dg-badge-date,.dg-stat-label,.dg-stat-recent,.dg-watch small,.dg-watch[aria-pressed="true"] small) { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body :is(.dg-rising-meter,.dg-rising-arrow,.dg-rising-list li:first-child .dg-rising-rank,.dg-stats-week a,.dg-how-list dt span) { color: var(--fl-accent) !important; }
+  html[data-theme="daylight"] body :is(.dg-badge-medal,.dg-badge-medal.is-bronze) { color: var(--fl-warn) !important; }
+  html[data-theme="daylight"] body .dg-badge-medal.is-silver { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body .dg-stats-code { background: var(--fl-raised) !important; color: var(--fl-copy) !important; }
+  html[data-theme="daylight"] body .dg-watch>span:nth-child(2) { display: inline !important; }
+
+  @media (min-width: 681px) {
+    html[data-theme="daylight"] body .dg-row:not(.dg-dir-row) { grid-template-columns: 50px minmax(0,1fr) auto !important; }
+    html[data-theme="daylight"] body .dg-dir-row { grid-template-columns: 26px 50px minmax(0,1fr) auto !important; }
+    html[data-theme="daylight"] body .dg-row .dg-logo { width: 50px; height: 50px; }
+  }
+  @media (max-width: 680px) {
+    html[data-theme="daylight"] body .dg-tagline {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      white-space: normal !important;
+    }
+  }
+  @media (max-width: 480px), (pointer: coarse) {
+    html[data-theme="daylight"] body :is(input:not([type="checkbox"],[type="radio"],[type="range"],[type="file"],[type="hidden"]), textarea, select) {
+      font-size: max(16px, 1em) !important;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html[data-theme="daylight"] body :is(.dg-row .dg-logo,.dg-spot,.news-story,.rl-card,.resource-card) { transition: none !important; }
+  }
+
+}
+
+@layer daylight {
+  html[data-theme="daylight"] {
+    --editorial-title: clamp(34px, 5.2vw, 64px);
+    --editorial-space: clamp(22px, 3.5vw, 40px);
+    --section-space: clamp(30px, 5vw, 64px);
+    --section-title: clamp(22px, 2.8vw, 32px);
+    --editorial-rail: minmax(240px, 27%);
+    --editorial-gap: clamp(24px, 4vw, 52px);
+  }
+
+  /* Align the public reading rail while allowing focused forms to stay narrower. */
+  html[data-theme="daylight"] body.platform #main {
+    width: min(100%, var(--daylight-content)) !important;
+    padding-inline: max(var(--daylight-gutter), env(safe-area-inset-left), env(safe-area-inset-right)) !important;
+  }
+  html[data-theme="daylight"] body.platform #main > .site-breadcrumbs {
+    padding-block: 12px !important;
+  }
+  html[data-theme="daylight"] body #main > :is(.dg-dir, .news-page, .creator-social) {
+    width: 100% !important;
+    margin-inline: auto !important;
+  }
+  html[data-theme="daylight"] body #main > :is(.page-intro, .news-page, .creator-social, .dg-forum) {
+    margin-block-start: 0 !important;
+  }
+
+  html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .creator-social-heading, .notifications-heading, .creator-inbox-heading, .invstr-heading, .membership-heading) {
+    min-width: 0;
+    padding-block-end: 0 !important;
+    margin-bottom: var(--editorial-space) !important;
+    border-block-end: 0 !important;
+  }
+  html[data-theme="daylight"] body .news-page .news-toolbar { border-block-start: 0 !important; }
+  html[data-theme="daylight"] body #main .dg-dir-overview {
+    padding-inline: 0 !important;
+    border: 0 !important;
+    border-block-start: 1px solid var(--fl-line) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+  html[data-theme="daylight"] body #main .dg-dir-overview .dg-dir-stats {
+    padding: 0 !important;
+  }
+  html[data-theme="daylight"] body #main .dg-tier-flag {
+    position: static;
+    order: 1;
+    justify-self: start;
+    margin-block-start: 4px !important;
+    border: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    color: var(--fl-muted) !important;
+    text-transform: none !important;
+  }
+  html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .creator-social-heading, .notifications-heading, .creator-inbox-heading, .invstr-heading, .membership-heading) h1 {
+    margin-block: 0 8px !important;
+    font-size: var(--editorial-title) !important;
+    font-weight: 560 !important;
+    letter-spacing: -.058em !important;
+    line-height: 1.07 !important;
+    overflow-wrap: anywhere;
+  }
+  html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .creator-social-heading, .notifications-heading) h1::after {
+    content: '';
+    display: block;
+    width: 54px;
+    height: 4px;
+    margin-top: 11px;
+    background: radial-gradient(circle, var(--fl-muted) 1px, transparent 1.5px) left center / 6px 4px repeat-x !important;
+    opacity: .7;
+    pointer-events: none;
+  }
+  html[data-theme="daylight"] body #main :is(.page-intro .lede, .page-heading .lede, .creator-social-heading-copy > p:last-child) {
+    max-width: 58ch;
+    margin-block: 0 !important;
+    color: var(--fl-copy) !important;
+    line-height: 1.55 !important;
+  }
+
+  html[data-theme="daylight"] body #main .login-heading { margin-bottom: 18px !important; }
+  html[data-theme="daylight"] body #main .login-page { margin-block: var(--editorial-space) !important; }
+  html[data-theme="daylight"] body #main .fl-dash { padding-block: 16px !important; }
+  html[data-theme="daylight"] body #main .dg-fp-account { max-width: 900px; margin-inline: auto; }
+  html[data-theme="daylight"] body #main .fl-settings .fl-setting {
+    border: 0 !important;
+    border-block-end: 1px solid var(--fl-line) !important;
+    border-radius: 0 !important;
+    padding-inline: 0 !important;
+    background: transparent !important;
+    gap: 12px 20px;
+  }
+  html[data-theme="daylight"] body #main .fl-badges-page .fl-badge-stage {
+    border-radius: 0 !important;
+    border: 0 !important;
+  }
+  html[data-theme="daylight"] body #main .fl-badges-page .fl-badge-card {
+    overflow: hidden;
+  }
+  html[data-theme="daylight"] body #main :is(.news-filters button[aria-pressed="true"], .creator-hub-rail a[aria-current="page"]) {
+    border-color: var(--dg-acc-line) !important;
+    background: var(--daylight-wash) !important;
+    color: var(--fl-ink) !important;
+  }
+  html[data-theme="daylight"] body #main :is(.creator-hub-panel, .creator-social-main > .creator-tabs, .news-standards) {
+    border-color: var(--fl-line) !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+  }
+  html[data-theme="daylight"] body #main :is(.creator-hub-rail a, .creator-hub-panel p, .creator-hub-panel button, .creator-hub-about a, .creator-hub-rail-note) {
+    color: var(--fl-copy) !important;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html[data-theme="daylight"] body :is(.dg-shell a, .dg-shell button, .site-menu-trigger, .dg-site-footer a, #main .button, #main .fl-btn, #main .dg-btn) {
+      transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease !important;
+    }
+  }
+}

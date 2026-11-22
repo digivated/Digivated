@@ -1,0 +1,357 @@
+/* The public navigation shell uses its own selectors. Shared account logic uses IDs. */
+@layer daylight {
+  .dg-shell {
+    --shell-bar-glass: #f7f7f5f5;
+    --shell-panel-glass: #f7f7f5fa;
+    --shell-shadow: 0 14px 30px -12px #191a183d, 0 4px 10px -7px #191a182a;
+    --shell-rim: inset 0 1px 0 #fffe, inset 0 -1px 0 #25252123, inset 1px 0 0 #ffffffa6, inset -1px 0 0 #fff8;
+    --shell-bar-edge: 32px;
+    --shell-label-shadow: 0 0 4px #faf9f5, 0 0 9px #faf9f5;
+    --shell-border: var(--fl-line);
+    --shell-accent: var(--fl-accent);
+    --shell-ink: var(--fl-ink);
+    --shell-muted: var(--fl-muted);
+    --shell-active: var(--daylight-wash);
+    position: sticky;
+    top: 7px;
+    z-index: 40;
+    width: min(100%, var(--daylight-content));
+    margin: 0 auto !important;
+    padding-inline: var(--daylight-gutter) !important;
+  }
+
+  .dg-shell .dg-shell-bar {
+    display: grid;
+    grid-template-columns: max-content minmax(0,1fr) max-content;
+    align-items: center;
+    position: relative;
+    isolation: isolate;
+    gap: 12px;
+    min-height: 66px;
+    padding: 5px 10px !important;
+    background: transparent !important;
+  }
+  .dg-shell-material {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: var(--shell-bar-edge) !important;
+    background-color: var(--shell-bar-glass) !important;
+    box-shadow: var(--shell-rim), 0 5px 14px -10px #191a184d, 0 0 0 1px #25252110 !important;
+    pointer-events: none;
+  }
+  .dg-shell .dg-reading-track { inset-inline: calc(var(--daylight-gutter) + 18px); }
+
+  .dg-shell .dg-shell-brand,
+  .dg-shell .dg-shell-primary,
+  .dg-shell .dg-shell-tools {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+  .dg-shell .dg-shell-brand {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    gap: 6px;
+    padding: 2px 4px 2px 0 !important;
+    color: var(--shell-ink) !important;
+    font-size: 16px !important;
+    font-weight: 680;
+    text-shadow: var(--shell-label-shadow);
+    letter-spacing: -.035em;
+    text-decoration: none !important;
+  }
+  .dg-shell .dg-shell-primary { display: flex !important; grid-column: 2; grid-row: 1; gap: 2px; margin-inline-start: clamp(10px, 2.5vw, 36px); }
+  .dg-shell .dg-shell-tools { grid-column: -2; grid-row: 1; justify-self: end; gap: 4px; }
+
+  .dg-shell .dg-shell-primary a,
+  .dg-shell .dg-shell-login,
+  .dg-shell .dg-shell-icon,
+  .dg-shell .dg-shell-avatar-trigger,
+  .dg-shell .site-menu-trigger {
+    display: inline-flex !important;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-height: 42px;
+    padding: 5px 11px !important;
+    border: 1px solid transparent !important;
+    border-radius: 12px !important;
+    background: transparent !important;
+    color: var(--shell-ink) !important;
+    font-size: 14px !important;
+    font-weight: 550;
+    text-shadow: var(--shell-label-shadow);
+    text-decoration: none !important;
+    white-space: nowrap;
+  }
+  .dg-shell-search, .dg-shell-search .lq-provider { display: contents; }
+  .dg-shell .dg-shell-icon { width: 43px; padding: 0 !important; }
+  .dg-shell :is(.dg-shell-icon,.site-menu-trigger) svg { filter: drop-shadow(0 0 2px #faf9f5); }
+  .dg-shell[data-account="signed-out"] .dg-shell-notifications { display: none !important; }
+  .dg-shell :is(.dg-shell-icon,.dg-shell-login,.dg-shell-primary a,.dg-shell-avatar-trigger,.site-menu-trigger):hover,
+  .dg-shell :is(.dg-shell-primary a[aria-current="page"],:where(.dg-shell-disclosure[open]) > .site-menu-trigger,[aria-expanded="true"].dg-shell-avatar-trigger) {
+    background: var(--shell-active) !important;
+    color: var(--shell-accent) !important;
+  }
+  .dg-shell .dg-header-submit {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 42px;
+    padding: 7px 14px !important;
+    border-radius: 12px !important;
+    font-size: 14px !important;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .dg-shell .dg-shell-primary a[aria-current="page"] {
+    background: transparent !important;
+    text-decoration: underline !important;
+    text-underline-offset: 7px;
+  }
+  .dg-shell .site-menu-trigger { list-style: none; cursor: pointer; }
+  .dg-shell .site-menu-trigger::-webkit-details-marker { display: none; }
+  .dg-shell .site-menu-trigger::marker { content: ""; }
+  .dg-shell :is(.dg-shell-menu-label,.dg-shell-menu-open,.dg-shell-menu-close) { display: none; }
+  .dg-shell .dg-shell-disclosure[open] .dg-shell-more-arrow { rotate: 180deg; }
+
+  .dg-shell :is(.dg-shell-disclosure,.dg-shell-account) { position: relative; }
+  .dg-shell .dg-shell-disclosure:not([open]) > .site-menu-panel,
+  .dg-shell [hidden] { display: none !important; }
+  .dg-shell :is(.site-menu-panel,.dg-shell-account-panel) {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0,1fr);
+    align-content: start;
+    gap: 8px;
+    min-width: 0;
+    width: min(248px,calc(100vw - 24px));
+    max-height: min(68dvh,570px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 12px !important;
+    border: 1px solid var(--shell-border) !important;
+    border-radius: 23px !important;
+    background-color: var(--shell-panel-glass) !important;
+    color: var(--shell-ink) !important;
+    box-shadow: var(--shell-rim), var(--shell-shadow) !important;
+  }
+
+  .dg-shell .site-menu-primary { display: none; }
+  .dg-shell .site-menu-secondary { display: grid; gap: 4px; }
+  .dg-shell .site-menu-branch { min-width: 0; }
+  .dg-shell .site-menu-branch-trigger {
+    display: flex !important;
+    align-items: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 6px 8px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--shell-ink) !important;
+    font-size: 14px !important;
+    font-weight: 620;
+    list-style: none;
+    cursor: pointer;
+  }
+  .dg-shell .site-menu-branch-trigger::marker { content: ''; }
+  .dg-shell .site-menu-branch-trigger::-webkit-details-marker { display: none; }
+  .dg-shell .site-menu-branch-trigger:is(:hover,:focus-visible) { background: var(--shell-active) !important; }
+  .site-menu-glyph { display: block; flex: none; }
+  .site-menu-branch-chevron { margin-inline-start: auto; }
+  .site-menu-branch[open] > summary .site-menu-branch-chevron { rotate: 180deg; }
+
+  .dg-shell .site-menu-branch-links {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+  .dg-shell .site-menu-branch-links > li {
+    position: relative;
+    margin: 0 !important;
+    padding-inline-start: 32px;
+  }
+  .dg-shell .site-menu-connector {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 15px;
+    width: 18px;
+    height: 100%;
+    stroke: var(--fl-line-hi) !important;
+    stroke-width: 1.5;
+    pointer-events: none;
+  }
+  .dg-shell .site-menu-branch-links > li:has(a:is(:hover,:focus-visible,[aria-current="page"])) .site-menu-elbow {
+    stroke: var(--shell-muted) !important;
+  }
+  .dg-shell .site-menu-connector:dir(rtl) { scale: -1 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    html[data-motion-ready] .site-menu-branch-chevron { transition: rotate 240ms ease; }
+    html[data-motion-ready] .dg-shell-disclosure[open] .site-menu-branch[open]:not(:has(a:focus-visible)) .site-menu-connector {
+      animation: dg-branch-draw 295ms cubic-bezier(.22,1,.36,1) var(--branch-delay, 0ms) both;
+    }
+    .site-menu-branch-links > li:nth-child(2) { --branch-delay: 35ms; }
+    .site-menu-branch-links > li:nth-child(3) { --branch-delay: 70ms; }
+    .site-menu-branch-links > li:nth-child(4) { --branch-delay: 105ms; }
+    @keyframes dg-branch-draw {
+      from { clip-path: inset(0 0 100% 0); }
+      to { clip-path: inset(0); }
+    }
+    @supports (interpolate-size: allow-keywords) and selector(details::details-content) {
+      html[data-motion-ready] .site-menu-branch::details-content {
+        interpolate-size: allow-keywords;
+        block-size: 0;
+        overflow: clip;
+        transition: block-size 300ms cubic-bezier(.22,1,.36,1), content-visibility 300ms allow-discrete;
+      }
+      html[data-motion-ready] .site-menu-branch[open]::details-content { block-size: auto; }
+      html[data-motion-ready] .site-menu-branch:has(:focus-visible)::details-content { transition: none; }
+    }
+  }
+  .dg-shell :is(.site-menu-links,.dg-shell-account-panel) :is(a,button) {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    min-height: 44px !important;
+    padding: 6px 10px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--shell-ink) !important;
+    font-size: 14px !important;
+    text-align: start;
+    text-decoration: none !important;
+  }
+  .dg-shell :is(.site-menu-links,.dg-shell-account-panel) :is(a,button):is(:hover,[aria-current="page"]) {
+    background: var(--shell-active) !important;
+    color: var(--shell-accent) !important;
+  }
+  .dg-shell .site-menu-branch-links a { padding-inline: 6px !important; }
+  .dg-shell .site-menu-links a[aria-current="page"] {
+    font-weight: 680;
+    text-decoration: underline !important;
+    text-underline-offset: 4px;
+  }
+  .dg-shell .dg-shell-account-panel { gap: 2px; width: min(300px, calc(100vw - 24px)); }
+  .dg-shell .dg-shell-account-who {
+    display: grid;
+    gap: 3px;
+    padding: 6px 10px 10px;
+    border-bottom: 1px solid var(--shell-border) !important;
+    color: var(--shell-muted) !important;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+  .dg-shell .dg-shell-avatar-trigger { padding: 3px 6px !important; }
+  .dg-shell .dg-shell-avatar {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    overflow: hidden;
+    border-radius: 9px !important;
+    background: var(--shell-active) !important;
+    color: var(--shell-accent) !important;
+  }
+  .dg-shell .dg-shell-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .dg-shell .dg-shell-badge {
+    position: absolute;
+    right: 1px;
+    top: -2px;
+    min-width: 15px;
+    padding: 1px 3px !important;
+    border-radius: 99px !important;
+    background: var(--shell-accent) !important;
+    color: white !important;
+    font-size: 10px !important;
+    text-align: center;
+  }
+
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .dg-shell {
+      --shell-bar-glass: #f7f7f527;
+      --shell-panel-glass: #f7f7f566;
+    }
+    .dg-shell .dg-shell-material {
+      -webkit-backdrop-filter: blur(6px) contrast(.54) brightness(1.31) !important;
+      backdrop-filter: blur(6px) contrast(.54) brightness(1.31) !important;
+    }
+    .dg-shell :is(.site-menu-panel,.dg-shell-account-panel) {
+      -webkit-backdrop-filter: blur(14px) saturate(1.12) !important;
+      backdrop-filter: blur(14px) saturate(1.12) !important;
+    }
+  }
+  .dg-shell .dg-shell-material[data-liquid-lens] {
+    background-color: #f7f7f519 !important;
+    backdrop-filter: blur(3px) contrast(.58) brightness(1.29) var(--lq-lens) !important;
+  }
+  .dg-shell :is(.site-menu-panel,.dg-shell-account-panel)[data-liquid-lens] {
+    background-color: #f7f7f561 !important;
+    backdrop-filter: blur(11px) contrast(.68) brightness(1.17) var(--lq-lens) !important;
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .dg-shell [data-nav-reflection]::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      padding: 2px;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 260ms ease-out;
+      background-image: radial-gradient(ellipse 124px 89px at var(--reflection-x, 0px) var(--reflection-y, 0px),
+        #fff7e8 2%, #eca888 22%, #db8dbb 40%, #a294e1b8 59%, #81b8de80 77%, #8bc8be00 100%) !important;
+      mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+      mask-clip: content-box, border-box;
+      mask-composite: exclude;
+    }
+    .dg-shell .dg-shell-bar::after { border-radius: var(--shell-bar-edge); }
+    html[data-motion-ready] .dg-shell [data-reflecting]::after { opacity: .85; }
+  }
+  @media (max-width: 920px) {
+    .dg-shell .dg-shell-bar { grid-template-columns: minmax(max-content,1fr) max-content; }
+    .dg-shell .dg-shell-primary { display: none !important; }
+    .dg-shell :is(.dg-shell-more-label,.dg-shell-more-arrow) { display: none; }
+    .dg-shell .dg-shell-menu-label { display: inline; }
+    .dg-shell .dg-shell-disclosure:not([open]) .dg-shell-menu-open,
+    .dg-shell .dg-shell-disclosure[open] .dg-shell-menu-close { display: inline-flex; }
+    .dg-shell .site-menu-panel { width: min(310px,calc(100vw - 24px)); }
+    .dg-shell .site-menu-primary {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 2px;
+      padding-block-end: 8px;
+      border-block-end: 1px solid var(--shell-border);
+    }
+    .dg-shell .site-menu-primary a { justify-content: center; padding-inline: 4px !important; }
+  }
+  @media (max-width: 550px) {
+    .dg-shell { top: env(safe-area-inset-top); padding-inline: max(8px, env(safe-area-inset-left), env(safe-area-inset-right)) !important; }
+    .dg-shell .dg-shell-bar { gap: 4px; min-height: 58px; padding-inline: 4px !important; }
+    .dg-shell .dg-shell-tools { gap: 2px; }
+    .dg-shell .dg-shell-brand { padding-inline: 3px !important; }
+    .dg-shell .dg-shell-brand > span { display: none; }
+    .dg-shell :is(.dg-shell-login,.dg-header-submit,.site-menu-trigger) { padding-inline: 7px !important; font-size: 13px !important; }
+    .dg-shell .dg-shell-icon { width: 38px; }
+    .dg-shell .dg-header-submit svg { display: none; }
+    .dg-shell :is(.dg-shell-disclosure,.dg-shell-account) { position: static; }
+    .dg-shell :is(.site-menu-panel,.dg-shell-account-panel) { top: calc(100% + 6px); right: 8px; }
+    .dg-shell .site-menu-links a { text-shadow: var(--shell-label-shadow); }
+    .dg-shell .site-menu-panel { left: 8px; width: auto; max-height: min(82dvh, 660px, calc(100dvh - 78px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); }
+  }
+  @media (max-width: 359px) {
+    .dg-shell .site-menu-trigger { gap: 3px; padding-inline: 3px !important; }
+    .dg-shell .dg-shell-account-caret { display: none; }
+  }
+}

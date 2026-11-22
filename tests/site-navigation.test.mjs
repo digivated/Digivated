@@ -3,9 +3,12 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {primaryLinks,menuLinks,footerGroups} from '../src/data/site-navigation.mjs';
 test('shared public destinations use canonical current routes without repeated footer links',async()=>{
+ const header=[...primaryLinks,...menuLinks];
  const footer=footerGroups.flatMap(group=>group.links);
+ assert.equal(new Set(header.map(([href])=>href)).size,header.length);
+ for(const href of ['/login','/account','/submit-project'])assert.ok(!header.some(([link])=>link===href));
  assert.equal(new Set(footer.map(([href])=>href)).size,footer.length);
- for(const [link] of [...primaryLinks,...menuLinks,...footer]){
+ for(const [link] of [...header,...footer]){
   if(!link.startsWith('/'))continue;
   const href=link.split('?')[0];
   assert.ok(!['/membership','/products','/promote','/founding-members','/community'].includes(href));

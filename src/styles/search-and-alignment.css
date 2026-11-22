@@ -1,27 +1,3 @@
-/* One centered axis for the public header, hero and project directory. */
-html body.platform.light-theme.moments-theme .compact-site-header .header-inner {
-  display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
-  width:min(1160px,calc(100% - 48px)); max-width:1160px; margin-inline:auto; padding:10px 0; gap:20px;
-}
-html body.platform.light-theme.moments-theme .compact-site-header .platform-brand { justify-self:start; }
-html body.platform.light-theme.moments-theme .compact-site-header .header-primary { justify-self:center; margin:0; }
-html body.platform.light-theme.moments-theme .compact-site-header .compact-header-actions { justify-self:end; margin:0; }
-html body.platform.light-theme.moments-theme .launch-directory { max-width:100%; padding-inline:0; }
-@media(max-width:1000px) {
-  html body.platform.light-theme.moments-theme .compact-site-header .header-inner { grid-template-columns:auto minmax(0,1fr); }
-}
-@media(max-width:600px) {
-  html body.platform.light-theme.moments-theme .compact-site-header .header-inner { width:calc(100% - 32px); gap:8px; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial { width:calc(100% - 40px); min-height:460px; padding:48px 0 36px; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial h1 { font-size:clamp(38px,10vw,56px); letter-spacing:-.052em; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial>p:not(.home-editorial-kicker) { font-size:15px; margin-block:22px; max-width:36ch; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial-kicker { font-size:9px; letter-spacing:.12em; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial-actions { width:100%; gap:8px; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial-actions a { gap:8px; padding:10px 14px; font-size:12px; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial-scroll { margin-top:32px; font-size:9px; }
-  html body.platform.light-theme.moments-theme .wall-grid-view .wall-react-root { width:calc(100% - 32px); }
-}
-
 /* Search owns its geometry; only the results pane scrolls. */
 #discovery-search {
   box-sizing:border-box; width:min(640px,calc(100vw - 32px)); max-width:none;
@@ -97,4 +73,44 @@ html body.platform.light-theme.moments-theme .launch-directory { max-width:100%;
   #discovery-search .unified-result-copy strong { font-size:13px; }
   #discovery-search .unified-result-copy small { font-size:11px; }
   #discovery-search .search-footnote { padding:12px 18px; font-size:9px; }
+}
+
+
+@layer daylight {
+  html[data-theme="daylight"] body #discovery-search[data-glass-surface] {
+    border-radius: 22px !important;
+    box-shadow: 0 24px 72px #191a1838, inset 0 1px 0 #fffe !important;
+  }
+  html[data-theme="daylight"] #discovery-search :is(
+    .search-subtitle, .search-count, .search-footnote, .search-empty p, .search-empty-icon,
+    .unified-result-copy small, .search-result-type, .unified-result-arrow,
+    .discovery-close, #clear-discovery-search, .search-scopes button:not([aria-pressed="true"])
+  ) {
+    color: var(--fl-muted) !important;
+  }
+  html[data-theme="daylight"] #discovery-search :is(.search-shortcuts a, #reset-discovery-search, .search-footnote kbd) {
+    color: var(--fl-ink) !important;
+    border-color: var(--fl-line) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-surface) !important;
+  }
+  html[data-theme="daylight"] #discovery-search :is(.search-shortcuts a, #reset-discovery-search):hover {
+    background: var(--daylight-hover) !important;
+    border-color: var(--fl-line-hi) !important;
+  }
+  html[data-theme="daylight"] #discovery-search .search-footnote { border-color: var(--fl-line) !important; }
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    html[data-theme="daylight"] body #discovery-search[data-glass-surface] {
+      background: #f7f7f5e6 !important;
+      -webkit-backdrop-filter: blur(14px) !important;
+      backdrop-filter: blur(14px) !important;
+    }
+    html[data-theme="daylight"] #discovery-search::backdrop {
+      background: #191a184a !important;
+      backdrop-filter: blur(3px) !important;
+    }
+  }
+  html[data-theme="daylight"] body #discovery-search[data-liquid-lens] {
+    backdrop-filter: blur(11px) var(--lq-lens) !important;
+  }
 }

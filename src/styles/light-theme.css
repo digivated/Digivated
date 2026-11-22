@@ -60,8 +60,6 @@ html body.platform.light-theme .platform-header .desktop-nav a::after { backgrou
 }
 html body.platform.light-theme .platform-header .mobile-menu nav { background: #fbfbfb
 }
-html body.platform.light-theme .platform-footer { background: #ffffff; border-color: #dedede
-}
 html body.platform.light-theme .eyebrow{ color: #545454
 }
 html body.platform.light-theme.home-refresh .welcome-guide {
@@ -318,8 +316,6 @@ html body.platform.light-theme .mobile-menu summary { background:#f7f7f7; color:
 html body.platform.light-theme .mobile-menu nav { background:#fff; color:#222; border-color:#ddd; }
 html body.platform.light-theme .mobile-menu nav a { color:#333; }
 html body.platform.light-theme .mobile-menu nav a:hover,html body.platform.light-theme .mobile-menu nav a[aria-current=page] { background:#f0f0f0; color:#111; }
-html body.platform.light-theme .platform-footer { background:#ffffffc9; color:#171717; border-color:#ddd; }
-html body.platform.light-theme .platform-footer a,html body.platform.light-theme .platform-footer h2 { color:#333; }
 html body.platform.light-theme .welcome-guide,html body.platform.light-theme .idea-card,html body.platform.light-theme .journey-steps li,html body.platform.light-theme .home-product,html body.platform.light-theme .share-next { background:#ffffffdb; border-color:#dedede; }
 html body.platform.light-theme .welcome-guide a { color:#222; }
 html body.platform.light-theme .welcome-guide small,html body.platform.light-theme .welcome-number { color:#666; }

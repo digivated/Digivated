@@ -4,7 +4,7 @@ import { boostProgress, BOOST_POINTS_PER_VOTE } from '../lib/feedback-score.mjs'
 // (account-header.js) already fetches points for signed-in visitors and announces
 // them with `digivated:points`; this only listens, so there is no extra request.
 const cards = [...document.querySelectorAll('[data-feedback-points]')];
-const header = document.querySelector('.compact-site-header');
+const header = document.querySelector('[data-site-header]');
 let week = null, total = null;
 
 // Draws progress toward the next bonus upvote as an ASCII bar: ▓ earned, ░ to go.

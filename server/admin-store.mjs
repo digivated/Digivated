@@ -1,5 +1,6 @@
 import { projectCategory, isAiListing } from '../src/lib/project-taxonomy.mjs';
 import { projectPricingOptions } from '../src/lib/project-pricing.mjs';
+import { projectDisplayLogo } from './project-display-logo.mjs';
 import { launchFields, pageSlug } from './launch-pages.mjs';
 import { AdminError } from './admin-auth.mjs';
 import { acceptedProjectCategories, resourceCategories, normalizeResourceCategory, safeUrl, statuses } from '../src/data/community.mjs';
@@ -83,7 +84,7 @@ export function projectPublic(record) {
   // Keep incomplete legacy submissions in their owners' accounts, but off every public surface.
   const destination = safeUrl(record.url);
   if (!record.image || !destination) return null;
-  return { ...(record.promotion?.verified ? {sponsored:true} : {}), pageUrl: record.pagePublished && record.page?.consent && record.slug ? `/projects/${record.slug}` : `/projects/listing/${record.id}`, id: record.id, name: record.name, creator: record.creator, description: record.description, category: projectCategory(record), ...(isAiListing(record) ? { ai: true } : {}), url: destination, socialUrl: safeUrl(record.socialUrl), date: record.date, ...(record.publishedAt ? { publishedAt: record.publishedAt } : {}), ...(projectPricingOptions.includes(record.pricing) ? { pricing: record.pricing } : {}), status: record.status, pick: isDigivatedPick(record), image: `/api/projects?image=${record.id}` };
+  return { ...(record.promotion?.verified ? {sponsored:true} : {}), pageUrl: record.pagePublished && record.page?.consent && record.slug ? `/projects/${record.slug}` : `/projects/listing/${record.id}`, id: record.id, name: record.name, creator: record.creator, description: record.description, category: projectCategory(record), ...(isAiListing(record) ? { ai: true } : {}), url: destination, socialUrl: safeUrl(record.socialUrl), date: record.date, ...(record.publishedAt ? { publishedAt: record.publishedAt } : {}), ...(projectPricingOptions.includes(record.pricing) ? { pricing: record.pricing } : {}), status: record.status, pick: isDigivatedPick(record), image: projectDisplayLogo(record) };
 }
 export function contentPublic(kind, record) {
   if (record.status !== 'published') return null;

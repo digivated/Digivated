@@ -7,7 +7,7 @@ for(const width of [320,375,390])test(`mobile controls and project card stay at 
  await page.route('**/api/projects*',route=>route.fulfill({json:{items:[project],next:null}}));
  await page.goto(base+'/discover');
  await expect(page.getByRole('button',{name:'Open Mobile Card'})).toBeVisible();
- const search=page.getByRole('searchbox',{name:'Search projects or makers'});
+ const search=page.getByRole('searchbox',{name:'Search products or makers'});
  expect(await search.evaluate(element=>parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(16);
  const open=page.getByRole('button',{name:'Open Mobile Card'});
  expect(await open.evaluate(element=>getComputedStyle(element).touchAction)).toBe('manipulation');
@@ -53,8 +53,12 @@ test('homepage stats fit at narrow sizes and between the desktop sidebars', asyn
             range.selectNodeContents(element);
             return [...range.getClientRects()];
           });
-          const meter = stat.querySelector('.dg-dot');
-          if (meter) text.push(meter.getBoundingClientRect());
+          const meter = stat.querySelector('.dg-activity-mark');
+          if (meter) {
+            const mark = meter.getBoundingClientRect();
+            text.push(mark);
+            if (counter.getBoundingClientRect().right > mark.left + 1) return { aligned: false, fits: false, row: 0, valueTop: 0 };
+          }
           return {
             aligned: cell.left >= bounds.left - 1 && cell.right <= bounds.right + 1,
             fits: text.every(rect => rect.left >= cell.left - 1 && rect.right <= cell.right + 1),

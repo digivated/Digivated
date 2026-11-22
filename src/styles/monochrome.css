@@ -72,8 +72,6 @@ html body.platform .platform-header .desktop-nav a { font-size: .875rem; }
 html body.platform .platform-header .desktop-nav a[aria-current=page] { background: #292929; border-radius: 6px; }
 html body.platform .platform-header .desktop-nav a::after { background: #f5f5f5; }
 html body.platform .platform-header .mobile-menu nav { background: #191919; }
-html body.platform .platform-footer { background: #111; border-color: #363636; }
-html body.platform .platform-footer nav a { font-size: .875rem; }
 html body.platform .page-intro h1 { font-size: clamp(2.5rem,5vw,4rem); line-height: 1.12; letter-spacing: -.05em; }
 html body.platform .page-intro .lede { font-size: 1.0625rem; line-height: 1.75; max-width: 60ch; }
 html body.platform .section-kicker, html body.platform .eyebrow { color: #aaa; font-size: .6875rem; letter-spacing: .12em; }

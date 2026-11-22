@@ -1,4 +1,4 @@
-html#digivated-root body.platform .notifications-page { width:min(100%,900px); margin:0 auto; padding:42px 24px 96px; box-sizing:border-box; }
+html#digivated-root body.platform .notifications-page { width:100%; margin:0; padding:var(--editorial-space) 0 64px; box-sizing:border-box; }
 html#digivated-root body.platform .notifications-page [hidden] { display:none!important; }
 html#digivated-root body.platform .notifications-heading { display:flex; justify-content:space-between; align-items:end; gap:24px; margin-bottom:36px; }
 html#digivated-root body.platform .notifications-heading .eyebrow { margin:0 0 12px; color:var(--dg-accent); }
@@ -48,7 +48,7 @@ html#digivated-root body.platform .notifications-empty { padding:56px 24px; bord
 html#digivated-root body.platform .notifications-empty strong { color:var(--dg-ink); font-size:17px; }
 html#digivated-root body.platform .notifications-empty p { margin:10px auto 0; max-width:48ch; color:var(--dg-muted); font-size:13px; line-height:1.6; }
 @media(max-width:760px){
- html#digivated-root body.platform .notifications-page { padding:26px 18px 72px; }
+ html#digivated-root body.platform .notifications-page { padding-block-end:48px; }
  html#digivated-root body.platform .notifications-heading { align-items:start; flex-direction:column; gap:16px; }
  html#digivated-root body.platform .notifications-feed>header { align-items:start; flex-direction:column; }
  html#digivated-root body.platform .notifications-feed-actions { justify-content:flex-start; }

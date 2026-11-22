@@ -22,24 +22,6 @@ html[data-ascii] body .dg-dir-collection button{min-height:44px!important;paddin
 html[data-ascii] body .dg-dir-collection button+button{border-left:1px solid var(--dgb-line-hi,#2e2e2e)!important}
 html[data-ascii] body .dg-dir-collection button[aria-pressed=true]{background-color:#ececec!important;color:#0a0a0a!important}
 html[data-ascii] body .dg-dir-surprise{white-space:nowrap}
-html[data-ascii] body :is(.dg-dir-sorts,.dg-dir-chips){display:flex;gap:6px;margin:0!important;padding:4px 2px!important}
-html[data-ascii] body .dg-dir-sorts{min-block-size:44px}
-html[data-ascii] body .dg-dir-chips{min-block-size:40px}
-html[data-ascii] body :is(.dg-dir-sorts,.dg-dir-chips){overflow-x:auto;scrollbar-width:thin;scrollbar-color:#434343 transparent}
-html[data-ascii] body .dg-dir-sort{flex:none;min-height:36px!important;padding:4px 10px!important;border:0!important;border-radius:0!important;background:transparent!important;color:#8f8f8f!important;font-family:var(--fl-mono)!important;font-size:12px!important;letter-spacing:.04em;text-transform:lowercase;cursor:pointer;transition:color .18s!important}
-html[data-ascii] body .dg-dir-sort::before{content:'[ ';color:#444}
-html[data-ascii] body .dg-dir-sort::after{content:' ]';color:#444}
-html[data-ascii] body .dg-dir-sort:hover{color:#fff!important}
-html[data-ascii] body .dg-dir-sort[aria-pressed=true]{color:#fff!important}
-html[data-ascii] body .dg-dir-sort[aria-pressed=true]::before,html[data-ascii] body .dg-dir-sort[aria-pressed=true]::after{color:var(--dgb-ok,#8fd6a4)}
-html[data-ascii] body .dg-dir-sort.is-points{color:#cdb8f5!important}
-html[data-ascii] body .dg-dir-spark{color:#d9c6ff}
-html[data-ascii] body .dg-dir-chip{flex:none;display:inline-flex!important;align-items:center;gap:6px;min-height:32px!important;padding:3px 10px!important;border:1px solid #262626!important;border-radius:0!important;background:transparent!important;color:#b0b0b0!important;font-family:var(--fl-sans)!important;font-size:12.5px!important;cursor:pointer;transition:border-color .18s,color .18s!important}
-html[data-ascii] body .dg-dir-chip small{font-family:var(--fl-mono)!important;font-size:10.5px!important;color:#666!important}
-html[data-ascii] body .dg-dir-chip:hover{border-color:#555!important;color:#fff!important}
-html[data-ascii] body .dg-dir-chip[aria-pressed=true]{border-color:#c3a0ff!important;background-color:#c3a0ff14!important;color:#fff!important}
-html[data-ascii] body .dg-dir-chip[aria-pressed=true] small{color:#d9c6ff!important}
-
 /* Rows */
 html[data-ascii] body .dg-dir-list{margin:0!important;padding:0!important;list-style:none!important;border-top:1px solid #1c1c1c!important}
 html[data-ascii] body .dg-dir-row{grid-template-columns:26px 44px minmax(0,1fr) auto!important}
@@ -85,11 +67,5 @@ html[data-ascii] body .dg-dir-dialog-hint{margin:6px 0 0!important;font-family:v
  html[data-ascii] body .dg-dir-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
  html[data-ascii] body .dg-dir-stats li:nth-child(3){border-left:0!important}
  html[data-ascii] body .dg-dir-stats li:nth-child(n+3){border-top:1px dashed #2a2a2a!important}
-}
-}
-/* Mouse and trackpad users can't swipe a row sideways, so wrap the chips instead. */
-@layer flow {
-@media (hover:hover) and (pointer:fine){
- html[data-ascii] body :is(.dg-dir-sorts,.dg-dir-chips){flex-wrap:wrap;overflow:visible}
 }
 }

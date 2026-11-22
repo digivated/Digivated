@@ -96,7 +96,7 @@ if(state){
    else if(message){const next=document.createElement('p');next.className='fl-next-copy'+(stage.key==='scheduled'?' account-launch':'');next.textContent=message;card.append(next);}
    const actions=document.createElement('div');actions.className='fl-actions';
    if(['approved','featured'].includes(item.status)){const view=Object.assign(document.createElement('a'),{className:'button primary',href:item.pageUrl||'/projects/listing/'+encodeURIComponent(item.id),textContent:'View project and feedback'});actions.append(view);}
-   if(item.awaitingInstantPayment){const finish=Object.assign(document.createElement('a'),{className:'button primary',href:'/submit-project?resume='+encodeURIComponent(item.id),textContent:'Finish publishing'});const cancel=Object.assign(document.createElement('button'),{type:'button',className:'button',textContent:'Cancel — not charged'});cancel.dataset.cancelInstant=item.id;cancel.onclick=()=>cancelInstant(item,cancel);actions.append(finish,cancel);}
+   if(item.awaitingInstantPayment){const finish=Object.assign(document.createElement('a'),{className:'button primary',href:'/submit-project?resume='+encodeURIComponent(item.id),textContent:'Finish publishing'});const cancel=Object.assign(document.createElement('button'),{type:'button',className:'button',textContent:'Cancel checkout'});cancel.dataset.cancelInstant=item.id;cancel.onclick=()=>cancelInstant(item,cancel);actions.append(finish,cancel);}
    if(actions.childElementCount)card.append(actions);
    if(['approved','featured'].includes(item.status))card.append(statsPanel(item));
    const later=badgeLater(item,stage);if(later)card.append(later);

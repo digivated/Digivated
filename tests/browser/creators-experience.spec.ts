@@ -120,21 +120,17 @@ for (const width of [1100, 390]) {
   await expect(page.locator('#creator-public-status')).toBeVisible();
   // Sample the layout in one frame so entrance motion cannot skew comparisons.
   await page.evaluate(()=>document.fonts.ready);
-  const [avatar,label,tabs,status,cover]=await page.evaluate(()=>
-   ['#creator-avatar','.creator-cover>span','.creator-public>.creator-tabs','#creator-public-status','.creator-cover'].map(selector=>{
-    const el=document.querySelector(selector)!;const r=el.getBoundingClientRect();
-    return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,visible:getComputedStyle(el).display!=='none'};
-   }));
-  expect(cover.bottom-cover.top).toBeGreaterThan(80);
-  if(label.visible){
-   const overlaps=!(avatar.right<=label.left||avatar.left>=label.right||avatar.bottom<=label.top||avatar.top>=label.bottom);
-   expect(overlaps,'avatar must not cover the banner label').toBe(false);
-  }
+  const [avatar, title, tabs, status, intro] = await page.evaluate(() =>
+   ['#creator-avatar', '#creator-title', '.creator-public > .creator-tabs', '#creator-public-status', '.creator-public-intro'].map(selector =>
+    document.querySelector(selector)!.getBoundingClientRect().toJSON()));
+  expect(avatar.top).toBeGreaterThanOrEqual(intro.top);
+  expect(avatar.right).toBeLessThanOrEqual(title.left);
+  expect((await page.locator('.creator-cover').count())).toBe(0);
   expect(status.top,'status text sits under the tabs').toBeGreaterThanOrEqual(tabs.bottom-1);
   const message=page.getByRole('link',{name:'Message'});
-  // Primary buttons are the on-theme lilac style: light text on a dark fill.
-  expect(await message.evaluate(el=>getComputedStyle(el).color)).toBe('rgb(241, 234, 255)');
-  expect(await message.evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(21, 15, 31)');
+  // The message link uses the shared primary action colors.
+  expect(await message.evaluate(el=>getComputedStyle(el).color)).toBe('rgb(255, 255, 255)');
+  expect(await message.evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(36, 38, 32)');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  });
 }
@@ -178,4 +174,29 @@ for(const width of [320, 768, 1440])for(const ownProfile of [false,true])test(`a
  await expect(page.locator('#creator-projects')).toBeHidden();
  await expect(page.locator('#creator-posts')).not.toHaveAttribute('hidden');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('Projects works while the creator’s posts are still loading', async ({ page }) => {
+ const person = people[0];
+ let releasePosts!: () => void;
+ const postsReady = new Promise<void>(resolve => { releasePosts = resolve; });
+ await page.route('**/api/creator-profile*', async route => {
+  if (new URL(route.request().url()).searchParams.get('action') === 'posts') {
+   await postsReady;
+   return route.fulfill({ json: { posts: [], next: null } });
+  }
+  return route.fulfill({
+   json: { profile: { name: person.name, bio: person.bio }, projects: [], followers: 0, ownProfile: false },
+  });
+ });
+ await page.goto(base + '/creator?id=' + person.id);
+ try {
+  await expect(page.locator('#creator-public-status')).toHaveText('Loading posts…');
+  await page.getByRole('button', { name: 'Projects', exact: true }).click();
+  await expect(page.locator('#creator-public-status')).toHaveText('No published projects yet.');
+ } finally {
+  releasePosts();
+ }
+ await page.getByRole('button', { name: 'Posts', exact: true }).click();
+ await expect(page.locator('#creator-public-status')).toHaveText('No posts yet.');
 });

@@ -1,17 +1,9 @@
 // A native disclosure keeps navigation usable before scripts load.
-const menu = document.querySelector('.explore-menu, .mobile-menu');
+const menu = document.querySelector('[data-navigation]');
 if (menu) {
   const trigger = menu.querySelector('summary');
   const panel = menu.querySelector('nav');
-  const positionPanel = () => {
-    const header = menu.closest('header');
-    if (header) menu.style.setProperty('--navigation-top', `${Math.max(8, Math.ceil(header.getBoundingClientRect().bottom) + 8)}px`);
-  };
-  const sync = () => {
-    if (menu.open) positionPanel();
-    trigger.setAttribute('aria-expanded', String(menu.open));
-    trigger.setAttribute('aria-label', menu.open ? 'Close navigation menu' : 'Open navigation menu');
-  };
+  const sync = () => trigger.setAttribute('aria-expanded', String(menu.open));
   const close = (restoreFocus = false) => {
     if (!menu.open) return;
     menu.open = false;
@@ -19,7 +11,6 @@ if (menu) {
     if (restoreFocus && menu.contains(document.activeElement)) trigger.focus();
   };
   menu.addEventListener('toggle', sync);
-  window.addEventListener('resize', () => { if (menu.open) positionPanel(); });
   trigger.addEventListener('click', event => {
     if (menu.open) { event.preventDefault(); close(true); }
   });
@@ -28,9 +19,21 @@ if (menu) {
       event.preventDefault();
       menu.open = true;
       sync();
-      // First link that is actually shown (the bar's links repeat in the menu only on narrow screens).
-      [...(panel?.querySelectorAll('a') || [])].find(link => link.getClientRects().length)?.focus();
+      // Focus the first visible destination for the current layout.
+      const links = panel.querySelectorAll('a');
+      const first = [...links].find(link => !link.closest('.site-menu-branch:not([open])') && link.getClientRects().length);
+      (first || panel.querySelector('.site-menu-branch-trigger'))?.focus();
     }
+  });
+  panel.addEventListener('keydown', event => {
+    const summary = event.target.closest('.site-menu-branch-trigger');
+    const branch = summary?.parentElement;
+    if (event.key !== 'ArrowDown' || !branch) return;
+    event.preventDefault();
+    branch.open = true;
+    requestAnimationFrame(() => {
+      if (menu.open && branch.open && document.activeElement === summary) branch.querySelector('a')?.focus();
+    });
   });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && menu.open) { event.preventDefault(); close(true); }

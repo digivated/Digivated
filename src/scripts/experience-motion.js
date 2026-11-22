@@ -1,13 +1,33 @@
-// Progressive, one-shot entrances: content never depends on JavaScript to be visible.
-// Only small, static headings move; the reel, fixed navigation and dialogs
-// retain their own positioning, animation and focus behavior.
+import '../styles/experience-motion.css';
+
+const main = document.querySelector('main#main');
 const preference = matchMedia('(prefers-reduced-motion: reduce)');
-const groups = [
-  ...document.querySelectorAll('#home-title,.page-intro h1,#creators-title,#news-title,.resources-hero h1,.home-featured-heading,.project-reel-heading,.news-section-heading h2,.ranking-personal-heading h2,.launch-list-heading h2'),
-].slice(0, 12);
-const pending = new Set(groups);
+const connection = navigator.connection;
+const progress = document.querySelector('[data-reading-progress]');
+const headings = [...(main?.querySelectorAll('h1, [role="heading"][aria-level="1"]') || [])].slice(0, 2);
+const sectionTitles = main?.querySelectorAll('[data-section-reveal] > h2, [data-section-reveal] > header > h2') || [];
+const subheads = [...(main?.querySelectorAll('h2:not(.sr-only):not([hidden])') || [])].slice(0, 10);
+const introSelector = '.dg-hero-copy, .page-intro, .page-heading, .news-masthead, .dg-forum-header, .creator-social-heading, .login-heading, .membership-heading, .invstr-heading';
+const copySelector = '.lede, .dg-hero-lede, .news-intro, [data-forum-description], .login-heading > p:not(.eyebrow)';
+
+const cues = new Map();
+for (const heading of headings) {
+  cues.set(heading, { duration: 640, offset: 12, delay: 0 });
+  const intro = heading.closest(introSelector);
+  const lede = intro?.querySelector(copySelector);
+  if (lede) cues.set(lede, { duration: 600, offset: 8, delay: 105 });
+}
+for (const heading of new Set([...subheads, ...sectionTitles])) {
+  cues.set(heading, { duration: 540, offset: 10, delay: 0 });
+}
+for (const scene of document.querySelectorAll('[data-motion-scene]')) cues.set(scene, null);
+
 const active = new Map();
 let observer;
+let progressFrame = 0;
+let running = false;
+
+const allowed = () => !preference.matches && !connection?.saveData && !document.hidden;
 
 function finish(element) {
   const animation = active.get(element);
@@ -15,52 +35,88 @@ function finish(element) {
   active.delete(element);
   animation.cancel();
 }
+
 function reveal(element) {
-  if (!pending.delete(element)) return;
+  if (!allowed() || !cues.has(element)) return;
+  const cue = cues.get(element);
+  cues.delete(element);
   observer?.unobserve(element);
-  if (preference.matches || navigator.connection?.saveData || document.hidden || !element.animate || element.contains(document.activeElement)) return;
-  // No fill mode or inline opacity: cancellation and failures restore the base UI.
+  if (!cue) {
+    element.dataset.motionEntered = '';
+    return;
+  }
+  if (!element.animate || element.contains(document.activeElement)) return;
+  // Keep a readable starting pose. Leaving the page or focusing a control restores it instantly.
   try {
     const animation = element.animate([
-      { opacity: .9, transform: 'translateY(3px)' },
-      { opacity: 1, transform: 'translateY(0)' },
-    ], { duration: 180, easing: 'cubic-bezier(.2,.75,.25,1)' });
+      { opacity: cue.delay ? .86 : .76, translate: `0 ${cue.offset}px` },
+      { opacity: 1, translate: '0 0' },
+    ], { duration: cue.duration, delay: cue.delay, fill: 'backwards', easing: 'cubic-bezier(.22,1,.36,1)' });
     animation.id = 'digivated-content-entrance';
     active.set(element, animation);
     animation.finished.then(() => finish(element), () => {
       if (active.get(element) === animation) active.delete(element);
     });
-  } catch { /* Keep the unanimated, fully readable baseline. */ }
+  } catch { /* Static content is always available. */ }
 }
-function start() {
-  if (preference.matches || navigator.connection?.saveData || document.hidden) return;
-  if ('IntersectionObserver' in window && !observer) {
-    observer = new IntersectionObserver(entries => {
-      for (const entry of entries) if (entry.isIntersecting) reveal(entry.target);
-    }, { threshold: .12 });
-  }
-  for (const element of pending) {
-    const bounds = element.getBoundingClientRect();
-    if (!bounds.width || !bounds.height) { pending.delete(element); continue; }
-    if (bounds.bottom <= 0) { pending.delete(element); continue; }
-    if (bounds.top < innerHeight) reveal(element);
-    else if (observer) observer.observe(element);
-    else pending.delete(element);
-  }
+
+function paintProgress() {
+  progressFrame = 0;
+  const root = document.scrollingElement;
+  if (!progress || !root || !running) return;
+  const range = root.scrollHeight - root.clientHeight;
+  const ratio = range > 0 ? Math.min(1, Math.max(0, root.scrollTop / range)) : 0;
+  progress.style.setProperty('--reading-progress', String(ratio));
 }
+function scheduleProgress() {
+  if (running && progress && !progressFrame) progressFrame = requestAnimationFrame(paintProgress);
+}
+
 function stop() {
+  running = false;
+  document.documentElement.removeAttribute('data-motion-ready');
   observer?.disconnect();
   for (const element of active.keys()) finish(element);
+  cancelAnimationFrame(progressFrame);
+  progressFrame = 0;
 }
-preference.addEventListener('change', () => {
-  stop();
-  if (preference.matches) pending.clear();
-  else start();
-});
-document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
-// A control is immediately stable when tabbed to, even during its entrance.
+
+function sync() {
+  if (!allowed()) {
+    stop();
+    return;
+  }
+  running = true;
+  document.documentElement.setAttribute('data-motion-ready', '');
+
+  if (!observer && 'IntersectionObserver' in window) {
+    observer = new IntersectionObserver(entries => {
+      for (const entry of entries) if (entry.isIntersecting) reveal(entry.target);
+    }, { rootMargin: '0px 0px -7% 0px' });
+  }
+  for (const element of cues.keys()) {
+    const bounds = element.getBoundingClientRect();
+    if (bounds.height && bounds.bottom <= 0) {
+      cues.delete(element);
+      continue;
+    }
+    if (bounds.height && bounds.top < innerHeight * .93) reveal(element);
+    else observer?.observe(element);
+  }
+  scheduleProgress();
+}
+
+preference.addEventListener('change', sync);
+connection?.addEventListener('change', sync);
+document.addEventListener('visibilitychange', sync);
+window.addEventListener('pagehide', stop);
+window.addEventListener('pageshow', event => { if (event.persisted) sync(); });
 document.addEventListener('focusin', event => {
   for (const element of active.keys()) if (element.contains(event.target)) finish(element);
 });
-if (preference.matches) pending.clear();
-else start();
+if (progress) {
+  window.addEventListener('scroll', scheduleProgress, { passive: true });
+  window.addEventListener('resize', scheduleProgress, { passive: true });
+  if (main && 'ResizeObserver' in window) new ResizeObserver(scheduleProgress).observe(main);
+}
+sync();

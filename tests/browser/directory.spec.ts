@@ -9,6 +9,7 @@ const projects = Array.from({ length: 27 }, (_, i) => ({
   description: 'An independent project for the directory test.',
   category: i === 0 ? 'Education' : 'Apps',
   status: i === 0 ? 'featured' : 'approved',
+  image: i === 26 ? '/digivated-daylight-mark.png' : '',
   url: 'https://example.com',
   pageUrl: '/projects/listing/directory-' + i,
   votes: { all: 100 - i },
@@ -29,17 +30,27 @@ for (const width of [390, 1440]) {
     await expect(page.locator('[data-dir-podium]')).toHaveCount(0);
     const rows = page.locator('[data-dir-list] .dg-dir-open');
     await expect(rows).toHaveCount(24);
-    await expect(page.locator('[data-dir-sorts] [data-sort=new]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByLabel('Sort by')).toHaveValue('new');
     await expect(rows.first()).toHaveText('Directory fixture 26');
-    await page.locator('[data-dir-sorts] [data-sort=top]').click();
+    await expect(page.locator('#project-directory-26 .dg-logo img')).toHaveCSS('object-fit', 'contain');
+    await expect(page.locator('#project-directory-25 .dg-monogram')).toHaveText('DI');
+    await page.getByLabel('Sort by').selectOption('top');
     await expect(page).toHaveURL(/sort=top$/);
     await page.reload();
     await expect(rows.first()).toHaveText('Directory fixture 0');
-    await page.locator('[data-dir-sorts] [data-sort=new]').click();
+    await page.getByLabel('Sort by').selectOption('new');
     await expect(page).toHaveURL(base + '/discover');
     await expect(rows.first()).toHaveText('Directory fixture 26');
     await page.locator('[data-dir-more]').click();
     await expect(rows).toHaveCount(27);
+    await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('Education');
+    await expect(page).toHaveURL(/category=Education$/);
+    await expect(rows).toHaveCount(1);
+    await expect(rows.first()).toHaveText('Directory fixture 0');
+    await page.reload();
+    await expect(page.getByRole('combobox', { name: 'Category', exact: true })).toHaveValue('Education');
+    await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('');
+    await expect(page).toHaveURL(base + '/discover');
     await page.locator('[data-dir-search]').fill('Directory fixture 26');
     await expect(rows).toHaveCount(1);
     await expect(rows.first()).toHaveAttribute('href', '/projects/listing/directory-26');

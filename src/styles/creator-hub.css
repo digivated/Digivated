@@ -1,7 +1,7 @@
 /* The conversation uses one continuous feed, with useful navigation and real
    creator suggestions at desktop sizes. The same controls collapse on phones. */
 html#digivated-root body.platform .creator-social {
-  padding:38px clamp(18px,3vw,48px) 110px;
+  padding:var(--editorial-space) 0 76px;
   background:radial-gradient(ellipse 680px 360px at 52% 0,#60328f20,transparent 78%),#070608!important;
 }
 html#digivated-root body.platform .creator-feed-shell { width:min(1360px,100%); }

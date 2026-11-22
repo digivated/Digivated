@@ -80,11 +80,6 @@ html body.platform.light-theme .comment-dialog { box-shadow:0 20px 80px #37352f3
 html body.platform.light-theme .comment-dialog-header button { min-width:44px; width:44px; height:44px; border-radius:7px; }
 html body.platform.light-theme .account-announcement { border-radius:10px; box-shadow:0 8px 32px #37352f15; }
 html body.platform.light-theme .account-announcement-actions button { width:44px; height:44px; }
-html body.platform.light-theme .platform-footer { background:var(--nb-canvas); padding-top:64px; border:0; }
-html body.platform.light-theme .footer-inner { max-width:1200px; }
-html body.platform.light-theme .platform-footer .footer-columns { gap:24px; }
-html body.platform.light-theme .platform-footer nav h2 { font-size:12px; font-weight:650; }
-html body.platform.light-theme .platform-footer .footer-group-links a { font-size:12px; color:var(--nb-muted); }
 @media(max-width:1100px) {
  .notebook-maker { width:170px; right:-5px; bottom:-14px; }
  .notebook-note { width:80px; left:0; bottom:20px; }
@@ -127,7 +122,6 @@ html body.platform.light-theme .platform-footer .footer-group-links a { font-siz
  .notebook-closing { padding:40px 24px; }
  html body.platform.light-theme .notebook-closing h2 { font-size:32px; }
  html body.platform.light-theme .login-panel { padding:22px; }
- html body.platform.light-theme .platform-footer { padding-top:48px; }
 }
 @media(max-width:600px) {
  html body.platform.light-theme.home-refresh .notebook-browser [data-live-projects] .project-grid { grid-template-columns:1fr; }

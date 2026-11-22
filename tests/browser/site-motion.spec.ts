@@ -2,46 +2,75 @@ import { test, expect } from '@playwright/test';
 
 const base = 'http://127.0.0.1:4321';
 
-for (const path of ['/creators', '/news', '/resources', '/membership', '/inbox']) {
-  test(`${path} shares the page entrance`, async ({ page }) => {
-    await page.goto(base + path);
-    const name = await page.locator('main#main > section').first().evaluate(element => getComputedStyle(element).animationName);
-    expect(name).toContain('digivated-page-arrive');
-  });
-}
-
-test('reduced motion keeps content immediately visible', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(base + '/creators');
-  const section = page.locator('main#main > section').first();
-  await expect(section).toBeVisible();
-  expect(await section.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
-  expect(await page.locator('.creator-social-heading h1').evaluate(element => getComputedStyle(element, '::after').content)).toBe('none');
+test('public, packet and owner headings share the gentle entrance', async ({ page }) => {
+ await page.addInitScript(() => {
+  const original = Element.prototype.animate;
+  const headings: string[] = [];
+  Object.defineProperty(window, '__animatedHeadings', { value: headings });
+  Element.prototype.animate = function (...args: Parameters<Element['animate']>) {
+   if (this.matches('main#main h1') && args[1] && typeof args[1] === 'object' && args[1].duration === 640) {
+    headings.push(this.textContent || '');
+   }
+   return original.apply(this, args);
+  };
+ });
+ await page.setViewportSize({ width: 390, height: 844 });
+ for (const route of ['/discover', '/threads', '/login', '/submit-project', '/creators', '/news', '/resources', '/membership', '/inbox', '/account', '/start', '/admin']) {
+  await page.goto(base + route);
+  await expect.poll(() => page.evaluate(() => (window as any).__animatedHeadings.length), { message: route }).toBeGreaterThan(0);
+  await expect(page.locator('#main h1:visible').first()).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route).toBe(true);
+ }
+ await page.emulateMedia({ reducedMotion: 'reduce' });
+ await page.goto(base + '/start');
+ await expect(page.locator('#main h1')).toBeVisible();
+ expect(await page.evaluate(() => (window as any).__animatedHeadings)).toEqual([]);
 });
 
-for (const [path, selector] of [
-  ['/', '.home-editorial h1'], ['/discover', '.wall-intro h1'], ['/creators', '.creator-social-heading h1'],
-  ['/news', '.news-masthead h1'], ['/resources', '.link-directory-head h1'], ['/membership', '.membership-heading h1'],
-  ['/inbox', '.creator-inbox-heading h1'], ['/account', '.page-intro h1'], ['/login', '.login-heading h1'],
-] as const) {
-  test(`${path} has a visible heading trace`, async ({ page }) => {
-    await page.goto(base + path);
-    const heading = page.locator(selector).first();
-    await expect(heading).toBeVisible();
-    const trace = await heading.evaluate(element => {
-      const style = getComputedStyle(element, '::after');
-      return { content: style.content, name: style.animationName, width: parseFloat(style.width), duration: style.animationDuration, delay: style.animationDelay, timing: style.animationTimingFunction };
-    });
-    expect(trace.content).not.toBe('none');
-    expect(trace.name).toContain('digivated-signal-sweep');
-    expect(trace.duration).toBe('8s');
-    expect(trace.delay).toBe('1s');
-    expect(trace.timing).toBe('ease-in-out');
-    expect(trace.width).toBeGreaterThan(30);
-    if (path === '/creators') {
-      await page.waitForTimeout(2200);
-      const visible = await heading.evaluate(element => Number(getComputedStyle(element, '::after').opacity));
-      expect(visible).toBeGreaterThan(.7);
-    }
+test('the editorial heading detail stays static with reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(base + '/creators');
+  const heading = page.locator('.creator-social-heading h1');
+  await expect(heading).toBeVisible();
+  const detail = await heading.evaluate(element => {
+    const style = getComputedStyle(element, '::after');
+    return { width: parseFloat(style.width), animation: style.animationName };
   });
-}
+  expect(detail.width).toBe(54);
+  expect(detail.animation).toBe('none');
+});
+
+test('editorial details animate during scrolling and menu interaction', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => sessionStorage.setItem('digivated-announcement-seen-v2', '1'));
+  await page.route('**/api/**', route => route.fulfill({ json: { items: [], next: null, ready: false } }));
+  await page.goto(base + '/discover');
+
+  const art = page.locator('[data-site-backdrop]');
+  await expect(art).toHaveCount(1);
+  await expect(art.locator('img')).toBeVisible();
+  const [artBounds, searchBounds] = await Promise.all([
+    art.boundingBox(),
+    page.locator('[data-dir-search]').boundingBox(),
+  ]);
+  expect(artBounds!.x).toBe(0);
+  expect(artBounds!.width).toBe(1440);
+  expect(artBounds!.y + artBounds!.height).toBeGreaterThan(searchBounds!.y);
+
+  const menu = page.locator('.site-menu-trigger');
+  await menu.click();
+  await expect(page.getByRole('navigation', { name: 'Site menu' })).toHaveCSS('animation-name', 'dg-panel-arrive');
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeFocused();
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
+
+  const track = page.locator('[data-reading-progress]');
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect.poll(() => track.evaluate(node => Number((node as HTMLElement).style.getPropertyValue('--reading-progress')))).toBeGreaterThan(.95);
+  await expect(page.locator('.dg-footer-imprint')).toHaveAttribute('data-motion-entered', '');
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(track).toBeHidden();
+  await expect(page.locator('html')).not.toHaveAttribute('data-motion-ready', '');
+  await expect(art.locator('img')).toBeVisible();
+});

@@ -1,0 +1,62 @@
+@layer daylight {
+  html[data-theme="daylight"] body.platform #main :is(.dg-dir .dg-hero, .news-masthead, .dg-forum-header, .rl > .dg-hero, .shop-hero) {
+    padding: clamp(20px, 3vw, 42px) 0 var(--editorial-space) !important;
+    margin-block: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+  html[data-theme="daylight"] body.platform #main :is(.dg-dir, .rl) .dg-hero-copy { max-width: min(100%, 880px) !important; }
+  html[data-theme="daylight"] body.platform #main :is(.dg-dir, .news-masthead, .dg-forum-header, .rl, .shop-hero) h1 {
+    font-size: var(--editorial-title) !important;
+    margin-block: 0 8px !important;
+    font-weight: 560 !important;
+    line-height: 1.07 !important;
+    letter-spacing: -.058em !important;
+    overflow-wrap: anywhere;
+  }
+  html[data-theme="daylight"] body.platform #main :is(.dg-dir .dg-hero-lede, .news-intro, .dg-forum-header p, .rl .dg-hero-lede) {
+    max-width: 48ch;
+    margin-block: 0 !important;
+    color: var(--fl-copy) !important;
+    font-size: clamp(15px, 1.6vw, 18px) !important;
+    line-height: 1.55 !important;
+  }
+
+  html[data-theme="daylight"] body.platform .dg-dir .dg-dir-controls {
+    gap: 9px;
+    margin: 0 0 clamp(22px, 3.5vw, 42px) !important;
+    padding-block: 0 16px !important;
+  }
+  html[data-theme="daylight"] body.platform .dg-dir #project-wall .dg-list-head { padding-block-end: 10px !important; }
+  html[data-theme="daylight"] body.platform .dg-dir #project-wall .dg-list-title { font-size: clamp(25px, 3vw, 35px) !important; }
+  html[data-theme="daylight"] body.platform .dg-dir .dg-dir-stats {
+    background: transparent !important;
+    border: 0 !important;
+  }
+  html[data-theme="daylight"] body.platform .dg-forum:not(.dg-forum-secondary) { row-gap: clamp(18px, 3vw, 32px); }
+  html[data-theme="daylight"] body.platform .dg-forum-header { align-items: end; }
+  html[data-theme="daylight"] body.platform .dg-forum-main .dg-forum-toolbar {
+    border-block-end: 1px solid var(--fl-line) !important;
+    padding-block-end: 10px;
+  }
+  html[data-theme="daylight"] body.platform .news-page { padding-block-start: 0; }
+  html[data-theme="daylight"] body.platform .news-layout { gap: var(--editorial-gap); }
+  @media (min-width: 821px) {
+    html[data-theme="daylight"] body.platform .news-layout:not(:has(.news-sidebar[hidden])) {
+      grid-template-columns: minmax(0, 1fr) var(--editorial-rail);
+    }
+  }
+  html[data-theme="daylight"] body.platform .news-toolbar { margin-block-end: clamp(14px, 2vw, 26px); }
+  html[data-theme="daylight"] body.platform .news-page :is(.news-feature, .news-standards, .news-market) {
+    padding-inline: 0 !important;
+    border: 0 !important;
+    border-block-start: 1px solid var(--fl-line) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+
+  @media (max-width: 700px) {
+    html[data-theme="daylight"] body.platform .dg-forum-header { align-items: start; }
+  }
+}
