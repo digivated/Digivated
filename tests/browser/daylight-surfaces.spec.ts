@@ -43,7 +43,10 @@ for (const width of [320, 768, 1440]) {
       await expect(topics.getByRole('navigation')).toBeHidden();
       await topics.locator('summary').click();
     }
-    await expect(topics.getByRole('link', { name: 'General' })).toBeVisible();
+    const general = topics.getByRole('link', { name: 'General' });
+    await expect(general).toBeVisible();
+    await expect(general).toHaveCSS('overflow-wrap', 'normal');
+    if (width <= 760) await expect(topics.getByRole('navigation')).toHaveCSS('display', 'grid');
 
     const row = area.locator('.dg-thread-row').first();
     await expect(row.getByRole('link', { name: thread.title })).toHaveAttribute('href', '/threads/' + thread.slug);

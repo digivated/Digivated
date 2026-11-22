@@ -15,6 +15,6 @@ if (card) (async () => {
     note.hidden = false;
     note.textContent = 'Instant spots are paused right now. You can still launch free.';
     cta.href = '/submit-project#project-form';
-    cta.firstChild.textContent = 'Launch free ';
+    cta.querySelector('[data-shop-spot-label]').textContent = 'Launch free';
   } catch {}
 })();

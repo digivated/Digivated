@@ -18,7 +18,6 @@ html#digivated-root[data-ascii] body :is(.button.primary,.fl-btn-primary,.dg-btn
 html#digivated-root[data-ascii] body :is(.dg-btn:not(.dg-btn-primary),.fl-btn:not(.fl-btn-primary,.fl-btn-oauth)){border-radius:var(--dg-r)!important;transition:border-color .2s,background-color .2s,color .2s,transform .2s var(--dg-spring)!important}
 html#digivated-root[data-ascii] body :is(.dg-btn:not(.dg-btn-primary),.fl-btn:not(.fl-btn-primary,.fl-btn-oauth)):hover{border-color:#5b4a7a!important;background-color:#c3a0ff0d!important;color:#fff!important}
 html#digivated-root[data-ascii] body :is(.dg-d-sort,.dg-dir-collection) button[aria-pressed=true],
-html#digivated-root[data-ascii] body .fl-tabs>:is([aria-selected=true],[aria-current=page],.active){border-color:#c3a0ff73!important;background-color:#c3a0ff1f!important;color:var(--dg-acc-ink)!important;box-shadow:inset 0 0 0 1px #c3a0ff1a!important}
 html#digivated-root[data-ascii] body .dg-vote{border-radius:var(--dg-r)!important;transition:border-color .2s,background-color .2s,color .2s,box-shadow .25s!important}
 html#digivated-root[data-ascii] body .dg-vote:hover{border-color:#5b4a7a!important;background-color:#c3a0ff0d!important}
 html#digivated-root[data-ascii] body .dg-vote[aria-pressed=true]{border-color:var(--dg-acc)!important;background-color:#c3a0ff26!important;color:#fff!important;box-shadow:0 0 18px -6px #c3a0ffb3!important}

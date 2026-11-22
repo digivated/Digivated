@@ -89,6 +89,15 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   submissionsAvailable = true;
   await page.reload();
   await expect(page.getByText('No submissions are linked to this account yet.')).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 900 });
+  const account = page.getByRole('tablist', { name: 'Dashboard sections' });
+  await expect(account.getByRole('tab', { name: 'Following' })).toHaveCSS('color', 'rgb(48, 48, 48)');
+  await account.getByRole('tab', { name: 'Settings' }).click();
+  await expect(account.getByRole('tab', { name: 'Settings' })).toHaveCSS('background-color', 'rgb(36, 36, 36)');
+  const settings = page.getByRole('tabpanel', { name: 'Settings' });
+  await expect(settings.getByRole('link', { name: 'Manage notifications' })).toHaveAttribute('href', '/notifications');
+  await expect(settings.getByRole('link', { name: 'Open inbox' })).toHaveAttribute('href', '/inbox');
+  await expect(settings.getByRole('button', { name: 'Email me a reset link' })).toBeVisible();
   await page.locator('#account-sign-out').click();
   await expect(page).toHaveURL(/\/login\/?$/);
   await expect(page.getByRole('link', { name: 'Log In', exact: true })).toBeVisible();

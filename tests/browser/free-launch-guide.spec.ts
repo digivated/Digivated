@@ -24,6 +24,10 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await page.goto(base+'/submit-project');
  await expect(page.locator('#submission-details')).toBeVisible();
  await expect(page.locator('#submission-progress li.is-current')).toContainText('Project');
+ await expect(page.locator('#submission-progress [aria-current=step]')).toHaveCSS('color', 'rgb(27, 27, 27)');
+ const projectLogo = page.locator('#project-image');
+ await expect(projectLogo).toHaveCSS('color', 'rgb(48, 48, 48)');
+ await expect(projectLogo).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
  const projectBox = (await page.locator('#sub-step-details').boundingBox())!;
  const launchBox = (await page.locator('#sub-step-launch').boundingBox())!;
  if (width === 1440) {

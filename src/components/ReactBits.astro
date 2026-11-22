@@ -2,29 +2,36 @@
 import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import { surfaces } from './react-bits/DigivatedSurfaces.jsx';
+import './react-bits/GlareHover.css';
+import './react-bits/LineSidebar.css';
 
 const { surface, ...props } = Astro.props;
 const html = renderToString(createElement(surfaces[surface as keyof typeof surfaces], props));
 ---
 <div class="dg-react-bits" data-react-bits={surface} data-react-bits-props={JSON.stringify(props)} set:html={html}/>
 <script>
-import { createElement } from 'react';
-import { hydrateRoot } from 'react-dom/client';
-import { surfaces } from './react-bits/DigivatedSurfaces.jsx';
-
+const pointerMotion = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
 const desktop = matchMedia('(min-width: 1120px)');
-for (const node of document.querySelectorAll<HTMLElement>('[data-react-bits]')) {
-  const name = node.dataset.reactBits as keyof typeof surfaces;
-  if (!node.dataset.reactBitsProps) continue;
-  const props = JSON.parse(node.dataset.reactBitsProps);
-  const hydrate = () => hydrateRoot(node, createElement(surfaces[name], props));
-  if (name === 'RailLinks' && !desktop.matches) {
-    const onDesktop = (event: MediaQueryListEvent) => {
-      if (!event.matches) return;
-      desktop.removeEventListener('change', onDesktop);
-      hydrate();
-    };
-    desktop.addEventListener('change', onDesktop);
-  } else hydrate();
+const pending = new Set(document.querySelectorAll<HTMLElement>('[data-react-bits][data-react-bits-props]'));
+
+function hydrateVisibleEffects() {
+  if (!pointerMotion.matches) return;
+  const ready = [...pending].filter(node => node.dataset.reactBits !== 'RailLinks' || desktop.matches);
+  if (!ready.length) return;
+  ready.forEach(node => pending.delete(node));
+
+  void Promise.all([import('react'), import('react-dom/client'), import('./react-bits/DigivatedSurfaces.jsx')])
+    .then(([{ createElement }, { hydrateRoot }, { surfaces }]) => {
+      for (const node of ready) {
+        const name = node.dataset.reactBits as keyof typeof surfaces;
+        const props = JSON.parse(node.dataset.reactBitsProps!);
+        hydrateRoot(node, createElement(surfaces[name], props));
+      }
+    })
+    .catch(() => { /* The static links and buttons remain usable. */ });
 }
+
+pointerMotion.addEventListener('change', hydrateVisibleEffects);
+desktop.addEventListener('change', hydrateVisibleEffects);
+hydrateVisibleEffects();
 </script>

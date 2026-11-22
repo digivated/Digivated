@@ -88,6 +88,23 @@
     color: var(--fl-ink) !important;
     caret-color: var(--fl-ink);
   }
+  html[data-theme="daylight"] body input[type="file"] {
+    max-width: 100%;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: var(--fl-copy) !important;
+  }
+  html[data-theme="daylight"] body input[type="file"]::file-selector-button {
+    min-height: 44px;
+    margin-inline-end: 9px;
+    padding: 6px 10px !important;
+    border: 1px solid var(--fl-line-hi) !important;
+    border-radius: var(--fl-radius) !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-ink) !important;
+    cursor: pointer;
+  }
   html[data-theme="daylight"] body :is(input,textarea)::placeholder { color: var(--fl-muted) !important; }
   html[data-theme="daylight"] body :is(input,select,textarea)[aria-invalid="true"] { border-color: var(--fl-bad) !important; }
 
@@ -111,9 +128,21 @@
     border-color: var(--fl-muted) !important;
     background: var(--daylight-hover) !important;
   }
-  html[data-theme="daylight"] body :is(.fl-tabs,.login-tabs) :is([aria-selected="true"],[aria-current="page"],.active) {
-    border-bottom-color: var(--fl-accent) !important;
-    color: var(--fl-accent) !important;
+  html[data-theme="daylight"] body .fl-tabs > :is(button,a) {
+    min-height: 40px !important;
+    padding: 6px 10px !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    color: var(--fl-copy) !important;
+  }
+  html[data-theme="daylight"] body .fl-tabs > :is(button,a):hover {
+    background: var(--daylight-hover) !important;
+    color: var(--fl-ink) !important;
+  }
+  html[data-theme="daylight"] body .fl-tabs > :is([aria-selected="true"],[aria-current="page"],.active) {
+    border-color: var(--fl-accent) !important;
+    background: var(--fl-accent) !important;
+    color: #fff !important;
   }
   html[data-theme="daylight"] body :is(.fl-link,.fl-switch .fl-link) { color: var(--fl-accent) !important; }
 
@@ -427,12 +456,12 @@
 
 @layer daylight {
   html[data-theme="daylight"] {
-    --editorial-title: clamp(34px, 5.2vw, 64px);
-    --editorial-space: clamp(22px, 3.5vw, 40px);
-    --section-space: clamp(30px, 5vw, 64px);
-    --section-title: clamp(22px, 2.8vw, 32px);
+    --editorial-title: clamp(28px, 4vw, 44px);
+    --editorial-space: clamp(14px, 2.3vw, 26px);
+    --section-space: clamp(24px, 3.5vw, 42px);
+    --section-title: clamp(20px, 2.4vw, 28px);
     --editorial-rail: minmax(240px, 27%);
-    --editorial-gap: clamp(24px, 4vw, 52px);
+    --editorial-gap: clamp(20px, 3vw, 36px);
   }
 
   /* Align the public reading rail while allowing focused forms to stay narrower. */
@@ -487,14 +516,6 @@
   html[data-theme="daylight"] body #main .login-page { margin-block: var(--editorial-space) !important; }
   html[data-theme="daylight"] body #main .fl-dash { padding-block: 16px !important; }
   html[data-theme="daylight"] body #main .dg-fp-account { max-width: 900px; margin-inline: auto; }
-  html[data-theme="daylight"] body #main .fl-settings .fl-setting {
-    border: 0 !important;
-    border-block-end: 1px solid var(--fl-line) !important;
-    border-radius: 0 !important;
-    padding-inline: 0 !important;
-    background: transparent !important;
-    gap: 12px 20px;
-  }
   html[data-theme="daylight"] body #main .fl-badges-page .fl-badge-stage {
     border-radius: 0 !important;
     border: 0 !important;
