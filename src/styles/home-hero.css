@@ -15,20 +15,21 @@
   }
   .home-refresh .dg-hero-stats {
     display: grid;
-    grid-template-columns: minmax(max-content, 1.25fr) repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     margin: 0 !important;
   }
   .home-refresh .dg-hero-stat {
     display: grid;
     align-content: start;
-    gap: 6px;
+    justify-items: center;
+    text-align: center;
+    gap: 4px;
     min-inline-size: 0;
-    padding: 16px clamp(10px, 2vw, 24px) !important;
+    padding: 12px 6px !important;
     border-inline-start: 1px solid var(--fl-line) !important;
   }
   .home-refresh .dg-hero-stat:first-child {
     border-inline-start: 0 !important;
-    padding-inline-start: 0 !important;
   }
   .home-refresh .dg-hero-stat dt {
     color: var(--fl-muted);
@@ -366,7 +367,6 @@
     .home-refresh .dg-hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .home-refresh .dg-hero-stat:nth-child(odd) {
       border-inline-start: 0 !important;
-      padding-inline-start: 0 !important;
     }
     .home-refresh .dg-hero-stat:nth-child(n+3) { border-block-start: 1px solid var(--fl-line) !important; }
     html[data-theme="daylight"] body.home-refresh #main > .dg-about { grid-template-columns: minmax(0, 1fr); }
@@ -380,7 +380,7 @@
 
 @layer workspace-preview {
   .home-refresh .board-introduction { margin:0 auto 8px; max-width:45ch; color:var(--fl-muted); text-align:center; }
-  .home-refresh .dg-hero-panel > summary { width:fit-content; margin-inline:auto; min-height:44px; align-content:center; font-size:13px; color:var(--fl-copy) !important; cursor:pointer; }
+  .board-all-categories { display: none !important; }
   .board-filters:not([hidden]) {display:grid;gap:8px;min-width:0;padding-block:8px;}
   .board-sort,.board-categories {display:flex;align-items:center;gap:5px;max-width:100%;min-width:0;}
   .board-categories {

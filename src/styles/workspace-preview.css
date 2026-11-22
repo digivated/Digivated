@@ -314,14 +314,14 @@
   .dg-launch-search button:focus-visible { outline-offset: -3px !important; }
 
   .home-refresh .dg-hero-panel {
-    margin:0 auto 10px !important;
-    max-width:var(--launch-board-width, 880px);
-    padding:0 !important;
-    border:0 !important;
-    background:none !important;
-    box-shadow:none !important;
+    margin: 4px auto 18px !important;
+    width: min(100%, 620px);
+    padding: 0 !important;
+    border: 1px solid var(--fl-line) !important;
+    border-radius: var(--fl-radius-card) !important;
+    background: var(--fl-surface) !important;
+    box-shadow: var(--glass-edge) !important;
   }
-  .home-refresh .dg-hero-stat { padding-block: 10px !important; }
   .home-refresh .dg-board { gap: clamp(22px, 3.5vw, 40px); }
   .home-refresh .dg-board .dg-list-note:empty { display: none !important; }
   .dg-workspace .dg-fp-strip summary { color: var(--fl-ink) !important; }

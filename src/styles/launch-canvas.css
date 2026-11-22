@@ -97,10 +97,30 @@
     .home-refresh .launch-welcome #dg-home-title { font-size: clamp(48px, 4.3vw, 60px) !important; }
     .home-refresh .launch-welcome .dg-hero-actions { width: min(100%, 610px); }
 
+    .home-refresh .board-category-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px 12px;
+    }
     .home-refresh .board-categories {
       flex-wrap: wrap;
       overflow: visible;
       gap: 7px;
+    }
+    /* Keep the reset chip and the four most populated categories. */
+    .home-refresh .board-categories button:nth-child(n+6):not([aria-pressed="true"]),
+    .home-refresh #main .board-mobile-categories { display: none !important; }
+    .home-refresh #main .board-all-categories {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+      color: var(--fl-ink) !important;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
     .home-refresh #main .board-filters button { font-size: 14px !important; }
     .home-refresh #main .dg-launch-nav a { font-size: 14px !important; }
