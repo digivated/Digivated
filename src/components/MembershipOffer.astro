@@ -47,7 +47,7 @@ import '../styles/membership.css';
         <li>Full News archive</li>
         <li>UI/UX Playbook, prompt builder and workflows</li>
       </ul>
-      {membership.checkoutReady ? <a class="button primary membership-checkout shop-cta" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get membership · $5 once <UiIcon name="external" size={17}/></a> : <><button class="button primary membership-checkout shop-cta" disabled>Checking checkout…</button><p class="membership-checkout-note shop-note" role="status">Loading checkout. Give it a second.</p></>}
+      {membership.checkoutReady ? <a class="button primary membership-checkout shop-cta" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get membership · $5 once</a> : <><button class="button primary membership-checkout shop-cta" disabled>Checking checkout…</button><p class="membership-checkout-note shop-note" role="status">Loading checkout. Give it a second.</p></>}
     </article>
   </div>
 
