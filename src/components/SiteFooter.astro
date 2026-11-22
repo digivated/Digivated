@@ -1,13 +1,11 @@
 ---
 import { footerGroups } from '../data/site-navigation.mjs';
 import BugReport from './BugReport.astro';
-import UiIcon from './UiIcon.astro';
 import '../styles/site-footer.css';
 
 const { compact = false } = Astro.props;
 const bugHref = 'mailto:digivatedbiz@gmail.com?subject=Digivated%20bug%20report';
 const groups = footerGroups.filter(group => group.title !== 'Follow');
-const submit = groups.flatMap(group => group.links).find(([href]) => href === '/submit-project');
 const socials = footerGroups.find(group => group.title === 'Follow')?.links ?? [];
 ---
 <footer class:list={['dg-site-footer', { 'dg-site-footer-compact': compact }]}>
@@ -18,11 +16,6 @@ const socials = footerGroups.find(group => group.title === 'Follow')?.links ?? [
           <img class="daylight-brand-mark" src="/digivated-daylight-mark.png" width="36" height="36" alt=""/>
           {compact ? 'Back to Digivated' : 'Digivated'}
         </a>
-        {!compact && <>
-          <p>Find and launch indie products.</p>
-          {submit && <a class="dg-footer-submit" data-glass-surface="action" href={submit[0]}>{submit[1]} <UiIcon name="arrow" size={16}/></a>}
-          <span class="dg-footer-imprint" data-motion-scene aria-hidden="true"></span>
-        </>}
       </div>
       {compact ? <nav class="dg-footer-utility" aria-label="Footer">
         <a href="/membership">Membership</a>
@@ -34,7 +27,7 @@ const socials = footerGroups.find(group => group.title === 'Follow')?.links ?? [
         {groups.map(group => <div class="dg-footer-group">
           <h2>{group.title}</h2>
           <ul>
-            {group.links.filter(([href]) => href !== submit?.[0]).map(([href, label]) => <li><a href={href}>{label}</a></li>)}
+            {group.links.map(([href, label]) => <li><a href={href}>{label}</a></li>)}
             {group.title === 'Digivated' && <li><a href={bugHref} data-bug-open>Report a bug</a></li>}
           </ul>
         </div>)}

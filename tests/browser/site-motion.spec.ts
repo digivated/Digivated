@@ -57,16 +57,8 @@ test('editorial details animate during scrolling and menu interaction', async ({
   await page.route('**/api/**', route => route.fulfill({ json: { items: [], next: null, ready: false } }));
   await page.goto(base + '/discover');
 
-  const art = page.locator('[data-site-backdrop]');
-  await expect(art).toHaveCount(1);
-  await expect(art).toHaveJSProperty('tagName', 'CANVAS');
-  const [artBounds, searchBounds] = await Promise.all([
-    art.boundingBox(),
-    page.locator('[data-dir-search]').boundingBox(),
-  ]);
-  expect(artBounds!.x).toBe(0);
-  expect(artBounds!.width).toBe(1000);
-  expect(artBounds!.y + artBounds!.height).toBeGreaterThan(searchBounds!.y);
+  await expect(page.locator('[data-site-backdrop]')).toHaveCount(0);
+  await expect(page.locator('[data-dir-search]')).toBeVisible();
 
   const menu = page.locator('.site-menu-trigger');
   await menu.click();
@@ -78,10 +70,8 @@ test('editorial details animate during scrolling and menu interaction', async ({
   const track = page.locator('[data-reading-progress]');
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await expect.poll(() => track.evaluate(node => Number((node as HTMLElement).style.getPropertyValue('--reading-progress')))).toBeGreaterThan(.95);
-  await expect(page.locator('.dg-footer-imprint')).toHaveAttribute('data-motion-entered', '');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(track).toBeHidden();
   await expect(page.locator('html')).not.toHaveAttribute('data-motion-ready', '');
-  await expect(art).toHaveJSProperty('tagName', 'CANVAS');
 });

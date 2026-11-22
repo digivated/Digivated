@@ -75,7 +75,7 @@ if(state){
    list.replaceChildren();
    if(!submissions.length){
     const empty=document.createElement('div');empty.className='fl-card fl-panel-pad fl-empty';
-    empty.innerHTML='<p><strong>No projects yet.</strong> No submissions are linked to this account yet. Submit your project to get a free launch date and a badge for your site.</p><div class="fl-actions"><a class="button primary" href="/submit-project">Submit your first project</a><a class="fl-btn" href="/discover?view=featured">Browse featured projects</a></div>';
+    empty.innerHTML='<h2>No launches yet</h2><p>Your drafts, scheduled launches and live projects will appear here.</p>';
     list.append(empty);return;
    }
    for(const item of submissions)list.append(projectCard(item));
@@ -98,12 +98,28 @@ if(state){
    if(['approved','featured'].includes(item.status)){const view=Object.assign(document.createElement('a'),{className:'button primary',href:item.pageUrl||'/projects/listing/'+encodeURIComponent(item.id),textContent:'View project and feedback'});actions.append(view);}
    if(item.awaitingInstantPayment){const finish=Object.assign(document.createElement('a'),{className:'button primary',href:'/submit-project?resume='+encodeURIComponent(item.id),textContent:'Finish publishing'});const cancel=Object.assign(document.createElement('button'),{type:'button',className:'button',textContent:'Cancel checkout'});cancel.dataset.cancelInstant=item.id;cancel.onclick=()=>cancelInstant(item,cancel);actions.append(finish,cancel);}
    if(actions.childElementCount)card.append(actions);
-   if(['approved','featured'].includes(item.status))card.append(statsPanel(item));
+   if (stage.key === 'live') {
+    const stats = document.createElement('details');
+    stats.className = 'account-project-stats';
+    const summary = document.createElement('summary');
+    summary.textContent = 'Launch stats';
+    stats.append(summary);
+    stats.addEventListener('toggle', () => {
+     if (stats.open && stats.childElementCount === 1) stats.append(statsPanel(item));
+    });
+    card.append(stats);
+   }
    const later=badgeLater(item,stage);if(later)card.append(later);
-   const feedback=document.createElement('div');feedback.className='review-feedback fl-feedback';
-   if(item.feedback){const label=document.createElement('strong');label.textContent='Review feedback';const body=document.createElement('p');body.textContent=item.feedback;feedback.append(label,body);}
-   else{feedback.classList.add('is-empty');feedback.textContent='There is no review feedback yet.';}
-   card.append(feedback);
+   if (item.feedback) {
+    const feedback = document.createElement('div');
+    feedback.className = 'review-feedback fl-feedback';
+    const label = document.createElement('strong');
+    label.textContent = 'Review feedback';
+    const body = document.createElement('p');
+    body.textContent = item.feedback;
+    feedback.append(label, body);
+    card.append(feedback);
+   }
    return card;
   }
   // Launch stats: 14 days of views, visits, upvotes and comments as ASCII sparklines,
@@ -111,7 +127,7 @@ if(state){
   function statsPanel(item){
    const el=(tag,text,cls)=>{const node=document.createElement(tag);if(text!=null)node.textContent=text;if(cls)node.className=cls;return node;};
    const box=el('section',null,'dg-stats');box.setAttribute('aria-label',`Launch stats for ${item.name}`);
-   const head=el('h4',null,'dg-stats-head');head.append(el('span','Launch stats'),el('small','all time · bars show the last 14 days'));
+   const head=el('p','All-time totals · bars show the last 14 days','dg-stats-head');
    const status=el('p','Loading stats…','dg-stats-status');status.setAttribute('role','status');
    box.append(head,status);
    const BARS='▁▂▃▄▅▆▇█';

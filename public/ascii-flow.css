@@ -108,7 +108,6 @@ html[data-ascii] body .fl-project-meta a{color:var(--fl-copy)!important}
 html[data-ascii] body .fl-next-copy{margin:0!important;padding:14px 16px!important;border:1px solid var(--fl-line)!important;border-radius:var(--fl-radius)!important;background-color:var(--fl-raised)!important;color:var(--fl-copy)!important;font-size:14px}
 html[data-ascii] body .fl-project[data-stage=scheduled] .fl-next-copy{border-color:#c3a0ff55!important}
 html[data-ascii] body .fl-feedback{padding:12px 14px!important;border-left:2px solid var(--fl-line-hi)!important;color:var(--fl-copy)!important;font-size:13px;white-space:pre-wrap}
-html[data-ascii] body .fl-feedback.is-empty{color:var(--fl-muted)!important;border-left-color:var(--fl-line)!important}
 html[data-ascii] body .fl-feedback strong{display:block;color:var(--fl-ink)!important;margin-bottom:4px}
 html[data-ascii] body .fl-feedback p{margin:0!important}
 html[data-ascii] body .fl-settings{display:grid;gap:12px}
@@ -150,19 +149,12 @@ html[data-ascii] body .fl-help summary{min-height:0!important;color:var(--fl-cop
 html[data-ascii] body .fl-help ul{margin:10px 0 0!important;padding-left:20px!important;color:var(--fl-muted)!important;font-size:12px;display:grid;gap:4px}
 
 /* ---- Submit flow ---- */
-html[data-ascii] body .fl-progress{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:0 0 24px!important;padding:0!important;list-style:none!important;background-color:var(--fl-bg)!important;border-bottom:2px solid var(--fl-line)!important}
-html[data-ascii] body .fl-progress li{min-width:0;border-bottom:0!important}
-html[data-ascii] body .fl-progress a{display:inline-block;min-height:0!important;padding:12px 0 10px!important;margin-bottom:-2px;border-bottom:2px solid transparent;color:var(--fl-muted)!important;font-size:12px;text-decoration:none!important;white-space:nowrap}
-html[data-ascii] body .fl-progress li.is-done a{color:var(--fl-ok)!important;border-bottom-color:var(--fl-ok)!important}
-html[data-ascii] body .fl-progress li.is-current a{color:var(--fl-ink)!important;border-bottom-color:var(--fl-ink)!important}
 html[data-ascii] body .submission-form fieldset[id^=sub-step]{scroll-margin-top:64px}
-html[data-ascii] body #project-form.is-saved :is(fieldset,#submission-progress,.submission-review>h2,.submission-review>p:not(#submission-status),.submission-review>label,.submission-review>button[type=submit]){display:none!important}
+html[data-ascii] body #project-form.is-saved :is(fieldset,.submission-review>h2,.submission-review>p:not(#submission-status),.submission-review>label,.submission-review>button[type=submit]){display:none!important}
 html[data-ascii] body #submission-badge:not([hidden]){display:grid!important;gap:12px;padding:clamp(18px,3vw,26px)!important;border:1px solid var(--fl-line)!important;border-radius:10px!important;background-color:var(--fl-panel)!important}
 html[data-ascii] body #submission-badge h3{margin:0!important;font-size:20px!important}
 html[data-ascii] body #submission-badge .eyebrow{margin:0!important;color:var(--fl-ok)!important}
 html[data-ascii] body .submission-account-callout{padding:20px!important;border:1px solid var(--fl-line)!important;border-radius:10px!important;background-color:var(--fl-panel)!important}
-@media (max-width:560px){html[data-ascii] body .fl-progress{gap:8px}html[data-ascii] body .fl-progress a{font-size:11px;padding:10px 0 8px!important}}
-@media (max-width:340px){html[data-ascii] body .fl-progress{flex-wrap:wrap;row-gap:2px}html[data-ascii] body .fl-progress li{flex:1 1 42%}html[data-ascii] body .fl-progress li:nth-child(even){text-align:right}}
 
 /* ---- Notifications ---- */
 html[data-ascii] body .fl-notify{max-width:820px!important;margin-inline:auto!important}
@@ -226,7 +218,7 @@ html[data-ascii] body .fl-menu-trigger #header-account-dot{position:absolute;top
 
 /* Type: clean sans for reading, mono for labels, meta and ASCII. */
 html[data-ascii] body *{font-family:var(--fl-sans)!important}
-html[data-ascii] body :is(pre,pre *,code,kbd,samp,.fl-mono,.fl-mono *,.eyebrow,.eyebrow *,time,.fl-pill,.fl-step-mark,.fl-progress,.fl-progress *,.site-breadcrumbs,.site-breadcrumbs *,.fl-badge-preview,.home-editorial-kicker,.home-about-label,.submission-step-label,.fl-code textarea,.queue-countdown,.queue-countdown *,.header-inbox-badge,.fl-menu-count,.fl-unread-dot,.fl-notify-group,.fl-label,.fl-hud,.fl-hud *,.fl-step-copy small,.notification-copy small,.fl-project-meta,.fl-tag){font-family:var(--fl-mono)!important}
+html[data-ascii] body :is(pre,pre *,code,kbd,samp,.fl-mono,.fl-mono *,.eyebrow,.eyebrow *,time,.fl-pill,.fl-step-mark,.site-breadcrumbs,.site-breadcrumbs *,.fl-badge-preview,.home-editorial-kicker,.home-about-label,.submission-step-label,.fl-code textarea,.queue-countdown,.queue-countdown *,.header-inbox-badge,.fl-menu-count,.fl-unread-dot,.fl-notify-group,.fl-label,.fl-hud,.fl-hud *,.fl-step-copy small,.notification-copy small,.fl-project-meta,.fl-tag){font-family:var(--fl-mono)!important}
 html[data-ascii] body{font-size:15px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 html[data-ascii] body :is(h1,h2,h3,h4){font-family:var(--fl-sans)!important;font-weight:500!important;color:#f3f3f3!important;-webkit-text-fill-color:currentColor!important}
 html[data-ascii] body h1{letter-spacing:-.04em!important;line-height:1.04!important}
@@ -319,7 +311,6 @@ html[data-ascii] body .compact-site-header .header-primary>a::after{content:none
 html[data-ascii] body #main .submission-intro{padding-block:8px 26px!important;margin-bottom:12px!important}
 html[data-ascii] body #main .submission-intro h1{font-size:clamp(32px,4vw,46px)!important;margin-block:0 6px!important}
 html[data-ascii] body #main:has(:is(.submission-intro,.dg-dir,.news-page))>.site-breadcrumbs{padding-block:8px!important}
-html[data-ascii] body #project-form #submission-progress{margin-bottom:8px!important}
 
 html[data-ascii] body #project-form fieldset[id^=sub-step]{margin:0!important;padding:16px!important;border-top:1px solid var(--fl-rule)!important}
 html[data-ascii] body .submission-form fieldset fieldset{margin:0!important;padding:0!important;border:0!important}

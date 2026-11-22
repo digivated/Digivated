@@ -100,12 +100,12 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await expect(page.locator('#account-submissions')).toContainText('Submissions unavailable.');
   submissionsAvailable = true;
   await page.reload();
-  await expect(page.getByText('No submissions are linked to this account yet.')).toBeVisible();
+  await expect(page.getByText('No launches yet')).toBeVisible();
   await page.setViewportSize({ width: 390, height: 900 });
   const account = page.getByRole('tablist', { name: 'Dashboard sections' });
-  await expect(account.getByRole('tab', { name: 'Following' })).toHaveCSS('color', 'rgb(48, 48, 48)');
+  await expect(account.getByRole('tab', { name: 'Following' })).toHaveCSS('color', 'rgb(65, 65, 65)');
   await account.getByRole('tab', { name: 'Settings' }).click();
-  await expect(account.getByRole('tab', { name: 'Settings' })).toHaveCSS('background-color', 'rgb(36, 36, 36)');
+  await expect(account.getByRole('tab', { name: 'Settings' })).toHaveCSS('border-bottom-color', 'rgb(27, 27, 27)');
   const settings = page.getByRole('tabpanel', { name: 'Settings' });
   await expect(settings.getByRole('link', { name: 'Manage notifications' })).toHaveAttribute('href', '/notifications');
   await expect(settings.getByRole('link', { name: 'Open inbox' })).toHaveAttribute('href', '/inbox');

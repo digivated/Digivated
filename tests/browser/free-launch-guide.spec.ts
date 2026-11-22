@@ -23,23 +23,16 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await page.setViewportSize({width,height:900});await signedIn(page);
  await page.goto(base+'/submit-project');
  await expect(page.locator('#submission-details')).toBeVisible();
- await expect(page.locator('#submission-progress li.is-current')).toContainText('Project');
- await expect(page.locator('#submission-progress [aria-current=step]')).toHaveCSS('color', 'rgb(27, 27, 27)');
- const projectLogo = page.locator('#project-image');
- await expect(projectLogo).toHaveCSS('color', 'rgb(48, 48, 48)');
- await expect(projectLogo).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
- const projectBox = (await page.locator('#sub-step-details').boundingBox())!;
- const launchBox = (await page.locator('#sub-step-launch').boundingBox())!;
- if (width === 1440) {
-  expect(launchBox.x).toBeGreaterThanOrEqual(projectBox.x + projectBox.width - 1);
-  expect(launchBox.y).toBeCloseTo(projectBox.y, 0);
-  const creator = (await page.locator('#sub-step-you').boundingBox())!;
-  const review = (await page.locator('#submission-details > .submission-review').boundingBox())!;
-  expect(review.x).toBeCloseTo(projectBox.x, 0);
-  expect(review.y).toBeCloseTo(creator.y + creator.height, 0);
- } else {
-  expect(launchBox.y).toBeGreaterThan(projectBox.y + projectBox.height);
-  expect(launchBox.x + launchBox.width).toBeLessThanOrEqual(width);
+ await expect(page.getByLabel('Project URL')).toBeVisible();
+ const form = page.locator('#project-form');
+ await expect(form).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+ expect((await form.boundingBox())!.width).toBeLessThanOrEqual(Math.min(740,width));
+ const sections = page.locator('#submission-details fieldset[id^=sub-step], #submission-details > .submission-review');
+ const boxes = await sections.evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().toJSON()));
+ expect(boxes).toHaveLength(5);
+ for (let i=1; i<boxes.length; i++) {
+  expect(boxes[i].top).toBeGreaterThanOrEqual(boxes[i-1].bottom-1);
+  expect(boxes[i].right).toBeLessThanOrEqual(width);
  }
  const guide = page.getByText('How free launches work', { exact: true });
  await expect(page.locator('.free-launch-guide')).toBeHidden();
