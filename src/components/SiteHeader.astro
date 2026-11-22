@@ -1,9 +1,25 @@
 ---
-import { primaryLinks, menuLinks } from '../data/site-navigation.mjs';
+import { primaryLinks, menuGroups } from '../data/site-navigation.mjs';
+import {
+  ArrowDown01Icon, Award01Icon, BookOpen01Icon, BubbleChatIcon, Certificate01Icon,
+  ChartLineData01Icon, News01Icon, Rocket01Icon, Store01Icon,
+} from '@hugeicons/core-free-icons';
+import NavGlyph from './NavGlyph.astro';
 import UiIcon from './UiIcon.astro';
 import '../styles/site-header.css';
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const active = (link: string) => { const href = link.split('?')[0]; if (link.includes('?')) return false; return path === href || path.startsWith(href + '/') || (href === '/discover' && path.startsWith('/projects/')) || (href === '/shop' && ['/membership','/products','/promote','/founding-members'].includes(path)); };
+const activeBranch = menuGroups.findIndex(group => group.links.some(([href]) => active(href)));
+const branchIcons = [BookOpen01Icon, Rocket01Icon];
+const linkIcons: Record<string, typeof Rocket01Icon> = {
+  '/news': News01Icon,
+  '/winners': Award01Icon,
+  '/resources': BookOpen01Icon,
+  '/invstr': ChartLineData01Icon,
+  '/badges': Certificate01Icon,
+  '/points': BubbleChatIcon,
+  '/shop': Store01Icon,
+};
 ---
 <header class="dg-shell" data-site-header data-account="signed-out">
   <div class="dg-shell-bar" data-nav-reflection>
@@ -38,8 +54,30 @@ const active = (link: string) => { const href = link.split('?')[0]; if (link.inc
           <div class="site-menu-primary site-menu-links">
             {primaryLinks.map(([href, label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}</a>)}
           </div>
-          <div class="site-menu-secondary site-menu-links">
-            {menuLinks.map(([href, label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}</a>)}
+          <div class="site-menu-secondary">
+            {menuGroups.map(({ label, links }, index) => (
+              <details class="site-menu-branch" open={index === (activeBranch < 0 ? 0 : activeBranch)}>
+                <summary class="site-menu-branch-trigger">
+                  <NavGlyph icon={branchIcons[index] ?? BookOpen01Icon}/>
+                  <span>{label}</span>
+                  <span class="site-menu-branch-chevron"><NavGlyph icon={ArrowDown01Icon}/></span>
+                </summary>
+                <ul class="site-menu-links site-menu-branch-links">
+                  {links.map(([href, label], row) => (
+                    <li>
+                      <svg class="site-menu-connector" viewBox="0 0 18 44" preserveAspectRatio="none" fill="none" aria-hidden="true">
+                        {row < links.length - 1 && <path class="site-menu-trunk" d="M1 0v44" vector-effect="non-scaling-stroke"/>}
+                        <path class="site-menu-elbow" d="M1 0v14a8 8 0 0 0 8 8h9" vector-effect="non-scaling-stroke"/>
+                      </svg>
+                      <a href={href} aria-current={active(href) ? 'page' : undefined}>
+                        <NavGlyph icon={linkIcons[href] ?? BookOpen01Icon}/>
+                        <span>{label}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            ))}
           </div>
         </nav>
       </details>

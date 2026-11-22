@@ -25,6 +25,9 @@ for (const width of [320, 390, 768, 920, 921, 1440]) {
     if (mobile) await expect(trigger.locator('.dg-shell-menu-close')).toBeVisible();
     await expect(menu).toBeVisible();
     await expect(menu).toHaveCSS('backdrop-filter', /blur/);
+    await expect(menu.locator('.site-menu-branch-trigger')).toHaveText(['Explore', 'For makers']);
+    await expect(menu.getByRole('link', { name: 'News', exact: true })).toBeVisible();
+    await expect(menu.getByRole('link', { name: 'Embed badges', exact: true })).toBeHidden();
     await expect(menu.locator('.site-menu-secondary a')).toHaveText([
       'News', 'Weekly winners', 'Resources', 'For Investors', 'Embed badges', 'Feedback points', 'Shop',
     ]);
@@ -81,10 +84,30 @@ test('the menu opens without JavaScript', async ({ browser }) => {
     const page = await context.newPage();
     await page.goto(base + '/');
     await page.locator('.site-menu-trigger').click();
-    await expect(page.locator('#explore-navigation').getByRole('link', { name: 'Directory', exact: true })).toHaveAttribute('href', '/discover');
+    const menu = page.locator('#explore-navigation');
+    await expect(menu.getByRole('link', { name: 'Directory', exact: true })).toHaveAttribute('href', '/discover');
+    await menu.locator('summary', { hasText: 'For makers' }).click();
+    await expect(menu.getByRole('link', { name: 'Embed badges', exact: true })).toHaveAttribute('href', '/badges');
   } finally {
     await context.close();
   }
+});
+
+test('desktop branches are keyboard operable and open to the current destination', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(base + '/badges');
+  const menu = page.locator('#explore-navigation');
+  const trigger = page.locator('.site-menu-trigger');
+  await trigger.press('ArrowDown');
+  const badges = menu.getByRole('link', { name: 'Embed badges', exact: true });
+  await expect(badges).toBeFocused();
+  await expect(badges).toHaveAttribute('aria-current', 'page');
+  const explore = menu.locator('summary', { hasText: 'Explore' });
+  await explore.press('ArrowDown');
+  await expect(menu.getByRole('link', { name: 'News', exact: true })).toBeFocused();
+  await expect(menu.locator('.site-menu-connector').first()).toHaveCSS('stroke', 'rgb(169, 170, 164)');
+  await page.keyboard.press('Escape');
+  await expect(trigger).toBeFocused();
 });
 
 test('the phone menu stays inside a short viewport', async ({ page }) => {
@@ -95,6 +118,7 @@ test('the phone menu stays inside a short viewport', async ({ page }) => {
   const menu = page.locator('#explore-navigation');
   const bounds = (await menu.boundingBox())!;
   expect(bounds.y + bounds.height).toBeLessThanOrEqual(360);
+  await menu.locator('summary', { hasText: 'For makers' }).click();
   await menu.getByRole('link', { name: 'Embed badges', exact: true }).click();
   await expect(page).toHaveURL(/\/badges$/);
 });

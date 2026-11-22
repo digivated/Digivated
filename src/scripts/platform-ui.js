@@ -20,8 +20,20 @@ if (menu) {
       menu.open = true;
       sync();
       // Focus the first visible destination for the current layout.
-      [...(panel?.querySelectorAll('a') || [])].find(link => link.getClientRects().length)?.focus();
+      const links = panel.querySelectorAll('a');
+      const first = [...links].find(link => !link.closest('.site-menu-branch:not([open])') && link.getClientRects().length);
+      (first || panel.querySelector('.site-menu-branch-trigger'))?.focus();
     }
+  });
+  panel.addEventListener('keydown', event => {
+    const summary = event.target.closest('.site-menu-branch-trigger');
+    const branch = summary?.parentElement;
+    if (event.key !== 'ArrowDown' || !branch) return;
+    event.preventDefault();
+    branch.open = true;
+    requestAnimationFrame(() => {
+      if (menu.open && branch.open && document.activeElement === summary) branch.querySelector('a')?.focus();
+    });
   });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && menu.open) { event.preventDefault(); close(true); }

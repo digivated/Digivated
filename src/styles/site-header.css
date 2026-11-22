@@ -132,7 +132,7 @@
     align-content: start;
     gap: 8px;
     min-width: 0;
-    width: min(220px,calc(100vw - 24px));
+    width: min(248px,calc(100vw - 24px));
     max-height: min(68dvh,570px);
     overflow: auto;
     overscroll-behavior: contain;
@@ -145,7 +145,77 @@
   }
 
   .dg-shell .site-menu-primary { display: none; }
-  .dg-shell .site-menu-secondary { display: grid; gap: 1px; }
+  .dg-shell .site-menu-secondary { display: grid; gap: 4px; }
+  .dg-shell .site-menu-branch { min-width: 0; }
+  .dg-shell .site-menu-branch-trigger {
+    display: flex !important;
+    align-items: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 6px 8px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--shell-ink) !important;
+    font-size: 14px !important;
+    font-weight: 620;
+    list-style: none;
+    cursor: pointer;
+  }
+  .dg-shell .site-menu-branch-trigger::marker { content: ''; }
+  .dg-shell .site-menu-branch-trigger::-webkit-details-marker { display: none; }
+  .dg-shell .site-menu-branch-trigger:is(:hover,:focus-visible) { background: var(--shell-active) !important; }
+  .site-menu-glyph { display: block; flex: none; }
+  .site-menu-branch-chevron { margin-inline-start: auto; }
+  .site-menu-branch[open] > summary .site-menu-branch-chevron { rotate: 180deg; }
+
+  .dg-shell .site-menu-branch-links {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+  .dg-shell .site-menu-branch-links > li {
+    position: relative;
+    margin: 0 !important;
+    padding-inline-start: 32px;
+  }
+  .dg-shell .site-menu-connector {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 15px;
+    width: 18px;
+    height: 100%;
+    stroke: var(--fl-line-hi) !important;
+    stroke-width: 1.5;
+    pointer-events: none;
+  }
+  .dg-shell .site-menu-branch-links > li:has(a:is(:hover,:focus-visible,[aria-current="page"])) .site-menu-elbow {
+    stroke: var(--shell-muted) !important;
+  }
+  .dg-shell .site-menu-connector:dir(rtl) { scale: -1 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    html[data-motion-ready] .site-menu-branch-chevron { transition: rotate 240ms ease; }
+    html[data-motion-ready] .dg-shell-disclosure[open] .site-menu-branch[open]:not(:has(a:focus-visible)) .site-menu-connector {
+      animation: dg-branch-draw 295ms cubic-bezier(.22,1,.36,1) var(--branch-delay, 0ms) both;
+    }
+    .site-menu-branch-links > li:nth-child(2) { --branch-delay: 35ms; }
+    .site-menu-branch-links > li:nth-child(3) { --branch-delay: 70ms; }
+    .site-menu-branch-links > li:nth-child(4) { --branch-delay: 105ms; }
+    @keyframes dg-branch-draw {
+      from { clip-path: inset(0 0 100% 0); }
+      to { clip-path: inset(0); }
+    }
+    @supports (interpolate-size: allow-keywords) and selector(details::details-content) {
+      html[data-motion-ready] .site-menu-branch::details-content {
+        interpolate-size: allow-keywords;
+        block-size: 0;
+        overflow: clip;
+        transition: block-size 300ms cubic-bezier(.22,1,.36,1), content-visibility 300ms allow-discrete;
+      }
+      html[data-motion-ready] .site-menu-branch[open]::details-content { block-size: auto; }
+      html[data-motion-ready] .site-menu-branch:has(:focus-visible)::details-content { transition: none; }
+    }
+  }
   .dg-shell :is(.site-menu-links,.dg-shell-account-panel) :is(a,button) {
     display: flex !important;
     align-items: center;
@@ -165,6 +235,7 @@
     background: var(--shell-active) !important;
     color: var(--shell-accent) !important;
   }
+  .dg-shell .site-menu-branch-links a { padding-inline: 6px !important; }
   .dg-shell .site-menu-links a[aria-current="page"] {
     font-weight: 680;
     text-decoration: underline !important;

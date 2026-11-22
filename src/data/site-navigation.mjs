@@ -10,12 +10,15 @@ const moreExploreLinks = [
   ['/resources', 'Resources'],
   ['/invstr', 'For Investors'],
 ];
-export const menuLinks = [
-  ...moreExploreLinks,
-  ['/badges', 'Embed badges'],
-  ['/points', 'Feedback points'],
-  ['/shop', 'Shop'],
+export const menuGroups = [
+  { label: 'Explore', links: moreExploreLinks },
+  { label: 'For makers', links: [
+    ['/badges', 'Embed badges'],
+    ['/points', 'Feedback points'],
+    ['/shop', 'Shop'],
+  ] },
 ];
+export const menuLinks = menuGroups.flatMap(group => group.links);
 // Footer: the same destinations as the header and menu, plus account pages and socials.
 export const footerGroups = [
   { title: 'Explore', links: [...primaryLinks, ...moreExploreLinks] },

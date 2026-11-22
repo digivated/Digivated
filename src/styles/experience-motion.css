@@ -28,9 +28,6 @@
     html[data-motion-ready] dialog#discovery-search[open] {
       animation: dg-panel-arrive 360ms cubic-bezier(.22,1,.36,1);
     }
-    html[data-motion-ready] .dg-shell .dg-shell-disclosure[open] .site-menu-secondary {
-      animation: dg-menu-links-arrive 430ms cubic-bezier(.22,1,.36,1);
-    }
     :is(.dg-home-hero .dg-btn, .dg-header-submit) svg {
       transition: translate 320ms cubic-bezier(.22,1,.36,1);
     }
@@ -41,11 +38,6 @@
       from { opacity: .7; translate: 0 -8px; }
       to { opacity: 1; translate: 0 0; }
     }
-    @keyframes dg-menu-links-arrive {
-      from { opacity: .78; translate: 0 5px; }
-      to { opacity: 1; translate: 0 0; }
-    }
-
     @supports (animation-timeline: view()) {
       html[data-motion-ready] #main :is(.dg-row:not(.is-loading) .dg-logo, .rl-grid .rl-mono, .dg-thread-row .dg-avatar, .launch-identity, .creator-public-intro .creator-avatar) {
         animation: dg-mark-arrive linear both;
