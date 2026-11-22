@@ -110,6 +110,32 @@ test('footer signup verifies the mailbox, deduplicates account delivery, and uns
  assert.equal((await f.invoke(handler,'GET','/api/return-emails?action=status')).body.subscribed,false);
 });
 
+test('weekly confirmation and digest use the same verified sending credentials', async () => {
+ const f=fixture(), authorization='Bearer fixture-verified-key', sender='Digivated <mail@auth.example.com>';
+ const deps={
+  ...f.deps,
+  env:{...env,SIGNUP_RESEND_API_KEY:'fixture-verified-key',SIGNUP_EMAIL_FROM:sender},
+  fetcher:async (url, options) => {
+   assert.equal(options.headers.Authorization, authorization);
+   assert.equal(JSON.parse(options.body).from, sender);
+   return f.deps.fetcher(url, options);
+  },
+ };
+ const handler=makeReturnEmailHandler(deps);
+ const signup='/api/return-emails?action=subscribe', headers={'x-real-ip':'203.0.113.1'};
+ const rejected=makeReturnEmailHandler({...deps,fetcher:async()=>({ok:false,status:403})});
+ assert.equal((await f.invoke(rejected,'POST',signup,{email},headers)).status,503);
+ assert.equal(f.members.size,0);
+ assert.ok(![...f.entries.keys()].some(key=>key.includes(':confirm:')));
+ assert.deepEqual((await f.invoke(handler,'POST',signup,{email},headers)).body,{subscribed:false,pending:true});
+ const token=[...f.entries.keys()].find(key=>key.includes(':confirm:')).split(':').at(-1);
+ assert.equal((await f.invoke(handler,'POST','/api/return-emails?action=confirm',{token})).status,200);
+ f.entries.set('digivated:submission:recent',JSON.stringify({status:'approved',name:'Weekly tool',publishedAt:'2026-11-23T14:00:00Z'}));
+ const digest=makeWeeklyDigestHandler({...deps,now:()=>Date.parse('2026-11-23T15:01:00Z')});
+ assert.deepEqual((await f.invoke(digest,'GET','/api/weekly-digest',undefined,{authorization:`Bearer ${env.CRON_SECRET}`})).body,{sent:1,failed:0,skipped:0});
+ assert.equal(f.sent.length,2);
+});
+
 test('temporary account and provider failures are visible and preserve subscriptions',async()=>{
  const f=fixture();
  const issue=new Date('2026-11-30T15:00:00Z');
