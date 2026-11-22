@@ -353,5 +353,10 @@
 /* Analytics stats */
 #digivated-root .fl-dash .dg-stats { border: 1px solid #ececf0 !important; border-radius: 18px !important; background: #fff !important; box-shadow: var(--cl-shadow) !important; }
 #digivated-root .fl-dash .dg-stat { border: 1px solid #ececf0 !important; border-radius: 14px !important; background: #fafafb !important; }
+/* One scroller for all tabs; the section group never overlaps New Launch */
+#digivated-root .maker-navigation { justify-content: flex-start !important; overflow-x: auto !important; overflow-y: hidden !important; }
+#digivated-root .maker-navigation .maker-navigation-sections { flex: none !important; min-width: max-content !important; overflow: visible !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+#digivated-root .maker-navigation .maker-navigation-launch { flex: none !important; margin-left: auto !important; }
+#digivated-root .account-settings-grid { margin-top: 0 !important; }
 
 }
