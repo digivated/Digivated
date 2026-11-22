@@ -160,16 +160,18 @@ test('React Bits sidebar and action effects animate without changing link target
   await page.goto(base + '/');
   const nav = page.getByRole('navigation', { name: 'Workspace navigation' });
   const directory = nav.getByRole('link', { name: 'Directory', exact: true });
-  const row = nav.locator('.line-sidebar__item').filter({ has: directory });
+  const row = nav.locator('.line-sidebar__item').filter({ has: page.getByRole('link', { name: 'Directory', exact: true }) });
+  const action = page.getByRole('link', { name: 'Browse launches', exact: true });
+  const band = action.locator('.glare-hover__band').first();
+  const bandTransform = () => band.evaluate(element => element.style.transform);
+  await expect.poll(bandTransform).toContain('translateX');
+
   await directory.hover();
   await expect.poll(() => row.evaluate(element => Number(element.style.getPropertyValue('--effect')))).toBeGreaterThan(.6);
 
-  const action = page.getByRole('link', { name: 'Browse launches', exact: true });
-  const band = action.locator('.glare-hover__band').first();
-  const resting = await band.evaluate(element => element.style.transform);
-  expect(resting).toContain('translateX');
+  const resting = await bandTransform();
   await action.hover();
-  await expect.poll(() => band.evaluate(element => element.style.transform)).not.toBe(resting);
+  await expect.poll(bandTransform).not.toBe(resting);
   await expect(action).toHaveAttribute('href', '#this-week');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });

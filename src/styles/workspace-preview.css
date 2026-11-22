@@ -63,7 +63,8 @@
   .dg-workspace .glare-hover .glare-hover__glare { z-index: -1; }
   @media (prefers-reduced-motion: reduce), (forced-colors: active) {
     .dg-workspace .glare-hover .glare-hover__glare { display: none; }
-    .dg-workspace .line-sidebar__label, .dg-workspace .line-sidebar__marker { transform: none; }
+    .dg-workspace .line-sidebar__label { transform: none !important; }
+    .dg-workspace .line-sidebar__marker { transform: translateY(-50%) !important; }
   }
   .dg-workspace-content { min-inline-size: 0; }
   .dg-workspace-rail { display: contents !important; }
@@ -178,8 +179,8 @@
     .dg-rail-group .line-sidebar__item::before { content: none; }
     .dg-rail-group .line-sidebar__label { align-items: center; gap: 9px; font-size: inherit; white-space: nowrap; }
     .dg-rail-group .line-sidebar__marker {
-      inset-inline-start: 0;
       left: auto;
+      inset-inline-start: 0;
       width: 2px;
       height: 12px;
       border-radius: 2px;
