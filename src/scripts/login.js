@@ -7,7 +7,7 @@ if(form){
  const status=$('login-status'),submit=$('login-submit'),explanation=$('login-explanation'),password=form.elements.password,email=form.elements.email;
  const params=new URLSearchParams(location.search);
  const next=params.get('next');
- const safeNext=next&&(/^\/account#project-[a-z0-9_-]{1,100}$/i.test(next)||/^\/creator\?id=[a-f0-9-]{36}$/i.test(next)||/^\/inbox(?:\?id=[a-f0-9-]{36})?$/i.test(next)||/^\/(?:submit-project|notifications|account|saved|creators)$/.test(next)||/^\/(?:threads(?:\/(?:new|[a-z0-9][a-z0-9-]{0,99}))?(?:\?(?:forum|view|q|sort)=[a-z0-9 %-]{0,60})?|projects\/(?:listing\/)?[a-z0-9][a-z0-9-]{0,99})?(?:#(?:feedback|launching-next|comment-[a-f0-9-]{36}))?$/.test(next));
+ const safeNext=next&&(next==='/account?tab=settings'||/^\/account#project-[a-z0-9_-]{1,100}$/i.test(next)||/^\/creator\?id=[a-f0-9-]{36}$/i.test(next)||/^\/inbox(?:\?id=[a-f0-9-]{36})?$/i.test(next)||/^\/(?:submit-project|notifications|account|saved|creators)$/.test(next)||/^\/(?:threads(?:\/(?:new|[a-z0-9][a-z0-9-]{0,99}))?(?:\?(?:forum|view|q|sort)=[a-z0-9 %-]{0,60})?|projects\/(?:listing\/)?[a-z0-9][a-z0-9-]{0,99})?(?:#(?:feedback|launching-next|comment-[a-f0-9-]{36}))?$/.test(next));
  const destination=safeNext?next:'/account';
  let mode=params.get('mode')==='signup'?'signup':'signin';
  let client=null,busy=false,unavailable='',pending=null;

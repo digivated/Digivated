@@ -136,8 +136,9 @@ for (const width of [320, 1440]) {
       expect(height, path).toBeLessThan(width === 320 ? 850 : 550);
       const action = footer.getByRole('link', { name: 'New Launch', exact: true });
       await expect(action).toHaveCount(1);
-      await expect(footer).toHaveCSS('background-color', 'rgb(16, 16, 16)');
+      await expect(footer).toHaveCSS('background-color', 'rgba(20, 20, 20, 0.91)');
       await expect(footer.locator('.dg-footer-group').filter({ has: page.getByRole('link', { name: 'New Launch', exact: true }) })).toHaveText(/For makers/);
+      await expect(footer.getByRole('link', { name: 'Email settings' })).toHaveAttribute('href', '/account?tab=settings');
       await expect(footer.locator('[data-scene-toggle]')).toHaveCount(0);
       const grid = footer.locator('.dg-footer-groups');
       const positions = await grid.locator('h2').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().toJSON()));
@@ -157,6 +158,10 @@ for (const width of [320, 1440]) {
     await expect(dialog).toBeVisible();
     await dialog.getByRole('button', { name: 'Close' }).click();
     await expect(dialog).toBeHidden();
+
+    await currentFooter.getByRole('link', { name: 'Email settings' }).click();
+    await expect(page).toHaveURL(/\/account\?tab=settings$/);
+    await expect(page.getByRole('link', { name: 'Log in or sign up' })).toHaveAttribute('href', '/login?next=%2Faccount%3Ftab%3Dsettings');
 
     await page.goto(base + '/start');
     const compact = page.getByRole('contentinfo');

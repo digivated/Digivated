@@ -9,7 +9,9 @@ if(state){
  const clearAuthFragment=()=>{
   if(location.hash&&location.hash!=='#account-submissions'&&location.hash!==projectAnchor)history.replaceState(null,'',location.pathname+location.search);
  };
- if(projectAnchor)form.querySelector('a[href="/login"]').href='/login?next='+encodeURIComponent('/account'+projectAnchor);
+ const signInDestination = projectAnchor ? '/account' + projectAnchor
+  : new URLSearchParams(location.search).get('tab') === 'settings' ? '/account?tab=settings' : '';
+ if(signInDestination)form.querySelector('a[href="/login"]').href='/login?next='+encodeURIComponent(signInDestination);
  const arrivingFromEmail=callback.has('access_token');
  const callbackError=callback.get('error_description');
  const recovering=callback.get('type')==='recovery'||new URLSearchParams(location.search).get('reset')==='password';

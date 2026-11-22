@@ -217,7 +217,7 @@ test('sidebar navigation keeps the content and footer aligned across destination
   await nav.getByRole('link', { name: 'News', exact: true }).click();
   await expect(page).toHaveURL(base + '/news');
   await expect(nav.getByRole('link', { name: 'News', exact: true })).toHaveAttribute('aria-current', 'page');
-  await expect(page.getByRole('contentinfo').locator('.dg-footer-group h2').first()).toHaveCSS('color', 'rgb(189, 189, 189)');
+  await expect(page.getByRole('contentinfo').locator('.dg-footer-group h2').first()).toHaveCSS('color', 'rgb(208, 208, 208)');
   expect(await shell()).toEqual(home);
 
   await page.goBack();

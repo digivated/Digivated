@@ -4,6 +4,7 @@
     margin: 0 auto !important;
     max-width: 820px;
     text-align: center;
+    background: radial-gradient(ellipse at 50% 26%, #fff 0%, transparent 70%) !important;
   }
 
   .launch-welcome {
