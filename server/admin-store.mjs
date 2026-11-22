@@ -236,3 +236,44 @@ return #duplicates`;
 export async function archiveDuplicateProjects(redis, apply = false) {
   return Number(await redis(['EVAL', ARCHIVE_DUPLICATE_PROJECTS, 1, 'digivated:public:submissions', apply ? 'apply' : 'preview']));
 }
+
+// Permanently deletes stuck submissions: pending manual launches with no purchase attached
+// ("review" stage, no promotion) and instant checkouts that were never paid ("payment" stage).
+// Paid or claimed promotions stay. Free launches
+// waiting on or past their badge, member spotlights and anything live, rejected or
+// archived are never touched. Preview returns the exact rows; apply deletes only the ids
+// the owner confirmed, rechecking each one so a record that moved on in the meantime stays.
+export const stuckStages = ['review', 'payment'];
+const STUCK_SUBMISSIONS = `${LAUNCH_STAGE_LUA}
+local function stuck(r) local s=launchStage(r); if s=='payment' then return true end; return s=='review' and (type(r.promotion)~='table' or (not r.promotion.requested and not r.promotion.verified and not r.promotion.included)) end
+if ARGV[1]=='preview' then
+ local ids=redis.call('ZRANGE',KEYS[1],0,-1); local rows={}
+ for _,id in ipairs(ids) do
+  local raw=redis.call('GET','digivated:submission:'..id)
+  if raw then local ok,r=pcall(cjson.decode,raw); if ok and type(r)=='table' and stuck(r) then
+   table.insert(rows,cjson.encode({id=id,name=r.name or '',creator=r.creator or '',date=r.date or '',stage=launchStage(r)}))
+  end end
+ end
+ return rows
+end
+local deleted=0
+for i=2,#ARGV do
+ local id=ARGV[i]; local key='digivated:submission:'..id; local raw=redis.call('GET',key)
+ if raw then local ok,r=pcall(cjson.decode,raw); if ok and type(r)=='table' and stuck(r) then
+  redis.call('DEL',key,'digivated:public:submission:'..id,'digivated:badge-mail:'..id..':verified','digivated:badge-mail:'..id..':finish')
+  redis.call('ZREM',KEYS[1],id); redis.call('ZREM','digivated:public:submissions',id); redis.call('ZREM','digivated:launch:free',id)
+  if type(r.slug)=='string' and r.slug~='' and redis.call('GET','digivated:launch-slug:'..r.slug)==id then redis.call('DEL','digivated:launch-slug:'..r.slug) end
+  deleted=deleted+1
+ end end
+end
+return deleted`;
+
+export async function stuckSubmissions(redis) {
+  const rows = await redis(['EVAL', STUCK_SUBMISSIONS, 1, 'digivated:submissions', 'preview']);
+  return (Array.isArray(rows) ? rows : []).map(row => JSON.parse(row));
+}
+export async function deleteStuckSubmissions(redis, ids) {
+  const clean = [...new Set((Array.isArray(ids) ? ids : []).filter(id => typeof id === 'string' && validId(id)))].slice(0, 500);
+  if (!clean.length) return 0;
+  return Number(await redis(['EVAL', STUCK_SUBMISSIONS, 1, 'digivated:submissions', 'apply', ...clean]));
+}

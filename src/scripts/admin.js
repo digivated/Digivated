@@ -35,6 +35,7 @@ async function api(path = '', body) {
 function errorText(error) { return error.name === 'TimeoutError' ? 'The request timed out. Refresh to check whether your change was saved before trying again.' : error.message || 'Something went wrong. Please try again.'; }
 function filters() {
   $('owner-duplicates').hidden = state.kind !== 'submission';
+  $('owner-stuck').hidden = state.kind !== 'submission';
   $('owner-stage-control').hidden = state.kind !== 'submission';
   $('owner-stage').value = '';
   const select = $('owner-filter'); select.replaceChildren(new Option('All statuses',''));
@@ -386,6 +387,27 @@ $('owner-duplicates').addEventListener('click', async () => {
     const result = await api('', { action: 'archive-duplicate-projects', apply: true });
     await selectKind('submission', 'archived');
     message(`Archived ${result.count} duplicate projects.`);
+  } catch (error) {
+    message(errorText(error));
+  } finally {
+    button.disabled = false;
+  }
+});
+
+// Permanent cleanup of stuck submissions (pending, never approved or never paid).
+// The server previews the exact rows; only those confirmed ids are deleted, and each is rechecked.
+$('owner-stuck').addEventListener('click', async () => {
+  const button = $('owner-stuck');
+  button.disabled = true;
+  try {
+    const { items } = await api('', { action: 'stuck-submissions' });
+    if (!items.length) { message('No stuck submissions. Badge launches, member spotlights and live projects are never included.'); return; }
+    const names = items.slice(0, 15).map(item => `• ${item.name || item.id}${item.creator ? ' — ' + item.creator : ''}${item.stage === 'payment' ? ' (unpaid checkout)' : ''}`).join('\n');
+    const more = items.length > 15 ? `\n…and ${items.length - 15} more` : '';
+    if (!confirm(`Permanently delete ${items.length} stuck submission${items.length === 1 ? '' : 's'}?\n\n${names}${more}\n\nThis cannot be undone. Badge launches, member spotlights and live projects are kept.`)) return;
+    const { count } = await api('', { action: 'delete-stuck-submissions', ids: items.map(item => item.id) });
+    await load();
+    message(`Deleted ${count} stuck submission${count === 1 ? '' : 's'}.`);
   } catch (error) {
     message(errorText(error));
   } finally {

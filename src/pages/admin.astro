@@ -94,7 +94,7 @@ import UiIcon from '../components/UiIcon.astro';
           <label class="owner-search-field"><span id="owner-search-label">Search loaded items</span><input id="owner-search" type="search" placeholder="Name, title, or creator"/></label>
           <label>Filter status<select id="owner-filter"><option value="">All statuses</option></select></label>
           <label id="owner-stage-control" hidden>Launch stage<select id="owner-stage"><option value="">All launch stages</option></select></label>
-          <div class="owner-toolbar-actions"><button id="owner-refresh" class="button" type="button">Refresh</button><button class="button" id="owner-duplicates" type="button" hidden>Check duplicate projects</button><button id="owner-create" class="button primary" type="button" hidden>New article</button></div>
+          <div class="owner-toolbar-actions"><button id="owner-refresh" class="button" type="button">Refresh</button><button class="button" id="owner-duplicates" type="button" hidden>Check duplicate projects</button><button class="button owner-danger" id="owner-stuck" type="button" hidden>Clear stuck submissions</button><button id="owner-create" class="button primary" type="button" hidden>New article</button></div>
         </div>
         <p id="owner-search-note" class="quiet" hidden>Search filters loaded accounts. Use Load more to see older accounts.</p>
         <div class="owner-list-meta"><p class="quiet" id="owner-count" role="status"></p><p class="quiet" id="owner-list-updated"></p></div>

@@ -209,6 +209,8 @@
 #digivated-root .owner-desk .owner-toolbar :is(input, select):focus { background-color:#fff; border-color:var(--dk-line-hi); box-shadow:var(--dk-ring); }
 #digivated-root .owner-desk .owner-toolbar-actions { display:flex; flex-wrap:wrap; gap:8px; margin-left:auto; }
 #digivated-root .owner-desk .owner-toolbar-actions .button { min-height:40px; }
+#digivated-root .owner-desk .button.owner-danger { color:#b42318; }
+#digivated-root .owner-desk .button.owner-danger:hover { border-color:#efc4ca; background:#fdf3f4; }
 #digivated-root .owner-desk #owner-search-note { margin:0 4px 8px; }
 #digivated-root .owner-desk .owner-list-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 16px; margin:0 4px 10px; }
 #digivated-root .owner-desk .owner-list-meta p { margin:0; font-size:12px; }
