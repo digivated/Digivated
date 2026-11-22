@@ -1,4 +1,4 @@
-html#digivated-root body.platform .creator-inbox-page {width:min(1180px,calc(100% - 48px));padding:30px 0 88px}
+html#digivated-root body.platform .creator-inbox-page {width:100%;padding:var(--editorial-space) 0 64px}
 html#digivated-root body.platform .creator-inbox-heading>a {display:inline-flex;min-height:36px;align-items:center;color:#beb0cb;font-size:12px}
 html#digivated-root body.platform .creator-inbox-heading h1 {font-size:clamp(33px,4.5vw,48px);letter-spacing:-.045em}
 html#digivated-root body.platform .creator-inbox-heading>p:last-child {margin:7px 0 0;color:#b8afc0;font-size:14px}
@@ -21,7 +21,6 @@ html#digivated-root body.platform .creator-inbox-page :is(a,button,input,textare
 @media(max-width:720px) {
   html#digivated-root body.platform .creator-back {margin:10px 17px 15px}
   html#digivated-root body.platform .creator-inbox-page {width:100%;padding:16px 0 65px}
-  html#digivated-root body.platform .creator-inbox-heading {padding-inline:18px}
   html#digivated-root body.platform .creator-inbox-layout {display:block;min-height:0;margin-top:20px;border-radius:0;border-inline:0}
   html#digivated-root body.platform .creator-inbox-list-head {min-height:60px}
   html#digivated-root body.platform #inbox-messages {min-height:calc(100dvh - 340px);max-height:calc(100dvh - 340px);padding:18px}

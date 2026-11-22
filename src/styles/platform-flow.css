@@ -1,5 +1,5 @@
 @layer daylight {
-  html[data-theme="daylight"] body.platform #main :is(.dg-dir .dg-hero, .news-masthead, .dg-forum-header, .rl > .dg-hero) {
+  html[data-theme="daylight"] body.platform #main :is(.dg-dir .dg-hero, .news-masthead, .dg-forum-header, .rl > .dg-hero, .shop-hero) {
     padding: clamp(20px, 3vw, 42px) 0 var(--editorial-space) !important;
     margin-block: 0 !important;
     border: 0 !important;
@@ -7,7 +7,7 @@
     background: transparent !important;
   }
   html[data-theme="daylight"] body.platform #main :is(.dg-dir, .rl) .dg-hero-copy { max-width: min(100%, 880px) !important; }
-  html[data-theme="daylight"] body.platform #main :is(.dg-dir, .news-masthead, .dg-forum-header, .rl) h1 {
+  html[data-theme="daylight"] body.platform #main :is(.dg-dir, .news-masthead, .dg-forum-header, .rl, .shop-hero) h1 {
     font-size: var(--editorial-title) !important;
     margin-block: 0 8px !important;
     font-weight: 560 !important;

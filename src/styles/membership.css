@@ -1,6 +1,6 @@
 /* Shop (/shop, /membership): two purchase cards, verify form, FAQ. */
 @layer flow {
-html#digivated-root[data-ascii] body .shop{display:grid;gap:32px;width:min(980px,100%);margin:0 auto!important;padding:0 0 64px!important}
+html#digivated-root[data-ascii] body .shop{display:grid;gap:var(--editorial-space);width:100%;margin:0 auto!important;padding:0 0 64px!important}
 html#digivated-root[data-ascii] body .shop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 html#digivated-root[data-ascii] body .shop-card{position:relative;display:flex!important;flex-direction:column;gap:14px;max-width:none!important;margin:0!important;padding:28px!important;border:1px solid #232323!important;border-radius:6px!important;background-color:#0d0d0d!important;box-shadow:none!important;overflow:hidden;transition:border-color .25s,box-shadow .3s!important}
 html#digivated-root[data-ascii] body .shop-card::before{content:'';position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,#c3a0ff00,var(--shop-glow,#8f8f8f),#c3a0ff00);opacity:.7}
