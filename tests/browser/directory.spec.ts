@@ -38,9 +38,10 @@ for (const width of [320, 768, 1440]) {
         stacked: links.top >= signup.bottom && Math.abs(signup.left - links.left) < 2,
         controlsFit: input.width >= 128 && input.right <= button.left + 1 && button.right <= signup.right,
         creditsBelow: credits.top > Math.max(signup.bottom, links.bottom),
+        dimensions: { signup: signup.width, input: input.width, button: button.width, links: links.width },
       };
     });
-    expect(layout).toEqual({ sideBySide: width === 1440, stacked: width !== 1440, controlsFit: true, creditsBelow: true });
+    expect(layout).toMatchObject({ sideBySide: width === 1440, stacked: width !== 1440, controlsFit: true, creditsBelow: true });
     await expect(footer).toHaveCSS('background-color', 'rgb(23, 24, 28)');
     await expect(footer.getByRole('link', { name: 'Report a bug' })).toBeVisible();
     await expect(footer.locator('[data-launchai-badge]')).toHaveAttribute('href', 'https://launchai.tools');

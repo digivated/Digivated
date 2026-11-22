@@ -17,6 +17,7 @@
   }
 
   .dg-footer-inner {
+    inline-size: 100% !important;
     max-inline-size: 1120px;
     margin-inline: auto;
     container: footer-content / inline-size;
@@ -43,9 +44,14 @@
     line-height: 1.5 !important;
   }
 
-  .dg-footer-signup form { margin-top: 14px; }
+  .dg-footer-signup form {
+    inline-size: 100% !important;
+    max-inline-size: none !important;
+    margin: 14px 0 0 !important;
+  }
   .dg-footer-signup-fields {
-    display: flex;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) max-content;
     align-items: stretch;
     min-width: 0;
     padding: 4px;
@@ -54,9 +60,9 @@
     background: #26272d !important;
   }
   #digivated-root .dg-footer-signup input {
-    flex: 1 1 0;
-    width: 0;
-    min-width: 0;
+    box-sizing: border-box;
+    width: 100% !important;
+    min-width: 0 !important;
     min-height: 42px !important;
     margin: 0 !important;
     padding: 6px 9px !important;
@@ -67,7 +73,8 @@
   }
   #digivated-root .dg-footer-signup input::placeholder { color: var(--footer-muted) !important; }
   #digivated-root .dg-footer-signup .button {
-    flex: none;
+    width: auto !important;
+    margin: 0 !important;
     min-height: 42px !important;
     padding: 8px 12px !important;
     border-radius: 8px !important;
