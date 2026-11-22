@@ -150,6 +150,22 @@ test('product URL opens an editable draft without publishing', async ({ page }) 
  });
  await page.goto(base+'/submit-project');
  await expect(page.getByLabel('Project name')).toBeHidden();
+ await expect(page.locator('#submission-account-status')).toBeVisible();
+ for (const width of [320, 390, 1440]) {
+  await page.setViewportSize({ width, height: 900 });
+  const form = (await page.locator('#project-form').boundingBox())!;
+  const field = (await page.getByLabel('Project URL').boundingBox())!;
+  const primary = (await page.getByRole('button', { name: 'Draft from link' }).boundingBox())!;
+  const manual = (await page.getByRole('button', { name: 'Enter details manually' }).boundingBox())!;
+  expect(field.x - form.x).toBeGreaterThanOrEqual(16);
+  expect(form.x + form.width - field.x - field.width).toBeGreaterThanOrEqual(16);
+  expect(primary.x).toBeCloseTo(field.x, 0);
+  expect(primary.y - field.y - field.height).toBeGreaterThanOrEqual(10);
+  expect(manual.y >= primary.y + primary.height || manual.x >= primary.x + primary.width + 12).toBe(true);
+  const bottomInset = form.y + form.height - manual.y - manual.height;
+  expect(bottomInset).toBeGreaterThanOrEqual(12);
+  expect(bottomInset).toBeLessThanOrEqual(32);
+ }
  await page.getByLabel('Project URL').fill('example.com');
  await page.locator('#project-import').click();
  await expect(page.getByLabel('Project name')).toHaveValue('Orbit');

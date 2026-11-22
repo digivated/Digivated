@@ -290,7 +290,7 @@
  html#digivated-root[data-ascii] #main :is(.launch-toolbar,.wall-navigation) {gap:24px!important;margin-block:24px 40px!important;}
  html#digivated-root[data-ascii] #main :is(.wall-card-grid,.resource-grid,.ai-category-grid) {gap:32px!important;}
  html#digivated-root[data-ascii] #main .creator-profile-editor form {min-width:0;max-width:760px;}
- html#digivated-root[data-ascii] .submission-form fieldset {padding:0!important;margin:0 0 56px!important;}
+ html#digivated-root[data-ascii] .submission-form fieldset:not(.launch-start) {padding:0!important;margin:0 0 56px!important;}
  html#digivated-root[data-ascii] .submission-form label {margin-block:24px!important;}
  html#digivated-root[data-ascii] .submission-form :is(input,select,textarea) {box-sizing:border-box;max-width:100%;}
  html#digivated-root[data-ascii] .submission-form .field-help {max-width:65ch;line-height:1.65;}

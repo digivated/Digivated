@@ -315,7 +315,7 @@
 
   .home-refresh .dg-hero-panel {
     margin:0 auto 10px !important;
-    max-width:880px;
+    max-width:var(--launch-board-width, 880px);
     padding:0 !important;
     border:0 !important;
     background:none !important;
