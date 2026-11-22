@@ -28,7 +28,6 @@ const active = (href: string) => isNavigationCurrent(path, href);
           <button role="menuitem" type="button" id="header-sign-out">Sign out</button>
         </div>
       </div>
-      <a class="dg-header-submit" href="/submit-project" aria-label="Submit a product" aria-current={active('/submit-project')?'page':undefined}><span>Submit</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <details class="dg-shell-disclosure" data-navigation>
         <summary class="site-menu-trigger" aria-controls="explore-navigation">
           <span class="dg-shell-more-label">More</span>
@@ -42,11 +41,6 @@ const active = (href: string) => isNavigationCurrent(path, href);
             {primaryLinks.map(([href, label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}</a>)}
           </div>
           <NavigationBranches path={path}/>
-          <div class="site-menu-submit site-menu-links">
-            <a href="/submit-project" aria-current={active('/submit-project') ? 'page' : undefined}>
-              <UiIcon name="arrow" size={16}/>Submit a product
-            </a>
-          </div>
         </nav>
       </details>
     </div>

@@ -10,7 +10,7 @@ test('white mobile menu remains readable and routes correctly',async({page})=>{
  const menu=page.locator('#explore-navigation');await expect(menu).toBeVisible();
  const material=await menu.evaluate(element=>({filter:getComputedStyle(element).backdropFilter,background:getComputedStyle(element).backgroundColor}));
  expect(material).toEqual({filter:'none',background:'rgb(255, 255, 255)'});
- await menu.getByRole('link',{name:'Resources'}).click();
+ await menu.getByRole('link',{name:'Extra Tools'}).click();
  await expect(page).toHaveURL(/\/resources\/?$/);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
@@ -31,7 +31,7 @@ test('glass search stays usable at desktop and narrow widths',async({page,browse
 
 test('reduced motion keeps the glass surfaces and readable controls',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:844});await page.goto(base+'/');
- const launch = page.getByRole('link', { name: 'Submit launch', exact: true });
+ const launch = page.locator('.dg-home-hero').getByRole('link', { name: 'New Launch', exact: true });
  await expect(launch).toBeVisible();
  await expect(launch).toHaveAttribute('href', '/submit-project');
  await expect(launch).toHaveCSS('transition-duration', '0s');

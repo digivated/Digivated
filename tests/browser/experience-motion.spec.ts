@@ -49,7 +49,7 @@ test('hero stays readable when JavaScript is disabled',async({browser})=>{
  await expect(p.locator('[data-site-backdrop]')).toHaveCount(0);
  const menu = p.locator('.site-menu-trigger');
  await menu.click();
- await expect(p.getByRole('link',{name:'Submit a product',exact:true})).toHaveAttribute('href','/submit-project');
+ await expect(p.getByRole('navigation',{name:'Site menu'}).getByRole('link',{name:'New Launch',exact:true})).toHaveAttribute('href','/submit-project');
  await menu.click();
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await p.getByRole('searchbox').fill('indie projects');
@@ -67,7 +67,7 @@ test('resources search and home hero actions stay usable',async({page})=>{
  await expect(page.locator('[data-ascii-field],.ascii-ambient')).toHaveCount(0);
  await page.locator('.dg-hero-panel summary').click();
  await expect(page.locator('.dg-hero-panel [role=timer]')).toBeVisible();
- await page.getByRole('link',{name:'Submit launch',exact:true}).click();
+ await page.locator('.dg-home-hero').getByRole('link',{name:'New Launch',exact:true}).click();
  await expect(page).toHaveURL(base + '/submit-project');
 });
 
@@ -89,7 +89,7 @@ test('activity indicators follow system motion preferences and launch links stay
  await page.emulateMedia({ reducedMotion: 'no-preference' });
  await expect(ribbon).toHaveCSS('animation-name', 'dg-ribbon-signal');
 
- await page.getByRole('link', { name: 'Submit launch', exact: true }).focus();
+ await page.locator('.dg-home-hero').getByRole('link', { name: 'New Launch', exact: true }).focus();
  await page.keyboard.press('Enter');
  await expect(page).toHaveURL(base + '/submit-project');
 });
@@ -131,7 +131,7 @@ test('sidebar and launch actions work with reduced motion and no hydrated visual
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.goto(base+'/');
   await expect(page.locator('[data-react-bits]')).toHaveCount(0);
-  await expect(page.getByRole('link',{name:'Submit launch',exact:true})).toHaveAttribute('href','/submit-project');
-  await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:'Categories'}).press('Enter');
-  await expect(page).toHaveURL(base+'/categories');
+  await expect(page.locator('.dg-home-hero').getByRole('link',{name:'New Launch',exact:true})).toHaveAttribute('href','/submit-project');
+  await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:'Directory'}).press('Enter');
+  await expect(page).toHaveURL(base+'/discover');
 });

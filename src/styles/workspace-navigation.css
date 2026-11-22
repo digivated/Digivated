@@ -64,7 +64,7 @@
   .dg-workspace .dg-shell .dg-shell-brand > span {display:inline !important; font-family:Georgia,serif; font-weight:700;}
   .dg-workspace .dg-rail-brand {font-family:Georgia,serif;}
   .dg-workspace .dg-shell :is(.site-menu-trigger,.dg-shell-login,.dg-shell-icon,.dg-shell-avatar-trigger,.site-menu-links a,.site-menu-branch-trigger) {color:#171717 !important; text-shadow:none !important;}
-  .dg-workspace :is(.dg-rail-submit,.dg-header-submit),.home-refresh .dg-home-hero .dg-btn-primary {background:#171717 !important;color:white !important;justify-content:center;gap:8px;}
+  .home-refresh .dg-home-hero .dg-btn-primary {background:#171717 !important;color:white !important;justify-content:center;gap:8px;}
   .dg-workspace-content #main {width:100%;max-width:1120px !important;margin-inline:auto !important;}
   .category-index {max-width:840px;margin:0 auto;padding-block:clamp(20px,4vw,50px);}
   .category-index header {margin-bottom:22px}
@@ -97,14 +97,26 @@
 @layer workspace-preview {
   html[data-theme="daylight"] body #discovery-search {background:white !important;color:#171717 !important;backdrop-filter:none !important;}
   @media(max-width:920px) {
-    .dg-workspace .dg-shell .site-menu-panel {height:calc(100dvh - 58px);max-height:calc(100dvh - 58px);align-content:start;grid-template-rows:auto auto minmax(min-content,1fr);border-radius:0 !important;opacity:1 !important;animation:none !important;}
-    .dg-workspace .site-menu-panel .site-menu-submit {align-self:end; padding-bottom:max(12px,env(safe-area-inset-bottom));}
-    .dg-workspace .site-menu-submit a {background:#171717 !important;color:#fff !important;justify-content:center;}
+    .dg-workspace .dg-shell .site-menu-panel {height:calc(100dvh - 58px);max-height:calc(100dvh - 58px);align-content:start;grid-template-rows:auto auto;border-radius:0 !important;opacity:1 !important;animation:none !important;}
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   @layer workspace-preview {
-    .dg-workspace :is(.dg-btn,.dg-rail-submit,.dg-header-submit) { transition:none !important; animation:none !important; }
+    .dg-workspace .dg-btn { transition:none !important; animation:none !important; }
   }
+}
+
+@layer workspace-preview {
+  .dg-workspace :is(.dg-rail-primary,.dg-shell-primary,.site-menu-primary) a[href="/submit-project"] {
+    color: #fff !important;
+    background: #171717 !important;
+    border-radius: 8px !important;
+    font-weight: 650 !important;
+    text-decoration: none !important;
+  }
+  .dg-workspace :is(.dg-rail-primary,.dg-shell-primary,.site-menu-primary) a[href="/submit-project"]:hover { background: #333 !important; }
+  .dg-workspace :is(.dg-rail-primary,.dg-shell-primary,.site-menu-primary) a[href="/submit-project"]:focus-visible { outline-color: #fff !important; }
+  .dg-workspace .dg-shell .dg-shell-primary { margin-inline-start: 8px; }
+  .dg-workspace .dg-shell .dg-shell-primary a { padding-inline: 9px !important; white-space: nowrap; }
 }
