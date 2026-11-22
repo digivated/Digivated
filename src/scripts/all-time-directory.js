@@ -6,6 +6,7 @@ import { safeSearchHref } from '../lib/discovery-search.mjs';
 import { categoryFromLink } from '../lib/project-taxonomy.mjs';
 import { DIRECTORY_SORTS, sortKeys, filterProjects, sortProjects, sectionLabel, categoryCounts } from '../lib/directory-sort.mjs';
 import { projectMarks } from '../lib/project-marks.mjs';
+import { projectLogo } from './project-logo.js';
 
 // /discover: the all-time index. Same rows as the homepage, plus search, sorts,
 // category filters, and a project dialog. Visiting a product
@@ -35,17 +36,6 @@ const pageOf = p => /^\/projects\/(?:listing\/)?[a-z0-9][a-z0-9-]*$/.test(p.page
 const liked = p => { if (p.liked !== undefined) return p.liked; try { return localStorage.getItem('digivated:liked:project:' + p.id) === '1'; } catch { return false; } };
 const pad = n => String(n).padStart(2, '0');
 
-function logo(p, className) {
-  const wrap = el('span', null, className);
-  wrap.append(el('span', (p.name || '?').slice(0, 2).toUpperCase(), 'dg-monogram'));
-  const src = local(p.image);
-  if (src) {
-    const img = el('img'); img.src = src; img.alt = ''; img.width = 44; img.height = 44; img.loading = 'lazy'; img.decoding = 'async';
-    img.addEventListener('error', () => img.remove(), { once: true });
-    wrap.append(img);
-  }
-  return wrap;
-}
 function visitLink(p, className) {
   const href = outbound(p.url);
   if (!href) return null;
@@ -120,7 +110,7 @@ if (root) {
     li.id = 'project-' + p.id;
     li.style.setProperty('--i', String(Math.min(index, 12)));
     const rankBox = el('span', rank ? pad(rank) : '', 'dg-dir-rank'); rankBox.setAttribute('aria-hidden', 'true');
-    const art = el('span', null, 'dg-logo-link'); art.setAttribute('aria-hidden', 'true'); art.append(logo(p, 'dg-logo'));
+    const art = el('span', null, 'dg-logo-link'); art.setAttribute('aria-hidden', 'true'); art.append(projectLogo(p, 'dg-logo'));
     const main = el('div', null, 'dg-main');
     const title = el('h3');
     const page = pageOf(p);

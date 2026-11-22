@@ -42,6 +42,11 @@ const active = (href: string) => isNavigationCurrent(path, href);
             {primaryLinks.map(([href, label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}</a>)}
           </div>
           <NavigationBranches path={path}/>
+          <div class="site-menu-submit site-menu-links">
+            <a href="/submit-project" aria-current={active('/submit-project') ? 'page' : undefined}>
+              <UiIcon name="arrow" size={16}/>Submit a product
+            </a>
+          </div>
         </nav>
       </details>
     </div>

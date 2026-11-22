@@ -7,6 +7,7 @@ import { boostVotes } from '../lib/feedback-score.mjs';
 import { safeSearchHref } from '../lib/discovery-search.mjs';
 import { cardIconMarkup } from '../lib/card-icons.mjs';
 import { projectMarks } from '../lib/project-marks.mjs';
+import { projectLogo } from './project-logo.js';
 import { matchesQuery } from '../lib/directory-sort.mjs';
 
 // One catalogue supplies the launch lists and featured products.
@@ -36,18 +37,6 @@ const shortDate = value => new Date(value).toLocaleDateString('en-US', { month: 
 const number = new Intl.NumberFormat('en-US');
 const canAnimate = () => !reduced.matches && document.documentElement.hasAttribute('data-motion-ready');
 
-function logo(p, className) {
-  const wrap = el('span', null, className);
-  wrap.append(el('span', (p.name || '?').slice(0, 2).toUpperCase(), 'dg-monogram'));
-  const src = local(p.image);
-  if (src) {
-    const img = el('img'); img.src = src; img.alt = ''; img.width = 44; img.height = 44; img.loading = 'lazy'; img.decoding = 'async';
-    img.addEventListener('error', () => img.remove(), { once: true });
-    wrap.append(img);
-  }
-  return wrap;
-}
-
 function visitAttrs(link, p) {
   link.href = outbound(p.url); link.target = '_blank'; link.rel = 'noopener';
   link.dataset.visitProject = p.id; link.dataset.visitName = p.name;
@@ -67,7 +56,7 @@ function spotCard(item, price) {
   }
   if (outbound(item.url)) visitAttrs(card, item); else card.href = local(item.pageUrl) || '/discover';
   card.dataset.projectId = item.id;
-  card.append(logo(item, 'dg-spot-logo'), el('strong', item.name, 'dg-spot-name'), el('span', item.description || item.category || 'Independent project', 'dg-spot-copy'), item.spot === 'Member' ? memberTag() : el('em', item.spot, 'dg-spot-tag'));
+  card.append(projectLogo(item, 'dg-spot-logo'), el('strong', item.name, 'dg-spot-name'), el('span', item.description || item.category || 'Independent project', 'dg-spot-copy'), item.spot === 'Member' ? memberTag() : el('em', item.spot, 'dg-spot-tag'));
   card.setAttribute('aria-label', `${item.name}, ${item.spot === 'Member' ? 'Digivated member' : 'featured product'}${card.target === '_blank' ? '. Opens in a new tab.' : ''}`);
   return card;
 }
@@ -124,7 +113,7 @@ function row(p, key) {
   const li = el('li', null, 'dg-row');
   li.dataset.launchId = p.id; li.dataset.project = ''; li.dataset.projectName = p.name;
   const page = local(p.pageUrl) || '/discover';
-  const art = el('a', null, 'dg-logo-link'); art.href = page; art.tabIndex = -1; art.setAttribute('aria-hidden', 'true'); art.append(logo(p, 'dg-logo'));
+  const art = el('a', null, 'dg-logo-link'); art.href = page; art.tabIndex = -1; art.setAttribute('aria-hidden', 'true'); art.append(projectLogo(p, 'dg-logo'));
   const main = el('div', null, 'dg-main');
   const title = el('h3'); const name = el('a', p.name); name.href = page; title.append(name);
   const votes = Number(p.votes?.[period]) || 0;
@@ -171,7 +160,7 @@ function row(p, key) {
 function upcomingRow(item) {
   const li = el('li', null, 'dg-row dg-row-upcoming');
   li.dataset.upcomingId = item.id;
-  const art = el('span', null, 'dg-logo-link'); art.setAttribute('aria-hidden', 'true'); art.append(logo(item, 'dg-logo'));
+  const art = el('span', null, 'dg-logo-link'); art.setAttribute('aria-hidden', 'true'); art.append(projectLogo(item, 'dg-logo'));
   const main = el('div', null, 'dg-main');
   const title = el('h3'); title.append(el('span', item.name, 'dg-upcoming-name'), el('span', freeLaunchDay(item.launchAt), 'dg-badge dg-badge-date'));
   main.append(title, el('p', item.description || 'Launching soon on Digivated.', 'dg-tagline'));
@@ -274,7 +263,7 @@ function renderRising() {
     const meter = el('span', '▮'.repeat(filled) + '▯'.repeat(6 - filled), 'dg-rising-meter'); meter.setAttribute('aria-hidden', 'true');
     const rank = el('span', `#${i + 1}`, 'dg-rising-rank'); rank.setAttribute('aria-hidden', 'true');
     const text = el('span', null, 'dg-rising-text'); text.append(el('strong', p.name), el('small', p.category || 'Project'));
-    a.append(rank, logo(p, 'dg-rising-logo'), text, meter);
+    a.append(rank, projectLogo(p, 'dg-rising-logo'), text, meter);
     a.setAttribute('aria-label', `${p.name}, number ${i + 1} rising in the last 24 hours`);
     li.append(a); return li;
   }));

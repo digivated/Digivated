@@ -19,11 +19,17 @@ for (const width of [320, 390, 768, 920, 921, 1119]) {
     await expect(trigger).toHaveAccessibleName(mobile ? 'Menu' : 'More');
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
     await expect(trigger.locator(mobile ? '.dg-shell-menu-open' : '.dg-shell-more-arrow')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Submit a product' }).first()).toHaveAttribute('href', '/submit-project');
+    const headerSubmit = page.locator('.dg-header-submit');
+    await expect(headerSubmit).toBeVisible({ visible: !mobile });
+    if (mobile) await expect(page.locator('.dg-shell-tools > a:visible')).toHaveText(['Log In']);
+    else await expect(headerSubmit).toHaveAttribute('href', '/submit-project');
     await expect(menu).toBeHidden();
     await trigger.click();
     if (mobile) await expect(trigger.locator('.dg-shell-menu-close')).toBeVisible();
     await expect(menu).toBeVisible();
+    const menuSubmit = menu.locator('.site-menu-submit a');
+    await expect(menuSubmit).toBeVisible({ visible: mobile });
+    if (mobile) await expect(menuSubmit).toHaveAttribute('href', '/submit-project');
     await expect(menu).toHaveCSS('background-color', 'rgb(0, 0, 0)');
     await expect(menu.locator('.site-menu-branch-trigger')).toHaveText(['Explore', 'For makers']);
     await expect(menu.getByRole('link', { name: 'News', exact: true })).toBeVisible();
