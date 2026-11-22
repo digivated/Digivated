@@ -229,5 +229,11 @@
 #digivated-root .dg-site-footer { position: relative !important; overflow: hidden !important; margin-bottom: 0 !important; border-radius: 22px 22px 0 0 !important; padding-bottom: clamp(70px, 14vw, 150px) !important; }
 #digivated-root .dg-site-footer::after { content: "digivated" / "" !important; position: absolute !important; left: 50% !important; bottom: clamp(-26px, -2.4vw, -10px) !important; transform: translateX(-50%) !important; display: block !important; font-size: clamp(84px, 19vw, 230px) !important; font-weight: 800 !important; letter-spacing: -.06em !important; line-height: 1 !important; white-space: nowrap !important; color: rgba(255,255,255,.06) !important; pointer-events: none !important; }
 #digivated-root .dg-site-footer .dg-footer-inner { position: relative !important; z-index: 1 !important; }
+#digivated-root .dg-row .dg-vote { display: flex !important; flex-direction: column !important; align-items: center !important; }
+#digivated-root .dg-row .dg-vote > * { display: block !important; }
+@media (max-width: 520px) {
+  #digivated-root .dg-row .dg-meta span:not(:first-child):not(.dg-meta-age) { display: none !important; }
+}
+#digivated-root .dg-site-footer { max-width: 1120px !important; }
 
 }
