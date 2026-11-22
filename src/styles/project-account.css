@@ -58,37 +58,74 @@ html body.platform.light-theme .creator-picks-heading{grid-column:1/-1;padding:1
     font-size: 14px !important;
   }
   .fl-dash .account-points > summary:hover { text-decoration: underline; }
-  .fl-dash .fl-settings {
-    gap: 0;
-    border: 1px solid var(--fl-line);
-    border-radius: var(--fl-radius-card);
-    background: var(--fl-surface);
+  .account-settings-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 14px;
+    margin-top: 14px;
   }
-  .fl-dash .fl-settings .fl-setting {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) auto;
+  .account-settings-secondary {
+    display: grid;
+    grid-auto-rows: min-content;
+    gap: 14px;
+  }
+  .fl-dash .account-setting-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-content: start;
+    align-items: start;
+    gap: 10px 13px;
+    padding: clamp(16px, 3vw, 24px) !important;
+    border: 1px solid var(--fl-line) !important;
+    border-radius: 16px !important;
+    background: var(--fl-surface) !important;
+  }
+  .fl-dash .account-setting-card[hidden] { display: none !important; }
+  .account-setting-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px !important;
+    background: var(--fl-raised) !important;
+    color: var(--fl-ink) !important;
+  }
+  .account-setting-card h3 {
+    margin: 0 0 4px !important;
+    color: var(--fl-ink) !important;
+    font-size: 17px !important;
+    line-height: 1.25 !important;
+  }
+  .account-setting-card p {
+    margin: 0 !important;
+    color: var(--fl-muted) !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+  .account-setting-card .fl-status:empty { display: none !important; }
+  .account-setting-card > :is(button, .fl-status) { grid-column: 2; }
+  .account-setting-card > :is(.button, .fl-btn, .account-setting-link) {
+    display: inline-flex;
     align-items: center;
-    gap: 6px 16px;
-    padding: 12px !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
+    justify-self: start;
+    gap: 7px;
+    min-height: 44px !important;
   }
-  .fl-dash .fl-settings .fl-setting[hidden] { display: none !important; }
-  .fl-dash .fl-settings .fl-setting:not(:first-child) { border-block-start: 1px solid var(--fl-line) !important; }
-  .fl-dash .fl-settings .fl-setting .fl-status:empty { display: none; }
-  .fl-dash .fl-settings .fl-btn {
-    min-height: 44px;
-    padding: 6px 0 !important;
-    border-color: transparent !important;
-    background: none !important;
-    box-shadow: none !important;
-    font-size: 13px !important;
+  .fl-dash .account-setting-feature {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: 12px;
+    background: linear-gradient(145deg, #fff 25%, #ededed) !important;
   }
-  @media (max-width: 440px) {
-    .fl-dash .fl-settings .fl-setting { grid-template-columns: minmax(0, 1fr); }
-    .fl-dash .fl-settings .fl-btn { justify-self: start; }
+  .account-setting-feature .account-setting-icon { width: 46px; height: 46px; }
+  .account-setting-feature h3 { font-size: clamp(21px, 3vw, 26px) !important; }
+  .account-setting-feature .account-setting-link {
+    color: var(--fl-ink) !important;
+    text-underline-offset: 4px;
+    font-size: 14px !important;
+  }
+  @media (max-width: 800px) {
+    .account-settings-grid { grid-template-columns: minmax(0, 1fr); }
   }
 }
 

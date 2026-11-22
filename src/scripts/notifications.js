@@ -131,7 +131,13 @@ $('notifications-clear').addEventListener('click',async () => {
     token = auth.session.access_token;
     await load();
     $('notifications-auth').hidden = true; $('notifications-main').hidden = false;
-    if (location.hash === '#notification-preferences') $('notification-preferences').scrollIntoView();
+    const section = ['#notification-activity', '#notification-preferences'].includes(location.hash)
+      ? $(location.hash.slice(1)) : null;
+    if (section) {
+      const { top, bottom } = section.querySelector('h2').getBoundingClientRect();
+      const topInset = matchMedia('(min-width: 1120px)').matches ? 12 : 76;
+      if (top < topInset || bottom > window.innerHeight) section.scrollIntoView();
+    }
   } catch(error) {
     $('notifications-auth').querySelector('p').textContent = error.message || 'Notifications could not be loaded. Try again.';
     if (!token) $('notifications-auth').querySelector('a').hidden = false;

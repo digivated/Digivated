@@ -1,0 +1,109 @@
+@layer workspace-preview {
+  .settings-masthead {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    overflow: hidden;
+    padding: clamp(20px, 4vw, 34px) !important;
+    border: 1px solid #333 !important;
+    border-radius: 20px !important;
+    background: radial-gradient(74% 170% at 95% 30%, #3d3d3d, #161616 73%) !important;
+    color: #fafafa !important;
+  }
+  .settings-masthead-copy {
+    min-width: 0;
+    max-width: 46ch;
+  }
+  .settings-masthead-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 12px;
+    border: 1px solid #ffffff42 !important;
+    border-radius: 11px !important;
+    background: #ffffff14 !important;
+    color: #fff !important;
+  }
+  .settings-masthead :is(h1, h2) {
+    margin: 0 0 6px !important;
+    color: #fff !important;
+    font-size: clamp(29px, 4.5vw, 46px) !important;
+    font-weight: 640 !important;
+    letter-spacing: -.045em !important;
+    line-height: 1.08 !important;
+  }
+  .settings-masthead .settings-masthead-copy p {
+    color: #d9d9d9 !important;
+    margin: 0 !important;
+    font-size: clamp(14px, 1.45vw, 16px) !important;
+    line-height: 1.5 !important;
+  }
+  .settings-masthead .settings-masthead-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px !important;
+    padding: 8px 12px !important;
+    border: 1px solid #ffffff5c !important;
+    border-radius: 10px !important;
+    background: #1d1d1d !important;
+    color: #fff !important;
+  }
+  .settings-masthead .settings-masthead-actions a:focus-visible {
+    outline-color: #fff !important;
+  }
+  .settings-motion {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    mask-image: linear-gradient(90deg, transparent 18%, #000 78%);
+  }
+  .settings-motion-rings {
+    position: absolute;
+    inset: -145px -85px auto auto;
+    width: clamp(265px, 50vw, 540px);
+    aspect-ratio: 1;
+    --settings-motion-progress: 0;
+    transform: translateY(calc(85px * var(--settings-motion-progress)))
+      rotate(calc(-24deg + 42deg * var(--settings-motion-progress)))
+      scaleY(calc(.78 - .08 * var(--settings-motion-progress)));
+  }
+  .settings-motion-rings span {
+    position: absolute;
+    inset: 11%;
+    border: 1px solid #ffffff40 !important;
+    border-radius: 44% 56% 62% 38% !important;
+    box-shadow: 0 0 16px #ffffff12, inset 0 0 14px #ffffff13 !important;
+  }
+  .settings-motion-rings span:nth-child(2) { inset: 16%; transform: rotate(18deg); }
+  .settings-motion-rings span:nth-child(3) { inset: 21%; transform: rotate(36deg); }
+  .settings-motion-rings span:nth-child(4) { inset: 26%; transform: rotate(56deg); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* React Bits Animated Content: a short lift as the selected surface appears. */
+    .settings-masthead > :is(.settings-masthead-copy, .settings-masthead-actions) {
+      animation: settings-surface-in 280ms cubic-bezier(.2,.75,.25,1) both;
+    }
+    @keyframes settings-surface-in {
+      from { transform: translateY(5px); }
+      to { transform: translateY(0); }
+    }
+  }
+  @media (max-width: 520px) {
+    .settings-masthead { align-items: flex-start; }
+    .settings-motion {
+      mask-image: linear-gradient(90deg, transparent 35%, #000 95%);
+      opacity: .65;
+    }
+    .settings-motion-rings { inset: -114px -86px auto auto; }
+  }
+  @media (forced-colors: active), (prefers-reduced-motion: reduce) {
+    .settings-motion { display: none; }
+  }
+}
