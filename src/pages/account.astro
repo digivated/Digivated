@@ -7,7 +7,7 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
 import SettingsMasthead from '../components/SettingsMasthead.astro';
 ---
 <Platform title="Your Projects" description="Your Digivated dashboard: track launches, read feedback, and manage your profile.">
-  <header class="page-intro fl-dash-intro"><div><h1>Maker dashboard</h1><p class="lede">Track your launches.</p></div></header>
+  <header class="page-intro fl-dash-intro"><div><h1 id="dash-title">Maker dashboard</h1><p class="lede" id="dash-lede">Track your launches.</p></div></header>
   <section class="project-account-card fl-dash" aria-label="Project account">
     <p id="account-state" class="fl-status" role="status" aria-live="polite">Connecting to account sign-in…</p>
     <form id="account-password-reset" class="login-panel fl-card fl-form fl-panel-pad" hidden>
@@ -20,8 +20,8 @@ import SettingsMasthead from '../components/SettingsMasthead.astro';
     </form>
     <div id="account-sign-in" class="account-actions fl-card fl-panel-pad fl-empty" hidden><div class="fl-actions"><a class="button primary" href="/login">Log in or sign up</a><a class="fl-btn" href="/discover?view=featured">Browse member projects</a></div></div>
     <div id="account-signed-in" hidden>
+      <div class="fl-dash-bar"><p>Signed in as <strong id="account-email"></strong></p><button class="fl-link" id="account-sign-out" type="button"><UiIcon name="external" size={15}/>Sign out</button></div>
       <MakerNavigation/>
-      <div class="fl-dash-bar"><p>Signed in as <strong id="account-email"></strong></p><button class="fl-link" id="account-sign-out" type="button">Sign out</button></div>
       <section id="account-panel-projects" role="tabpanel" aria-labelledby="account-tab-projects" class="fl-tabpanel">
         <h2 id="account-submissions-title" class="sr-only">My submissions</h2>
         <dl class="launch-totals" id="launch-totals" hidden>
@@ -29,27 +29,29 @@ import SettingsMasthead from '../components/SettingsMasthead.astro';
           <div><dt>Scheduled</dt><dd data-count="scheduled"></dd></div>
           <div><dt>Live</dt><dd data-count="live"></dd></div>
         </dl>
-        <div id="account-submissions" aria-live="polite"><p class="fl-status">Loading your projects…</p></div>
+        <p class="dash-note"><span class="dash-note-tag">Free</span><span>Free launches go live on a Monday at 9 AM Eastern once the Digivated badge is on your site.</span></p>
+        <div id="account-submissions" aria-live="polite"><p class="fl-status dash-loading">Loading your projects…</p></div>
+        <a class="dash-link-card" href="/badges"><span class="dash-link-icon"><UiIcon name="chart" size={18}/></span><span><strong>Embed badges</strong><small>Show your launch on your own site.</small></span></a>
         <details class="account-points">
           <summary>Feedback points</summary>
           <FeedbackPoints heading="Give feedback, get bonus upvotes on your launch."/>
         </details>
       </section>
       <section id="account-panel-analytics" role="tabpanel" aria-labelledby="account-tab-analytics" class="fl-tabpanel" hidden>
-        <header class="maker-section-heading"><h2>Launch analytics</h2>
-          <p>Views, visits, votes, and comments for your published projects.</p></header>
+        <header class="maker-section-heading"><h2>How your launches are doing</h2>
+          <p>Views, visits, upvotes and comments for each of your published launches.</p></header>
         <div class="maker-analytics-content">
           <label id="analytics-picker" hidden>Project <select id="analytics-project"></select></label>
-          <div id="analytics-result" aria-live="polite">Loading projects…</div>
+          <div id="analytics-result" aria-live="polite"><p class="fl-status dash-loading">Loading projects…</p></div>
         </div>
       </section>
       <section id="account-panel-profile" role="tabpanel" aria-labelledby="account-tab-profile" class="fl-tabpanel" hidden>
         <header class="maker-section-heading">
-          <h2 id="creator-profile-title">Your maker profile</h2>
-          <p>Choose how you appear on Digivated. Your account email stays private.</p>
+          <h2 id="creator-profile-title">How people see you</h2>
+          <p>Shown on your launches and your public profile. Your account email stays private.</p>
         </header>
         <section class="creator-profile-editor fl-card fl-panel-pad" aria-labelledby="creator-profile-title">
-          <form id="creator-profile-form" class="fl-form">
+          <form id="creator-profile-form" class="fl-form creator-profile-grid">
             <div class="creator-logo-editor">
               <span class="creator-avatar" id="creator-logo-preview" aria-hidden="true">D</span>
               <div class="maker-photo-details">
@@ -58,48 +60,51 @@ import SettingsMasthead from '../components/SettingsMasthead.astro';
                 <input id="creator-logo-input" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="creator-logo-help"/>
               </div>
             </div>
-            <label>Display name<input name="name" maxlength="60" required placeholder="Your name or studio" autocomplete="nickname"/></label>
-            <label>Short bio<textarea name="bio" maxlength="240" rows="3" placeholder="What do you build?"></textarea></label>
+            <label class="creator-field-wide">Display name<input name="name" maxlength="60" required placeholder="Your name or studio" autocomplete="nickname"/></label>
+            <label class="creator-field-wide"><span class="maker-field-label">Short bio <small>Up to 240 characters</small></span><textarea name="bio" maxlength="240" rows="3" placeholder="What do you build?"></textarea></label>
             <label><span class="maker-field-label">Website <small>Optional</small></span><input name="website" type="url" maxlength="300" placeholder="https://your-site.com"/></label>
             <label><span class="maker-field-label">Social profile <small>Optional</small></span><input name="social" type="url" maxlength="300" placeholder="https://x.com/yourname"/></label>
-            <label class="creator-profile-visibility"><input name="public" type="checkbox"/> Show my profile publicly</label>
-            <div class="creator-profile-actions fl-actions">
+            <label class="creator-profile-visibility creator-field-wide"><input name="public" type="checkbox"/> Show my profile publicly</label>
+            <div class="creator-profile-actions fl-actions creator-field-wide">
               <button class="button primary" type="submit">Save profile</button>
               <a id="creator-profile-link" class="fl-btn" hidden>View public profile</a>
             </div>
-            <p id="creator-profile-status" class="fl-status" role="status" aria-live="polite"></p>
+            <p id="creator-profile-status" class="fl-status creator-field-wide" role="status" aria-live="polite"></p>
           </form>
         </section>
       </section>
       <section id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" class="fl-tabpanel" hidden>
-        <SettingsMasthead title="Account settings" description="Manage alerts, the weekly launch email, and your password." icon="sliders"/>
+        <SettingsMasthead title="Account settings" description="Alerts, the weekly launch email, and your password."/>
         <div class="account-settings-grid">
-          <section class="account-setting-card account-setting-feature" aria-labelledby="account-notifications-title">
-            <span class="account-setting-icon"><UiIcon name="bell" size={23}/></span>
-            <div>
-              <h3 id="account-notifications-title">Notifications</h3>
-              <p>Choose which activity you hear about, from project feedback to launch reminders.</p>
+          <section class="account-setting-group" aria-labelledby="account-email-title">
+            <header><h3 id="account-email-title">Email and alerts</h3><p>Choose what reaches you, and where.</p></header>
+            <div class="account-setting-row" role="group" aria-labelledby="account-notifications-title">
+              <div class="account-setting-copy"><h4 id="account-notifications-title">Notifications</h4><p>Which activity you hear about, from project feedback to launch reminders.</p></div>
+              <div class="account-setting-actions">
+                <a class="button primary" href="/notifications#notification-preferences">Manage notifications <UiIcon name="arrow" size={16}/></a>
+                <a class="account-setting-link" href="/notifications#notification-activity">View recent activity</a>
+              </div>
             </div>
-            <a class="button primary" href="/notifications#notification-preferences">Manage notifications <UiIcon name="arrow" size={16}/></a>
-            <a class="account-setting-link" href="/notifications#notification-activity">View recent activity</a>
+            <div id="weekly-email" class="account-setting-row" role="group" aria-labelledby="account-weekly-title" hidden>
+              <div class="account-setting-copy"><h4 id="account-weekly-title">Weekly email</h4><p>New projects in your inbox once a week. Unsubscribe anytime.</p></div>
+              <div class="account-setting-actions">
+                <button class="fl-btn" id="weekly-toggle" type="button">Get weekly emails</button>
+                <p id="weekly-status" class="fl-status" role="status" aria-live="polite"></p>
+              </div>
+            </div>
           </section>
-          <div class="account-settings-secondary">
-            <section id="weekly-email" class="account-setting-card" aria-labelledby="account-weekly-title" hidden>
-              <span class="account-setting-icon"><UiIcon name="mail" size={21}/></span>
-              <div><h3 id="account-weekly-title">Weekly email</h3><p>Get new projects in your inbox. Unsubscribe anytime.</p></div>
-              <button class="fl-btn" id="weekly-toggle" type="button">Get weekly emails</button>
-              <p id="weekly-status" class="fl-status" role="status" aria-live="polite"></p>
-            </section>
-            <section class="account-setting-card" aria-labelledby="account-password-title">
-              <span class="account-setting-icon"><UiIcon name="lock" size={21}/></span>
-              <div><h3 id="account-password-title">Password</h3><p>Send a reset link to your account email.</p></div>
-              <button class="fl-btn" id="account-reset-link" type="button">Email me a reset link</button>
-              <p id="account-reset-status" class="fl-status" role="status" aria-live="polite"></p>
-            </section>
-          </div>
+          <section class="account-setting-group" aria-labelledby="account-password-title">
+            <div class="account-setting-row">
+              <div class="account-setting-copy"><h3 id="account-password-title">Password</h3><p>We email a reset link to your account address.</p></div>
+              <div class="account-setting-actions">
+                <button class="fl-btn" id="account-reset-link" type="button">Email me a reset link</button>
+                <p id="account-reset-status" class="fl-status" role="status" aria-live="polite"></p>
+              </div>
+            </div>
+          </section>
         </div>
       </section>
     </div>
   </section>
-  <script>import '../scripts/project-account.js';</script>
+  <script>import '../scripts/project-account.js';import '../scripts/dashboard-shell.js';</script>
 </Platform>
