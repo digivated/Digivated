@@ -14,7 +14,7 @@ if (button) (async () => {
     const link = document.createElement('a');
     link.className = button.className; link.href = membership.checkoutUrl;
     link.target = '_blank'; link.rel = 'noopener noreferrer';
-    link.textContent = 'Get membership · $5 once ↗';
+    link.textContent = 'Get membership · $5 once';
     button.replaceWith(link);
     const note = document.querySelector('.membership-checkout-note');
     if (note) note.hidden = true;

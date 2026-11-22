@@ -34,7 +34,9 @@ for (const width of [390, 1440]) test(`shop plans lead to the correct launch pat
  await expect(free.locator('.shop-price')).toHaveText('$0');
  await expect(starter.locator('[data-shop-spot-price]')).toHaveText('$3');
  await expect(free.getByRole('link', { name: 'Start free' })).toHaveAttribute('href', '/submit-project#project-form');
+ await expect(free.getByRole('link', { name: 'Start free' })).toHaveCSS('color', 'rgb(11, 11, 12)');
  await expect(starter.getByRole('link', { name: 'Get Starter' })).toHaveAttribute('href', '/submit-project?spot=1#project-form');
+ await expect(membership.locator('.shop-list')).toHaveCSS('row-gap', '9px');
 
  const bounds = await Promise.all([free.boundingBox(), starter.boundingBox(), membership.boundingBox()]);
  const [freeBox, starterBox, memberBox] = bounds;
