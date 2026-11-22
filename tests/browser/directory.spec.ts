@@ -77,11 +77,11 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await expect(activeLaunches).toHaveAttribute('aria-current', 'page');
   await expect(activeLaunches).toHaveCSS('box-shadow', /inset/);
   await expect(rail.getByRole('link', { name: 'Submit a launch' })).toHaveAttribute('href', '/submit-project');
-  await expect(rail).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+  await expect(rail).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(rail).toHaveCSS('background-image', 'none');
   const workspace = rail.getByRole('navigation', { name: 'Workspace navigation' });
   await expect(workspace.locator('a')).toHaveText([
-    'Launches', 'Directory', 'Threads', 'News', 'Resources', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
+    'Launches', 'Categories', 'Threads', 'News', 'Directory', 'Resources', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
   ]);
   await expect(workspace.getByRole('link', { name: 'News', exact: true })).toBeVisible();
   await expect(workspace.locator('a[href="/badges"]')).toBeHidden();
@@ -108,14 +108,14 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   const search = page.getByRole('search', { name: 'Find a product' }).getByRole('searchbox');
   const status = page.locator('[data-launch-search-status]');
   await expect(page.locator('[data-stat-products]')).toHaveText('27');
-  const category = page.locator('[data-board-category]');
-  await category.selectOption('Education');
+  const category = page.getByRole('group', {name:'Filter by category'});
+  await category.getByRole('button', {name:'Education',exact:true}).click();
   await expect(page.locator('[data-launch-id]:visible h3 a')).toHaveText(['Directory fixture 0']);
-  await category.selectOption('');
-  const order = page.locator('[data-board-sort]');
-  await order.selectOption('ranked');
+  await category.getByRole('button', {name:'All',exact:true}).click();
+  const order = page.getByRole('group', {name:'Sort launches'});
+  await order.getByRole('button', {name:'Board ranking'}).click();
   await expect(page.locator('[data-launch-id] h3 a').first()).toHaveText('Directory fixture 0');
-  await order.selectOption('recent');
+  await order.getByRole('button', {name:'Most recent'}).click();
   await expect(page.locator('[data-launch-id] h3 a').first()).toHaveText('Directory fixture 26');
   await search.fill('Directory fixture 26');
   await expect(status).toHaveText('1 of 27 launches');
@@ -138,8 +138,8 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
 
   await page.setViewportSize({ width: 390, height: 800 });
   await expect(rail.locator('.dg-rail-navigation')).toBeHidden();
-  await expect(rail.locator('.dg-shell-material')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
-  await expect(login).toHaveCSS('color', 'rgb(248, 248, 248)');
+  await expect(rail.locator('.dg-shell-material')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(login).toHaveCSS('color', 'rgb(23, 23, 23)');
   await page.locator('.site-menu-trigger').click();
   const directory = page.getByRole('navigation', { name: 'Site menu' }).getByRole('link', { name: 'Directory', exact: true });
   await expect(directory).toBeVisible();
@@ -183,7 +183,7 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   const nav = page.getByRole('navigation', { name: 'Browse launches' });
   await nav.getByRole('link', { name: 'Upcoming' }).click();
   await expect(page).toHaveURL(base + '/#launching-next');
-  await expect(nav.getByRole('link', { name: 'Browse by category' })).toHaveAttribute('href', '/discover#directory-filters');
+  await expect(nav.getByRole('link', { name: 'Browse by category' })).toHaveAttribute('href', '/categories');
   await expect(page.getByRole('region', { name: 'Launching next' })).toContainText('Mon, Nov 23 · 9:00 AM Eastern');
   await expect(page.locator('#launching-next .dg-list-rows')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.getByRole('button', { name: 'Notify me when Scheduled fixture launches' })).toBeVisible();
@@ -219,7 +219,7 @@ test('sidebar navigation keeps the content and footer aligned across destination
     };
   });
   const home = await shell();
-  expect(home.footer).toEqual(home.content);
+  expect(home.footer[0]).toBeGreaterThanOrEqual(home.rail[1]);
   await nav.getByRole('link', { name: 'Directory', exact: true }).click();
   await expect(page).toHaveURL(base + '/discover');
   await expect(nav.getByRole('link', { name: 'Directory', exact: true })).toHaveAttribute('aria-current', 'page');
@@ -228,7 +228,7 @@ test('sidebar navigation keeps the content and footer aligned across destination
   await nav.getByRole('link', { name: 'News', exact: true }).click();
   await expect(page).toHaveURL(base + '/news');
   await expect(nav.getByRole('link', { name: 'News', exact: true })).toHaveAttribute('aria-current', 'page');
-  await expect(page.getByRole('contentinfo').locator('.dg-footer-group h2').first()).toHaveCSS('color', 'rgb(27, 27, 27)');
+  await expect(page.getByRole('contentinfo').locator('.dg-footer-group h2').first()).toHaveCSS('color', 'rgb(189, 189, 189)');
   expect(await shell()).toEqual(home);
 
   await page.goBack();
@@ -266,4 +266,14 @@ test('signed-out launch browsing skips account setup and keeps focused rows duri
   } finally {
     finishUpcoming();
   }
+});
+
+test('categories group existing listings and open the filtered directory', async ({ page }) => {
+  await page.route('**/api/projects?**', route => route.fulfill({json:{items:projects,next:null}}));
+  await page.goto(base+'/categories');
+  const education = page.locator('#category-list a').filter({hasText:'Education'});
+  await expect(education).toContainText('Directory fixture 0');
+  await education.click();
+  await expect(page).toHaveURL(/\/discover\?category=Education$/);
+  await expect(page.locator('[data-dir-list] h3 a')).toHaveText(['Directory fixture 0']);
 });

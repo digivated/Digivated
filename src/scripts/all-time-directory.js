@@ -1,3 +1,4 @@
+import { loadDirectoryProjects } from './directory-projects.js';
 import { requestCardInteraction } from './card-actions.js';
 import { observeProjectViews } from './project-views.js';
 import { cardIconMarkup } from '../lib/card-icons.mjs';
@@ -317,20 +318,6 @@ if (root) {
   function writeCache(projects) {
     try { const saved = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null') || {}; localStorage.setItem(CACHE_KEY, JSON.stringify({ ...saved, at: Date.now(), projects: projects.map(({ liked: _liked, ...p }) => p) })); } catch { /* optional */ }
   }
-  async function loadAll() {
-    const items = [], offsets = new Set(); let offset = 0, fair = null;
-    do {
-      if (offsets.has(offset)) break;
-      offsets.add(offset);
-      const response = await fetch('/api/projects?ranking=1&offset=' + offset, { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(20000) });
-      if (!response.ok) throw Error('unavailable');
-      const page = await response.json();
-      if (page.fairStart && !fair) fair = page.fairStart;
-      items.push(...(page.items || []));
-      offset = page.next ?? null;
-    } while (offset != null);
-    return { projects: [...new Map(items.filter(p => p?.id && p.name).map(p => [p.id, p])).values()], fair };
-  }
   function accept(projects) {
     state.projects = projects; state.loaded = true;
     renderStats(); render(!root.dataset.painted); root.dataset.painted = 'true';
@@ -340,7 +327,7 @@ if (root) {
   render();
   const cached = readCache();
   if (cached && !feedbackTarget) accept(cached);
-  loadAll().then(({ projects, fair }) => {
+  loadDirectoryProjects().then(({ projects, fair }) => {
     if (feedbackTarget) { const target = projects.find(p => p.id === feedbackTarget); if (target) { location.replace(projectFeedbackHref(target.id, target.pageUrl)); return; } }
     accept(projects);
     if (projects.length) {

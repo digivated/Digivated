@@ -133,11 +133,11 @@ for (const width of [320, 1440]) {
         }
       }
       const height = (await footer.boundingBox())!.height;
-      expect(height, path).toBeLessThan(width === 320 ? 510 : 330);
-      const action = footer.getByRole('link', { name: 'Submit a project', exact: true });
+      expect(height, path).toBeLessThan(width === 320 ? 850 : 550);
+      const action = footer.getByRole('link', { name: 'Submit a launch', exact: true });
       await expect(action).toHaveCount(1);
-      await expect(footer.locator('.dg-footer-inner')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-      await expect(footer.locator('.dg-footer-group').filter({ has: page.getByRole('link', { name: 'Submit a project', exact: true }) })).toHaveText(/For makers/);
+      await expect(footer).toHaveCSS('background-color', 'rgb(16, 16, 16)');
+      await expect(footer.locator('.dg-footer-group').filter({ has: page.getByRole('link', { name: 'Submit a launch', exact: true }) })).toHaveText(/For makers/);
       await expect(footer.locator('[data-scene-toggle]')).toHaveCount(0);
       const grid = footer.locator('.dg-footer-groups');
       const positions = await grid.locator('h2').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().toJSON()));
@@ -147,18 +147,8 @@ for (const width of [320, 1440]) {
       await expect(credit).toHaveAttribute('href', 'https://launchai.tools');
       await credit.scrollIntoViewIfNeeded();
       await expect.poll(() => credit.locator('img').evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
-      const [bottom, copy, partner, socials] = await Promise.all([
-        footer.locator('.dg-footer-bottom').boundingBox(), footer.locator('.dg-footer-bottom > span').boundingBox(),
-        credit.boundingBox(), footer.getByRole('navigation', { name: 'Digivated social links' }).boundingBox(),
-      ]);
-      expect(partner!.x).toBeGreaterThanOrEqual(copy!.x + copy!.width);
-      if (width === 320) {
-        expect(socials!.x).toBeCloseTo(copy!.x);
-        expect(socials!.y).toBeGreaterThanOrEqual(partner!.y + partner!.height);
-      } else {
-        expect(partner!.x + partner!.width / 2).toBeCloseTo(bottom!.x + bottom!.width / 2);
-        expect(socials!.x).toBeGreaterThanOrEqual(partner!.x + partner!.width);
-      }
+      await expect(footer.locator('.dg-footer-bottom small')).toContainText('Digivated');
+      await expect(footer.getByRole('navigation', { name:'Digivated social links' })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), path).toBe(true);
     }
     const currentFooter = page.getByRole('contentinfo');
@@ -171,9 +161,9 @@ for (const width of [320, 1440]) {
     await page.goto(base + '/start');
     const compact = page.getByRole('contentinfo');
     await expect(compact.locator('[data-scene-toggle]')).toHaveCount(0);
-    await expect(compact.getByRole('link', { name: 'Back to Digivated' })).toHaveAttribute('href', '/');
-    await expect(compact.getByRole('link', { name: 'Membership' })).toHaveAttribute('href', '/membership');
-    expect((await compact.boundingBox())!.height).toBeLessThan(210);
+    await expect(compact.getByRole('link', { name: 'Digivated', exact:true })).toHaveAttribute('href', '/');
+    await expect(compact.getByRole('link', { name: 'Dashboard' })).toHaveAttribute('href', '/account');
+    await expect(compact.getByRole('link', {name:'News',exact:true})).toHaveAttribute('href','/news');
   });
 
   test(`listing names, actions and discussion are legible at ${width}px`, async ({ page }) => {

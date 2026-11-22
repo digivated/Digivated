@@ -1,11 +1,12 @@
 // The bar holds the main destinations. On smaller screens they move into the menu.
 export const primaryLinks = [
   ['/', 'Launches'],
-  ['/discover', 'Directory'],
+  ['/categories', 'Categories'],
   ['/threads', 'Threads'],
   ['/news', 'News'],
 ];
 const moreExploreLinks = [
+  ['/discover', 'Directory'],
   ['/resources', 'Resources'],
   ['/winners', 'Weekly winners'],
   ['/invstr', 'For Investors'],
@@ -28,12 +29,11 @@ export function isNavigationCurrent(path, href) {
 export const menuLinks = menuGroups.flatMap(group => group.links);
 // Footer: the same destinations as the header and menu, plus account pages and socials.
 export const footerGroups = [
-  { title: 'Explore', links: [...primaryLinks, ...moreExploreLinks] },
+  { title: 'Explore', links: [...primaryLinks, ['/discover', 'All products']] },
   { title: 'For makers', links: [
-    ['/submit-project', 'Submit a project'], ['/points', 'Feedback points'], ['/account', 'Your projects'], ['/saved', 'Saved items'],
-    ['/inbox', 'Inbox'], ['/badges', 'Embed badges'], ['/shop', 'Shop'],
+    ['/submit-project', 'Submit a launch'], ['/account', 'Dashboard'], ['/badges', 'Embed badges'], ['/points', 'Feedback points'],
   ] },
-  { title: 'Digivated', links: [
+  { title: 'Company', links: [
     ['/about', 'About'], ['/privacy', 'Privacy'], ['/terms', 'Terms'],
   ] },
   { title: 'Follow', links: [

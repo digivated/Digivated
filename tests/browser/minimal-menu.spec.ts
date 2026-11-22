@@ -30,16 +30,16 @@ for (const width of [320, 390, 768, 920, 921, 1119]) {
     const menuSubmit = menu.locator('.site-menu-submit a');
     await expect(menuSubmit).toBeVisible({ visible: mobile });
     if (mobile) await expect(menuSubmit).toHaveAttribute('href', '/submit-project');
-    await expect(menu).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+    await expect(menu).toHaveCSS('background-color', 'rgb(255, 255, 255)');
     await expect(menu.locator('.site-menu-branch-trigger')).toHaveText(['Explore', 'For makers']);
     await expect((mobile ? menu : primary).getByRole('link', { name: 'News', exact: true })).toBeVisible();
     await expect(menu.getByRole('link', { name: 'Embed badges', exact: true })).toBeHidden();
     await expect(menu.locator('.site-menu-secondary a')).toHaveText([
-      'Resources', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
+      'Directory', 'Resources', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
     ]);
     await expect(menu.locator('.site-menu-primary')).toBeVisible({ visible: mobile });
     const mainLinks = mobile ? menu.locator('.site-menu-primary') : primary;
-    await expect(mainLinks.getByRole('link')).toHaveText(['Launches', 'Directory', 'Threads', 'News']);
+    await expect(mainLinks.getByRole('link')).toHaveText(['Launches', 'Categories', 'Threads', 'News']);
     const destinations = await page.locator('.dg-shell-primary a:visible, .dg-shell-tools a:visible').evaluateAll(
       links => links.map(link => link.getAttribute('href')),
     );
@@ -112,7 +112,7 @@ test('the compact header branches are keyboard operable and open to the current 
   await expect(badges).toHaveAttribute('aria-current', 'page');
   const explore = menu.locator('summary', { hasText: 'Explore' });
   await explore.press('ArrowDown');
-  await expect(menu.getByRole('link', { name: 'Resources', exact: true })).toBeFocused();
+  await expect(menu.getByRole('link', { name: 'Directory', exact: true })).toBeFocused();
   await expect(menu.locator('.site-menu-connector').first()).toHaveCSS('stroke', 'rgb(160, 160, 160)');
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
@@ -132,40 +132,6 @@ test('the phone menu stays inside a short viewport', async ({ page }) => {
 });
 
 
-test('the glass reflection follows a mouse across the bar and menu and respects reduced motion', async ({ page }) => {
-  await page.setViewportSize({ width: 1000, height: 920 });
-  await page.goto(base + '/');
-  await page.locator('html[data-motion-ready]').waitFor();
-  const bar = page.locator('.dg-shell-bar');
-  const bounds = (await bar.boundingBox())!;
-  await page.mouse.move(bounds.x + 100, bounds.y + 20);
-  await expect(bar).toHaveAttribute('data-reflecting', '');
-  const rim = (locator: typeof bar) => locator.evaluate(el => {
-    const style = getComputedStyle(el, '::after');
-    return { opacity: Number(style.opacity), mask: style.maskComposite, highlight: style.backgroundImage };
-  });
-  await expect.poll(async () => (await rim(bar)).opacity).toBeGreaterThan(.7);
-  expect((await rim(bar)).mask).toContain('exclude');
-  expect((await rim(bar)).highlight).toContain('radial-gradient');
-  expect(await bar.evaluate(el => getComputedStyle(el, '::before').backgroundImage)).toBe('none');
-  const coordinate = () => bar.evaluate(el => (el as HTMLElement).style.getPropertyValue('--reflection-x'));
-  const first = await coordinate();
-  await page.mouse.move(bounds.x + 220, bounds.y + 20);
-  await expect.poll(coordinate).not.toBe(first);
-
-  await page.locator('.site-menu-trigger').click();
-  const panel = page.locator('#explore-navigation');
-  await panel.getByRole('link', { name: 'Resources', exact: true }).hover();
-  await expect(panel).toHaveAttribute('data-reflecting', '');
-  await expect.poll(async () => (await rim(panel)).opacity).toBeGreaterThan(.7);
-  expect((await rim(panel)).highlight).toContain('radial-gradient');
-  await expect(bar).not.toHaveAttribute('data-reflecting', '');
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect.poll(() => panel.evaluate(el => getComputedStyle(el, '::after').content)).toBe('none');
-  await expect(panel).not.toHaveAttribute('data-reflecting', '');
-});
-
-
 test('navigation surfaces stay opaque over a bright backdrop', async ({ page }) => {
   await page.setViewportSize({ width: 1000, height: 850 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -173,13 +139,13 @@ test('navigation surfaces stay opaque over a bright backdrop', async ({ page }) 
   const bar = page.locator('.dg-shell-material');
   const trigger = page.locator('.site-menu-trigger');
   await page.addStyleTag({ content: 'body.platform::before{content:"";position:absolute;inset:0 0 auto;height:100px;z-index:-1;background:repeating-linear-gradient(120deg, #fff 0 5px,#171817 5px 10px)!important}' });
-  await expect(bar).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+  await expect(bar).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(bar).toHaveCSS('backdrop-filter', 'none');
   await trigger.click();
   const menu = page.locator('#explore-navigation');
-  await expect(menu).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+  await expect(menu).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(menu).toHaveCSS('backdrop-filter', 'none');
-  await expect(menu.getByRole('link', { name: 'Resources' })).toHaveCSS('color', 'rgb(248, 248, 248)');
+  await expect(menu.getByRole('link', { name: 'Resources' })).toHaveCSS('color', 'rgb(23, 23, 23)');
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
 });

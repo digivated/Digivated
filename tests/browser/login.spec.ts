@@ -85,9 +85,9 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await expect(accountMenu).toContainText(email);
   await expect(accountMenu).toHaveCSS('position', 'static');
   await expect(accountMenu).toHaveCSS('overflow-y', 'visible');
-  await expect(sidebar).toHaveCSS('border-top-right-radius', '18px');
+  await expect(sidebar).toHaveCSS('border-top-right-radius', '0px');
   await expect(accountMenu.locator('#header-account-email')).toHaveAttribute('title', email);
-  await expect(accountMenu.locator('#header-menu-points')).toHaveCSS('color', 'rgb(208, 208, 208)');
+  await expect(accountMenu.locator('#header-menu-points')).toHaveCSS('color', 'rgb(68, 68, 68)');
   const primaryNav = sidebar.getByRole('navigation', { name: 'Workspace navigation' });
   expect((await primaryNav.boundingBox())!.y).toBeGreaterThanOrEqual(panel.y + panel.height - 1);
   await page.setViewportSize({ width: 1120, height: 430 });

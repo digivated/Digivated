@@ -1,12 +1,11 @@
 ---
 import UiIcon from './UiIcon.astro';
-import ReactBits from './ReactBits.astro';
 ---
 
 <section class="dg-hero dg-home-hero" aria-labelledby="dg-home-title" data-discovery-hero>
   <div class="dg-hero-copy">
-    <h1 id="dg-home-title">Discover indie <span>launches.</span></h1>
-    <p class="board-introduction">Explore this week’s products, or share what you’re building.</p>
+    <h1 id="dg-home-title">What are you building?</h1>
+    <p class="board-introduction">Find independent products and the makers behind them. Free launches go live every Monday.</p>
     <div class="dg-hero-actions">
       <form class="dg-launch-search" action="/discover" method="get" role="search" aria-label="Find a product" data-launch-search>
         <UiIcon name="search" size={18}/>
@@ -15,7 +14,7 @@ import ReactBits from './ReactBits.astro';
         <button type="button" data-clear-launch-search aria-label="Clear launch search" hidden><UiIcon name="close" size={16}/></button>
         <button type="submit" aria-label="Search products"><UiIcon name="arrow" size={16}/></button>
       </form>
-      <ReactBits surface="GlassAction" className="dg-btn dg-btn-primary" href="/submit-project" label="Submit launch" icon="upload"/>
+      <a class="dg-btn dg-btn-primary" href="/submit-project">Submit launch <UiIcon name="arrow" size={15}/></a>
     </div>
     <p class="dg-launch-search-status" data-launch-search-status role="status" hidden></p>
   </div>

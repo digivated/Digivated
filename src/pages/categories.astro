@@ -1,0 +1,45 @@
+---
+import Platform from '../layouts/Platform.astro';
+---
+<Platform title="Product categories" description="Explore Digivated projects by category and discover the makers behind them." showBreadcrumb={false}>
+  <section class="category-index">
+    <header><h1>Categories</h1><p>Explore products by what they do.</p></header>
+    <p role="status" id="category-status">Loading categories…</p>
+    <ul id="category-list"></ul>
+    <a href="/discover">Browse all products →</a>
+  </section>
+</Platform>
+<script>
+  import { loadDirectoryProjects } from '../scripts/directory-projects.js';
+  import { projectLogo } from '../scripts/project-logo.js';
+  const status = document.querySelector<HTMLElement>('#category-status')!;
+  const list = document.querySelector<HTMLUListElement>('#category-list')!;
+  loadDirectoryProjects().then(({projects}) => {
+    const groups = new Map<string, typeof projects>();
+    for (const project of projects) {
+      if (!project.category) continue;
+      const group = groups.get(project.category) ?? [];
+      group.push(project);
+      groups.set(project.category, group);
+    }
+    for (const [name, items] of [...groups].sort((a,b) => b[1].length-a[1].length || a[0].localeCompare(b[0]))) {
+      const row = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = '/discover?' + new URLSearchParams({category:name});
+      const copy = document.createElement('span');
+      const title = document.createElement('strong');
+      title.textContent = name;
+      const sample = document.createElement('small');
+      sample.textContent = items.slice(0,3).map(item=>item.name).join(', ');
+      const count = document.createElement('span');
+      count.textContent = String(items.length);
+      count.setAttribute('aria-label',items.length+' products');
+      copy.append(title,sample);
+      link.append(projectLogo(items[0],'category-logo'),copy,count);
+      row.append(link);
+      list.append(row);
+    }
+    status.hidden = groups.size > 0;
+    status.textContent = groups.size ? '' : 'No categories yet.';
+  }).catch(() => {status.textContent = 'Categories could not load. Try the product directory below.';});
+</script>

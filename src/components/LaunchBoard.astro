@@ -12,12 +12,15 @@ const sections = [
 ];
 ---
 <div class="board-filters" data-board-filters hidden>
-  <label>Sort <select data-board-sort><option value="recent">Most recent</option><option value="ranked">Board ranking</option></select></label>
-  <label>Category <select data-board-category><option value="">All categories</option></select></label>
+  <div class="board-sort" role="group" aria-label="Sort launches">
+    <button type="button" data-board-sort="recent" aria-pressed="true">Most recent</button>
+    <button type="button" data-board-sort="ranked" aria-pressed="false">Board ranking</button>
+  </div>
+  <div class="board-categories" role="group" aria-label="Filter by category" data-board-categories></div>
 </div>
 <nav class="dg-launch-nav" aria-label="Browse launches">
   {sections.map(section => <a href={`#${section.id}`}>{section.navLabel}</a>)}
-  <a href="/discover#directory-filters">Browse by category <UiIcon name="external" size={13}/></a>
+  <a href="/categories">Browse by category <UiIcon name="external" size={13}/></a>
 </nav>
 <div class="dg-board" data-board>
   {sections.map(section => (<>
