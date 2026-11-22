@@ -19,11 +19,14 @@ test('homepage activity, launches and community sections stay in reading order',
   });
   await page.goto(base + '/');
   await expect(page.locator('[data-launch-id="launch-fixture"]')).toBeVisible();
-  await expect(page.locator('[data-spot-grid] .dg-spot:not(.is-open)')).toBeVisible();
+  const featured = page.locator('[data-spot-grid] .dg-spot:not(.is-open)');
+  await expect(featured.locator('.dg-spot-name')).toContainText('An unusually long name');
+  const titleBounds = (await featured.locator('.dg-spot-name').boundingBox())!;
+  expect(titleBounds.width).toBeGreaterThan(100);
 
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    const layout = await page.locator('#main').evaluate(main => {
+    const layout = await page.locator('#main').evaluate((main, wide) => {
       const box = (selector: string) => main.querySelector(selector)!.getBoundingClientRect();
       const art = box('[data-launch-id] .dg-logo-link');
       const copy = box('[data-launch-id] .dg-main');
@@ -31,12 +34,13 @@ test('homepage activity, launches and community sections stay in reading order',
       return {
         ordered: box('.dg-home-hero').bottom <= box('.dg-hero-panel').top &&
           box('.dg-hero-panel').bottom <= box('#this-week').top &&
-          box('.dg-board').bottom <= box('.dg-home-extras').top &&
-          box('.dg-home-extras').bottom <= box('.dg-about').top,
+          (wide ? box('.dg-board').right <= box('.dg-home-extras').left :
+            box('.dg-board').bottom <= box('.dg-home-extras').top) &&
+          Math.max(box('.dg-board').bottom, box('.dg-home-extras').bottom) <= box('.dg-about').top,
         separated: art.right <= copy.left && copy.right <= controls.left,
         overflow: document.documentElement.scrollWidth - innerWidth,
       };
-    });
+    }, width > 880);
     expect(layout, `Layout at ${width}px`).toEqual({ ordered: true, separated: true, overflow: 0 });
   }
   await page.setViewportSize({ width: 320, height: 900 });
@@ -73,4 +77,36 @@ test('resource icons replace initials in one slot and votes stay separate', asyn
   await expect(row.locator('.rl-icon')).toBeHidden();
   const [resource, vote] = await Promise.all([row.locator('.rl-card').boundingBox(), row.locator('.rl-vote').boundingBox()]);
   expect(vote!.x).toBeGreaterThanOrEqual(resource!.x + resource!.width);
+});
+
+
+test('expanding weekly launches keeps the new entries reachable by keyboard', async ({ page }) => {
+  const date = new Date().toISOString();
+  await page.route('**/api/**', route => {
+    const url = new URL(route.request().url());
+    const items = url.pathname === '/api/projects' ? Array.from({ length: 12 }, (_, index) => ({
+      id: 'week-product-' + index, name: 'Product ' + index, date, category: 'Apps',
+      status: 'approved', creator: 'Maker', description: 'A product that helps independent teams.',
+      pageUrl: '/projects/listing/week-product-' + index, url: 'https://example.com/',
+      comments: 2, votes: { all: 1, weekly: 1 },
+    })) : [];
+    return route.fulfill({ json: { ready: false, items, next: null } });
+  });
+  await page.goto(base + '/');
+  const week = page.locator('#this-week');
+  const rows = week.locator('[data-launch-id]');
+  await expect(rows).toHaveCount(10);
+  const first = rows.first();
+  await expect(first.getByRole('link', { name: /Discussion for Product/ })).toHaveAttribute('href', /#feedback$/);
+  await expect(first.getByRole('button', { name: /Upvote Product/ })).toHaveAttribute('aria-pressed', 'false');
+  await page.locator('html[data-motion-ready]').waitFor();
+  const tagline = first.locator('.dg-tagline');
+  if (await page.evaluate(() => CSS.supports('animation-timeline: view()'))) {
+    await expect(tagline).toHaveCSS('animation-name', 'dg-launch-row-enter');
+  }
+  await week.getByRole('button', { name: 'View 2 more' }).press('Enter');
+  await expect(rows).toHaveCount(12);
+  await expect(rows.nth(10).getByRole('heading').getByRole('link')).toBeFocused();
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(rows.last().locator('.dg-tagline')).toHaveCSS('animation-name', 'none');
 });

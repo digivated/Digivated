@@ -13,8 +13,8 @@ function refresh(element){
  const bounds=element.getBoundingClientRect();
  if(!bounds.width||!bounds.height||bounds.bottom<=0||bounds.top>=innerHeight||bounds.right<=0||bounds.left>=innerWidth)return;
  const animation=element.animate([
-  {transform:'translateY(5px)',opacity:.55,color:'#c3a0ff'},
-  {transform:'translateY(-1px)',opacity:1,color:'#c3a0ff',offset:.55},
+  {transform:'translateY(5px)',opacity:.55,color:'var(--fl-accent)'},
+  {transform:'translateY(-1px)',opacity:1,color:'var(--fl-accent)',offset:.55},
   {transform:'translateY(0)',opacity:1},
  ],{duration:420,easing:'cubic-bezier(.2,.7,.25,1)'});
  running.set(element,animation);active.add(animation);

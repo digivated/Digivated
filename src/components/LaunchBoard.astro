@@ -1,12 +1,12 @@
 ---
-// LaunchKiwi-style stacked launch lists. Rows are rendered by home-board.js from
+// Rows are rendered by home-board.js from
 // /api/projects?ranking=1 (this week, earlier), /api/launches?view=podium (last
 // week's final results) and /api/launches?view=upcoming (launching next).
 const sections = [
   { key: 'current', id: 'this-week', title: 'This week’s launches', live: true },
   { key: 'upcoming', id: 'launching-next', title: 'Launching next', live: false, more: '/submit-project', moreLabel: 'Get a free launch date' },
-  { key: 'previous', id: 'last-week', title: 'Last week’s launches', live: false, more: '/winners', moreLabel: 'See every weekly podium' },
-  { key: 'archive', id: 'earlier', title: 'Earlier launches', live: false, more: '/discover', moreLabel: 'View all projects' },
+  { key: 'previous', id: 'last-week', title: 'Last week’s launches', live: false, more: '/winners', moreLabel: 'See weekly winners' },
+  { key: 'archive', id: 'earlier', title: 'Earlier launches', live: false, more: '/discover', moreLabel: 'Browse the directory' },
 ];
 ---
 <div class="dg-board" data-board>
@@ -31,7 +31,7 @@ const sections = [
       <section class="dg-rising" data-section-reveal data-rising hidden aria-labelledby="dg-rising-title">
         <header class="dg-rising-head">
           <h2 id="dg-rising-title"><span class="dg-rising-arrow" aria-hidden="true">↗</span> Rising now</h2>
-          <p class="dg-rising-sub">Most momentum in the last 24 hours</p>
+          <p class="dg-rising-sub">Most active in the past 24 hours</p>
           <a class="dg-quiet-link dg-rising-how" href="/winners#how-ranking-works">How ranking works <span aria-hidden="true">→</span></a>
         </header>
         <ol class="dg-rising-list" data-rising-list></ol>

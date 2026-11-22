@@ -28,7 +28,7 @@
     display: block;
     width: max-content;
     padding-inline-end: .13em;
-    color: #575361 !important;
+    color: var(--fl-muted) !important;
     font-style: italic;
     font-weight: 490;
   }
@@ -62,9 +62,9 @@
   }
   @media (max-width: 700px) {
     html[data-theme="daylight"] body #main > .dg-home-hero {
-      min-height: 450px;
+      min-height: 380px;
       align-content: start;
-      padding: 36px 0 110px !important;
+      padding: 36px 0 86px !important;
     }
     html[data-theme="daylight"] body .dg-home-hero #dg-home-title {
       font-size: clamp(51px, 12vw, 85px) !important;

@@ -32,6 +32,7 @@ const outbound = value => { try { const url = new URL(safeSearchHref(value)); if
 const liked = p => { if (p.liked !== undefined) return p.liked; try { return localStorage.getItem('digivated:liked:project:' + p.id) === '1'; } catch { return false; } };
 const shortDate = value => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 const number = new Intl.NumberFormat('en-US');
+const canAnimate = () => !reduced.matches && document.documentElement.hasAttribute('data-motion-ready');
 
 function logo(p, className) {
   const wrap = el('span', null, className);
@@ -64,10 +65,8 @@ function spotCard(item, price) {
   }
   if (outbound(item.url)) visitAttrs(card, item); else card.href = local(item.pageUrl) || '/discover';
   card.dataset.projectId = item.id;
-  const top = el('span', null, 'dg-spot-top');
-  top.append(logo(item, 'dg-spot-logo'), el('strong', item.name));
-  card.append(top, el('span', item.description || item.category || 'Independent project', 'dg-spot-copy'), item.spot === 'Member' ? memberTag() : el('em', item.spot, 'dg-spot-tag'));
-  card.setAttribute('aria-label', `${item.name}, ${item.spot.toLowerCase()} spot. Opens in a new tab.`);
+  card.append(logo(item, 'dg-spot-logo'), el('strong', item.name, 'dg-spot-name'), el('span', item.description || item.category || 'Independent project', 'dg-spot-copy'), item.spot === 'Member' ? memberTag() : el('em', item.spot, 'dg-spot-tag'));
+  card.setAttribute('aria-label', `${item.name}, ${item.spot === 'Member' ? 'Digivated member' : 'featured product'}${card.target === '_blank' ? '. Opens in a new tab.' : ''}`);
   return card;
 }
 
@@ -118,12 +117,11 @@ function groups() {
 
 function placeOf(id) { return state.podium?.week?.podium?.find(place => place.id === id)?.rank || 0; }
 
-function row(p, key, index) {
+function row(p, key) {
   const period = key === 'current' ? 'weekly' : 'all';
   const fresh = key === 'current' && (p.fresh || state.fair.active);
   const li = el('li', null, 'dg-row');
   li.dataset.launchId = p.id; li.dataset.project = ''; li.dataset.projectName = p.name;
-  li.style.setProperty('--i', String(Math.min(index, 12)));
   const page = local(p.pageUrl) || '/discover';
   const art = el('a', null, 'dg-logo-link'); art.href = page; art.tabIndex = -1; art.setAttribute('aria-hidden', 'true'); art.append(logo(p, 'dg-logo'));
   const main = el('div', null, 'dg-main');
@@ -134,16 +132,18 @@ function row(p, key, index) {
   appendMarks(title, p);
   const lift = key === 'current' && !fresh ? boostVotes(p.boost) : 0;
   if (lift) { const b = el('span', '⚡ Boosted', 'dg-badge dg-badge-boost'); b.title = `+${lift} from ${p.boost} feedback points this week`; title.append(b); }
-  main.append(title, el('p', p.description || 'Explore this project and meet its maker.', 'dg-tagline'));
+  main.append(title, el('p', p.description, 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
   meta.append(el('span', p.category || 'Project'));
-  if (p.creator) meta.append(el('span', 'by ' + p.creator));
+  if (p.creator) meta.append(el('span', 'By ' + p.creator));
   if (key === 'archive' && Number.isFinite(launchTimestamp(p))) meta.append(el('span', shortDate(launchTimestamp(p))));
   main.append(meta);
   const actions = el('div', null, 'dg-actions');
   if (outbound(p.url)) {
     const visit = visitAttrs(el('a', null, 'dg-visit'), p);
-    visit.append(el('span', 'Visit'), el('span', '↗', 'dg-visit-arrow'));
+    const arrow = icon('external');
+    arrow.classList.add('dg-visit-arrow');
+    visit.append(el('span', 'Visit'), arrow);
     visit.setAttribute('aria-label', `Visit ${p.name} (opens in a new tab)`);
     actions.append(visit);
   }
@@ -167,17 +167,16 @@ function row(p, key, index) {
 }
 
 // A scheduled free launch: no page or logo yet, and a "Notify me" button.
-function upcomingRow(item, index) {
+function upcomingRow(item) {
   const li = el('li', null, 'dg-row dg-row-upcoming');
   li.dataset.upcomingId = item.id;
-  li.style.setProperty('--i', String(Math.min(index, 12)));
   const art = el('span', null, 'dg-logo-link'); art.setAttribute('aria-hidden', 'true'); art.append(logo({ name: item.name }, 'dg-logo'));
   const main = el('div', null, 'dg-main');
   const title = el('h3'); title.append(el('span', item.name, 'dg-upcoming-name'), el('span', launchDay(item.launchAt), 'dg-badge dg-badge-date'));
   main.append(title, el('p', item.description || 'Launching soon on Digivated.', 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
   meta.append(el('span', item.category || 'Project'));
-  if (item.creator) meta.append(el('span', 'by ' + item.creator));
+  if (item.creator) meta.append(el('span', 'By ' + item.creator));
   main.append(meta);
   const actions = el('div', null, 'dg-actions');
   const watch = el('button', null, 'dg-watch'); watch.type = 'button';
@@ -241,20 +240,20 @@ async function toggleVote(p, button, li) {
     if (failure) section.querySelector('[data-section-note]').textContent = failure;
     const next = section.querySelector(`[data-launch-id="${CSS.escape(p.id)}"] .dg-vote`);
     if (focused) next?.focus({ preventScroll: true });
-    if (!failure && p.liked && next && !reduced.matches) next.animate([{ transform: 'none' }, { transform: 'translateY(-4px) scale(1.06)' }, { transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.2,.9,.3,1.4)' });
+    if (!failure && p.liked && next && canAnimate()) next.animate([{ transform: 'none' }, { transform: 'translateY(-4px) scale(1.06)' }, { transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.2,.9,.3,1.4)' });
   }
 }
 
-function sectionNote(key, items) {
+function sectionNote(key) {
   const howLink = () => Object.assign(el('a', 'How launches are ranked', 'dg-note-link'), { href: '/winners#how-ranking-works' });
   if (key === 'archive') return ['Sorted by all-time upvotes.'];
-  if (key === 'upcoming') return [`Scheduled free launches · tap Notify me to hear when they go live.`];
+  if (key === 'upcoming') return [`Get a notification when a product launches.`];
   const bounds = launchBounds(key);
   const dates = `${shortDate(bounds.start)} – ${shortDate(bounds.end - 86_400_000)}`;
   if (key === 'current') return state.fair.active
-    ? [`${dates} · fresh week: order shuffles every hour and upvotes show ${localTime(state.fair.endsAt)} · `, howLink()]
+    ? [`${dates} · launches rotate hourly. Upvote counts appear ${localTime(state.fair.endsAt)} · `, howLink()]
     : [`${dates} · `, howLink()];
-  return state.podium?.order?.length ? [`${dates} · final results · `, Object.assign(el('a', 'Winners', 'dg-note-link'), { href: '/winners' })] : [`${dates} · sorted by upvotes`];
+  return state.podium?.order?.length ? [`${dates} · Final results · `, Object.assign(el('a', 'Winners', 'dg-note-link'), { href: '/winners' })] : [`${dates} · Sorted by upvotes`];
 }
 
 function renderRising() {
@@ -285,18 +284,30 @@ function render() {
     const count = section.querySelector('[data-section-count]');
     const note = section.querySelector('[data-section-note]');
     count.textContent = key === 'archive' ? `${items.length} ${items.length === 1 ? 'project' : 'projects'}` : key === 'upcoming' ? `${items.length} scheduled` : `${items.length} ${items.length === 1 ? 'launch' : 'launches'}`;
-    note.replaceChildren(...sectionNote(key, items));
+    note.replaceChildren(...sectionNote(key));
     const list = section.querySelector('[data-section-list]');
-    list.replaceChildren(...items.slice(0, limit).map((p, i) => key === 'upcoming' ? upcomingRow(p, i) : row(p, key, i)));
+    list.replaceChildren(...items.slice(0, limit).map(p => key === 'upcoming' ? upcomingRow(p) : row(p, key)));
     if (!items.length) {
       const empty = el('li', null, 'dg-row dg-row-empty');
-      if (key === 'current') { const cta = el('a', 'Be the first launch this week →'); cta.href = '/submit-project'; empty.append(cta); }
-      else empty.textContent = 'No launches here yet.';
+      if (key === 'current') { const cta = el('a', 'Submit a product for this week'); cta.href = '/submit-project'; empty.append(cta); }
+      else empty.textContent = 'No launches to show.';
       list.append(empty);
     }
     const more = section.querySelector('[data-section-more]');
     more.hidden = items.length <= limit;
-    more.onclick = () => { state.limits[key] += PAGE; render(); };
+    more.onclick = event => {
+      state.limits[key] += PAGE;
+      render();
+      const revealed = Array.from(list.children).slice(limit);
+      if (event.detail === 0) revealed[0]?.querySelector('h3 a, button')?.focus();
+      if (!canAnimate()) return;
+      for (const [index, item] of revealed.slice(0, 5).entries()) {
+        if (item.contains(document.activeElement)) continue;
+        item.animate([{ opacity: .55, translate: '0 8px' }, { opacity: 1, translate: '0 0' }], {
+          duration: 420, delay: index * 38, fill: 'backwards', easing: 'cubic-bezier(.22,1,.36,1)',
+        });
+      }
+    };
     more.textContent = `View ${Math.min(PAGE, items.length - limit)} more`;
   }
   const upvotes = state.projects.reduce((sum, p) => sum + (Number(p.votes?.all) || 0), 0);

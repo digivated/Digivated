@@ -7,7 +7,7 @@ if (comments) mountDiscussion(comments, { type: 'project', id: comments.dataset.
 if (comments) {
   const hint = document.createElement('p'); hint.className = 'launch-points-hint';
   const link = document.createElement('a'); link.href = '/points'; link.textContent = 'feedback points';
-  hint.append('✦ Tried it with the Visit button? Specific feedback here earns ', link, ' that lift your own launch.');
+  hint.append('Tried this product? Share what worked or what could improve to earn ', link, '.');
   comments.querySelector('.dg-d-head')?.after(hint);
 }
 

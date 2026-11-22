@@ -4,7 +4,7 @@
     margin: 0 !important;
     padding: clamp(18px, 3vw, 30px) 0 max(14px, env(safe-area-inset-bottom)) !important;
     border-top: 1px solid var(--fl-line) !important;
-    background: var(--fl-raised) !important;
+    background: var(--fl-bg) !important;
     color: var(--fl-copy) !important;
   }
   .dg-footer-inner {
@@ -61,20 +61,28 @@
     font-weight: 680;
   }
   .dg-footer-brand img, .dg-footer-credit img { flex: none; object-fit: contain; }
-  .dg-footer-bottom, .dg-site-footer .dg-footer-utility {
+  .dg-site-footer .dg-footer-utility {
     display: flex !important;
     flex-wrap: wrap;
     align-items: center;
-    gap: 3px 14px !important;
+    gap: 2px 16px !important;
+    min-width: 0;
   }
   .dg-footer-bottom {
-    margin-block-start: 14px;
-    padding-block-start: 10px;
+    display: grid;
+    grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
+    align-items: center;
+    gap: 4px 18px;
+    margin-block-start: 16px;
+    padding-block-start: 12px;
     border-block-start: 1px solid var(--fl-line) !important;
+    color: var(--fl-muted);
     font-size: 13px;
+    line-height: 1.4;
   }
-  .dg-footer-bottom > span { margin-inline-end: auto; }
-  .dg-site-footer .dg-footer-credit { font-size: 13px !important; }
+  .dg-site-footer .dg-footer-credit { justify-self: center; font-size: inherit !important; }
+  .dg-footer-bottom .dg-footer-utility { justify-self: end; }
+  .dg-footer-bottom .dg-footer-utility a { font-size: inherit !important; }
   @media (prefers-reduced-motion: no-preference) {
     .dg-site-footer a {
       text-decoration-color: transparent !important;
@@ -96,12 +104,13 @@
     .dg-site-footer .dg-footer-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .dg-footer-group:last-child { grid-column: 1 / -1; }
     .dg-footer-group:last-child ul { display: flex; flex-wrap: wrap; gap: 0 14px; }
-    .dg-site-footer:not(.dg-site-footer-compact) .dg-footer-bottom {
-      display: grid !important;
+  }
+  @media (max-width: 670px) {
+    .dg-footer-bottom {
       grid-template-columns: minmax(0, 1fr) auto;
-      gap: 2px 8px;
+      gap: 4px 10px;
     }
-    .dg-footer-bottom > span { margin-inline-end: 0; }
-    .dg-footer-bottom .dg-footer-utility { grid-column: 1 / -1; }
+    .dg-site-footer .dg-footer-credit { justify-self: end; }
+    .dg-footer-bottom .dg-footer-utility { grid-column: 1 / -1; justify-self: start; }
   }
 }

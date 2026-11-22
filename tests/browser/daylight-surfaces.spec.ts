@@ -134,7 +134,20 @@ for (const width of [320, 1440]) {
       const positions = await grid.locator('h2').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().toJSON()));
       expect(positions[0].y).toBeCloseTo(positions[1].y);
       expect(positions[0].x).toBeLessThan(positions[1].x);
-      await expect(footer.locator('[data-launchai-badge]')).toHaveAttribute('href', 'https://launchai.tools');
+      const credit = footer.locator('[data-launchai-badge]');
+      await expect(credit).toHaveAttribute('href', 'https://launchai.tools');
+      const [bottom, copy, partner, socials] = await Promise.all([
+        footer.locator('.dg-footer-bottom').boundingBox(), footer.locator('.dg-footer-bottom > span').boundingBox(),
+        credit.boundingBox(), footer.getByRole('navigation', { name: 'Digivated social links' }).boundingBox(),
+      ]);
+      expect(partner!.x).toBeGreaterThanOrEqual(copy!.x + copy!.width);
+      if (width === 320) {
+        expect(socials!.x).toBeCloseTo(copy!.x);
+        expect(socials!.y).toBeGreaterThanOrEqual(partner!.y + partner!.height);
+      } else {
+        expect(partner!.x + partner!.width / 2).toBeCloseTo(bottom!.x + bottom!.width / 2);
+        expect(socials!.x).toBeGreaterThanOrEqual(partner!.x + partner!.width);
+      }
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), path).toBe(true);
     }
     await page.getByRole('contentinfo').getByRole('link', { name: 'Report a bug' }).click();
@@ -166,7 +179,18 @@ for (const width of [320, 1440]) {
     const card = page.locator('.launch-creator');
     await expect(card.getByText(creator)).toBeVisible();
     await expect(card.getByText(creator)).toHaveCSS('color', 'rgb(25, 26, 24)');
-    await expect(card).toHaveCSS('border-top-width', '1px');
+    await expect(card).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    const [intro, overview, maker, discussion] = await Promise.all([
+      page.locator('.launch-intro').boundingBox(), page.locator('.launch-overview').boundingBox(),
+      card.boundingBox(), page.locator('#feedback').boundingBox(),
+    ]);
+    expect(overview!.y).toBeGreaterThanOrEqual(intro!.y + intro!.height);
+    if (width <= 820) {
+      expect(maker!.y).toBeGreaterThanOrEqual(overview!.y + overview!.height);
+      expect(discussion!.y).toBeGreaterThanOrEqual(maker!.y + maker!.height);
+    } else {
+      expect(maker!.x).toBeGreaterThanOrEqual(overview!.x + overview!.width);
+    }
     await expect(card.getByRole('link', { name: /Creator profile/ })).toHaveAttribute('href', 'https://example.com/creator');
     await expect(page.getByRole('link', { name: /Visit project/ })).toHaveAttribute('href', 'https://example.com');
     await expect(page.getByRole('link', { name: /Visit project/ }).locator('svg')).toHaveCount(1);
@@ -182,7 +206,7 @@ for (const width of [320, 1440]) {
     }
 
     await page.getByRole('link', { name: 'Join the discussion' }).click();
-    await expect(page.locator('#feedback .dg-signin')).toHaveCSS('background-color', 'rgb(239, 239, 235)');
+    await expect(page.locator('#feedback .dg-signin')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect(page.locator('#feedback').getByRole('link', { name: 'Log in' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });

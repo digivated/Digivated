@@ -339,6 +339,8 @@
     --editorial-space: clamp(24px, 4.2vw, 48px);
     --section-space: clamp(30px, 5vw, 64px);
     --section-title: clamp(22px, 2.8vw, 32px);
+    --editorial-rail: minmax(240px, 27%);
+    --editorial-gap: clamp(24px, 4vw, 52px);
   }
 
   /* Align the public reading rail while allowing focused forms to stay narrower. */
