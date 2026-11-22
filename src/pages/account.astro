@@ -1,10 +1,11 @@
 ---
 import Platform from '../layouts/Platform.astro';
 import '../styles/project-account.css';
+import MakerNavigation from '../components/MakerNavigation.astro';
 import FeedbackPoints from '../components/FeedbackPoints.astro';
 ---
 <Platform title="Your Projects" description="Your Digivated dashboard: track launches, read feedback, and manage your profile.">
-  <header class="page-intro fl-dash-intro"><div><h1>Maker dashboard</h1><p class="lede">Manage your launches and profile.</p></div><a class="button primary fl-btn-primary fl-dash-cta" id="account-submit-cta" href="/submit-project" hidden>Submit a launch</a></header>
+  <header class="page-intro fl-dash-intro"><div><h1>Maker dashboard</h1><p class="lede">Manage your launches and profile.</p></div></header>
   <section class="project-account-card fl-dash" aria-label="Project account">
     <p id="account-state" class="fl-status" role="status" aria-live="polite">Connecting to account sign-in…</p>
     <form id="account-password-reset" class="login-panel fl-card fl-form fl-panel-pad" hidden>
@@ -17,13 +18,8 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
     </form>
     <div id="account-sign-in" class="account-actions fl-card fl-panel-pad fl-empty" hidden><div class="fl-actions"><a class="button primary" href="/login">Log in or sign up</a><a class="fl-btn" href="/discover?view=featured">Browse member projects</a></div></div>
     <div id="account-signed-in" hidden>
+      <MakerNavigation/>
       <div class="fl-dash-bar"><p>Signed in as <strong id="account-email"></strong></p><button class="fl-link" id="account-sign-out" type="button">Sign out</button></div>
-      <div class="fl-tabs" role="tablist" aria-label="Dashboard sections">
-        <button type="button" role="tab" id="account-tab-projects" aria-controls="account-panel-projects" aria-selected="true" data-account-tab="projects">Overview</button>
-        <button type="button" role="tab" id="account-tab-analytics" aria-controls="account-panel-analytics" aria-selected="false" tabindex="-1" data-account-tab="analytics">Analytics</button>
-        <button type="button" role="tab" id="account-tab-profile" aria-controls="account-panel-profile" aria-selected="false" tabindex="-1" data-account-tab="profile">Profile</button>
-        <button type="button" role="tab" id="account-tab-settings" aria-controls="account-panel-settings" aria-selected="false" tabindex="-1" data-account-tab="settings">Settings</button>
-      </div>
       <section id="account-panel-projects" role="tabpanel" aria-labelledby="account-tab-projects" class="fl-tabpanel">
         <h2 id="account-submissions-title" class="sr-only">My submissions</h2>
         <dl class="launch-totals" id="launch-totals" hidden>
@@ -39,6 +35,7 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
       </section>
       <section id="account-panel-analytics" role="tabpanel" aria-labelledby="account-tab-analytics" class="fl-tabpanel" hidden>
         <div class="fl-card fl-panel-pad"><h2>Launch analytics</h2>
+          <p>See views, visits, votes, and comments for your published projects.</p>
           <label id="analytics-picker" hidden>Project <select id="analytics-project"></select></label>
           <div id="analytics-result" aria-live="polite">Loading projects…</div>
         </div>

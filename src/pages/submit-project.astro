@@ -1,5 +1,6 @@
 ---
 import Platform from '../layouts/Platform.astro';
+import MakerNavigation from '../components/MakerNavigation.astro';
 import FreeLaunchGuide from '../components/FreeLaunchGuide.astro';
 import { projectPricingOptions } from '../lib/project-pricing.mjs';
 import { projectCategoryGroups } from '../data/community.mjs';
@@ -7,6 +8,7 @@ import '../styles/submission-flow.css';
 
 ---
 <Platform title="Launch your project" description="Submit your project to Digivated. Verify a badge for a free launch or choose a member launch.">
+  <div class="submission-maker-navigation" id="submission-maker-navigation" hidden><MakerNavigation submitting/></div>
   <header class="page-intro submission-intro">
     <h1>Launch your project.</h1>
     <p class="lede">Paste your product link to autofill details, or enter them yourself.</p>

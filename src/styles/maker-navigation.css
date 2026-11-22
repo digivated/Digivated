@@ -1,0 +1,51 @@
+@layer workspace-preview {
+  .maker-navigation {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 10px;
+    width: 100%;
+    margin: 0 0 18px !important;
+    padding: 4px !important;
+    border: 1px solid var(--fl-line);
+    border-radius: 12px;
+    background: var(--fl-surface);
+  }
+
+  .maker-navigation .maker-navigation-sections {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .maker-navigation :is(a, button) {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px !important;
+    margin: 0 !important;
+    padding: 6px clamp(7px, 1.25vw, 14px) !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    color: var(--fl-ink) !important;
+    font: inherit;
+    font-size: 13px !important;
+    font-weight: 550 !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+    white-space: nowrap;
+  }
+
+  .maker-navigation :is(a, button):hover { background: #ededed !important; }
+  .maker-navigation button[aria-selected="true"] { background: #ededed !important; font-weight: 680 !important; }
+  .maker-navigation a.maker-navigation-launch { background: #171717 !important; color: #fff !important; }
+  .maker-navigation a.maker-navigation-launch:hover { background: #333 !important; }
+
+  .submission-maker-navigation { width: min(100%, 740px); margin: 0 auto !important; }
+
+  .account-analytics-empty { padding-block: 16px; color: var(--fl-copy); }
+  .account-analytics-empty strong { display: block; color: var(--fl-ink); }
+}
