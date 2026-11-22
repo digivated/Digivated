@@ -94,16 +94,17 @@ import '../styles/submission-flow.css';
         <fieldset class="submission-intent" id="sub-step-launch">
           <legend>Launch options</legend>
           <!-- The tier cards drive the select used by submission and checkout. -->
+          <p id="plan-status" class="dg-plan-status" role="status" hidden></p>
           <div class="dg-tiers" role="radiogroup" aria-label="Launch option" data-tiers>
-            <label class="dg-tier" data-tier="directory"><input type="radio" name="dg-tier" value="directory" checked/><span class="dg-tier-head"><strong>Free launch</strong><b>$0</b></span><span class="dg-tier-sub">Verify a badge for a permanent listing and a Monday launch.</span></label>
-            <label class="dg-tier dg-tier-instant" data-tier="instant" hidden><input type="radio" name="dg-tier" value="instant" disabled/><span class="dg-tier-head"><strong>Instant Publishing</strong><b data-tier-price>$3</b></span><span class="dg-tier-sub" id="instant-launch-help">Go live after payment with a 7-day homepage spot. No badge needed.</span></label>
-            <label class="dg-tier" data-tier="founding-feature"><input type="radio" name="dg-tier" value="founding-feature"/><span class="dg-tier-head"><strong>Member launch</strong><b>$5</b></span><span class="dg-tier-sub">One reviewed spotlight, a member badge, and full site access.</span></label>
+            <label class="dg-tier" data-tier="directory"><input type="radio" name="dg-tier" value="directory" checked/><span class="dg-tier-head"><strong>Free</strong><b>$0</b></span><span class="dg-tier-sub">1 project. Add a badge to your site and launch on Monday.</span><span class="dg-tier-own" data-tier-own hidden>Your plan</span></label>
+            <label class="dg-tier dg-tier-instant" data-tier="instant" hidden><input type="radio" name="dg-tier" value="instant" disabled/><span class="dg-tier-head"><strong>Starter</strong><b data-tier-price>$3</b></span><span class="dg-tier-sub" id="instant-launch-help">Up to 3 projects, live the moment you publish. One-time.</span><span class="dg-tier-own" data-tier-own hidden>Your plan</span></label>
+            <label class="dg-tier" data-tier="founding-feature"><input type="radio" name="dg-tier" value="founding-feature"/><span class="dg-tier-head"><strong>Membership</strong><b>$5</b></span><span class="dg-tier-sub">Unlimited projects, live instantly, and full site access. One-time.</span><span class="dg-tier-own" data-tier-own hidden>Your plan</span></label>
           </div>
           <label class="sr-only" aria-hidden="true">Launch option
             <select name="submissionType" id="submission-type" aria-describedby="free-launch-help" tabindex="-1">
-              <option value="directory">Free launch (add a badge to your site)</option>
-              <option value="instant" id="submission-instant-option" hidden disabled>Instant Publishing</option>
-              <option value="founding-feature">Member launch</option>
+              <option value="directory">Free (add a badge to your site)</option>
+              <option value="instant" id="submission-instant-option" hidden disabled>Starter</option>
+              <option value="founding-feature">Membership</option>
             </select>
           </label>
           <p id="free-launch-help" class="field-help"><span id="free-launch-date"></span></p>
@@ -116,7 +117,7 @@ import '../styles/submission-flow.css';
             <p class="dg-badge-tip">Use Copy prompt to ask your AI coding assistant to add the badge to your footer.</p>
             <div id="badge-first-picker"></div>
           </div>
-          <div id="membership-fields" class="submission-option-detail" hidden><p>Verify your membership on the <a href="/shop#member-sign-in">Shop page</a> first. We take a quick look, then add your member badge.</p></div>
+          <div id="membership-fields" class="submission-option-detail dg-plan-buy" hidden><p id="plan-buy-copy">Buy on Gumroad with <strong data-plan-email>your account email</strong>, then come back here. Your project goes live as soon as you publish.</p><div class="submission-account-actions"><a id="plan-buy" class="button primary" target="_blank" rel="noopener" hidden>Buy ↗</a><button id="plan-recheck" class="button" type="button">I’ve paid, check again</button></div><p id="plan-buy-status" class="field-help" role="status" aria-live="polite"></p></div>
         </fieldset>
 
         <div class="submission-review">

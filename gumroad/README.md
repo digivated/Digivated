@@ -1,6 +1,6 @@
 # Digivated membership checkout history
 
-Digivated's public offer is **$5 USD once**. It includes one reviewed project spotlight and full News summaries. The News section is live. Check the current offer and access instructions on `/membership` before changing seller settings.
+Digivated's public offer is **$5 USD once**. It includes unlimited project uploads that go live instantly and full News summaries. The $3 Starter listing (`/l/instant-launch`, copy in `starter-product.json`) gives 3 projects. Running the setup at `/admin#gumroad-setup` updates both listings; it never changes the Starter price. The News section is live. Check the current offer and access instructions on `/membership` before changing seller settings.
 
 The remap procedure below is retained as an operations record; it is not a routine deployment step. Existing packet, founding membership, and promotional purchases retain their original access and benefits. Preserve the existing one-time product ID and permalink because purchase verification depends on them.
 

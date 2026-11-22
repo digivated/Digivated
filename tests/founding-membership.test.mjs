@@ -151,29 +151,6 @@ test('a refunded packet session still opens when the founding session is valid',
   assert.equal(read.headers['set-cookie'], undefined);
 });
 
-function featureRedis() {
-  const kv = new Map();
-  const commands = [];
-  const redis = async command => {
-    commands.push(command);
-    const [op, , count, ...rest] = command;
-    assert.equal(op, 'EVAL');
-    const keyCount = Number(count);
-    const keys = rest.slice(0, keyCount);
-    const argv = rest.slice(keyCount);
-    const limit = Number(kv.get(keys[0]) || 0) + 1;
-    kv.set(keys[0], String(limit));
-    if (limit > 5) return 0;
-    if (keyCount === 5) {
-      if (kv.has(keys[3])) return -1;
-      kv.set(keys[3], argv[2]);
-    }
-    kv.set(keys[1], argv[0]);
-    return 1;
-  };
-  return { redis, commands, kv };
-}
-
 const submissionEnv = {
   ...accessEnv,
   APP_ORIGIN: 'https://digivated.com',
@@ -198,31 +175,51 @@ async function memberCookie(license, id) {
   return `${FOUNDING_COOKIE}=${await sealFoundingSession({ method: 'license', license, saleId: id }, cfg)}`;
 }
 
-test('one founding membership can submit one reviewed feature, and existing submissions stay the same', async () => {
-  const store = featureRedis();
-  const anonymous = await submit({ ...project, submissionType: 'founding-feature', promotionVerified: true, memberSaleId: 'client-sale', status: 'featured' }, { redis: store.redis, fetcher: async () => { throw new Error('unused'); } });
-  assert.equal(anonymous.status, 401);
-  assert.equal(store.commands.length, 0);
+function planRedis() {
+  const commands = [];
+  const redis = async command => {
+    commands.push(command);
+    if (command[0] === 'GET') return null;
+    if (command[0] === 'SET') return 'OK';
+    if (command[0] === 'EVAL') return 1;
+    if (['ZRANGE', 'ZREVRANGE', 'SMEMBERS', 'MGET'].includes(command[0])) return [];
+    return 0;
+  };
+  const saves = () => commands.filter(c => c[0] === 'EVAL' && c[3]?.startsWith?.('digivated:limit:'));
+  return { redis, commands, saves };
+}
+
+test('Membership publishes unlimited projects instantly; without a plan the paid options are refused and free stays the same', async () => {
+  const store = planRedis();
+  // No plan: the member option is refused before anything is saved.
+  const refused = await submit({ ...project, submissionType: 'founding-feature', promotionVerified: true, status: 'featured' }, { redis: store.redis });
+  assert.equal(refused.status, 403);
+  assert.match(refused.data.error, /Starter \(\$3\) or Membership \(\$5\)/);
+  assert.equal(store.saves().length, 0);
+  // A Membership sign-in on this browser upgrades the account and publishes at once.
   const cookie = await memberCookie(foundingLicense, saleId);
-  const saved = await submit({ ...project, submissionType: 'founding-feature', promotionVerified: true, memberSaleId: 'client-sale', verified: true, status: 'approved' }, { cookie, redis: store.redis });
+  const saved = await submit({ ...project, submissionType: 'founding-feature', promotionVerified: true, verified: true, status: 'featured' }, { cookie, redis: store.redis });
   assert.equal(saved.status, 201);
-  assert.equal(saved.data.status, 'pending');
-  const stored = JSON.parse(store.commands[0][8]);
+  assert.equal(saved.data.status, 'approved');
+  assert.equal(saved.data.plan, 'member');
+  const stored = JSON.parse(store.saves().at(-1)[7]);
+  assert.equal(stored.plan, 'member');
   assert.equal(stored.status, 'pending');
-  assert.deepEqual(stored.promotion, { requested: true, included: 'founding-membership', verified: false, memberSaleId: saleId, receiptReference: 'founding-membership' });
-  assert.equal(store.commands[0][6], `digivated:founding-feature:${saleId}`);
-  const again = await submit({ ...project, submissionType: 'founding-feature' }, { cookie, redis: store.redis });
-  assert.equal(again.status, 409);
-  assert.match(again.data.error, /one featured submission/);
-  const other = await submit({ ...project, name: 'Second project', submissionType: 'founding-feature' }, { cookie: await memberCookie(otherLicense, otherSaleId), redis: store.redis });
-  assert.equal(other.status, 201);
-  const free = await submit(project, { redis: store.redis });
+  assert.equal(stored.promotion, undefined);
+  assert.equal(stored.launch, undefined);
+  const publish = store.commands.filter(c => c[0] === 'EVAL' && c[3] === `digivated:submission:${stored.id}`).at(-1);
+  assert.equal(JSON.parse(publish[8]).status, 'approved');
+  assert.equal(JSON.parse(publish[9]).member, true);
+  // Free and promo submissions behave as before.
+  const free = await submit(project, { redis: planRedis().redis });
   assert.equal(free.status, 201);
-  assert.equal(store.commands.at(-1)[2], 4);
-  assert.equal(JSON.parse(store.commands.at(-1)[7]).promotion, undefined);
-  const paid = await submit({ ...project, submissionType: 'promotion', promotionPurchased: true, promotionReceipt: 'ORDER-TEST' }, { redis: store.redis });
+  assert.equal(free.data.status, 'pending');
+  assert.equal(free.data.plan, 'free');
+  assert.equal(free.data.launch.kind, 'free');
+  const promoStore = planRedis();
+  const paid = await submit({ ...project, submissionType: 'promotion', promotionPurchased: true, promotionReceipt: 'ORDER-TEST' }, { redis: promoStore.redis });
   assert.equal(paid.status, 201);
-  assert.deepEqual(JSON.parse(store.commands.at(-1)[7]).promotion, { requested: true, receiptReference: 'ORDER-TEST', verified: false });
+  assert.deepEqual(JSON.parse(promoStore.saves().at(-1)[7]).promotion, { requested: true, receiptReference: 'ORDER-TEST', verified: false });
 });
 
 test('a member feature stays private until review, then publishes without the sale id', () => {
@@ -247,7 +244,7 @@ test('one-time membership advertises one offer and leaves checkout gated during 
   const { membership } = await import('../src/data/membership.mjs');
   assert.equal(membership.priceUSD, 5);
   assert.equal(membership.billing, 'one-time');
-  assert.equal(membership.spotlightLimit, 1);
+  assert.equal(membership.projectLimit, 0); // unlimited
   assert.equal(membership.newsStatus, 'live');
   const payload = JSON.parse(readFileSync(new URL('../gumroad/membership-product.json', import.meta.url), 'utf8'));
   assert.equal(payload.price, 500);
@@ -255,7 +252,8 @@ test('one-time membership advertises one offer and leaves checkout gated during 
   assert.equal(Object.hasOwn(payload, 'subscription_duration'), false);
   assert.equal(Object.hasOwn(payload, 'files'), false); // Preserve existing buyers' delivered files.
   assert.match(payload.description, /full News access/i);
-  assert.match(payload.custom_receipt, /unlocks all member content/i);
+  assert.match(payload.custom_receipt, /unlimited project uploads/i);
+  assert.match(payload.description, /unlimited project uploads/i);
   const page = readFileSync(new URL('../src/components/MembershipOffer.astro', import.meta.url), 'utf8');
   assert.match(page, /membership.checkoutReady/);
   assert.match(page, /Loading checkout\. Give it a second\./);

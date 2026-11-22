@@ -84,7 +84,7 @@ export function projectPublic(record) {
   // Keep incomplete legacy submissions in their owners' accounts, but off every public surface.
   const destination = safeUrl(record.url);
   if (!record.image || !destination) return null;
-  return { ...(record.promotion?.verified ? {sponsored:true} : {}), pageUrl: record.pagePublished && record.page?.consent && record.slug ? `/projects/${record.slug}` : `/projects/listing/${record.id}`, id: record.id, name: record.name, creator: record.creator, description: record.description, category: projectCategory(record), ...(isAiListing(record) ? { ai: true } : {}), url: destination, socialUrl: safeUrl(record.socialUrl), date: record.date, ...(record.publishedAt ? { publishedAt: record.publishedAt } : {}), ...(projectPricingOptions.includes(record.pricing) ? { pricing: record.pricing } : {}), status: record.status, pick: isDigivatedPick(record), image: projectDisplayLogo(record) };
+  return { ...(record.promotion?.verified ? {sponsored:true} : {}), ...(record.plan === 'member' ? {member:true} : {}), pageUrl: record.pagePublished && record.page?.consent && record.slug ? `/projects/${record.slug}` : `/projects/listing/${record.id}`, id: record.id, name: record.name, creator: record.creator, description: record.description, category: projectCategory(record), ...(isAiListing(record) ? { ai: true } : {}), url: destination, socialUrl: safeUrl(record.socialUrl), date: record.date, ...(record.publishedAt ? { publishedAt: record.publishedAt } : {}), ...(projectPricingOptions.includes(record.pricing) ? { pricing: record.pricing } : {}), status: record.status, pick: isDigivatedPick(record), image: projectDisplayLogo(record) };
 }
 export function contentPublic(kind, record) {
   if (record.status !== 'published') return null;
@@ -100,6 +100,17 @@ if old then revision=cjson.decode(old).revision or 0 end
 if revision~=tonumber(ARGV[1]) then return 0 end
 local record=cjson.decode(ARGV[2]); local id=record.id
 if ARGV[5]=='submission' and ARGV[3]~='' then
+ -- Live projects per owner follow the upload plan: free 1, starter 3, member unlimited.
+ local limits={starter=3,member=0}
+ local limit=limits[record.plan or 'free'] or 1
+ if record.accountId and record.accountId~='' then
+  local ok,current=pcall(cjson.decode,redis.call('GET','digivated:account-plan:'..record.accountId) or '')
+  if ok and type(current)=='table' and current.plan then
+   local other=limits[current.plan] or 1
+   if other==0 or (limit~=0 and other>limit) then limit=other end
+  end
+ end
+ local live=0
  for _,otherId in ipairs(redis.call('ZRANGE',KEYS[4],0,-1)) do
   if otherId~=id then
    local raw=redis.call('GET','digivated:submission:'..otherId)
@@ -108,11 +119,12 @@ if ARGV[5]=='submission' and ARGV[3]~='' then
     if other.status=='approved' or other.status=='featured' then
      local sameAccount=record.accountId and record.accountId~='' and record.accountId==other.accountId
      local legacyEmail=(not record.accountId or not other.accountId) and record.email and record.email~='' and other.email and string.lower(record.email)==string.lower(other.email)
-     if sameAccount or legacyEmail then return -2 end
+     if sameAccount or legacyEmail then live=live+1 end
     end
    end
   end
  end
+ if limit>0 and live>=limit then return -2 end
 end
 if ARGV[5]=='submission' and record.slug then
  local key='digivated:launch-slug:'..record.slug; local owner=redis.call('GET',key)
@@ -134,7 +146,7 @@ export async function saveRecord(redis, kind, input) {
   const record = validateEdit(kind, input, raw ? JSON.parse(raw) : null);
   const projection = kind === 'submission' ? projectPublic(record) : contentPublic(kind, record);
   const result = await redis(['EVAL', SAVE_EDIT, 4, storageKey(kind, input.id), indexKey(kind), `digivated:public:${kind}:${input.id}`, `digivated:public:${kind}s`, input.revision, JSON.stringify(record), projection ? JSON.stringify(projection) : '', Date.parse(record.date), kind]);
-  if (result === -2) throw new AdminError(409, 'This owner already has a live project. Archive it before publishing another.');
+  if (result === -2) throw new AdminError(409, 'This owner is at their plan’s live project limit (Free 1, Starter 3). Archive one before publishing another.');
   if (result !== 1) throw new AdminError(409, 'This item changed elsewhere. Reload it before saving.');
   return record;
 }

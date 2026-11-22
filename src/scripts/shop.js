@@ -1,4 +1,4 @@
-// Shop: show the live instant-spot price, or say when spots are paused.
+// Shop: show the live Starter price, or say when Starter is paused.
 const card = document.querySelector('[data-shop-spot]');
 if (card) (async () => {
   try {
@@ -13,7 +13,7 @@ if (card) (async () => {
     // Not available right now: keep the card, point people to the free launch.
     card.classList.add('is-paused');
     note.hidden = false;
-    note.textContent = 'Instant spots are paused right now. You can still launch free.';
+    note.textContent = 'Starter is paused right now. Your free project is still available.';
     cta.href = '/submit-project#project-form';
     cta.querySelector('[data-shop-spot-label]').textContent = 'Launch free';
   } catch {}

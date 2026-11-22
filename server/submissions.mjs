@@ -13,7 +13,10 @@ const reserveToken=(secret,accountId,id)=>createHmac('sha256',secret).update(`ba
 const sameToken=(a,b)=>typeof a==='string'&&typeof b==='string'&&a.length===b.length&&timingSafeEqual(Buffer.from(a),Buffer.from(b));
 import { projectPricingOptions } from '../src/lib/project-pricing.mjs';
 import { acceptedProjectCategories, safeUrl } from '../src/data/community.mjs';
-import { FoundingError, foundingConfig, readMember, verifyFoundingEmail } from './founding-access.mjs';
+import { FoundingError, foundingConfig, verifyFoundingEmail } from './founding-access.mjs';
+import { resolvePlan, plansUsage } from './plans.mjs';
+import { planOf, isPaidPlan, PLANS } from '../src/lib/plans.mjs';
+import { membership } from '../src/data/membership.mjs';
 import { accountIndex, verifiedAccount } from './project-account.mjs';
 import { projectPublic, SAVE_EDIT, validId } from './admin-store.mjs';
 
@@ -176,14 +179,18 @@ export function redisClient(env=process.env,fetcher=fetch) {
 const ONE_ACTIVE_SUBMISSION = `
 local accountKey=KEYS[#KEYS-(ARGV[4] and 1 or 0)]
 local incoming=cjson.decode(ARGV[1])
+-- Plan limits: free 1, starter 3, member unlimited (0). Counts waiting + live.
+local limit=({starter=3,member=0})[incoming.plan or 'free'] or 1
+local used=0
 for _,id in ipairs(redis.call('ZRANGE',accountKey,0,-1)) do
  local raw=redis.call('GET','digivated:submission:'..id)
  if raw then
   local row=cjson.decode(raw)
   local owned=not row.accountId or row.accountId==incoming.accountId
-  if owned and (row.status=='pending' or row.status=='approved' or row.status=='featured') then return -2 end
+  if owned and (row.status=='pending' or row.status=='approved' or row.status=='featured') then used=used+1 end
  end
 end
+if limit>0 and used>=limit then return -2 end
 `;
 // Commit the explicit in-app choice alongside the submission. Older clients
 // omit it. Turning the master switch off preserves individual preferences.
@@ -207,21 +214,39 @@ if incoming.launch and incoming.launch.badgeVerifiedAt then
  redis.call('ZADD','digivated:launch:free',incoming.launch.scheduledTimestamp,ARGV[3])
 end
 ` + SAVE_ACTIVITY_CHOICE;
-const SAVE_MEMBER_FEATURE = ONE_ACTIVE_SUBMISSION + `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],3600) end; if n>5 then return 0 end; if not redis.call('SET',KEYS[4],ARGV[3],'NX') then return -1 end; redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); redis.call('ZADD',KEYS[5],ARGV[2],ARGV[3]); ` + SAVE_ACTIVITY_CHOICE;
-const MEMBER_FEATURE_MESSAGE = 'Sign in with your Founding Membership before using the included feature.';
-const MEMBER_FEATURE_USED = 'This membership already includes one featured submission. It stays in review, and a feature is not guaranteed.';
-
-async function memberFeature(req, env, deps) {
-  const cfg = foundingConfig(env);
-  if (!cfg.enabled) throw new SubmissionError(401, MEMBER_FEATURE_MESSAGE);
-  let member;
-  try { member = await readMember(req, cfg, deps.fetcher || fetch); }
-  catch (error) {
-    if (error instanceof FoundingError && error.status === 401) member = null;
-    else throw new SubmissionError(503, 'We couldn’t check your Founding Membership right now. Please try again shortly.');
-  }
-  if (!member?.saleId || !/^[A-Za-z0-9+=/_-]{8,200}$/.test(member.saleId) || member.saleId.includes('..')) throw new SubmissionError(401, MEMBER_FEATURE_MESSAGE);
-  return { requested:true, included:'founding-membership', verified:false, memberSaleId:member.saleId, receiptReference:'founding-membership' };
+const PLAN_CHECK_FAILED = 'We couldn’t confirm your plan right now. Your details are still here; try again in a moment.';
+function limitMessage(plan) {
+  if (plan === 'starter') return 'Starter includes 3 projects on Digivated at a time. Get Membership ($5) for unlimited projects, or archive one in Your Projects.';
+  return 'Free accounts can have 1 project on Digivated at a time. Get Starter ($3) for 3 projects or Membership ($5) for unlimited, or archive your project in Your Projects.';
+}
+// Paid plans skip review: save, then publish in the same request. If publishing
+// fails for any reason, the project stays saved and waits for review instead.
+async function publishPlanProject(redis, stored, now) {
+  try {
+    const updated = { ...stored, status: 'approved', publishedAt: now.toISOString(), revision: 1 };
+    const projection = projectPublic(updated);
+    if (!projection) return null;
+    const saved = await redis(['EVAL', SAVE_EDIT, 4, `digivated:submission:${stored.id}`, 'digivated:submissions',
+      `digivated:public:submission:${stored.id}`, 'digivated:public:submissions', 0, JSON.stringify(updated), JSON.stringify(projection), now.getTime(), 'submission']);
+    if (saved !== 1) return null;
+    try { await notifyProjectApproval(redis, stored, updated); } catch { /* Published already. */ }
+    try { await sendProjectUpdate(stored, updated); } catch { /* Published already. */ }
+    return projection;
+  } catch { return null; }
+}
+async function planSummary(req, env, account, redis, fetcher, fresh) {
+  const starter = await instantLaunchConfig(env, fetcher);
+  const memberOn = foundingConfig(env).enabled;
+  const { plan, checkFailed } = await resolvePlan({ req, env, account, redis, fetcher, starter, fresh });
+  const used = await plansUsage(redis, accountIndex(account.email, env.SUBMISSIONS_REDIS_REST_TOKEN || 'test-only'), account.id);
+  const { limit, name } = planOf(plan);
+  return {
+    plan, name, limit, used, remaining: limit ? Math.max(0, limit - used) : null, instant: isPaidPlan(plan), checkFailed,
+    offers: {
+      starter: starter && plan === 'free' ? { price: starter.price, checkoutUrl: starter.checkoutUrl, limit: PLANS.starter.limit } : null,
+      member: memberOn && plan !== 'member' ? { price: membership.priceUSD * 100, checkoutUrl: membership.checkoutUrl } : null,
+    },
+  };
 }
 export function makeSubmissionHandler(deps={}) {
   return async(req,res)=>{
@@ -279,11 +304,24 @@ export function makeSubmissionHandler(deps={}) {
         const project = await publishInstantProject(deps.redis || redisClient(env), account, body.id, instant, deps.fetcher || fetch);
         return send(200, { ok: true, id: project.id, pageUrl: project.pageUrl });
       }
+      if (body?.action === 'plan') {
+        const redis=deps.redis||redisClient(env);
+        const key=`digivated:plan-check:${account.id}`;
+        const attempts=Number(await redis(['INCR',key]));if(attempts===1)await redis(['EXPIRE',key,3600]);
+        const fresh=body.fresh===true&&Number.isFinite(attempts)&&attempts<=30;
+        return send(200,await planSummary(req,env,account,redis,deps.fetcher||fetch,fresh));
+      }
       let record = validateSubmission(body);
-      if (record.promotion?.included === 'instant-launch' && !await instantLaunchConfig(env, deps.fetcher || fetch)) throw new SubmissionError(403, 'Instant publishing is currently unavailable.');
       if(account&&record.email.toLowerCase()!==account.email)throw new SubmissionError(403,'Use the same email as your verified account.');
-      if (record.promotion?.included === 'founding-membership') record = { ...record, promotion: await memberFeature(req, env, deps) };
       const redis=deps.redis||redisClient(env);
+      const starter=await instantLaunchConfig(env, deps.fetcher || fetch);
+      const {plan,checkFailed}=await resolvePlan({req,env,account,redis,fetcher:deps.fetcher||fetch,starter});
+      const paid=isPaidPlan(plan);
+      // Paid plans publish instantly; the old per-project paid types now mean "use my plan".
+      if (['instant-launch','founding-membership'].includes(record.promotion?.included)) {
+        if (!paid) throw new SubmissionError(403, checkFailed ? PLAN_CHECK_FAILED : 'Instant publishing comes with Starter ($3) or Membership ($5). Buy one with your account email, then publish.');
+        const { promotion, ...rest } = record; record = rest;
+      }
       const ip=req.headers['x-real-ip'];
       if(!deps.redis && (env.VERCEL!=='1'||typeof ip!=='string'||!ip))throw new SubmissionError(503,'Submissions are temporarily unavailable. Please try again later.');
       const hash=createHmac('sha256',env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only').update(String(ip||'fixture')).digest('hex');
@@ -309,25 +347,25 @@ export function makeSubmissionHandler(deps={}) {
         }
       }
       const scheduledAt=nextFreeLaunch(now.getTime());
-      const stored={...record,...(!record.promotion?{launch:{kind:'free',version:1,scheduledAt,scheduledTimestamp:Date.parse(scheduledAt),...(badgeVerifiedAt?{badgeVerifiedAt}:{})}}:{}),...(account?{accountId:account.id}:{}),id,date:now.toISOString(),consentedAt:now.toISOString(),...(record.emailOutreachConsent?{emailOutreachConsentedAt:now.toISOString(),emailOutreachConsentVersion:2}:{})};
+      const stored={...record,plan,...(!record.promotion&&!paid?{launch:{kind:'free',version:1,scheduledAt,scheduledTimestamp:Date.parse(scheduledAt),...(badgeVerifiedAt?{badgeVerifiedAt}:{})}}:{}),...(account?{accountId:account.id}:{}),id,date:now.toISOString(),consentedAt:now.toISOString(),...(record.emailOutreachConsent?{emailOutreachConsentedAt:now.toISOString(),emailOutreachConsentVersion:2}:{})};
       const accountKey=accountIndex(record.email,env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only');
       const activityNotifications = body.activityNotifications;
       if (activityNotifications !== undefined && typeof activityNotifications !== 'boolean') throw new SubmissionError(400, 'Choose a valid activity notification setting.');
-      const isMemberFeature = record.promotion?.included === 'founding-membership';
-      const keys = [`digivated:limit:${hash}`, `digivated:submission:${id}`, 'digivated:submissions'];
-      if (isMemberFeature) keys.push(`digivated:founding-feature:${record.promotion.memberSaleId}`);
-      keys.push(accountKey);
+      const keys = [`digivated:limit:${hash}`, `digivated:submission:${id}`, 'digivated:submissions', accountKey];
       const args = [JSON.stringify(stored), now.getTime(), id];
       if (typeof activityNotifications === 'boolean') {
         keys.push(notificationPreferencesKey(account.id));
         args.push(JSON.stringify({...defaultNotificationPreferences,enabled:activityNotifications}));
       }
-      const saved = await redis(['EVAL', isMemberFeature ? SAVE_MEMBER_FEATURE : SAVE, keys.length, ...keys, ...args]);
-      if(saved===-2)throw new SubmissionError(409,'You already have a project live or in review. Check Your Projects for its status.');
-      if(saved===-1)throw new SubmissionError(409,MEMBER_FEATURE_USED);
+      const saved = await redis(['EVAL', SAVE, keys.length, ...keys, ...args]);
+      if(saved===-2)throw new SubmissionError(409,checkFailed?PLAN_CHECK_FAILED:limitMessage(plan));
       if(saved!==1){res.setHeader('Retry-After','3600');throw new SubmissionError(429,'You’ve reached the submission limit. Please try again in an hour.');}
-      if(badgeVerifiedAt){try{await notifyLaunchScheduled(redis,stored);}catch{/* Saved and verified; the notice is a courtesy. */}}
-      send(201,{ok:true,id,status:'pending',...(typeof activityNotifications === 'boolean' ? {activityNotifications} : {}),...(stored.launch?{launch:{...stored.launch,badge:badgeSnippet(id)}}:{})});
+      if(badgeVerifiedAt&&!paid){try{await notifyLaunchScheduled(redis,stored);}catch{/* Saved and verified; the notice is a courtesy. */}}
+      if(paid){
+        const published=await publishPlanProject(redis,stored,now);
+        if(published)return send(201,{ok:true,id,status:'approved',plan,pageUrl:published.pageUrl,...(typeof activityNotifications === 'boolean' ? {activityNotifications} : {})});
+      }
+      send(201,{ok:true,id,status:'pending',plan,...(typeof activityNotifications === 'boolean' ? {activityNotifications} : {}),...(stored.launch?{launch:{...stored.launch,badge:badgeSnippet(id)}}:{})});
     }catch(error){send(error instanceof SubmissionError?error.status:503,{error:error instanceof SubmissionError?error.message:'Submissions are temporarily unavailable. Your details have not been cleared; please try again later.'});}
   };
 }
