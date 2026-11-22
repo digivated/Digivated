@@ -132,12 +132,11 @@ for (const width of [320, 1440]) {
       expect(height, path).toBeLessThan(width === 320 ? 510 : 330);
       const action = footer.getByRole('link', { name: 'Submit a project', exact: true });
       await expect(action).toHaveCount(1);
-      const [brand, submit, toggle] = await Promise.all([
+      const [brand, submit] = await Promise.all([
         footer.locator('.dg-footer-brand').boundingBox(), action.boundingBox(),
-        footer.locator('.dg-footer-motion').boundingBox(),
       ]);
       if (width === 320) expect(submit!.x).toBeGreaterThanOrEqual(brand!.x + brand!.width);
-      if (toggle && width === 320) expect(toggle.y).toBeGreaterThanOrEqual(submit!.y + submit!.height);
+      await expect(footer.locator('[data-scene-toggle]')).toHaveCount(0);
       const grid = footer.locator('.dg-footer-groups');
       const positions = await grid.locator('h2').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().toJSON()));
       expect(positions[0].y).toBeCloseTo(positions[1].y);
@@ -159,13 +158,6 @@ for (const width of [320, 1440]) {
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), path).toBe(true);
     }
     const currentFooter = page.getByRole('contentinfo');
-    const play = currentFooter.locator('.dg-footer-motion');
-    await play.click();
-    await expect(play).toHaveAccessibleName('Play animation');
-    await play.click();
-    await expect(play).toHaveAccessibleName('Pause animation');
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await expect(play).toBeHidden();
     await currentFooter.getByRole('link', { name: 'Report a bug' }).click();
     const dialog = page.getByRole('dialog', { name: 'Report a bug' });
     await expect(dialog).toBeVisible();
@@ -174,6 +166,7 @@ for (const width of [320, 1440]) {
 
     await page.goto(base + '/start');
     const compact = page.getByRole('contentinfo');
+    await expect(compact.locator('[data-scene-toggle]')).toHaveCount(0);
     await expect(compact.getByRole('link', { name: 'Back to Digivated' })).toHaveAttribute('href', '/');
     await expect(compact.getByRole('link', { name: 'Membership' })).toHaveAttribute('href', '/membership');
     expect((await compact.boundingBox())!.height).toBeLessThan(210);

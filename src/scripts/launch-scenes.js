@@ -4,12 +4,8 @@ const preference = matchMedia('(prefers-reduced-motion: reduce)');
 const forcedColors = matchMedia('(forced-colors: active)');
 const connection = navigator.connection;
 const scenes = [...document.querySelectorAll('[data-launch-scene]')];
-const controls = [...document.querySelectorAll('[data-scene-toggle]')];
-let paused = false;
-try { paused = sessionStorage.getItem('digivated-scenes-paused') === '1'; } catch { /* Storage is optional. */ }
-
 const motionEnabled = () => !preference.matches && !forcedColors.matches && !connection?.saveData;
-const permitted = () => !paused && motionEnabled() && !document.hidden;
+const permitted = () => motionEnabled() && !document.hidden;
 const scenesOnscreen = new Set();
 const state = new Map();
 let frame = 0;
@@ -39,16 +35,10 @@ function render(now) {
 
 function sync() {
   const allowed = permitted();
-  document.documentElement.toggleAttribute('data-artwork-paused', paused);
   const canAnimate = motionEnabled();
-  controls.forEach(button => {
-    button.hidden = !canAnimate;
-    button.setAttribute('aria-label', paused ? 'Play animation' : 'Pause animation');
-    button.dataset.paused = String(paused);
-  });
   for (const element of scenes) {
-    if (!canAnimate || paused) {
-      if (!paused || !canAnimate) delete element.dataset.sceneReady;
+    if (!canAnimate) {
+      delete element.dataset.sceneReady;
       continue;
     }
     if (!scenesOnscreen.has(element)) continue;
@@ -116,11 +106,6 @@ if (scenes.length && 'IntersectionObserver' in window && 'ResizeObserver' in win
     sync();
   });
   scenes.forEach(scene => observer.observe(scene));
-  controls.forEach(button => button.addEventListener('click', () => {
-    paused = !paused;
-    try { sessionStorage.setItem('digivated-scenes-paused', paused ? '1' : '0'); } catch { /* The control still works. */ }
-    sync();
-  }));
   preference.addEventListener('change', sync);
   forcedColors.addEventListener('change', sync);
   connection?.addEventListener('change', sync);

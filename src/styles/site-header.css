@@ -31,8 +31,7 @@
     padding: 5px 10px !important;
     background: transparent !important;
   }
-  .dg-shell-bar::before {
-    content: '';
+  .dg-shell-material {
     position: absolute;
     inset: 0;
     z-index: -1;
@@ -88,6 +87,7 @@
     text-decoration: none !important;
     white-space: nowrap;
   }
+  .dg-shell-search, .dg-shell-search .lq-provider { display: contents; }
   .dg-shell .dg-shell-icon { width: 43px; padding: 0 !important; }
   .dg-shell :is(.dg-shell-icon,.site-menu-trigger) svg { filter: drop-shadow(0 0 2px #faf9f5); }
   .dg-shell[data-account="signed-out"] .dg-shell-notifications { display: none !important; }
@@ -281,7 +281,7 @@
       --shell-bar-glass: #f7f7f527;
       --shell-panel-glass: #f7f7f566;
     }
-    .dg-shell .dg-shell-bar::before {
+    .dg-shell .dg-shell-material {
       -webkit-backdrop-filter: blur(6px) contrast(.54) brightness(1.31) !important;
       backdrop-filter: blur(6px) contrast(.54) brightness(1.31) !important;
     }
@@ -290,15 +290,14 @@
       backdrop-filter: blur(14px) saturate(1.12) !important;
     }
   }
-  .dg-shell .dg-shell-bar[data-glass-refraction]::before {
+  .dg-shell .dg-shell-material[data-liquid-lens] {
     background-color: #f7f7f519 !important;
-    backdrop-filter: blur(3px) contrast(.58) brightness(1.29) var(--shell-lens) !important;
+    backdrop-filter: blur(3px) contrast(.58) brightness(1.29) var(--lq-lens) !important;
   }
-  .dg-shell :is(.site-menu-panel,.dg-shell-account-panel)[data-glass-refraction] {
+  .dg-shell :is(.site-menu-panel,.dg-shell-account-panel)[data-liquid-lens] {
     background-color: #f7f7f561 !important;
-    backdrop-filter: blur(11px) contrast(.68) brightness(1.17) var(--shell-lens) !important;
+    backdrop-filter: blur(11px) contrast(.68) brightness(1.17) var(--lq-lens) !important;
   }
-  .dg-glass-definitions { position: absolute; width: 0; height: 0; pointer-events: none; }
 
   @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
     .dg-shell [data-nav-reflection]::after {

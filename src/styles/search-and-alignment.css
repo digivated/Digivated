@@ -134,7 +134,7 @@ html body.platform.light-theme.moments-theme .launch-directory { max-width:100%;
       backdrop-filter: blur(3px) !important;
     }
   }
-  html[data-theme="daylight"] body #discovery-search[data-glass-refraction] {
-    backdrop-filter: blur(11px) var(--shell-lens) !important;
+  html[data-theme="daylight"] body #discovery-search[data-liquid-lens] {
+    backdrop-filter: blur(11px) var(--lq-lens) !important;
   }
 }

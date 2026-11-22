@@ -103,7 +103,6 @@
     html[data-motion-ready] .dg-activity-mark-ribbon .dg-activity-dot {
       animation: dg-ribbon-signal 3.4s ease-in-out var(--dot-delay) infinite;
     }
-    html[data-artwork-paused] .dg-activity-mark .dg-activity-dot { animation-play-state: paused; }
     @keyframes dg-orbit-signal {
       0%, 100% { opacity: .4; scale: .8; }
       32% { opacity: 1; scale: 1.55; }

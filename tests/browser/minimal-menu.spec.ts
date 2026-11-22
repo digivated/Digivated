@@ -165,15 +165,16 @@ test('the bevel optically displaces a real backdrop and keeps the labels outside
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(base + '/');
   const bar = page.locator('.dg-shell-bar');
-  await expect(bar).toHaveAttribute('data-glass-refraction', '');
+  const material = bar.locator('.dg-shell-material');
+  await expect(material).toHaveAttribute('data-liquid-lens', 'true');
   await page.addStyleTag({ content: 'body.platform::before{content:"";position:absolute;inset:0 0 auto;height:100px;z-index:-1;background:repeating-linear-gradient(120deg, #fff 0 5px,#171817 5px 10px)!important}' });
 
-  const optics = await bar.evaluate(el => {
-    const id = (el as HTMLElement).style.getPropertyValue('--shell-lens').match(/#([^"]+)/)?.[1];
+  const optics = await material.evaluate(el => {
+    const id = (el as HTMLElement).style.getPropertyValue('--lq-lens').match(/#([^)]*)/)?.[1];
     const filter = id && document.getElementById(id);
-    const glass = getComputedStyle(el, '::before');
+    const glass = getComputedStyle(el);
     const scales = filter ? [...filter.querySelectorAll('feDisplacementMap')].map(lens => Number(lens.getAttribute('scale'))) : [];
-    return { id, scales, backdrop: glass.backdropFilter, tint: Number(glass.backgroundColor.split(',').at(-1)?.replace(')', '')), foreground: getComputedStyle(el.querySelector('nav')!).filter };
+    return { id, scales, backdrop: glass.backdropFilter, tint: Number(glass.backgroundColor.split(',').at(-1)?.replace(')', '')), foreground: getComputedStyle(el.parentElement!.querySelector('nav')!).filter };
   });
   expect(optics.scales).toHaveLength(3);
   expect(new Set(optics.scales).size).toBe(3);
@@ -195,7 +196,7 @@ test('the bevel optically displaces a real backdrop and keeps the labels outside
 
   await page.locator('.site-menu-trigger').click();
   const menu = page.locator('#explore-navigation');
-  await expect(menu).toHaveAttribute('data-glass-refraction', '');
+  await expect(menu).toHaveAttribute('data-liquid-lens', 'true');
   await expect(menu).toHaveCSS('backdrop-filter', /url\(/);
   await page.keyboard.press('Escape');
   await expect(page.locator('.site-menu-trigger')).toBeFocused();

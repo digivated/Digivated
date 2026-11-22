@@ -20,26 +20,4 @@
   }
   .dg-launch-scene:not([data-scene-ready]) canvas,
   .dg-launch-scene[data-scene-ready] .dg-scene-poster { visibility: hidden; }
-  html[data-theme="daylight"] body .dg-scene-toggle {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    display: grid;
-    place-items: center;
-    width: 44px;
-    min-height: 44px;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 1px solid var(--fl-line-hi) !important;
-    border-radius: 50% !important;
-    background: #fafaf5d9 !important;
-    color: var(--fl-ink) !important;
-    cursor: pointer;
-  }
-  html[data-theme="daylight"] body .dg-scene-toggle[hidden] { display: none !important; }
-  html[data-theme="daylight"] body .dg-scene-toggle:hover { background: var(--fl-surface) !important; }
-  .dg-scene-pause { width: 9px; height: 12px; border-inline: 2px solid currentColor !important; }
-  .dg-scene-play { display: none; width: 0; height: 0; border: 6px solid transparent !important; border-left: 9px solid currentColor !important; margin-left: 6px; }
-  .dg-scene-toggle[data-paused="true"] .dg-scene-pause { display: none; }
-  .dg-scene-toggle[data-paused="true"] .dg-scene-play { display: block; }
 }

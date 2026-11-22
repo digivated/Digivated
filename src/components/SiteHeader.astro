@@ -4,6 +4,9 @@ import {
   ArrowDown01Icon, Award01Icon, BookOpen01Icon, BubbleChatIcon, Certificate01Icon,
   ChartLineData01Icon, News01Icon, Rocket01Icon, Store01Icon,
 } from '@hugeicons/core-free-icons';
+import { createElement } from 'react';
+import { renderToString } from 'react-dom/server';
+import { NavigationSearch } from './ui/navigation-search';
 import NavGlyph from './NavGlyph.astro';
 import UiIcon from './UiIcon.astro';
 import '../styles/site-header.css';
@@ -22,11 +25,12 @@ const linkIcons: Record<string, typeof Rocket01Icon> = {
 };
 ---
 <header class="dg-shell" data-site-header data-account="signed-out">
-  <div class="dg-shell-bar" data-glass-surface="bar" data-nav-reflection>
+  <div class="dg-shell-bar" data-nav-reflection>
+    <div class="dg-shell-material" data-glass-surface="bar" aria-hidden="true"></div>
     <a class="dg-shell-brand" href="/" aria-label="Digivated home"><img class="daylight-brand-mark" src="/digivated-daylight-mark.png" width="32" height="32" alt=""/><span>Digivated</span></a>
     <nav class="dg-shell-primary" aria-label="Primary navigation">{primaryLinks.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</nav>
     <div class="dg-shell-tools">
-      <button class="dg-shell-icon" type="button" data-open-search aria-label="Search Digivated"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></button>
+      <div class="dg-shell-search" data-glass-search-root set:html={renderToString(createElement(NavigationSearch))}/>
       <a class="dg-shell-icon dg-shell-notifications" id="header-notifications-link" href="/notifications" aria-label="Notifications" aria-current={active('/notifications')?'page':undefined}><UiIcon name="bell" size={20}/><span id="header-notifications-badge" class="dg-shell-badge" hidden></span></a>
       <a class="dg-shell-login" id="header-account-link" href="/login" aria-current={active('/login')?'page':undefined}>Log In</a>
       <div class="dg-shell-account" id="header-account-menu" hidden>
@@ -41,7 +45,7 @@ const linkIcons: Record<string, typeof Rocket01Icon> = {
           <button role="menuitem" type="button" id="header-sign-out">Sign out</button>
         </div>
       </div>
-      <a class="dg-header-submit" href="/submit-project" aria-label="Submit a product" aria-current={active('/submit-project')?'page':undefined}><span>Submit</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="dg-header-submit" data-glass-surface="action" href="/submit-project" aria-label="Submit a product" aria-current={active('/submit-project')?'page':undefined}><span>Submit</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <details class="dg-shell-disclosure" data-navigation>
         <summary class="site-menu-trigger" aria-controls="explore-navigation">
           <span class="dg-shell-more-label">More</span>
@@ -86,4 +90,15 @@ const linkIcons: Record<string, typeof Rocket01Icon> = {
   <span class="dg-reading-track" data-reading-progress aria-hidden="true"></span>
 </header>
 <script is:inline src="/header-session.js"></script>
-<script>import '../scripts/navigation-glass.js'; import '../scripts/navigation-reflection.js'; import '../scripts/account-header.js'; import '../scripts/notification-bell.js';</script>
+<script>
+import '../scripts/navigation-glass.js';
+import '../scripts/navigation-reflection.js';
+import '../scripts/account-header.js';
+import '../scripts/notification-bell.js';
+
+// The server-rendered button opens search immediately. Load its optics on interaction.
+const searchRoot = document.querySelector('[data-glass-search-root]');
+const hydrateSearch = () => { void import('../scripts/navigation-search'); };
+searchRoot?.addEventListener('pointerover', hydrateSearch, { once: true });
+searchRoot?.addEventListener('focusin', hydrateSearch, { once: true });
+</script>

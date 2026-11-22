@@ -1,0 +1,3737 @@
+/*
+ * Tailwind CSS v4 interop for liquefy-ui.
+ *
+ * Import this instead of `styles.css` when the project also uses Tailwind:
+ *
+ *   @import '@liquefy-ui/react/tailwind.css';
+ *   @import 'tailwindcss';
+ *
+ * Import order matters. The `@layer` statement below is what puts `liquefy-ui`
+ * before Tailwind's own layers, so a utility class always beats a component
+ * style and `class="p-0"` on a LiquidButton does what you expect. Import
+ * Tailwind first and the cascade flips.
+ */
+
+@layer liquefy-ui, theme, base, components, utilities;
+
+@layer liquefy-ui {
+  :root {
+    --lq-accent: #8f8f8f;
+    --lq-space: 4px;
+    --lq-radius-default: 18px;
+    --lq-duration: 420ms;
+    --lq-easing: cubic-bezier(0.22, 1, 0.36, 1);
+    --lq-text: #f8faff;
+    --lq-muted: rgba(242, 246, 255, 0.66);
+  }
+
+  .lq-provider {
+    /* The least material a surface may show, whatever `veil` is set to. A
+       clear panel on a dark page is a 15%-white hairline and nothing else,
+       which is not enough to read as a surface — so the dark theme asks for
+       a floor and the light one, sitting on white, does not need one. */
+    --lq-veil-floor: 0.34;
+    --lq-clear-fill: rgba(255, 255, 255, 0.12);
+    --lq-clear-line: rgba(255, 255, 255, 0.15);
+    --lq-control-fill: transparent;
+    --lq-control-line: rgba(255, 255, 255, 0.16);
+    --lq-control-hover-line: color-mix(in srgb, var(--lq-button-tint, var(--lq-accent)) 28%, rgba(255, 255, 255, 0.18));
+    --lq-dock-active: #fff;
+    --lq-dock-hover-fill: rgba(255, 255, 255, 0.012);
+    --lq-dock-indicator-fill: transparent;
+    --lq-field-fill: transparent;
+    --lq-field-focus-fill: color-mix(in srgb, var(--lq-accent) 2%, transparent);
+    --lq-field-line: rgba(255, 255, 255, 0.13);
+    --lq-foreground: #f8faff;
+    --lq-glass-bright: rgba(255, 255, 255, 0.32);
+    --lq-glass-shade: rgba(73, 111, 209, 0.07);
+    --lq-glass-soft: rgba(255, 255, 255, 0.06);
+    --lq-muted: rgba(242, 246, 255, 0.66);
+    --lq-placeholder: rgba(235, 241, 255, 0.42);
+    --lq-quiet-fill: transparent;
+    --lq-quiet-line: rgba(255, 255, 255, 0.13);
+    --lq-regular-fill: rgba(255, 255, 255, 0.012);
+    --lq-regular-line: rgba(255, 255, 255, 0.18);
+    --lq-rim-bright: rgba(255, 255, 255, 1);
+    --lq-rim-dim: rgba(255, 255, 255, 0.7);
+    --lq-rim-mid: rgba(255, 255, 255, 0.55);
+    --lq-rim-width: 1.6px;
+    --lq-shadow-color: rgba(4, 9, 24, 0.14);
+    --lq-solid-fill: rgb(30, 38, 60);
+    --lq-switch-fill: transparent;
+    --lq-switch-line: rgba(255, 255, 255, 0.14);
+    color: var(--lq-text);
+    color-scheme: dark light;
+    min-width: 0;
+  }
+
+  .lq-provider[data-liquid-theme='dark'] {
+    color: var(--lq-foreground);
+    color-scheme: dark;
+  }
+
+  .lq-provider[data-liquid-theme='light'] {
+    --lq-veil-floor: 0;
+    --lq-clear-fill: rgba(255, 255, 255, 0.55);
+    --lq-clear-line: rgba(66, 85, 128, 0.22);
+    --lq-control-fill: transparent;
+    --lq-control-line: rgba(66, 85, 128, 0.24);
+    --lq-control-hover-line: color-mix(in srgb, var(--lq-button-tint, var(--lq-accent)) 28%, rgba(255, 255, 255, 0.18));
+    --lq-dock-active: #17203a;
+    --lq-dock-hover-fill: rgba(255, 255, 255, 0.015);
+    --lq-dock-indicator-fill: transparent;
+    --lq-field-fill: transparent;
+    --lq-field-focus-fill: color-mix(in srgb, var(--lq-accent) 1.5%, transparent);
+    --lq-field-line: rgba(66, 85, 128, 0.24);
+    --lq-foreground: #12182a;
+    --lq-glass-bright: rgba(255, 255, 255, 0.56);
+    --lq-glass-shade: rgba(62, 91, 164, 0.07);
+    --lq-glass-soft: rgba(255, 255, 255, 0.16);
+    --lq-muted: rgba(26, 35, 58, 0.62);
+    --lq-placeholder: rgba(28, 40, 68, 0.42);
+    --lq-quiet-fill: transparent;
+    --lq-quiet-line: rgba(66, 85, 128, 0.16);
+    --lq-regular-fill: rgba(255, 255, 255, 0.015);
+    --lq-regular-line: rgba(66, 85, 128, 0.26);
+    --lq-rim-bright: rgba(255, 255, 255, 0.94);
+    --lq-rim-dim: rgba(255, 255, 255, 0.62);
+    --lq-rim-mid: rgba(255, 255, 255, 0.4);
+    --lq-rim-width: 1.6px;
+    --lq-shadow-color: rgba(42, 55, 91, 0.1);
+    --lq-solid-fill: rgb(239, 244, 255);
+    --lq-switch-fill: transparent;
+    --lq-switch-line: rgba(66, 85, 128, 0.24);
+    color: var(--lq-foreground);
+    color-scheme: light;
+  }
+
+  .lq-surface,
+  .lq-button,
+  .lq-switch,
+  .lq-checkbox__box,
+  .lq-radio__control,
+  .lq-select__trigger,
+  .lq-chip,
+  .lq-pagination__item,
+  .lq-text-field__control {
+    --lq-edge-angle: 145deg;
+    --lq-elastic-x: 0px;
+    --lq-elastic-y: 0px;
+    --lq-pointer-x: 50%;
+    --lq-pointer-y: 50%;
+    --lq-rotate-x: 0deg;
+    --lq-rotate-y: 0deg;
+    --lq-skew-x: 0deg;
+    --lq-squish: 0;
+    --lq-lift: 0px;
+    --lq-magnet-x: 0px;
+    --lq-magnet-y: 0px;
+    --lq-scale-x: 1;
+    --lq-scale-y: 1;
+    --lq-shine-opacity: 0;
+    -webkit-tap-highlight-color: transparent;
+    isolation: isolate;
+    position: relative;
+    transform: perspective(900px)
+      translate3d(
+        calc(var(--lq-magnet-x) + var(--lq-elastic-x)),
+        calc(var(--lq-lift) + var(--lq-magnet-y) + var(--lq-elastic-y)),
+        0)
+      rotateX(var(--lq-rotate-x))
+      rotateY(var(--lq-rotate-y))
+      skewX(var(--lq-skew-x))
+      scaleX(var(--lq-scale-x))
+      scaleY(var(--lq-scale-y));
+    transform-style: preserve-3d;
+    transition:
+      box-shadow var(--lq-duration) var(--lq-easing),
+      border-color var(--lq-duration) var(--lq-easing),
+      background var(--lq-duration) var(--lq-easing);
+    will-change: transform;
+  }
+
+  /* WebKit puts the text-selection callout — the bubble a long press raises, the
+     one holding Paste — in the wrong coordinate space when the input it belongs
+     to is nested inside a compositing layer, so on iOS a long press on a field
+     inside the block above raises no menu at all and the field cannot be pasted
+     into. The motion controller compounds it by springing that transform from
+     `pointerdown`, which leaves the field moving while the press is still being
+     recognised.
+
+     What the transform buys is tilt and parallax tracking a pointer, and a
+     touchscreen has no pointer to track, so a text entry and whatever surface
+     holds it give up the geometry there and keep every bit of the paint. Matched
+     on `any-pointer` rather than `pointer` so a tablet driven from a trackpad —
+     a fine pointer, with a finger still on the glass — is covered as well. */
+  @media (any-pointer: coarse) {
+    .lq-text-field__control {
+      transform: none;
+      transform-style: flat;
+      will-change: auto;
+    }
+  }
+
+  /* Held apart from the rule above rather than joined to its selector list: one
+     selector a browser cannot parse voids the whole list it sits in, and `:has()`
+     is the newest thing in this file. Split, a Safari too old for `:has()` still
+     gets the field itself unwrapped. The surface is matched only when it holds a
+     text entry, so a card with nothing to type into keeps its tilt. */
+  @media (any-pointer: coarse) {
+    .lq-surface:has(.lq-text-field__control) {
+      transform: none;
+      transform-style: flat;
+      will-change: auto;
+    }
+  }
+
+  /* With a fine pointer the tilt stays, until the field takes focus. A field
+     rotated toward the pointer foreshortens its focus outline along one edge, so
+     the ring reads as cut off while you type, and the motion is no help once the
+     caret is in it. So a focused field lies flat, and so does a surface holding
+     one — a card tilting under a flat field drags the ring with it. The dialog
+     surface is left out: it lifts on open, and flattening it on focus makes the
+     whole dialog jump, while the field inside it lying flat is already enough. */
+  .lq-text-field__control:focus-within {
+    transform: none;
+    transform-style: flat;
+  }
+
+  /* Its own rule for the same reason as above: `:has()` must not take the
+     field's selector down with it. */
+  .lq-surface:not(.lq-dialog__surface):has(.lq-text-field__control:focus-within) {
+    transform: none;
+    transform-style: flat;
+  }
+
+  /* `-webkit-backdrop-filter` is written before the standard property, here and
+     everywhere else in this file, and the order is load-bearing. Lightning CSS —
+     what Vite hands a stylesheet to — reads the two as one property declared
+     twice and keeps only the last, so the other order leaves a build with
+     nothing but the prefixed form in it, which Chrome has dropped. This way the
+     standard property survives the pass, and Safari versions old enough to want
+     the prefix still find it. */
+  /* `veil` is how much of the material's own dressing sits between the eye and
+     what is behind it: the fill, the inner sheen, the cast shadow and the lift
+     it gives the backdrop's colour. It deliberately leaves the rim and the
+     refraction alone, because those are what make a panel read as glass rather
+     than as a hole cut in the page — a sheet with nothing in it but a lit edge
+     is exactly the look this dial exists to reach, and at 0 those two are all
+     that is left on the backdrop.
+
+     The scaling is done on aliases derived here rather than on the theme tokens
+     themselves. A token redefined at provider scope would resolve there once,
+     and a surface further down could no longer set a veil of its own — which is
+     the whole point of having the dial on the component as well. */
+  .lq-surface {
+    --lq-veil-amount: clamp(var(--lq-veil-floor, 0), var(--lq-veil, 1), 1);
+    --lq-cast: color-mix(in srgb, var(--lq-shadow-color) calc(var(--lq-veil-amount) * 100%), transparent);
+    --lq-sheen: color-mix(in srgb, var(--lq-glass-bright) calc(var(--lq-veil-amount) * 100%), transparent);
+    --lq-sheen-shade: color-mix(in srgb, var(--lq-glass-shade) calc(var(--lq-veil-amount) * 100%), transparent);
+    --lq-blur: calc(1.5px + var(--lq-frost, 0px));
+    --lq-saturate: calc(1 + 0.4 * var(--lq-veil-amount));
+    --lq-brighten: calc(1 + 0.05 * var(--lq-veil-amount));
+    --lq-glow: calc(0.4 * var(--lq-veil-amount));
+    --lq-fill-base: var(--lq-clear-fill);
+    --lq-fill: color-mix(in srgb, var(--lq-fill-base) calc(var(--lq-veil-amount) * 100%), transparent);
+    --lq-line: var(--lq-clear-line);
+    --lq-shadow: 0 16px 40px var(--lq-cast), 0 2px 8px color-mix(in srgb, var(--lq-cast) 52%, transparent);
+    -webkit-backdrop-filter: blur(var(--lq-blur)) saturate(var(--lq-saturate)) brightness(var(--lq-brighten)) var(--lq-lens, );
+    backdrop-filter: blur(var(--lq-blur)) saturate(var(--lq-saturate)) brightness(var(--lq-brighten)) var(--lq-lens, );
+    background: var(--lq-fill);
+    border: 1px solid var(--lq-line);
+    border-radius: calc(var(--lq-radius) + var(--lq-squish) * 6px);
+    box-shadow:
+      var(--lq-shadow),
+      inset 0 1px 0 var(--lq-sheen),
+      inset 0 -1.25px 0 var(--lq-sheen-shade),
+      inset 0 0 22px -14px rgba(255, 255, 255, var(--lq-glow));
+    overflow: hidden;
+  }
+
+  .lq-surface[data-liquid-variant='clear'] {
+    --lq-blur: var(--lq-frost, 0px);
+    --lq-saturate: calc(1 + 0.08 * var(--lq-veil-amount));
+    --lq-brighten: 1;
+    --lq-glow: calc(0.1 * var(--lq-veil-amount));
+  }
+
+  .lq-surface[data-liquid-variant='clear'] > .lq-surface__edge {
+    opacity: 0.88;
+  }
+
+  .lq-surface[data-liquid-variant='tinted'] {
+    --lq-blur: calc(2px + var(--lq-frost, 0px));
+    --lq-fill-base: color-mix(in srgb, var(--lq-tint) 14%, transparent);
+    --lq-line: color-mix(in srgb, var(--lq-tint) 48%, rgba(255, 255, 255, 0.12));
+  }
+
+  .lq-surface[data-liquid-active='true'] {
+    border-color: color-mix(in srgb, var(--lq-tint) 32%, rgba(255, 255, 255, 0.14));
+    box-shadow:
+      0 20px 52px color-mix(in srgb, var(--lq-shadow-color) 86%, transparent),
+      0 3px 12px color-mix(in srgb, var(--lq-shadow-color) 54%, transparent),
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade);
+  }
+
+  /* The lit rim. Two stacked rings rather than one: `screen` lifts the line off
+     a dark backdrop, `overlay` keeps it alive on a bright one, and a single
+     blend mode can only do one of those. Both are drawn with padding plus
+     mask-exclude so the line follows the corner radius exactly — a box-shadow
+     rounds on its own terms and drifts away from the silhouette at the ends.
+     `--lq-edge-angle` is written by the motion controller, so the bright
+     quarter of the ring swings toward the pointer. */
+  .lq-surface__edge,
+  .lq-surface__edge::after {
+    border-radius: inherit;
+    content: '';
+    inset: 0;
+    padding: var(--lq-rim-width);
+    pointer-events: none;
+    position: absolute;
+    /* Prefixed first, standard last — the same ordering `backdrop-filter` needs
+       further up, and for a sharper reason. The `-webkit-mask` shorthand resets
+       the compositing operator, and `-webkit-mask-composite: xor` does not put
+       the standard one back, so with the prefixed pair written last the ring
+       composited as source-over: the gradient filled the whole face instead of
+       the 1.6px band. Screen-blended white over a dark page, that turned every
+       surface into a bright diagonal wash and buried the labels under it —
+       invisible in the light theme, because screen against white is a no-op. */
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+
+  .lq-surface__edge {
+    background:
+      radial-gradient(
+        circle 124px at var(--lq-pointer-x) var(--lq-pointer-y),
+        rgba(255, 255, 255, calc(0.22 + var(--lq-shine-opacity) * 0.42)),
+        rgba(255, 255, 255, 0.08) 36%,
+        transparent 72%
+      ),
+      linear-gradient(
+        var(--lq-edge-angle),
+        var(--lq-rim-bright) 0%,
+        var(--lq-rim-mid) 34%,
+        var(--lq-glass-shade) 62%,
+        var(--lq-rim-dim) 100%
+      );
+    filter: drop-shadow(0 0 2px color-mix(in srgb, var(--lq-tint, var(--lq-button-tint)) 8%, transparent));
+    mix-blend-mode: screen;
+    transition: opacity 260ms ease;
+    z-index: 2;
+  }
+
+  .lq-surface__edge::after {
+    background: linear-gradient(
+      var(--lq-edge-angle),
+      color-mix(in srgb, var(--lq-rim-bright) 80%, transparent) 0%,
+      color-mix(in srgb, var(--lq-rim-mid) 80%, transparent) 34%,
+      transparent 62%,
+      color-mix(in srgb, var(--lq-rim-dim) 80%, transparent) 100%
+    );
+    mix-blend-mode: overlay;
+  }
+
+  .lq-surface[data-liquid-interactive='false'] > .lq-surface__edge {
+    background: linear-gradient(
+      145deg,
+      var(--lq-rim-bright) 0%,
+      var(--lq-rim-mid) 34%,
+      var(--lq-glass-shade) 62%,
+      var(--lq-rim-dim) 100%
+    );
+  }
+
+  .lq-surface::after,
+  .lq-button::after {
+    border-radius: inherit;
+    box-shadow:
+      inset 0 0.75px 0 rgba(255, 255, 255, 0.1),
+      inset 0 -0.75px 0 color-mix(in srgb, var(--lq-tint, var(--lq-button-tint)) 8%, transparent);
+    content: '';
+    inset: 1px;
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
+  }
+
+  /* Scaled by the veil like every other piece of dressing. `screen` against a
+     dark page turns this canvas into the brightest thing on it, so a surface
+     asking to be barely there cannot leave its glow at full strength — that is
+     what washed the dark theme out and buried the labels underneath it. */
+  .lq-surface__shader {
+    border-radius: inherit;
+    height: 100%;
+    inset: 0;
+    mix-blend-mode: screen;
+    opacity: var(--lq-veil-amount, 1);
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+  }
+
+  .lq-surface__shader[data-fallback='true'] {
+    display: none;
+  }
+
+  .lq-surface__content {
+    display: contents;
+  }
+
+  .lq-surface__content > * {
+    position: relative;
+    z-index: 3;
+  }
+
+  /* LiquidGlass: a surface whose optics are set per instance. It reuses the
+     surface's structure wholesale and only adds what it owns — its own padding,
+     and the darkening that keeps glass legible on a bright backdrop. */
+  .lq-glass {
+    --lq-glass-padding: 0;
+    padding: var(--lq-glass-padding);
+  }
+
+  .lq-glass[data-liquid-over-light='true'] {
+    --lq-fill-base: rgba(0, 0, 0, 0.16);
+    --lq-glow: 0.04;
+    box-shadow:
+      0 18px 60px color-mix(in srgb, var(--lq-shadow-color) 92%, transparent),
+      inset 0 1px 0 var(--lq-glass-bright),
+      inset 0 -1.25px 0 var(--lq-glass-shade);
+  }
+
+  .lq-button {
+    --lq-button-tint: var(--lq-accent);
+    --lq-button-radius: 14px;
+    align-items: center;
+    appearance: none;
+    -webkit-backdrop-filter: saturate(1.08) var(--lq-lens, );
+    backdrop-filter: saturate(1.08) var(--lq-lens, );
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--lq-button-tint) 16%, rgba(255, 255, 255, 0.08));
+    border-radius: calc(var(--lq-button-radius) + var(--lq-squish) * 5px);
+    box-shadow:
+      0 8px 20px color-mix(in srgb, var(--lq-shadow-color) 40%, transparent),
+      inset 0 0.75px 0 var(--lq-glass-soft),
+      inset 0 -1px 0 var(--lq-glass-shade);
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-weight: 650;
+    justify-content: center;
+    letter-spacing: -0.01em;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .lq-button[data-liquid-size='sm'] {
+    --lq-button-radius: 11px;
+    font-size: 0.82rem;
+    min-height: 36px;
+    padding: 0 14px;
+  }
+
+  .lq-button[data-liquid-size='md'] {
+    font-size: 0.9rem;
+    min-height: 46px;
+    padding: 0 21px;
+  }
+
+  .lq-button[data-liquid-size='lg'] {
+    --lq-button-radius: 13px;
+    font-size: 1rem;
+    min-height: 56px;
+    padding: 0 27px;
+  }
+
+  .lq-button:hover:not([data-disabled]) {
+    background: color-mix(in srgb, var(--lq-button-tint) 8%, transparent);
+    border-color: var(--lq-control-hover-line);
+    box-shadow:
+      0 12px 28px color-mix(in srgb, var(--lq-shadow-color) 56%, transparent),
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade);
+  }
+
+  .lq-button:focus-visible,
+  .lq-switch:focus-visible,
+  .lq-dock__item:focus-visible,
+  .lq-text-field__control:focus-within {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: 3px;
+  }
+
+  .lq-button[data-disabled],
+  .lq-switch[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .lq-button__content {
+    align-items: center;
+    display: inline-flex;
+    gap: 9px;
+    position: relative;
+    z-index: 3;
+    transition: transform 500ms var(--lq-easing);
+  }
+
+  .lq-button:hover:not([data-disabled]) .lq-button__content {
+    transform: translate3d(calc(var(--lq-magnet-x) * 0.45), calc(var(--lq-magnet-y) * 0.45), 0);
+  }
+
+  .lq-button__icon {
+    display: inline-flex;
+  }
+
+  .lq-button__icon[data-position='before'] {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .lq-button[data-loading='true'],
+  .lq-button[data-loading='true'][data-disabled] {
+    cursor: progress;
+    opacity: 1;
+  }
+
+  .lq-button[data-loading='true'] .lq-button__content {
+    opacity: 0;
+  }
+
+  .lq-button__spinner {
+    align-items: center;
+    display: inline-flex;
+    inset: 0;
+    justify-content: center;
+    pointer-events: none;
+    position: absolute;
+    z-index: 3;
+  }
+
+  .lq-card {
+    padding: 26px;
+  }
+
+  .lq-card__header,
+  .lq-card__body,
+  .lq-card__footer {
+    position: relative;
+    z-index: 3;
+  }
+
+  .lq-card__header {
+    margin-bottom: 20px;
+  }
+
+  .lq-card__eyebrow {
+    color: color-mix(in srgb, var(--lq-accent) 72%, white);
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .lq-card__title {
+    font-size: 1.25rem;
+    letter-spacing: -0.035em;
+    margin: 0;
+  }
+
+  .lq-card__description {
+    color: var(--lq-muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    margin: 8px 0 0;
+  }
+
+  /* Trailing action row — no hairline; actions simply sit at the trailing edge. */
+  .lq-card__footer {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 22px;
+  }
+
+  .lq-switch {
+    appearance: none;
+    -webkit-backdrop-filter: saturate(1.08) var(--lq-lens, );
+    backdrop-filter: saturate(1.08) var(--lq-lens, );
+    background: var(--lq-switch-fill);
+    border: 1px solid var(--lq-switch-line);
+    border-radius: 10px;
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade),
+      0 5px 12px rgba(4, 9, 24, 0.08);
+    cursor: pointer;
+    height: 32px;
+    overflow: hidden;
+    padding: 3px;
+    width: 54px;
+  }
+
+  .lq-switch::before {
+    background: color-mix(in srgb, var(--lq-accent) 12%, transparent);
+    border-radius: 7px;
+    content: '';
+    height: 24px;
+    left: 3px;
+    opacity: 0;
+    position: absolute;
+    scale: 0.45;
+    top: 3px;
+    transition:
+      opacity 360ms ease,
+      scale 620ms cubic-bezier(0.18, 1.4, 0.3, 1),
+      translate 620ms cubic-bezier(0.18, 1.4, 0.3, 1);
+    width: 24px;
+  }
+
+  .lq-switch[data-checked] {
+    background: color-mix(in srgb, var(--lq-accent) 3%, transparent);
+    border-color: color-mix(in srgb, var(--lq-accent) 30%, rgba(255, 255, 255, 0.12));
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--lq-accent) 8%, transparent), inset 0 0.75px 0 rgba(255, 255, 255, 0.14);
+  }
+
+  .lq-switch[data-checked]::before {
+    opacity: 0.48;
+    scale: 1.2;
+    translate: 22px 0;
+  }
+
+  .lq-switch__thumb {
+    background: color-mix(in srgb, var(--lq-accent) 16%, rgba(255, 255, 255, 0.78));
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 7px;
+    box-shadow: 0 2px 6px rgba(3, 8, 22, 0.18);
+    display: block;
+    height: 24px;
+    position: relative;
+    transform-origin: center;
+    transition:
+      box-shadow 420ms var(--lq-easing),
+      translate 680ms cubic-bezier(0.16, 1.52, 0.28, 1);
+    translate: 0 0;
+    width: 24px;
+    z-index: 3;
+  }
+
+  .lq-switch[data-checked] .lq-switch__thumb {
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--lq-accent) 14%, rgba(3, 8, 22, 0.2));
+    translate: 22px 0;
+  }
+
+  .lq-switch[data-interacted][data-checked] .lq-switch__thumb {
+    animation: lq-switch-thumb-on 680ms cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+
+  .lq-switch[data-interacted][data-unchecked] .lq-switch__thumb {
+    animation: lq-switch-thumb-off 680ms cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+
+  .lq-control-label {
+    color: color-mix(in srgb, var(--lq-foreground) 82%, transparent);
+    font-size: 0.78rem;
+    font-weight: 650;
+  }
+
+  .lq-control-hint {
+    color: var(--lq-muted);
+    font-size: 0.72rem;
+    line-height: 1.4;
+  }
+
+  .lq-slider,
+  .lq-text-field {
+    display: grid;
+    gap: 8px;
+  }
+
+  .lq-slider__row {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+  }
+
+  .lq-slider__adornment,
+  .lq-text-field__adornment {
+    color: var(--lq-muted);
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
+
+  /* Inset by half a thumb. Base UI centres the thumb on its value, so at either
+     end half of it hangs outside the track — which is fine until the slider sits
+     in anything that clips, and then the handle is sliced down the middle at the
+     one value where it matters most. Padding the control shortens the track by
+     exactly that much, so the thumb's outer edge lands on the control's own. */
+  .lq-slider__control {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    flex: 1;
+    height: 28px;
+    min-width: 80px;
+    padding-inline: 11px;
+    /* The drag reads the pointer directly, so the browser must not claim the
+       gesture for a scroll first. */
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .lq-slider__control[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .lq-slider__track {
+    background: rgba(255, 255, 255, 0.13);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    height: 7px;
+    width: 100%;
+  }
+
+  /* The filled part of the track. A native range could not draw this: the vendor
+     track pseudo-element has no idea where the thumb is, so the fill used to be
+     a fixed gradient pretending to be one. */
+  .lq-slider__indicator {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--lq-accent) 72%, white 4%), color-mix(in srgb, var(--lq-accent) 88%, white 12%));
+    border-radius: inherit;
+  }
+
+  .lq-slider__thumb {
+    background: linear-gradient(145deg, white, #dbe5f7);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(3, 8, 22, 0.4);
+    height: 21px;
+    /* `scale` rather than `transform`, so the squish composes with the
+       `translate` Base UI sets to centre the thumb on its value. */
+    scale: var(--lq-thumb-sx, 1) var(--lq-thumb-sy, 1);
+    width: 21px;
+    will-change: scale;
+  }
+
+  /* The focus ring belongs to the thumb; the input that takes the focus sits
+     inside it and has no size of its own. */
+  .lq-slider__thumb:has(:focus-visible) {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: 3px;
+  }
+
+  .lq-text-field__control {
+    align-items: center;
+    -webkit-backdrop-filter: saturate(1.08) var(--lq-lens, );
+    backdrop-filter: saturate(1.08) var(--lq-lens, );
+    background: var(--lq-field-fill);
+    border: 1px solid var(--lq-field-line);
+    border-radius: 12px;
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade),
+      0 8px 20px color-mix(in srgb, var(--lq-shadow-color) 52%, transparent);
+    display: flex;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 15px;
+    transition: background 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+  }
+
+  .lq-text-field__control:focus-within {
+    background: var(--lq-field-focus-fill);
+    border-color: color-mix(in srgb, var(--lq-accent) 32%, rgba(255, 255, 255, 0.14));
+    box-shadow: 0 7px 18px color-mix(in srgb, var(--lq-accent) 7%, transparent), inset 0 0.75px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .lq-text-field input {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    min-width: 0;
+    outline: 0;
+    width: 100%;
+  }
+
+  .lq-text-field input::placeholder {
+    color: var(--lq-placeholder);
+  }
+
+  .lq-dock-shell {
+    width: max-content;
+  }
+
+  .lq-dock-shell[data-position='floating'] {
+    bottom: 24px;
+    left: 50%;
+    position: fixed;
+    transform: translateX(-50%);
+    z-index: 50;
+  }
+
+  .lq-dock {
+    align-items: center;
+    display: flex;
+    gap: 5px;
+    padding: 6px;
+    position: relative;
+  }
+
+  .lq-dock__indicator {
+    background:
+      radial-gradient(circle at 30% 16%, rgba(255, 255, 255, 0.05), transparent 46%),
+      color-mix(in srgb, var(--lq-accent) 2%, var(--lq-dock-indicator-fill));
+    border: 1px solid var(--lq-control-line);
+    border-radius: 11px;
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade),
+      0 6px 16px color-mix(in srgb, var(--lq-shadow-color) 56%, transparent);
+    height: 42px;
+    left: 6px;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute !important;
+    top: 6px;
+    transform: translate3d(calc(var(--lq-dock-active-index) * 47px), 0, 0);
+    transition:
+      transform 680ms cubic-bezier(0.18, 1.45, 0.3, 1),
+      width 480ms var(--lq-easing),
+      opacity 220ms ease;
+    width: 42px;
+    z-index: 2 !important;
+  }
+
+  .lq-dock__indicator[data-visible='true'] {
+    opacity: 1;
+  }
+
+  .lq-dock__item {
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+    color: var(--lq-muted);
+    cursor: pointer;
+    display: inline-flex;
+    height: 42px;
+    justify-content: center;
+    padding: 0;
+    transition: color 240ms ease, background 240ms ease, transform 300ms var(--lq-easing);
+    width: 42px;
+  }
+
+  .lq-dock__item:hover {
+    background: var(--lq-dock-hover-fill);
+    color: var(--lq-dock-active);
+    transform: translateY(-2px);
+  }
+
+  .lq-dock__item[data-active='true'] {
+    color: var(--lq-dock-active);
+  }
+
+  /* Base UI renders the panel and the scrim as two sibling divs in a portal, so
+     this is a plain fixed box rather than a <dialog> with a ::backdrop. */
+  .lq-dialog {
+    color: inherit;
+    left: 50%;
+    max-width: min(520px, calc(100vw - 32px));
+    position: fixed;
+    top: 50%;
+    /* Centring uses `translate` so the keyframes below keep `transform` to
+       themselves — the two properties compose instead of overwriting. */
+    translate: -50% -50%;
+    width: 100%;
+    z-index: 80;
+  }
+
+  .lq-dialog__backdrop {
+    -webkit-backdrop-filter: blur(7px) saturate(0.86) var(--lq-lens, );
+    backdrop-filter: blur(7px) saturate(0.86) var(--lq-lens, );
+    background: rgba(2, 5, 16, 0.42);
+    inset: 0;
+    position: fixed;
+    transition: opacity 320ms ease;
+    z-index: 79;
+  }
+
+  .lq-dialog__backdrop[data-starting-style],
+  .lq-dialog__backdrop[data-ending-style] {
+    opacity: 0;
+  }
+
+  .lq-dialog[data-open] {
+    animation: lq-dialog-in 620ms cubic-bezier(0.16, 1.35, 0.3, 1) both;
+  }
+
+  /* Base UI keeps the popup mounted until this finishes, then unmounts it. */
+  .lq-dialog[data-closed] {
+    animation: lq-dialog-out 300ms cubic-bezier(0.5, 0, 0.4, 1) both;
+  }
+
+  @keyframes lq-dialog-out {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    to {
+      opacity: 0;
+      transform: translateY(14px) scale(0.94);
+    }
+  }
+
+  .lq-dialog__surface {
+    padding: 26px;
+  }
+
+  .lq-dialog__header {
+    align-items: flex-start;
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    position: relative;
+    z-index: 3;
+  }
+
+  .lq-dialog__header h2 {
+    font-size: 1.35rem;
+    letter-spacing: -0.035em;
+    margin: 0;
+  }
+
+  .lq-dialog__header p {
+    color: var(--lq-muted);
+    line-height: 1.55;
+    margin: 8px 0 0;
+  }
+
+  .lq-dialog__body {
+    margin-top: 24px;
+    position: relative;
+    z-index: 3;
+  }
+
+  /* Action row — Delete/Cancel and friends sit at the trailing edge. */
+  .lq-dialog__footer {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 22px;
+  }
+
+  @keyframes lq-dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scaleX(0.9) scaleY(0.82);
+    }
+
+    42% {
+      opacity: 1;
+      transform: translateY(-5px) scaleX(1.035) scaleY(1.06);
+    }
+
+    64% {
+      transform: translateY(2px) scaleX(0.985) scaleY(0.965);
+    }
+
+    82% {
+      transform: translateY(-1px) scaleX(1.008) scaleY(1.014);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes lq-switch-thumb-on {
+    0% {
+      scale: 1;
+    }
+
+    26% {
+      scale: 1.38 0.68;
+    }
+
+    52% {
+      scale: 0.82 1.22;
+    }
+
+    74% {
+      scale: 1.1 0.92;
+    }
+
+    88% {
+      scale: 0.96 1.05;
+    }
+
+    100% {
+      scale: 1;
+    }
+  }
+
+  @keyframes lq-switch-thumb-off {
+    0% {
+      scale: 1;
+    }
+
+    26% {
+      scale: 1.38 0.68;
+    }
+
+    52% {
+      scale: 0.82 1.22;
+    }
+
+    74% {
+      scale: 1.1 0.92;
+    }
+
+    88% {
+      scale: 0.96 1.05;
+    }
+
+    100% {
+      scale: 1;
+    }
+  }
+
+  /* Shared squash-and-stretch "purun" — two identical names so toggling a
+     control's state swaps the animation-name and replays it every time. */
+  @keyframes lq-jelly-pop {
+    0% {
+      scale: 1;
+    }
+
+    28% {
+      scale: 1.24 0.78;
+    }
+
+    54% {
+      scale: 0.86 1.16;
+    }
+
+    76% {
+      scale: 1.07 0.95;
+    }
+
+    90% {
+      scale: 0.98 1.02;
+    }
+
+    100% {
+      scale: 1;
+    }
+  }
+
+  @keyframes lq-jelly-pop-off {
+    0% {
+      scale: 1;
+    }
+
+    28% {
+      scale: 1.24 0.78;
+    }
+
+    54% {
+      scale: 0.86 1.16;
+    }
+
+    76% {
+      scale: 1.07 0.95;
+    }
+
+    90% {
+      scale: 0.98 1.02;
+    }
+
+    100% {
+      scale: 1;
+    }
+  }
+
+  @media (prefers-color-scheme: light) {
+    .lq-provider[data-liquid-theme='system'] {
+      --lq-veil-floor: 0;
+      --lq-clear-fill: rgba(255, 255, 255, 0.55);
+      --lq-clear-line: rgba(66, 85, 128, 0.22);
+      --lq-control-fill: transparent;
+      --lq-control-line: rgba(66, 85, 128, 0.24);
+      --lq-control-hover-line: color-mix(in srgb, var(--lq-button-tint, var(--lq-accent)) 28%, rgba(255, 255, 255, 0.18));
+      --lq-dock-active: #17203a;
+      --lq-dock-hover-fill: rgba(255, 255, 255, 0.015);
+      --lq-dock-indicator-fill: transparent;
+      --lq-field-fill: transparent;
+      --lq-field-focus-fill: color-mix(in srgb, var(--lq-accent) 1.5%, transparent);
+      --lq-field-line: rgba(66, 85, 128, 0.24);
+      --lq-foreground: #12182a;
+      --lq-glass-bright: rgba(255, 255, 255, 0.56);
+      --lq-glass-shade: rgba(62, 91, 164, 0.07);
+      --lq-glass-soft: rgba(255, 255, 255, 0.16);
+      --lq-muted: rgba(26, 35, 58, 0.62);
+      --lq-placeholder: rgba(28, 40, 68, 0.42);
+      --lq-quiet-fill: transparent;
+      --lq-quiet-line: rgba(66, 85, 128, 0.16);
+      --lq-regular-fill: rgba(255, 255, 255, 0.015);
+      --lq-regular-line: rgba(66, 85, 128, 0.26);
+      --lq-rim-bright: rgba(255, 255, 255, 0.94);
+      --lq-rim-dim: rgba(255, 255, 255, 0.62);
+      --lq-rim-mid: rgba(255, 255, 255, 0.4);
+      --lq-rim-width: 1.6px;
+      --lq-shadow-color: rgba(42, 55, 91, 0.1);
+      --lq-solid-fill: rgb(239, 244, 255);
+      --lq-switch-fill: transparent;
+      --lq-switch-line: rgba(66, 85, 128, 0.24);
+      color: var(--lq-foreground);
+      color-scheme: light;
+    }
+  }
+
+  .lq-provider[data-liquid-motion='off'] .lq-surface,
+  .lq-provider[data-liquid-motion='off'] .lq-button,
+  .lq-provider[data-liquid-motion='off'] .lq-switch,
+  .lq-provider[data-liquid-motion='off'] .lq-switch::before,
+  .lq-provider[data-liquid-motion='off'] .lq-switch__thumb,
+  .lq-provider[data-liquid-motion='off'] .lq-checkbox__box,
+  .lq-provider[data-liquid-motion='off'] .lq-radio__control,
+  .lq-provider[data-liquid-motion='off'] .lq-segmented__indicator,
+  .lq-provider[data-liquid-motion='off'] .lq-tab-panel,
+  .lq-provider[data-liquid-motion='off'] .lq-pagination__item,
+  .lq-provider[data-liquid-motion='off'] .lq-accordion__content-inner,
+  .lq-provider[data-liquid-motion='off'] .lq-dock__item,
+  .lq-provider[data-liquid-motion='off'] .lq-dialog[data-open] {
+    animation: none;
+    transition-duration: 0.01ms;
+  }
+
+  .lq-provider[data-liquid-transparency='off'] .lq-surface,
+  .lq-provider[data-liquid-transparency='off'] .lq-button,
+  .lq-provider[data-liquid-transparency='off'] .lq-switch,
+  .lq-provider[data-liquid-transparency='off'] .lq-text-field__control {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--lq-solid-fill);
+  }
+
+  .lq-provider[data-liquid-transparency='off'] .lq-surface__shader,
+  .lq-provider[data-liquid-transparency='off'] .lq-surface__edge {
+    display: none;
+  }
+}
+
+@layer liquefy-ui {
+  /* ---------- Popover base (Select, Menu, Date picker) ---------- */
+  /* var() fallbacks keep the popover legible even in the rare frame where it
+     portals outside a provider (before the container ref resolves). */
+  /* The stacking order every overlay in the library shares. Each layer portals
+     into the provider's node as a sibling of the others, so nesting in the JSX
+     buys nothing — this ladder is the only thing deciding what covers what, and
+     a popover opened from inside a dialog has to outrank the dialog itself:
+
+       50  floating dock
+       79  dialog and drawer backdrop
+       80  dialog and drawer panel
+       85  popover layer — select, menu and date picker
+       88  tooltip
+       90  toast viewport                                                    */
+  .lq-popover {
+    -webkit-backdrop-filter: blur(14px) saturate(1.5) brightness(1.04) var(--lq-lens, );
+    backdrop-filter: blur(14px) saturate(1.5) brightness(1.04) var(--lq-lens, );
+    background: color-mix(in srgb, var(--lq-solid-fill, rgb(30, 38, 60)) 72%, transparent);
+    border: 1px solid var(--lq-regular-line, rgba(255, 255, 255, 0.18));
+    border-radius: 14px;
+    box-shadow:
+      0 18px 44px var(--lq-shadow-color, rgba(4, 9, 24, 0.28)),
+      inset 0 1px 0 var(--lq-glass-bright, rgba(255, 255, 255, 0.32)),
+      inset 0 -1px 0 var(--lq-glass-shade, rgba(73, 111, 209, 0.07));
+    padding: 5px;
+    z-index: 85;
+    animation: lq-popover-in 420ms cubic-bezier(0.16, 1.35, 0.3, 1) both;
+  }
+
+  /* Base UI holds the popup in the DOM for as long as this runs, so the popover
+     gets a real exit instead of vanishing on the frame the state flips. */
+  .lq-popover[data-closed] {
+    animation: lq-popover-out 190ms cubic-bezier(0.5, 0, 0.4, 1) both;
+  }
+
+  @keyframes lq-popover-out {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    to {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.97);
+    }
+  }
+
+  @keyframes lq-popover-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.96);
+    }
+
+    60% {
+      opacity: 1;
+      transform: translateY(2px) scale(1.008);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* A panel that covers the page has to carry the legibility the page was
+     giving it. Both surfaces are `clear`, which leaves whatever is behind them
+     in full view — passable for a dialog floating over a dimmed desktop page,
+     unreadable on a phone, where a drawer is most of the screen and the backdrop
+     it dims is a sliver.
+
+     Thick glass rather than a sheet of paper: the blur is what makes the panel
+     readable, and the fill stays light enough that what is behind still moves
+     and colours through it. The lens matches this blur in the browsers that have
+     one — see `lensBlur` on both components. Set `transparency={false}` on the
+     provider for a panel with no glass at all. */
+  .lq-surface.lq-dialog__surface,
+  .lq-surface.lq-drawer__surface {
+    --lq-blur: calc(20px + var(--lq-frost, 0px));
+    --lq-saturate: 1.7;
+    --lq-brighten: 1.06;
+    --lq-glow: 0.5;
+    --lq-fill: color-mix(in srgb, var(--lq-solid-fill) 58%, transparent);
+  }
+
+  /* ---------- Checkbox ---------- */
+  .lq-checkbox {
+    align-items: flex-start;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 11px;
+  }
+
+  .lq-checkbox[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .lq-checkbox__box {
+    appearance: none;
+    align-items: center;
+    -webkit-backdrop-filter: saturate(1.08) var(--lq-lens, );
+    backdrop-filter: saturate(1.08) var(--lq-lens, );
+    background: var(--lq-control-fill);
+    border: 1px solid var(--lq-control-line);
+    border-radius: 7px;
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade);
+    color: #fff;
+    cursor: inherit;
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: 22px;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+    transition: background 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
+    width: 22px;
+  }
+
+  .lq-checkbox__box[data-interacted][data-checked],
+  .lq-checkbox__box[data-interacted][data-indeterminate] {
+    animation: lq-jelly-pop 620ms cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+
+  .lq-checkbox__box[data-interacted][data-unchecked]:not([data-indeterminate]) {
+    animation: lq-jelly-pop-off 620ms cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+
+  .lq-checkbox__box:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: 3px;
+  }
+
+  .lq-checkbox__box[data-checked],
+  .lq-checkbox__box[data-indeterminate] {
+    background: color-mix(in srgb, var(--lq-accent) 26%, transparent);
+    border-color: color-mix(in srgb, var(--lq-accent) 58%, rgba(255, 255, 255, 0.2));
+    box-shadow:
+      0 4px 12px color-mix(in srgb, var(--lq-accent) 16%, transparent),
+      inset 0 0.75px 0 rgba(255, 255, 255, 0.28);
+  }
+
+  .lq-checkbox__mark {
+    display: inline-flex;
+    opacity: 0;
+    position: relative;
+    scale: 0.4;
+    transition: opacity 200ms ease, scale 480ms cubic-bezier(0.18, 1.5, 0.3, 1);
+    z-index: 3;
+  }
+
+  .lq-checkbox__box[data-checked] .lq-checkbox__mark,
+  .lq-checkbox__box[data-indeterminate] .lq-checkbox__mark {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .lq-checkbox__copy,
+  .lq-radio__copy {
+    display: grid;
+    gap: 3px;
+    padding-top: 1px;
+  }
+
+  /* ---------- Radio ---------- */
+  .lq-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .lq-radio-group[data-orientation='horizontal'] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+
+  .lq-radio {
+    align-items: flex-start;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 11px;
+  }
+
+  .lq-radio[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .lq-radio__control {
+    appearance: none;
+    align-items: center;
+    -webkit-backdrop-filter: saturate(1.08) var(--lq-lens, );
+    backdrop-filter: saturate(1.08) var(--lq-lens, );
+    background: var(--lq-control-fill);
+    border: 1px solid var(--lq-control-line);
+    border-radius: 50%;
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade);
+    cursor: inherit;
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: 22px;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+    transition: border-color 260ms ease, box-shadow 260ms ease;
+    width: 22px;
+  }
+
+  .lq-radio__control:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: 3px;
+  }
+
+  .lq-radio__control[data-checked] {
+    animation: lq-jelly-pop 620ms cubic-bezier(0.2, 0.9, 0.25, 1);
+    border-color: color-mix(in srgb, var(--lq-accent) 58%, rgba(255, 255, 255, 0.2));
+    box-shadow:
+      0 4px 12px color-mix(in srgb, var(--lq-accent) 14%, transparent),
+      inset 0 0.75px 0 rgba(255, 255, 255, 0.24);
+  }
+
+  .lq-radio__dot {
+    background: color-mix(in srgb, var(--lq-accent) 78%, white);
+    border-radius: 50%;
+    box-shadow: 0 1px 4px color-mix(in srgb, var(--lq-accent) 32%, transparent);
+    height: 10px;
+    opacity: 0;
+    position: relative;
+    scale: 0.3;
+    transition: opacity 200ms ease, scale 480ms cubic-bezier(0.18, 1.5, 0.3, 1);
+    width: 10px;
+    z-index: 3;
+  }
+
+  .lq-radio__control[data-checked] .lq-radio__dot {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* ---------- Select ---------- */
+  .lq-select {
+    display: grid;
+    gap: 8px;
+    position: relative;
+  }
+
+  .lq-select__trigger {
+    align-items: center;
+    appearance: none;
+    -webkit-backdrop-filter: saturate(1.08) var(--lq-lens, );
+    backdrop-filter: saturate(1.08) var(--lq-lens, );
+    background: var(--lq-field-fill);
+    border: 1px solid var(--lq-field-line);
+    border-radius: 12px;
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade),
+      0 8px 20px color-mix(in srgb, var(--lq-shadow-color) 52%, transparent);
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    font: inherit;
+    gap: 10px;
+    justify-content: space-between;
+    min-height: 48px;
+    /* A flat 200px cannot be honoured by a trigger in a narrower column — three
+       filters side by side on a phone — and the overflow reads as neighbouring
+       selects overlapping rather than as a width problem. Capping the floor at
+       the container keeps the 200px comfortable default wherever there is room
+       for it. A parent sized by its own content (`fit-content`, a table cell)
+       gives the percentage nothing definite to resolve against, so the trigger
+       measures its content there rather than the 200px. */
+    min-width: min(200px, 100%);
+    overflow: hidden;
+    padding: 0 15px;
+    text-align: left;
+    transition: background 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+  }
+
+  .lq-select__value {
+    overflow: hidden;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    z-index: 3;
+  }
+
+  .lq-select__trigger:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: 3px;
+  }
+
+  .lq-select__trigger[data-popup-open] {
+    background: var(--lq-field-focus-fill);
+    border-color: color-mix(in srgb, var(--lq-accent) 32%, rgba(255, 255, 255, 0.14));
+  }
+
+  .lq-select__trigger[data-placeholder] .lq-select__value {
+    color: var(--lq-placeholder);
+  }
+
+  .lq-select__trigger[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .lq-select__chevron {
+    color: var(--lq-muted);
+    display: inline-flex;
+    flex: 0 0 auto;
+    position: relative;
+    transition: rotate 380ms cubic-bezier(0.18, 1.4, 0.3, 1);
+    z-index: 3;
+  }
+
+  .lq-select__trigger[data-popup-open] .lq-select__chevron {
+    rotate: 180deg;
+  }
+
+  .lq-select__positioner {
+    z-index: 85;
+  }
+
+  .lq-select__listbox {
+    max-height: min(320px, var(--available-height));
+    /* Matches the trigger without measuring it in JS. */
+    min-width: var(--anchor-width);
+    overflow: auto;
+    transform-origin: var(--transform-origin);
+  }
+
+  .lq-select__option {
+    align-items: center;
+    border-radius: 9px;
+    cursor: pointer;
+    display: flex;
+    font-size: 0.88rem;
+    gap: 10px;
+    justify-content: space-between;
+    min-height: 38px;
+    padding: 0 11px;
+    transition: background 160ms ease;
+  }
+
+  .lq-select__option[data-highlighted] {
+    background: color-mix(in srgb, var(--lq-accent) 14%, transparent);
+  }
+
+  .lq-select__option[data-selected] {
+    color: color-mix(in srgb, var(--lq-accent) 60%, var(--lq-foreground));
+    font-weight: 650;
+  }
+
+  .lq-select__option[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  /* ---------- Date picker ---------- */
+  .lq-date-picker {
+    display: grid;
+    gap: 8px;
+    position: relative;
+  }
+
+  /* The trigger is a field, not a button: it has to line up with a text field
+     standing next to it in the same form, so it repeats those measurements
+     rather than inheriting a button's. */
+  .lq-date-picker__trigger {
+    align-items: center;
+    appearance: none;
+    -webkit-backdrop-filter: saturate(1.08) var(--lq-lens, );
+    backdrop-filter: saturate(1.08) var(--lq-lens, );
+    background: var(--lq-field-fill);
+    border: 1px solid var(--lq-field-line);
+    border-radius: 12px;
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade),
+      0 8px 20px color-mix(in srgb, var(--lq-shadow-color) 52%, transparent);
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    font: inherit;
+    gap: 10px;
+    justify-content: space-between;
+    min-height: 48px;
+    /* Capped at the container for the reason the select trigger gives. */
+    min-width: min(200px, 100%);
+    overflow: hidden;
+    padding: 0 15px;
+    text-align: left;
+    transition: background 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+  }
+
+  .lq-date-picker__value {
+    overflow: hidden;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    z-index: 3;
+  }
+
+  .lq-date-picker__value[data-placeholder] {
+    color: var(--lq-placeholder);
+  }
+
+  .lq-date-picker__trigger:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: 3px;
+  }
+
+  .lq-date-picker__trigger[data-popup-open] {
+    background: var(--lq-field-focus-fill);
+    border-color: color-mix(in srgb, var(--lq-accent) 32%, rgba(255, 255, 255, 0.14));
+  }
+
+  .lq-date-picker__trigger[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .lq-date-picker__icon {
+    color: var(--lq-muted);
+    display: inline-flex;
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 3;
+  }
+
+  .lq-date-picker__positioner {
+    z-index: 85;
+  }
+
+  .lq-date-picker__panel {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    transform-origin: var(--transform-origin);
+    /* Seven columns of comfortable tap target, and never wider than a phone. */
+    width: min(19rem, calc(100vw - 32px));
+  }
+
+  .lq-date-picker__header {
+    align-items: center;
+    display: flex;
+    gap: 6px;
+    justify-content: space-between;
+  }
+
+  .lq-date-picker__caption {
+    font-size: 0.86rem;
+    font-weight: 650;
+  }
+
+  .lq-date-picker__nav {
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: var(--lq-muted);
+    cursor: pointer;
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: 32px;
+    justify-content: center;
+    transition: background 160ms ease, color 160ms ease;
+    width: 32px;
+  }
+
+  .lq-date-picker__nav:hover {
+    background: color-mix(in srgb, var(--lq-accent) 12%, transparent);
+    color: var(--lq-foreground);
+  }
+
+  .lq-date-picker__nav:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: 2px;
+  }
+
+  .lq-date-picker__grid {
+    display: grid;
+    gap: 2px;
+  }
+
+  .lq-date-picker__weekdays,
+  .lq-date-picker__week {
+    display: grid;
+    gap: 2px;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .lq-date-picker__weekday {
+    color: var(--lq-muted);
+    font-size: 0.68rem;
+    font-weight: 650;
+    padding-bottom: 4px;
+    text-align: center;
+  }
+
+  .lq-date-picker__day {
+    align-items: center;
+    appearance: none;
+    aspect-ratio: 1;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    font: inherit;
+    font-size: 0.83rem;
+    font-variant-numeric: tabular-nums;
+    justify-content: center;
+    transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+  }
+
+  .lq-date-picker__day:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--lq-accent) 14%, transparent);
+  }
+
+  .lq-date-picker__day:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: -1px;
+  }
+
+  /* Days either side of the month stay legible — they are still selectable — but
+     have to lose the argument about which month this grid is showing. */
+  .lq-date-picker__day[data-outside] {
+    opacity: 0.38;
+  }
+
+  .lq-date-picker__day[data-today] {
+    border-color: color-mix(in srgb, var(--lq-accent) 42%, transparent);
+  }
+
+  .lq-date-picker__day[data-selected] {
+    background: color-mix(in srgb, var(--lq-accent) 34%, transparent);
+    border-color: color-mix(in srgb, var(--lq-accent) 60%, transparent);
+    font-weight: 700;
+    opacity: 1;
+  }
+
+  .lq-date-picker__day:disabled {
+    cursor: not-allowed;
+    opacity: 0.22;
+  }
+
+  /* ---------- TextArea ---------- */
+  .lq-textarea__control {
+    padding: 12px 15px;
+  }
+
+  .lq-textarea textarea {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    line-height: 1.55;
+    min-width: 0;
+    outline: 0;
+    resize: vertical;
+    width: 100%;
+  }
+
+  .lq-textarea textarea::placeholder {
+    color: var(--lq-placeholder);
+  }
+
+  /* ---------- Icon button ---------- */
+  .lq-icon-button {
+    padding: 0 !important;
+  }
+
+  .lq-icon-button[data-liquid-size='sm'] {
+    height: 36px;
+    min-height: 36px;
+    width: 36px;
+  }
+
+  .lq-icon-button[data-liquid-size='md'] {
+    height: 46px;
+    min-height: 46px;
+    width: 46px;
+  }
+
+  .lq-icon-button[data-liquid-size='lg'] {
+    height: 56px;
+    min-height: 56px;
+    width: 56px;
+  }
+
+  .lq-icon-button[data-liquid-shape='circle'] {
+    --lq-button-radius: 999px;
+  }
+
+  /* ---------- Segmented ---------- */
+  .lq-segmented {
+    -webkit-backdrop-filter: saturate(1.08) var(--lq-lens, );
+    backdrop-filter: saturate(1.08) var(--lq-lens, );
+    background: var(--lq-control-fill);
+    border: 1px solid var(--lq-control-line);
+    border-radius: 13px;
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade);
+    display: inline-grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    padding: 4px;
+    position: relative;
+  }
+
+  .lq-segmented__indicator {
+    background: color-mix(in srgb, var(--lq-accent) 14%, rgba(255, 255, 255, 0.05));
+    border: 1px solid color-mix(in srgb, var(--lq-accent) 36%, rgba(255, 255, 255, 0.14));
+    border-radius: 9px;
+    box-shadow:
+      0 5px 14px color-mix(in srgb, var(--lq-shadow-color) 56%, transparent),
+      inset 0 0.75px 0 var(--lq-glass-bright);
+    height: calc(100% - 8px);
+    left: 4px;
+    pointer-events: none;
+    position: absolute;
+    top: 4px;
+    transform: translateX(calc(var(--lq-segment-index) * 100%));
+    transition: transform 560ms cubic-bezier(0.18, 1.35, 0.3, 1);
+    width: calc((100% - 8px) / var(--lq-segment-count));
+  }
+
+  .lq-segmented__item {
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 9px;
+    color: var(--lq-muted);
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 650;
+    gap: 7px;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0 16px;
+    position: relative;
+    transition: color 240ms ease;
+    white-space: nowrap;
+    z-index: 1;
+  }
+
+  .lq-segmented[data-liquid-size='sm'] .lq-segmented__item {
+    font-size: 0.78rem;
+    min-height: 29px;
+    padding: 0 12px;
+  }
+
+  .lq-segmented__item[data-pressed] {
+    color: var(--lq-foreground);
+  }
+
+  .lq-segmented__item:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  .lq-segmented__item:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: 2px;
+  }
+
+  .lq-segmented__icon {
+    display: inline-flex;
+  }
+
+  /* ---------- Rating ---------- */
+  .lq-rating {
+    display: inline-flex;
+    gap: 3px;
+  }
+
+  .lq-rating__star {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    color: color-mix(in srgb, var(--lq-foreground) 24%, transparent);
+    cursor: pointer;
+    display: inline-flex;
+    padding: 2px;
+    transition: color 200ms ease, scale 320ms cubic-bezier(0.18, 1.5, 0.3, 1);
+  }
+
+  .lq-rating[data-read-only='true'] .lq-rating__star {
+    cursor: default;
+  }
+
+  .lq-rating__star[data-active='true'] {
+    color: #f6c344;
+    filter: drop-shadow(0 2px 6px rgba(246, 195, 68, 0.35));
+  }
+
+  .lq-rating:not([data-read-only='true']) .lq-rating__star:hover {
+    scale: 1.18;
+  }
+
+  .lq-rating__star:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Badge ---------- */
+  .lq-badge {
+    display: inline-flex;
+    position: relative;
+  }
+
+  .lq-badge__indicator {
+    align-items: center;
+    background: color-mix(in srgb, var(--lq-badge-tint, #ff5d73) 88%, white);
+    border: 1.5px solid color-mix(in srgb, var(--lq-solid-fill) 80%, transparent);
+    border-radius: 999px;
+    box-shadow: 0 3px 8px color-mix(in srgb, var(--lq-badge-tint, #ff5d73) 30%, transparent);
+    color: #fff;
+    display: inline-flex;
+    font-size: 0.62rem;
+    font-weight: 750;
+    justify-content: center;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    min-width: 18px;
+    padding: 3px 5px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translate(40%, -40%);
+    z-index: 4;
+  }
+
+  .lq-badge__indicator[data-dot='true'] {
+    height: 10px;
+    min-width: 10px;
+    padding: 0;
+    width: 10px;
+  }
+
+  /* ---------- Chip ---------- */
+  .lq-chip {
+    align-items: center;
+    appearance: none;
+    -webkit-backdrop-filter: saturate(1.08) var(--lq-lens, );
+    backdrop-filter: saturate(1.08) var(--lq-lens, );
+    background: color-mix(in srgb, var(--lq-chip-tint, var(--lq-accent)) 1.4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--lq-chip-tint, var(--lq-accent)) 22%, rgba(255, 255, 255, 0.1));
+    border-radius: 999px;
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade);
+    color: inherit;
+    display: inline-flex;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    gap: 7px;
+    min-height: 32px;
+    padding: 0 13px;
+    transition: background 220ms ease, border-color 220ms ease;
+  }
+
+  .lq-chip[data-liquid-size='sm'] {
+    font-size: 0.74rem;
+    gap: 5px;
+    min-height: 26px;
+    padding: 0 10px;
+  }
+
+  .lq-chip[data-liquid-variant='tinted'] {
+    background: color-mix(in srgb, var(--lq-chip-tint, var(--lq-accent)) 14%, transparent);
+    border-color: color-mix(in srgb, var(--lq-chip-tint, var(--lq-accent)) 38%, rgba(255, 255, 255, 0.12));
+  }
+
+  .lq-chip[data-interactive='true'] {
+    cursor: pointer;
+  }
+
+  .lq-chip[data-interactive='true']:hover {
+    background: color-mix(in srgb, var(--lq-chip-tint, var(--lq-accent)) 10%, transparent);
+  }
+
+  .lq-chip[data-selected='true'] {
+    background: color-mix(in srgb, var(--lq-chip-tint, var(--lq-accent)) 20%, transparent);
+    border-color: color-mix(in srgb, var(--lq-chip-tint, var(--lq-accent)) 52%, rgba(255, 255, 255, 0.16));
+  }
+
+  .lq-chip:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: 2px;
+  }
+
+  .lq-chip__icon {
+    display: inline-flex;
+  }
+
+  .lq-chip__delete {
+    align-items: center;
+    appearance: none;
+    background: color-mix(in srgb, var(--lq-foreground) 10%, transparent);
+    border: 0;
+    border-radius: 50%;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    height: 17px;
+    justify-content: center;
+    margin-right: -5px;
+    padding: 0;
+    transition: background 180ms ease;
+    width: 17px;
+  }
+
+  .lq-chip__delete:hover {
+    background: color-mix(in srgb, #ff5d73 42%, transparent);
+    color: #fff;
+  }
+
+  /* ---------- Avatar ---------- */
+  .lq-avatar {
+    align-items: center;
+    background: color-mix(in srgb, var(--lq-avatar-tint, var(--lq-accent)) 22%, transparent);
+    border: 1px solid color-mix(in srgb, var(--lq-avatar-tint, var(--lq-accent)) 36%, rgba(255, 255, 255, 0.14));
+    border-radius: 50%;
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      0 4px 12px color-mix(in srgb, var(--lq-shadow-color) 50%, transparent);
+    display: inline-flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .lq-avatar[data-liquid-size='sm'] {
+    font-size: 0.62rem;
+    height: 28px;
+    width: 28px;
+  }
+
+  .lq-avatar[data-liquid-size='md'] {
+    font-size: 0.76rem;
+    height: 38px;
+    width: 38px;
+  }
+
+  .lq-avatar[data-liquid-size='lg'] {
+    font-size: 0.92rem;
+    height: 50px;
+    width: 50px;
+  }
+
+  .lq-avatar[data-liquid-size='xl'] {
+    font-size: 1.15rem;
+    height: 66px;
+    width: 66px;
+  }
+
+  .lq-avatar img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .lq-avatar__fallback {
+    font-weight: 750;
+    letter-spacing: 0.02em;
+  }
+
+  .lq-avatar-group {
+    display: inline-flex;
+  }
+
+  .lq-avatar-group .lq-avatar {
+    border: 2px solid color-mix(in srgb, var(--lq-solid-fill) 88%, transparent);
+    margin-left: -9px;
+    transition: translate 280ms var(--lq-easing);
+  }
+
+  .lq-avatar-group .lq-avatar:first-child {
+    margin-left: 0;
+  }
+
+  .lq-avatar-group:hover .lq-avatar {
+    translate: 0 -2px;
+  }
+
+  .lq-avatar--overflow {
+    background: color-mix(in srgb, var(--lq-foreground) 14%, transparent);
+  }
+
+  /* ---------- Tooltip ---------- */
+  .lq-tooltip {
+    display: inline-flex;
+  }
+
+  .lq-tooltip__positioner {
+    z-index: 88;
+  }
+
+  .lq-tooltip__bubble {
+    -webkit-backdrop-filter: blur(10px) saturate(1.4) var(--lq-lens, );
+    backdrop-filter: blur(10px) saturate(1.4) var(--lq-lens, );
+    background: color-mix(in srgb, var(--lq-solid-fill) 62%, transparent);
+    border: 1px solid var(--lq-regular-line);
+    border-radius: 10px;
+    box-shadow:
+      0 10px 26px var(--lq-shadow-color),
+      inset 0 0.75px 0 var(--lq-glass-bright);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.4;
+    max-width: 240px;
+    padding: 7px 11px;
+    pointer-events: none;
+    /* The positioner places the bubble and flips it when it would run off the
+       edge, so all that is left here is the grow-from-the-anchor animation. Base
+       UI publishes the matching origin as --transform-origin. */
+    transform-origin: var(--transform-origin);
+    transition: opacity 220ms ease, scale 380ms cubic-bezier(0.18, 1.4, 0.3, 1);
+    white-space: nowrap;
+  }
+
+  .lq-tooltip__bubble[data-starting-style],
+  .lq-tooltip__bubble[data-ending-style] {
+    opacity: 0;
+    scale: 0.92;
+  }
+
+  /* ---------- Table ---------- */
+  .lq-table-container {
+    --lq-saturate: 1;
+    --lq-brighten: 1;
+    --lq-glow: 0;
+    background: transparent;
+    padding: 6px;
+  }
+
+  /* Drop the glossy diagonal rim and inset highlight so the table reads as a
+     plain transparent pane instead of a reflective mirror. */
+  .lq-table-container > .lq-surface__edge {
+    opacity: 0.12;
+  }
+
+  .lq-table-container::after {
+    display: none;
+  }
+
+  .lq-table-scroll {
+    overflow-x: auto;
+  }
+
+  .lq-table {
+    border-collapse: collapse;
+    font-size: 0.87rem;
+    min-width: 100%;
+  }
+
+  .lq-table__header-cell {
+    border-bottom: 1px solid var(--lq-regular-line);
+    color: var(--lq-muted);
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    padding: 13px 16px;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .lq-table__cell {
+    border-bottom: 1px solid color-mix(in srgb, var(--lq-regular-line) 46%, transparent);
+    padding: 13px 16px;
+  }
+
+  .lq-table[data-liquid-size='sm'] .lq-table__cell,
+  .lq-table[data-liquid-size='sm'] .lq-table__header-cell {
+    padding: 9px 12px;
+  }
+
+  .lq-table__row:last-child .lq-table__cell {
+    border-bottom: 0;
+  }
+
+  .lq-table__cell[data-align='right'],
+  .lq-table__header-cell[data-align='right'] {
+    text-align: right;
+  }
+
+  .lq-table__cell[data-align='center'],
+  .lq-table__header-cell[data-align='center'] {
+    text-align: center;
+  }
+
+  .lq-table[data-hover='true'] .lq-table__body .lq-table__row {
+    transition: background 180ms ease;
+  }
+
+  .lq-table[data-hover='true'] .lq-table__body .lq-table__row:hover {
+    background: color-mix(in srgb, var(--lq-accent) 5%, transparent);
+  }
+
+  .lq-table__row[data-selected='true'] {
+    background: color-mix(in srgb, var(--lq-accent) 10%, transparent);
+  }
+
+  /* ---------- List ---------- */
+  .lq-list {
+    padding: 7px;
+  }
+
+  .lq-list__items {
+    display: grid;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    z-index: 3;
+  }
+
+  .lq-list__item + .lq-list__item {
+    border-top: 1px solid color-mix(in srgb, var(--lq-regular-line) 40%, transparent);
+  }
+
+  .lq-list[data-inset='true'] .lq-list__item + .lq-list__item {
+    border-top: 0;
+  }
+
+  .lq-list__item-button,
+  .lq-list__item-static {
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 11px;
+    color: inherit;
+    display: flex;
+    font: inherit;
+    gap: 13px;
+    padding: 12px 13px;
+    text-align: left;
+    width: 100%;
+  }
+
+  .lq-list__item-button {
+    cursor: pointer;
+    transition: background 180ms ease;
+  }
+
+  .lq-list__item-button:hover {
+    background: color-mix(in srgb, var(--lq-accent) 6%, transparent);
+  }
+
+  .lq-list__item-button:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: -2px;
+  }
+
+  .lq-list__icon {
+    align-items: center;
+    background: color-mix(in srgb, var(--lq-accent) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--lq-accent) 22%, rgba(255, 255, 255, 0.08));
+    border-radius: 9px;
+    color: color-mix(in srgb, var(--lq-accent) 72%, white);
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: 34px;
+    justify-content: center;
+    width: 34px;
+  }
+
+  .lq-list__copy {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .lq-list__title {
+    font-size: 0.9rem;
+    font-weight: 650;
+  }
+
+  .lq-list__description {
+    color: var(--lq-muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .lq-list__end {
+    color: var(--lq-muted);
+    flex: 0 0 auto;
+    font-size: 0.8rem;
+  }
+
+  .lq-list__chevron {
+    color: var(--lq-muted);
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
+
+  .lq-list__subheader {
+    color: var(--lq-muted);
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    padding: 12px 13px 6px;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Divider ---------- */
+  .lq-divider {
+    align-items: center;
+    border: 0;
+    display: flex;
+    gap: 14px;
+    margin: 4px 0;
+  }
+
+  .lq-divider[data-orientation='horizontal']::before,
+  .lq-divider[data-orientation='horizontal']::after {
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--lq-foreground) 18%, transparent), transparent);
+    content: '';
+    flex: 1;
+    height: 1px;
+  }
+
+  /* Without a label there is nothing to draw a second rule on the far side of. */
+  .lq-divider[data-orientation='horizontal']:not([data-with-label])::after {
+    display: none;
+  }
+
+  .lq-divider[data-orientation='vertical'] {
+    align-self: stretch;
+    margin: 0 4px;
+    width: 1px;
+  }
+
+  .lq-divider[data-orientation='vertical']::before {
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--lq-foreground) 18%, transparent), transparent);
+    content: '';
+    flex: 1;
+    width: 1px;
+  }
+
+  .lq-divider__label {
+    color: var(--lq-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ---------- Progress ---------- */
+  .lq-progress {
+    display: grid;
+    gap: 8px;
+    min-width: 160px;
+  }
+
+  .lq-progress__meta {
+    align-items: baseline;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .lq-progress__value {
+    color: var(--lq-muted);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+
+  .lq-progress__track {
+    -webkit-backdrop-filter: saturate(1.08) var(--lq-lens, );
+    backdrop-filter: saturate(1.08) var(--lq-lens, );
+    background: color-mix(in srgb, var(--lq-foreground) 7%, transparent);
+    border: 1px solid var(--lq-control-line);
+    border-radius: 999px;
+    box-shadow: inset 0 1px 2px rgba(3, 8, 22, 0.14);
+    display: block;
+    height: 9px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .lq-progress__fill {
+    animation:
+      lq-progress-glow 2s ease-in-out infinite,
+      lq-progress-liquid 2.6s linear infinite;
+    /* A wide tri-stop gradient scrolled left forever, so the fill looks like a
+       living body of tinted liquid rather than a flat bar. */
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--lq-progress-tint, var(--lq-accent)) 90%, white 4%),
+      color-mix(in srgb, var(--lq-progress-tint, var(--lq-accent)) 52%, white 36%),
+      color-mix(in srgb, var(--lq-progress-tint, var(--lq-accent)) 90%, white 4%)
+    );
+    background-size: 220% 100%;
+    border-radius: inherit;
+    bottom: 0;
+    display: block;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    /* Overshoot easing makes the bar bounce as it lands on a new value. The
+       width itself is set inline, from the value. */
+    transition: width 720ms cubic-bezier(0.34, 1.7, 0.5, 1);
+  }
+
+  /* A bright liquid glint forever flowing left-to-right along the fill. */
+  .lq-progress__fill::after {
+    animation: lq-progress-flow 1.9s linear infinite;
+    background: linear-gradient(
+      100deg,
+      transparent 12%,
+      rgba(255, 255, 255, 0.62) 48%,
+      rgba(255, 255, 255, 0.28) 60%,
+      transparent 86%
+    );
+    content: '';
+    inset: 0;
+    position: absolute;
+  }
+
+  /* A rounded meniscus that bobs at the leading edge of the liquid. */
+  .lq-progress__fill::before {
+    animation: lq-progress-bob 1.6s ease-in-out infinite;
+    background: radial-gradient(
+      120% 150% at 100% 50%,
+      color-mix(in srgb, var(--lq-progress-tint, var(--lq-accent)) 30%, white 60%),
+      transparent 60%
+    );
+    border-radius: inherit;
+    content: '';
+    inset: 0;
+    position: absolute;
+    z-index: 1;
+  }
+
+  .lq-progress__fill[data-indeterminate] {
+    animation:
+      lq-progress-slide 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite,
+      lq-progress-squish 1.5s ease-in-out infinite;
+    transform-origin: center;
+    width: 38%;
+  }
+
+  @keyframes lq-progress-slide {
+    from {
+      left: -45%;
+    }
+
+    to {
+      left: 108%;
+    }
+  }
+
+  @keyframes lq-progress-squish {
+    0%,
+    100% {
+      scale: 1 1;
+    }
+
+    30% {
+      scale: 1.35 0.72;
+    }
+
+    60% {
+      scale: 0.82 1.2;
+    }
+
+    80% {
+      scale: 1.08 0.94;
+    }
+  }
+
+  @keyframes lq-progress-glow {
+    0%,
+    100% {
+      box-shadow: 0 0 9px color-mix(in srgb, var(--lq-progress-tint, var(--lq-accent)) 34%, transparent);
+    }
+
+    50% {
+      box-shadow: 0 0 18px color-mix(in srgb, var(--lq-progress-tint, var(--lq-accent)) 60%, transparent);
+    }
+  }
+
+  @keyframes lq-progress-flow {
+    from {
+      transform: translateX(-100%);
+    }
+
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes lq-progress-liquid {
+    from {
+      background-position: 0% 50%;
+    }
+
+    to {
+      background-position: -220% 50%;
+    }
+  }
+
+  @keyframes lq-progress-bob {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: scaleX(1);
+    }
+
+    50% {
+      opacity: 0.9;
+      transform: scaleX(1.06);
+    }
+  }
+
+  /* ---------- Spinner ---------- */
+  .lq-spinner {
+    display: inline-flex;
+  }
+
+  .lq-spinner__track {
+    stroke: color-mix(in srgb, var(--lq-foreground) 12%, transparent);
+  }
+
+  .lq-spinner__arc {
+    stroke: color-mix(in srgb, var(--lq-spinner-tint, var(--lq-accent)) 82%, white);
+    transition: stroke-dasharray 480ms var(--lq-easing);
+  }
+
+  /* Purun jelly spinner: the wrapper pops with a UNIFORM scale so the ring
+     always stays perfectly round (no ellipse), the svg spins on its own, and
+     the arc length breathes — the liquid life comes from the morphing arc, not
+     from squashing the circle. */
+  .lq-spinner[data-indeterminate='true'] {
+    animation: lq-spinner-pop 1.4s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  .lq-spinner[data-indeterminate='true'] svg {
+    animation: lq-spinner-rotate 1.4s cubic-bezier(0.62, 0.14, 0.4, 0.86) infinite;
+    transform-origin: center;
+  }
+
+  .lq-spinner[data-indeterminate='true'] .lq-spinner__arc {
+    animation: lq-spinner-dash 1.4s ease-in-out infinite;
+    transition: none;
+  }
+
+  @keyframes lq-spinner-rotate {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @keyframes lq-spinner-pop {
+    0%,
+    100% {
+      scale: 1;
+    }
+
+    30% {
+      scale: 1.12;
+    }
+
+    55% {
+      scale: 0.92;
+    }
+
+    78% {
+      scale: 1.05;
+    }
+  }
+
+  /* The arc grows and shrinks like a drawn-out liquid drip as it sweeps. */
+  @keyframes lq-spinner-dash {
+    0% {
+      stroke-dasharray: 12 100;
+      stroke-dashoffset: 0;
+    }
+
+    50% {
+      stroke-dasharray: 64 100;
+      stroke-dashoffset: -16;
+    }
+
+    100% {
+      stroke-dasharray: 12 100;
+      stroke-dashoffset: -100;
+    }
+  }
+
+  /* ---------- Gauge ---------- */
+  /* The reading sits in the middle of the ring, sized off the ring itself so a
+     gauge scales as one piece. `--lq-gauge-size` is written by the component. */
+  .lq-gauge {
+    display: inline-grid;
+    flex: none;
+    height: var(--lq-gauge-size);
+    place-items: center;
+    position: relative;
+    width: var(--lq-gauge-size);
+  }
+
+  .lq-gauge__ring {
+    inset: 0;
+    position: absolute;
+  }
+
+  .lq-gauge__track {
+    stroke: color-mix(in srgb, var(--lq-foreground) 12%, transparent);
+  }
+
+  .lq-gauge__arc {
+    stroke: color-mix(in srgb, var(--lq-gauge-tint, var(--lq-accent)) 82%, white);
+    transition: stroke-dasharray 480ms var(--lq-easing);
+  }
+
+  /* The tint stays on the arc. A warning yellow is a fine stroke and an
+     unreadable number on a light surface. */
+  .lq-gauge__value {
+    font-size: calc(var(--lq-gauge-size) * 0.25);
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    position: relative;
+  }
+
+  .lq-gauge__value small {
+    color: var(--lq-muted);
+    font-size: 0.55em;
+    font-weight: 700;
+    margin-left: 0.05em;
+  }
+
+  /* ---------- Skeleton ---------- */
+  .lq-skeleton {
+    animation:
+      lq-skeleton-shimmer 1.8s ease-in-out infinite,
+      lq-skeleton-breathe 2.8s ease-in-out infinite;
+    background: linear-gradient(
+      100deg,
+      color-mix(in srgb, var(--lq-foreground) 7%, transparent) 38%,
+      color-mix(in srgb, var(--lq-accent) 14%, color-mix(in srgb, var(--lq-foreground) 16%, transparent)) 50%,
+      color-mix(in srgb, var(--lq-foreground) 7%, transparent) 62%
+    );
+    background-size: 260% 100%;
+    border-radius: 7px;
+    display: block;
+    overflow: hidden;
+    position: relative;
+    transform-origin: center;
+  }
+
+  /* A brighter tinted glint slides across on a different cadence, so the two
+     sweeps interfere into a flowing-liquid surface. */
+  .lq-skeleton::after {
+    animation: lq-skeleton-flow 2.4s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    background: linear-gradient(
+      100deg,
+      transparent 30%,
+      color-mix(in srgb, var(--lq-accent) 24%, rgba(255, 255, 255, 0.5)) 50%,
+      transparent 70%
+    );
+    border-radius: inherit;
+    content: '';
+    inset: 0;
+    position: absolute;
+    transform: translateX(-100%);
+  }
+
+  .lq-skeleton[data-liquid-variant='text'] {
+    height: 0.95em;
+    width: 100%;
+  }
+
+  .lq-skeleton[data-liquid-variant='circular'] {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+  }
+
+  .lq-skeleton[data-liquid-variant='rectangular'] {
+    border-radius: 12px;
+    height: 90px;
+    width: 100%;
+  }
+
+  @keyframes lq-skeleton-shimmer {
+    from {
+      background-position: 130% 0;
+    }
+
+    to {
+      background-position: -110% 0;
+    }
+  }
+
+  /* Gentle gel breathing so the placeholder feels like a soft body of liquid. */
+  @keyframes lq-skeleton-breathe {
+    0%,
+    100% {
+      opacity: 1;
+      scale: 1 1;
+    }
+
+    50% {
+      opacity: 0.7;
+      scale: 1.008 0.92;
+    }
+  }
+
+  @keyframes lq-skeleton-flow {
+    to {
+      transform: translateX(120%);
+    }
+  }
+
+  /* ---------- Alert ---------- */
+  .lq-alert {
+    --lq-alert-tint: #7fb2ff;
+    align-items: flex-start;
+    -webkit-backdrop-filter: blur(6px) saturate(1.4) var(--lq-lens, );
+    backdrop-filter: blur(6px) saturate(1.4) var(--lq-lens, );
+    background: color-mix(in srgb, var(--lq-alert-tint) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--lq-alert-tint) 32%, rgba(255, 255, 255, 0.1));
+    border-radius: 15px;
+    box-shadow:
+      0 10px 26px color-mix(in srgb, var(--lq-shadow-color) 56%, transparent),
+      inset 0 0.75px 0 var(--lq-glass-bright);
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  /* Info stays neutral and see-through — no blue wash, just a faint glass edge. */
+  .lq-alert[data-severity='info'] {
+    background: transparent;
+    border-color: var(--lq-regular-line);
+  }
+
+  .lq-alert[data-severity='info'] .lq-alert__icon {
+    color: var(--lq-muted);
+  }
+
+  .lq-alert[data-severity='success'] {
+    --lq-alert-tint: #4fd8a4;
+  }
+
+  .lq-alert[data-severity='warning'] {
+    --lq-alert-tint: #f4b64f;
+  }
+
+  .lq-alert[data-severity='danger'] {
+    --lq-alert-tint: #ff5d73;
+  }
+
+  .lq-alert__icon {
+    color: color-mix(in srgb, var(--lq-alert-tint) 82%, white);
+    display: inline-flex;
+    flex: 0 0 auto;
+    padding-top: 1px;
+  }
+
+  .lq-alert__copy {
+    display: grid;
+    flex: 1;
+    gap: 3px;
+  }
+
+  .lq-alert__title {
+    font-size: 0.9rem;
+    letter-spacing: -0.01em;
+  }
+
+  .lq-alert__message {
+    color: color-mix(in srgb, var(--lq-foreground) 76%, transparent);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .lq-alert__action {
+    flex: 0 0 auto;
+  }
+
+  .lq-alert__close {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 7px;
+    color: var(--lq-muted);
+    cursor: pointer;
+    display: inline-flex;
+    flex: 0 0 auto;
+    padding: 4px;
+    transition: background 180ms ease, color 180ms ease;
+  }
+
+  .lq-alert__close:hover {
+    background: color-mix(in srgb, var(--lq-foreground) 10%, transparent);
+    color: var(--lq-foreground);
+  }
+
+  /* ---------- Toast ---------- */
+  .lq-toast-viewport {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: min(380px, calc(100vw - 32px));
+    position: fixed;
+    z-index: 90;
+  }
+
+  .lq-toast-viewport[data-placement='bottom-right'] {
+    bottom: 22px;
+    right: 22px;
+  }
+
+  .lq-toast-viewport[data-placement='bottom-center'] {
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .lq-toast-viewport[data-placement='top-right'] {
+    right: 22px;
+    top: 22px;
+  }
+
+  .lq-toast-viewport[data-placement='top-center'] {
+    left: 50%;
+    top: 22px;
+    transform: translateX(-50%);
+  }
+
+  .lq-toast {
+    --lq-toast-tint: #7fb2ff;
+    animation: lq-toast-in 560ms cubic-bezier(0.16, 1.35, 0.3, 1) both;
+    -webkit-backdrop-filter: blur(16px) saturate(1.5) brightness(1.04) var(--lq-lens, );
+    backdrop-filter: blur(16px) saturate(1.5) brightness(1.04) var(--lq-lens, );
+    background: color-mix(in srgb, var(--lq-solid-fill) 52%, transparent);
+    border: 1px solid color-mix(in srgb, var(--lq-toast-tint) 30%, rgba(255, 255, 255, 0.12));
+    border-radius: 15px;
+    box-shadow:
+      0 16px 40px var(--lq-shadow-color),
+      inset 0 0.75px 0 var(--lq-glass-bright);
+    min-width: 260px;
+    /* The swipe reads the pointer directly, so the browser must not claim the
+       gesture for a scroll first. */
+    touch-action: none;
+  }
+
+  /* Base UI clips the stack through this element, so the padding and the row
+     layout belong to it rather than to the popup that animates. */
+  .lq-toast__content {
+    align-items: flex-start;
+    display: flex;
+    gap: 11px;
+    padding: 13px 15px;
+  }
+
+  .lq-toast[data-type='success'] {
+    --lq-toast-tint: #4fd8a4;
+  }
+
+  .lq-toast[data-type='warning'] {
+    --lq-toast-tint: #f4b64f;
+  }
+
+  .lq-toast[data-type='danger'] {
+    --lq-toast-tint: #ff5d73;
+  }
+
+  .lq-toast[data-ending-style] {
+    animation: lq-toast-out 340ms ease both;
+  }
+
+  /* A toast dropped for exceeding the limit never animated in, so it should not
+     be seen animating out either. */
+  .lq-toast[data-limited] {
+    animation: lq-toast-out 200ms ease both;
+  }
+
+  .lq-toast[data-swiping] {
+    animation: none;
+    transform: translate(var(--toast-swipe-movement-x), var(--toast-swipe-movement-y));
+    transition: none;
+  }
+
+  .lq-toast__icon {
+    color: color-mix(in srgb, var(--lq-toast-tint) 82%, white);
+    display: inline-flex;
+    flex: 0 0 auto;
+    padding-top: 1px;
+  }
+
+  .lq-toast__copy {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+  }
+
+  .lq-toast__copy strong {
+    font-size: 0.87rem;
+    letter-spacing: -0.01em;
+  }
+
+  .lq-toast__copy span {
+    color: color-mix(in srgb, var(--lq-foreground) 72%, transparent);
+    font-size: 0.79rem;
+    line-height: 1.45;
+  }
+
+  .lq-toast__close {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    color: var(--lq-muted);
+    cursor: pointer;
+    display: inline-flex;
+    padding: 3px;
+  }
+
+  .lq-toast__close:hover {
+    color: var(--lq-foreground);
+  }
+
+  @keyframes lq-toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.94);
+    }
+
+    60% {
+      opacity: 1;
+      transform: translateY(-3px) scale(1.01);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes lq-toast-out {
+    to {
+      opacity: 0;
+      transform: translateY(8px) scale(0.95);
+    }
+  }
+
+  /* ---------- Tabs ---------- */
+  .lq-tab-list {
+    border-bottom: 1px solid color-mix(in srgb, var(--lq-regular-line) 70%, transparent);
+    display: flex;
+    gap: 4px;
+  }
+
+  .lq-tab {
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 9px 9px 0 0;
+    color: var(--lq-muted);
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 650;
+    gap: 8px;
+    padding: 11px 15px;
+    position: relative;
+    transition: color 220ms ease;
+  }
+
+  .lq-tab:hover {
+    color: var(--lq-foreground);
+  }
+
+  .lq-tab[data-active] {
+    color: var(--lq-foreground);
+  }
+
+  .lq-tab:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: -2px;
+  }
+
+  .lq-tab__icon {
+    display: inline-flex;
+  }
+
+  .lq-tab__underline {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--lq-accent) 88%, white), color-mix(in srgb, var(--lq-accent) 52%, white 30%));
+    border-radius: 3px 3px 0 0;
+    bottom: -1px;
+    box-shadow: 0 0 10px color-mix(in srgb, var(--lq-accent) 44%, transparent);
+    height: 2.5px;
+    left: 10px;
+    /* Flipped by the selector below rather than by an inline style, so the tab
+       itself stays stateless and Base UI's data-active drives the animation. */
+    --lq-tab-active: 0;
+    opacity: var(--lq-tab-active);
+    position: absolute;
+    right: 10px;
+    scale: var(--lq-tab-active) 1;
+    transform-origin: center bottom;
+    transition: opacity 240ms ease, scale 440ms cubic-bezier(0.18, 1.4, 0.3, 1);
+  }
+
+  /* The indicator springs out with a wide jelly stretch when a tab activates. */
+  .lq-tab[data-active] .lq-tab__underline {
+    --lq-tab-active: 1;
+    animation: lq-tab-underline 560ms cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+
+  @keyframes lq-tab-underline {
+    0% {
+      scale: 0.15 0.5;
+    }
+
+    45% {
+      scale: 1.28 1.35;
+    }
+
+    70% {
+      scale: 0.9 0.9;
+    }
+
+    100% {
+      scale: 1 1;
+    }
+  }
+
+  .lq-tab-panel {
+    animation: lq-tab-panel-in 520ms cubic-bezier(0.18, 1.3, 0.3, 1) both;
+    padding: 18px 4px;
+  }
+
+  /* Panels don't just fade — they surface out of a soft blur with a jelly
+     overshoot, so switching tabs feels like content rising through liquid. */
+  @keyframes lq-tab-panel-in {
+    0% {
+      opacity: 0;
+      filter: blur(7px);
+      transform: translateY(10px) scale(0.965);
+    }
+
+    55% {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(-3px) scale(1.012);
+    }
+
+    76% {
+      transform: translateY(1px) scale(0.997);
+    }
+
+    100% {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* ---------- Breadcrumbs ---------- */
+  .lq-breadcrumbs ol {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .lq-breadcrumbs__item {
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 7px;
+    color: var(--lq-muted);
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 600;
+    gap: 6px;
+    padding: 4px 6px;
+    transition: color 180ms ease, background 180ms ease;
+  }
+
+  a.lq-breadcrumbs__item:hover,
+  button.lq-breadcrumbs__item:hover {
+    background: color-mix(in srgb, var(--lq-accent) 8%, transparent);
+    color: var(--lq-foreground);
+  }
+
+  .lq-breadcrumbs li[data-current='true'] .lq-breadcrumbs__item {
+    color: var(--lq-foreground);
+    cursor: default;
+    font-weight: 700;
+  }
+
+  .lq-breadcrumbs__separator {
+    color: color-mix(in srgb, var(--lq-muted) 60%, transparent);
+    display: inline-flex;
+  }
+
+  .lq-breadcrumbs__icon {
+    display: inline-flex;
+  }
+
+  /* ---------- Pagination ---------- */
+  .lq-pagination {
+    align-items: center;
+    display: inline-flex;
+    gap: 5px;
+  }
+
+  /* Each control is a small glass button carrying the shared jelly springs
+     (tilt + squish + release purun) driven from JS, exactly like LiquidButton —
+     so transform is left to the spring and never transitioned here. */
+  .lq-pagination__item {
+    align-items: center;
+    appearance: none;
+    -webkit-backdrop-filter: saturate(1.08) var(--lq-lens, );
+    backdrop-filter: saturate(1.08) var(--lq-lens, );
+    background: var(--lq-control-fill);
+    border: 1px solid color-mix(in srgb, var(--lq-accent) 10%, var(--lq-control-line));
+    border-radius: calc(10px + var(--lq-squish) * 4px);
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-soft),
+      inset 0 -1px 0 var(--lq-glass-shade);
+    color: var(--lq-muted);
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 650;
+    height: 36px;
+    justify-content: center;
+    min-width: 36px;
+    overflow: hidden;
+    padding: 0 6px;
+    transition:
+      color 200ms ease,
+      background 220ms var(--lq-easing),
+      border-color 220ms var(--lq-easing),
+      box-shadow 220ms var(--lq-easing);
+  }
+
+  .lq-pagination__item:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--lq-accent) 9%, transparent);
+    border-color: var(--lq-control-hover-line);
+    box-shadow:
+      inset 0 0.75px 0 var(--lq-glass-bright),
+      inset 0 -1px 0 var(--lq-glass-shade);
+    color: var(--lq-foreground);
+  }
+
+  .lq-pagination__item[data-active='true'] {
+    background: color-mix(in srgb, var(--lq-accent) 16%, transparent);
+    border-color: color-mix(in srgb, var(--lq-accent) 42%, rgba(255, 255, 255, 0.14));
+    box-shadow:
+      0 5px 14px color-mix(in srgb, var(--lq-accent) 14%, transparent),
+      inset 0 0.75px 0 var(--lq-glass-bright);
+    color: var(--lq-foreground);
+  }
+
+  .lq-pagination__item:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+  }
+
+  .lq-pagination__item:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: 2px;
+  }
+
+  .lq-pagination__ellipsis {
+    color: var(--lq-muted);
+    padding: 0 4px;
+  }
+
+  /* ---------- Menu ---------- */
+  .lq-menu {
+    display: inline-flex;
+  }
+
+  .lq-menu__positioner {
+    z-index: 85;
+  }
+
+  /* The positioner publishes how much room is left on the chosen side, so the
+     popup caps itself instead of the component measuring the viewport in JS. */
+  .lq-menu__popup {
+    max-height: min(360px, var(--available-height));
+    min-width: 210px;
+    overflow-y: auto;
+    transform-origin: var(--transform-origin);
+  }
+
+  .lq-menu__item {
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 9px;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 550;
+    gap: 10px;
+    min-height: 37px;
+    padding: 0 11px;
+    text-align: left;
+    transition: background 160ms ease;
+    width: 100%;
+  }
+
+  .lq-menu__item[data-highlighted] {
+    background: color-mix(in srgb, var(--lq-accent) 14%, transparent);
+  }
+
+  .lq-menu__item[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  .lq-menu__item:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: -2px;
+  }
+
+  .lq-menu__item[data-danger='true'] {
+    color: #ff8296;
+  }
+
+  .lq-menu__item[data-danger='true'][data-highlighted] {
+    background: color-mix(in srgb, #ff5d73 16%, transparent);
+  }
+
+  .lq-menu__icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
+
+  .lq-menu__label {
+    flex: 1;
+  }
+
+  .lq-menu__shortcut {
+    background: color-mix(in srgb, var(--lq-foreground) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--lq-foreground) 12%, transparent);
+    border-radius: 5px;
+    color: var(--lq-muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.66rem;
+    padding: 2px 5px;
+  }
+
+  .lq-menu__separator {
+    background: color-mix(in srgb, var(--lq-regular-line) 60%, transparent);
+    height: 1px;
+    margin: 5px 7px;
+  }
+
+  /* ---------- Drawer ---------- */
+  .lq-drawer {
+    color: inherit;
+    height: 100dvh;
+    max-height: 100dvh;
+    max-width: 100vw;
+    position: fixed;
+    z-index: 80;
+  }
+
+  .lq-drawer__backdrop {
+    -webkit-backdrop-filter: blur(6px) saturate(0.88) var(--lq-lens, );
+    backdrop-filter: blur(6px) saturate(0.88) var(--lq-lens, );
+    background: rgba(2, 5, 16, 0.4);
+    inset: 0;
+    position: fixed;
+    transition: opacity 320ms ease;
+    z-index: 79;
+  }
+
+  .lq-drawer__backdrop[data-starting-style],
+  .lq-drawer__backdrop[data-ending-style] {
+    opacity: 0;
+  }
+
+  .lq-drawer[data-side='right'] {
+    inset: 0 0 0 auto;
+    width: min(400px, 92vw);
+  }
+
+  .lq-drawer[data-side='left'] {
+    inset: 0 auto 0 0;
+    width: min(400px, 92vw);
+  }
+
+  .lq-drawer[data-side='bottom'] {
+    display: flex;
+    height: auto;
+    inset: auto 0 0 0;
+    max-height: 82dvh;
+    width: 100vw;
+  }
+
+  .lq-drawer[data-open][data-side='right'] {
+    animation: lq-drawer-right 560ms cubic-bezier(0.16, 1.2, 0.3, 1) both;
+  }
+
+  .lq-drawer[data-open][data-side='left'] {
+    animation: lq-drawer-left 560ms cubic-bezier(0.16, 1.2, 0.3, 1) both;
+  }
+
+  .lq-drawer[data-open][data-side='bottom'] {
+    animation: lq-drawer-bottom 560ms cubic-bezier(0.16, 1.2, 0.3, 1) both;
+  }
+
+  /* Jelly exit. data-closed and data-open never coexist, and Base UI holds the
+     popup in the DOM until the animation ends, so no timer is involved. */
+  .lq-drawer[data-closed][data-side='right'] {
+    animation: lq-drawer-out-right 540ms cubic-bezier(0.5, 0, 0.4, 1) both;
+  }
+
+  .lq-drawer[data-closed][data-side='left'] {
+    animation: lq-drawer-out-left 540ms cubic-bezier(0.5, 0, 0.4, 1) both;
+  }
+
+  .lq-drawer[data-closed][data-side='bottom'] {
+    animation: lq-drawer-out-bottom 540ms cubic-bezier(0.5, 0, 0.4, 1) both;
+  }
+
+  .lq-drawer__surface {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 24px;
+  }
+
+  /* The bottom panel is sized by `max-height` rather than `height`, so the
+     percentage above resolves against an `auto` parent and collapses back to
+     `auto` — the surface then grows to its content and nothing scrolls, which
+     puts the end of a tall panel past the bottom of the screen. Stretching it
+     as a flex item gives it the clamped height, and `min-height: 0` lets it
+     become shorter than its content so `overflow` has something to do. */
+  .lq-drawer[data-side='bottom'] .lq-drawer__surface {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+  }
+
+  .lq-drawer__header {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 3;
+  }
+
+  .lq-drawer__header h2 {
+    font-size: 1.2rem;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+
+  .lq-drawer__close {
+    appearance: none;
+    background: color-mix(in srgb, var(--lq-foreground) 7%, transparent);
+    border: 1px solid var(--lq-control-line);
+    border-radius: 9px;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    padding: 7px;
+    transition: background 180ms ease;
+  }
+
+  .lq-drawer__close:hover {
+    background: color-mix(in srgb, var(--lq-foreground) 13%, transparent);
+  }
+
+  .lq-drawer__body {
+    flex: 1;
+    position: relative;
+    z-index: 3;
+  }
+
+  @keyframes lq-drawer-right {
+    from {
+      opacity: 0.6;
+      transform: translateX(60%);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes lq-drawer-left {
+    from {
+      opacity: 0.6;
+      transform: translateX(-60%);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes lq-drawer-bottom {
+    from {
+      opacity: 0.6;
+      transform: translateY(55%);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes lq-drawer-out-right {
+    0% {
+      opacity: 1;
+      transform: translateX(0) scale(1, 1);
+    }
+
+    18% {
+      transform: translateX(-4%) scale(0.94, 1.05);
+    }
+
+    42% {
+      transform: translateX(7%) scale(1.06, 0.94);
+    }
+
+    64% {
+      transform: translateX(1%) scale(0.98, 1.02);
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateX(108%) scale(0.88, 1);
+    }
+  }
+
+  @keyframes lq-drawer-out-left {
+    0% {
+      opacity: 1;
+      transform: translateX(0) scale(1, 1);
+    }
+
+    18% {
+      transform: translateX(4%) scale(0.94, 1.05);
+    }
+
+    42% {
+      transform: translateX(-7%) scale(1.06, 0.94);
+    }
+
+    64% {
+      transform: translateX(-1%) scale(0.98, 1.02);
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateX(-108%) scale(0.88, 1);
+    }
+  }
+
+  @keyframes lq-drawer-out-bottom {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1, 1);
+    }
+
+    18% {
+      transform: translateY(-4%) scale(1.04, 0.94);
+    }
+
+    42% {
+      transform: translateY(7%) scale(0.95, 1.06);
+    }
+
+    64% {
+      transform: translateY(1%) scale(1.02, 0.98);
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateY(108%) scale(1, 0.88);
+    }
+  }
+
+  /* ---------- Accordion ---------- */
+  .lq-accordion {
+    padding: 7px;
+  }
+
+  .lq-accordion__item {
+    border-radius: 12px;
+    position: relative;
+    transition: background 260ms ease;
+    z-index: 3;
+  }
+
+  .lq-accordion__item[data-open] {
+    background: color-mix(in srgb, var(--lq-accent) 4%, transparent);
+  }
+
+  .lq-accordion__header {
+    font: inherit;
+    margin: 0;
+  }
+
+  .lq-accordion__item + .lq-accordion__item {
+    border-top: 1px solid color-mix(in srgb, var(--lq-regular-line) 40%, transparent);
+  }
+
+  .lq-accordion__trigger {
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 12px;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    font: inherit;
+    gap: 14px;
+    justify-content: space-between;
+    padding: 15px 14px;
+    text-align: left;
+    width: 100%;
+  }
+
+  .lq-accordion__trigger:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--lq-accent) 72%, white);
+    outline-offset: -2px;
+  }
+
+  .lq-accordion__heading {
+    display: grid;
+    gap: 2px;
+  }
+
+  .lq-accordion__title {
+    font-size: 0.93rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  .lq-accordion__subtitle {
+    color: var(--lq-muted);
+    font-size: 0.78rem;
+  }
+
+  .lq-accordion__chevron {
+    color: var(--lq-muted);
+    display: inline-flex;
+    flex: 0 0 auto;
+    transition: rotate 420ms cubic-bezier(0.18, 1.4, 0.3, 1);
+  }
+
+  .lq-accordion__item[data-open] .lq-accordion__chevron {
+    rotate: 180deg;
+  }
+
+  /* Base UI measures the panel and publishes --accordion-panel-height, then flags
+     the first and last frame of the transition. That beats the 0fr/1fr grid trick
+     because it also animates on close, when the panel is on its way out. */
+  .lq-accordion__content {
+    height: var(--accordion-panel-height);
+    overflow: hidden;
+    transition: height 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .lq-accordion__content[data-starting-style],
+  .lq-accordion__content[data-ending-style] {
+    height: 0;
+  }
+
+  .lq-accordion__content-inner {
+    color: color-mix(in srgb, var(--lq-foreground) 76%, transparent);
+    font-size: 0.87rem;
+    line-height: 1.6;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0 14px;
+    transform: translateY(-8px);
+    transform-origin: top center;
+    transition:
+      opacity 300ms ease,
+      transform 520ms cubic-bezier(0.18, 1.4, 0.3, 1);
+  }
+
+  /* On open the panel doesn't just slide — it drops and squash-stretches out of
+     the header with a purun jelly bounce. */
+  .lq-accordion__item[data-open] .lq-accordion__content-inner {
+    animation: lq-accordion-open 580ms cubic-bezier(0.2, 0.9, 0.25, 1);
+    opacity: 1;
+    padding-bottom: 16px;
+    transform: translateY(0);
+  }
+
+  @keyframes lq-accordion-open {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px) scaleY(0.82);
+    }
+
+    55% {
+      opacity: 1;
+      transform: translateY(3px) scaleY(1.05);
+    }
+
+    78% {
+      transform: translateY(-1px) scaleY(0.99);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
+  }
+}
+
+@layer liquefy-ui {
+  /* ---------- Light-mode glass for data surfaces ----------
+     On a light background a near-white rim just vanishes, so simply stripping
+     the highlights left Table/Accordion/Card/List looking flat and washed-out
+     ("whitish"), not glassy. Give them REAL frosted glass instead: a soft
+     backdrop blur + heavy saturation pulls the tinted page through them so the
+     body reads as cool glass rather than milk, and a crisp edge defines the
+     pane. The lens stays off (that was the "mirror"), and dark mode is
+     untouched. */
+  .lq-provider[data-liquid-theme='light'] .lq-card,
+  .lq-provider[data-liquid-theme='light'] .lq-accordion,
+  .lq-provider[data-liquid-theme='light'] .lq-table-container,
+  .lq-provider[data-liquid-theme='light'] .lq-list {
+    --lq-blur: calc(7px + var(--lq-frost, 0px));
+    --lq-saturate: 1.7;
+    --lq-brighten: 1;
+    --lq-glow: 0.1;
+    --lq-glass-bright: rgba(255, 255, 255, 0.5);
+    --lq-glass-soft: rgba(255, 255, 255, 0.1);
+    --lq-glass-shade: rgba(62, 91, 164, 0.14);
+    /* On a pale background the pane is defined by its edge, not its body — a
+       crisp cool hairline + specular rim is what reads as glass here. */
+    --lq-line: color-mix(in srgb, var(--lq-accent) 24%, rgba(66, 85, 128, 0.42));
+  }
+
+  .lq-provider[data-liquid-theme='light'] .lq-card > .lq-surface__edge,
+  .lq-provider[data-liquid-theme='light'] .lq-accordion > .lq-surface__edge,
+  .lq-provider[data-liquid-theme='light'] .lq-table-container > .lq-surface__edge,
+  .lq-provider[data-liquid-theme='light'] .lq-list > .lq-surface__edge {
+    opacity: 0.4;
+  }
+
+  /* Alert follows the same light-mode recipe: dial back the milky white top
+     highlight, add a touch more frost, and give the neutral (info) edge the
+     same crisp cool hairline as the data surfaces. */
+  .lq-provider[data-liquid-theme='light'] .lq-alert {
+    --lq-glass-bright: rgba(255, 255, 255, 0.32);
+    -webkit-backdrop-filter: blur(9px) saturate(1.7) var(--lq-lens, );
+    backdrop-filter: blur(9px) saturate(1.7) var(--lq-lens, );
+  }
+
+  .lq-provider[data-liquid-theme='light'] .lq-alert[data-severity='info'] {
+    border-color: color-mix(in srgb, var(--lq-accent) 20%, rgba(66, 85, 128, 0.4));
+  }
+
+  /* ---------- Light-mode panels ----------
+     The scrim behind a panel is a dark dim, and a translucent panel sitting on
+     top of it inherits the dimming as grey — 40% of near-black under 58% of
+     white lands at about #d5d5d5, which is milk, not glass. Dark mode never
+     showed it because the dim disappears into the page. So the light scrim only
+     dims enough to say the page is out of reach, the fill gives up a few points
+     to let more of the page through, and the inner white glow steps back the way
+     it does on every other light surface, where it only ever reads as haze. */
+  .lq-provider[data-liquid-theme='light'] .lq-dialog__backdrop,
+  .lq-provider[data-liquid-theme='light'] .lq-drawer__backdrop {
+    background: rgba(24, 33, 60, 0.18);
+  }
+
+  .lq-provider[data-liquid-theme='light'] .lq-dialog__surface,
+  .lq-provider[data-liquid-theme='light'] .lq-drawer__surface {
+    --lq-glow: 0.14;
+    --lq-fill: color-mix(in srgb, var(--lq-solid-fill) 54%, transparent);
+  }
+
+  @media (prefers-color-scheme: light) {
+    .lq-provider[data-liquid-theme='system'] .lq-dialog__backdrop,
+    .lq-provider[data-liquid-theme='system'] .lq-drawer__backdrop {
+      background: rgba(24, 33, 60, 0.18);
+    }
+
+    .lq-provider[data-liquid-theme='system'] .lq-dialog__surface,
+    .lq-provider[data-liquid-theme='system'] .lq-drawer__surface {
+      --lq-glow: 0.14;
+      --lq-fill: color-mix(in srgb, var(--lq-solid-fill) 54%, transparent);
+    }
+
+    .lq-provider[data-liquid-theme='system'] .lq-card,
+    .lq-provider[data-liquid-theme='system'] .lq-accordion,
+    .lq-provider[data-liquid-theme='system'] .lq-table-container,
+    .lq-provider[data-liquid-theme='system'] .lq-list {
+      --lq-blur: calc(7px + var(--lq-frost, 0px));
+      --lq-saturate: 1.7;
+      --lq-brighten: 1;
+      --lq-glow: 0.1;
+      --lq-glass-bright: rgba(255, 255, 255, 0.5);
+      --lq-glass-soft: rgba(255, 255, 255, 0.1);
+      --lq-glass-shade: rgba(62, 91, 164, 0.14);
+      --lq-line: color-mix(in srgb, var(--lq-accent) 24%, rgba(66, 85, 128, 0.42));
+    }
+
+    .lq-provider[data-liquid-theme='system'] .lq-card > .lq-surface__edge,
+    .lq-provider[data-liquid-theme='system'] .lq-accordion > .lq-surface__edge,
+    .lq-provider[data-liquid-theme='system'] .lq-table-container > .lq-surface__edge,
+    .lq-provider[data-liquid-theme='system'] .lq-list > .lq-surface__edge {
+      opacity: 0.4;
+    }
+
+    .lq-provider[data-liquid-theme='system'] .lq-alert {
+      --lq-glass-bright: rgba(255, 255, 255, 0.32);
+      -webkit-backdrop-filter: blur(9px) saturate(1.7) var(--lq-lens, );
+      backdrop-filter: blur(9px) saturate(1.7) var(--lq-lens, );
+    }
+
+    .lq-provider[data-liquid-theme='system'] .lq-alert[data-severity='info'] {
+      border-color: color-mix(in srgb, var(--lq-accent) 20%, rgba(66, 85, 128, 0.4));
+    }
+  }
+}
+
+/*
+ * `inline` is load-bearing. liquefy-ui retints every token when the theme flips
+ * between light and dark, so the utilities have to resolve `var(--lq-*)` at use
+ * time rather than baking in whatever the value happened to be at build time.
+ */
+@theme inline {
+  --color-liquid-accent: var(--lq-accent);
+  --color-liquid-foreground: var(--lq-foreground);
+  --color-liquid-muted: var(--lq-muted);
+  --color-liquid-placeholder: var(--lq-placeholder);
+  --color-liquid-line: var(--lq-regular-line);
+  --color-liquid-fill: var(--lq-regular-fill);
+  --color-liquid-glass-soft: var(--lq-glass-soft);
+  --color-liquid-glass-bright: var(--lq-glass-bright);
+  --color-liquid-glass-shade: var(--lq-glass-shade);
+  --color-liquid-solid: var(--lq-solid-fill);
+
+  --radius-liquid: var(--lq-radius-default);
+  --spacing-liquid: var(--lq-space);
+  --ease-liquid: var(--lq-easing);
+  --shadow-liquid:
+    0 16px 40px var(--lq-shadow-color),
+    0 2px 8px color-mix(in srgb, var(--lq-shadow-color) 52%, transparent);
+}

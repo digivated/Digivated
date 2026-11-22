@@ -56,10 +56,6 @@
     text-decoration: underline !important;
     text-underline-offset: 5px;
   }
-  html[data-theme="daylight"] body .dg-home-hero > .dg-scene-toggle {
-    inset-inline-end: 0 !important;
-    inset-block-end: 3px !important;
-  }
   @media (max-width: 700px) {
     html[data-theme="daylight"] body #main > .dg-home-hero {
       min-height: 380px;

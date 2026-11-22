@@ -63,11 +63,10 @@ test('the new backdrop leaves resources search and home hero actions usable',asy
  await expect(page).toHaveURL(/#this-week$/);
 });
 
-test('the ASCII field moves, pauses, and keeps native launch links usable', async ({ page }) => {
+test('the ASCII field follows system motion preferences and keeps native launch links usable', async ({ page }) => {
  await page.setViewportSize({ width: 1440, height: 900 });
  await page.clock.install();
  await page.goto(base + '/');
- const hero = page.locator('[data-discovery-hero]');
  const canvas = page.locator('.dg-launch-scene-hero canvas');
  await expect(canvas).toBeVisible();
  const orbit = page.locator('.dg-activity-mark-orbit .dg-activity-dot').first();
@@ -81,17 +80,20 @@ test('the ASCII field moves, pauses, and keeps native launch links usable', asyn
  await page.clock.runFor(8000);
  expect(await capture()).not.toBe(first);
 
- const pause = hero.getByRole('button', { name: 'Pause animation' });
- await pause.click();
- await expect(orbit).toHaveCSS('animation-play-state', 'paused');
- await expect(ribbon).toHaveCSS('animation-play-state', 'paused');
+ await expect(page.locator('[data-scene-toggle]')).toHaveCount(0);
+ await page.emulateMedia({ reducedMotion: 'reduce' });
+ await expect(canvas).toBeHidden();
+ await expect(page.locator('.dg-scene-poster img')).toBeVisible();
+ await expect(orbit).toHaveCSS('animation-name', 'none');
+ await expect(ribbon).toHaveCSS('animation-name', 'none');
  const frozen = await capture();
  await page.clock.runFor(1200);
  expect(await capture()).toBe(frozen);
- await hero.getByRole('button', { name: 'Play animation' }).click();
+
+ await page.emulateMedia({ reducedMotion: 'no-preference' });
+ await expect(canvas).toBeVisible();
  await page.clock.runFor(1200);
  expect(await capture()).not.toBe(frozen);
- await expect(ribbon).toHaveCSS('animation-play-state', 'running');
 
  await page.getByRole('link', { name: 'Browse launches', exact: true }).focus();
  await page.keyboard.press('Enter');

@@ -19,7 +19,11 @@ test('mobile glass menu remains readable and routes correctly',async({page})=>{
 test('glass search stays usable at desktop and narrow widths',async({page,browserName})=>{
  for(const width of [390,1440]){
   await page.setViewportSize({width,height:900});await page.goto(base+'/');
-  await page.locator('[data-open-search]').click();
+  const search = page.getByRole('button', { name: 'Search Digivated', exact: true });
+  await expect(search).toHaveClass(/lq-button/);
+  await search.focus();
+  if (browserName === 'chromium') await expect(search).toHaveAttribute('data-liquid-lens', 'true');
+  await search.click();
   const dialog=page.locator('#discovery-search');await expect(dialog).toBeVisible();
   await expect(dialog).toHaveCSS('backdrop-filter', /blur/);
   if (browserName === 'chromium') await expect(dialog).toHaveCSS('backdrop-filter', /url\(/);
@@ -35,7 +39,10 @@ test('glass search stays usable at desktop and narrow widths',async({page,browse
 
 test('reduced motion keeps the glass surfaces and readable controls',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:844});await page.goto(base+'/');
- await expect(page.locator('.dg-hero-actions .dg-btn').first()).toBeVisible();
+ const launch = page.getByRole('link', { name: 'Browse launches', exact: true });
+ await expect(launch).toBeVisible();
+ await expect(launch).toHaveAttribute('href', '#this-week');
+ await expect(launch).toHaveCSS('transition-duration', '0s');
  await page.locator('.site-menu-trigger').click();
  await expect(page.locator('#explore-navigation')).toBeVisible();
  expect(await page.locator('#explore-navigation').evaluate(element=>getComputedStyle(element).animationName)).toBe('none');

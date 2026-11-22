@@ -1,4 +1,6 @@
 /* Tailwind utilities without Preflight: protect the existing product and admin surfaces. */
+@import './liquefy-ui.css';
+@import './digivated-glass.css';
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 @source '../';
