@@ -517,4 +517,13 @@
 #digivated-root .account-delete-form .fl-status[data-tone="ok"] { color: #0b0b0c !important; font-weight: 600 !important; }
 #digivated-root .fl-dash .account-delete-form label { display: block !important; }
 
+/* Upload plans on the submit form */
+#digivated-root .dg-plan-status { margin: 0 0 10px !important; font-size: 13px !important; line-height: 1.5 !important; color: #3f3f46 !important; }
+#digivated-root .dg-plan-status[hidden] { display: none !important; }
+#digivated-root .dg-plan-status strong { color: #0b0b0c !important; font-weight: 600 !important; }
+#digivated-root .dg-tier-own { justify-self: start !important; display: inline-block !important; padding: 2px 8px !important; border: 1px solid #0b0b0c !important; border-radius: 999px !important; font-size: 11px !important; font-weight: 600 !important; letter-spacing: .04em !important; text-transform: uppercase !important; color: #0b0b0c !important; background: #fff !important; }
+#digivated-root .dg-tier-own[hidden] { display: none !important; }
+#digivated-root .dg-plan-buy .submission-account-actions { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; margin: 10px 0 0 !important; }
+#digivated-root .dg-plan-buy .button[hidden] { display: none !important; }
+
 }

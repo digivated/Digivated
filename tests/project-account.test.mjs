@@ -12,7 +12,7 @@ test('verified submissions are indexed by email and visible only to that account
  const commands=[];
  const saved=await invoke(makeSubmissionHandler({env,verifyAccount:async()=>account,redis:async c=>{commands.push(c);return 1;}}),{method:'POST',url:'/api/submissions',headers:{origin:env.SUBMISSIONS_ORIGIN,authorization:'Bearer fixture','content-type':'application/json','x-real-ip':'127.0.0.1'},body:submission});
  assert.equal(saved.status,201);
- const command=commands[0];assert.equal(command[6],accountIndex(account.email,env.SUBMISSIONS_REDIS_REST_TOKEN));
+ const command=commands.find(c=>c[0]==='EVAL');assert.equal(command[6],accountIndex(account.email,env.SUBMISSIONS_REDIS_REST_TOKEN));
  const stored=JSON.parse(command[7]);assert.equal(stored.accountId,account.id);
  assert.equal(saved.body.launch.kind,'free');
  assert.equal(saved.body.launch.badge,`<a href="https://digivated.com/projects/listing/${stored.id}" data-digivated-project="${stored.id}" target="_blank" rel="noopener">\n  <img src="https://digivated.com/badge/${stored.id}?theme=dark" alt="Featured on Digivated" width="250" height="54">\n</a>`);

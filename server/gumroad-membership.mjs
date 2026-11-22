@@ -9,7 +9,7 @@ export const SETUP_DIAGNOSTIC_KEY = 'digivated:membership:last-setup';
 class ProviderError extends Error { constructor(reason,status=0){super(reason);this.reason=reason;this.status=status;} }
 const optionalProfileFailure = e => e instanceof ProviderError && ([403,404].includes(e.status)||e.reason==='custom_html_unavailable');
 const retiredSlugs = new Set(['ui-prompt-package','digivated-promo','support-digivated']);
-const accurateDescription = value => typeof value === 'string' && /full UI\/UX Prompt Packet/i.test(value) && /member-only carousel library/i.test(value) && /project spotlight/i.test(value) && /full News access/i.test(value) && /AI\s*&amp;?\s*Tech/i.test(value);
+const accurateDescription = value => typeof value === 'string' && /full UI\/UX Prompt Packet/i.test(value) && /member-only carousel library/i.test(value) && /unlimited project uploads/i.test(value) && /full News access/i.test(value) && /AI\s*&amp;?\s*Tech/i.test(value);
 const backupFields = ['id','name','price','currency','published','description','custom_summary','custom_receipt','max_purchase_count','custom_html','covers'];
 export async function remapGumroadMembership({token,redis,fetcher=fetch,assets}) {
   if(typeof token!=='string'||!/[A-Za-z0-9]/.test(token)||!/^\S{20,500}$/.test(token)||/[^\x21-\x7e]/.test(token))throw new AdminError(400,'Enter a valid Gumroad seller API key.');
@@ -88,6 +88,20 @@ export async function remapGumroadMembership({token,redis,fetcher=fetch,assets})
     for(const item of old)if(item.published)await api('PUT',`/products/${encodeURIComponent(item.id)}/disable`);
     const final=(await api('GET','/products')).products;
     if(!Array.isArray(final)||final.some(p=>old.some(item=>item.id===p.id)&&p.published)||!final.some(p=>p.id===product.id&&p.name===membership.name&&p.price===500&&p.currency==='usd'&&p.published===true&&p.subscription_duration===null&&p.is_tiered_membership===false&&p.max_purchase_count===null&&accurateDescription(p.description)))throw new Error('Final verification failed');
+    // The $3 Starter listing (permalink instant-launch) gets matching copy. Its
+    // price is never changed here; a missing or mismatched listing is a warning.
+    phase='updating the Starter listing';
+    try {
+      const starterOffer=assets?.starter||JSON.parse(await readFile(new URL('../gumroad/starter-product.json',import.meta.url),'utf8'));
+      const starter=final.find(p=>(p.custom_permalink||p.permalink)===starterOffer.permalink&&p.id!==product.id&&!p.deleted);
+      if(!starter)warnings.push('No $3 Starter listing (gumroad.com/l/instant-launch) was found, so its copy was not updated.');
+      else if(starter.price!==starterOffer.price||starter.currency!=='usd'||starter.subscription_duration||starter.is_tiered_membership)warnings.push('The Starter listing is not a $3 one-time product, so its copy was left alone. Check its price on Gumroad.');
+      else {
+        await api('PUT',`/products/${encodeURIComponent(starter.id)}`,{name:starterOffer.name,custom_summary:starterOffer.custom_summary,description:starterOffer.description,custom_receipt:starterOffer.custom_receipt});
+        const check=(await api('GET',`/products/${encodeURIComponent(starter.id)}`)).product;
+        if(check?.price!==starterOffer.price||!/3 projects/i.test(check.description||''))warnings.push('The Starter listing copy could not be confirmed. Check it on Gumroad.');
+      }
+    } catch(error) { if(error instanceof ProviderError||error?.code==='ENOENT'||error instanceof SyntaxError)warnings.push('The Starter listing copy could not be updated. Membership is done; update the $3 listing on Gumroad by hand.'); else throw error; }
     await redis(['SET',CHECKOUT_KEY,JSON.stringify({version:OFFER_VERSION,productId:product.id,price:500,billing:'one-time',status:'ready',verifiedAt:new Date().toISOString()})]);
     try{await redis(['SET',SETUP_DIAGNOSTIC_KEY,JSON.stringify({outcome:'ready',at:new Date().toISOString(),warnings}),'EX',86400]);}catch{/* Optional diagnostics cannot undo a completed update. */}
     return {...await checkoutStatus(redis),ok:true,warnings,message:'Gumroad is updated. Membership checkout is now open. Your API key was not saved.'};

@@ -9,7 +9,8 @@ const key='Gumroad-SECRET-fixture-1234567890';
 function storage(){const map=new Map(),writes=[];const redis=async c=>{const[op,k,v,...args]=c;if(op==='GET')return map.get(k)||null;if(op==='SET'){if(args.includes('NX')&&map.has(k))return null;map.set(k,v);writes.push(c);return'OK'}if(op==='DEL'){map.delete(k);return 1}if(op==='EVAL'){if(map.get(c[3])===c[4])map.delete(c[3]);return 1}throw Error('Unexpected command');};return{map,writes,redis}}
 function provider(failAt='',failureStatus=403){
  const product={id:membership.gumroadProductId,name:'Digivated Founding Membership',price:500,currency:'usd',published:true,subscription_duration:null,is_tiered_membership:false,max_purchase_count:25,covers:[{id:'old-cover'}]};
- const products=[product,...['ui-prompt-package','digivated-promo','support-digivated'].map((slug,i)=>({id:'old'+i,name:slug,custom_permalink:slug,published:true})),{id:'unrelated',name:'Other draft',custom_permalink:'unrelated',published:true}];
+ const starter={id:'starter-id',name:'Instant spot',custom_permalink:'instant-launch',price:300,currency:'usd',published:true,subscription_duration:null,is_tiered_membership:false,description:'Old copy'};
+ const products=[product,...['ui-prompt-package','digivated-promo','support-digivated'].map((slug,i)=>({id:'old'+i,name:slug,custom_permalink:slug,published:true})),{id:'unrelated',name:'Other draft',custom_permalink:'unrelated',published:true},starter];
  const calls=[];
  const fetcher=async(url,opts)=>{const path=new URL(url).pathname.slice(3),body=opts.body?JSON.parse(opts.body):null;calls.push({path,method:opts.method,body,auth:opts.headers.Authorization});assert.equal(new URL(url).origin,'https://api.gumroad.com');assert.equal(opts.redirect,'error');
   if(`${opts.method} ${path}`===failAt)return new Response(JSON.stringify({success:false,error:key}),{status:failureStatus});
@@ -23,11 +24,12 @@ function provider(failAt='',failureStatus=403){
   else if(path.endsWith('/disable'))products.find(p=>path.includes(encodeURIComponent(p.id))).published=false;
   else if(path.endsWith('/enable'))product.published=true;
   else if(path==='/products/'+encodeURIComponent(product.id)){if(opts.method==='PUT')Object.assign(product,body);else data.product=product;}
+  else if(path==='/products/starter-id'){if(opts.method==='PUT')Object.assign(starter,body);else data.product=starter;}
   else throw Error('Unexpected provider request '+path);
   return new Response(JSON.stringify(data),{status:200});
- };return{fetcher,calls,products,product};
+ };return{fetcher,calls,products,product,starter};
 }
-const assets={offer:{name:membership.name,price:500,price_currency_type:'usd',description:'Full UI/UX Prompt Packet and member-only carousel library. One project spotlight. Full News access across AI &amp; Tech, Markets and Security.'},html:'<style>body{background:black}</style><h1>One membership.</h1>'};
+const assets={offer:{name:membership.name,price:500,price_currency_type:'usd',description:'Full UI/UX Prompt Packet and member-only carousel library. Unlimited project uploads, live instantly. Full News access across AI &amp; Tech, Markets and Security.'},html:'<style>body{background:black}</style><h1>One membership.</h1>',starter:{name:'Digivated Starter',permalink:'instant-launch',price:300,custom_summary:'Up to 3 projects.',description:'<p>Up to 3 projects on Digivated, live instantly.</p>',custom_receipt:'Thanks.'}};
 test('seller remap publishes the exact one-time offer, retires only known products, and never persists the key',async()=>{
  const db=storage(),p=provider();const result=await remapGumroadMembership({token:key,redis:db.redis,fetcher:p.fetcher,assets});
  assert.equal(result.ready,true);assert.equal(result.checkoutUrl,membership.checkoutUrl);
@@ -40,6 +42,10 @@ test('seller remap publishes the exact one-time offer, retires only known produc
  for(const call of p.calls){assert.equal(call.auth,'Bearer '+key);assert.equal(Object.hasOwn(call.body||{},'files'),false);assert.equal(Object.hasOwn(call.body||{},'rich_content'),false);}
  const updates=p.calls.filter(c=>c.method==='PUT'&&c.path.includes('/products/'));assert.equal(updates.some(c=>c.path.endsWith('/disable')),true);
  assert.equal((await checkoutStatus(db.redis)).ready,true);
+ // The $3 Starter listing gets the new copy; its price is never sent.
+ assert.equal(p.starter.name,'Digivated Starter');assert.match(p.starter.description,/3 projects/);assert.equal(p.starter.price,300);
+ assert.equal(p.calls.filter(c=>c.path==='/products/starter-id'&&c.method==='PUT').every(c=>!Object.hasOwn(c.body,'price')),true);
+ assert.deepEqual(result.warnings,[]);
 });
 for(const phase of ['DELETE /products/'+encodeURIComponent(membership.gumroadProductId)+'/covers/old-cover','PUT /products/'+encodeURIComponent(membership.gumroadProductId),'POST /products/'+encodeURIComponent(membership.gumroadProductId)+'/thumbnail'])test('provider failure does not leak credentials or enable incomplete checkout: '+phase,async()=>{
  const db=storage(),p=provider(phase);await assert.rejects(remapGumroadMembership({token:key,redis:db.redis,fetcher:p.fetcher,assets}),e=>e.status===503&&!e.message.includes(key));

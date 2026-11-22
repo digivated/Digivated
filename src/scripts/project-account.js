@@ -124,6 +124,23 @@ if(state){
   document.dispatchEvent(new CustomEvent('dg:account-ready',{detail:{email}}));
   state.hidden=true; // The dashboard bar already shows who is signed in.
   void loadSubmissions();
+  void loadPlan();
+  // Upload plan: Free 1 project, Starter 3, Membership unlimited. Display only.
+  async function loadPlan(){
+   const note=document.getElementById('account-plan-note');if(!note)return;
+   try{
+    const current=(await client.auth.getSession())?.data?.session||session;
+    const response=await fetch('/api/submissions',{method:'POST',headers:{Authorization:`Bearer ${current.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({action:'plan'}),cache:'no-store',signal:AbortSignal.timeout(20000)});
+    if(!response.ok)return;
+    const plan=await response.json().catch(()=>null);if(typeof plan?.plan!=='string'||typeof plan?.name!=='string')return;
+    const used=Number(plan.used)||0;
+    const slots=plan.limit?`${Math.min(used,plan.limit)} of ${plan.limit} project${plan.limit===1?'':'s'} used.`:`${used} project${used===1?'':'s'}, no limit.`;
+    note.querySelector('[data-plan-tag]').textContent=plan.name;
+    const copy=note.querySelector('[data-plan-copy]');
+    copy.replaceChildren(`${slots} `,plan.instant?'Your projects go live the moment you publish.':'Free launches go live on a Monday at 9 AM Eastern once the Digivated badge is on your site.');
+    if(plan.plan!=='member'){const more=document.createElement('a');more.href='/shop';more.textContent=plan.plan==='free'?'Get more projects →':'Go unlimited →';copy.append(' ',more);}
+   }catch{/* Keep the default note. */}
+  }
   function emptyLaunchState(title, description) {
    const card = document.createElement('div');
    card.className = 'maker-empty-state';

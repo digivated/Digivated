@@ -4,6 +4,7 @@
 // Every step is safe to repeat, so if anything fails partway the person can simply
 // try again while still signed in. Payment records stay, as tax law requires.
 import { accountIndex, ownedSubmissions } from './project-account.mjs';
+import { accountPlanKey, planBindingsKey } from './plans.mjs';
 import { clearNotifications, launchWatchersKey, launchWatchingKey } from './notifications.mjs';
 import { pointsLedgerKey, pointsTotalKey } from './feedback-points.mjs';
 import { commentKey } from './card-interactions.mjs';
@@ -88,6 +89,10 @@ async function clearPersonalData(redis, account, secret) {
   await clearNotifications(redis, id);
   await redis(['DEL', `digivated:notifications:preferences:${id}`, `digivated:weekly:preference:${id}`, `digivated:weekly:request:${id}`, pointsTotalKey(id), pointsLedgerKey(id)]);
   await redis(['ZREM', 'digivated:weekly:members', id]);
+  // Plan purchases: release the sale bindings so the buyer can claim them on a new account.
+  const bindings = await redis(['SMEMBERS', planBindingsKey(id)]);
+  if (Array.isArray(bindings) && bindings.length) await redis(['DEL', ...bindings.filter(key => typeof key === 'string' && key.startsWith('digivated:plan-sale:'))]);
+  await redis(['DEL', planBindingsKey(id), accountPlanKey(id), `digivated:plan-seen:${id}`, `digivated:plan-check:${id}`]);
   // The private list that links this email address to its submissions.
   await redis(['DEL', accountIndex(account.email, secret), `${accountIndex(account.email, secret)}:legacy-scanned`]);
 }

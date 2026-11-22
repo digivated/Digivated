@@ -4,7 +4,7 @@ import { projectStage, trackerElement } from './launch-tracker.js';
 import { badgePicker } from './badge-picker.js';
 const form = document.getElementById('project-form');
 if (form) {
-  let accountClient, accountVerified = false, instantConfig, pendingInstantId;
+  let accountClient, accountVerified = false, instantConfig, pendingInstantId, planInfo = null;
   const resumePanel = document.getElementById('instant-launch-resume');
   const checkout = document.getElementById('instant-launch-checkout');
   const verify = document.getElementById('instant-launch-verify');
@@ -200,6 +200,7 @@ if (form) {
         accountUserId = session.user.id || '';
         if (query.get('membership') || query.get('spot') || query.get('resume')) openEditor();
         configureLaunch(account);
+        loadPlan(false);
         renderBadgeFirst();
       }
       else {accountStatus.hidden=false;accountStatus.innerHTML='To submit a project, <a href="/login">sign in or create an account</a> first.';}
@@ -263,12 +264,82 @@ if (form) {
     imagePreviewPicture.src = imagePreviewUrl;
   };
   imageInput?.addEventListener('change', updateImagePreview);
+  // Upload plans: Free 1 project, Starter 3, Membership unlimited. The server
+  // decides; this only shows the plan, the slots left and how to upgrade.
+  const PLAN_TIER = { free: 'directory', starter: 'instant', member: 'founding-feature' };
+  const TIER_PLAN = { directory: 'free', instant: 'starter', 'founding-feature': 'member' };
+  const money = cents => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }).format(cents / 100);
+  const ownsTier = tier => {
+    if (!planInfo) return false;
+    const rank = { free: 0, starter: 1, member: 2 };
+    return rank[planInfo.plan] >= rank[TIER_PLAN[tier]];
+  };
+  const planStatus = document.getElementById('plan-status');
+  const planBuy = document.getElementById('plan-buy');
+  const planBuyStatus = document.getElementById('plan-buy-status');
+  const planRecheck = document.getElementById('plan-recheck');
+  const renderPlan = () => {
+    if (!planInfo || !planStatus) return;
+    const used = Number(planInfo.used) || 0;
+    const slots = planInfo.limit ? `${Math.min(used, planInfo.limit)} of ${planInfo.limit} project${planInfo.limit === 1 ? '' : 's'} used` : `${used} project${used === 1 ? '' : 's'} · unlimited`;
+    planStatus.replaceChildren('Your plan: ', Object.assign(document.createElement('strong'), { textContent: planInfo.name }), ` · ${slots}.`);
+    if (planInfo.limit && planInfo.remaining === 0) planStatus.append(planInfo.plan === 'member' ? '' : ' Upgrade below or archive a project in Your Projects to add another.');
+    planStatus.hidden = false;
+  };
+  function syncPlanBuy() {
+    if (!membershipFields) return;
+    const tier = intent.value;
+    const needsBuy = (tier === 'instant' || tier === 'founding-feature') && !ownsTier(tier);
+    membershipFields.hidden = !needsBuy;
+    if (!needsBuy) return;
+    const offer = tier === 'instant' ? planInfo?.offers?.starter : planInfo?.offers?.member;
+    const label = tier === 'instant' ? 'Starter' : 'Membership';
+    document.querySelectorAll('[data-plan-email]').forEach(node => { node.textContent = accountEmail || 'your account email'; });
+    if (offer?.checkoutUrl && planBuy) {
+      const url = new URL(offer.checkoutUrl);
+      url.searchParams.set('wanted', 'true');
+      if (accountEmail) url.searchParams.set('email', accountEmail);
+      planBuy.href = url.href;
+      planBuy.textContent = `Buy ${label} · ${money(offer.price)} once ↗`;
+      planBuy.hidden = false;
+    } else if (planBuy) planBuy.hidden = true;
+    if (planBuyStatus && !planBuyStatus.dataset.busy) planBuyStatus.textContent = planInfo ? '' : 'Sign in to see your plan.';
+  }
+  async function loadPlan(fresh) {
+    try {
+      const { data: { session } } = await accountClient.auth.getSession();
+      if (!session) return;
+      const response = await fetch('/api/submissions', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ action: 'plan', fresh }), signal: AbortSignal.timeout(20000) });
+      if (!response.ok) return;
+      const info = await response.json().catch(() => null);
+      if (!info || typeof info.plan !== 'string' || typeof info.name !== 'string') return;
+      planInfo = info;
+      if (session.user?.email) accountEmail = accountEmail || session.user.email;
+      // Owners of a paid plan start on it; others keep what they picked.
+      if (planInfo.instant && intent.value === 'directory') intent.value = PLAN_TIER[planInfo.plan];
+      renderPlan();
+      syncIntent();
+      updateButton();
+    } catch { /* The form still works; the server enforces the plan. */ }
+  }
+  planBuy?.addEventListener('click', () => { if (planBuyStatus) planBuyStatus.textContent = 'Finish checkout in the other tab, then press “I’ve paid, check again”.'; });
+  planRecheck?.addEventListener('click', async () => {
+    planRecheck.disabled = true;
+    if (planBuyStatus) { planBuyStatus.dataset.busy = '1'; planBuyStatus.textContent = 'Checking your purchase…'; }
+    const before = planInfo?.plan;
+    await loadPlan(true);
+    if (planBuyStatus) {
+      delete planBuyStatus.dataset.busy;
+      planBuyStatus.textContent = planInfo && planInfo.plan !== before && planInfo.instant ? `You’re on ${planInfo.name}. Publish below and you’re live.` : planInfo?.checkFailed ? 'We couldn’t reach Gumroad. Try again in a moment.' : 'No purchase found for your account email yet. If you just paid, give it a minute.';
+    }
+    planRecheck.disabled = false;
+  });
   const syncIntent = () => {
     const help = {directory:'free-launch-help',instant:'instant-launch-help','founding-feature':'membership-fields'};
     intent.setAttribute('aria-describedby', help[intent.value] || help.directory);
     document.getElementById('free-launch-help').hidden = intent.value !== 'directory';
-    if (membershipFields) membershipFields.hidden = intent.value !== 'founding-feature';
     syncTiers();
+    syncPlanBuy();
   };
   const query = new URLSearchParams(location.search);
   if (query.get('membership') === '1') intent.value = 'founding-feature';
@@ -280,13 +351,17 @@ if (form) {
     const instantOption = document.getElementById('submission-instant-option');
     if (!tiers) return;
     const instantCard = tiers.querySelector('[data-tier="instant"]');
-    const ready = instantOption && !instantOption.disabled && !instantOption.hidden;
+    const ready = (instantOption && !instantOption.disabled && !instantOption.hidden) || planInfo?.plan === 'starter' || Boolean(planInfo?.offers?.starter);
     instantCard.hidden = !ready;
     instantCard.querySelector('input').disabled = !ready;
     const price = instantOption?.textContent.match(/\(([^)]+)\)/)?.[1];
     if (price) instantCard.querySelector('[data-tier-price]').textContent = price;
     for (const card of tiers.querySelectorAll('[data-tier]')) {
       const input = card.querySelector('input');
+      const own = card.querySelector('[data-tier-own]');
+      if (own) own.hidden = !planInfo || PLAN_TIER[planInfo.plan] !== card.dataset.tier;
+      // Paid plans always publish instantly, so the free option steps aside.
+      if (card.dataset.tier === 'directory') card.hidden = Boolean(planInfo?.instant);
       input.checked = card.dataset.tier === intent.value;
       card.classList.toggle('is-selected', input.checked);
     }
@@ -308,11 +383,12 @@ if (form) {
       if(nextFreeLaunch)document.getElementById('free-launch-date').textContent='Next free launch: '+new Date(nextFreeLaunch).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})+' at 9:00 AM Eastern.';
       if (!instant) return;
       instantConfig = instant;
+      syncTiers();
       const option = document.getElementById('submission-instant-option');
       option.disabled = false;
       option.hidden = false;
       const price = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }).format(instant.price / 100);
-      option.textContent = `Instant Publishing (${price})`;
+      option.textContent = `Starter (${price})`;
       if (account.email) accountEmail = account.email;
       const resumeId = query.get('resume');
       const pending = account.submissions?.find(item => item.awaitingInstantPayment && (!resumeId || item.id === resumeId)) || account.submissions?.find(item => item.awaitingInstantPayment);
@@ -359,7 +435,18 @@ if (form) {
   };
   form.elements.url?.addEventListener('change',()=>renderBadgeFirst());
   intent.addEventListener('change',()=>{if(intent.value==='directory')ensureReservation();renderBadgeFirst();});
-  const updateButton = () => { button.disabled = !accountVerified; button.textContent=accountVerified?(intent.value==='instant'?`Continue to payment${instantConfig?.price?` (${new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',trailingZeroDisplay:'stripIfInteger'}).format(instantConfig.price/100)})`:''} →`:intent.value==='directory'?(reservedBadge?'Verify badge & submit':'Save and get your badge'):'Submit for review'):'Sign in to submit your project'; };
+  const updateButton = () => {
+    const paidTier = intent.value === 'instant' || intent.value === 'founding-feature';
+    const locked = paidTier && !ownsTier(intent.value);
+    const full = Boolean(planInfo && !planInfo.checkFailed && planInfo.limit && planInfo.remaining === 0);
+    button.disabled = !accountVerified || locked || full;
+    button.textContent = !accountVerified ? 'Sign in to submit your project'
+      : locked ? `Buy ${intent.value === 'instant' ? 'Starter' : 'Membership'} above to publish`
+      : full ? 'No project slots left'
+      : paidTier ? 'Publish now'
+      : intent.value === 'directory' ? (reservedBadge ? 'Verify badge & submit' : 'Save and get your badge')
+      : 'Submit for review';
+  };
   updateButton();
   form.addEventListener('submit', async event => {
     event.preventDefault();
@@ -368,11 +455,8 @@ if (form) {
     // Open the checkout tab now, while this tap still counts as a user action
     // (browsers block tabs opened later). It's pointed at checkout once saved.
     let popup = null;
-    if (intent.value === 'instant' && instantConfig) {
-      try { popup = window.open('', '_blank'); if (popup) { popup.opener = null; popup.document.title = 'Opening checkout…'; popup.document.body.style.cssText = 'background:#0b0b0b;color:#ccc;font:14px monospace;padding:24px'; popup.document.body.textContent = 'Opening secure checkout…'; } } catch { popup = null; }
-    }
     button.disabled = true;
-    status.textContent = intent.value === 'directory' ? (reservedBadge ? 'Checking your site for the badge… this can take up to 30 seconds.' : 'Saving your project…') : 'Submitting your project…';
+    status.textContent = intent.value === 'directory' ? (reservedBadge ? 'Checking your site for the badge… this can take up to 30 seconds.' : 'Saving your project…') : intent.value === 'promotion' ? 'Submitting your project…' : 'Publishing your project…';
     try {
       const values = new FormData(form);
       const payload = Object.fromEntries([...values].filter(([key])=>key!=='image'));
@@ -393,16 +477,15 @@ if (form) {
       const data = await response.json().catch(()=>({}));
       if (!response.ok) throw new Error(data.error || 'Your project could not be submitted. Your details are still here; please try again.');
       document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
-      if (payload.submissionType === 'instant') {
-        accountEmail = payload.email || accountEmail;
-        showCheckout(data.id, popup);
-        popup = null;
-        return;
-      }
       window.digivatedTrack?.('project_submit', {project_category:payload.category});
-      const membership = payload.submissionType === 'founding-feature';
       form.reset();form.dispatchEvent(new Event('input'));if(session?.user?.email_confirmed_at)form.elements.email.value=session.user.email;syncIntent();updateImagePreview();
       if (badgeFirstSubmit) { try { localStorage.removeItem(reserveKey()); } catch {} reservedBadge = null; if (badgeFirst) badgeFirst.hidden = true; ensureReservation(); }
+      if (planInfo) { planInfo = { ...planInfo, used: (Number(planInfo.used) || 0) + 1, remaining: planInfo.limit ? Math.max(0, planInfo.remaining - 1) : null }; renderPlan(); }
+      if (data.status === 'approved' && data.pageUrl) {
+        status.replaceChildren('Your project is live ⚡ ', Object.assign(document.createElement('a'), { href: data.pageUrl, textContent: 'View it →' }));
+        status.focus();
+        return;
+      }
       if (data.launch?.badgeVerifiedAt) {
         // Verified at submit: no badge steps left, just the locked-in launch.
         const scheduledDate = new Date(data.launch.scheduledAt);
@@ -446,7 +529,7 @@ if (form) {
         }
         return;
       }
-      status.textContent = (membership ? 'Got your spotlight request. We’ll review it before anything goes public, and a feature isn’t guaranteed.' : 'Thanks, we got your project. It stays private while we review it.') + (session ? ' Track it and read any feedback in Your Projects.' : ' Sign in next time to track your submissions.');
+      status.textContent = 'Thanks, we got your project. It stays private while we review it.' + (session ? ' Track it and read any feedback in Your Projects.' : ' Sign in next time to track your submissions.');
       status.focus();
     } catch (error) {
       popup?.close?.();

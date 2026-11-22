@@ -4,52 +4,53 @@ import UiIcon from './UiIcon.astro';
 import { membership } from '../data/membership.mjs';
 import '../styles/membership.css';
 ---
-<Platform canonicalPath="/shop" title="Launch options and membership" description="View Digivated launch options and membership benefits. Members get a project spotlight, the News archive and the UI/UX Playbook.">
+<Platform canonicalPath="/shop" title="Plans and membership" description="Digivated plans: 1 project free, Starter for 3 projects, or Membership for unlimited projects and full site access.">
 <div class="shop">
   <section class="dg-hero shop-hero" aria-labelledby="shop-title">
     <div class="dg-hero-copy">
-      <h1 id="shop-title">Launch options and membership</h1>
-      <p class="dg-hero-lede">Launch for free or get more with a one-time purchase.</p>
+      <h1 id="shop-title">Plans and membership</h1>
+      <p class="dg-hero-lede">Every account gets 1 project free. Need more? Pay once, never again.</p>
     </div>
   </section>
 
   <div class="shop-grid">
     <article class="shop-card shop-spot" aria-labelledby="shop-spot-title" data-shop-spot>
-      <p class="shop-kicker"><span aria-hidden="true">⚡</span> Instant spot</p>
-      <h2 id="shop-spot-title">Go live today</h2>
-      <p class="shop-for">For one launch you want out now.</p>
+      <p class="shop-kicker"><span aria-hidden="true">⚡</span> Starter</p>
+      <h2 id="shop-spot-title">3 projects, live instantly</h2>
+      <p class="shop-for">For makers with a few things to show.</p>
       <div class="shop-price"><strong data-shop-spot-price>$3</strong><span>once</span></div>
       <ul class="shop-list">
-        <li>Live the moment you pay</li>
-        <li>Homepage spot for 7 days</li>
+        <li>Up to 3 projects on Digivated</li>
+        <li>Live the moment you publish</li>
         <li>No queue, no badge needed</li>
       </ul>
-      <a class="button primary shop-cta" href="/submit-project?spot=1#project-form" data-shop-spot-cta><span class="dg-glass-action-label"><span data-shop-spot-label>Claim a spot</span><UiIcon name="arrow" size={16}/></span></a>
+      <a class="button primary shop-cta" href="/submit-project?spot=1#project-form" data-shop-spot-cta><span class="dg-glass-action-label"><span data-shop-spot-label>Get Starter</span><UiIcon name="arrow" size={16}/></span></a>
       <p class="shop-note" data-shop-spot-note hidden></p>
     </article>
 
     <article class="shop-card membership-offer" aria-labelledby="shop-member-title">
       <p class="shop-kicker shop-kicker-member"><span class="dg-member-mark" aria-hidden="true"></span> Membership</p>
       <h2 id="shop-member-title">Become a member</h2>
-      <p class="shop-for">Members get full access to everything on Digivated.</p>
+      <p class="shop-for">Unlimited projects and full access to everything on Digivated.</p>
       <div class="shop-price membership-price"><strong>${membership.priceUSD}</strong><span>once</span></div>
       <ul class="shop-list membership-benefits">
-        <li>A member badge on your project</li>
-        <li>One reviewed project spotlight</li>
+        <li>Unlimited projects, live instantly</li>
+        <li>Member mark on your projects</li>
         <li>Full News archive</li>
-        <li>UI/UX Playbook</li>
+        <li>UI/UX Playbook and member guides</li>
       </ul>
       {membership.checkoutReady ? <a class="button primary membership-checkout shop-cta" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get membership · $5 once <UiIcon name="external" size={17}/></a> : <><button class="button primary membership-checkout shop-cta" disabled>Checking checkout…</button><p class="membership-checkout-note shop-note" role="status">Loading checkout. Give it a second.</p></>}
-      <p class="shop-note">Checkout is on Gumroad. Then verify below.</p>
+      <p class="shop-note">Checkout is on Gumroad. Use your Digivated account email.</p>
     </article>
   </div>
 
-  <section id="member-sign-in" class="membership-access" aria-labelledby="membership-access-title"><div><p class="eyebrow">Already a member?</p><h2 id="membership-access-title">Verify your purchase</h2><p>Use your Gumroad email or license key.</p><p id="membership-verified" hidden>You’re verified. <a href="/submit-project?membership=1#project-form">Submit your member project</a>.</p></div><div><form id="founding-access-form" class="carousel-access" method="post" action="/api/founding-access"><label>Gumroad license key<input name="license" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="35"/></label><p class="quiet">or</p><label>Purchase email<input name="email" type="email" autocomplete="email" maxlength="254"/></label><button type="submit" class="button primary">Verify membership</button><p id="founding-access-status" role="status"></p></form><button class="button" id="founding-sign-out" type="button" hidden>Sign out of membership</button></div></section>
+  <section id="member-sign-in" class="membership-access" aria-labelledby="membership-access-title"><div><p class="eyebrow">Already a member?</p><h2 id="membership-access-title">Verify your purchase</h2><p>Use your Gumroad email or license key.</p><p id="membership-verified" hidden>You’re verified. <a href="/submit-project?membership=1#project-form">Publish a project</a>.</p></div><div><form id="founding-access-form" class="carousel-access" method="post" action="/api/founding-access"><label>Gumroad license key<input name="license" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="35"/></label><p class="quiet">or</p><label>Purchase email<input name="email" type="email" autocomplete="email" maxlength="254"/></label><button type="submit" class="button primary">Verify membership</button><p id="founding-access-status" role="status"></p></form><button class="button" id="founding-sign-out" type="button" hidden>Sign out of membership</button></div></section>
 
   <section class="membership-faq" aria-labelledby="membership-questions"><h2 id="membership-questions">Questions</h2>
-    <details><summary>Which one should I pick?</summary><p>Choose an instant spot for a single launch when spots are available. Choose membership for a project spotlight, the News archive and the UI/UX Playbook.</p></details>
+    <details><summary>Which one should I pick?</summary><p>Free gives you 1 project, launched on Monday after you add a badge. Starter ($3) gives you up to 3 projects that go live instantly. Membership ($5) gives you unlimited projects that go live instantly, plus the News archive, the UI/UX Playbook and every member guide.</p></details>
+    <details><summary>How do project slots work?</summary><p>Your plan counts the projects you have on Digivated right now, live or waiting. Archive or delete one in Your Projects to free a slot. Buy with the same email as your Digivated account, then press “I’ve paid, check again” on the submit page.</p></details>
     <details><summary>Is anything a subscription?</summary><p>No. Both are one-time payments. Nothing renews.</p></details>
-    <details><summary>How does the member badge work?</summary><p>Sign in and pick Membership when you submit. We take a quick look at your logo, description and link, then your project shows the member badge. Paying doesn’t skip review or promise traffic.</p></details>
+    <details><summary>Do paid projects skip review?</summary><p>Starter and Membership projects go live as soon as you publish. They still have to follow the listing rules, and we remove anything that doesn’t. Paying doesn’t promise traffic.</p></details>
     <details><summary>How do I open the Prompt Packet?</summary><p>Verify above, then open the Packet. You can also use your license key at <a href="/access">digivated.com/access</a>.</p></details>
     <details><summary>Can I read News first?</summary><p>Yes. <a href="/news">Five stories are free</a>. Verify your membership to read the rest.</p></details>
     <details id="previous-purchases"><summary>What about a previous purchase?</summary><p>Older purchases still work. <a href="/access">Open your Prompt Packet</a> or use the form above. Bought a promotion? <a href="/submit-project?promotion=1#project-form">Submit it for review</a>.</p></details>

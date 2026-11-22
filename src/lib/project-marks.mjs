@@ -3,7 +3,7 @@
 export function projectMarks(project) {
   if (!project || typeof project !== 'object') return [];
   const marks = [];
-  if (project.status === 'featured' || project.featured === true) marks.push('member');
+  if (project.status === 'featured' || project.featured === true || project.member === true) marks.push('member');
   else if (project.sponsored) marks.push('spot');
   if (project.fresh) marks.push('fresh');
   else if (Number(project.rising) > 0) marks.push('rising');
