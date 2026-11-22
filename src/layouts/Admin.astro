@@ -1,10 +1,7 @@
 ---
+// Owner desk shell (Nov 2026 revamp). Light app shell that matches the public site:
+// gray canvas, white rounded panel, black accents. Every page script hook is unchanged.
 import '../styles/global.css';
-import '../styles/platform.css';
-import '../styles/admin.css';
-import '../styles/monochrome.css';
-import '../styles/admin-refresh.css';
-import '../styles/admin-simple.css';
+import '../styles/owner-desk.css';
 ---
-<!doctype html><html id="digivated-root" data-ascii lang="en" data-theme="dark-glass" style="background:#050505;color-scheme:dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><meta name="theme-color" content="#050505"/><meta name="robots" content="noindex, nofollow"/><meta name="referrer" content="no-referrer"/><title>Owner dashboard · Digivated</title><link rel="icon" href="/digivated-ascii-icon-transparent.png" type="image/png"/><link rel="apple-touch-icon" href="/digivated-ascii-touch-transparent.png"/><link rel="stylesheet" href="/ascii-flow.css"/><link rel="stylesheet" href="/ascii-silver.css"/></head><body class="platform owner"><a class="skip" href="#main">Skip to content</a><header class="platform-header"><a class="platform-brand" href="/"><img src="/digivated-ascii-icon-transparent.png" width="32" height="38" alt=""/><span>DIGIVATED<span class="brand-subtitle">Owner dashboard</span></span></a><div class="owner-header-actions"><a href="/">View site →</a><button class="button small" id="owner-logout" hidden>Sign out</button></div></header><main id="main" tabindex="-1"><slot/></main><script>import '../scripts/experience-motion.js';</script></body></html>
-
+<!doctype html><html id="digivated-root" lang="en" data-theme="daylight" style="background:#f1f1f4;color-scheme:light"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><meta name="theme-color" content="#f1f1f4"/><meta name="robots" content="noindex, nofollow"/><meta name="referrer" content="no-referrer"/><title>Owner dashboard · Digivated</title><link rel="icon" href="/digivated-ascii-icon-transparent.png" type="image/png"/><link rel="apple-touch-icon" href="/digivated-ascii-touch-transparent.png"/><link rel="preload" href="/fonts/inter-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous"/></head><body class="owner owner-desk"><a class="skip" href="#main">Skip to content</a><header class="desk-topbar"><a class="desk-brand" href="/admin"><img src="/digivated-daylight-mark.png" width="28" height="28" alt=""/><span>Digivated</span><small>Owner</small></a><div class="owner-header-actions"><a class="desk-site-link" href="/" target="_blank" rel="noopener">View site <span aria-hidden="true">↗</span></a><button class="button small" id="owner-logout" type="button" hidden>Sign out</button></div></header><main id="main" tabindex="-1"><slot/></main></body></html>
