@@ -19,7 +19,7 @@ for(const width of [375,1440])test(`server-rendered creator metadata preserves t
  await expect(page.locator('#creator-title')).toHaveText(profile.name);
  await expect(page.locator('#creator-bio')).toHaveText(profile.bio);
  await expect(page.locator('#creator-public-status')).toHaveText('No posts yet.');
- await expect(page.locator('#creator-message')).toBeVisible();
+ await expect(page.locator('#creator-follow')).toBeVisible();
  await page.getByRole('button',{name:'Projects',exact:true}).click();
  await expect(page.locator('#creator-public-status')).toHaveText('No published projects yet.');
  await page.getByRole('button',{name:'Posts',exact:true}).click();

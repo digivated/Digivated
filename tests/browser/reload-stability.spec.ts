@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const base = 'http://127.0.0.1:4321';
 
-for (const path of ['/', '/discover', '/creators', '/news']) {
+for (const path of ['/', '/discover', '/news']) {
   test(`${path} stays usable on first visit and repeated reloads`, async ({ page }) => {
     await page.goto(base + path, { waitUntil: 'domcontentloaded' });
     for (let attempt = 0; attempt < 3; attempt++) {

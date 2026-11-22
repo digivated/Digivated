@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 for (const width of [390, 768, 1440]) {
-  for (const path of ['/creators', '/news', '/resources', '/membership', '/inbox', '/account', '/saved', '/about', '/login']) {
+  for (const path of ['/news', '/resources', '/membership', '/account', '/saved', '/about', '/login']) {
     test(`${path} breadcrumb follows its title at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.goto('http://127.0.0.1:4321' + path);

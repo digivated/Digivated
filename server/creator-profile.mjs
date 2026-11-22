@@ -165,7 +165,7 @@ export function makeCreatorProfileHandler(deps={}){
     if(media)await redis(['DEL',`digivated:creator:pending-media:${media.path}`]);
     await redis(['ZADD',parentId?`digivated:creator:replies:${parentId}`:postIndex,Date.now(),id]);
     if(!parentId)await redis(['ZADD',`digivated:creator:author:${account.id}`,Date.now(),id]);
-    if(parentId){const raw=await redis(['GET',postKey(parentId)]);if(raw){const parent=JSON.parse(raw);parent.replies=(parent.replies||0)+1;await redis(['SET',postKey(parentId),JSON.stringify(parent)]);await addNotification(redis,{recipientId:parent.authorId,type:'reply',actorId:account.id,targetId:parentId}).catch(()=>{});}}
+    if(parentId){const raw=await redis(['GET',postKey(parentId)]);if(raw){const parent=JSON.parse(raw);parent.replies=(parent.replies||0)+1;await redis(['SET',postKey(parentId),JSON.stringify(parent)]);}}
     return send(201,{post:{...post,media:media?{type:media.type,url:mediaUrl(env,media.path)}:null,author:{id:account.id,name:profile.name,logoUrl:profile.hasLogo?`/api/creator-profile?logo=${account.id}`:''}}});
    }
    if(url.searchParams.get('action')==='delete-post'){

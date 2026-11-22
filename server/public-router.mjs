@@ -65,6 +65,12 @@ export function defaultPublicHandlers(overrides = {}) {
 export function makePublicRouter(handlers = defaultPublicHandlers()) {
   return (req, res) => {
     const path = new URL(req.url, 'https://digivated.invalid').pathname;
+    const retiredPage = path.replace(/\/$/, '');
+    if (retiredPage === '/creators' || retiredPage === '/inbox') {
+      res.statusCode = 308;
+      res.setHeader('Location', retiredPage === '/creators' ? '/threads' : '/account');
+      return res.end();
+    }
     // Vercel preserves the original URL for rewritten requests.
     const route = /^\/creator\/?$/.test(path) ? 'creator-page' : threadSlugFromPath(path) ? 'thread-page' : /^\/badge\/[^/]+\/?$/.test(path) ? 'badge' : /^\/api\/([^/]+)$/.exec(path)?.[1];
     if (route && Object.hasOwn(handlers, route)) return handlers[route](req, res);

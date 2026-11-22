@@ -3,6 +3,10 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   output: 'static',
+  redirects: {
+    '/creators': '/threads',
+    '/inbox': '/account',
+  },
   vite: {
     plugins: [tailwindcss()],
     server: { allowedHosts: ['terminal.local'] },

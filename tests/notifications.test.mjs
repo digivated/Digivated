@@ -46,12 +46,12 @@ test('notifications are on by default, private, and controllable per activity ty
   assert.equal(defaultNotificationPreferences.enabled,true);
   // An explicit opt-out is respected.
   await saveNotificationPreferences(redis,alice,{...defaultNotificationPreferences,enabled:false});
-  assert.equal(await addNotification(redis,{recipientId:alice,type:'reply',actorId:bob,targetId:post}),false);
+  assert.equal(await addNotification(redis,{recipientId:alice,type:'reply',actorId:bob,link:'/threads/example#comment-'+post}),false);
   assert.equal((await listNotifications(redis,alice)).items.length,0);
   const preferences = {...defaultNotificationPreferences,enabled:true,message:false};
   assert.deepEqual(await saveNotificationPreferences(redis,alice,preferences),preferences);
   assert.equal(await addNotification(redis,{recipientId:alice,type:'message',actorId:bob}),false);
-  assert.equal(await addNotification(redis,{recipientId:alice,type:'reply',actorId:bob,targetId:post}),true);
+  assert.equal(await addNotification(redis,{recipientId:alice,type:'reply',actorId:bob,link:'/threads/example#comment-'+post}),true);
   assert.equal(await addNotification(redis,{recipientId:alice,type:'follow',actorId:bob}),true);
   assert.equal(await addNotification(redis,{recipientId:alice,type:'follow',actorId:bob}),false);
   const listing = await listNotifications(redis,alice);
@@ -86,6 +86,17 @@ test('expired activity leaves no stale unread badge', async () => {
   assert.equal(values.has(`digivated:notifications:item:${oldId}`),false);
 });
 
+test('historical notices remain readable without linking to retired pages', async () => {
+  const {redis,values} = memoryRedis();
+  for (const [id,type,href] of [[post,'reply','/creators?post=retired'],[bob,'message','/inbox?id=retired']]) {
+    values.set(`digivated:notifications:item:${id}`,JSON.stringify({id,recipientId:alice,type,href}));
+    await redis(['ZADD',`digivated:notifications:index:${alice}`,Date.now(),id]);
+  }
+  const {items} = await listNotifications(redis,alice);
+  assert.equal(items.length,2);
+  assert.ok(items.every(item=>item.href===null));
+});
+
 test('notification API requires sign-in, same-site writes, and ownership', async () => {
   const {redis} = memoryRedis();
   const handler = makeNotificationsHandler({redis,env:{},verifyAccount:async req => req.headers.authorization === 'Alice' ? {id:alice} : null});
@@ -97,7 +108,7 @@ test('notification API requires sign-in, same-site writes, and ownership', async
   assert.equal((await call(null,'GET','list')).status,401);
   assert.equal((await call('Alice','POST','preferences',{preferences:{...defaultNotificationPreferences,enabled:true}},'https://elsewhere.example')).status,403);
   assert.equal((await call('Alice','POST','preferences',{preferences:{...defaultNotificationPreferences,enabled:true}})).status,200);
-  const added = await addNotification(redis,{recipientId:alice,type:'reply',actorId:bob,targetId:post});
+  const added = await addNotification(redis,{recipientId:alice,type:'reply',actorId:bob,link:'/threads/example#comment-'+post});
   assert.equal(added,true);
   assert.equal((await call('Alice','GET','list')).items.length,1);
   assert.equal((await call('Alice','POST','read',{id:bob})).status,404);
@@ -105,7 +116,7 @@ test('notification API requires sign-in, same-site writes, and ownership', async
   assert.equal((await call('Alice','GET','summary')).unread,0);
 });
 
-test('a delivered creator message notifies by default and respects an opt-out', async () => {
+test('the legacy message API still delivers messages without creating inbox notifications', async () => {
   const {redis,values} = memoryRedis();
   values.set(`digivated:creator:profile:${alice}`,JSON.stringify({name:'Alice',public:true}));
   values.set(`digivated:creator:profile:${bob}`,JSON.stringify({name:'Bob',public:true}));
@@ -121,9 +132,8 @@ test('a delivered creator message notifies by default and respects an opt-out', 
   await saveNotificationPreferences(redis,bob,{...defaultNotificationPreferences,enabled:true});
   assert.equal((await send()).status,201);
   const activity = await listNotifications(redis,bob);
-  assert.equal(activity.items.length,1);
-  assert.equal(activity.items[0].href,`/inbox?id=${alice}`);
-  assert(!JSON.stringify(activity).includes('How is your project going?'));
+  assert.equal(activity.items.length,0);
+  assert.equal(activity.unread,0);
 });
 
 import {notifyProjectApproval} from '../server/notifications.mjs';
