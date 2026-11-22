@@ -101,13 +101,13 @@
 }
 
 @layer workspace-preview {
-  .dg-workspace .dg-shell .site-menu-panel {
+  .dg-workspace .dg-shell #explore-navigation {
     position:fixed !important;
     inset:calc(68px + env(safe-area-inset-top)) 10px auto auto !important;
     width:min(340px, calc(100vw - 30px)) !important;
     height:calc(100dvh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    max-height:none;
-    display:flex;
+    max-height:none !important;
+    display:flex !important;
     flex-direction:column;
     gap:16px;
     padding:16px !important;
@@ -128,11 +128,11 @@
   .navigation-tree { list-style:none; padding:0 !important; margin:0 !important; }
   .navigation-tree li { position:relative; margin:0 !important; padding:2px 0 2px 16px !important; }
   .navigation-tree li::before {
-    content:""; position:absolute; inset:0 auto 0 3px; border-left:1px solid #bcbcbc; pointer-events:none;
+    content:""; position:absolute; inset:0 auto 0 3px; border-left:1px solid #aaa !important; pointer-events:none;
   }
   .navigation-tree li::after {
     content:""; position:absolute; inset:0 auto 50% 3px; width:10px;
-    border-left:1px solid #bcbcbc; border-bottom:1px solid #bcbcbc; border-radius:0 0 0 5px;
+    border-left:1px solid #aaa !important; border-bottom:1px solid #aaa !important; border-radius:0 0 0 5px;
     pointer-events:none;
   }
   .navigation-tree li:last-child::before { display:none; }

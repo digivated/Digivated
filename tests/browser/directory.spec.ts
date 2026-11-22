@@ -39,7 +39,7 @@ for (const width of [390, 1440]) {
     await page.reload();
     await expect(rows.first()).toHaveText('Directory fixture 0');
     await page.getByLabel('Sort by').selectOption('new');
-    await expect(page).toHaveURL(base + '/categories');
+    await expect(page).toHaveURL(base + '/discover');
     await expect(rows.first()).toHaveText('Directory fixture 26');
     await page.locator('[data-dir-more]').click();
     await expect(rows).toHaveCount(27);
@@ -50,7 +50,7 @@ for (const width of [390, 1440]) {
     await page.reload();
     await expect(page.getByRole('combobox', { name: 'Category', exact: true })).toHaveValue('Education');
     await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('');
-    await expect(page).toHaveURL(base + '/categories');
+    await expect(page).toHaveURL(base + '/discover');
     await page.locator('[data-dir-search]').fill('Directory fixture 26');
     await expect(rows).toHaveCount(1);
     await expect(rows.first()).toHaveAttribute('href', '/projects/listing/directory-26');

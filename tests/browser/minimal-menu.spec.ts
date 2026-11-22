@@ -108,7 +108,7 @@ test('navigation surfaces stay opaque over a bright backdrop', async ({ page }) 
   const menu = page.locator('#explore-navigation');
   await expect(menu).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(menu).toHaveCSS('backdrop-filter', 'none');
-  await expect(menu.getByRole('link', { name: 'Categories' })).toHaveCSS('color', 'rgb(23, 23, 23)');
+  await expect(menu.getByRole('link', { name: 'Categories' })).toHaveCSS('color', 'rgb(51, 51, 51)');
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
 });
