@@ -101,7 +101,7 @@
 }
 
 @layer workspace-preview {
-  .dg-workspace .dg-shell #explore-navigation {
+  .dg-workspace .dg-shell .dg-shell-disclosure[open] #explore-navigation {
     position:fixed !important;
     inset:calc(68px + env(safe-area-inset-top)) 10px auto auto !important;
     width:min(340px, calc(100vw - 30px)) !important;
