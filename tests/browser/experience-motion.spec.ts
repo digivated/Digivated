@@ -73,7 +73,7 @@ test('the ASCII field moves, pauses, and keeps native launch links usable', asyn
  const orbit = page.locator('.dg-activity-mark-orbit .dg-activity-dot').first();
  const ribbon = page.locator('.dg-activity-mark-ribbon .dg-activity-dot').first();
  await expect(orbit).toHaveCSS('background-color', 'rgb(57, 100, 86)');
- await expect(ribbon).toHaveCSS('background-color', 'rgb(87, 83, 97)');
+ await expect(ribbon).toHaveCSS('background-color', 'rgb(97, 99, 91)');
  await expect(orbit).toHaveCSS('animation-name', 'dg-orbit-signal');
  await expect(ribbon).toHaveCSS('animation-name', 'dg-ribbon-signal');
  const capture = () => canvas.evaluate(element => (element as HTMLCanvasElement).toDataURL());
