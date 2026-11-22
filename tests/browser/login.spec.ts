@@ -52,7 +52,7 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   });
   await page.route('https://fixture.supabase.co/auth/v1/**', route => route.fulfill({ json: user }));
   await page.route('**/api/notifications?action=list', route => route.fulfill({ json: { items: [] } }));
-  await page.route('**/api/feedback-points?action=me', route => route.fulfill({ json: { total: 0, week: 0 } }));
+  await page.route('**/api/feedback-points?action=me', route => route.fulfill({ json: { total: 12, week: 4 } }));
   await page.goto('http://127.0.0.1:4321/discover?view=featured&signed_in=1');
   const menu = page.getByRole('button', { name: `Account menu for ${email}` });
   await expect(menu).toBeVisible();
@@ -117,6 +117,10 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await expect(page.locator('#account-state')).toContainText(`You're logged in as ${email}.`);
   await expect(page.locator('#creator-profile-link')).toHaveAttribute('href', `/creator?id=${user.id}`);
   await expect(page.locator('#account-submissions')).toContainText('Submissions unavailable.');
+  const points = page.locator('main [data-feedback-points]');
+  await expect(points.locator('[data-fp-me]')).toHaveText('✦ 12 pts');
+  await expect(points.locator('[data-fp-progress-copy]')).toContainText('4 points this week');
+  await expect(points.getByRole('link', { name: /feedback/i })).toHaveAttribute('href', '/discover?sort=needs');
   submissionsAvailable = true;
   await page.reload();
   await expect(page.getByText('No launches yet')).toBeVisible();

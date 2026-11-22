@@ -15,14 +15,22 @@ test('public crawl files list canonical pages and exclude private routes',async(
  expect(xml).not.toMatch(/<loc>[^<]*\/(?:admin|account|inbox|login|saved)(?:<|\/)/);
 });
 
-for(const width of [390,1366]) test(`home has clear content and unique featured landmarks at ${width}px`,async({page})=>{
+for(const width of [390,1366]) test(`home shows launches without the extra panels at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});
- await page.route('**/api/projects?*',route=>route.fulfill({json:{items:[{id:'audit-fixture',name:'Example project',description:'A useful independent project.',category:'Apps',status:'featured',views:12,image:'/digivated-logo.webp',url:'https://example.com'}],next:null}}));
+ await page.route('**/api/projects?*',route=>route.fulfill({json:{items:[{id:'audit-fixture',name:'Example project',description:'A useful independent project.',category:'Apps',status:'featured',date:new Date().toISOString(),views:12,image:'/digivated-logo.webp',url:'https://example.com'}],next:null}}));
+ const panelRequests: string[] = [];
+ page.on('request', request => {
+  const { pathname, searchParams } = new URL(request.url());
+  if ((pathname === '/api/threads' && searchParams.get('sort') === 'trending') ||
+      (pathname === '/api/submissions' && searchParams.get('action') === 'launch-options')) panelRequests.push(request.url());
+ });
  await page.goto(base);
  await expect(page.getByRole('heading',{level:1,name:'Discover product launches'})).toBeVisible();
  await expect(page.getByText('See what makers are shipping.', {exact:true})).toBeVisible();
  await expect(page.getByRole('heading',{name:'How Digivated works'})).toBeVisible();
- await expect(page.getByRole('region',{name:'Featured products'})).toBeVisible();
+ await expect(page.locator('[data-launch-id="audit-fixture"]')).toBeVisible();
+ await expect(page.locator('.dg-home-extras, [data-spot-grid], main [data-feedback-points]')).toHaveCount(0);
+ expect(panelRequests).toEqual([]);
  const graph=await page.locator('script[type="application/ld+json"]').first().textContent();
  const types=JSON.parse(graph||'{}')['@graph'].map((node:{'@type':string})=>node['@type']);
  expect(types).toEqual(['Organization','WebSite','WebPage']);

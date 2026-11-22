@@ -2,7 +2,6 @@
 import Platform from '../layouts/Platform.astro';
 import DiscoveryHero from '../components/DiscoveryHero.astro';
 import LaunchBoard from '../components/LaunchBoard.astro';
-import FeedbackPoints from '../components/FeedbackPoints.astro';
 import ActivityMark from '../components/ActivityMark.astro';
 import '../styles/project-wall.css';
 import '../styles/home-hero.css';
@@ -18,24 +17,8 @@ import '../styles/launch-canvas.css';
       <div class="dg-hero-stat"><dt>Site visits</dt><dd class="dg-hero-activity"><span data-site-visits>—</span><ActivityMark kind="ribbon"/></dd></div>
     </dl>
   </section>
-  <div class="dg-home" data-spots>
+  <div class="dg-home">
     <div class="dg-launch-feed"><LaunchBoard/></div>
-    <div class="dg-home-extras">
-      <section class="dg-home-spots" data-section-reveal aria-labelledby="dg-home-spots-title">
-        <h2 id="dg-home-spots-title">Featured products</h2>
-        <p class="dg-spots-status" data-featured-status role="status" hidden></p>
-        <div class="dg-spot-grid" data-spot-grid></div>
-      </section>
-      <section class="dg-home-side" data-section-reveal aria-labelledby="dg-home-community-title">
-        <h2 id="dg-home-community-title">For makers</h2>
-        <FeedbackPoints variant="strip" cta="/discover?sort=needs" ctaLabel="Find a product that needs feedback"/>
-        <section class="dg-rail-threads" data-rail-threads aria-labelledby="dg-rail-threads-title" hidden>
-          <h3 id="dg-rail-threads-title"><a href="/threads">Trending threads</a></h3>
-          <ol data-rail-thread-list></ol>
-          <a class="dg-quiet-link" href="/threads">All threads →</a>
-        </section>
-      </section>
-    </div>
   </div>
   <section class="dg-about" data-section-reveal aria-labelledby="dg-about-title">
     <h2 id="dg-about-title">How Digivated works</h2>
