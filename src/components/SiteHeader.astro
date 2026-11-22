@@ -8,7 +8,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const active = (href: string) => isNavigationCurrent(path, href);
 ---
 <header class="dg-shell" data-site-header data-account="signed-out">
-  <div class="dg-shell-bar" data-nav-reflection>
+  <div class="dg-shell-bar">
     <div class="dg-shell-material" aria-hidden="true"></div>
     <a class="dg-shell-brand" href="/" aria-label="Digivated home"><img class="daylight-brand-mark" src="/digivated-daylight-mark.png" width="32" height="32" alt=""/><span>Digivated</span></a>
     <nav class="dg-shell-primary" aria-label="Primary navigation">{primaryLinks.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</nav>
@@ -17,7 +17,7 @@ const active = (href: string) => isNavigationCurrent(path, href);
       <a class="dg-shell-login" id="header-account-link" href="/login" aria-current={active('/login')?'page':undefined}>Log In</a>
       <div class="dg-shell-account" id="header-account-menu" hidden>
         <button type="button" class="dg-shell-avatar-trigger" id="header-account-trigger" aria-labelledby="header-account-label" aria-haspopup="menu" aria-expanded="false" aria-controls="header-account-panel"><span class="dg-shell-avatar" id="header-account-avatar" aria-hidden="true">D</span><span class="fl-menu-name sr-only" id="header-account-label">Account menu</span><span class="dg-shell-account-caption" aria-hidden="true">Account</span><span class="dg-shell-account-caret" aria-hidden="true">▾</span><span id="header-account-dot" class="dg-shell-badge" hidden></span></button>
-        <div class="dg-shell-account-panel" data-nav-reflection id="header-account-panel" role="menu" aria-labelledby="header-account-trigger" hidden>
+        <div class="dg-shell-account-panel" id="header-account-panel" role="menu" aria-labelledby="header-account-trigger" hidden>
           <span class="dg-shell-account-who" role="presentation"><span id="header-account-email"></span><span class="fl-menu-points"><span aria-hidden="true">✦</span> <b id="header-menu-points" hidden>0</b> feedback points</span></span>
           <div class="dg-shell-account-links" role="presentation">
             <a role="menuitem" href="/account">Your projects</a>
@@ -28,7 +28,7 @@ const active = (href: string) => isNavigationCurrent(path, href);
           <button role="menuitem" type="button" id="header-sign-out">Sign out</button>
         </div>
       </div>
-      <a class="dg-header-submit" data-glass-surface="action" href="/submit-project" aria-label="Submit a product" aria-current={active('/submit-project')?'page':undefined}><span>Submit</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="dg-header-submit" href="/submit-project" aria-label="Submit a product" aria-current={active('/submit-project')?'page':undefined}><span>Submit</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <details class="dg-shell-disclosure" data-navigation>
         <summary class="site-menu-trigger" aria-controls="explore-navigation">
           <span class="dg-shell-more-label">More</span>
@@ -37,7 +37,7 @@ const active = (href: string) => isNavigationCurrent(path, href);
           <span class="dg-shell-menu-open" aria-hidden="true"><UiIcon name="menu" size={18}/></span>
           <span class="dg-shell-menu-close" aria-hidden="true"><UiIcon name="close" size={18}/></span>
         </summary>
-        <nav id="explore-navigation" class="site-menu-panel" data-nav-reflection aria-label="Site menu">
+        <nav id="explore-navigation" class="site-menu-panel" aria-label="Site menu">
           <div class="site-menu-primary site-menu-links">
             {primaryLinks.map(([href, label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}</a>)}
           </div>
@@ -55,8 +55,6 @@ const active = (href: string) => isNavigationCurrent(path, href);
 </header>
 <script is:inline src="/header-session.js"></script>
 <script>
-import '../scripts/navigation-glass.js';
-import '../scripts/navigation-reflection.js';
 import '../scripts/account-header.js';
 import '../scripts/notification-bell.js';
 </script>

@@ -126,29 +126,12 @@ test('the centered homepage search sits directly on the page background', async 
   await expect(hero.getByRole('searchbox')).toBeVisible();
 });
 
-test('React Bits sidebar and action effects animate without changing link targets', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(base + '/');
-  const nav = page.getByRole('navigation', { name: 'Workspace navigation' });
-  const directory = nav.getByRole('link', { name: 'Directory', exact: true });
-  const row = nav.locator('.line-sidebar__item').filter({ has: page.getByRole('link', { name: 'Directory', exact: true }) });
-  const action = page.getByRole('link', { name: 'Submit launch', exact: true });
-  const band = action.locator('.glare-hover__band').first();
-  const bandTransform = () => band.evaluate(element => element.style.transform);
-  await expect.poll(bandTransform).toContain('translateX');
-
-  await directory.hover();
-  await expect.poll(() => row.evaluate(element => Number(element.style.getPropertyValue('--effect')))).toBeGreaterThan(.6);
-
-  const resting = await bandTransform();
-  await action.hover();
-  await expect.poll(bandTransform).not.toBe(resting);
-  await expect(action).toHaveAttribute('href', '/submit-project');
-
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(action.locator('.glare-hover__glare')).toBeHidden();
-  await expect(directory.locator('.line-sidebar__label')).toHaveCSS('transform', 'none');
-  await directory.press('Enter');
-  await expect(page).toHaveURL(base + '/discover');
-  await expect(directory).toHaveAttribute('aria-current', 'page');
+test('sidebar and launch actions work with reduced motion and no hydrated visual effects', async ({page}) => {
+  await page.setViewportSize({width:1440,height:900});
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.goto(base+'/');
+  await expect(page.locator('[data-react-bits]')).toHaveCount(0);
+  await expect(page.getByRole('link',{name:'Submit launch',exact:true})).toHaveAttribute('href','/submit-project');
+  await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:'Categories'}).press('Enter');
+  await expect(page).toHaveURL(base+'/categories');
 });

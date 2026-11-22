@@ -282,18 +282,33 @@ function revealRows(rows) {
   }
 }
 
+const boardDay = new Intl.DateTimeFormat('en-US', { weekday:'long', month:'short', day:'numeric', year:'numeric', timeZone:'America/New_York' });
+
 function render({ animateSearch = false, only = null } = {}) {
   const g = groups();
   const searching = Boolean(state.query || state.category);
-  const categorySelect = document.querySelector('[data-board-category]');
-  if (categorySelect) {
-    const names = [...new Set(Object.values(g).flat().map(item => item.category).filter(Boolean))].sort();
-    if (state.category && !names.includes(state.category)) names.push(state.category);
-    if (categorySelect.options.length !== names.length + 1 || names.some((name, i) => categorySelect.options[i+1].value !== name)) {
-      categorySelect.replaceChildren(new Option('All categories',''), ...names.map(name => new Option(name, name)));
-      categorySelect.value = state.category;
+  const categories = document.querySelector('[data-board-categories]');
+  if (categories) {
+    const counts = new Map();
+    for (const item of Object.values(g).flat()) {
+      if (item.category) counts.set(item.category, (counts.get(item.category) || 0) + 1);
     }
-    categorySelect.closest('[data-board-filters]').hidden = false;
+    const names = ['', ...[...counts.keys()].sort((a,b) => counts.get(b) - counts.get(a) || a.localeCompare(b))];
+    if (state.category && !counts.has(state.category)) names.push(state.category);
+    // Keep the actual buttons during filtering so the keyboard focus stays put.
+    if (categories.dataset.names !== JSON.stringify(names)) {
+      categories.dataset.names = JSON.stringify(names);
+      categories.replaceChildren(...names.map(name => {
+        const button = el('button', name || 'All');
+        button.type = 'button';
+        button.dataset.boardCategory = name;
+        return button;
+      }));
+    }
+    for (const button of categories.children) button.setAttribute('aria-pressed', String(button.dataset.boardCategory === state.category));
+    const filters = categories.closest('[data-board-filters]');
+    for (const button of filters.querySelectorAll('[data-board-sort]')) button.setAttribute('aria-pressed', String(button.dataset.boardSort === state.sort));
+    filters.hidden = false;
   }
   const total = Object.values(g).reduce((sum, items) => sum + items.length, 0);
   if (!only) {
@@ -317,7 +332,18 @@ function render({ animateSearch = false, only = null } = {}) {
     note.replaceChildren(...sectionNote(key, items));
     const list = section.querySelector('[data-section-list]');
     const rows = items.slice(0, limit).map(p => key === 'upcoming' ? upcomingRow(p) : row(p, key));
-    list.replaceChildren(...rows);
+    const ordered = [];
+    let lastDay = '';
+    for (const [index, node] of rows.entries()) {
+      if (state.sort === 'recent' && key !== 'upcoming' && !(key === 'current' && state.fair.active)) {
+        const stamp = launchTimestamp(items[index]);
+        const day = Number.isFinite(stamp) ? boardDay.format(stamp) : '';
+        if (day && day !== lastDay) ordered.push(el('li', day, 'board-date-divider'));
+        lastDay = day;
+      }
+      ordered.push(node);
+    }
+    list.replaceChildren(...ordered);
     if (animateSearch) searchRows.push(...rows.slice(0, Math.max(0, 5 - searchRows.length)));
     if (!items.length) {
       const empty = el('li', null, 'dg-row dg-row-empty');
@@ -330,7 +356,7 @@ function render({ animateSearch = false, only = null } = {}) {
     more.onclick = event => {
       state.limits[key] += PAGE;
       render();
-      const revealed = Array.from(list.children).slice(limit);
+      const revealed = Array.from(list.querySelectorAll(':scope > .dg-row')).slice(limit);
       if (event.detail === 0) revealed[0]?.querySelector('h3 a, button')?.focus();
       revealRows(revealed);
     };
@@ -427,10 +453,10 @@ const featuredFrom = projects => projects.filter(p => p.status === 'featured').s
 const sponsoredFrom = projects => { const now = Date.now(); return projects.filter(p => p.sponsored && p.status !== 'featured' && now - launchTimestamp(p) < WEEK).sort((a, b) => launchTimestamp(b) - launchTimestamp(a)); };
 
 if (board) {
-  document.querySelector('[data-board-filters]')?.addEventListener('change', event => {
+  document.querySelector('[data-board-filters]')?.addEventListener('click', event => {
     const field = event.target;
-    if (field.matches('[data-board-sort]')) state.sort = field.value;
-    else if (field.matches('[data-board-category]')) state.category = field.value;
+    if (field.matches('[data-board-sort]')) state.sort = field.dataset.boardSort;
+    else if (field.matches('[data-board-category]')) state.category = field.dataset.boardCategory;
     else return;
     state.limits = { ...defaultLimits };
     render();

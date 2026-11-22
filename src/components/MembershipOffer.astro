@@ -1,7 +1,6 @@
 ---
 import Platform from '../layouts/Platform.astro';
 import UiIcon from './UiIcon.astro';
-import ReactBits from './ReactBits.astro';
 import { membership } from '../data/membership.mjs';
 import '../styles/membership.css';
 ---
@@ -45,7 +44,7 @@ import '../styles/membership.css';
     </article>
   </div>
 
-  <section id="member-sign-in" class="membership-access" aria-labelledby="membership-access-title"><div><p class="eyebrow">Already a member?</p><h2 id="membership-access-title">Verify your purchase</h2><p>Use your Gumroad email or license key.</p><p id="membership-verified" hidden>You’re verified. <a href="/submit-project?membership=1#project-form">Submit your member project</a>.</p></div><div><form id="founding-access-form" class="carousel-access" method="post" action="/api/founding-access"><label>Gumroad license key<input name="license" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="35"/></label><p class="quiet">or</p><label>Purchase email<input name="email" type="email" autocomplete="email" maxlength="254"/></label><ReactBits surface="GlassAction" className="button primary" label="Verify membership" icon="check"/><p id="founding-access-status" role="status"></p></form><button class="button" id="founding-sign-out" type="button" hidden>Sign out of membership</button></div></section>
+  <section id="member-sign-in" class="membership-access" aria-labelledby="membership-access-title"><div><p class="eyebrow">Already a member?</p><h2 id="membership-access-title">Verify your purchase</h2><p>Use your Gumroad email or license key.</p><p id="membership-verified" hidden>You’re verified. <a href="/submit-project?membership=1#project-form">Submit your member project</a>.</p></div><div><form id="founding-access-form" class="carousel-access" method="post" action="/api/founding-access"><label>Gumroad license key<input name="license" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="35"/></label><p class="quiet">or</p><label>Purchase email<input name="email" type="email" autocomplete="email" maxlength="254"/></label><button type="submit" class="button primary">Verify membership</button><p id="founding-access-status" role="status"></p></form><button class="button" id="founding-sign-out" type="button" hidden>Sign out of membership</button></div></section>
 
   <section class="membership-faq" aria-labelledby="membership-questions"><h2 id="membership-questions">Questions</h2>
     <details><summary>Which one should I pick?</summary><p>Choose an instant spot for a single launch when spots are available. Choose membership for a project spotlight, the News archive and the UI/UX Playbook.</p></details>

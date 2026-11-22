@@ -6,9 +6,6 @@ const escape=(value)=>String(value??'').replace(/\uf0b7/g,'•').replace(/[&<>"'
 const topicNames={
 'Audit & Diagnosis':'Find what needs fixing','Layout & Hierarchy':'Organize a screen','Navigation & Information Architecture':'Make navigation easier','Mobile & Responsive':'Improve the phone experience','Color & Typography':'Improve colors & text','Components & Design System':'Keep the design consistent','Forms & Authentication':'Improve forms & sign-in','Onboarding':'Welcome new users','States & Feedback':'Explain loading, errors & success','Dashboards & Data':'Present data clearly','Accessibility':'Make it easier for everyone','AI-Look Cleanup & Copy':'Simplify design & wording','Testing & Final Polish':'Check before you launch','Search & Discovery':'Help people find things','Collaboration & Social UI':'Design shared experiences','Monetization & Upgrade UX':'Explain pricing & upgrades','Localization & Content Resilience':'Support different languages & content','Trust, Privacy & Sensitive Actions':'Protect privacy & important actions','Interaction Feedback & Motion':'Use animation & feedback well'};
 const topic=c=>topicNames[c]||c;
-$('menu-toggle')?.addEventListener('click',()=>{const open=$('menu-toggle').getAttribute('aria-expanded')!=='true';$('menu-toggle').setAttribute('aria-expanded',String(open));$('menu-toggle').textContent=open?'Close menu':'Menu';$('site-navigation').classList.toggle('is-open',open);});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('menu-toggle')?.getAttribute('aria-expanded')==='true'){$('menu-toggle').click();$('menu-toggle').focus();}});
-
 const STORE='uip-toolkit-v1';
 try { sessionStorage.removeItem('uip-edition-key-v1'); } catch {}
 const empty=()=>({version:1,favorites:[],completed:[],checks:[],steps:[],notes:'',brief:{}});
