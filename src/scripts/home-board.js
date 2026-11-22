@@ -44,7 +44,7 @@ function visitAttrs(link, p) {
   return link;
 }
 
-// Featured cards have less room for a description than the launch feed.
+// Keep homepage descriptions short. Project pages show the full text.
 function launchExcerpt(description) {
   const text = String(description || '').trim().replace(/\s+/g, ' ');
   const characters = Array.from(text);
@@ -132,7 +132,7 @@ function row(p, key) {
   appendMarks(title, p);
   const lift = key === 'current' && !fresh ? boostVotes(p.boost) : 0;
   if (lift) { const b = el('span', '⚡ Boosted', 'dg-badge dg-badge-boost'); b.title = `+${lift} from ${p.boost} feedback points this week`; title.append(b); }
-  main.append(title, el('p', p.description, 'dg-tagline'));
+  main.append(title, el('p', launchExcerpt(p.description), 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
   meta.append(el('span', p.category || 'Project'));
   if (p.creator) meta.append(el('span', 'By ' + p.creator));
@@ -175,7 +175,7 @@ function upcomingRow(item) {
   const title = el('h3');
   title.append(el('span', item.name, 'dg-upcoming-name'));
   if (Number.isFinite(Date.parse(item.launchAt))) title.append(el('span', freeLaunchDay(item.launchAt), 'dg-badge dg-badge-date'));
-  main.append(title, el('p', item.description, 'dg-tagline'));
+  main.append(title, el('p', launchExcerpt(item.description), 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
   meta.append(el('span', item.category || 'Project'));
   if (item.creator) meta.append(el('span', 'By ' + item.creator));

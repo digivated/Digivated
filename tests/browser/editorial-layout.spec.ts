@@ -23,7 +23,9 @@ test('homepage activity, launches and community sections stay in reading order',
   await expect(launch).toBeVisible();
   await expect(launch).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(launch.locator('.dg-project-art img')).toHaveCSS('object-fit', 'contain');
-  await expect(launch.locator('.dg-tagline')).toHaveText(fullDescription.trim());
+  const excerpt = await launch.locator('.dg-tagline').textContent();
+  expect(excerpt).toMatch(/^A focused tool for independent makers\..+…$/);
+  expect(Array.from(excerpt!).length).toBeLessThanOrEqual(81);
   await expect(launch.locator('.dg-project-art')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(page.locator('a[href^="/winners"], a[href="/points"], .dg-dot, [data-points-chip]')).toHaveCount(0);
   await expect(page.getByRole('link', { name: /how (launches are ranked|ranking works)/i })).toHaveCount(0);
@@ -51,6 +53,8 @@ test('homepage activity, launches and community sections stay in reading order',
     }, width <= 480);
     expect(layout, `Layout at ${width}px`).toEqual({ ordered: true, separated: true, overflow: 0 });
     if (width >= 1120) {
+      await expect(page.locator('.dg-hero-actions .dg-btn-primary')).toHaveCSS('background-color', 'rgb(23, 23, 23)');
+      await expect(page.locator('.board-categories button[aria-pressed="true"]')).toHaveCSS('background-color', 'rgb(23, 23, 23)');
       await expect(launch.locator('.dg-tagline')).toHaveCSS('white-space', 'normal');
       await expect(launch.locator('.dg-meta')).toContainText('By An independent maker');
       await expect(launch.locator('.dg-meta')).toBeVisible();
@@ -130,6 +134,7 @@ test('expanding weekly launches keeps the new entries reachable by keyboard', as
   const rows = week.locator('[data-launch-id]');
   await expect(rows).toHaveCount(10);
   const first = rows.first();
+  await expect(first.locator('.dg-tagline')).toHaveText('A product that helps independent teams.');
   await expect(first.getByRole('link', { name: /Discussion for Product/ })).toHaveAttribute('href', /#feedback$/);
   await expect(first.getByRole('button', { name: /Upvote Product/ })).toHaveAttribute('aria-pressed', 'false');
   await page.locator('html[data-motion-ready]').waitFor();

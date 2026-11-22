@@ -99,8 +99,6 @@
     html[data-theme="daylight"] body.home-refresh {
       --launch-board-width: 1120px;
       --section-title: clamp(28px, 2.6vw, 34px);
-      --home-accent: #34466b;
-      background: radial-gradient(ellipse at 55% 0%, #eef2fa, transparent 680px), #f6f7f9 !important;
     }
     html[data-theme="daylight"] body.home-refresh.platform #main {
       width: min(100%, calc(var(--launch-board-width) + 2 * var(--daylight-inset))) !important;
@@ -114,15 +112,6 @@
       width: 100%;
       max-width: var(--launch-board-width) !important;
       margin-inline: auto !important;
-    }
-    .home-refresh #main .launch-welcome .dg-btn-primary,
-    .home-refresh #main .board-categories button[aria-pressed="true"] {
-      color: #fff !important;
-      background: var(--home-accent) !important;
-      border-color: var(--home-accent) !important;
-    }
-    .home-refresh #main .launch-welcome .dg-btn-primary:is(:hover,:focus-visible) {
-      background: #283957 !important;
     }
 
     .home-refresh .board-category-bar {
@@ -144,7 +133,7 @@
       align-items: center;
       gap: 6px;
       min-height: 44px;
-      color: var(--home-accent) !important;
+      color: var(--fl-ink) !important;
       font-size: 14px;
       font-weight: 600;
       text-decoration: underline;
