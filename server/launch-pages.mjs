@@ -43,43 +43,90 @@ export function launchPublic(record, draft = false) {
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export async function renderLaunch(item, { draft = false, origin = 'https://digivated.com', template } = {}) {
   const e = escape, canonical = new URL(item.path || `/projects/${item.slug}`, origin).href;
-  const screenshot = (src,alt,primary=false) => `<figure class="launch-shot"><img src="${e(src)}" alt="${e(alt)}" width="1200" height="750" decoding="async" ${primary?'fetchpriority="high"':'loading="lazy"'}><figcaption>${e(alt)}</figcaption></figure>`;
+  const screenshots = [
+    ...(item.image ? [{ image: item.image, alt: item.alt }] : []),
+    ...item.gallery,
+  ];
   const website = safeUrl(item.website || item.ctaUrl);
+  const destination = safeUrl(item.ctaUrl) || website;
   // Outbound clicks from a published page count as a visit for feedback points (visit-feedback.js).
   const visitAttrs = draft || !item.id ? '' : ` data-visit-project="${e(item.id)}" data-visit-name="${e(item.name)}"${/^\/[^/]/.test(item.logo || '') ? ` data-visit-image="${e(item.logo)}"` : ''}`;
   const date = item.publishedAt || item.date;
   const listedDate = date && Number.isFinite(Date.parse(date)) ? new Date(date) : null;
   const categoryHref = `/discover?category=${encodeURIComponent(item.category)}`;
-  const details = `<section class="launch-info-panel" aria-labelledby="launch-details-title">
-    <h2 id="launch-details-title">Details</h2>
+  const sections = [
+    ['overview', 'Overview'],
+    ...(screenshots.length ? [['gallery', 'Gallery']] : []),
+    ['details', 'Details'],
+    ...(draft ? [] : [['feedback', 'Discussion'], ['similar', 'Similar']]),
+  ];
+  const marks = projectMarks(item).map(key => key === 'member'
+    ? '<span class="launch-mark"><span class="dg-member-mark" aria-hidden="true"></span>Member</span>'
+    : `<span class="launch-mark">${e(PROJECT_MARK_LABEL[key])}</span>`).join('');
+  const draftNotice = draft
+    ? '<p class="launch-draft" role="status">Private draft preview · Only an explicit Publish launch page action makes this public.</p>'
+    : '';
+  const vote = draft ? '' : `<button type="button" class="launch-vote" data-like-type="project" data-like-id="${e(item.id)}" data-show-zero aria-pressed="false" aria-label="Upvote this project"><span aria-hidden="true">↑</span><span data-like-count>–</span></button>`;
+  const shareControls = draft ? '' : `<div class="launch-share">
+    <button type="button" data-save-type="project" data-save-id="${e(item.id)}">Save</button>
+    <button type="button" data-copy-link>Copy link</button>
+    <button type="button" data-native-share hidden>Share</button>
+    <p role="status" data-share-status></p>
+  </div>`;
+  const gallery = screenshots.length ? `<section id="gallery" class="launch-panel launch-media" aria-labelledby="launch-gallery-title">
+    <h2 id="launch-gallery-title">Gallery</h2>
+    ${screenshots.map(({ image, alt }) => `<figure class="launch-shot"><img src="${e(image)}" alt="${e(alt)}" width="1200" height="750" decoding="async" loading="lazy"><figcaption>${e(alt)}</figcaption></figure>`).join('')}
+  </section>` : '';
+  const details = `<section id="details" class="launch-panel" aria-labelledby="launch-details-title">
+    <h2 id="launch-details-title">Project details</h2>
     <dl class="launch-facts">
       <div><dt>Category</dt><dd><a href="${e(categoryHref)}">${e(item.category)}</a></dd></div>
       ${website ? `<div><dt>Website</dt><dd><a href="${e(website)}" target="_blank" rel="noopener noreferrer"${visitAttrs}>${e(new URL(website).hostname)} ${cardIconMarkup('external')}</a></dd></div>` : ''}
       ${projectPricingOptions.includes(item.pricing) ? `<div><dt>Pricing</dt><dd>${e(item.pricing)}</dd></div>` : ''}
       ${listedDate ? `<div><dt>${item.publishedAt ? 'Published' : 'Submitted'}</dt><dd><time datetime="${listedDate.toISOString().slice(0,10)}">${e(listedDate.toLocaleDateString('en-US',{dateStyle:'medium',timeZone:'UTC'}))}</time></dd></div>` : ''}
     </dl>
-    ${draft ? '' : `<button type="button" class="launch-details-vote" data-like-type="project" data-like-id="${e(item.id)}" data-show-zero aria-pressed="false" aria-label="Upvote this project"><span aria-hidden="true">↑</span><span data-like-count>–</span><span>Upvotes</span></button>`}
+    <div class="launch-creator">
+      <h3>Meet the creator</h3><p class="creator-name">${e(item.creator)}</p>
+      ${item.bio ? `<p>${e(item.bio)}</p>` : ''}
+      ${item.socialUrl ? `<a href="${e(item.socialUrl)}" target="_blank" rel="noopener noreferrer">Creator profile ${cardIconMarkup('external')}</a>` : ''}
+    </div>
   </section>`;
-  const comments = draft ? '' : `<section id="feedback" class="launch-comments" data-project-comments="${e(item.id)}" aria-labelledby="launch-comments-title" tabindex="-1">
+  const community = draft ? '' : `<section id="feedback" class="launch-panel launch-comments" data-project-comments="${e(item.id)}" aria-labelledby="launch-comments-title" tabindex="-1">
     <h2 id="launch-comments-title">Discussion</h2>
     <p data-project-comments-message role="status">Loading the discussion…</p>
     <noscript><p>Turn on JavaScript to read and join the discussion.</p></noscript>
+  </section>
+  <section id="similar" class="launch-panel" data-launch-related="${e(item.id)}" data-category="${e(item.category)}" aria-labelledby="launch-related-title">
+    <h2 id="launch-related-title">More in ${e(item.category)}</h2>
+    <ul class="launch-related-list" hidden></ul>
+    <a class="launch-category-link" href="${e(categoryHref)}">Browse this category <span aria-hidden="true">→</span></a>
   </section>`;
-  const body = `${draft?'<p class="launch-draft" role="status">Private draft preview · Only an explicit Publish launch page action makes this public.</p>':''}<article class="launch-page"><a class="launch-back" href="/discover">← Product directory</a>
-<header class="launch-intro">
-<div class="launch-hero"><div class="launch-identity" aria-hidden="true"><span>${e(item.name.slice(0,2).toUpperCase())}</span>${item.logo ? `<img src="${e(item.logo)}" alt="" width="96" height="96">` : ''}</div>
-<div class="launch-hero-copy"><p class="launch-labels"><span>${e(item.category)}</span>${projectMarks(item).map(key => key === 'member' ? '<span class="launch-spotlight launch-member"><span class="dg-member-mark" aria-hidden="true"></span>Member</span>' : `<span class="launch-spotlight">${key === 'rising' ? cardIconMarkup('external') : ''}${e(PROJECT_MARK_LABEL[key])}</span>`).join('')}</p>
-<h1>${e(item.name)}</h1><p class="launch-byline">By ${e(item.creator)}</p><div class="actions"><div class="launch-main-actions">${item.ctaUrl?`<a class="button primary" href="${e(item.ctaUrl)}" target="_blank" rel="noopener noreferrer"${visitAttrs}>${e(item.ctaLabel)} ${cardIconMarkup('external')}</a>`:'<p>Project link currently unavailable.</p>'}${draft?'':`<a class="button" href="#feedback">Join the discussion</a>`}</div>${draft?'':`<div class="launch-secondary-actions"><button class="button" type="button" data-save-type="project" data-save-id="${e(item.id)}">Save</button><button class="button" type="button" data-copy-link>Copy link</button><button class="button" type="button" data-native-share hidden>Share</button></div>`}</div><p role="status" data-share-status></p></div></div></header>
-<div class="launch-layout">
-<div class="launch-story">
-<section class="launch-overview" aria-labelledby="launch-about"><h2 id="launch-about">About the project</h2><p>${e(item.description)}</p>${!item.logo && !item.image && !item.gallery.length ? '<p class="launch-no-media">For a closer look, visit the project website.</p>' : ''}</section>
-${item.image || item.gallery.length ? `<section class="launch-media" aria-label="Project screenshots">${item.image ? screenshot(item.image,item.alt,true) : ''}${item.gallery.map(s=>screenshot(s.image,s.alt)).join('')}</section>` : ''}
-</div>
-<div class="launch-maker-column" role="complementary" aria-label="Project information"><aside class="launch-creator"><h2>Meet the creator</h2><p class="creator-name">${e(item.creator)}</p>${item.bio?`<p>${e(item.bio)}</p>`:''}${item.socialUrl?`<a href="${e(item.socialUrl)}" target="_blank" rel="noopener noreferrer">Creator profile ${cardIconMarkup('external')}</a>`:''}</aside>${details}${draft ? '' : `<section class="launch-featured-panel" data-launch-featured="${e(item.id)}" aria-labelledby="launch-featured-title" hidden>
-  <h2 id="launch-featured-title">Member projects</h2>
-  <ul class="launch-featured-list"></ul>
-  <a class="launch-featured-all" href="/discover?view=featured">See all members <span aria-hidden="true">→</span></a>
-</section>`}</div>${comments}</div><nav class="launch-next" aria-label="Keep exploring"><a href="/discover">Explore more projects <span aria-hidden="true">→</span></a><a href="/creators">Meet the builders <span aria-hidden="true">→</span></a></nav></article>`;
+  const body = `${draftNotice}<article class="launch-page">
+    <nav class="launch-breadcrumb" aria-label="Breadcrumb"><a href="/discover">Projects</a><span aria-hidden="true">/</span><a href="${e(categoryHref)}">${e(item.category)}</a></nav>
+    <header class="launch-panel launch-intro">
+      <div class="launch-cover" aria-hidden="true">${screenshots.length ? `<img src="${e(screenshots[0].image)}" alt="" width="1200" height="750" fetchpriority="high" decoding="async">` : ''}</div>
+      <div class="launch-hero">
+        <div class="launch-identity" aria-hidden="true"><span>${e(item.name.slice(0,2).toUpperCase())}</span>${item.logo ? `<img src="${e(item.logo)}" alt="" width="96" height="96">` : ''}</div>
+        <div class="launch-hero-copy">
+          <h1>${e(item.name)}</h1>
+          <p class="launch-byline">By ${e(item.creator)}</p>
+          ${marks ? `<p class="launch-labels">${marks}</p>` : ''}
+        </div>
+        <div class="launch-actions">
+          ${destination ? `<a class="button primary" href="${e(destination)}" target="_blank" rel="noopener noreferrer"${visitAttrs}>${e(item.ctaLabel)} ${cardIconMarkup('external')}</a>` : '<p>Project link currently unavailable.</p>'}
+          ${vote}
+        </div>
+        ${shareControls}
+      </div>
+    </header>
+    <nav class="launch-section-nav" aria-label="On this page">${sections.map(([id, label]) => `<a href="#${id}">${label}</a>`).join('')}</nav>
+    <section id="overview" class="launch-panel launch-overview" aria-labelledby="launch-about">
+      <h2 id="launch-about">Overview</h2><p>${e(item.description)}</p>
+    </section>
+    ${gallery}
+    ${details}
+    ${community}
+  </article>`;
   let shell = template || await readFile(new URL('./generated/project.html', import.meta.url),'utf8');
   if(draft) shell=shell.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'');
   shell=shell.replace(/<script\b[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/i,'');

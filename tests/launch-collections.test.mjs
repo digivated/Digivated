@@ -13,14 +13,14 @@ const page={bio:'An approved bio.',alt:'Project dashboard',ctaLabel:'Try the app
 test('published project pages lead to feedback and further discovery', async () => {
  const item={id:'project-one',slug:'same-name-project-one',name:'Same name',description:'A useful project.',creator:'Creator',category:'Apps',sponsored:false,bio:'',ctaLabel:'Visit project',ctaUrl:'https://example.com',socialUrl:'',image:'',gallery:[]};
  const html=await renderLaunch(item,{template});
- assert.match(html,/href="#feedback">Join the discussion<\/a>/);
- assert.match(html,/id="feedback" class="launch-comments" data-project-comments="project-one"/);
+ assert.match(html,/href="#feedback">Discussion<\/a>/);
+ assert.match(html,/id="feedback" class="launch-panel launch-comments" data-project-comments="project-one"/);
  assert.match(html,/<h2 id="launch-comments-title">Discussion<\/h2>/);
  assert.doesNotMatch(html,/launch-comment-form/,'guests no longer get a posting form; the signed-in discussion replaces it');
  const draft = await renderLaunch(item,{template,draft:true});
  assert.doesNotMatch(draft,/data-project-comments|href="#feedback"/);
- assert.match(html,/class="launch-next"/);
- assert.match(html,/href="\/creators">Meet the builders/);
+ assert.match(html,/href="#similar">Similar<\/a>/);
+ assert.match(html,/href="\/discover\?category=Apps">Browse this category/);
  assert.match(html,/rel="canonical" href="https:\/\/digivated.com\/projects\/same-name-project-one"/);
  const schema=JSON.parse(html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)?.[1]||'{}');
  assert.equal(schema.name,'Same name');
@@ -48,7 +48,7 @@ test('Redis: explicit page publication, collision-safe stable URLs, private fiel
  const second=await saveRecord(redis,'submission',{...record('project-two'),revision:0,status:'approved',page,pageAction:'publish'});assert.notEqual(second.slug,slug);
  assert.equal((await call(saved,'/api/saved-item?type=project&id=project-one')).status,200);
  first=await saveRecord(redis,'submission',{...first,page,pageAction:'unpublish'});assert.equal((await call(handler,`/projects/${slug}`)).status,404);assert.equal((await call(handler,`/api/project-page?slug=${slug}&asset=primary`)).status,404);
- first=await saveRecord(redis,'submission',{...first,page:{...page,bio:'',gallery:[]},removeImage:true,pageAction:'publish'});response=await call(handler,`/projects/${slug}`);assert.equal(response.status,200);assert.match(response.body,/closer look/);
+ first=await saveRecord(redis,'submission',{...first,page:{...page,bio:'',gallery:[]},removeImage:true,pageAction:'publish'});response=await call(handler,`/projects/${slug}`);assert.equal(response.status,200);assert.doesNotMatch(response.body,/id="gallery"/);assert.match(response.body,/href="https:\/\/example.com\/app"/);
  first=await saveRecord(redis,'submission',{...first,status:'archived'});assert.equal((await call(saved,'/api/saved-item?type=project&id=project-one')).status,404);assert.equal((await call(handler,`/projects/${slug}`)).status,404);
  await redis(['DEL','digivated:submission:project-two']);assert.equal((await call(handler,`/projects/${second.slug}`)).status,404);assert.equal((await call(publicApi,'/api/projects?id=project-two')).status,404);
  await redis(['FLUSHDB']);
