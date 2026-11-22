@@ -184,16 +184,16 @@ test('signed-in overview keeps launch details and profile within reach', async (
    }] },
  }));
  await page.route('**/api/creator-profile**', route => route.fulfill({
-  json: route.request().url().includes('action=feed')
-   ? { items: [] }
-   : { id: 'fixture-owner', profile: { name: 'Studio North', public: false } },
+  json: { id: 'fixture-owner', profile: { name: 'Studio North', public: false } },
  }));
  let analyticsRequests = 0;
  await page.route('**/api/maker-stats?*', route => {
   analyticsRequests++;
   return route.fulfill({ json: { days: [], totals: { views: 2, visits: 1, upvotes: 0, comments: 0 } } });
  });
- await page.goto('http://127.0.0.1:4321/account');
+ await page.goto('http://127.0.0.1:4321/account?tab=following');
+ await expect(page).toHaveURL(/\/account$/);
+ await expect(page.getByRole('tab', { name: 'Following' })).toHaveCount(0);
  await expect(page.getByRole('tab', { name: 'Overview' })).toHaveAttribute('aria-selected', 'true');
  const project = page.locator('#project-studio-notes');
  await expect(project.getByRole('link', { name: 'View project and feedback' })).toHaveAttribute('href', '/projects/listing/studio-notes');

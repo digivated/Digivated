@@ -22,7 +22,6 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
         <button type="button" role="tab" id="account-tab-projects" aria-controls="account-panel-projects" aria-selected="true" data-account-tab="projects">Overview</button>
         <button type="button" role="tab" id="account-tab-analytics" aria-controls="account-panel-analytics" aria-selected="false" tabindex="-1" data-account-tab="analytics">Analytics</button>
         <button type="button" role="tab" id="account-tab-profile" aria-controls="account-panel-profile" aria-selected="false" tabindex="-1" data-account-tab="profile">Profile</button>
-        <button type="button" role="tab" id="account-tab-following" aria-controls="account-panel-following" aria-selected="false" tabindex="-1" data-account-tab="following">Following</button>
         <button type="button" role="tab" id="account-tab-settings" aria-controls="account-panel-settings" aria-selected="false" tabindex="-1" data-account-tab="settings">Settings</button>
       </div>
       <section id="account-panel-projects" role="tabpanel" aria-labelledby="account-tab-projects" class="fl-tabpanel">
@@ -46,9 +45,6 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
       </section>
       <section id="account-panel-profile" role="tabpanel" aria-labelledby="account-tab-profile" class="fl-tabpanel" hidden>
         <section class="creator-profile-editor fl-card fl-panel-pad" aria-labelledby="creator-profile-title"><h2 id="creator-profile-title">Your profile</h2><p>Help builders find you and your projects. Your email and review notes stay private.</p><form id="creator-profile-form" class="fl-form"><div class="creator-logo-editor"><span class="creator-avatar" id="creator-logo-preview" aria-hidden="true">D</span><label>Profile logo <span class="quiet">(PNG, JPG or WebP)</span><input id="creator-logo-input" type="file" accept="image/png,image/jpeg,image/webp"/><small>Square images work best. Your logo appears on your creator profile.</small></label></div><label>Display name<input name="name" maxlength="60" required placeholder="Your name or studio"/></label><label>Short bio<textarea name="bio" maxlength="240" rows="3" placeholder="What are you building?"></textarea></label><label>Website <span class="quiet">(optional)</span><input name="website" type="url" maxlength="300" placeholder="https://your-site.com"/></label><label>Social profile <span class="quiet">(optional)</span><input name="social" type="url" maxlength="300" placeholder="https://x.com/yourname"/></label><label class="creator-profile-visibility"><input name="public" type="checkbox"/> Show my profile publicly</label><div class="creator-profile-actions fl-actions"><button class="button primary" type="submit">Save profile</button><a id="creator-profile-link" class="fl-btn" hidden>View public profile</a></div><p id="creator-profile-status" class="fl-status" role="status" aria-live="polite"></p></form></section>
-      </section>
-      <section id="account-panel-following" role="tabpanel" aria-labelledby="account-tab-following" class="fl-tabpanel" hidden>
-        <section class="creator-following-feed fl-card fl-panel-pad"><h2>From creators you follow</h2><p id="creator-feed-status" class="quiet">Loading recent projects…</p><div id="creator-feed" class="creator-projects"></div><a href="/creators">Explore creators →</a></section>
       </section>
       <section id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" class="fl-tabpanel" hidden>
         <div class="fl-settings">
