@@ -67,12 +67,12 @@ test('saved collection creation still works',async({page})=>{
  await page.reload();await expect(page.locator('#saved-folders')).toContainText('My project shortlist');
 });
 
-for (const width of [390, 1440]) test(`creator breadcrumbs align and fit at ${width}px`, async ({page}) => {
+for (const width of [390, 1440]) test(`About breadcrumbs align and fit at ${width}px`, async ({page}) => {
  await page.setViewportSize({width,height:900});
- await page.goto(base+'/creators');
+ await page.goto(base+'/about');
  const result = await page.evaluate(() => {
   const crumb = document.querySelector('.site-breadcrumbs')!.getBoundingClientRect();
-  const heading = document.querySelector('.creator-social-heading')!.getBoundingClientRect();
+  const heading = document.querySelector('.page-intro')!.getBoundingClientRect();
   const last = document.querySelector('.site-breadcrumbs [aria-current="page"]')!.getBoundingClientRect();
   return {offset:Math.abs(crumb.left-heading.left),fits:last.right<=crumb.right-4,inside:crumb.left>=0&&crumb.right<=innerWidth};
  });

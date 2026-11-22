@@ -382,13 +382,13 @@
   }
 
   /* Shared interaction states for older public components. */
-  html[data-theme="daylight"] body :is(.creator-profile-editor,.creator-post:not(.creator-public .creator-post),.creator-projects article,.creator-inbox-list,.creator-inbox-thread,.inbox-picker,.packet-workspace .panel,.packet-workspace #site-navigation,.packet-workspace .start-steps li) {
+  html[data-theme="daylight"] body :is(.creator-profile-editor,.creator-post:not(.creator-public .creator-post),.creator-projects article,.packet-workspace .panel,.packet-workspace #site-navigation,.packet-workspace .start-steps li) {
     background: var(--fl-surface) !important;
     border-color: var(--fl-line) !important;
     color: var(--fl-copy) !important;
   }
-  html[data-theme="daylight"] body :is(.creator-public-intro .creator-avatar,.creator-tabs,.creator-timeline,.creator-projects,.creator-inbox-list-head,.saved-backup) { border-color: var(--fl-line) !important; }
-  html[data-theme="daylight"] body :is(.creator-back,#creator-bio,.creator-followers,#creator-public-status,.creator-tabs button,.creator-inbox-list-head button,.saved-backup summary,#main form label,.dg-fp-strip-copy span,.packet-context a) { color: var(--fl-muted) !important; }
+  html[data-theme="daylight"] body :is(.creator-public-intro .creator-avatar,.creator-tabs,.creator-timeline,.creator-projects,.saved-backup) { border-color: var(--fl-line) !important; }
+  html[data-theme="daylight"] body :is(.creator-back,#creator-bio,.creator-followers,#creator-public-status,.creator-tabs button,.saved-backup summary,#main form label,.dg-fp-strip-copy span,.packet-context a) { color: var(--fl-muted) !important; }
   html[data-theme="daylight"] body :is(.creator-tabs .active,.dg-moved a,.creator-profile-links a,.fl-menu-points,.fl-menu-points b,.dg-dir-needs a,.dg-dir-dialog-hint) { color: var(--fl-accent) !important; }
   html[data-theme="daylight"] body .creator-tabs .active { border-bottom-color: var(--fl-accent) !important; }
   html[data-theme="daylight"] body :is(.dg-moved,.dg-dir-needs) { color: var(--fl-copy) !important; background: var(--fl-raised) !important; border-color: var(--fl-line) !important; border-radius: var(--fl-radius) !important; }
@@ -462,15 +462,15 @@
   html[data-theme="daylight"] body.platform #main > .site-breadcrumbs {
     padding-block: 12px !important;
   }
-  html[data-theme="daylight"] body #main > :is(.dg-dir, .news-page, .creator-social) {
+  html[data-theme="daylight"] body #main > :is(.dg-dir, .news-page) {
     width: 100% !important;
     margin-inline: auto !important;
   }
-  html[data-theme="daylight"] body #main > :is(.page-intro, .news-page, .creator-social, .dg-forum) {
+  html[data-theme="daylight"] body #main > :is(.page-intro, .news-page, .dg-forum) {
     margin-block-start: 0 !important;
   }
 
-  html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .creator-social-heading, .notifications-heading, .creator-inbox-heading, .invstr-heading, .membership-heading) {
+  html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .notifications-heading, .invstr-heading, .membership-heading) {
     min-width: 0;
     padding-block-end: 0 !important;
     margin-bottom: var(--editorial-space) !important;
@@ -487,7 +487,7 @@
   html[data-theme="daylight"] body #main .dg-dir-overview .dg-dir-stats {
     padding: 0 !important;
   }
-  html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .creator-social-heading, .notifications-heading, .creator-inbox-heading, .invstr-heading, .membership-heading) h1 {
+  html[data-theme="daylight"] body #main :is(.page-intro, .page-heading, .notifications-heading, .invstr-heading, .membership-heading) h1 {
     margin-block: 0 8px !important;
     font-size: var(--editorial-title) !important;
     font-weight: 560 !important;
@@ -495,7 +495,7 @@
     line-height: 1.07 !important;
     overflow-wrap: anywhere;
   }
-  html[data-theme="daylight"] body #main :is(.page-intro .lede, .page-heading .lede, .creator-social-heading-copy > p:last-child) {
+  html[data-theme="daylight"] body #main :is(.page-intro .lede, .page-heading .lede) {
     max-width: 58ch;
     margin-block: 0 !important;
     color: var(--fl-copy) !important;
@@ -512,18 +512,15 @@
   html[data-theme="daylight"] body #main .fl-badges-page .fl-badge-card {
     overflow: hidden;
   }
-  html[data-theme="daylight"] body #main :is(.news-filters button[aria-pressed="true"], .creator-hub-rail a[aria-current="page"]) {
+  html[data-theme="daylight"] body #main .news-filters button[aria-pressed="true"] {
     border-color: var(--dg-acc-line) !important;
     background: var(--daylight-wash) !important;
     color: var(--fl-ink) !important;
   }
-  html[data-theme="daylight"] body #main :is(.creator-hub-panel, .creator-social-main > .creator-tabs, .news-standards) {
+  html[data-theme="daylight"] body #main .news-standards {
     border-color: var(--fl-line) !important;
     background: var(--fl-surface) !important;
     color: var(--fl-ink) !important;
-  }
-  html[data-theme="daylight"] body #main :is(.creator-hub-rail a, .creator-hub-panel p, .creator-hub-panel button, .creator-hub-about a, .creator-hub-rail-note) {
-    color: var(--fl-copy) !important;
   }
   @media (prefers-reduced-motion: no-preference) {
     html[data-theme="daylight"] body :is(.dg-shell a, .dg-shell button, .site-menu-trigger, .dg-site-footer a, #main .button, #main .fl-btn, #main .dg-btn) {

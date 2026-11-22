@@ -6,53 +6,80 @@ const signup=document.getElementById('header-signup-link');
 const menu=document.getElementById('header-account-menu');
 const trigger=document.getElementById('header-account-trigger');
 const panel=document.getElementById('header-account-panel');
-const inboxBadge=document.getElementById('header-inbox-badge');
 const notificationBadge=document.getElementById('header-notifications-badge');
 const menuNotificationBadge=document.getElementById('menu-notifications-badge');
 const panelNotifications=document.getElementById('header-menu-notifications');
-const panelInbox=document.getElementById('header-menu-inbox');
 const dot=document.getElementById('header-account-dot');
 const avatar=document.getElementById('header-account-avatar');
-const counts={inbox:0,notifications:0};
+let notificationCount=0;
 const label=value=>value>9?'9+':String(value);
 const showCounts=()=>{
- if(panelNotifications){panelNotifications.textContent=label(counts.notifications);panelNotifications.hidden=!counts.notifications;}
- if(panelInbox){panelInbox.textContent=label(counts.inbox);panelInbox.hidden=!counts.inbox;}
- if(dot){const total=counts.inbox+counts.notifications;dot.textContent=label(total);dot.hidden=!total;}
+ if(panelNotifications){panelNotifications.textContent=label(notificationCount);panelNotifications.hidden=!notificationCount;}
+ if(dot){dot.textContent=label(notificationCount);dot.hidden=!notificationCount;}
 };
 
-let avatarAccount, avatarRequest=0, avatarUrl;
-function showAvatar(initial, src, image) {
- if(avatarUrl)URL.revokeObjectURL(avatarUrl);
- avatarUrl=src;
- if(image)avatar.replaceChildren(image);
- else avatar.textContent=initial;
+const avatarCacheKey = 'digivated:header-avatar';
+let avatarAccount = avatar?.dataset.account || '';
+let avatarLoaded = false;
+let avatarRequest = 0;
+
+function saveAvatar(account, src) {
+ try {
+  if (account && src && src.length <= 350000) sessionStorage.setItem(avatarCacheKey, JSON.stringify({account, src}));
+  else sessionStorage.removeItem(avatarCacheKey);
+ } catch { /* The photo still works when storage is unavailable. */ }
 }
 
-async function updateAvatar(address, session, refresh) {
- if(!avatar)return;
- const account=session ? (session.user?.id||address) : `fallback:${address}`;
- if(account===avatarAccount&&!refresh)return;
- const current=++avatarRequest, initial=(address||'D').slice(0,1).toUpperCase();
- if(account!==avatarAccount||!session)showAvatar(initial);
- avatarAccount=account;
- if(!session)return;
- let src;
- try{
-  const response=await fetch('/api/creator-profile?action=avatar',{
+function imageData(blob) {
+ return new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(reader.result);
+  reader.onerror = reject;
+  reader.readAsDataURL(blob);
+ });
+}
+
+async function updateAvatar(address, session, {verified, refresh}) {
+ if (!avatar) return;
+ const account = session?.user?.id || '';
+ const initial = (address || 'D').slice(0,1).toUpperCase();
+ if (account !== avatarAccount) {
+  avatarAccount = account;
+  avatarLoaded = false;
+  avatarRequest++;
+  avatar.textContent = initial;
+  saveAvatar();
+ } else if (!avatar.querySelector('img')) {
+  avatar.textContent = initial;
+ }
+ if (refresh) avatarLoaded = false;
+ if (!verified || !session || avatarLoaded) return;
+
+ const current = ++avatarRequest;
+ try {
+  const response = await fetch('/api/creator-profile?action=avatar', {
    headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store',signal:AbortSignal.timeout(8000),
   });
-  if(current!==avatarRequest)return;
-  if(response.status===204){showAvatar(initial);return;}
-  if(!response.ok)return;
-  src=URL.createObjectURL(await response.blob());
-  const image=new Image();
-  image.alt='';
-  image.src=src;
+  if (current !== avatarRequest) return;
+  if (response.status === 204) {
+   avatar.textContent = initial;
+   avatarLoaded = true;
+   saveAvatar();
+   return;
+  }
+  if (!response.ok) return;
+  const blob = await response.blob();
+  if (!['image/png','image/jpeg','image/webp'].includes(blob.type)) return;
+  const src = await imageData(blob);
+  const image = new Image();
+  image.alt = '';
+  image.src = src;
   await image.decode();
-  if(current===avatarRequest){showAvatar(initial,src,image);src=undefined;}
- }catch{/* Keep the initial or the previously loaded logo. */}
- finally{if(src)URL.revokeObjectURL(src);}
+  if (current !== avatarRequest) return;
+  avatar.replaceChildren(image);
+  avatarLoaded = true;
+  saveAvatar(account, src);
+ } catch { /* Keep the last photo until the server confirms it was removed. */ }
 }
 
 // Account dropdown: opens on click, closes on Escape, outside click, or focus leaving.
@@ -115,18 +142,16 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
     const accountEmail=document.getElementById('header-account-email');
     accountEmail.textContent=address;
     accountEmail.title=address;
-    void updateAvatar(address,state==='signed-in'?session:null,refreshAvatar);
+    void updateAvatar(address,hasAccount?session:null,{verified:signedIn,refresh:refreshAvatar});
     document.getElementById('header-account-label').textContent=address?`Account menu for ${address}`:'Account menu';
    }
-   // Inbox lives in the account menu; its unread count also shows on the avatar.
-   if(inboxBadge||panelInbox){if(inboxBadge)inboxBadge.hidden=true;counts.inbox=0;if(state==='signed-in'){fetch('/api/creator-inbox?action=list',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'}).then(response=>response.ok?response.json():null).then(data=>{if(current!==request)return;const unread=(data?.conversations||[]).reduce((sum,item)=>sum+Number(item.unread||0),0);counts.inbox=unread;if(inboxBadge){inboxBadge.textContent=label(unread);inboxBadge.hidden=!unread;}showCounts();}).catch(()=>{});}}
-   if(notificationBadge){notificationBadge.hidden=true;counts.notifications=0;if(menuNotificationBadge)menuNotificationBadge.hidden=true;if(state==='signed-in'){fetch('/api/notifications?action=summary',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'}).then(response=>response.ok?response.json():null).then(data=>{if(current!==request)return;const unread=Math.max(0,Number(data?.unread)||0);counts.notifications=unread;notificationBadge.textContent=label(unread);notificationBadge.hidden=!unread;if(menuNotificationBadge){menuNotificationBadge.textContent=unread>9?'9+ new':`${unread} new`;menuNotificationBadge.hidden=!unread;}showCounts();}).catch(()=>{});}}
+   if(notificationBadge){notificationBadge.hidden=true;notificationCount=0;if(menuNotificationBadge)menuNotificationBadge.hidden=true;if(state==='signed-in'){fetch('/api/notifications?action=summary',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'}).then(response=>response.ok?response.json():null).then(data=>{if(current!==request)return;const unread=Math.max(0,Number(data?.unread)||0);notificationCount=unread;notificationBadge.textContent=label(unread);notificationBadge.hidden=!unread;if(menuNotificationBadge){menuNotificationBadge.textContent=unread>9?'9+ new':`${unread} new`;menuNotificationBadge.hidden=!unread;}showCounts();}).catch(()=>{});}}
    const points=document.getElementById('header-menu-points');
    if(points){points.hidden=true;if(state==='signed-in'){fetch('/api/feedback-points?action=me',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'}).then(response=>response.ok?response.json():null).then(data=>{if(current!==request||!data)return;points.textContent=String(data.total);points.hidden=false;document.dispatchEvent(new CustomEvent('digivated:points',{detail:data}));}).catch(()=>{});}}
    showCounts();
   }catch{
    // Keep the visible sign-in route available during a temporary outage.
-   if(current===request&&header?.hasAttribute('data-account-guess')){
+   if(current===request&&header?.hasAttribute('data-account-guess')&&!avatar?.querySelector('img')){
     header.removeAttribute('data-account-guess');header.setAttribute('data-account','signed-out');
     link.hidden=false;if(menu)menu.hidden=true;
    }

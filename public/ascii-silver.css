@@ -282,8 +282,8 @@
  html#digivated-root[data-ascii] .compact-header-actions {gap:16px!important;}
  html#digivated-root[data-ascii] .site-breadcrumbs {padding:24px 0!important;margin:0!important;}
  html#digivated-root[data-ascii] #main > :is(section,article) {margin-block:48px var(--canvas-space)!important;}
- html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.creator-social-heading,.notifications-heading) {padding-inline:0!important;margin-bottom:48px!important;}
- html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.creator-social-heading,.notifications-heading) h1 {font-size:clamp(32px,4vw,56px)!important;line-height:1.18!important;margin-block:16px 20px!important;text-wrap:balance;}
+ html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.notifications-heading) {padding-inline:0!important;margin-bottom:48px!important;}
+ html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.notifications-heading) h1 {font-size:clamp(32px,4vw,56px)!important;line-height:1.18!important;margin-block:16px 20px!important;text-wrap:balance;}
  html#digivated-root[data-ascii] #main :is(.lede,.page-intro>p) {max-width:60ch;line-height:1.75!important;}
  html#digivated-root[data-ascii] #main :is(.launch-directory,.creator-feed-shell,.project-wall) {width:100%!important;max-width:none!important;padding-inline:0!important;}
  html#digivated-root[data-ascii] #main :is(.launch-toolbar,.wall-navigation) {gap:24px!important;margin-block:24px 40px!important;}
@@ -296,8 +296,6 @@
  html#digivated-root[data-ascii] #main .login-page {max-width:560px!important;margin-inline:auto!important;padding:32px 0 72px!important;}
  html#digivated-root[data-ascii] #main :is(.login-panel,.account-panel) {padding:24px 0!important;}
  html#digivated-root[data-ascii] #main .notifications-page {max-width:960px!important;margin-inline:auto!important;}
- html#digivated-root[data-ascii] #main .creator-social-main {width:100%!important;max-width:none!important;padding:0!important;margin:0!important;}
- html#digivated-root[data-ascii] .creator-social-layout {gap:32px!important;}
  html#digivated-root[data-ascii] .membership-page {max-width:960px!important;margin-inline:auto!important;}
  html#digivated-root[data-ascii] .membership-offer {padding:32px 0!important;}
  html#digivated-root[data-ascii] .membership-benefits {gap:28px!important;}
@@ -334,14 +332,14 @@
   html#digivated-root[data-ascii] .compact-header-actions {gap:6px!important;}
   html#digivated-root[data-ascii] #main > :is(section,article) {margin-top:28px!important;}
 
-  html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.creator-social-heading,.notifications-heading) {margin-bottom:32px!important;}
+  html#digivated-root[data-ascii] #main :is(.page-intro,.launch-heading,.notifications-heading) {margin-bottom:32px!important;}
 
  }
 }
 
 @layer ascii {
 
- html#digivated-root[data-ascii] #main :is(.submission-layout,.submission-intro,.creator-inbox-page) {width:100%!important;max-width:none!important;margin-inline:0!important;padding-inline:0!important;}
+ html#digivated-root[data-ascii] #main :is(.submission-layout,.submission-intro) {width:100%!important;max-width:none!important;margin-inline:0!important;padding-inline:0!important;}
  html#digivated-root[data-ascii] #main .project-wall :is(.wall-intro,.wall-navigation,.wall-dom-grid) {width:100%!important;max-width:none!important;margin-inline:0!important;padding-inline:0!important;}
 
  html#digivated-root[data-ascii] #main :is(.article-body,.about-copy) {max-width:72ch!important;line-height:1.8!important;}

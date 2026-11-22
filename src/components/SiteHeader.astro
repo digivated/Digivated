@@ -20,7 +20,6 @@ const active = (href: string) => isNavigationCurrent(path, href);
           <span class="dg-shell-account-who" role="presentation"><span id="header-account-email"></span><span class="fl-menu-points"><span aria-hidden="true">✦</span> <b id="header-menu-points" hidden>0</b> feedback points</span></span>
           <div class="dg-shell-account-links" role="presentation">
             <a role="menuitem" href="/account">Your projects</a>
-            <a role="menuitem" href="/inbox" aria-current={active('/inbox') ? 'page' : undefined}>Inbox <span class="fl-menu-count" id="header-menu-inbox" hidden></span></a>
             <a role="menuitem" href="/saved" aria-current={active('/saved') ? 'page' : undefined}>Saved items</a>
             <a role="menuitem" href="/account?tab=settings">Settings</a>
           </div>
@@ -46,7 +45,7 @@ const active = (href: string) => isNavigationCurrent(path, href);
   </div>
   <span class="dg-reading-track" data-reading-progress aria-hidden="true"></span>
 </header>
-<script is:inline src="/header-session.js"></script>
+<script is:inline src="/header-session.js?v=2"></script>
 <script>
 import '../scripts/account-header.js';
 import '../scripts/notification-bell.js';

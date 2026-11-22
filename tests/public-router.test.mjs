@@ -22,6 +22,16 @@ test('unknown routes cannot invoke handlers, including prototype properties', ()
     assert.equal(res.statusCode,404); assert.equal(headers['Cache-Control'],'no-store'); assert.equal(body.error,'Not found.');
   }
 });
+test('retired community pages redirect without carrying old post or contact identifiers', () => {
+  const router = makePublicRouter({});
+  for (const [path, destination] of [['/creators?post=old-post', '/threads'], ['/inbox/?id=old-contact', '/account']]) {
+    const headers = {};
+    const res = {setHeader:(name,value)=>headers[name]=value,end(){}};
+    router({url:path},res);
+    assert.equal(res.statusCode,308);
+    assert.equal(headers.Location,destination);
+  }
+});
 test('deployment keeps all capabilities with the dedicated scheduled News worker on Pro', () => {
   const entries=readdirSync(new URL('../api/',import.meta.url)).filter(name=>name.endsWith('.js'));
   assert.ok(entries.includes('weekly-digest.js'));

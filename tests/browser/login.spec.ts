@@ -40,11 +40,16 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
 
   let submissionsAvailable = false;
   await page.route('**/api/project-account', route => submissionsAvailable ? route.fulfill({ json: { email, submissions: [] } }) : route.fulfill({ status: 503, json: { error: 'Submissions unavailable.' } }));
-  let avatarAvailable = true;
-  await page.route('**/api/creator-profile?action=avatar', route => route.fulfill(avatarAvailable ? {
-    contentType: 'image/png',
-    body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a3foAAAAASUVORK5CYII=', 'base64'),
-  } : { status: 204 }));
+  let avatarStatus = 200;
+  let avatarResponseReady: Promise<void> | undefined;
+  await page.route('**/api/creator-profile?action=avatar', async route => {
+    const status = avatarStatus;
+    await avatarResponseReady;
+    return route.fulfill(status === 200 ? {
+      contentType: 'image/png',
+      body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a3foAAAAASUVORK5CYII=', 'base64'),
+    } : { status });
+  });
   await page.route('https://fixture.supabase.co/auth/v1/**', route => route.fulfill({ json: user }));
   await page.route('**/api/notifications?action=list', route => route.fulfill({ json: { items: [] } }));
   await page.route('**/api/feedback-points?action=me', route => route.fulfill({ json: { total: 0, week: 0 } }));
@@ -58,7 +63,20 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await page.setViewportSize({ width: 390, height: 900 });
   const avatar = page.locator('#header-account-avatar');
   await expect(avatar.locator('img')).toBeVisible();
-  avatarAvailable = false;
+  avatarStatus = 503;
+  let releaseAvatarResponse!: () => void;
+  avatarResponseReady = new Promise(resolve => { releaseAvatarResponse = resolve; });
+  const refresh = page.waitForResponse('**/api/creator-profile?action=avatar');
+  try {
+    await page.reload();
+    await expect(avatar.locator('img')).toBeVisible();
+  } finally {
+    releaseAvatarResponse();
+    avatarResponseReady = undefined;
+  }
+  await refresh;
+  await expect(avatar.locator('img')).toBeVisible();
+  avatarStatus = 204;
   await page.evaluate(() => document.dispatchEvent(new Event('digivated:profile-logo-updated')));
   await expect(avatar).toHaveText('V');
   await page.locator('#header-notifications-link').click();
@@ -83,6 +101,7 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   expect(panel.x).toBeGreaterThanOrEqual(rail.x);
   expect(panel.x + panel.width).toBeLessThanOrEqual(rail.x + rail.width);
   await expect(accountMenu).toContainText(email);
+  await expect(accountMenu.getByRole('menuitem', { name: 'Inbox' })).toHaveCount(0);
   await expect(accountMenu).toHaveCSS('position', 'static');
   await expect(accountMenu).toHaveCSS('overflow-y', 'visible');
   await expect(sidebar).toHaveCSS('border-top-right-radius', '0px');
@@ -108,7 +127,7 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await expect(account.getByRole('tab', { name: 'Settings' })).toHaveAttribute('aria-selected', 'true');
   const settings = page.getByRole('tabpanel', { name: 'Settings' });
   await expect(settings.getByRole('link', { name: 'Manage notifications' })).toHaveAttribute('href', '/notifications');
-  await expect(settings.getByRole('link', { name: 'Open inbox' })).toHaveAttribute('href', '/inbox');
+  await expect(settings.getByRole('link', { name: 'Open inbox' })).toHaveCount(0);
   await expect(settings.getByRole('button', { name: 'Email me a reset link' })).toBeVisible();
   await menu.click();
   await expect(accountMenu.getByRole('menuitem', { name: 'Settings' })).toHaveAttribute('aria-current', 'page');

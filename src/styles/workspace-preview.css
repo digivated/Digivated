@@ -29,7 +29,7 @@
   html[data-theme="daylight"] body { background: linear-gradient(180deg, #fcfcfc, var(--fl-bg) 520px) !important; }
   html[data-theme="daylight"] body.home-refresh .dg-activity-mark-orbit { color: #444 !important; }
 
-  :is(.dg-workspace,.packet-workspace) :is(.fl-card,.submission-review,.submission-account-callout,.shop-card,.notifications-preferences,.creator-hub-panel,.rl-card,.dg-fp-meter) {
+  :is(.dg-workspace,.packet-workspace) :is(.fl-card,.submission-review,.submission-account-callout,.shop-card,.notifications-preferences,.rl-card,.dg-fp-meter) {
     background: var(--glass-light) !important;
     box-shadow: var(--glass-edge) !important;
     border-color: var(--fl-line) !important;

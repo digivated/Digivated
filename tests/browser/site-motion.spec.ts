@@ -16,7 +16,7 @@ test('public, packet and owner headings share the gentle entrance', async ({ pag
  });
  await page.setViewportSize({ width: 390, height: 844 });
  let daylightFont: string | undefined;
- for (const route of ['/discover', '/threads', '/login', '/submit-project', '/creators', '/news', '/resources', '/membership', '/inbox', '/account', '/start', '/admin']) {
+ for (const route of ['/discover', '/threads', '/login', '/submit-project', '/news', '/resources', '/membership', '/account', '/start', '/admin']) {
   await page.goto(base + route);
   await expect.poll(() => page.evaluate(() => (window as any).__animatedHeadings.length), { message: route }).toBeGreaterThan(0);
   const heading = page.locator('#main h1:visible').first();
@@ -38,10 +38,10 @@ test('public, packet and owner headings share the gentle entrance', async ({ pag
  expect(await page.evaluate(() => (window as any).__animatedHeadings)).toEqual([]);
 });
 
-test('the creators heading has no retired decorative underline', async ({ page }) => {
+test('the About heading has no retired decorative underline', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(base + '/creators');
-  const heading = page.locator('.creator-social-heading h1');
+  await page.goto(base + '/about');
+  const heading = page.locator('.page-intro h1');
   await expect(heading).toBeVisible();
   const detail = await heading.evaluate(element => {
     const style = getComputedStyle(element, '::after');

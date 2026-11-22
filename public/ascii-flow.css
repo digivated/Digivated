@@ -202,7 +202,7 @@ html[data-ascii] body .fl-menu-count{min-width:20px;padding:0 6px!important;bord
 html[data-ascii] body .fl-menu-count[hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){html[data-ascii] body .fl-menu-panel:not([hidden]){animation:fl-menu-in .16s ease-out}}
 @keyframes fl-menu-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-html[data-ascii] body .compact-site-header[data-account=signed-out] :is(#header-inbox-link,#header-notifications-link){display:none!important}
+html[data-ascii] body .compact-site-header[data-account=signed-out] #header-notifications-link{display:none!important}
 html[data-ascii] body .fl-menu-trigger{position:relative}
 html[data-ascii] body .fl-menu-trigger #header-account-dot{position:absolute;top:-4px;right:-4px}
 @media (max-width:560px){html[data-ascii] body .fl-menu-name,html[data-ascii] body .fl-menu-caret{display:none!important}html[data-ascii] body .fl-menu-trigger{padding:3px!important}}
@@ -218,7 +218,7 @@ html[data-ascii] body .fl-menu-trigger #header-account-dot{position:absolute;top
 
 /* Type: clean sans for reading, mono for labels, meta and ASCII. */
 html[data-ascii] body *{font-family:var(--fl-sans)!important}
-html[data-ascii] body :is(pre,pre *,code,kbd,samp,.fl-mono,.fl-mono *,.eyebrow,.eyebrow *,time,.fl-pill,.fl-step-mark,.site-breadcrumbs,.site-breadcrumbs *,.fl-badge-preview,.home-editorial-kicker,.home-about-label,.submission-step-label,.fl-code textarea,.queue-countdown,.queue-countdown *,.header-inbox-badge,.fl-menu-count,.fl-unread-dot,.fl-notify-group,.fl-label,.fl-hud,.fl-hud *,.fl-step-copy small,.notification-copy small,.fl-project-meta,.fl-tag){font-family:var(--fl-mono)!important}
+html[data-ascii] body :is(pre,pre *,code,kbd,samp,.fl-mono,.fl-mono *,.eyebrow,.eyebrow *,time,.fl-pill,.fl-step-mark,.site-breadcrumbs,.site-breadcrumbs *,.fl-badge-preview,.home-editorial-kicker,.home-about-label,.submission-step-label,.fl-code textarea,.queue-countdown,.queue-countdown *,.fl-menu-count,.fl-unread-dot,.fl-notify-group,.fl-label,.fl-hud,.fl-hud *,.fl-step-copy small,.notification-copy small,.fl-project-meta,.fl-tag){font-family:var(--fl-mono)!important}
 html[data-ascii] body{font-size:15px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 html[data-ascii] body :is(h1,h2,h3,h4){font-family:var(--fl-sans)!important;font-weight:500!important;color:#f3f3f3!important;-webkit-text-fill-color:currentColor!important}
 html[data-ascii] body h1{letter-spacing:-.04em!important;line-height:1.04!important}

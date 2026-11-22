@@ -3,6 +3,11 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   output: 'static',
+  // Vercel serves these redirects through the public router.
+  redirects: process.env.VERCEL === '1' ? {} : {
+    '/creators': '/threads',
+    '/inbox': '/account',
+  },
   vite: {
     plugins: [tailwindcss()],
     server: { allowedHosts: ['terminal.local'] },

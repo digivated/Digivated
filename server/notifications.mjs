@@ -65,9 +65,7 @@ export async function addNotification(redis, { recipientId, type, actorId, targe
   let href;
   if (['reply', 'feedback', 'launch'].includes(type) && typeof link === 'string' && SAFE_LINK.test(link)) href = link;
   else if (type === 'award' && link === '/#last-week') href = link;
-  else if (type === 'reply' && UUID.test(targetId)) href = `/creators?post=${encodeURIComponent(targetId)}`;
   else if (type === 'follow' && UUID.test(actorId)) href = `/creator?id=${encodeURIComponent(actorId)}`;
-  else if (type === 'message' && UUID.test(actorId)) href = `/inbox?id=${encodeURIComponent(actorId)}`;
   else if (type === 'feedback' && typeof targetId === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(targetId)) href = `/discover#project-${encodeURIComponent(targetId)}`;
   else return false;
   // Repeated follow requests should never fill somebody else's activity feed.
@@ -138,7 +136,12 @@ export async function listNotifications(redis, userId) {
   const raws = ids.length ? await redis(['MGET', ...ids.map(itemKey)]) : [];
   const unread = new Set(await redis(['SMEMBERS', unreadKey(userId)]));
   const items = raws.flatMap(raw => {
-    try { const item = JSON.parse(raw); return item.recipientId === userId && UUID.test(item.id) && TYPES.includes(item.type) ? [{ id:item.id, type:item.type, title:TITLES[item.type], href:item.href, createdAt:item.createdAt, unread:unread.has(item.id), ...detail({ actorName:item.actor, verb:item.verb, subject:item.subject, excerpt:item.excerpt, count:item.count }) }] : []; }
+    try {
+      const item = JSON.parse(raw);
+      if (item.recipientId !== userId || !UUID.test(item.id) || !TYPES.includes(item.type)) return [];
+      const retiredLink = /^\/(?:inbox|creators)(?:[/?#]|$)/.test(item.href);
+      return [{ id:item.id, type:item.type, title:TITLES[item.type], href:retiredLink ? null : item.href, createdAt:item.createdAt, unread:unread.has(item.id), ...detail({ actorName:item.actor, verb:item.verb, subject:item.subject, excerpt:item.excerpt, count:item.count }) }];
+    }
     catch { return []; }
   });
   return { preferences, items, unread: Number(await redis(['SCARD', unreadKey(userId)])) || 0 };

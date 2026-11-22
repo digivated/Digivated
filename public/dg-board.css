@@ -88,6 +88,14 @@ html[data-ascii] body .dg-bell-foot:hover{color:#fff!important;background-color:
 
 /* Notification rows: shared by the bell preview and /notifications */
 html[data-ascii] body .dg-note{position:relative;display:grid!important;grid-template-columns:32px minmax(0,1fr) auto;align-items:start;gap:12px;padding:12px 14px!important;border-bottom:1px solid var(--dgb-line)!important;color:var(--dgb-copy)!important;text-decoration:none!important;transition:background-color .18s!important}
+button.dg-note {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
 html[data-ascii] body .dg-note:hover{background-color:#151515!important;text-decoration:none!important}
 html[data-ascii] body .dg-note.is-unread{background-color:#c3a0ff0a!important}
 html[data-ascii] body .dg-note-icon{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--dgb-line-hi)!important;border-radius:2px!important;font-family:var(--fl-mono)!important;font-size:13px!important;color:#d9c6ff!important;background-color:#141414!important}

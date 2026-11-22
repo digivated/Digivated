@@ -22,8 +22,10 @@ export function notificationLine(item) {
 }
 
 export function notificationRow(item, { onOpen } = {}) {
-  const link = el('a', null, 'dg-note' + (item.unread ? ' is-unread' : ''));
-  link.href = item.href?.startsWith('/') && !item.href.startsWith('//') ? item.href : '/notifications';
+  const validHref = item.href?.startsWith('/') && !item.href.startsWith('//');
+  const link = el(validHref ? 'a' : 'button', null, 'dg-note' + (item.unread ? ' is-unread' : ''));
+  if (validHref) link.href = item.href;
+  else link.type = 'button';
   link.dataset.type = item.type;
   const icon = el('span', GLYPH[item.type] || '*', 'dg-note-icon'); icon.setAttribute('aria-hidden', 'true');
   const copy = el('span', null, 'dg-note-copy');

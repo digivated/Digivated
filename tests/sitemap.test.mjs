@@ -63,7 +63,7 @@ test('sitemap lists public pages and drops private, redirected, and member-only 
   const xml = renderSitemap(entries);
   assert.match(xml, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
   assert.match(xml, /<loc>https:\/\/digivated\.com\/projects\/fieldnotes-1<\/loc><lastmod>2026-04-02<\/lastmod>/);
-  assert.doesNotMatch(xml, /secret-draft|paused-article|example\.com|\/admin|\/api\/|\/account|\/login|\/inbox|\/saved|connect-x|research\.html|\/carousels/);
+  assert.doesNotMatch(xml, /secret-draft|paused-article|example\.com|\/admin|\/api\/|\/account|\/login|\/inbox|\/creators|\/saved|connect-x|research\.html|\/carousels/);
 });
 
 test('renderer escapes query separators', () => {
