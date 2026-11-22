@@ -290,19 +290,22 @@ function revealRows(rows) {
   }
 }
 
-function render({ animateSearch = false } = {}) {
+function render({ animateSearch = false, only = null } = {}) {
   const g = groups();
   const searching = !!state.query;
   const total = Object.values(g).reduce((sum, items) => sum + items.length, 0);
-  const rising = board.querySelector('[data-rising]');
-  if (searching && rising) rising.hidden = true;
-  else renderRising();
+  if (!only) {
+    const rising = board.querySelector('[data-rising]');
+    if (searching && rising) rising.hidden = true;
+    else renderRising();
+  }
   let matches = 0;
   const searchRows = [];
   for (const section of board.querySelectorAll('[data-board-section]')) {
     const key = section.dataset.boardSection, all = g[key] || [], limit = state.limits[key];
     const items = searching ? all.filter(project => matchesQuery(project, state.query)) : all;
     matches += items.length;
+    if (only && key !== only) continue;
     section.hidden = !items.length && (searching || key === 'upcoming');
     if (section.hidden) continue;
     const count = section.querySelector('[data-section-count]');
@@ -338,6 +341,7 @@ function render({ animateSearch = false } = {}) {
       ? `${number.format(matches)} of ${number.format(total)} launches`
       : 'No launches match your search.';
   }
+  if (only) return;
   const upvotes = state.projects.reduce((sum, p) => sum + (Number(p.votes?.all) || 0), 0);
   document.querySelectorAll('[data-stat-upvotes]').forEach(node => { node.textContent = number.format(upvotes); });
   document.querySelectorAll('[data-stat-products]').forEach(node => { node.textContent = number.format(state.projects.length); });
@@ -484,9 +488,9 @@ if (board) {
     if (home) renderSpots(featuredFrom(cached.projects), sponsoredFrom(cached.projects), cached.instant || null);
   }
   const catalogue = loadCatalogue();
-  // Last week's final results and the podium arrive separately; lists re-render when they do.
-  loadLaunches('podium').then(data => { if (!data?.order) return; state.podium = data; writeCache({ podium: data }); if (state.ready) render(); });
-  loadLaunches('upcoming').then(data => { if (!data?.items) return; state.upcoming = data; if (state.ready) render(); });
+  // Refresh just the section a late response affects.
+  loadLaunches('podium').then(data => { if (!data?.order) return; state.podium = data; writeCache({ podium: data }); if (state.ready) render({ only: 'previous' }); });
+  loadLaunches('upcoming').then(data => { if (!data?.items) return; state.upcoming = data; if (state.ready) render({ only: 'upcoming' }); });
   catalogue.then(projects => {
     state.projects = projects;
     state.ready = true;

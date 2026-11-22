@@ -83,7 +83,7 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
  const update=async(fresh=false,refreshAvatar=false)=>{
   const current=++request;
   try{
-   const {state,email,session}=await accountSession({fresh});
+   const {state,email,session}=await accountSession({fresh,optional:true});
    if(current!==request)return;
    header?.removeAttribute('data-account-guess');
    signedIn=state==='signed-in';

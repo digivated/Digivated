@@ -26,7 +26,7 @@ export function personName(person, tag = 'strong') {
 
 let sessionPromise;
 export async function session() {
-  sessionPromise ||= import('./account-session.js').then(m => m.accountSession()).then(s => s.state === 'signed-in' ? s.session.access_token : '').catch(() => '');
+  sessionPromise ||= import('./account-session.js').then(m => m.accountSession({optional:true})).then(s => s.state === 'signed-in' ? s.session.access_token : '').catch(() => '');
   return sessionPromise;
 }
 export async function api(path, body) {

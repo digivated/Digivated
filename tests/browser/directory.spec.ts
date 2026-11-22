@@ -208,3 +208,33 @@ test('sidebar navigation keeps the content and footer aligned across destination
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('#main')).toHaveCSS('view-transition-name', 'none');
 });
+
+test('signed-out launch browsing skips account setup and keeps focused rows during feed updates', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  const accountRequests: string[] = [];
+  page.on('request', request => {
+    if (new URL(request.url()).pathname === '/api/project-account') accountRequests.push(request.url());
+  });
+  await page.route('**/api/projects?**', route => route.fulfill({ json: { items: projects, next: null } }));
+  let finishUpcoming!: () => void;
+  const upcoming = new Promise<void>(resolve => { finishUpcoming = resolve; });
+  await page.route('**/api/launches?view=upcoming', async route => {
+    await upcoming;
+    await route.fulfill({ json: { items: [{
+      id: 'upcoming-after-board', name: 'Upcoming after board', launchAt: '2026-11-23T14:00:00.000Z', watchers: 0,
+    }] } });
+  });
+  await page.goto(base + '/');
+  try {
+    await expect(page.locator('[data-stat-products]')).toHaveText('27');
+    const existing = page.locator('li[data-launch-id] h3 a').first();
+    await existing.focus();
+    finishUpcoming();
+    await expect(page.getByText('Upcoming after board', { exact: true })).toBeVisible();
+    await expect(existing).toBeFocused();
+    await expect(page.getByRole('link', { name: 'Log In', exact: true }).first()).toBeVisible();
+    expect(accountRequests).toEqual([]);
+  } finally {
+    finishUpcoming();
+  }
+});
