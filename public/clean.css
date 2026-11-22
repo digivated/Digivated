@@ -487,5 +487,11 @@
 #digivated-root .launch-draft-actions .manual-launch { min-height: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; color: #52525b !important; font-size: 14px !important; font-weight: 500 !important; text-decoration: underline !important; text-underline-offset: 3px !important; box-shadow: none !important; }
 /* Dashboard uses the full panel width, like the reference */
 #digivated-root #main > :is(.fl-dash-intro, .fl-dash), #digivated-root #main:has(> .fl-dash-intro) > .site-breadcrumbs { width: 100% !important; max-width: none !important; margin-inline: 0 !important; }
+#digivated-root .creator-profile-grid { max-width: none !important; width: 100% !important; }
+/* The signed-in dashboard is an app view: no marketing footer, like the reference */
+#digivated-root:has(#account-signed-in:not([hidden])) .dg-site-footer { display: none !important; }
+/* New launch: heading, breadcrumb and form share one centered column */
+#digivated-root #main > .submission-intro, #digivated-root #main:has(> .submission-intro) > .site-breadcrumbs, #digivated-root #main > .submission-layout { width: 100% !important; max-width: 740px !important; margin-inline: auto !important; }
+#digivated-root #main > .submission-intro { padding-top: 18px !important; }
 
 }
