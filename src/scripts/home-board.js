@@ -277,7 +277,17 @@ function renderRising() {
   }));
 }
 
-function render() {
+function revealRows(rows) {
+  if (!canAnimate() || document.hidden) return;
+  for (const [index, item] of rows.slice(0, 5).entries()) {
+    if (item.contains(document.activeElement)) continue;
+    item.animate([{ opacity: .78, translate: '0 5px' }, { opacity: 1, translate: '0 0' }], {
+      duration: 260, delay: index * 24, fill: 'backwards', easing: 'cubic-bezier(.22,1,.36,1)',
+    });
+  }
+}
+
+function render({ animateSearch = false } = {}) {
   const g = groups();
   const searching = !!state.query;
   const total = Object.values(g).reduce((sum, items) => sum + items.length, 0);
@@ -285,6 +295,7 @@ function render() {
   if (searching && rising) rising.hidden = true;
   else renderRising();
   let matches = 0;
+  const searchRows = [];
   for (const section of board.querySelectorAll('[data-board-section]')) {
     const key = section.dataset.boardSection, all = g[key] || [], limit = state.limits[key];
     const items = searching ? all.filter(project => matchesQuery(project, state.query)) : all;
@@ -296,7 +307,9 @@ function render() {
     count.textContent = key === 'archive' ? `${items.length} ${items.length === 1 ? 'project' : 'projects'}` : key === 'upcoming' ? `${items.length} scheduled` : `${items.length} ${items.length === 1 ? 'launch' : 'launches'}`;
     note.replaceChildren(...sectionNote(key));
     const list = section.querySelector('[data-section-list]');
-    list.replaceChildren(...items.slice(0, limit).map(p => key === 'upcoming' ? upcomingRow(p) : row(p, key)));
+    const rows = items.slice(0, limit).map(p => key === 'upcoming' ? upcomingRow(p) : row(p, key));
+    list.replaceChildren(...rows);
+    if (animateSearch) searchRows.push(...rows.slice(0, Math.max(0, 5 - searchRows.length)));
     if (!items.length) {
       const empty = el('li', null, 'dg-row dg-row-empty');
       if (key === 'current') { const cta = el('a', 'Submit a product for this week'); cta.href = '/submit-project'; empty.append(cta); }
@@ -310,16 +323,11 @@ function render() {
       render();
       const revealed = Array.from(list.children).slice(limit);
       if (event.detail === 0) revealed[0]?.querySelector('h3 a, button')?.focus();
-      if (!canAnimate()) return;
-      for (const [index, item] of revealed.slice(0, 5).entries()) {
-        if (item.contains(document.activeElement)) continue;
-        item.animate([{ opacity: .55, translate: '0 8px' }, { opacity: 1, translate: '0 0' }], {
-          duration: 420, delay: index * 38, fill: 'backwards', easing: 'cubic-bezier(.22,1,.36,1)',
-        });
-      }
+      revealRows(revealed);
     };
     more.textContent = `View ${Math.min(PAGE, items.length - limit)} more`;
   }
+  if (animateSearch) revealRows(searchRows);
   const searchStatus = document.querySelector('[data-launch-search-status]');
   if (searchStatus) {
     searchStatus.hidden = !searching;
@@ -411,31 +419,54 @@ const sponsoredFrom = projects => { const now = Date.now(); return projects.filt
 if (board) {
   const searchForm = document.querySelector('[data-launch-search]');
   const searchField = searchForm?.querySelector('input[type="search"]');
-  if (searchField) {
+  const clearButton = searchForm?.querySelector('[data-clear-launch-search]');
+  if (searchField && clearButton) {
+    searchForm.setAttribute('data-search-enhanced', '');
+    const updateClear = () => { clearButton.hidden = !searchField.value; };
+    updateClear();
     let timer = 0;
     const applyQuery = () => {
       const query = searchField.value.trim().slice(0, 120);
       if (query === state.query) return;
       state.query = query;
       state.limits = { ...defaultLimits };
-      if (state.ready) render();
+      if (state.ready) render({ animateSearch: !!query });
     };
+    const clearQuery = () => {
+      clearTimeout(timer);
+      searchField.value = '';
+      updateClear();
+      applyQuery();
+      searchField.focus();
+    };
+    clearButton.addEventListener('click', clearQuery);
     searchForm.addEventListener('submit', event => {
       if (!state.ready) return; // The directory remains a fallback while the board loads or is unavailable.
       event.preventDefault();
       clearTimeout(timer);
       applyQuery();
     });
-    searchField.addEventListener('input', () => {
+    searchField.addEventListener('input', event => {
+      updateClear();
       clearTimeout(timer);
-      timer = setTimeout(applyQuery, 100);
+      if (!event.isComposing) timer = setTimeout(applyQuery, 100);
     });
+    searchField.addEventListener('compositionend', applyQuery);
     searchField.addEventListener('keydown', event => {
-      if (event.key !== 'Escape' || !searchField.value) return;
-      event.preventDefault();
-      clearTimeout(timer);
-      searchField.value = '';
-      applyQuery();
+      if (event.isComposing) return;
+      if (event.key === 'Escape' && searchField.value) {
+        event.preventDefault();
+        clearQuery();
+      }
+      if (event.key === 'ArrowDown' && searchField.value.trim() && state.ready) {
+        clearTimeout(timer);
+        applyQuery();
+        const firstResult = board.querySelector('[data-board-section]:not([hidden]) .dg-row:not(.dg-row-empty) :is(h3 a,.dg-watch)');
+        if (firstResult) {
+          event.preventDefault();
+          firstResult.focus();
+        }
+      }
     });
   }
   pointsChip();

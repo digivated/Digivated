@@ -1,4 +1,4 @@
-const header = document.querySelector('[data-site-header]');
+const roots = document.querySelectorAll('[data-site-header], [data-discovery-hero]');
 const preference = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
 let surface;
 let target;
@@ -32,7 +32,7 @@ function paint(now) {
   }
 }
 
-header?.addEventListener('pointermove', event => {
+function move(event) {
   if (!preference.matches || event.pointerType === 'touch' || !document.documentElement.hasAttribute('data-motion-ready')) return;
   const next = event.target.closest('[data-nav-reflection]');
   if (surface !== next) clear();
@@ -42,9 +42,12 @@ header?.addEventListener('pointermove', event => {
   target = { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
   glint ??= { ...target };
   if (!frame) frame = requestAnimationFrame(paint);
-}, { passive: true });
+}
 
-header?.addEventListener('pointerleave', clear);
-header?.addEventListener('toggle', clear, true);
+for (const root of roots) {
+  root.addEventListener('pointermove', move, { passive: true });
+  root.addEventListener('pointerleave', clear);
+  root.addEventListener('toggle', clear, true);
+}
 preference.addEventListener('change', clear);
 window.addEventListener('pagehide', clear);

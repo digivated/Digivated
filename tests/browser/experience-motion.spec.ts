@@ -23,9 +23,10 @@ test('reduced motion keeps all content visible and native search focus working',
  await expect(page.locator('.dg-activity-dot').first()).toHaveCSS('animation-name', 'none');
  const [hero, title, actions] = await Promise.all(['[data-discovery-hero]', '#dg-home-title', '.dg-hero-actions'].map(selector => page.locator(selector).boundingBox()));
  for (const bounds of [title, actions]) {
-  expect(bounds!.x).toBeCloseTo(hero!.x, 0);
+  expect(bounds!.x).toBeGreaterThan(hero!.x);
   expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(hero!.x + hero!.width + 1);
  }
+ expect(title!.x).toBeCloseTo(actions!.x, 0);
 
  expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.id==='digivated-content-entrance').length)).toBe(0);
  expect(await page.locator('.dg-hero').evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
@@ -45,7 +46,11 @@ test('hero stays readable when JavaScript is disabled',async({browser})=>{
  await expect(p.locator('#dg-home-title')).toBeVisible();
  await expect(p.locator('canvas[data-site-backdrop]')).toHaveAttribute('width', '1');
  await expect(p.getByRole('link',{name:'Submit a product',exact:true})).toHaveAttribute('href','/submit-project');
- expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
+ expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await p.getByRole('searchbox').fill('indie projects');
+ await p.getByRole('button',{name:'Search products',exact:true}).click();
+ await expect(p).toHaveURL(/\/discover\?q=indie\+projects$/);
+ await c.close();
 });
 test('the new backdrop leaves resources search and home hero actions usable',async({page})=>{
  await page.setViewportSize({width:390,height:900});
@@ -134,4 +139,18 @@ test('the particle field animates and becomes still when reduced motion is enabl
   }));
   return await frame() === stillFrame;
  }).toBe(true);
+});
+
+test('the search panel catches light on desktop and stays still with reduced motion', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(base + '/');
+  const panel = page.locator('[data-discovery-hero]');
+  await panel.hover({ position: { x: 15, y: 15 } });
+  await expect(panel).toHaveAttribute('data-reflecting', '');
+  await expect.poll(() => panel.evaluate(element => getComputedStyle(element, '::after').opacity)).toBe('1');
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(panel).not.toHaveAttribute('data-reflecting', '');
+  await expect.poll(() => panel.evaluate(element => getComputedStyle(element, '::after').content)).toBe('none');
+  await expect(panel.getByRole('searchbox')).toBeVisible();
 });

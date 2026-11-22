@@ -89,6 +89,13 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await expect(page.locator('[data-launch-id]:visible h3')).toHaveText(['Directory fixture 26']);
   await search.press('Enter');
   await expect(page).toHaveURL(base + '/');
+  await search.press('ArrowDown');
+  await expect(page.getByRole('link', { name: 'Directory fixture 26', exact: true })).toBeFocused();
+  const clear = page.getByRole('button', { name: 'Clear launch search' });
+  await clear.click();
+  await expect(search).toBeFocused();
+  await expect(search).toHaveValue('');
+  await expect(clear).toBeHidden();
   await search.fill('unmatched query');
   await expect(status).toHaveText('No launches match your search.');
   await expect(page.locator('[data-launch-id]:visible')).toHaveCount(0);
