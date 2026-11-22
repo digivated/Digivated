@@ -159,10 +159,14 @@ test('desktop shows four category shortcuts and links to all categories', async 
   const categories = ['AI', 'Business', 'Design', 'Developer Tools', 'Education', 'Entertainment',
     'Finance', 'Health', 'Marketing', 'Productivity', 'Social', 'Travel', 'Video & Audio', 'Writing & Content'];
   const fixtures = categories.map((category, index) => ({ ...projects[index], category }));
-  await page.setViewportSize({ width: 1440, height: 800 });
+  await page.setViewportSize({ width: 390, height: 800 });
   await page.route('**/api/projects*', route => route.fulfill({ json: { items: fixtures, next: null } }));
   await page.goto(base + '/');
   const filters = page.getByRole('group', { name: 'Filter by category' });
+  await expect(filters.getByRole('button')).toHaveCount(fixtures.length + 1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  expect(await filters.evaluate(element => element.scrollWidth)).toBeGreaterThan(390);
+  await page.setViewportSize({ width: 1440, height: 800 });
   await expect(filters.getByRole('button')).toHaveCount(5);
   await expect(filters.getByRole('button', { name: 'Writing & Content', exact: true })).toHaveCount(0);
   const allCategories = page.getByRole('link', { name: 'All Categories', exact: true });
