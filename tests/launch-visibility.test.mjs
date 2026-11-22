@@ -213,6 +213,15 @@ test('real Redis: maker stats are private to the owner and show 14 days and this
     assert.deepEqual(mine.data.week, { score: 2, upvotes: 1, commenters: 0, points: 0, rank: 2, of: 2 });
     assert.deepEqual(mine.data.places, []);
     assert.equal(mine.data.award, undefined);
+    // range=7: the last 7 days, the 7 before them for trends, and the newest published comments.
+    const ranged = await stats('GET', '/api/maker-stats?id=pocketlog&range=7', null, { as: 'maker' });
+    assert.equal(ranged.status, 200);
+    assert.equal(ranged.data.range, 7);
+    assert.equal(ranged.data.days.length, 7);
+    assert.equal(ranged.data.history.length, 14);
+    assert.deepEqual(Object.keys(ranged.data.previous).sort(), ['comments', 'upvotes', 'views', 'visits']);
+    assert.ok(Array.isArray(ranged.data.comments) && ranged.data.comments.every(comment => typeof comment.body === 'string' && !('accountId' in comment) && !('email' in comment)));
+    assert.equal((await stats('GET', '/api/maker-stats?id=pocketlog&range=999', null, { as: 'maker' })).data.days.length, 14, 'unknown ranges fall back to the default');
   } finally { await redis(['FLUSHDB']); }
 });
 
