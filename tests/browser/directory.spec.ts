@@ -89,7 +89,7 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   const rail = page.getByRole('complementary', { name: 'Digivated sidebar' });
   const activeLaunches = rail.getByRole('link', { name: 'Home', exact: true });
   await expect(activeLaunches).toHaveAttribute('aria-current', 'page');
-  await expect(activeLaunches).toHaveCSS('background-color', 'rgb(11, 11, 12)');
+  await expect(activeLaunches).toHaveCSS('background-color', 'rgb(255, 255, 255)'); // white pill on the gray sidebar
   await expect(rail.getByRole('link', { name: 'New Launch' })).toHaveAttribute('href', '/submit-project');
   await expect(rail).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(rail).toHaveCSS('background-image', 'none');

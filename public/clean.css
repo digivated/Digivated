@@ -420,7 +420,9 @@
 #digivated-root .fl-dash #account-sign-out { display: inline-flex !important; align-items: center !important; gap: 7px !important; border-radius: 10px !important; color: #52525b !important; }
 #digivated-root .fl-dash #account-sign-out svg { transform: scaleX(-1) !important; }
 /* On Analytics, Profile and Settings the section heading leads, like separate pages */
-#digivated-root[data-dash-signed-in][data-dash-tab]:not([data-dash-tab="projects"]) :is(.fl-dash-intro, .fl-dash .fl-dash-bar) { display: none !important; }
+#digivated-root[data-dash-signed-in][data-dash-tab]:not([data-dash-tab="projects"]) .fl-dash-intro { display: none !important; }
+/* Analytics and Profile drop the signed-in line; Settings keeps it so Sign out stays one tap away */
+#digivated-root[data-dash-signed-in]:is([data-dash-tab="analytics"], [data-dash-tab="profile"]) .fl-dash .fl-dash-bar { display: none !important; }
 
 /* Free launch note and Embed badges link */
 #digivated-root .dash-note { display: flex !important; align-items: center !important; gap: 10px !important; margin: 0 0 14px !important; padding: 12px 14px !important; border: 1px solid #ececf0 !important; border-radius: 14px !important; background: #fff !important; font-size: 13.5px !important; line-height: 1.45 !important; color: #52525b !important; box-shadow: 0 1px 2px rgba(17,17,26,.03) !important; }
@@ -484,7 +486,7 @@
 #digivated-root .launch-draft-actions { display: flex !important; flex-wrap: wrap !important; align-items: center !important; gap: 14px 18px !important; }
 #digivated-root .launch-draft-actions .dg-import { min-height: 46px !important; padding: 0 20px !important; border: 0 !important; border-radius: 12px !important; background: #0b0b0c !important; color: #fff !important; font-size: 14.5px !important; font-weight: 600 !important; box-shadow: 0 1px 2px rgba(0,0,0,.18) !important; }
 #digivated-root .launch-draft-actions .dg-import:hover { background: #26262b !important; }
-#digivated-root .launch-draft-actions .manual-launch { min-height: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; color: #52525b !important; font-size: 14px !important; font-weight: 500 !important; text-decoration: underline !important; text-underline-offset: 3px !important; box-shadow: none !important; }
+#digivated-root .launch-draft-actions .manual-launch { display: inline-flex !important; align-items: center !important; min-height: 40px !important; padding: 0 !important; border: 0 !important; background: none !important; color: #52525b !important; font-size: 14px !important; font-weight: 500 !important; text-decoration: underline !important; text-underline-offset: 3px !important; box-shadow: none !important; }
 /* Dashboard uses the full panel width, like the reference */
 #digivated-root #main > :is(.fl-dash-intro, .fl-dash), #digivated-root #main:has(> .fl-dash-intro) > .site-breadcrumbs { width: 100% !important; max-width: none !important; margin-inline: 0 !important; }
 #digivated-root .creator-profile-grid { max-width: none !important; width: 100% !important; }
