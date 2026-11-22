@@ -159,4 +159,16 @@
 #digivated-root .dg-site-footer :is(.dg-footer-bottom, .dg-footer-groups, .dg-footer-intro) { border-color: #232327 !important; }
 #digivated-root .dg-site-footer .dg-footer-credit, #digivated-root .dg-site-footer .dg-footer-credit * { color: #0b0b0c !important; }
 
+/* Docked top bar on phones and tablets: flush, square, solid white, hairline under it */
+@media (max-width: 1023px) {
+  #digivated-root [data-site-header] { position: sticky !important; top: 0 !important; z-index: 50 !important; margin: 0 !important; }
+  #digivated-root .dg-shell-bar { min-height: 52px !important; padding: env(safe-area-inset-top) 16px 0 !important; }
+  #digivated-root .dg-shell-material { inset: 0 !important; border: 0 !important; border-bottom: 1px solid #ececf0 !important; border-radius: 0 !important; background: #ffffff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: none !important; }
+  #digivated-root .dg-reading-track { left: 0 !important; right: 0 !important; width: auto !important; top: auto !important; bottom: -1px !important; height: 2px !important; }
+  #digivated-root .dg-reading-track::after { background: #0b0b0c !important; opacity: 1 !important; }
+  #digivated-root .site-menu-panel { left: 10px !important; right: 10px !important; width: auto !important; top: calc(52px + env(safe-area-inset-top) + 8px) !important; }
+}
+/* Desktop side rail: same hairline as the cards */
+#digivated-root .dg-workspace-rail { border-right-color: #ececf0 !important; background: #ffffff !important; }
+
 }
