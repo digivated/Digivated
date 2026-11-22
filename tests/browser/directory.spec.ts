@@ -79,9 +79,19 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await expect(rail.getByRole('link', { name: 'Submit a launch' })).toHaveAttribute('href', '/submit-project');
   await expect(rail).toHaveCSS('background-color', 'rgb(0, 0, 0)');
   await expect(rail).toHaveCSS('background-image', 'none');
-  await expect(rail.getByRole('navigation', { name: 'Workspace navigation' }).getByRole('link')).toHaveText([
+  const workspace = rail.getByRole('navigation', { name: 'Workspace navigation' });
+  await expect(workspace.locator('a')).toHaveText([
     'Launches', 'Directory', 'Threads', 'News', 'Resources', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
   ]);
+  await expect(workspace.getByRole('link', { name: 'News', exact: true })).toBeVisible();
+  await expect(workspace.locator('a[href="/badges"]')).toBeHidden();
+  const makers = workspace.locator('summary', { hasText: 'For makers' });
+  await makers.press('ArrowDown');
+  await expect(workspace.getByRole('link', { name: 'Feedback points' })).toBeFocused();
+  await expect(workspace.getByRole('link', { name: 'Embed badges' })).toHaveAttribute('href', '/badges');
+  await expect(workspace.locator('.site-menu-connector').first()).toBeVisible();
+  await makers.press('Enter');
+  await expect(workspace.locator('a[href="/badges"]')).toBeHidden();
   const login = rail.getByRole('link', { name: 'Log In', exact: true });
   await expect(login).toHaveAttribute('href', '/login');
   await expect(rail.locator('[data-open-search]')).toHaveCount(0);
@@ -92,6 +102,7 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   expect(submitBox!.y).toBeGreaterThan(loginBox!.y);
   await expect(page.locator('.dg-workspace-content > header')).toHaveCount(0);
   const [railBox, mainBox] = await Promise.all([rail.boundingBox(), page.locator('#main').boundingBox()]);
+  expect(railBox!.width).toBe(196);
   expect(railBox!.x + railBox!.width).toBeLessThanOrEqual(mainBox!.x);
 
   const search = page.getByRole('search', { name: 'Find a product' }).getByRole('searchbox');
@@ -126,6 +137,25 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await directory.click();
   await expect(page).toHaveURL(base + '/discover');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('the desktop sidebar opens the current branch and scrolls in a short viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 1120, height: 430 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(base + '/badges');
+  const rail = page.getByRole('complementary', { name: 'Digivated sidebar' });
+  const nav = rail.getByRole('navigation', { name: 'Workspace navigation' });
+  await expect(nav.getByRole('link', { name: 'Embed badges' })).toHaveAttribute('aria-current', 'page');
+  await expect(nav.locator('a[href="/news"]')).toBeHidden();
+  await expect(nav.locator('.site-menu-branch[open] .site-menu-connector').first()).toHaveCSS('animation-name', 'none');
+  await nav.locator('summary', { hasText: 'Explore' }).press('Enter');
+  await expect(nav.getByRole('link', { name: 'Weekly winners' })).toHaveAttribute('href', '/winners');
+  const action = rail.getByRole('link', { name: 'Submit a launch' });
+  await action.scrollIntoViewIfNeeded();
+  await expect(action).toBeInViewport();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1120);
+  await action.click();
+  await expect(page).toHaveURL(base + '/submit-project');
 });
 
 

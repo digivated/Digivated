@@ -18,6 +18,13 @@ export const menuGroups = [
     ['/shop', 'Shop'],
   ] },
 ];
+export function isNavigationCurrent(path, href) {
+  return !href.includes('?') && (
+    path === href || (href !== '/' && path.startsWith(href + '/')) ||
+    (href === '/discover' && (path === '/launch-template' || path.startsWith('/projects/'))) ||
+    (href === '/shop' && ['/membership', '/products', '/promote', '/founding-members'].includes(path))
+  );
+}
 export const menuLinks = menuGroups.flatMap(group => group.links);
 // Footer: the same destinations as the header and menu, plus account pages and socials.
 export const footerGroups = [
