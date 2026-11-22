@@ -24,12 +24,14 @@ import '../styles/launch-canvas.css';
 
 <script>
   import { freeLaunchDay, nextFreeLaunch } from '../lib/launch-calendar.mjs';
+  import { rollingCounter } from '../scripts/rolling-counter.js';
 
   const countdown = document.querySelector<HTMLTimeElement>('#queue-countdown');
   const weekBar = document.querySelector<HTMLElement>('[data-week-bar]');
   const fallback = document.querySelector<HTMLElement>('[data-countdown-fallback]');
   let timer: ReturnType<typeof setTimeout>;
   let target = 0;
+  let counter: ReturnType<typeof rollingCounter> | undefined;
 
   function updateCountdown() {
     clearTimeout(timer);
@@ -46,7 +48,8 @@ import '../styles/launch-canvas.css';
     const minutes = Math.ceil(remaining / 60_000);
     const days = Math.floor(minutes / 1440);
     const hours = Math.floor(minutes / 60) % 24;
-    countdown.textContent = `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes % 60).padStart(2, '0')}m`;
+    counter ??= rollingCounter(countdown);
+    counter.set(`${days}d ${String(hours).padStart(2, '0')}h ${String(minutes % 60).padStart(2, '0')}m`);
     if (weekBar) {
       const percent = (1 - remaining / (7 * 86_400_000)) * 100;
       weekBar.style.setProperty('--launch-progress', String(Math.max(0, Math.min(100, percent))) + '%');
