@@ -111,3 +111,53 @@ test('expanding weekly launches keeps the new entries reachable by keyboard', as
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(rows.last().locator('.dg-tagline')).toHaveCSS('animation-name', 'none');
 });
+
+test('signed-in feedback points and the how-it-works control fit the homepage sidebar', async ({ page }) => {
+  await page.addInitScript(() => {
+    sessionStorage.setItem('digivated-announcement-seen-v2', '1');
+    localStorage.setItem('sb-fixture-auth-token', JSON.stringify({
+      access_token: 'fixture-token',
+      refresh_token: 'fixture-refresh',
+      expires_at: Math.floor(Date.now() / 1000) + 3600,
+      user: { id: 'fixture-owner' },
+    }));
+  });
+  await page.route('**/api/**', route => route.fulfill({ json: { items: [], next: null } }));
+  await page.route('**/api/project-account?*', route => route.fulfill({
+    json: route.request().url().includes('action=config')
+      ? { ready: true, url: 'https://fixture.supabase.co', key: 'fixture-key' }
+      : { email: 'fixture@example.com' },
+  }));
+  await page.route('**/api/feedback-points?action=me', route => route.fulfill({ json: { total: 0 } }));
+  await page.goto(base + '/');
+  const card = page.locator('.dg-home-side [data-feedback-points]');
+  const summary = card.locator('summary');
+  const meter = summary.locator('[data-fp-me]');
+  const toggle = summary.getByText('How it works');
+  await expect(meter).toBeVisible();
+  await expect(meter).toContainText('0 pts');
+
+  for (const total of [0, 12345]) {
+    await page.evaluate(total => document.dispatchEvent(new CustomEvent('digivated:points', { detail: { total } })), total);
+    await expect(meter).toContainText(`${total} pts`);
+    for (const width of [320, 390, 900, 1024, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+
+      for (const open of [false, true]) {
+        await expect(card).toHaveJSProperty('open', open);
+        const [summaryBox, meterBox, toggleBox] = await Promise.all([
+          summary.boundingBox(), meter.boundingBox(), summary.locator('.dg-fp-toggle').boundingBox(),
+        ]);
+        expect(summaryBox && meterBox && toggleBox).toBeTruthy();
+        const summaryRight = summaryBox!.x + summaryBox!.width;
+        const meterRight = meterBox!.x + meterBox!.width;
+        const toggleRight = toggleBox!.x + toggleBox!.width;
+        expect(meterRight, `Points fit at ${width}px`).toBeLessThanOrEqual(summaryRight + 1);
+        expect(toggleRight, `Control fits at ${width}px`).toBeLessThanOrEqual(summaryRight + 1);
+        expect(meterRight <= toggleBox!.x || meterBox!.y + meterBox!.height <= toggleBox!.y,
+          `Points and control are separate at ${width}px, expanded=${open}`).toBe(true);
+        await toggle.click();
+      }
+    }
+  }
+});
