@@ -106,7 +106,7 @@ if (root) {
 
   // ---------- Rows ----------
   function row(p, index, rank) {
-    const li = el('li', null, 'dg-row dg-dir-row');
+    const li = el('li', null, 'dg-row dg-dir-row dg-project-tile');
     li.dataset.project = ''; li.dataset.projectId = p.id; li.dataset.projectName = p.name; li.dataset.projectViewsTotal = String(Number(p.views) || 0);
     li.id = 'project-' + p.id;
     li.style.setProperty('--i', String(Math.min(index, 12)));

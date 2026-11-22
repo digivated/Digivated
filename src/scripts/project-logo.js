@@ -2,7 +2,7 @@ import { safeSearchHref } from '../lib/discovery-search.mjs';
 
 export function projectLogo(project, className) {
   const wrap = document.createElement('span');
-  wrap.className = className;
+  wrap.className = className + ' dg-project-art';
   wrap.setAttribute('aria-hidden', 'true');
 
   const initials = document.createElement('span');

@@ -6,11 +6,12 @@ test('homepage activity, launches and community sections stay in reading order',
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.addInitScript(() => sessionStorage.setItem('digivated-announcement-seen-v2', '1'));
   const date = new Date().toISOString();
+  const fullDescription = 'A focused tool for independent makers. ' + 'The full product overview has more information for anyone who wants to read the details. '.repeat(3);
   await page.route('**/api/**', route => {
     const url = new URL(route.request().url());
     const items = url.pathname === '/api/projects' ? [{
       id: 'launch-fixture', name: 'An unusually long name for a featured product ' + 'a'.repeat(55),
-      description: 'A focused tool for independent makers.', creator: 'An independent maker',
+      description: fullDescription, creator: 'An independent maker',
       category: 'Writing & Content', status: 'featured', date, url: 'https://example.com',
       pageUrl: '/projects/listing/launch-fixture', image: '/digivated-daylight-mark.png',
       comments: 20, votes: { all: 17, weekly: 17 },
@@ -18,7 +19,13 @@ test('homepage activity, launches and community sections stay in reading order',
     return route.fulfill({ json: { ready: false, items, next: null, views: {}, counts: {} } });
   });
   await page.goto(base + '/');
-  await expect(page.locator('[data-launch-id="launch-fixture"]')).toBeVisible();
+  const launch = page.locator('[data-launch-id="launch-fixture"]');
+  await expect(launch).toBeVisible();
+  await expect(launch).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(launch.locator('.dg-project-art img')).toHaveCSS('object-fit', 'contain');
+  const excerpt = await launch.locator('.dg-tagline').textContent();
+  expect(excerpt!.length).toBeLessThan(fullDescription.length);
+  expect(excerpt).toMatch(/…$/);
   await expect(page.locator('a[href^="/winners"], a[href="/points"], .dg-dot, [data-points-chip]')).toHaveCount(0);
   await expect(page.getByRole('link', { name: /how (launches are ranked|ranking works)/i })).toHaveCount(0);
   const featured = page.locator('[data-spot-grid] .dg-spot:not(.is-open)');
@@ -29,7 +36,7 @@ test('homepage activity, launches and community sections stay in reading order',
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await expect(page.locator('#this-week .dg-list-title')).toBeInViewport();
-    const layout = await page.locator('#main').evaluate(main => {
+    const layout = await page.locator('#main').evaluate((main, stackActions) => {
       const box = (selector: string) => main.querySelector(selector)!.getBoundingClientRect();
       const art = box('[data-launch-id] .dg-logo-link');
       const copy = box('[data-launch-id] .dg-main');
@@ -39,10 +46,10 @@ test('homepage activity, launches and community sections stay in reading order',
           box('.dg-hero-panel').bottom <= box('#this-week').top &&
           box('.dg-board').bottom <= box('.dg-home-extras').top &&
           Math.max(box('.dg-board').bottom, box('.dg-home-extras').bottom) <= box('.dg-about').top,
-        separated: art.right <= copy.left && copy.right <= controls.left,
+        separated: art.right <= copy.left && (stackActions ? copy.bottom <= controls.top + 1 : copy.right <= controls.left),
         overflow: document.documentElement.scrollWidth - innerWidth,
       };
-    });
+    }, width <= 480 || width >= 1240);
     expect(layout, `Layout at ${width}px`).toEqual({ ordered: true, separated: true, overflow: 0 });
   }
   await page.setViewportSize({ width: 320, height: 900 });
