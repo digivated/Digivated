@@ -41,7 +41,7 @@ html#digivated-root body.platform .submission-form label {
   display:flex;flex-direction:column;gap:8px;margin:0;font-size:14px;font-weight:500;line-height:1.5;
 }
 html#digivated-root .submission-form label>.quiet {font-size:12px;margin-top:-6px}
-html#digivated-root body.platform .submission-form :is(input:not([type=checkbox]):not([type=radio]),select,textarea) {
+html#digivated-root body.platform .submission-form :is(input:not([type=checkbox],[type=radio],[type=file]),select,textarea) {
   box-sizing:border-box;min-width:0;width:100%;min-height:48px;margin:0;padding:12px 14px;
   border:1px solid var(--dg-line-strong);border-radius:8px;font:400 16px/1.5 'Inter Variable',system-ui,sans-serif;
 }
@@ -61,11 +61,6 @@ html#digivated-root .submission-option-detail a,
 html#digivated-root .submission-review a {text-decoration:underline;text-underline-offset:3px}
 html#digivated-root .submission-form .submission-upload {
   padding:20px;border:1px dashed var(--dg-line-strong);border-radius:10px;background:var(--dg-raised);
-}
-html#digivated-root .submission-form input[type=file] {border:0;padding:4px 0;background:transparent;color:var(--dg-copy);font-size:13px}
-html#digivated-root .submission-form input[type=file]::file-selector-button {
-  min-height:44px;margin-right:12px;padding:8px 14px;border:1px solid var(--dg-line-strong);
-  border-radius:7px;background:var(--dg-panel);color:var(--dg-ink);font:inherit;cursor:pointer;
 }
 html#digivated-root #project-form .submission-image-preview {
   display:grid;gap:12px;min-width:0;padding:12px;background:var(--dg-raised);
@@ -223,6 +218,26 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
 
 
 @layer workspace-preview {
+  #submission-progress {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    margin-block: 0 12px !important;
+  }
+
+  #submission-progress li { text-align: center; }
+  #submission-progress a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    min-height: 44px !important;
+    padding: 4px 2px !important;
+    white-space: normal;
+  }
+  #submission-progress .is-current a { font-weight: 680; }
+
   .submission-form .dg-badge-first {
     display: grid;
     gap: 12px;

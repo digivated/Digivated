@@ -282,3 +282,36 @@ html#digivated-root body.platform .creator-feed-shell .creator-empty-actions{gri
 html#digivated-root body.platform .creator-feed-shell .creator-empty>h2{max-width:32ch;overflow-wrap:normal}
 html#digivated-root body.platform .creator-feed-shell .creator-empty>p:not(.eyebrow){max-width:55ch;margin:0}
 html#digivated-root body.platform .creator-feed-shell .creator-project-picks{grid-column:1 / -1}
+
+
+@layer workspace-preview {
+  .fl-dash .fl-settings {
+    gap: 0;
+    border: 1px solid var(--fl-line);
+    border-radius: var(--fl-radius-card);
+    background: var(--fl-surface);
+  }
+  .fl-dash .fl-settings .fl-setting {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px 16px;
+    padding: 12px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .fl-dash .fl-settings .fl-setting[hidden] { display: none !important; }
+  .fl-dash .fl-settings .fl-setting:not(:first-child) { border-block-start: 1px solid var(--fl-line) !important; }
+  .fl-dash .fl-settings .fl-setting .fl-status:empty { display: none; }
+  .fl-dash .fl-settings .fl-btn {
+    min-height: 44px;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+  }
+  @media (max-width: 440px) {
+    .fl-dash .fl-settings .fl-setting { grid-template-columns: minmax(0, 1fr); }
+    .fl-dash .fl-settings .fl-btn { justify-self: start; }
+  }
+}

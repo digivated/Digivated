@@ -56,8 +56,13 @@ async function renderSaved(){
  const data=snapshot();if(!data.collections.some(c=>c.id===active))active='saved';const current=data.collections.find(c=>c.id===active);
  const nav=document.getElementById('saved-folders');nav.replaceChildren();
  for(const c of data.collections){const button=el('button',`${c.name} (${c.items.length})`,'button');button.type='button';button.setAttribute('aria-pressed',String(c.id===active));button.addEventListener('click',()=>{active=c.id;renderSaved();});nav.append(button);}
- document.getElementById('saved-heading').textContent=current.name;
+ const heading=document.getElementById('saved-heading');
+ heading.textContent=active==='saved'?'Collection items':current.name;
+ heading.classList.toggle('sr-only',active==='saved');
  document.getElementById('saved-count').textContent=`${current.items.length} saved ${current.items.length===1?'item':'items'}`;
+ const empty=current.items.length===0;
+ document.getElementById('saved-filters').hidden=empty;
+ document.getElementById('refresh-saved').hidden=empty;
  document.getElementById('rename-collection').hidden=active==='saved';document.getElementById('delete-collection').hidden=active==='saved';
  const query=document.getElementById('saved-search').value.toLowerCase().trim(), type=document.getElementById('saved-type').value;
  const list=document.getElementById('saved-items');list.replaceChildren();let shown=0;
@@ -67,7 +72,7 @@ async function renderSaved(){
  else card.append(el('h3',detail?.error?'Could not load item':detail?.unavailable?'Item no longer available':'Loading saved item…'),el('p',detail?.error?'Try refreshing. Your saved reference is safe.':'Unpublished or deleted content is not stored in your collections.'));
  const remove=el('button','Remove','button saved-remove');remove.setAttribute('aria-label','Remove from this collection');remove.type='button';remove.addEventListener('click',async()=>{try{await change(data=>{const c=data.collections.find(c=>c.id===active);c.items=c.items.filter(i=>itemKey(i)!==itemKey(item));});await renderSaved();message('Removed from this collection.');document.getElementById('saved-heading').focus();}catch(error){message(error.message);}});card.append(remove);list.append(card);
  }
- document.getElementById('saved-empty-panel').hidden=shown>0;document.getElementById('saved-empty-title').textContent=current.items.length?'No matches this time.':'Make room for your next idea.';document.getElementById('clear-saved-filters').hidden=!query&&!type;document.getElementById('saved-empty').textContent=current.items.length?'No saved items match these filters.':'Choose Save on any project or resource, then select this collection. Your finds will be waiting here.';
+ document.getElementById('saved-empty-panel').hidden=shown>0;document.getElementById('saved-empty-title').textContent=current.items.length?'No matches this time.':'Nothing saved yet.';document.getElementById('clear-saved-filters').hidden=!query&&!type;document.getElementById('saved-empty').textContent=current.items.length?'No saved items match these filters.':'Save a project or resource to find it here later.';
  if(problem)message(problem);
 }
 if(root){

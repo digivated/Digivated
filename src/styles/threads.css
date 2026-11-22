@@ -20,7 +20,7 @@
   .dg-forum-header > div { min-inline-size: 0; }
   .dg-forum :is(.dg-forum-header h1, .dg-thread-page h1) {
     margin: 0 !important;
-    font-size: clamp(29px, 4vw, 44px) !important;
+    font-size: clamp(28px, 3.5vw, 40px) !important;
     line-height: 1.13 !important;
     letter-spacing: -.045em !important;
     overflow-wrap: anywhere;
@@ -57,7 +57,7 @@
     font-size: 14px !important;
     line-height: 1.35;
     text-decoration: none !important;
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
   }
   .dg-forum .dg-forum-nav a:hover { background-color: var(--daylight-hover) !important; }
   .dg-forum .dg-forum-nav a[aria-current="page"] {
@@ -253,7 +253,12 @@
 
   @media (max-width: 760px) {
     .dg-forum, .dg-forum-secondary { grid-template-columns: minmax(0, 1fr); }
-    .dg-forum .dg-forum-nav nav { flex-direction: row; flex-wrap: wrap; }
+    .dg-forum .dg-forum-nav .dg-forum-list {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px;
+    }
+    .dg-forum .dg-forum-list a { min-block-size: 44px; }
     .dg-forum .dg-forum-nav { gap: 8px; }
   }
   @media (max-width: 480px) {

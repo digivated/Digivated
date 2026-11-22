@@ -459,6 +459,9 @@ if (form) {
       item.classList.toggle('is-done', done);
       const isCurrent = !done && !current;
       item.classList.toggle('is-current', isCurrent);
+      const link = item.querySelector('a');
+      if (isCurrent) link.setAttribute('aria-current', 'step');
+      else link.removeAttribute('aria-current');
       if (isCurrent) current = true;
       item.querySelector('.fl-progress-mark').textContent = done ? '[✓]' : '[ ]';
     }

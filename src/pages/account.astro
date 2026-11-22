@@ -4,7 +4,7 @@ import '../styles/project-account.css';
 import FeedbackPoints from '../components/FeedbackPoints.astro';
 ---
 <Platform title="Your Projects" description="Your Digivated dashboard: track launches, read feedback, and manage your profile.">
-  <header class="page-intro fl-dash-intro"><div><p class="eyebrow">YOUR DASHBOARD</p><h1>Your projects</h1><p class="lede">Track your launch, see what to do next, and read feedback.</p></div><a class="button primary fl-btn-primary fl-dash-cta" id="account-submit-cta" href="/submit-project" hidden>+ Submit a project</a></header>
+  <header class="page-intro fl-dash-intro"><div><h1>Your projects</h1><p class="lede">Track your launch, see what to do next, and read feedback.</p></div><a class="button primary fl-btn-primary fl-dash-cta" id="account-submit-cta" href="/submit-project" hidden>+ Submit a project</a></header>
   <section class="project-account-card fl-dash" aria-label="Project account">
     <p id="account-state" class="fl-status" role="status" aria-live="polite">Connecting to account sign-in…</p>
     <form id="account-password-reset" class="login-panel fl-card fl-form fl-panel-pad" hidden>
@@ -27,6 +27,7 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
       <section id="account-panel-projects" role="tabpanel" aria-labelledby="account-tab-projects" class="fl-tabpanel">
         <h2 id="account-submissions-title" class="sr-only">My submissions</h2>
         <div id="account-submissions" aria-live="polite"><p class="fl-status">Loading your projects…</p></div>
+        <div class="dg-fp-account"><FeedbackPoints heading="Give feedback, get bonus upvotes on your launch."/></div>
       </section>
       <section id="account-panel-profile" role="tabpanel" aria-labelledby="account-tab-profile" class="fl-tabpanel" hidden>
         <section class="creator-profile-editor fl-card fl-panel-pad" aria-labelledby="creator-profile-title"><h2 id="creator-profile-title">Your profile</h2><p>Help builders find you and your projects. Your email and review notes stay private.</p><form id="creator-profile-form" class="fl-form"><div class="creator-logo-editor"><span class="creator-avatar" id="creator-logo-preview" aria-hidden="true">D</span><label>Profile logo <span class="quiet">(PNG, JPG or WebP)</span><input id="creator-logo-input" type="file" accept="image/png,image/jpeg,image/webp"/><small>Square images work best. Your logo appears on your creator profile.</small></label></div><label>Display name<input name="name" maxlength="60" required placeholder="Your name or studio"/></label><label>Short bio<textarea name="bio" maxlength="240" rows="3" placeholder="What are you building?"></textarea></label><label>Website <span class="quiet">(optional)</span><input name="website" type="url" maxlength="300" placeholder="https://your-site.com"/></label><label>Social profile <span class="quiet">(optional)</span><input name="social" type="url" maxlength="300" placeholder="https://x.com/yourname"/></label><label class="creator-profile-visibility"><input name="public" type="checkbox"/> Show my profile publicly</label><div class="creator-profile-actions fl-actions"><button class="button primary" type="submit">Save profile</button><a id="creator-profile-link" class="fl-btn" hidden>View public profile</a></div><p id="creator-profile-status" class="fl-status" role="status" aria-live="polite"></p></form></section>
@@ -36,14 +37,13 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
       </section>
       <section id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" class="fl-tabpanel" hidden>
         <div class="fl-settings">
-          <div class="fl-card fl-panel-pad fl-setting"><div><h3>Notifications</h3><p>Choose alerts for launches, replies, follows, messages, and feedback.</p></div><a class="fl-btn" href="/notifications">Manage notifications</a></div>
+          <div class="fl-card fl-panel-pad fl-setting"><div><h3>Notifications</h3><p>Choose which activity sends you an alert.</p></div><a class="fl-btn" href="/notifications">Manage notifications</a></div>
           <div class="fl-card fl-panel-pad fl-setting"><div><h3>Inbox</h3><p>Messages from other creators.</p></div><a class="fl-btn" href="/inbox">Open inbox</a></div>
           <section id="weekly-email" class="fl-card fl-panel-pad fl-setting" hidden><div><h3>Weekly email</h3><p>Get new projects by email. Unsubscribe anytime.</p><p id="weekly-status" class="fl-status" role="status" aria-live="polite"></p></div><button class="fl-btn" id="weekly-toggle" type="button">Get weekly emails</button></section>
-          <div class="fl-card fl-panel-pad fl-setting"><div><h3>Password</h3><p>Forgot it or want a new one? We’ll email you a reset link.</p><p id="account-reset-status" class="fl-status" role="status" aria-live="polite"></p></div><button class="fl-btn" id="account-reset-link" type="button">Email me a reset link</button></div>
+          <div class="fl-card fl-panel-pad fl-setting"><div><h3>Password</h3><p>Send a reset link to your account email.</p><p id="account-reset-status" class="fl-status" role="status" aria-live="polite"></p></div><button class="fl-btn" id="account-reset-link" type="button">Email me a reset link</button></div>
         </div>
       </section>
     </div>
   </section>
-  <div class="dg-fp-account"><FeedbackPoints heading="Give feedback, get bonus upvotes on your launch."/></div>
   <script>import '../scripts/project-account.js';</script>
 </Platform>

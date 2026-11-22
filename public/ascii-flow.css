@@ -154,7 +154,7 @@ html[data-ascii] body .fl-progress{position:sticky;top:0;z-index:5;display:flex;
 html[data-ascii] body .fl-progress li{min-width:0;border-bottom:0!important}
 html[data-ascii] body .fl-progress a{display:inline-block;min-height:0!important;padding:12px 0 10px!important;margin-bottom:-2px;border-bottom:2px solid transparent;color:var(--fl-muted)!important;font-size:12px;text-decoration:none!important;white-space:nowrap}
 html[data-ascii] body .fl-progress li.is-done a{color:var(--fl-ok)!important;border-bottom-color:var(--fl-ok)!important}
-html[data-ascii] body .fl-progress li.is-current a{color:#fff!important;border-bottom-color:#e8e8e8!important}
+html[data-ascii] body .fl-progress li.is-current a{color:var(--fl-ink)!important;border-bottom-color:var(--fl-ink)!important}
 html[data-ascii] body .submission-form fieldset[id^=sub-step]{scroll-margin-top:64px}
 html[data-ascii] body #project-form.is-saved :is(fieldset,#submission-progress,.submission-review>h2,.submission-review>p:not(#submission-status),.submission-review>label,.submission-review>button[type=submit]){display:none!important}
 html[data-ascii] body #submission-badge:not([hidden]){display:grid!important;gap:12px;padding:clamp(18px,3vw,26px)!important;border:1px solid var(--fl-line)!important;border-radius:10px!important;background-color:var(--fl-panel)!important}

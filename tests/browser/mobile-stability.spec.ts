@@ -84,3 +84,32 @@ for(const width of [320,375])test(`primary mobile routes never force sideways sc
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),path).toBe(true);
  }
 });
+
+
+test('touch devices keep static navigation and skip pointer effects', async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  try {
+    const page = await context.newPage();
+    const effects: string[] = [];
+    page.on('request', request => {
+      if (/\/DigivatedSurfaces[.\w-]*\.js$/.test(new URL(request.url()).pathname)) effects.push(request.url());
+    });
+    await page.goto('http://127.0.0.1:4321/');
+    await page.getByRole('link', { name: 'Browse launches', exact: true }).click();
+    await expect(page).toHaveURL(/#this-week$/);
+    await page.goto('http://127.0.0.1:4321/saved');
+    await expect(page.getByRole('heading', { name: 'Saved items', exact: true })).toHaveCount(1);
+    await expect(page.getByRole('button', { name: 'Saved items (0)' })).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await expect(page.getByRole('button', { name: 'New collection' })).toHaveCSS('color', 'rgb(27, 27, 27)');
+    await expect(page.getByRole('heading', { name: 'Nothing saved yet.' })).toBeVisible();
+    await expect(page.getByLabel('Search saved items')).toBeHidden();
+    await page.getByRole('button', { name: 'New collection' }).click();
+    const collection = page.getByRole('dialog', { name: 'New collection' });
+    await collection.getByRole('textbox', { name: 'Name', exact: true }).fill('Weekend tools');
+    await collection.getByRole('button', { name: 'Save collection' }).click();
+    await expect(page.getByRole('heading', { name: 'Weekend tools' })).toBeVisible();
+    expect(effects).toEqual([]);
+  } finally {
+    await context.close();
+  }
+});
