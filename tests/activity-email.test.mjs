@@ -45,3 +45,16 @@ test('provider errors stay isolated from the notification request', async () => 
   });
   assert.equal(result, 'failed');
 });
+
+test('activity alerts prefer the site sender and fall back to the sign-in sender', async () => {
+  const sent = [];
+  const fetcher = async (url, init) => { if (String(url).includes('resend')) { sent.push(JSON.parse(init.body)); return new Response('{"id":"x"}', { status: 200 }); } return new Response('{}', { status: 200 }); };
+  const accountClient = { auth: { admin: { getUserById: async () => ({ data: { user: { email: 'maker@example.com', email_confirmed_at: '2026-11-01T00:00:00Z' } } }) } } };
+  const redis = async () => 1;
+  const item = { id: '11111111-1111-4111-8111-111111111111', recipientId: '22222222-2222-4222-8222-222222222222', type: 'reply' };
+  const site = { ...env, RESEND_API_KEY: 'site-fixture', ACCOUNT_EMAIL_FROM: 'Digivated <updates@example.com>' };
+  assert.equal(await sendActivityEmail(redis, item, { env: site, fetcher, accountClient }), 'sent');
+  assert.equal(sent.at(-1).from, 'Digivated <updates@example.com>');
+  assert.equal(await sendActivityEmail(redis, { ...item, id: '33333333-3333-4333-8333-333333333333' }, { env, fetcher, accountClient }), 'sent');
+  assert.equal(sent.at(-1).from, env.SIGNUP_EMAIL_FROM);
+});
