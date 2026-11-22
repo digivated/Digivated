@@ -69,7 +69,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await picker.locator('[data-copy-badge=light]').click();
  await expect(picker.locator('[data-copy-badge=light]')).toHaveText('Copied ✓');
  await expect(page.locator('#submission-badge-launch')).toContainText('November 23, 2026');
- await expect(page.locator('#submission-badge')).toContainText('Once verified, you go live on launch day.');
+ await expect(page.locator('#submission-badge-launch')).toContainText('Projects publish every Monday at 9:00 AM Eastern.');
  await expect(page.locator('#sub-step-details')).toBeHidden();
  await expect(page.locator('#submission-badge .fl-tracker [aria-current=step]')).toContainText('Badge verified');
  await page.goto(base+'/account?tab=profile#project-badge-fixture');
