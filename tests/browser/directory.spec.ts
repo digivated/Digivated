@@ -91,7 +91,7 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await expect(activeLaunches).toHaveAttribute('aria-current', 'page');
   await expect(activeLaunches).toHaveCSS('background-color', 'rgb(255, 255, 255)'); // white pill on the gray sidebar
   await expect(rail.getByRole('link', { name: 'New Launch' })).toHaveAttribute('href', '/submit-project');
-  await expect(rail).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(rail).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)'); // the sidebar sits on the gray canvas
   await expect(rail).toHaveCSS('background-image', 'none');
   const workspace = rail.getByRole('navigation', { name: 'Workspace navigation' });
   await expect(workspace.locator('a')).toHaveText([
@@ -102,13 +102,14 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await expect(login).toHaveAttribute('href', '/login');
   await expect(rail.locator('[data-open-search]')).toHaveCount(0);
   const submit = rail.getByRole('link', { name: 'New Launch' });
-  const [loginBox, submitBox] = await Promise.all([login.boundingBox(), submit.boundingBox()]);
-  expect(loginBox!.x).toBeCloseTo(submitBox!.x, 0);
-  expect(loginBox!.width).toBeCloseTo(submitBox!.width, 0);
-  expect(submitBox!.y).toBeGreaterThan(loginBox!.y);
+  const [loginBox, submitBox, sideBox] = await Promise.all([login.boundingBox(), submit.boundingBox(), rail.boundingBox()]);
+  // New Launch leads the sidebar; the account card (Log In) is pinned to the bottom.
+  expect(loginBox!.y).toBeGreaterThan(submitBox!.y);
+  expect(loginBox!.x).toBeGreaterThanOrEqual(sideBox!.x);
+  expect(loginBox!.x + loginBox!.width).toBeLessThanOrEqual(sideBox!.x + sideBox!.width);
   await expect(page.locator('.dg-workspace-content > header')).toHaveCount(0);
   const [railBox, mainBox] = await Promise.all([rail.boundingBox(), page.locator('#main').boundingBox()]);
-  expect(railBox!.width).toBe(196);
+  expect(railBox!.width).toBe(268);
   expect(railBox!.x + railBox!.width).toBeLessThanOrEqual(mainBox!.x);
 
   const search = page.getByRole('search', { name: 'Find a product' }).getByRole('searchbox');
