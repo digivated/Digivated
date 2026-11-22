@@ -42,7 +42,7 @@ function renderSearch() {
 }
 async function collection(url) {
   const items=[];let offset=0;
-  do {const response=await fetch(`${url}${url.includes('?')?'&':'?'}offset=${offset}`,{cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(10000)});if(!response.ok)throw new Error('Unavailable');const data=await response.json();items.push(...data.items);offset=data.next;}while(offset!==null && offset!==undefined);
+  do {const response=await fetch(`${url}${url.includes('?')?'&':'?'}offset=${offset}`,{cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(10000)});if(!response.ok)throw new Error('Unavailable');const data=await response.json();items.push(...data.items);offset=data.next;}while(offset!==null && offset!==undefined);
   return items;
 }
 let requested=false;
