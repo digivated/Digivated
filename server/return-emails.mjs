@@ -1,20 +1,58 @@
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { isIP } from 'node:net';
 import { createClient } from '@supabase/supabase-js';
 import { verifiedAccount } from './project-account.mjs';
 import { redisClient } from './submissions.mjs';
 import { notificationPreferencesKey } from './notifications.mjs';
 import { renderEmail } from './email-layout.mjs';
+import { weeklyMembers as MEMBERS, weeklyPreference as preference, emailSubscriberId, isEmailSubscriber, weeklyOptOut, stopWeeklyEmail } from './weekly-subscriptions.mjs';
 
 // Small on-theme pages for the unsubscribe link.
 const page=(title,body,form='')=>`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>${title}</title></head><body style="margin:0;background:#0b0b0b;color:#e7e7e7"><main style="max-width:520px;margin:12vh auto;padding:24px;font:16px/1.6 Arial,Helvetica,sans-serif"><p style="margin:0 0 18px;color:#bfc2c5;font:700 12px/1.5 'Courier New',monospace;letter-spacing:1.5px">[ DIGIVATED / EMAIL ]</p><h1 style="margin:0 0 12px;font-size:26px;line-height:1.25">${title}</h1><p style="margin:0 0 22px;color:#c8c8c8">${body}</p>${form}<p style="margin:26px 0 0"><a href="https://digivated.com" style="color:#c8c8c8">Back to Digivated &rarr;</a></p></main></body></html>`;
 
-const MEMBERS='digivated:weekly:members';
-const preference=id=>`digivated:weekly:preference:${id}`;
 const tokenKey=token=>`digivated:weekly:confirm:${token}`;
 const sign=(id,secret)=>createHmac('sha256',secret).update(`weekly-unsubscribe:${id}`).digest('hex');
 const valid=(a,b)=>typeof a==='string'&&Buffer.byteLength(a)===Buffer.byteLength(b)&&timingSafeEqual(Buffer.from(a),Buffer.from(b));
 const json=(res,status,data)=>{res.statusCode=status;res.setHeader('Content-Type','application/json; charset=utf-8');res.setHeader('Cache-Control','private, no-store');res.setHeader('X-Content-Type-Options','nosniff');res.end(JSON.stringify(data));};
 const admin=env=>createClient(env.COMMUNITY_SUPABASE_URL,env.COMMUNITY_SUPABASE_SECRET_KEY,{auth:{autoRefreshToken:false,persistSession:false,detectSessionInUrl:false}});
+const pending = { subscribed: false, pending: true };
+const normalizeEmail = value => {
+ const email = typeof value === 'string' ? value.trim().toLowerCase() : '';
+ return email.length <= 254 && /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(email) ? email : '';
+};
+const sameSite = req => req.headers.origin === 'https://digivated.com' && req.headers['sec-fetch-site'] !== 'cross-site' && /^application\/json(?:;|$)/i.test(req.headers['content-type'] || '');
+const CONFIRM = `
+if redis.call('GET',KEYS[1]) ~= ARGV[1] then return 0 end
+redis.call('SET',KEYS[2],ARGV[2])
+redis.call('ZADD',KEYS[3],'NX',0,ARGV[3])
+redis.call('DEL',KEYS[1],KEYS[4])
+return 1`;
+
+async function sendConfirmation(redis, { id, email }, env, fetcher) {
+ const daily = `digivated:weekly:confirmation-day:${new Date().toISOString().slice(0,10)}`;
+ const count = Number(await redis(['INCR', daily]));
+ if (count === 1) await redis(['EXPIRE', daily, 172800]);
+ if (count > 20) return { status: 429, body: { error: 'Email confirmations are busy today. Try again tomorrow.' } };
+ const token = randomBytes(24).toString('hex');
+ const key = tokenKey(token);
+ await redis(['SET', key, JSON.stringify({ id, email }), 'EX', 86400]);
+ const message = renderEmail({
+  label: 'DIGIVATED / WEEKLY', title: 'Confirm your weekly digest',
+  paragraphs: ['Confirm to get a weekly email with new launches on Digivated.'],
+  cta: { label: 'Confirm subscription', href: `https://digivated.com/email-preferences?token=${token}` },
+  after: ['If you didn’t request this, ignore this email. The link expires in 24 hours.'],
+ });
+ try {
+  const response = await fetcher('https://api.resend.com/emails', {
+   method: 'POST', headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+   body: JSON.stringify({ from: env.ACCOUNT_EMAIL_FROM, to: [email], subject: 'Confirm your Digivated weekly email', ...message }),
+   signal: AbortSignal.timeout(8000), redirect: 'error',
+  });
+  if (response.ok) return { status: 200, body: pending };
+ } catch { /* Both provider errors and unavailable connections leave the subscription unchanged. */ }
+ await redis(['DEL', key]);
+ return { status: 503, body: { error: 'Could not send confirmation. Try again later.' } };
+}
 
 async function bodyOf(req){let body=req.body;if(body===undefined){let size=0,chunks=[];for await(const chunk of req){size+=chunk.length;if(size>2048)throw Error('Invalid request');chunks.push(chunk);}body=Buffer.concat(chunks).toString('utf8');}if(Buffer.isBuffer(body))body=body.toString('utf8');if(typeof body==='string')body=JSON.parse(body);if(!body||typeof body!=='object'||Array.isArray(body)||JSON.stringify(body).length>2048)throw Error('Invalid request');return body;}
 
@@ -32,39 +70,71 @@ export function makeReturnEmailHandler(deps={}){return async(req,res)=>{
   if(req.method==='POST'&&action==='unsubscribe'){
    const id=url.searchParams.get('id'),signature=url.searchParams.get('signature');
    if(!id||!valid(signature,sign(id,env.SUBMISSIONS_REDIS_REST_TOKEN)))return json(res,400,{error:'Invalid unsubscribe link.'});
-   await redis(['DEL',preference(id)]);await redis(['ZREM',MEMBERS,id]);
+   const record = isEmailSubscriber(id) ? null : JSON.parse(await redis(['GET', preference(id)]) || 'null');
+   const emailId = isEmailSubscriber(id) ? id : record?.email ? emailSubscriberId(record.email,env.SUBMISSIONS_REDIS_REST_TOKEN) : null;
+   await stopWeeklyEmail(redis,id,emailId);
    res.statusCode=200;res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('Cache-Control','no-store');return res.end(page('You are unsubscribed.','You will not receive the weekly project email.'));
   }
   if(req.method==='POST'&&action==='confirm'){
-   if(req.headers.origin!=='https://digivated.com'||!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))return json(res,403,{error:'Open Digivated to confirm.'});
+   if(!sameSite(req))return json(res,403,{error:'Open Digivated to confirm.'});
    const {token}=await bodyOf(req);if(typeof token!=='string'||!/^[a-f0-9]{48}$/.test(token))return json(res,400,{error:'Invalid link.'});
-   const raw=await redis(['GET',tokenKey(token)]);if(!raw)return json(res,410,{error:'This link has expired. Sign in to request another.'});
-   const {id,email}=JSON.parse(raw),{data,error}=await (deps.adminClient||admin(env)).auth.admin.getUserById(id);
-   if(error||data?.user?.email?.toLowerCase()!==email)return json(res,410,{error:'This link is no longer valid.'});
-   await redis(['SET',preference(id),JSON.stringify({email,consentedAt:new Date().toISOString(),source:'account weekly email confirmation'})]);await redis(['ZADD',MEMBERS,0,id]);await redis(['DEL',tokenKey(token)]);
+   const key=tokenKey(token),raw=await redis(['GET',key]);if(!raw)return json(res,410,{error:'This link has expired. Request another from the footer.'});
+   const {id,email}=JSON.parse(raw),emailId=emailSubscriberId(email,env.SUBMISSIONS_REDIS_REST_TOKEN);
+   const fromFooter=isEmailSubscriber(id);
+   if(fromFooter){
+    if(id!==emailId)return json(res,410,{error:'This link is no longer valid.'});
+   } else {
+    const {data,error}=await (deps.adminClient||admin(env)).auth.admin.getUserById(id);
+    if(error||data?.user?.email?.toLowerCase()!==email)return json(res,410,{error:'This link is no longer valid.'});
+   }
+   const record=JSON.stringify({email,consentedAt:new Date().toISOString(),source:fromFooter?'footer weekly email confirmation':'account weekly email confirmation'});
+   if(!Number(await redis(['EVAL',CONFIRM,4,key,preference(id),MEMBERS,weeklyOptOut(emailId),raw,record,id])))return json(res,410,{error:'This confirmation link has already been used.'});
    return json(res,200,{ok:true});
   }
+  if(req.method==='POST'&&action==='subscribe'){
+   if(!sameSite(req))return json(res,403,{error:'Open Digivated to subscribe.'});
+   if(!env.WEEKLY_EMAIL_POSTAL_ADDRESS)return json(res,503,{error:'Weekly emails are being set up. Check back soon.'});
+   const {email:input}=await bodyOf(req),email=normalizeEmail(input);
+   if(!email)return json(res,400,{error:'Enter a valid email address.'});
+   const ip=req.headers['x-real-ip'];
+   if(typeof ip!=='string'||!isIP(ip))return json(res,503,{error:'Email signup is temporarily unavailable.'});
+   const secret=env.SUBMISSIONS_REDIS_REST_TOKEN,id=emailSubscriberId(email,secret);
+   const day=new Date().toISOString().slice(0,10);
+   const network=createHmac('sha256',secret).update(`weekly-signup:${day}:${ip}`).digest('hex');
+   const limit=`digivated:weekly:signup:${network}`;
+   const attempts=Number(await redis(['INCR',limit]));
+   if(attempts===1)await redis(['EXPIRE',limit,86400]);
+   if(attempts>8)return json(res,429,{error:'Too many signup attempts. Try again tomorrow.'});
+   if(await redis(['GET',preference(id)]))return json(res,200,pending);
+   const cooldown=`digivated:weekly:signup-cooldown:${id}`;
+   if(await redis(['SET',cooldown,'1','NX','EX',900])!=='OK')return json(res,200,pending);
+   const result=await sendConfirmation(redis,{id,email},env,deps.fetcher||fetch);
+   if(result.status!==200)await redis(['DEL',cooldown]);
+   return json(res,result.status,result.body);
+  }
   if(!['GET','POST'].includes(req.method))return json(res,405,{error:'Method not allowed.'});
-  if(req.method==='POST'&&(req.headers.origin!=='https://digivated.com'||!/^application\/json(?:;|$)/i.test(req.headers['content-type']||'')))return json(res,403,{error:'Open Digivated to change preferences.'});
+  if(req.method==='POST'&&!sameSite(req))return json(res,403,{error:'Open Digivated to change preferences.'});
   const account=await (deps.verifyAccount||verifiedAccount)(req,env,deps.fetcher||fetch);if(!account)return json(res,401,{error:'Sign in to manage email preferences.'});
-  if(req.method==='GET'&&action==='status'){const stored=await redis(['GET',preference(account.id)]);return json(res,200,{subscribed:stored?JSON.parse(stored).email===account.email:false,available:!!env.WEEKLY_EMAIL_POSTAL_ADDRESS});}
+  const emailId=emailSubscriberId(account.email,env.SUBMISSIONS_REDIS_REST_TOKEN);
+  if((req.method==='GET'&&action==='status')||(req.method==='POST'&&action==='on')){
+   const own=JSON.parse(await redis(['GET',preference(account.id)])||'null');
+   const guest=account.mailboxVerified===false?null:await redis(['GET',preference(emailId)]);
+   const subscribed=!!(guest||own?.email===account.email)&&!await redis(['GET',weeklyOptOut(emailId)]);
+   if(action==='status')return json(res,200,{subscribed,available:!!env.WEEKLY_EMAIL_POSTAL_ADDRESS});
+   if(subscribed)return json(res,200,{subscribed:true});
+  }
   if(req.method==='POST'&&action==='off'){
-   await redis(['DEL',preference(account.id)]);await redis(['ZREM',MEMBERS,account.id]);return json(res,200,{subscribed:false});
+   const own=JSON.parse(await redis(['GET',preference(account.id)])||'null');
+   await stopWeeklyEmail(redis,account.id,account.mailboxVerified!==false||own?.email===account.email?emailId:null);
+   return json(res,200,{subscribed:false});
   }
   if(req.method==='POST'&&action==='on'){
    if(!env.WEEKLY_EMAIL_POSTAL_ADDRESS)return json(res,503,{error:'Weekly emails are being set up. Please check back soon.'});
-   const previous=await redis(['GET',preference(account.id)]);if(previous&&JSON.parse(previous).email===account.email)return json(res,200,{subscribed:true});
    const limit=`digivated:weekly:request:${account.id}`;
    if(Number(await redis(['INCR',limit]))>3)return json(res,429,{error:'Please try again tomorrow.'});
    await redis(['EXPIRE',limit,86400]);
-   const daily=`digivated:weekly:confirmation-day:${new Date().toISOString().slice(0,10)}`;
-   const count=Number(await redis(['INCR',daily]));if(count===1)await redis(['EXPIRE',daily,172800]);
-   if(count>20)return json(res,429,{error:'Email confirmations are busy today. Please try again tomorrow.'});
-   const token=randomBytes(24).toString('hex');await redis(['SET',tokenKey(token),JSON.stringify({id:account.id,email:account.email}),'EX',86400]);
-   const link=`https://digivated.com/email-preferences?token=${token}`;
-   const response=await (deps.fetcher||fetch)('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({from:env.ACCOUNT_EMAIL_FROM,to:[account.email],subject:'Confirm your Digivated weekly email',...renderEmail({label:'DIGIVATED / WEEKLY',title:'Confirm your weekly email.',preheader:'One tap to start the weekly project email.',paragraphs:['You asked for a weekly email about new projects on Digivated. Open the link and press Confirm to start it.'],cta:{label:'Confirm weekly email',href:link},after:['If you did not request this, ignore this email. The link expires in 24 hours.']})}),signal:AbortSignal.timeout(8000),redirect:'error'});
-   if(!response.ok)return json(res,503,{error:'Could not send confirmation. Try again later.'});
-   return json(res,200,{subscribed:false,pending:true});
+   const result=await sendConfirmation(redis,{id:account.id,email:account.email},env,deps.fetcher||fetch);
+   return json(res,result.status,result.body);
   }
   return json(res,404,{error:'Not found.'});
  }catch{return json(res,503,{error:'Email preferences are temporarily unavailable.'});}
@@ -164,16 +234,29 @@ export function makeWeeklyDigestHandler(deps={}){return async(req,res)=>{
    try {
     const stored = await redis(['GET',preference(id)]);
     if (!stored) { await redis(['ZREM', MEMBERS, id]); skipped++; continue; }
-    const email = JSON.parse(stored).email;
-    const { data, error } = await accounts.getUserById(id);
-    if (error && error.status !== 404) throw error;
-    if (error || data?.user?.email?.toLowerCase() !== email) {
-     await redis(['DEL', preference(id)]); await redis(['ZREM', MEMBERS, id]); skipped++; continue;
+    const email = normalizeEmail(JSON.parse(stored).email);
+    if (!email) { await stopWeeklyEmail(redis,id); skipped++; continue; }
+    const emailId = emailSubscriberId(email,env.SUBMISSIONS_REDIS_REST_TOKEN);
+    if (await redis(['GET',weeklyOptOut(emailId)])) {
+     await stopWeeklyEmail(redis,id); skipped++; continue;
     }
-    const unsubscribe = `https://digivated.com/api/return-emails?action=unsubscribe&id=${encodeURIComponent(id)}&signature=${sign(id,env.SUBMISSIONS_REDIS_REST_TOKEN)}`;
+    if (isEmailSubscriber(id)) {
+     if (id !== emailId) { await stopWeeklyEmail(redis,id); skipped++; continue; }
+    } else {
+     const { data, error } = await accounts.getUserById(id);
+     if (error && error.status !== 404) throw error;
+     if (error || data?.user?.email?.toLowerCase() !== email) {
+      await stopWeeklyEmail(redis,id); skipped++; continue;
+     }
+    }
+    const delivery = `digivated:weekly:sent:${issueDate}:${emailId}`;
+    if (await redis(['GET',delivery])) {
+     await redis(['ZADD',MEMBERS,'XX',now,id]); skipped++; continue;
+    }
+    const unsubscribe = `https://digivated.com/api/return-emails?action=unsubscribe&id=${emailId}&signature=${sign(emailId,env.SUBMISSIONS_REDIS_REST_TOKEN)}`;
     const response = await (deps.fetcher || fetch)('https://api.resend.com/emails', {
      method: 'POST',
-     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': `weekly-${id}-${issueDate}` },
+     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': `weekly-${emailId}-${issueDate}` },
      body: JSON.stringify({
       from: env.WEEKLY_EMAIL_FROM || env.ACCOUNT_EMAIL_FROM, to: [email], subject: announce ? announcementTitle : 'New projects on Digivated',
       ...digestContent(projects, unsubscribe, env.WEEKLY_EMAIL_POSTAL_ADDRESS, announce),
@@ -182,7 +265,8 @@ export function makeWeeklyDigestHandler(deps={}){return async(req,res)=>{
      signal: AbortSignal.timeout(8000), redirect: 'error'
     });
     if (!response.ok) { logger.warn('weekly-digest provider rejected send', { status: response.status }); failed++; continue; }
-    await redis(['ZADD', MEMBERS, now, id]);
+    await redis(['SET',delivery,'1','EX',14*86400]);
+    await redis(['ZADD',MEMBERS,'XX',now,id]);
     sent++;
    } catch {
     logger.warn('weekly-digest recipient processing failed');

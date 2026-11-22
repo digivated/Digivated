@@ -4,6 +4,21 @@ import { resourceGroups } from '../../src/data/link-resources.mjs';
 
 const base = 'http://127.0.0.1:4321';
 
+test('the footer signs up an email and asks for confirmation on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.route('**/api/return-emails?action=subscribe', route => {
+    expect(route.request().postDataJSON()).toEqual({ email: 'reader@example.com' });
+    return route.fulfill({ json: { pending: true } });
+  });
+  await page.goto(base + '/');
+  const digest = page.getByRole('region', { name: 'The weekly launch digest' });
+  await digest.getByRole('textbox', { name: 'Email address' }).fill('reader@example.com');
+  await digest.getByRole('button', { name: 'Subscribe' }).click();
+  await expect(digest.getByRole('status')).toContainText('Check your inbox to confirm');
+  await expect(page.getByRole('contentinfo').getByRole('link', { name: 'Email settings' })).toHaveAttribute('href', '/account?tab=settings');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+});
+
 test('Tools puts search first and keeps the cross-category list available', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   const rankedLinks = resourceGroups[0].links.slice(0, 3);

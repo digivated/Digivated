@@ -8,6 +8,7 @@ import { accountPlanKey, planBindingsKey } from './plans.mjs';
 import { clearNotifications, launchWatchersKey, launchWatchingKey } from './notifications.mjs';
 import { pointsLedgerKey, pointsTotalKey } from './feedback-points.mjs';
 import { commentKey } from './card-interactions.mjs';
+import { emailSubscriberId, stopWeeklyEmail } from './weekly-subscriptions.mjs';
 
 export const DELETED_NAME = 'Deleted account';
 const LIVE_OR_WAITING = new Set(['pending', 'approved', 'featured']);
@@ -87,8 +88,8 @@ async function clearPersonalData(redis, account, secret) {
   await redis(['DEL', launchWatchingKey(id)]);
   // Notifications, alert settings, the weekly email and feedback points.
   await clearNotifications(redis, id);
-  await redis(['DEL', `digivated:notifications:preferences:${id}`, `digivated:weekly:preference:${id}`, `digivated:weekly:request:${id}`, pointsTotalKey(id), pointsLedgerKey(id)]);
-  await redis(['ZREM', 'digivated:weekly:members', id]);
+  await redis(['DEL', `digivated:notifications:preferences:${id}`, `digivated:weekly:request:${id}`, pointsTotalKey(id), pointsLedgerKey(id)]);
+  await stopWeeklyEmail(redis,id,account.mailboxVerified===false?null:emailSubscriberId(account.email,secret));
   // Plan purchases: release the sale bindings so the buyer can claim them on a new account.
   const bindings = await redis(['SMEMBERS', planBindingsKey(id)]);
   if (Array.isArray(bindings) && bindings.length) await redis(['DEL', ...bindings.filter(key => typeof key === 'string' && key.startsWith('digivated:plan-sale:'))]);
