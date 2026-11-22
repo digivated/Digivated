@@ -8,18 +8,31 @@ function fixture(){
  const entries=new Map(),members=new Map(),sent=[];
  const redis=async ([command,...args])=>{
   if(command==='GET')return entries.get(args[0])||null;
-  if(command==='SET'){entries.set(args[0],args[1]);return 'OK';}
+  if(command==='SET'){if(args.includes('NX')&&entries.has(args[0]))return null;entries.set(args[0],args[1]);return 'OK';}
   if(command==='DEL'){entries.delete(args[0]);return 1;}
   if(command==='INCR'){const n=Number(entries.get(args[0])||0)+1;entries.set(args[0],String(n));return n;}
   if(command==='EXPIRE')return 1;
-  if(command==='ZADD'){members.set(args[2],Number(args[1]));return 1;}
+  if(command==='ZADD'){
+   if(args[1]==='XX'&&!members.has(args[3]))return 0;
+   members.set(args.at(-1),Number(args.at(-2)));return 1;
+  }
   if(command==='ZREM'){members.delete(args[1]);return 1;}
   if(command==='ZRANGEBYSCORE')return [...members].filter(([,score])=>score<=Number(args[2])).map(([key])=>key).slice(Number(args[4]),Number(args[4])+Number(args[5]));
   if(command==='ZREVRANGE')return [...entries.keys()].filter(key=>key.startsWith('digivated:submission:')).map(key=>key.slice('digivated:submission:'.length));
   if(command==='MGET')return args.map(key=>entries.get(key)||null);
+  if(command==='EVAL'){
+   const [script,,first,,third,fourth,arg1,arg2,arg3]=args;
+   if(script.includes("redis.call('ZADD',KEYS[3],'NX'")){
+    if(entries.get(first)!==arg1)return 0;
+    entries.set(args[3],arg2);if(!members.has(arg3))members.set(arg3,0);
+    entries.delete(first);entries.delete(fourth);return 1;
+   }
+   if(arg3==='yes'){entries.set(third,'1');entries.delete(fourth);members.delete(arg2);}
+   entries.delete(first);members.delete(arg1);return 1;
+  }
   throw Error(command);
  };
- const deps={env,redis,logger:{info(){},warn(){},error(){}},verifyAccount:async()=>({id,email}),adminClient:{auth:{admin:{getUserById:async()=>({data:{user:{email}}})}}},fetcher:async(_url,options)=>{sent.push(JSON.parse(options.body));return {ok:true};}};
+ const deps={env,redis,logger:{info(){},warn(){},error(){}},verifyAccount:async()=>({id,email}),adminClient:{auth:{admin:{getUserById:async userId=>({data:{user:{email:userId.startsWith('member-')?`${userId}@example.com`:email}}})}}},fetcher:async(_url,options)=>{sent.push(JSON.parse(options.body));return {ok:true};}};
  async function invoke(handler,method,url,body,headers={}){const req={method,url,headers:{origin:'https://digivated.com','content-type':'application/json',...headers},body};let raw;const res={setHeader(){},end(value){raw=value;}};await handler(req,res);return {status:res.statusCode,body:raw?.startsWith('{')?JSON.parse(raw):raw};}
  return {entries,members,sent,deps,invoke};
 }
@@ -53,7 +66,7 @@ test('digest sends only recent published projects and stops at ten recipients',a
  const now=+issue-1000;
  f.entries.set('digivated:submission:recent',JSON.stringify({status:'featured',name:'New tool',url:'https://example.com',publishedAt:new Date(now).toISOString(),reviewedAt:new Date(now-14*86400000).toISOString()}));
  f.entries.set('digivated:submission:private',JSON.stringify({status:'pending',name:'Private project',url:'https://private.example',reviewedAt:new Date(now).toISOString()}));
- for(let n=0;n<12;n++){const member=`member-${n}`;f.entries.set(`digivated:weekly:preference:${member}`,JSON.stringify({email}));f.members.set(member,0);}
+ for(let n=0;n<12;n++){const member=`member-${n}`;f.entries.set(`digivated:weekly:preference:${member}`,JSON.stringify({email:`${member}@example.com`}));f.members.set(member,0);}
  const result=await f.invoke(handler,'GET','/api/weekly-digest',undefined,{authorization:`Bearer ${env.CRON_SECRET}`});
  assert.equal(result.body.sent,10);assert.equal(f.sent.length,10);
  assert.match(f.sent[0].text,/New tool/);assert.match(f.sent[0].html,/projects\/listing\/recent/);
@@ -61,6 +74,40 @@ test('digest sends only recent published projects and stops at ten recipients',a
  assert.match(f.sent[0].text,/Unsubscribe:/);assert.match(f.sent[0].text,/123 Example St/);
  assert.equal(f.sent[0].from,'Digivated <updates@digivated.com>');
  assert.equal([...f.members.values()].filter(score=>score>0).length,10);
+});
+
+test('footer signup verifies the mailbox, deduplicates account delivery, and unsubscribes by email', async () => {
+ const f=fixture(),handler=makeReturnEmailHandler(f.deps);
+ const signup='/api/return-emails?action=subscribe';
+ const headers={'x-real-ip':'203.0.113.1'};
+ assert.equal((await f.invoke(handler,'POST',signup,{email:'invalid'},headers)).status,400);
+ assert.equal((await f.invoke(handler,'POST',signup,{email},{...headers,origin:'https://example.org'})).status,403);
+ const first=await f.invoke(handler,'POST',signup,{email:' OWNER@EXAMPLE.COM '},headers);
+ assert.equal(first.status,200);
+ assert.deepEqual(first.body,{subscribed:false,pending:true});
+ assert.equal(f.members.size,0);
+ assert.equal((await f.invoke(handler,'POST',signup,{email},headers)).status,200);
+ assert.equal(f.sent.length,1);
+ assert.deepEqual(f.sent[0].to,[email]);
+ const token=[...f.entries.keys()].find(key=>key.includes(':confirm:')).split(':').at(-1);
+ const confirm=()=>f.invoke(handler,'POST','/api/return-emails?action=confirm',{token});
+ assert.equal((await confirm()).status,200);
+ assert.equal((await confirm()).status,410);
+ const guest=[...f.members.keys()][0];
+ assert.match(guest,/^email-[a-f0-9]{64}$/);
+ assert.equal((await f.invoke(handler,'GET','/api/return-emails?action=status')).body.subscribed,true);
+ f.entries.set(`digivated:weekly:preference:${id}`,JSON.stringify({email}));
+ f.members.set(id,0);
+ f.entries.set('digivated:submission:recent',JSON.stringify({status:'approved',name:'Weekly tool',publishedAt:'2026-11-21T15:00:00Z'}));
+ const digest=makeWeeklyDigestHandler({...f.deps,now:()=>Date.parse('2026-11-22T16:00:00Z')});
+ const send=()=>f.invoke(digest,'GET','/api/weekly-digest',undefined,{authorization:`Bearer ${env.CRON_SECRET}`});
+ assert.deepEqual((await send()).body,{sent:1,failed:0,skipped:1});
+ const unsubscribe=f.sent[1].headers['List-Unsubscribe'].slice(1,-1);
+ assert.equal((await f.invoke(handler,'GET',unsubscribe)).status,200);
+ assert.ok(f.members.has(guest),'opening the link does not unsubscribe');
+ assert.equal((await f.invoke(handler,'POST',unsubscribe)).status,200);
+ assert.equal(f.members.has(guest),false);
+ assert.equal((await f.invoke(handler,'GET','/api/return-emails?action=status')).body.subscribed,false);
 });
 
 test('temporary account and provider failures are visible and preserve subscriptions',async()=>{

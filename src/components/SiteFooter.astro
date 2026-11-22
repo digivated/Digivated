@@ -9,6 +9,21 @@ const socials = footerGroups.find(group => group.title === 'Follow')?.links ?? [
 ---
 <footer class="dg-site-footer">
   <div class="dg-footer-inner">
+    <section class="dg-footer-signup" aria-labelledby="footer-digest-title">
+      <div>
+        <h2 id="footer-digest-title">The weekly launch digest</h2>
+        <p>Up to three new Digivated launches on Sundays.</p>
+      </div>
+      <form action="/api/return-emails?action=subscribe" method="post" data-footer-digest>
+        <div class="dg-footer-signup-fields">
+          <label class="sr-only" for="footer-digest-email">Email address</label>
+          <input id="footer-digest-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required/>
+          <button class="button primary" type="submit">Subscribe</button>
+        </div>
+        <p role="status" data-footer-digest-status></p>
+        <noscript><p><a href="/account?tab=settings">Subscribe in Email settings</a></p></noscript>
+      </form>
+    </section>
     <div class="dg-footer-intro">
       <a class="dg-footer-brand" href="/">
         <img class="daylight-brand-mark" src="/digivated-daylight-mark.png" width="32" height="32" alt=""/>
@@ -39,3 +54,32 @@ const socials = footerGroups.find(group => group.title === 'Follow')?.links ?? [
   </div>
 </footer>
 <BugReport/>
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-footer-digest]');
+  if (form) {
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const status = form.querySelector<HTMLElement>('[data-footer-digest-status]')!;
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (button.disabled) return;
+      const email = new FormData(form).get('email');
+      button.disabled = true;
+      status.textContent = 'Sending…';
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }), signal: AbortSignal.timeout(12000),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || data.pending !== true) throw new Error(data.error || 'Couldn’t subscribe. Try again.');
+        form.reset();
+        status.textContent = 'Check your inbox to confirm. Already subscribed? You’re all set.';
+      } catch (error) {
+        status.textContent = error instanceof Error && !(error instanceof DOMException)
+          ? error.message : 'Couldn’t send confirmation. Try again.';
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+</script>

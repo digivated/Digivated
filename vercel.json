@@ -221,7 +221,7 @@
   "crons": [
     {
       "path": "/api/weekly-digest",
-      "schedule": "0 15 * * 0"
+      "schedule": "0 15-23 * * 0"
     },
     {
       "path": "/api/news-ingest",
