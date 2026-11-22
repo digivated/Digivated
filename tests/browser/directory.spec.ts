@@ -32,6 +32,15 @@ for (const width of [390, 1440]) {
     await expect(rows).toHaveCount(24);
     await expect(page.getByLabel('Sort by')).toHaveValue('new');
     await expect(rows.first()).toHaveText('Directory fixture 26');
+    const firstTwo = page.locator('[data-dir-list] .dg-project-tile');
+    const [first, second] = await Promise.all([firstTwo.nth(0).boundingBox(), firstTwo.nth(1).boundingBox()]);
+    if (width >= 1240) {
+      expect(second!.x).toBeGreaterThanOrEqual(first!.x + first!.width);
+      expect(second!.y).toBeCloseTo(first!.y, 0);
+    } else {
+      expect(second!.x).toBeCloseTo(first!.x, 0);
+      expect(second!.y).toBeGreaterThanOrEqual(first!.y + first!.height);
+    }
     await expect(page.locator('#project-directory-26 .dg-logo img')).toHaveCSS('object-fit', 'contain');
     await expect(page.locator('#project-directory-25 .dg-monogram')).toHaveText('DI');
     await page.getByLabel('Sort by').selectOption('top');

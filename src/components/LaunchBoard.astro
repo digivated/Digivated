@@ -33,7 +33,7 @@ const sections = [
         <span class="dg-list-count" data-section-count></span>
       </header>
       <p class="dg-list-note" data-section-note>{section.key === 'upcoming' ? '' : 'Loading launches…'}</p>
-      <ul class="dg-list-rows" data-section-list>
+      <ul class="dg-list-rows dg-project-list" data-section-list>
         {section.key !== 'upcoming' && Array.from({ length: section.key === 'current' ? 4 : 2 }, () => <li class="dg-row is-loading" aria-hidden="true"><span class="dg-logo"></span><span class="dg-main"></span></li>)}
       </ul>
       <div class="dg-list-foot">

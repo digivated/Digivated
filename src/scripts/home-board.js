@@ -44,9 +44,19 @@ function visitAttrs(link, p) {
   return link;
 }
 
+// Listings have room for a short excerpt. Project pages keep the full description.
+function launchExcerpt(description) {
+  const text = String(description || '').trim().replace(/\s+/g, ' ');
+  const characters = Array.from(text);
+  if (characters.length <= 105) return text;
+  const excerpt = characters.slice(0, 105).join('');
+  const wordEnd = excerpt.lastIndexOf(' ');
+  return (wordEnd > 72 ? excerpt.slice(0, wordEnd) : excerpt).trimEnd() + '…';
+}
+
 /* ---------- Spots ---------- */
 function spotCard(item, price) {
-  const card = el('a', null, 'dg-spot' + (item ? '' : ' is-open'));
+  const card = el('a', null, 'dg-spot dg-project-tile' + (item ? '' : ' is-open'));
   if (!item) {
     // Open cards are paid spots only: they always lead to $3 Instant Publishing.
     card.href = '/submit-project?spot=1#project-form';
@@ -56,7 +66,7 @@ function spotCard(item, price) {
   }
   if (outbound(item.url)) visitAttrs(card, item); else card.href = local(item.pageUrl) || '/discover';
   card.dataset.projectId = item.id;
-  card.append(projectLogo(item, 'dg-spot-logo'), el('strong', item.name, 'dg-spot-name'), el('span', item.description || item.category || 'Independent project', 'dg-spot-copy'), item.spot === 'Member' ? memberTag() : el('em', item.spot, 'dg-spot-tag'));
+  card.append(projectLogo(item, 'dg-spot-logo'), el('strong', item.name, 'dg-spot-name'), el('span', launchExcerpt(item.description || item.category || 'Independent project'), 'dg-spot-copy'), item.spot === 'Member' ? memberTag() : el('em', item.spot, 'dg-spot-tag'));
   card.setAttribute('aria-label', `${item.name}, ${item.spot === 'Member' ? 'Digivated member' : 'featured product'}${card.target === '_blank' ? '. Opens in a new tab.' : ''}`);
   return card;
 }
@@ -110,7 +120,7 @@ function placeOf(id) { return state.podium?.week?.podium?.find(place => place.id
 function row(p, key) {
   const period = key === 'current' ? 'weekly' : 'all';
   const fresh = key === 'current' && (p.fresh || state.fair.active);
-  const li = el('li', null, 'dg-row');
+  const li = el('li', null, 'dg-row dg-project-tile');
   li.dataset.launchId = p.id; li.dataset.project = ''; li.dataset.projectName = p.name;
   const page = local(p.pageUrl) || '/discover';
   const art = el('a', null, 'dg-logo-link'); art.href = page; art.tabIndex = -1; art.setAttribute('aria-hidden', 'true'); art.append(projectLogo(p, 'dg-logo'));
@@ -122,7 +132,7 @@ function row(p, key) {
   appendMarks(title, p);
   const lift = key === 'current' && !fresh ? boostVotes(p.boost) : 0;
   if (lift) { const b = el('span', '⚡ Boosted', 'dg-badge dg-badge-boost'); b.title = `+${lift} from ${p.boost} feedback points this week`; title.append(b); }
-  main.append(title, el('p', p.description, 'dg-tagline'));
+  main.append(title, el('p', launchExcerpt(p.description), 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
   meta.append(el('span', p.category || 'Project'));
   if (p.creator) meta.append(el('span', 'By ' + p.creator));
@@ -158,14 +168,14 @@ function row(p, key) {
 
 // A scheduled free launch shows its logo and a "Notify me" button.
 function upcomingRow(item) {
-  const li = el('li', null, 'dg-row dg-row-upcoming');
+  const li = el('li', null, 'dg-row dg-row-upcoming dg-project-tile');
   li.dataset.upcomingId = item.id;
   const art = el('span', null, 'dg-logo-link'); art.setAttribute('aria-hidden', 'true'); art.append(projectLogo(item, 'dg-logo'));
   const main = el('div', null, 'dg-main');
   const title = el('h3');
   title.append(el('span', item.name, 'dg-upcoming-name'));
   if (Number.isFinite(Date.parse(item.launchAt))) title.append(el('span', freeLaunchDay(item.launchAt), 'dg-badge dg-badge-date'));
-  main.append(title, el('p', item.description || 'Launching soon on Digivated.', 'dg-tagline'));
+  main.append(title, el('p', launchExcerpt(item.description), 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
   meta.append(el('span', item.category || 'Project'));
   if (item.creator) meta.append(el('span', 'By ' + item.creator));
