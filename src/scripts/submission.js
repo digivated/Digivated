@@ -195,6 +195,7 @@ if (form) {
       const response=await fetch('/api/project-account',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'});
       if(response.ok){
         const account = await response.json();
+        document.getElementById('submission-maker-navigation').hidden = false;
         accountVerified=true;form.elements.email.value=session.user.email;form.elements.email.readOnly=true;document.getElementById('submission-account-callout').hidden=true;details.hidden=false;accountStatus.hidden=false;accountStatus.textContent=`Submitting as ${session.user.email}`;updateButton();
         accountUserId = session.user.id || '';
         if (query.get('membership') || query.get('spot') || query.get('resume')) openEditor();

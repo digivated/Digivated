@@ -1,0 +1,25 @@
+---
+import '../styles/maker-navigation.css';
+
+const { submitting = false } = Astro.props;
+const sections = [
+  { id: 'projects', label: 'Overview', href: '/account' },
+  { id: 'analytics', label: 'Analytics', href: '/account?tab=analytics' },
+  { id: 'profile', label: 'Profile', href: '/account?tab=profile' },
+  { id: 'settings', label: 'Settings', href: '/account?tab=settings' },
+];
+---
+<nav class="maker-navigation" aria-label="Maker workspace">
+  {submitting ? (
+    <div class="maker-navigation-sections">
+      {sections.map(({ label, href }) => <a href={href}>{label}</a>)}
+    </div>
+  ) : (
+    <div class="maker-navigation-sections" role="tablist" aria-label="Dashboard sections">
+      {sections.map(({ id, label }, index) => (
+        <button type="button" role="tab" id={`account-tab-${id}`} aria-controls={`account-panel-${id}`} aria-selected={index === 0 ? 'true' : 'false'} tabindex={index === 0 ? 0 : -1} data-account-tab={id}>{label}</button>
+      ))}
+    </div>
+  )}
+  <a class="maker-navigation-launch" id={submitting ? undefined : 'account-submit-cta'} href="/submit-project" aria-current={submitting ? 'page' : undefined}>New launch</a>
+</nav>

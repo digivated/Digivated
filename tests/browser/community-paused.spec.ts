@@ -208,4 +208,9 @@ test('signed-in overview keeps launch details and profile within reach', async (
  await page.locator('#account-submit-cta').click();
  await expect(page).toHaveURL(/\/submit-project$/);
  await expect(page.getByRole('textbox', { name: 'Project URL' })).toBeVisible();
+ const makerNavigation = page.getByRole('navigation', { name: 'Maker workspace' });
+ await expect(makerNavigation.getByRole('link', {name:'New launch'})).toHaveAttribute('aria-current', 'page');
+ await makerNavigation.getByRole('link', {name:'Analytics'}).click();
+ await expect(page).toHaveURL(/\/account\?tab=analytics$/);
+ await expect(page.getByRole('tab', {name:'Analytics'})).toHaveAttribute('aria-selected', 'true');
 });

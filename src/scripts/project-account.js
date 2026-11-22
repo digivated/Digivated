@@ -58,7 +58,6 @@ if(state){
    return;
   }
   panel.hidden=false;
-  document.getElementById('account-submit-cta').hidden=false;
   document.getElementById('account-email').textContent=email||session?.user?.email||'';
   const projects = new Map();
   const statsCache = new Map();
@@ -83,7 +82,14 @@ if(state){
    selector.replaceChildren(...live.map(item => new Option(item.name, item.id)));
    if (live.some(item => item.id === selected)) selector.value = selected;
    document.getElementById('analytics-picker').hidden = live.length < 2;
-   if (!live.length) result.textContent = 'Views, visits, votes and comments appear here after your first launch goes live.';
+   if (!live.length) {
+    const empty = document.createElement('div');
+    empty.className = 'account-analytics-empty';
+    const heading = document.createElement('strong');
+    heading.textContent = 'No live launches yet';
+    empty.append(heading, 'Analytics appear after your first launch goes live.');
+    result.replaceChildren(empty);
+   }
    else showAnalytics();
   }
   setupTabs(name => { if (name === 'analytics') showAnalytics(); });
