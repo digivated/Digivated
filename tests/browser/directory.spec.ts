@@ -34,12 +34,11 @@ for (const width of [390, 1440]) {
     await expect(rows.first()).toHaveText('Directory fixture 26');
     const firstTwo = page.locator('[data-dir-list] .dg-project-tile');
     const [first, second] = await Promise.all([firstTwo.nth(0).boundingBox(), firstTwo.nth(1).boundingBox()]);
-    if (width >= 1240) {
-      expect(second!.x).toBeGreaterThanOrEqual(first!.x + first!.width);
-      expect(second!.y).toBeCloseTo(first!.y, 0);
-    } else {
-      expect(second!.x).toBeCloseTo(first!.x, 0);
-      expect(second!.y).toBeGreaterThanOrEqual(first!.y + first!.height);
+    expect(second!.x).toBeCloseTo(first!.x, 0);
+    expect(second!.y).toBeGreaterThanOrEqual(first!.y + first!.height);
+    if (width >= 1120) {
+      expect(first!.height).toBeLessThanOrEqual(66);
+      await expect(firstTwo.first().locator('.dg-tagline')).toHaveCSS('white-space', 'nowrap');
     }
     await expect(page.locator('#project-directory-26 .dg-logo img')).toHaveCSS('object-fit', 'contain');
     await expect(page.locator('#project-directory-25 .dg-monogram')).toHaveText('DI');
