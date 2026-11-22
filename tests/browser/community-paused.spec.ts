@@ -40,7 +40,9 @@ for (const width of [390, 1440]) {
   const approvals = page.getByRole('region',{name:'Your live projects'});
   await expect(approvals.getByText('Approved and live',{exact:true})).toBeVisible();
   await expect(approvals.getByRole('link',{name:/Studio Notes/})).toHaveAttribute('href',href);
-  await expect(page.getByRole('region',{name:'Recent activity'}).getByRole('link',{name:/Your project is approved and live/})).toHaveAttribute('href',href);
+  const notification = page.getByRole('region',{name:'Recent activity'}).getByRole('link',{name:/Your project is approved and live/});
+  await expect(notification).toHaveAttribute('href',href);
+  await expect(notification).toHaveCSS('background-color','rgb(237, 237, 232)');
   await expect(page.getByText('1 unread · 1 recent')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
  });

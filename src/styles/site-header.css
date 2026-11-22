@@ -17,7 +17,7 @@
     z-index: 40;
     width: min(100%, var(--daylight-content));
     margin: 0 auto !important;
-    padding-inline: var(--daylight-gutter) !important;
+    padding-inline: var(--daylight-inset) !important;
   }
 
   .dg-shell .dg-shell-bar {
@@ -40,7 +40,7 @@
     box-shadow: var(--shell-rim), 0 5px 14px -10px #191a184d, 0 0 0 1px #25252110 !important;
     pointer-events: none;
   }
-  .dg-shell .dg-reading-track { inset-inline: calc(var(--daylight-gutter) + 18px); }
+  .dg-shell .dg-reading-track { inset-inline: calc(var(--daylight-inset) + 18px); }
 
   .dg-shell .dg-shell-brand,
   .dg-shell .dg-shell-primary,

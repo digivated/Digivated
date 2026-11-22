@@ -163,67 +163,67 @@
  @media(max-width:600px){html[data-ascii] body.wall-experience .project-wall .wall-page-controls button{flex-basis:36px!important;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important}}
 }
 
-/* Activity preferences use the same quiet, monochrome controls as the site. */
+/* Legacy activity preferences. Daylight uses the notification component styles. */
 @layer ascii {
- html[data-ascii] body .notifications-page{width:min(100%,780px)!important;padding:48px 0 88px!important}
- html[data-ascii] body .notifications-heading{margin-bottom:44px!important;align-items:end!important}
- html[data-ascii] body .notifications-heading h1{font-size:clamp(32px,4vw,48px)!important}
- html[data-ascii] body .notifications-heading>a{min-height:36px!important;display:inline-flex!important;align-items:center!important}
- html[data-ascii] body .notifications-preferences{padding:0!important;gap:24px!important;min-height:88px!important;border:0!important;border-radius:0!important;background:transparent!important}
- html[data-ascii] body .notifications-setting-icon{width:32px!important;height:32px!important;border:0!important;border-radius:0!important;color:#bdbdbd!important;background:transparent!important}
- html[data-ascii] body .notifications-preferences-copy{gap:18px!important}
- html[data-ascii] body .notifications-preferences h2{font-size:16px!important;color:#eee!important}
- html[data-ascii] body .notifications-preferences p{font-size:12px!important;color:#aaa!important}
- html[data-ascii] body .notifications-master{width:52px!important;height:44px!important}
- html[data-ascii] body .notifications-switch{display:grid!important;place-items:center!important;width:100%!important;min-height:44px!important;padding:0!important;border:0!important;background:transparent!important;color:#aaa!important;font:inherit!important}
- html[data-ascii] body .notifications-switch::after{content:'[ off ]'!important;width:auto!important;height:auto!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;transform:none!important;white-space:nowrap}
- html[data-ascii] body .notifications-master{width:76px!important}
- html[data-ascii] body .notifications-master input:checked+.notifications-switch{color:#eee!important;background:transparent!important}
- html[data-ascii] body .notifications-master input:checked+.notifications-switch::after{content:'[ on ]'!important;transform:none!important}
- html[data-ascii] body .notifications-master input:focus-visible+.notifications-switch{outline:2px solid #ddd!important;outline-offset:4px!important}
- html[data-ascii] body .notifications-master input:disabled+.notifications-switch,
- html[data-ascii] body .notifications-choice-list input:disabled{opacity:.55!important;cursor:wait!important}
- html[data-ascii] body .notifications-choices{margin:20px 0 0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important}
- html[data-ascii] body .notifications-choices summary{min-height:44px!important;padding:0!important;font-size:12px!important;color:#ddd!important}
- html[data-ascii] body .notifications-choices summary::after{color:#aaa!important}
- html[data-ascii] body .notifications-choice-list{padding:4px 0 0!important}
- html[data-ascii] body .notifications-choice-list label{min-height:70px!important;padding:14px 0!important;gap:24px!important;border:0!important}
- html[data-ascii] body .notifications-choice-list label>span{min-width:0!important}
- html[data-ascii] body .notifications-choice-list strong{font-size:13px!important;color:#eee!important}
- html[data-ascii] body .notifications-choice-list small{font-size:11px!important;color:#aaa!important}
- html[data-ascii] body .notifications-choice-list input[type=checkbox]{appearance:none!important;display:grid!important;place-items:center!important;flex:0 0 44px!important;width:44px!important;height:44px!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;color:#aaa!important;font:inherit!important;cursor:pointer!important}
- html[data-ascii] body .notifications-choice-list input[type=checkbox]::after{content:'[ - ]';font-size:14px;line-height:1;white-space:nowrap}
- html[data-ascii] body .notifications-choice-list input[type=checkbox]:checked::after{content:'[ ✓ ]';color:#eee}
- html[data-ascii] body .notifications-choice-list input[type=checkbox]:focus-visible{outline:2px solid #eee!important;outline-offset:4px!important}
- html[data-ascii] body .notifications-settings-status{margin:12px 0 32px!important;min-height:18px!important;color:#aaa!important}
- html[data-ascii] body .notifications-feed{border:0!important}
- html[data-ascii] body .notifications-feed>header{padding:16px 0!important}
- html[data-ascii] body .notifications-feed-actions button{padding:4px 0!important;min-height:36px!important;border:0!important;border-radius:0!important;background:transparent!important;color:#ccc!important}
- html[data-ascii] body .notification-item,
- html[data-ascii] body .notification-item.unread{background:transparent!important;border:0!important;border-radius:0!important}
- html[data-ascii] body .notification-item:is(:hover,:focus-visible){background:transparent!important}
- html[data-ascii] body .notification-item:hover strong{text-decoration:underline;text-underline-offset:3px}
- html[data-ascii] body .notifications-auth{padding:20px 0!important;border:0!important;background:transparent!important}
- html[data-ascii] body .notifications-auth .button,
- html[data-ascii] body #header-notifications-link{border:0!important;background:transparent!important;box-shadow:none!important}
- html[data-ascii] body .notifications-auth .button,
- html[data-ascii] body .notifications-feed-actions button{min-height:44px!important;text-decoration:underline;text-underline-offset:4px}
- html[data-ascii] body #header-notifications-link[aria-current=page]{color:#eee!important}
- html[data-ascii] body #header-notifications-badge{background:transparent!important;border:0!important;box-shadow:none!important;color:#eee!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-page{width:min(100%,780px)!important;padding:48px 0 88px!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-heading{margin-bottom:44px!important;align-items:end!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-heading h1{font-size:clamp(32px,4vw,48px)!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-heading>a{min-height:36px!important;display:inline-flex!important;align-items:center!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-preferences{padding:0!important;gap:24px!important;min-height:88px!important;border:0!important;border-radius:0!important;background:transparent!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-setting-icon{width:32px!important;height:32px!important;border:0!important;border-radius:0!important;color:#bdbdbd!important;background:transparent!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-preferences-copy{gap:18px!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-preferences h2{font-size:16px!important;color:#eee!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-preferences p{font-size:12px!important;color:#aaa!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-master{width:52px!important;height:44px!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-switch{display:grid!important;place-items:center!important;width:100%!important;min-height:44px!important;padding:0!important;border:0!important;background:transparent!important;color:#aaa!important;font:inherit!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-switch::after{content:'[ off ]'!important;width:auto!important;height:auto!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;transform:none!important;white-space:nowrap}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-master{width:76px!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-master input:checked+.notifications-switch{color:#eee!important;background:transparent!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-master input:checked+.notifications-switch::after{content:'[ on ]'!important;transform:none!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-master input:focus-visible+.notifications-switch{outline:2px solid #ddd!important;outline-offset:4px!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-master input:disabled+.notifications-switch,
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list input:disabled{opacity:.55!important;cursor:wait!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choices{margin:20px 0 0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choices summary{min-height:44px!important;padding:0!important;font-size:12px!important;color:#ddd!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choices summary::after{color:#aaa!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list{padding:4px 0 0!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list label{min-height:70px!important;padding:14px 0!important;gap:24px!important;border:0!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list label>span{min-width:0!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list strong{font-size:13px!important;color:#eee!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list small{font-size:11px!important;color:#aaa!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list input[type=checkbox]{appearance:none!important;display:grid!important;place-items:center!important;flex:0 0 44px!important;width:44px!important;height:44px!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;color:#aaa!important;font:inherit!important;cursor:pointer!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list input[type=checkbox]::after{content:'[ - ]';font-size:14px;line-height:1;white-space:nowrap}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list input[type=checkbox]:checked::after{content:'[ ✓ ]';color:#eee}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list input[type=checkbox]:focus-visible{outline:2px solid #eee!important;outline-offset:4px!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-settings-status{margin:12px 0 32px!important;min-height:18px!important;color:#aaa!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-feed{border:0!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-feed>header{padding:16px 0!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-feed-actions button{padding:4px 0!important;min-height:36px!important;border:0!important;border-radius:0!important;background:transparent!important;color:#ccc!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notification-item,
+ html[data-ascii]:not([data-theme="daylight"]) body .notification-item.unread{background:transparent!important;border:0!important;border-radius:0!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notification-item:is(:hover,:focus-visible){background:transparent!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notification-item:hover strong{text-decoration:underline;text-underline-offset:3px}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-auth{padding:20px 0!important;border:0!important;background:transparent!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-auth .button,
+ html[data-ascii]:not([data-theme="daylight"]) body #header-notifications-link{border:0!important;background:transparent!important;box-shadow:none!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-auth .button,
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-feed-actions button{min-height:44px!important;text-decoration:underline;text-underline-offset:4px}
+ html[data-ascii]:not([data-theme="daylight"]) body #header-notifications-link[aria-current=page]{color:#eee!important}
+ html[data-ascii]:not([data-theme="daylight"]) body #header-notifications-badge{background:transparent!important;border:0!important;box-shadow:none!important;color:#eee!important}
 
- html[data-ascii] body .notification-mark{border:0!important;border-radius:0!important;background:transparent!important;color:#bbb!important}
- html[data-ascii] body .notifications-empty{padding:40px 0!important;border:0!important;border-radius:0!important;background:transparent!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notification-mark{border:0!important;border-radius:0!important;background:transparent!important;color:#bbb!important}
+ html[data-ascii]:not([data-theme="daylight"]) body .notifications-empty{padding:40px 0!important;border:0!important;border-radius:0!important;background:transparent!important}
  @media(max-width:760px){
-  html[data-ascii] body .notifications-page{padding:28px 0 68px!important}
-  html[data-ascii] body .notifications-heading{align-items:start!important;margin-bottom:32px!important}
-  html[data-ascii] body .notifications-preferences{gap:16px!important}
-  html[data-ascii] body .notifications-preferences-copy{gap:12px!important}
-  html[data-ascii] body .notifications-choice-list label{min-height:64px!important}
+  html[data-ascii]:not([data-theme="daylight"]) body .notifications-page{padding:28px 0 68px!important}
+  html[data-ascii]:not([data-theme="daylight"]) body .notifications-heading{align-items:start!important;margin-bottom:32px!important}
+  html[data-ascii]:not([data-theme="daylight"]) body .notifications-preferences{gap:16px!important}
+  html[data-ascii]:not([data-theme="daylight"]) body .notifications-preferences-copy{gap:12px!important}
+  html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list label{min-height:64px!important}
  }
  @media(prefers-reduced-motion:reduce){
-  html[data-ascii] body .notifications-switch,
-  html[data-ascii] body .notifications-switch::after,
-  html[data-ascii] body .notifications-choice-list input[type=checkbox]{transition:none!important}
+  html[data-ascii]:not([data-theme="daylight"]) body .notifications-switch,
+  html[data-ascii]:not([data-theme="daylight"]) body .notifications-switch::after,
+  html[data-ascii]:not([data-theme="daylight"]) body .notifications-choice-list input[type=checkbox]{transition:none!important}
  }
 }
 

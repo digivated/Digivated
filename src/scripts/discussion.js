@@ -52,10 +52,13 @@ export function signInPrompt(text = 'Sign in to join the discussion.') {
 
 export function mountDiscussion(root, { type = 'project', id, onCount } = {}) {
   let comments = [], viewer = { signedIn: false }, sort = 'top', openReply = null, expanded = new Set();
+  const labelId = root.getAttribute('aria-labelledby');
+  const replacesLabel = labelId && root.contains(root.ownerDocument.getElementById(labelId));
   root.classList.add('dg-discussion');
   root.replaceChildren();
   const head = el('div', null, 'dg-d-head');
   const title = el('h2', null, 'dg-d-title'); title.append(el('span', 'Discussion', 'dg-d-title-text'), el('span', '', 'dg-d-count'));
+  if (replacesLabel) title.id = labelId;
   const tabs = el('div', null, 'dg-d-sort'); tabs.setAttribute('role', 'group'); tabs.setAttribute('aria-label', 'Sort comments');
   const sortButtons = [['top', 'Top'], ['new', 'Newest']].map(([key, label]) => { const b = el('button', label); b.type = 'button'; b.dataset.sort = key; b.addEventListener('click', () => { sort = key; render(); }); tabs.append(b); return b; });
   head.append(title, tabs);

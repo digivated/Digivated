@@ -19,7 +19,16 @@ document.querySelector('[data-copy-link]')?.addEventListener('click',async()=>{
 });
 const share=document.querySelector('[data-native-share]');
 if(share && navigator.share){share.hidden=false;share.addEventListener('click',async()=>{try{await navigator.share({title:document.title,url});status.textContent='';}catch(error){if(error.name!=='AbortError')status.textContent='Sharing is unavailable. Use Copy link instead.';}});}
-document.querySelectorAll('.launch-shot img').forEach(img=>img.addEventListener('error',()=>{const note=document.createElement('p');note.textContent='Screenshot currently unavailable.';img.replaceWith(note);},{once:true}));
+for (const image of document.querySelectorAll('.launch-shot img')) {
+  const showUnavailable = () => {
+    const note = document.createElement('p');
+    note.className = 'launch-shot-unavailable';
+    note.textContent = 'Screenshot currently unavailable.';
+    image.replaceWith(note);
+  };
+  if (image.complete && !image.naturalWidth) showUnavailable();
+  else image.addEventListener('error', showUnavailable, { once: true });
+}
 
 const logo = document.querySelector('.launch-identity img');
 if (logo) {

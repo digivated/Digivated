@@ -26,6 +26,7 @@ test('homepage activity, launches and community sections stay in reading order',
 
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
+    await expect(page.locator('#this-week .dg-list-title')).toBeInViewport();
     const layout = await page.locator('#main').evaluate((main, wide) => {
       const box = (selector: string) => main.querySelector(selector)!.getBoundingClientRect();
       const art = box('[data-launch-id] .dg-logo-link');

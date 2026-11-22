@@ -10,7 +10,7 @@
   .dg-footer-inner {
     inline-size: min(100%, var(--daylight-content));
     margin-inline: auto;
-    padding-inline: var(--daylight-gutter);
+    padding-inline: var(--daylight-inset);
   }
   .dg-footer-main {
     display: grid;
