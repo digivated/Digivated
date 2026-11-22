@@ -11,7 +11,7 @@ import '../styles/submission-flow.css';
   <div class="submission-maker-navigation" id="submission-maker-navigation" hidden><MakerNavigation submitting/></div>
   <header class="page-intro submission-intro">
     <h1>New launch</h1>
-    <p class="lede">Start with your product link or enter the details yourself.</p>
+    <p class="lede">Add your product link to draft a listing. You can review it before submitting.</p>
   </header>
 
   <div class="submission-layout submission-workspace">
@@ -25,14 +25,15 @@ import '../styles/submission-flow.css';
 
       <div id="instant-launch-resume" class="submission-review" hidden><h2 id="instant-launch-title">Complete your payment</h2><p id="instant-launch-copy">Your project is saved. Pay in the checkout tab using <strong id="instant-launch-email">your account email</strong>. This page publishes it automatically as soon as payment goes through.</p><div class="submission-account-actions"><a id="instant-launch-checkout" class="button primary" target="_blank" rel="noopener">Open checkout ↗</a><button id="instant-launch-verify" class="button" type="button">I’ve paid — check now</button></div><p id="instant-launch-cancel-note" class="field-help">Changed your mind? You’re only charged if you finish checkout. <button id="instant-launch-cancel" class="dg-link-button" type="button">← Cancel and change launch option</button></p><p id="instant-launch-status" role="status" aria-live="polite"></p><a id="instant-launch-listing" hidden>View your live project →</a></div>
       <div id="submission-details" hidden>
-        <fieldset class="launch-start">
-          <legend>Start with your website</legend>
-            <div class="submission-url-row">
-              <label>Project URL<input name="url" type="url" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="yourproduct.com" maxlength="500" required/></label>
-              <button type="button" id="project-import" class="dg-import"><span class="dg-import-icon" aria-hidden="true">⇣</span><span class="dg-import-label">Draft from link</span></button>
-            </div>
-            <p id="project-import-status" class="dg-import-status" role="status" aria-live="polite" hidden></p>
-          <button type="button" class="manual-launch" id="manual-launch">Enter details manually</button>
+        <fieldset class="launch-start" aria-label="Draft your launch">
+          <div class="submission-url-row">
+            <label>Project URL<input name="url" type="url" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="yourproduct.com" maxlength="500" required/></label>
+          </div>
+          <div class="launch-draft-actions">
+            <button type="button" id="project-import" class="dg-import"><span class="dg-import-icon" aria-hidden="true">⇣</span><span class="dg-import-label">Draft from link</span></button>
+            <button type="button" class="manual-launch" id="manual-launch">Enter details manually</button>
+          </div>
+          <p id="project-import-status" class="dg-import-status" role="status" aria-live="polite" hidden></p>
         </fieldset>
         <div id="launch-editor" hidden>
         <div class="submission-project-fields">

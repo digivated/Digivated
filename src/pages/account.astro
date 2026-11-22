@@ -34,16 +34,43 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
         </details>
       </section>
       <section id="account-panel-analytics" role="tabpanel" aria-labelledby="account-tab-analytics" class="fl-tabpanel" hidden>
-        <div class="fl-card fl-panel-pad"><h2>How your launches are doing</h2>
-          <p>See views, visits, votes, and comments for your published projects.</p>
+        <header class="maker-section-heading"><h2>Launch analytics</h2>
+          <p>Views, visits, votes, and comments for your published projects.</p></header>
+        <div class="maker-analytics-content">
           <label id="analytics-picker" hidden>Project <select id="analytics-project"></select></label>
           <div id="analytics-result" aria-live="polite">Loading projects…</div>
         </div>
       </section>
       <section id="account-panel-profile" role="tabpanel" aria-labelledby="account-tab-profile" class="fl-tabpanel" hidden>
-        <section class="creator-profile-editor fl-card fl-panel-pad" aria-labelledby="creator-profile-title"><h2 id="creator-profile-title">Your maker profile</h2><p>Shown on your launches when your profile is public.</p><form id="creator-profile-form" class="fl-form"><div class="creator-logo-editor"><span class="creator-avatar" id="creator-logo-preview" aria-hidden="true">D</span><label>Profile logo <span class="quiet">(PNG, JPG or WebP)</span><input id="creator-logo-input" type="file" accept="image/png,image/jpeg,image/webp"/><small>Square images work best. Your logo appears on your creator profile.</small></label></div><label>Display name<input name="name" maxlength="60" required placeholder="Your name or studio"/></label><label>Short bio<textarea name="bio" maxlength="240" rows="3" placeholder="What are you building?"></textarea></label><label>Website <span class="quiet">(optional)</span><input name="website" type="url" maxlength="300" placeholder="https://your-site.com"/></label><label>Social profile <span class="quiet">(optional)</span><input name="social" type="url" maxlength="300" placeholder="https://x.com/yourname"/></label><label class="creator-profile-visibility"><input name="public" type="checkbox"/> Show my profile publicly</label><div class="creator-profile-actions fl-actions"><button class="button primary" type="submit">Save profile</button><a id="creator-profile-link" class="fl-btn" hidden>View public profile</a></div><p id="creator-profile-status" class="fl-status" role="status" aria-live="polite"></p></form></section>
+        <header class="maker-section-heading">
+          <h2 id="creator-profile-title">Your maker profile</h2>
+          <p>Choose how you appear on Digivated. Your account email stays private.</p>
+        </header>
+        <section class="creator-profile-editor fl-card fl-panel-pad" aria-labelledby="creator-profile-title">
+          <form id="creator-profile-form" class="fl-form">
+            <div class="creator-logo-editor">
+              <span class="creator-avatar" id="creator-logo-preview" aria-hidden="true">D</span>
+              <div class="maker-photo-details">
+                <label for="creator-logo-input">Profile logo</label>
+                <small id="creator-logo-help">Square PNG, JPG, or WebP. Up to 2 MB.</small>
+                <input id="creator-logo-input" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="creator-logo-help"/>
+              </div>
+            </div>
+            <label>Display name<input name="name" maxlength="60" required placeholder="Your name or studio" autocomplete="nickname"/></label>
+            <label>Short bio<textarea name="bio" maxlength="240" rows="3" placeholder="What do you build?"></textarea></label>
+            <label><span class="maker-field-label">Website <small>Optional</small></span><input name="website" type="url" maxlength="300" placeholder="https://your-site.com"/></label>
+            <label><span class="maker-field-label">Social profile <small>Optional</small></span><input name="social" type="url" maxlength="300" placeholder="https://x.com/yourname"/></label>
+            <label class="creator-profile-visibility"><input name="public" type="checkbox"/> Show my profile publicly</label>
+            <div class="creator-profile-actions fl-actions">
+              <button class="button primary" type="submit">Save profile</button>
+              <a id="creator-profile-link" class="fl-btn" hidden>View public profile</a>
+            </div>
+            <p id="creator-profile-status" class="fl-status" role="status" aria-live="polite"></p>
+          </form>
+        </section>
       </section>
       <section id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" class="fl-tabpanel" hidden>
+        <header class="maker-section-heading"><h2>Account settings</h2></header>
         <div class="fl-settings">
           <div class="fl-card fl-panel-pad fl-setting"><div><h3>Notifications</h3><p>Choose which activity sends you an alert.</p></div><a class="fl-btn" href="/notifications">Manage notifications</a></div>
           <div class="fl-card fl-panel-pad fl-setting"><div><h3>Inbox</h3><p>Messages from other creators.</p></div><a class="fl-btn" href="/inbox">Open inbox</a></div>

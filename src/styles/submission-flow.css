@@ -301,3 +301,12 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
   #project-import-status[data-state="error"] { border-inline-start:2px solid currentColor; padding-inline-start:8px; }
   .submission-workspace > .submission-preview-panel[hidden] { display:none !important; }
 }
+
+@layer workspace-preview {
+  #project-form .launch-start .submission-url-row { display: grid; grid-template-columns: minmax(0, 1fr); }
+  #project-form .launch-start :is(.submission-url-row label, input[type="url"]) { min-width: 0; max-width: 100%; }
+  #project-form .launch-start input[type="url"] { background: #f5f5f5 !important; }
+  #project-form .launch-draft-actions {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px;
+  }
+}

@@ -73,3 +73,18 @@
 
   .home-refresh .board-filters button[aria-pressed="true"] { text-decoration: none !important; }
 }
+
+@layer workspace-preview {
+  .home-refresh .board-categories button {
+    border-radius: 20px !important;
+    background: #fff !important;
+    border-color: #dedede !important;
+    box-shadow: var(--glass-edge) !important;
+  }
+  .home-refresh .board-categories button[aria-pressed="true"] {
+    color: #fff !important;
+    background: #171717 !important;
+    border-color: #171717 !important;
+  }
+  .board-category-count { margin-inline-start: 6px; font-variant-numeric: tabular-nums; opacity: .7; }
+}
