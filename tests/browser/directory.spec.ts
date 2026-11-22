@@ -113,10 +113,12 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await expect(page.locator('[data-launch-id]:visible h3 a')).toHaveText(['Directory fixture 0']);
   await category.getByRole('button', {name:'All',exact:true}).click();
   const order = page.getByRole('group', {name:'Sort launches'});
-  await order.getByRole('button', {name:'Board ranking'}).click();
-  await expect(page.locator('[data-launch-id] h3 a').first()).toHaveText('Directory fixture 0');
+  await order.getByRole('button', {name:'Top voted'}).click();
+  await expect(page.locator('#top-voted [data-launch-id] h3 a').first()).toHaveText('Directory fixture 0');
+  await expect(page.locator('#earlier')).toBeHidden();
   await order.getByRole('button', {name:'Most recent'}).click();
-  await expect(page.locator('[data-launch-id] h3 a').first()).toHaveText('Directory fixture 26');
+  await expect(page.locator('[data-launch-id]:visible h3 a').first()).toHaveText('Directory fixture 26');
+  await expect(page.locator('#top-voted')).toBeHidden();
   await search.fill('Directory fixture 26');
   await expect(status).toHaveText('1 of 27 launches');
   await expect(page.locator('[data-launch-id]:visible h3')).toHaveText(['Directory fixture 26']);

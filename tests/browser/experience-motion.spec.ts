@@ -29,7 +29,7 @@ test('reduced motion keeps all content visible and native search focus working',
  expect(title!.x + title!.width / 2).toBeCloseTo(actions!.x + actions!.width / 2, 0);
 
  expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.id==='digivated-content-entrance').length)).toBe(0);
- expect(await page.locator('.dg-hero').evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
+ expect(await page.locator('.dg-home-hero').evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
  const login = page.getByRole('link', { name: 'Log In', exact: true });
  await login.focus();
  await page.keyboard.press('/');await expect(page.locator('#unified-search-input')).toBeFocused();

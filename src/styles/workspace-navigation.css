@@ -80,7 +80,7 @@
     .dg-workspace .dg-shell-bar {padding-inline:clamp(12px,3vw,36px) !important;}
   }
   @media(max-width:920px) {
-    .dg-workspace .dg-shell .site-menu-panel {position:fixed !important;inset:58px auto auto 0 !important;width:min(300px,86vw) !important;max-height:calc(100dvh - 68px);overflow:auto;padding:16px !important;box-shadow:4px 12px 32px #0002 !important;}
+    .dg-workspace .dg-shell .site-menu-panel {position:fixed !important;inset:58px 0 auto auto !important;width:min(300px,86vw) !important;max-height:calc(100dvh - 68px);overflow:auto;padding:16px !important;box-shadow:0 0 0 100vmax #17171733 !important;}
     .dg-workspace .site-menu-primary {grid-template-columns:1fr !important;}
     .dg-workspace .site-menu-primary a {justify-content:flex-start !important;}
   }
