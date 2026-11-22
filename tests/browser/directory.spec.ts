@@ -170,7 +170,12 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   await page.route('**/missing-project-logo.webp', route => route.fulfill({ status: 404 }));
   await page.goto(base + '/');
   await expect(page.locator('#queue-countdown')).toHaveAttribute('datetime', '2026-11-23T14:00:00.000Z');
+  const nav = page.getByRole('navigation', { name: 'Browse launches' });
+  await nav.getByRole('link', { name: 'Upcoming' }).click();
+  await expect(page).toHaveURL(base + '/#launching-next');
+  await expect(nav.getByRole('link', { name: 'Browse by category' })).toHaveAttribute('href', '/discover#directory-filters');
   await expect(page.getByRole('region', { name: 'Launching next' })).toContainText('Mon, Nov 23 · 9:00 AM Eastern');
+  await expect(page.locator('[data-upcoming-id="upcoming-fixture"]')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.getByRole('button', { name: 'Notify me when Scheduled fixture launches' })).toBeVisible();
   const upcoming = page.locator('[data-upcoming-id="upcoming-fixture"] img');
   await expect(upcoming).toHaveAttribute('src', '/digivated-daylight-mark.png');

@@ -45,6 +45,12 @@ test('homepage activity, launches and community sections stay in reading order',
     expect(layout, `Layout at ${width}px`).toEqual({ ordered: true, separated: true, overflow: 0 });
   }
   await page.setViewportSize({ width: 320, height: 900 });
+  const launchNav = page.getByRole('navigation', { name: 'Browse launches' });
+  const [thisWeek, lastWeek] = await Promise.all(['This week', 'Last week'].map(
+    name => launchNav.getByRole('link', { name, exact: true }).boundingBox(),
+  ));
+  expect(thisWeek!.y).toBeCloseTo(lastWeek!.y, 0);
+  expect(lastWeek!.x).toBeGreaterThan(thisWeek!.x);
   const feedback = page.locator('.dg-home-side .dg-fp-strip');
   const [description, toggle] = await Promise.all([
     feedback.locator('.dg-fp-strip-copy').boundingBox(),
@@ -54,7 +60,7 @@ test('homepage activity, launches and community sections stay in reading order',
   await feedback.locator('summary').click();
   await expect(feedback.getByRole('link', { name: 'Find a product that needs feedback' })).toHaveAttribute('href', '/discover?sort=needs');
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.getByRole('link', { name: 'Browse launches' }).click();
+  await page.getByRole('navigation', { name: 'Browse launches' }).getByRole('link', { name: 'This week', exact: true }).click();
   await expect(page).toHaveURL(/#this-week$/);
 });
 

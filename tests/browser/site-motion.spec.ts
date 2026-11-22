@@ -28,7 +28,7 @@ test('public, packet and owner headings share the gentle entrance', async ({ pag
    }));
    daylightFont ??= styles.font;
    expect(styles.font, route).toBe(daylightFont);
-   expect(styles.canvas, route).toBe('rgb(240, 240, 240)');
+   expect(styles.canvas, route).toBe('rgb(246, 246, 246)');
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route).toBe(true);
  }

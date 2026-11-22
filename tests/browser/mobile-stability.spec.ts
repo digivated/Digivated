@@ -95,7 +95,7 @@ test('touch devices keep static navigation and skip pointer effects', async ({ b
       if (/\/DigivatedSurfaces[.\w-]*\.js$/.test(new URL(request.url()).pathname)) effects.push(request.url());
     });
     await page.goto('http://127.0.0.1:4321/');
-    await page.getByRole('link', { name: 'Browse launches', exact: true }).click();
+    await page.getByRole('navigation', { name: 'Browse launches' }).getByRole('link', { name: 'This week', exact: true }).click();
     await expect(page).toHaveURL(/#this-week$/);
     await page.goto('http://127.0.0.1:4321/saved');
     await expect(page.getByRole('heading', { name: 'Saved items', exact: true })).toHaveCount(1);
