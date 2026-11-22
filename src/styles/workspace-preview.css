@@ -218,7 +218,7 @@
       letter-spacing: .02em !important;
       text-transform: none !important;
     }
-    .dg-rail-group .line-sidebar { padding-inline: 0; }
+    .dg-rail-group .line-sidebar { padding-inline: 0 !important; }
     .dg-rail-group .line-sidebar__list { position: relative; width: 100%; padding: 0 !important; margin: 0 !important; list-style: none !important; }
     .dg-rail-group .line-sidebar__item { padding: 0 !important; margin: 0 !important; }
     .dg-rail-group .line-sidebar__item::before { content: none; }
@@ -249,7 +249,7 @@
       box-shadow: none !important;
       color: #fff !important;
     }
-    .dg-rail-group a[aria-current="page"] {
+    .dg-workspace-rail .dg-rail-group a[aria-current="page"] {
       font-weight: 650;
       box-shadow: inset 3px 0 #fff !important;
     }

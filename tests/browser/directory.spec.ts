@@ -73,7 +73,9 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(base + '/');
   const rail = page.getByRole('complementary', { name: 'Digivated sidebar' });
-  await expect(rail.getByRole('link', { name: 'Launches', exact: true })).toHaveAttribute('aria-current', 'page');
+  const activeLaunches = rail.getByRole('link', { name: 'Launches', exact: true });
+  await expect(activeLaunches).toHaveAttribute('aria-current', 'page');
+  await expect(activeLaunches).toHaveCSS('box-shadow', /inset/);
   await expect(rail.getByRole('link', { name: 'Submit a launch' })).toHaveAttribute('href', '/submit-project');
   await expect(rail).toHaveCSS('background-color', 'rgb(0, 0, 0)');
   await expect(rail).toHaveCSS('background-image', 'none');
