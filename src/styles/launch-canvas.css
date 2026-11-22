@@ -13,7 +13,6 @@
     gap: 10px;
   }
 
-  .launch-welcome-mark { display: block; object-fit: contain; }
   .launch-welcome #dg-home-title {
     margin: 0 !important;
     font-size: clamp(30px, 4.2vw, 50px) !important;
@@ -108,7 +107,7 @@
     .home-refresh .launch-welcome #dg-home-title { font-size: clamp(46px, 4.1vw, 58px) !important; }
     .home-refresh .launch-welcome .dg-hero-actions { width: min(100%, 640px); }
     .home-refresh #main .dg-hero-panel { width: min(100%, 640px); }
-    .home-refresh #main :is(.dg-home, .dg-about) {
+    .home-refresh #main .dg-home {
       width: 100%;
       max-width: var(--launch-board-width) !important;
       margin-inline: auto !important;

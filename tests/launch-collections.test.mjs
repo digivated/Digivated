@@ -20,7 +20,10 @@ test('published project pages lead to feedback and further discovery', async () 
  const draft = await renderLaunch(item,{template,draft:true});
  assert.doesNotMatch(draft,/data-project-comments|href="#feedback"/);
  assert.match(html,/href="#similar">Similar<\/a>/);
- assert.match(html,/href="\/discover\?category=Apps">Browse this category/);
+ assert.match(html,/href="\/discover\?category=Apps">Browse category/);
+ assert.doesNotMatch(html, /<dt>Website<\/dt>/);
+ const distinctSite = await renderLaunch({...item, website:'https://example.com/about'}, {template});
+ assert.match(distinctSite, /<dt>Website<\/dt><dd><a href="https:\/\/example.com\/about"/);
  assert.match(html,/rel="canonical" href="https:\/\/digivated.com\/projects\/same-name-project-one"/);
  const schema=JSON.parse(html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)?.[1]||'{}');
  assert.equal(schema.name,'Same name');

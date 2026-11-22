@@ -11,14 +11,13 @@ import '../styles/submission-flow.css';
   <div class="submission-maker-navigation" id="submission-maker-navigation" hidden><MakerNavigation submitting/></div>
   <header class="page-intro submission-intro">
     <h1>New launch</h1>
-    <p class="lede">Add your product link to draft a listing. You can review it before submitting.</p>
+    <p class="lede">Start with your product link.</p>
   </header>
 
   <div class="submission-layout submission-workspace">
     <form class="submission-form" id="project-form" action="/api/submissions" method="post">
       <div id="submission-account-callout" class="submission-account-callout">
         <strong>Create a free account to submit</strong>
-        <p>Track your launch and replies from your account.</p>
         <div class="submission-account-actions"><a class="button primary" href="/login?mode=signup&amp;next=%2Fsubmit-project">Create an account</a><a href="/login?next=%2Fsubmit-project">Sign in</a></div>
       </div>
       <p id="submission-account-status" class="submission-account-status" role="status" aria-live="polite" hidden></p>
@@ -61,7 +60,7 @@ import '../styles/submission-flow.css';
               <summary>Project pricing (optional)</summary>
               <fieldset class="submission-pricing" aria-describedby="project-pricing-help">
                 <legend class="sr-only">Project pricing</legend>
-                <p id="project-pricing-help" class="field-help">Choose how people pay to use your project.</p>
+                <p id="project-pricing-help" class="field-help">How people pay for your product.</p>
                 <div class="submission-pricing-options">
                   <label><input type="radio" name="pricing" value="" checked/><span>Skip for now</span></label>
                   {projectPricingOptions.filter(option => option !== 'Open source').map(option => (
@@ -74,7 +73,7 @@ import '../styles/submission-flow.css';
 
           <fieldset id="sub-step-logo">
             <legend>Project logo</legend>
-            <label class="submission-upload"><span class="sr-only">Project logo</span><input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">A square PNG with a transparent background works best. JPG and WebP also work. Up to 10 MB.</span></label>
+            <label class="submission-upload"><span class="sr-only">Project logo</span><input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Square PNG, JPG, or WebP. Up to 10 MB.</span></label>
             <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project logo preview"/><span id="project-image-name"></span></div>
           </fieldset>
 
@@ -84,8 +83,8 @@ import '../styles/submission-flow.css';
             <details class="submission-disclosure">
               <summary>Social handle and review notes (optional)</summary>
               <div class="submission-optional-fields">
-                <label>Social handle <span class="quiet">(optional)</span><input name="social" maxlength="200" placeholder="@yourhandle and platform"/></label>
-                <label>Notes for the review <span class="quiet">(optional)</span><textarea name="notes" rows="3" maxlength="2000" placeholder="Anything else you’d like us to know?"></textarea><span class="field-help">Only the review team sees these notes.</span></label>
+                <label>Social handle<input name="social" maxlength="200" placeholder="@yourhandle and platform"/></label>
+                <label>Review notes<textarea name="notes" rows="3" maxlength="2000" ></textarea><span class="field-help">Only the review team sees these notes.</span></label>
               </div>
             </details>
           </fieldset>
@@ -96,9 +95,9 @@ import '../styles/submission-flow.css';
           <!-- The tier cards drive the select used by submission and checkout. -->
           <p id="plan-status" class="dg-plan-status" role="status" hidden></p>
           <div class="dg-tiers" role="radiogroup" aria-label="Launch option" data-tiers>
-            <label class="dg-tier" data-tier="directory"><input type="radio" name="dg-tier" value="directory" checked/><span class="dg-tier-head"><strong>Free</strong><b>$0</b></span><span class="dg-tier-sub">1 project. Add a badge to your site and launch on Monday.</span><span class="dg-tier-own" data-tier-own hidden>Your plan</span></label>
-            <label class="dg-tier dg-tier-instant" data-tier="instant" hidden><input type="radio" name="dg-tier" value="instant" disabled/><span class="dg-tier-head"><strong>Starter</strong><b data-tier-price>$3</b></span><span class="dg-tier-sub" id="instant-launch-help">Up to 3 projects, live the moment you publish. One-time.</span><span class="dg-tier-own" data-tier-own hidden>Your plan</span></label>
-            <label class="dg-tier" data-tier="founding-feature"><input type="radio" name="dg-tier" value="founding-feature"/><span class="dg-tier-head"><strong>Membership</strong><b>$5</b></span><span class="dg-tier-sub">Unlimited projects, live instantly, and full site access. One-time.</span><span class="dg-tier-own" data-tier-own hidden>Your plan</span></label>
+            <label class="dg-tier" data-tier="directory"><input type="radio" name="dg-tier" value="directory" checked/><span class="dg-tier-head"><strong>Free</strong><b>$0</b></span><span class="dg-tier-sub">1 project with a badge. Launch Monday.</span><span class="dg-tier-own" data-tier-own hidden>Your plan</span></label>
+            <label class="dg-tier dg-tier-instant" data-tier="instant" hidden><input type="radio" name="dg-tier" value="instant" disabled/><span class="dg-tier-head"><strong>Starter</strong><b data-tier-price>$3</b></span><span class="dg-tier-sub" id="instant-launch-help">Up to 3 projects. Publish instantly.</span><span class="dg-tier-own" data-tier-own hidden>Your plan</span></label>
+            <label class="dg-tier" data-tier="founding-feature"><input type="radio" name="dg-tier" value="founding-feature"/><span class="dg-tier-head"><strong>Membership</strong><b>$5</b></span><span class="dg-tier-sub">Unlimited instant launches and full site access.</span><span class="dg-tier-own" data-tier-own hidden>Your plan</span></label>
           </div>
           <label class="sr-only" aria-hidden="true">Launch option
             <select name="submissionType" id="submission-type" aria-describedby="free-launch-help" tabindex="-1">
@@ -121,12 +120,12 @@ import '../styles/submission-flow.css';
         </fieldset>
 
         <div class="submission-review">
-          <h2>Confirm and submit</h2>
+          <h2 class="sr-only">Confirm and submit</h2>
           <label class="honeypot" aria-hidden="true">Leave this empty<input name="company" tabindex="-1" autocomplete="off"/></label>
           <label class="consent"><input name="consent" type="checkbox" required checked/><span>I confirm that I own or am authorized to submit this project and allow Digivated to display the submitted information and project logo.</span></label>
           <label class="consent"><input name="emailOutreachConsent" type="checkbox" checked/><span>Send me one follow-up email about my launch. No newsletter unless I opt in.</span></label>
           <label class="consent"><input name="activityNotifications" type="checkbox" aria-describedby="submission-notification-help" checked/><span><strong>Turn on all activity notifications</strong></span></label>
-          <p id="submission-notification-help" class="field-help">Replies, follows and feedback. Change this any time in <a href="/notifications">Notifications</a>.</p>
+          <p id="submission-notification-help" class="field-help">Manage alerts in <a href="/notifications#notification-preferences">Notifications</a>.</p>
           <button class="button primary" type="submit" disabled>Sign in to submit your project</button>
           <noscript>Enable JavaScript to submit your project securely.</noscript>
           <p class="form-status" id="submission-status" role="status" aria-live="polite" tabindex="-1"></p>

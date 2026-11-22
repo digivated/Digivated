@@ -1,12 +1,14 @@
 /* Resources directory (/resources). Same layer as the ASCII sheets so these win. */
 @layer flow {
 html#digivated-root[data-ascii] body .rl{display:grid;gap:28px;width:min(1180px,100%);margin:0 auto!important;padding:0 0 64px!important}
-html#digivated-root[data-ascii] body .rl .dg-dir-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important;max-width:420px!important}
-html#digivated-root[data-ascii] body .rl .dg-dir-stats li{border-left:0!important}
-html#digivated-root[data-ascii] body .rl .dg-dir-stats li+li{border-left:1px dashed #2a2a2a!important}
-html#digivated-root[data-ascii] body .rl .dg-dir-stats [data-rl-total]{color:#d9c6ff!important}
 
 /* Most helpful */
+html#digivated-root[data-ascii] body .rl-top > summary {
+  min-height: 44px;
+  padding: 12px 0;
+  cursor: pointer;
+  color: var(--fl-ink) !important;
+}
 html#digivated-root[data-ascii] body .rl-top-list{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0!important;padding:0!important;list-style:none!important}
 html#digivated-root[data-ascii] body .rl-top-item{margin:0!important;padding:0!important;min-width:0}
 html#digivated-root[data-ascii] body .rl-top-card{min-height:64px!important}

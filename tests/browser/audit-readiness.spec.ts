@@ -27,7 +27,7 @@ for(const width of [390,1366]) test(`home shows launches without the extra panel
  await page.goto(base);
  await expect(page.getByRole('heading',{level:1,name:'Discover product launches'})).toBeVisible();
  await expect(page.getByText('See what makers are shipping.', {exact:true})).toBeVisible();
- await expect(page.getByRole('heading',{name:'How Digivated works'})).toBeVisible();
+ await expect(page.getByRole('contentinfo').getByRole('link',{name:'About',exact:true})).toHaveAttribute('href','/about');
  await expect(page.locator('[data-launch-id="audit-fixture"]')).toBeVisible();
  await expect(page.locator('.dg-home-extras, [data-spot-grid], main [data-feedback-points]')).toHaveCount(0);
  expect(panelRequests).toEqual([]);

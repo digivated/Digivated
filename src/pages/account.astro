@@ -74,19 +74,19 @@ import SettingsMasthead from '../components/SettingsMasthead.astro';
         </section>
       </section>
       <section id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" class="fl-tabpanel" hidden>
-        <SettingsMasthead title="Account settings" description="Alerts, the weekly launch email, and your password."/>
+        <SettingsMasthead title="Account settings"/>
         <div class="account-settings-grid">
           <section class="account-setting-group" aria-labelledby="account-email-title">
-            <header><h3 id="account-email-title">Email and alerts</h3><p>Choose what reaches you, and where.</p></header>
+            <header><h3 id="account-email-title">Email and alerts</h3></header>
             <div class="account-setting-row" role="group" aria-labelledby="account-notifications-title">
-              <div class="account-setting-copy"><h4 id="account-notifications-title">Notifications</h4><p>Which activity you hear about, from project feedback to launch reminders.</p></div>
+              <div class="account-setting-copy"><h4 id="account-notifications-title">Notifications</h4></div>
               <div class="account-setting-actions">
                 <a class="button primary" href="/notifications#notification-preferences">Manage notifications <UiIcon name="arrow" size={16}/></a>
                 <a class="account-setting-link" href="/notifications#notification-activity">View recent activity</a>
               </div>
             </div>
             <div id="weekly-email" class="account-setting-row" role="group" aria-labelledby="account-weekly-title" hidden>
-              <div class="account-setting-copy"><h4 id="account-weekly-title">Weekly email</h4><p>New projects in your inbox once a week. Unsubscribe anytime.</p></div>
+              <div class="account-setting-copy"><h4 id="account-weekly-title">Weekly email</h4><p>New launches in your inbox.</p></div>
               <div class="account-setting-actions">
                 <button class="fl-btn" id="weekly-toggle" type="button">Get weekly emails</button>
                 <p id="weekly-status" class="fl-status" role="status" aria-live="polite"></p>
@@ -95,7 +95,7 @@ import SettingsMasthead from '../components/SettingsMasthead.astro';
           </section>
           <section class="account-setting-group" aria-labelledby="account-password-title">
             <div class="account-setting-row">
-              <div class="account-setting-copy"><h3 id="account-password-title">Password</h3><p>We email a reset link to your account address.</p></div>
+              <div class="account-setting-copy"><h3 id="account-password-title">Password</h3></div>
               <div class="account-setting-actions">
                 <button class="fl-btn" id="account-reset-link" type="button">Email me a reset link</button>
                 <p id="account-reset-status" class="fl-status" role="status" aria-live="polite"></p>

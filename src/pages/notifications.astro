@@ -8,14 +8,14 @@ const activityChoices = [
   ['feedback', 'Project comments', 'New comments on your projects.'],
   ['reply', 'Replies', 'Replies to your comments and threads.'],
   ['upvote', 'Upvotes', 'Grouped by project, thread, or comment each day.'],
-  ['launch', 'Launch reminders', 'Products you turned on Notify me for, plus launches by makers you follow.'],
+  ['launch', 'Launch reminders', 'Products you watch and makers you follow.'],
   ['award', 'Weekly podium', 'An in-app alert when your launch finishes in the top three.'],
   ['follow', 'New followers', 'When someone follows your public profile.'],
 ];
 ---
 <Platform title="Notifications" description="See your Digivated activity and manage your notification settings.">
   <section class="notifications-page" aria-labelledby="notifications-title">
-    <SettingsMasthead title="Notifications" id="notifications-title" level="h1" description="Keep up with your launches and the conversations around them.">
+    <SettingsMasthead title="Notifications" id="notifications-title" level="h1" description="Launch updates and activity.">
       <a href="/account?tab=settings"><UiIcon name="arrow-left" size={16}/> Account settings</a>
     </SettingsMasthead>
 
@@ -58,7 +58,7 @@ const activityChoices = [
       <section id="notification-preferences" class="notifications-settings notifications-card" aria-labelledby="notifications-preferences-title">
         <header class="notifications-settings-head">
           <span class="notifications-setting-icon" aria-hidden="true"><UiIcon name="bell" size={20}/></span>
-          <div><h2 id="notifications-preferences-title">Notification settings</h2><p>Choose which activity appears here and what gets emailed.</p></div>
+          <div><h2 id="notifications-preferences-title">Notification settings</h2><p>Choose what reaches you.</p></div>
         </header>
         <div class="notifications-choice-list">
           <label class="notifications-choice notifications-master">

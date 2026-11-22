@@ -1,6 +1,5 @@
 ---
 import { footerGroups } from '../data/site-navigation.mjs';
-import UiIcon from './UiIcon.astro';
 import BugReport from './BugReport.astro';
 import '../styles/site-footer.css';
 
@@ -15,10 +14,6 @@ const socials = footerGroups.find(group => group.title === 'Follow')?.links ?? [
         <img class="daylight-brand-mark" src="/digivated-daylight-mark.png" width="32" height="32" alt=""/>
         Digivated
       </a>
-      <div class="dg-footer-digest">
-        <div><h2>Weekly launch email</h2><p>Get new projects in your inbox.</p></div>
-        <a class="dg-footer-email-link" href="/account?tab=settings">Email settings <UiIcon name="external" size={14}/></a>
-      </div>
     </div>
       <nav class="dg-footer-groups" aria-label="Footer">
         {groups.map(group => <div class="dg-footer-group">

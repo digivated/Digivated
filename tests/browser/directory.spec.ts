@@ -1,7 +1,26 @@
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
+import { resourceGroups } from '../../src/data/link-resources.mjs';
 
 const base = 'http://127.0.0.1:4321';
+
+test('Tools puts search first and keeps the cross-category list available', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  const rankedLinks = resourceGroups[0].links.slice(0, 3);
+  await page.route('**/api/link-votes', route => route.fulfill({
+    json: { counts: Object.fromEntries(rankedLinks.map((link, index) => [link.id, 3 - index])) },
+  }));
+  await page.goto(base + '/resources');
+  const search = page.getByRole('searchbox', { name: 'Search resources' });
+  const recommendations = page.locator('[data-rl-top]');
+  await expect(search).toBeVisible();
+  await expect(recommendations).toBeVisible();
+  await expect(recommendations.locator('li').first()).toBeHidden();
+  await recommendations.locator('summary').click();
+  await expect(recommendations.locator('li').first()).toBeVisible();
+  await search.fill('no-matching-tool-fixture');
+  await expect(page.locator('[data-link-empty]')).toBeVisible();
+});
 const projects = Array.from({ length: 27 }, (_, i) => ({
   id: 'directory-' + i,
   name: 'Directory fixture ' + i,

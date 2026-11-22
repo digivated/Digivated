@@ -9,7 +9,7 @@ const Heading = level;
 <header class="settings-masthead settings-masthead-plain">
   <div class="settings-masthead-copy">
     <Heading id={id}>{title}</Heading>
-    <p>{description}</p>
+    {description && <p>{description}</p>}
   </div>
   {Astro.slots.has('default') && <div class="settings-masthead-actions"><slot/></div>}
 </header>
