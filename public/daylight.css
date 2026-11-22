@@ -515,7 +515,6 @@
   html[data-theme="daylight"] body #main .login-heading { margin-bottom: 18px !important; }
   html[data-theme="daylight"] body #main .login-page { margin-block: var(--editorial-space) !important; }
   html[data-theme="daylight"] body #main .fl-dash { padding-block: 16px !important; }
-  html[data-theme="daylight"] body #main .dg-fp-account { max-width: 900px; margin-inline: auto; }
   html[data-theme="daylight"] body #main .fl-badges-page .fl-badge-stage {
     border-radius: 0 !important;
     border: 0 !important;

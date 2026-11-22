@@ -136,10 +136,8 @@ for (const width of [320, 1440]) {
       expect(height, path).toBeLessThan(width === 320 ? 510 : 330);
       const action = footer.getByRole('link', { name: 'Submit a project', exact: true });
       await expect(action).toHaveCount(1);
-      const [brand, submit] = await Promise.all([
-        footer.locator('.dg-footer-brand').boundingBox(), action.boundingBox(),
-      ]);
-      if (width === 320) expect(submit!.x).toBeGreaterThanOrEqual(brand!.x + brand!.width);
+      await expect(footer.locator('.dg-footer-inner')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+      await expect(footer.locator('.dg-footer-group').filter({ has: page.getByRole('link', { name: 'Submit a project', exact: true }) })).toHaveText(/For makers/);
       await expect(footer.locator('[data-scene-toggle]')).toHaveCount(0);
       const grid = footer.locator('.dg-footer-groups');
       const positions = await grid.locator('h2').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().toJSON()));
@@ -193,7 +191,7 @@ for (const width of [320, 1440]) {
     await page.route(base + listing, route => route.fulfill({ contentType: 'text/html', body: html }));
     await page.route(base + '/missing-project-screenshot.png', route => route.fulfill({ status: 404 }));
     await page.goto(base + listing);
-    await expect(page.locator('canvas[data-site-backdrop]')).toHaveCount(1);
+    await expect(page.locator('[data-site-backdrop]')).toHaveCount(0);
     await expect(page.getByText('Screenshot currently unavailable.')).toBeVisible();
     await expect(page.locator('.launch-shot img')).toHaveCount(0);
     const card = page.locator('.launch-creator');

@@ -17,7 +17,6 @@ html[data-ascii] body .dg-fp-foot{display:flex;flex-wrap:wrap;align-items:center
 html[data-ascii] body .dg-fp-foot [hidden]{display:none!important}
 html[data-ascii] body .dg-fp-fine{margin:0!important;font-family:var(--fl-mono)!important;font-size:10.5px!important;color:#6f6f6f!important}
 
-html[data-ascii] body .dg-fp-account{width:100%;margin:28px 0 0!important}
 html[data-ascii] body #main>.dg-fp-strip{margin-block:20px!important}
 }
 @layer flow {

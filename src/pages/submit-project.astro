@@ -9,7 +9,7 @@ import '../styles/submission-flow.css';
 <Platform title="Launch your project" description="Submit your project to Digivated. Verify a badge for a free launch or choose a member launch.">
   <header class="page-intro submission-intro">
     <h1>Launch your project.</h1>
-    <p class="lede">Add your project and choose how to launch.</p>
+    <p class="lede">Paste your product link to autofill details, or enter them yourself.</p>
   </header>
 
   <div class="submission-layout submission-workspace">
@@ -23,14 +23,6 @@ import '../styles/submission-flow.css';
 
       <div id="instant-launch-resume" class="submission-review" hidden><h2 id="instant-launch-title">Complete your payment</h2><p id="instant-launch-copy">Your project is saved. Pay in the checkout tab using <strong id="instant-launch-email">your account email</strong>. This page publishes it automatically as soon as payment goes through.</p><div class="submission-account-actions"><a id="instant-launch-checkout" class="button primary" target="_blank" rel="noopener">Open checkout ↗</a><button id="instant-launch-verify" class="button" type="button">I’ve paid — check now</button></div><p id="instant-launch-cancel-note" class="field-help">Changed your mind? You’re only charged if you finish checkout. <button id="instant-launch-cancel" class="dg-link-button" type="button">← Cancel and change launch option</button></p><p id="instant-launch-status" role="status" aria-live="polite"></p><a id="instant-launch-listing" hidden>View your live project →</a></div>
       <div id="submission-details" hidden>
-        <ol class="fl-progress" id="submission-progress" aria-label="Form progress">
-          <li data-progress="sub-step-details"><a href="#sub-step-details"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> Project</a></li>
-          <li data-progress="sub-step-logo"><a href="#sub-step-logo"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> Logo</a></li>
-          <li data-progress="sub-step-you"><a href="#sub-step-you"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> About you</a></li>
-          <li data-progress="sub-step-launch"><a href="#sub-step-launch"><span class="fl-progress-mark" aria-hidden="true">[ ]</span> Launch</a></li>
-        </ol>
-
-
         <div class="submission-project-fields">
           <fieldset id="sub-step-details">
             <legend>Project details</legend>
@@ -44,7 +36,7 @@ import '../styles/submission-flow.css';
               <label>
                 <span id="project-category-label">Category</span>
                 <span class="submission-category-control">
-                  <select name="category" aria-labelledby="project-category-label" aria-describedby="project-category-help" required>
+                  <select name="category" aria-labelledby="project-category-label" required>
                     <option value="">Choose a category</option>
                     {projectCategoryGroups.map(([label, names]) => (
                       <optgroup label={label}>
@@ -54,7 +46,6 @@ import '../styles/submission-flow.css';
                     <option value="Other">Other</option>
                   </select>
                 </span>
-                <span id="project-category-help" class="field-help">Pick the category that best fits what it does.</span>
               </label>
             </div>
             <label>Project description<textarea name="description" rows="2" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters.</span></label>
@@ -75,7 +66,7 @@ import '../styles/submission-flow.css';
 
           <fieldset id="sub-step-logo">
             <legend>Project logo</legend>
-            <label class="submission-upload"><span class="sr-only">Project logo</span><input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Your logo, not a screenshot. Square JPG, PNG or WebP, up to 10 MB.</span></label>
+            <label class="submission-upload"><span class="sr-only">Project logo</span><input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Square JPG, PNG or WebP, up to 10 MB.</span></label>
             <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project logo preview"/><span id="project-image-name"></span></div>
           </fieldset>
 
@@ -122,7 +113,6 @@ import '../styles/submission-flow.css';
 
         <div class="submission-review">
           <h2>Confirm and submit</h2>
-          <p>Track your launch in <a href="/account">Your projects</a>.</p>
           <label class="honeypot" aria-hidden="true">Leave this empty<input name="company" tabindex="-1" autocomplete="off"/></label>
           <label class="consent"><input name="consent" type="checkbox" required checked/><span>I confirm that I own or am authorized to submit this project and allow Digivated to display the submitted information and project logo.</span></label>
           <label class="consent"><input name="emailOutreachConsent" type="checkbox" checked/><span>Send me one follow-up email about my launch. No newsletter unless I opt in.</span></label>

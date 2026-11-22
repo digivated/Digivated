@@ -163,3 +163,47 @@ for (const width of [390, 1440]) test(`free launch can verify the badge and subm
  await expect(page.locator('#submission-badge-title')).toHaveText('Badge found. You’re in the launch.');
  expect(configRequests).toBe(1);
 });
+
+test('signed-in overview keeps launch details and profile within reach', async ({ page }) => {
+ await page.setViewportSize({ width: 390, height: 900 });
+ await page.addInitScript(() => {
+  localStorage.setItem('sb-fixture-auth-token', JSON.stringify({
+   access_token: 'fixture-token', refresh_token: 'fixture-refresh',
+   expires_at: Math.floor(Date.now() / 1000) + 3600,
+   user: { id: 'fixture-owner', email: 'fixture@example.com', email_confirmed_at: '2026-11-01T00:00:00Z' },
+  }));
+ });
+ await page.route('**/api/project-account**', route => route.fulfill({
+  json: route.request().url().includes('action=config')
+   ? { ready: true, url: 'https://fixture.supabase.co', key: 'fixture-key' }
+   : { email: 'fixture@example.com', submissions: [{
+    id: 'studio-notes', name: 'Studio Notes', status: 'approved',
+    date: '2026-11-19T00:00:00Z', pageUrl: '/projects/listing/studio-notes',
+   }] },
+ }));
+ await page.route('**/api/creator-profile**', route => route.fulfill({
+  json: route.request().url().includes('action=feed')
+   ? { items: [] }
+   : { id: 'fixture-owner', profile: { name: 'Studio North', public: false } },
+ }));
+ let analyticsRequests = 0;
+ await page.route('**/api/maker-stats?*', route => {
+  analyticsRequests++;
+  return route.fulfill({ json: { days: [], totals: { views: 2, visits: 1, upvotes: 0, comments: 0 } } });
+ });
+ await page.goto('http://127.0.0.1:4321/account');
+ await expect(page.getByRole('tab', { name: 'Overview' })).toHaveAttribute('aria-selected', 'true');
+ const project = page.locator('#project-studio-notes');
+ await expect(project.getByRole('link', { name: 'View project and feedback' })).toHaveAttribute('href', '/projects/listing/studio-notes');
+ expect(analyticsRequests).toBe(0);
+ await project.getByText('Launch stats', { exact: true }).click();
+ await expect(project.getByRole('region', { name: 'Launch stats for Studio Notes' }).getByText('Views')).toBeVisible();
+ expect(analyticsRequests).toBe(1);
+ await page.getByRole('tab', { name: 'Profile' }).click();
+ await expect(page.getByLabel('Display name')).toHaveValue('Studio North');
+ await page.getByRole('tab', { name: 'Settings' }).click();
+ await expect(page.getByRole('link', { name: 'Manage notifications' })).toHaveAttribute('href', '/notifications');
+ await page.locator('#account-submit-cta').click();
+ await expect(page).toHaveURL(/\/submit-project$/);
+ await expect(page.getByRole('textbox', { name: 'Project URL' })).toBeVisible();
+});

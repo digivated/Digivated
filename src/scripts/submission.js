@@ -186,7 +186,7 @@ if (form) {
       const response=await fetch('/api/project-account',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store'});
       if(response.ok){
         const account = await response.json();
-        accountVerified=true;form.elements.email.value=session.user.email;form.elements.email.readOnly=true;document.getElementById('submission-account-callout').hidden=true;details.hidden=false;accountStatus.hidden=false;accountStatus.textContent=`Signed in as ${session.user.email}. This project will appear in your account.`;updateButton();
+        accountVerified=true;form.elements.email.value=session.user.email;form.elements.email.readOnly=true;document.getElementById('submission-account-callout').hidden=true;details.hidden=false;accountStatus.hidden=false;accountStatus.textContent=`Submitting as ${session.user.email}`;updateButton();
         configureLaunch(account);
         accountUserId=session.user.id||'';if(intent.value==='directory')ensureReservation();renderBadgeFirst();
       }
@@ -441,31 +441,4 @@ if (form) {
       status.textContent = error.name === 'TimeoutError' ? 'The response took too long. Your submission may have been received; please wait before trying again.' : (error.message || 'Unable to submit. Please try again.');
     } finally { updateButton(); }
   });
-  // Live progress: each section is marked done once its required fields are valid.
-  const progressItems = [...document.querySelectorAll('#submission-progress [data-progress]')];
-  const sectionDone = id => {
-    const section = document.getElementById(id);
-    if (!section) return false;
-    const fields = [...section.querySelectorAll('input,select,textarea')].filter(field => field.required && field.type !== 'checkbox');
-    return fields.length ? fields.every(field => field.type === 'file' ? !!field.files?.length : field.checkValidity()) : !!intent.value;
-  };
-  const updateProgress = () => {
-    let current = false, previousDone = true;
-    for (const item of progressItems) {
-      // A step only counts once every step before it is complete.
-      const done = previousDone && sectionDone(item.dataset.progress);
-      previousDone = done;
-      item.classList.toggle('is-done', done);
-      const isCurrent = !done && !current;
-      item.classList.toggle('is-current', isCurrent);
-      const link = item.querySelector('a');
-      if (isCurrent) link.setAttribute('aria-current', 'step');
-      else link.removeAttribute('aria-current');
-      if (isCurrent) current = true;
-      item.querySelector('.fl-progress-mark').textContent = done ? '[✓]' : '[ ]';
-    }
-  };
-  form.addEventListener('input', updateProgress);
-  form.addEventListener('change', updateProgress);
-  updateProgress();
 }

@@ -285,6 +285,34 @@ html#digivated-root body.platform .creator-feed-shell .creator-project-picks{gri
 
 
 @layer workspace-preview {
+  .fl-dash .fl-dash-bar { margin-block-end: 8px; }
+  .fl-dash .fl-tabs > button {
+    min-height: 44px !important;
+    padding-inline: clamp(7px, 2vw, 14px) !important;
+    border: 0 !important;
+    border-block-end: 2px solid transparent !important;
+    border-radius: 0 !important;
+    background: none !important;
+    color: var(--fl-muted) !important;
+    box-shadow: none !important;
+  }
+  .fl-dash .fl-tabs > button[aria-selected="true"] {
+    border-block-end-color: var(--fl-ink) !important;
+    color: var(--fl-ink) !important;
+    font-weight: 670 !important;
+  }
+  .fl-dash .fl-tabs > button:is(:hover,:focus-visible) { color: var(--fl-ink) !important; }
+  .fl-dash .fl-empty h2 { margin-block: 0 5px !important; font-size: 20px !important; }
+  .fl-dash :is(.account-project-stats,.account-points) > summary {
+    align-content: center;
+    min-height: 44px;
+    cursor: pointer;
+    color: var(--fl-ink) !important;
+    font-size: 14px !important;
+  }
+  .fl-dash .account-project-stats { border-block-start: 1px solid var(--fl-line); }
+  .fl-dash .account-points > summary:hover,
+  .fl-dash .account-project-stats > summary:hover { text-decoration: underline; }
   .fl-dash .fl-settings {
     gap: 0;
     border: 1px solid var(--fl-line);
@@ -307,7 +335,10 @@ html#digivated-root body.platform .creator-feed-shell .creator-project-picks{gri
   .fl-dash .fl-settings .fl-setting .fl-status:empty { display: none; }
   .fl-dash .fl-settings .fl-btn {
     min-height: 44px;
-    padding: 6px 10px !important;
+    padding: 6px 0 !important;
+    border-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
     font-size: 13px !important;
   }
   @media (max-width: 440px) {

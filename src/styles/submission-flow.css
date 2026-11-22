@@ -1,7 +1,6 @@
-/* Submission workspace: use the shared Obsidian tokens, never light-only surfaces.
-   Scope every rule to this page so account and directory forms stay unchanged. */
+/* Styles for the launch form and its optional previews. */
 html#digivated-root body.platform .submission-intro {
-  max-width:1120px;margin-inline:auto;padding:24px 0 16px;
+  max-width:740px;margin-inline:auto;padding:24px 0 16px;
 }
 html#digivated-root body.platform .submission-intro h1 {
   margin:0 0 8px;font-size:clamp(32px,4vw,46px);line-height:1.08;letter-spacing:-.05em;
@@ -9,15 +8,15 @@ html#digivated-root body.platform .submission-intro h1 {
 html#digivated-root .submission-intro .lede {max-width:58ch;font-size:16px;line-height:1.7;margin:0}
 html#digivated-root body.platform .submission-workspace {
   display:grid;grid-template-columns:minmax(0,1fr);gap:12px;
-  max-width:1120px;margin-inline:auto;align-items:start;
+  max-width:740px;margin-inline:auto;align-items:start;
 }
 html#digivated-root body.platform .submission-form {
   display:block;min-width:0;margin:0;padding:0;border:1px solid var(--dg-line-strong);
-  border-radius:16px;overflow:hidden;
+  border-radius:16px;background:var(--fl-surface);
 }
 html#digivated-root body.platform #project-form :is(.submission-account-callout,.submission-account-status) {
   margin:0;padding:24px 28px;border:0;border-bottom:1px solid var(--dg-line);
-  border-radius:0;background:var(--dg-raised);overflow-wrap:anywhere;
+  border-radius:0;background:var(--fl-surface);overflow-wrap:anywhere;
 }
 html#digivated-root .submission-account-callout strong {display:block;font-size:20px;letter-spacing:-.02em}
 html#digivated-root .submission-account-callout p {font-size:14px;line-height:1.7;margin:8px 0 20px}
@@ -125,7 +124,7 @@ html#digivated-root .submission-category-control {
 }
 html#digivated-root body.platform .submission-form .submission-category-control select {
   appearance: none;
-  color-scheme: dark;
+  color-scheme: light;
   padding-inline-end: 44px;
 }
 html#digivated-root .submission-category-control::after {
@@ -181,8 +180,8 @@ html#digivated-root body.platform .submission-pricing-options input[type=radio] 
   height: 16px;
   margin: 0;
   padding: 0;
-  accent-color: #d7d7d7;
-  color-scheme: dark;
+  accent-color: var(--fl-ink);
+  color-scheme: light;
 }
 
 html#digivated-root .submission-project-fields {min-width:0}
@@ -199,45 +198,7 @@ html#digivated-root .submission-disclosure > :last-child:not(summary) {margin-bo
 html#digivated-root .submission-optional-fields {display:grid;gap:12px}
 html#digivated-root body.platform .submission-preview-panel {padding-inline:14px;border:1px solid var(--fl-rule-hi, var(--dg-line-strong))}
 html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;margin-bottom:8px}
-@media(min-width:850px) {
-  html#digivated-root #submission-details:not([hidden]) {
-    display:grid;grid-template-columns:minmax(0,1fr) minmax(280px, 35%);align-items:start;
-  }
-  html#digivated-root #submission-details > :is(#submission-progress,.submission-review) {grid-column:1/-1}
-  html#digivated-root #project-form:not(.is-saved) #submission-details {
-    grid-template-areas:"progress progress" "project launch" "review launch";
-    grid-template-rows:auto max-content 1fr;
-  }
-  html#digivated-root #project-form:not(.is-saved) #submission-progress {grid-area:progress}
-  html#digivated-root #project-form:not(.is-saved) .submission-project-fields {grid-area:project}
-  html#digivated-root #project-form:not(.is-saved) #sub-step-launch {grid-area:launch}
-  html#digivated-root #project-form:not(.is-saved) #submission-details > .submission-review {grid-area:review}
-  html#digivated-root body.platform #sub-step-launch {border-inline-start:1px solid var(--fl-rule, var(--dg-line))}
-  html#digivated-root .submission-form .form-row {grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-}
-
-
 @layer workspace-preview {
-  #submission-progress {
-    position: static;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0;
-    margin-block: 0 12px !important;
-  }
-
-  #submission-progress li { text-align: center; }
-  #submission-progress a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    min-height: 44px !important;
-    padding: 4px 2px !important;
-    white-space: normal;
-  }
-  #submission-progress .is-current a { font-weight: 680; }
-
   .submission-form .dg-badge-first {
     display: grid;
     gap: 12px;
@@ -311,4 +272,18 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
   }
 
   .dg-badge-first .fl-badge-actions .fl-btn { min-height: 44px !important; }
+}
+
+@layer workspace-preview {
+  html[data-theme="daylight"] #main > :is(.submission-intro, .submission-workspace),
+  html[data-theme="daylight"] #main:has(> .submission-intro) > .site-breadcrumbs {
+    width: 100% !important;
+    max-width: 740px !important;
+    margin-inline: auto !important;
+  }
+  html[data-theme="daylight"] #project-form,
+  html[data-theme="daylight"] #project-form :is(fieldset[id^="sub-step"], .submission-review, .submission-account-callout, .submission-account-status) {
+    background: var(--fl-surface) !important;
+  }
+  html[data-theme="daylight"] #project-import .dg-import-icon { color: currentColor !important; }
 }

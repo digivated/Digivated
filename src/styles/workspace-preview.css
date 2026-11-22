@@ -81,7 +81,6 @@
   }
   .dg-workspace-rail { display: contents !important; }
   .dg-workspace :is(.dg-rail-brand,.dg-rail-submit,.dg-rail-navigation,.dg-rail-footer) { display: none !important; }
-  .dg-site-backdrop { opacity: .12 !important; }
 
   .dg-workspace :is(.dg-shell,.dg-rail-navigation) {
     --shell-bar-glass: #000 !important;
