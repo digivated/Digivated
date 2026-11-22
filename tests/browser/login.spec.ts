@@ -4,7 +4,8 @@ test('login entry point exposes sign-in and sign-up email flows', async ({ page 
   await page.route('**/api/project-account?action=config', route => route.fulfill({ json: { ready: false } }));
   await page.goto('http://127.0.0.1:4321/');
   await page.locator('.site-menu-trigger').click();
-  await expect(page.getByRole('link', { name: 'Log in or sign up', exact: true })).toHaveAttribute('href', '/login');
+  await expect(page.getByRole('navigation', { name: 'Site menu' }).locator('a[href="/login"]')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Log In', exact: true })).toHaveAttribute('href', '/login');
   await page.keyboard.press('Escape');
   await page.getByRole('link', { name: 'Log In', exact: true }).click();
   await expect(page).toHaveURL(/\/login\/?$/);
@@ -63,7 +64,7 @@ test('verified account shows a named mobile account menu, welcome, account, and 
   await expect(notifications).toBeHidden();
   await menu.click();
   await expect(page.getByRole('menu')).toContainText(email);
-  await page.getByRole('menuitem', { name: 'Dashboard' }).click();
+  await page.getByRole('menuitem', { name: 'Your projects' }).click();
   await expect(page.locator('#account-state')).toContainText(`You're logged in as ${email}.`);
   await expect(page.locator('#creator-profile-link')).toHaveAttribute('href', `/creator?id=${user.id}`);
   await expect(page.locator('#account-submissions')).toContainText('Submissions unavailable.');

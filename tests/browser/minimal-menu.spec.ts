@@ -14,32 +14,33 @@ for (const width of [320, 390, 768, 920, 921, 1440]) {
     const trigger = page.locator('.site-menu-trigger');
     const menu = page.locator('#explore-navigation');
 
+    const mobile = width <= 920;
+    const primary = page.getByRole('navigation', { name: 'Primary navigation' });
+    await expect(trigger).toHaveAccessibleName(mobile ? 'Menu' : 'More');
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
-    await expect(trigger.locator('.dg-shell-menu-open')).toBeVisible();
-    await expect(page.locator('.dg-header-submit')).toHaveAttribute('href', '/submit-project');
+    await expect(trigger.locator(mobile ? '.dg-shell-menu-open' : '.dg-shell-more-arrow')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Submit a product' }).first()).toHaveAttribute('href', '/submit-project');
     await expect(menu).toBeHidden();
     await trigger.click();
-    await expect(trigger.locator('.dg-shell-menu-close')).toBeVisible();
+    if (mobile) await expect(trigger.locator('.dg-shell-menu-close')).toBeVisible();
     await expect(menu).toBeVisible();
     await expect(menu).toHaveCSS('backdrop-filter', /blur/);
-    await expect(menu.locator('.site-menu-group a')).toHaveText([
-      'Resources', 'Weekly winners', 'For Investors',
-      'Submit a project', 'Embed badges', 'Feedback points', 'Shop',
+    await expect(menu.locator('.site-menu-secondary a')).toHaveText([
+      'News', 'Weekly winners', 'Resources', 'For Investors', 'Embed badges', 'Feedback points', 'Shop',
     ]);
-    await expect(menu.locator('.site-menu-footer a')).toHaveText(['Your projects', 'About', 'Log in or sign up']);
-    await expect(menu.locator('.site-menu-primary a')).toHaveText(['Launches', 'Directory', 'Threads', 'News']);
-    await expect(menu.locator('.site-menu-primary')).toBeVisible({ visible: width <= 920 });
-    await expect(page.locator('.dg-shell-primary')).toBeVisible({ visible: width > 920 });
-
-    if (width <= 920) {
-      const primaryBounds = (await menu.locator('.site-menu-primary').boundingBox())!;
-      const groupBounds = (await menu.locator('.site-menu-groups').boundingBox())!;
-      expect(groupBounds.y).toBeGreaterThanOrEqual(primaryBounds.y + primaryBounds.height);
-      expect(Math.abs(groupBounds.width - primaryBounds.width)).toBeLessThanOrEqual(1);
-    }
-    if (width > 920) {
-      const primary = page.locator('.dg-shell-primary');
-      await expect(primary).toHaveCSS('display', 'flex');
+    await expect(menu.locator('.site-menu-primary')).toBeVisible({ visible: mobile });
+    const mainLinks = mobile ? menu.locator('.site-menu-primary') : primary;
+    await expect(mainLinks.getByRole('link')).toHaveText(['Launches', 'Directory', 'Threads']);
+    const destinations = await page.locator('.dg-shell-primary a:visible, .dg-shell-tools a:visible').evaluateAll(
+      links => links.map(link => link.getAttribute('href')),
+    );
+    expect(new Set(destinations).size).toBe(destinations.length);
+    if (mobile) {
+      const primaryBounds = (await mainLinks.boundingBox())!;
+      const secondaryBounds = (await menu.locator('.site-menu-secondary').boundingBox())!;
+      expect(secondaryBounds.y).toBeGreaterThanOrEqual(primaryBounds.y + primaryBounds.height);
+      expect(Math.abs(secondaryBounds.width - primaryBounds.width)).toBeLessThanOrEqual(1);
+    } else {
       const headerBounds = (await page.locator('.dg-shell-bar').boundingBox())!;
       expect(headerBounds.height).toBeLessThanOrEqual(76);
     }
@@ -94,8 +95,8 @@ test('the phone menu stays inside a short viewport', async ({ page }) => {
   const menu = page.locator('#explore-navigation');
   const bounds = (await menu.boundingBox())!;
   expect(bounds.y + bounds.height).toBeLessThanOrEqual(360);
-  await menu.getByRole('link', { name: 'About', exact: true }).click();
-  await expect(page).toHaveURL(/\/about$/);
+  await menu.getByRole('link', { name: 'Embed badges', exact: true }).click();
+  await expect(page).toHaveURL(/\/badges$/);
 });
 
 

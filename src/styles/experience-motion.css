@@ -50,7 +50,7 @@
     html[data-motion-ready] dialog#discovery-search[open] {
       animation: dg-panel-arrive 360ms cubic-bezier(.22,1,.36,1);
     }
-    html[data-motion-ready] .dg-shell .dg-shell-disclosure[open] .site-menu-groups {
+    html[data-motion-ready] .dg-shell .dg-shell-disclosure[open] .site-menu-secondary {
       animation: dg-menu-links-arrive 430ms cubic-bezier(.22,1,.36,1);
     }
     :is(.dg-home-hero .dg-btn, .dg-header-submit) svg {

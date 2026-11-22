@@ -7,7 +7,6 @@
   if(!header||!link||!menu)return;
   header.setAttribute('data-account','signed-in');header.setAttribute('data-account-guess','');link.hidden=true;menu.hidden=false;
   var email=saved.user&&saved.user.email||'';if(email)document.getElementById('header-account-avatar').textContent=email.slice(0,1).toUpperCase();
-  var login=document.getElementById('menu-login-link');if(login)login.hidden=true;
   return;
  }
 }catch(e){}})();

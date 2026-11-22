@@ -3,10 +3,7 @@ const menu = document.querySelector('[data-navigation]');
 if (menu) {
   const trigger = menu.querySelector('summary');
   const panel = menu.querySelector('nav');
-  const sync = () => {
-    trigger.setAttribute('aria-expanded', String(menu.open));
-    trigger.setAttribute('aria-label', menu.open ? 'Close navigation menu' : 'Open navigation menu');
-  };
+  const sync = () => trigger.setAttribute('aria-expanded', String(menu.open));
   const close = (restoreFocus = false) => {
     if (!menu.open) return;
     menu.open = false;
@@ -22,7 +19,7 @@ if (menu) {
       event.preventDefault();
       menu.open = true;
       sync();
-      // First link that is actually shown (the bar's links repeat in the menu only on narrow screens).
+      // Focus the first visible destination for the current layout.
       [...(panel?.querySelectorAll('a') || [])].find(link => link.getClientRects().length)?.focus();
     }
   });
