@@ -179,46 +179,57 @@ for (const width of [320, 1440]) {
     const html = await renderLaunch({
       id: 'fixture-product', path: listing, name: 'Product fixture', creator,
       logo: '/digivated-daylight-mark.png', category: 'Apps',
+      image: width > 480 ? '/digivated-tech-markets-banner.png' : '', alt: 'Project dashboard',
       gallery: [{ image: '/missing-project-screenshot.png', alt: 'Example project screenshot' }],
       description: 'An independent product with a public discussion.', ctaUrl: 'https://example.com',
       ctaLabel: 'Visit project', socialUrl: 'https://example.com/creator', date,
     }, { template });
     await page.route(base + listing, route => route.fulfill({ contentType: 'text/html', body: html }));
     await page.route(base + '/missing-project-screenshot.png', route => route.fulfill({ status: 404 }));
+    await page.route(base + '/api/projects', route => route.fulfill({ json: { items: [
+      { id: 'fixture-product', category: 'Apps', name: 'Product fixture', pageUrl: listing },
+      { id: 'similar-product', category: 'Apps', name: 'Similar fixture', pageUrl: '/projects/similar-product' },
+      { id: 'other-product', category: 'Games', name: 'Other fixture', pageUrl: '/projects/other-product' },
+    ] } }));
     await page.goto(base + listing);
     await expect(page.locator('[data-site-backdrop]')).toHaveCount(0);
     await expect(page.getByText('Screenshot currently unavailable.')).toBeVisible();
-    await expect(page.locator('.launch-shot img')).toHaveCount(0);
+    await expect(page.locator('.launch-shot img')).toHaveCount(width > 480 ? 1 : 0);
     const card = page.locator('.launch-creator');
     await expect(card.getByText(creator)).toBeVisible();
     await expect(card.getByText(creator)).toHaveCSS('color', 'rgb(27, 27, 27)');
-    await expect(card).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    const [intro, overview, maker, discussion] = await Promise.all([
-      page.locator('.launch-intro').boundingBox(), page.locator('.launch-overview').boundingBox(),
-      card.boundingBox(), page.locator('#feedback').boundingBox(),
-    ]);
-    expect(overview!.y).toBeGreaterThanOrEqual(intro!.y + intro!.height);
-    if (width <= 820) {
-      expect(maker!.y).toBeGreaterThanOrEqual(overview!.y + overview!.height);
-      expect(discussion!.y).toBeGreaterThanOrEqual(maker!.y + maker!.height);
-    } else {
-      expect(maker!.x).toBeGreaterThanOrEqual(overview!.x + overview!.width);
-    }
+    const nav = page.getByRole('navigation', { name: 'On this page' });
+    await expect(nav).toHaveCSS('display', 'flex');
+    await expect(nav.getByRole('link')).toHaveText(['Overview', 'Gallery', 'Details', 'Discussion', 'Similar']);
+    await expect(page.locator('.launch-intro')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(page.locator('.launch-overview')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(page.locator('.launch-cover img')).toHaveCount(width > 480 ? 1 : 0);
+    if (width > 480) await expect.poll(() => page.locator('.launch-cover img').evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+    const upvote = page.getByRole('button', { name: /Upvote this project/ });
+    await expect(upvote).toBeVisible();
+    await expect(upvote).toHaveCSS('color', 'rgb(27, 27, 27)');
+    const copyLink = page.getByRole('button', { name: 'Copy link' });
+    await expect(copyLink).toHaveCSS('color', 'rgb(48, 48, 48)');
+    await copyLink.click();
+    await expect(page.locator('[data-share-status]')).toContainText(/Link copied|Copy this link/);
+    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
     await expect(card.getByRole('link', { name: /Creator profile/ })).toHaveAttribute('href', 'https://example.com/creator');
-    await expect(page.getByRole('link', { name: /Visit project/ })).toHaveAttribute('href', 'https://example.com');
+    await expect(page.getByRole('link', { name: /Visit project/ })).toHaveAttribute('href', 'https://example.com/');
     await expect(page.getByRole('link', { name: /Visit project/ }).locator('svg')).toHaveCount(1);
-    if (width <= 480) {
-      const [logo, title, actions] = await Promise.all([
-        page.locator('.launch-identity').boundingBox(),
-        page.getByRole('heading', { name: 'Product fixture' }).boundingBox(),
-        page.locator('.launch-hero .actions').boundingBox(),
-      ]);
-      expect(logo!.x + logo!.width).toBeLessThanOrEqual(title!.x);
-      expect(actions!.x).toBeCloseTo(logo!.x);
-      expect(actions!.y).toBeGreaterThanOrEqual(title!.y + title!.height);
-    }
+    const [cover, logo, title, actions] = await Promise.all([
+      page.locator('.launch-cover').boundingBox(), page.locator('.launch-identity').boundingBox(),
+      page.getByRole('heading', { name: 'Product fixture' }).boundingBox(), page.locator('.launch-actions').boundingBox(),
+    ]);
+    expect(logo!.y).toBeLessThan(cover!.y + cover!.height);
+    expect(title!.y).toBeGreaterThanOrEqual(logo!.y + logo!.height);
+    if (width <= 480) expect(actions!.y).toBeGreaterThanOrEqual(title!.y + title!.height);
 
-    await page.getByRole('link', { name: 'Join the discussion' }).click();
+    await nav.getByRole('link', { name: 'Discussion' }).click();
+    await expect(page).toHaveURL(/#feedback$/);
+    await expect.poll(async () => (await page.locator('#feedback').boundingBox())!.y - (await nav.boundingBox())!.y - (await nav.boundingBox())!.height).toBeGreaterThanOrEqual(0);
+    await nav.getByRole('link', { name: 'Similar' }).click();
+    await expect(page.getByRole('link', { name: 'Similar fixture' })).toHaveAttribute('href', '/projects/similar-product');
+    await expect(page.getByRole('link', { name: 'Other fixture' })).toHaveCount(0);
     await expect(page.locator('#feedback .dg-signin')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect(page.getByRole('region', { name: 'Discussion' }).getByRole('link', { name: 'Log in' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
