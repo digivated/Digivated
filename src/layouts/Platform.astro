@@ -13,6 +13,7 @@ import '../styles/cards.css';
 import '../styles/products.css';
 import '../styles/workspace-preview.css';
 import DiscoveryTools from '../components/DiscoveryTools.astro';
+import { footerGroups } from '../data/site-navigation.mjs';
 const { title = 'Tech. AI. Markets. What’s next.', description = 'Discover independent projects, useful tools, and the people building them on Digivated.', canonicalPath, noindex = false, showBreadcrumb = true } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const sectionNames: Record<string,string> = { '/threads':'Threads', '/threads/new':'Start a thread', '/discover':'Directory', '/resources':'Extra Tools', '/products':'Membership', '/ui-ux-prompt-packet':'Prompt Packet', '/submit-project':'New Launch', '/account':'Dashboard', '/login':'Log in', '/promote':'Membership', '/about':'About', '/privacy':'Privacy & Data', '/terms':'Terms of Use' };
@@ -24,10 +25,11 @@ const socialTitle = `${title} · Digivated`;
 // Homepage share card. Other platform pages keep /digivated-social-card.png, including /membership.
 const socialImage = path === '/' ? 'https://digivated.com/digivated-social-card-v3.png' : 'https://digivated.com/digivated-social-card.png';
 const socialImageAlt = 'Get your product discovered on Digivated. A preview of the project directory.';
+const socialProfiles = footerGroups.find(group => group.title === 'Follow')?.links.map(([href]) => href) ?? [];
 const structuredData = {
   '@context': 'https://schema.org',
   '@graph': [
-    { '@type':'Organization', '@id':'https://digivated.com/#organization', name:'Digivated', url:'https://digivated.com/', logo:'https://digivated.com/digivated-ascii-icon-transparent.png', sameAs:['https://x.com/digivatedx','https://www.threads.com/@digivated'] },
+    { '@type':'Organization', '@id':'https://digivated.com/#organization', name:'Digivated', url:'https://digivated.com/', logo:'https://digivated.com/digivated-ascii-icon-transparent.png', sameAs:socialProfiles },
     { '@type':'WebSite', '@id':'https://digivated.com/#website', name:'Digivated', url:'https://digivated.com/', description:'Discover independent projects, give feedback, and share what you are building.', publisher:{'@id':'https://digivated.com/#organization'}, inLanguage:'en' },
     { '@type':pageType, '@id':`${canonicalUrl}#webpage`, name:title, url:canonicalUrl, description, isPartOf:{'@id':'https://digivated.com/#website'}, publisher:{'@id':'https://digivated.com/#organization'}, inLanguage:'en', ...(path === '/' ? {isAccessibleForFree:true} : {}) }
   ]

@@ -9,7 +9,7 @@
     width: auto !important;
     max-width: none !important;
     margin: 24px clamp(8px, 2vw, 16px) 12px !important;
-    padding: clamp(22px, 3vw, 36px) clamp(16px, 4vw, 48px) !important;
+    padding: clamp(18px, 2.5vw, 32px) clamp(14px, 4vw, 48px) !important;
     border: 0 !important;
     border-radius: 18px !important;
     background: var(--footer-surface) !important;
@@ -25,7 +25,7 @@
 
   .dg-footer-main {
     display: grid;
-    gap: clamp(22px, 4vw, 48px);
+    gap: clamp(16px, 3.5vw, 48px);
     align-items: start;
   }
 
@@ -90,13 +90,13 @@
 
   .dg-site-footer .dg-footer-groups {
     display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
     margin: 0 !important;
     padding: 0 !important;
   }
   .dg-site-footer .dg-footer-group h2 {
-    margin: 0 0 7px !important;
+    margin: 0 0 4px !important;
     color: var(--footer-muted) !important;
     font-size: 13px !important;
     font-weight: 600 !important;
@@ -121,6 +121,10 @@
     text-decoration: none !important;
   }
   .dg-site-footer a:hover { text-decoration: underline !important; text-underline-offset: 3px; }
+  .dg-site-footer :is(.dg-footer-group, .dg-footer-utility) a {
+    min-height: 32px !important;
+    padding: 3px 0 !important;
+  }
   .dg-site-footer :is(a,button):focus-visible,
   .dg-footer-signup-fields:has(input:focus-visible) {
     outline: 2px solid var(--footer-text) !important;
@@ -138,8 +142,8 @@
   }
   .dg-footer-bottom {
     justify-content: space-between;
-    margin-top: 20px;
-    padding-top: 14px;
+    margin-top: 14px;
+    padding-top: 10px;
     border-top: 1px solid var(--footer-line) !important;
   }
   .dg-site-footer :is(.dg-footer-feature > span, a.dg-footer-brand) {
@@ -157,8 +161,8 @@
   .dg-footer-bottom small { margin: 0 !important; }
 
   .dg-site-footer .dg-footer-wordmark {
-    block-size: clamp(36px, 11cqi, 84px);
-    margin-top: 12px;
+    block-size: clamp(30px, 10cqi, 78px);
+    margin-top: 8px;
     overflow: hidden;
     color: #fff !important;
     font-size: clamp(46px, 20cqi, 200px) !important;
@@ -177,10 +181,13 @@
     .dg-site-footer .dg-footer-wordmark { display: none !important; }
   }
 
-  @container footer-content (min-width: 400px) {
-    .dg-site-footer .dg-footer-groups { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @container footer-content (max-width: 399px) {
+    .dg-site-footer .dg-footer-groups { column-gap: 8px; }
+    .dg-site-footer .dg-footer-group a { overflow-wrap: anywhere; }
+    .dg-footer-bottom { gap: 4px 12px; }
   }
   @container footer-content (min-width: 740px) {
     .dg-footer-main { grid-template-columns: minmax(270px, 0.82fr) minmax(0, 1fr); }
+    .dg-site-footer .dg-footer-group a { min-height: 37px !important; }
   }
 }
