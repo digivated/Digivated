@@ -59,7 +59,19 @@ async function updateAvatar(address, session, refresh) {
 if(menu&&trigger&&panel){
  const items=()=>[...panel.querySelectorAll('[role=menuitem]')];
  const close=(focus=false)=>{if(panel.hidden)return;panel.hidden=true;trigger.setAttribute('aria-expanded','false');if(focus)trigger.focus();};
- const open=(first=false)=>{panel.hidden=false;trigger.setAttribute('aria-expanded','true');if(first)items()[0]?.focus();};
+ const open=(first=false)=>{
+  if(location.pathname.replace(/\/$/,'')==='/account'){
+   const activeTab=new URLSearchParams(location.search).get('tab');
+   panel.querySelectorAll('a[href^="/account"]').forEach(item=>{
+    const settings=item.getAttribute('href')==='/account?tab=settings';
+    if(settings===(activeTab==='settings')) item.setAttribute('aria-current','page');
+    else item.removeAttribute('aria-current');
+   });
+  }
+  panel.hidden=false;
+  trigger.setAttribute('aria-expanded','true');
+  if(first)items()[0]?.focus();
+ };
  trigger.addEventListener('click',()=>panel.hidden?open():close());
  trigger.addEventListener('keydown',event=>{if(event.key==='ArrowDown'){event.preventDefault();open(true);}});
  panel.addEventListener('keydown',event=>{
@@ -100,7 +112,9 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
    if(menu){
     menu.hidden=!hasAccount;link.hidden=hasAccount;if(signup)signup.hidden=hasAccount;
     const address=email||session?.user?.email||'';
-    document.getElementById('header-account-email').textContent=address;
+    const accountEmail=document.getElementById('header-account-email');
+    accountEmail.textContent=address;
+    accountEmail.title=address;
     void updateAvatar(address,state==='signed-in'?session:null,refreshAvatar);
     document.getElementById('header-account-label').textContent=address?`Account menu for ${address}`:'Account menu';
    }

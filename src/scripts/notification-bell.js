@@ -39,7 +39,7 @@ if (bell) {
     if (bounds) {
       const maxRight = innerWidth - panel.offsetWidth - 12;
       const right = Math.min(maxRight, Math.floor(innerWidth - bounds.right));
-      panel.style.setProperty('--bell-top', `${Math.ceil(bounds.bottom) + 8}px`);
+      panel.style.setProperty('--bell-top', `${Math.ceil(bell.getBoundingClientRect().bottom) + 8}px`);
       panel.style.setProperty('--bell-right', `${Math.max(12, right)}px`);
     }
     bell.setAttribute('aria-expanded', 'true');
