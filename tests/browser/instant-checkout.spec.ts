@@ -30,6 +30,7 @@ async function signedIn(page,{paidAfterChecks=1,submissions=[] as any[]}={}){
 async function fill(page){
  await page.goto(base+'/submit-project');
  await expect(page.locator('#submission-details')).toBeVisible();
+ await page.getByRole('button', { name: 'Enter details manually' }).click();
  for(const [name,value] of Object.entries({name:'Orbit',url:'https://example.com',description:'A useful workspace for independent builders to organize projects.',creator:'Builder'}))await page.locator(`#project-form [name=${name}]`).fill(value);
  await page.locator('#project-form [name=category]').selectOption('Developer Tools');
  const image=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=64;c.getContext('2d')!.fillRect(0,0,64,64);return c.toDataURL('image/png').split(',')[1];});
@@ -86,6 +87,6 @@ test('an older unpaid instant draft can still be cancelled',async({page})=>{
  await expect(page.locator('#instant-launch-resume')).toBeVisible();
  await page.locator('#instant-launch-cancel').click();
  await expect(page.locator('#instant-launch-resume')).toBeHidden();
- await expect(page.locator('#submission-status')).toContainText('you weren’t charged');
+ await expect(page.locator('#submission-status')).toContainText('You weren’t charged');
  expect(calls.cancel).toBe(1);
 });

@@ -62,6 +62,7 @@ jobs:
           tests/browser/free-launch-guide.spec.ts
           tests/browser/login.spec.ts
           tests/browser/gumroad-secure-setup.spec.ts
+          tests/browser/instant-checkout.spec.ts
           tests/browser/membership-offer.spec.ts
           tests/browser/mobile-stability.spec.ts
           tests/browser/news-paused.spec.ts
