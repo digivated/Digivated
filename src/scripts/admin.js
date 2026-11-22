@@ -1,3 +1,4 @@
+import { freeLaunchDay, freeLaunchTime } from '../lib/launch-calendar.mjs';
 import { projectCategories, resourceCategories, normalizeResourceCategory } from '../data/community.mjs';
 const $ = id => document.getElementById(id);
 const state = { csrf: '', kind: 'submission', panel:'overview', items: [], next: null, record: null, dirty: false, busy: false, request: 0, editorRequest: 0, overviewRequest:0 };
@@ -14,8 +15,8 @@ function launchDetails(record) {
   if (record.promotion?.included === 'founding-membership') return 'Member launch. Spotlight review.';
   if (record.launch?.kind !== 'free') return '';
   if (record.status !== 'pending') return 'Free launch. Live on its date.';
-  const time = Date.parse(record.launch.scheduledAt);
-  const date = Number.isFinite(time) ? new Date(time).toLocaleDateString(undefined, {dateStyle:'medium',timeZone:'UTC'}) + ' UTC' : 'No launch date';
+  const time = freeLaunchTime(record);
+  const date = Number.isFinite(time) ? freeLaunchDay(time) + ' at 9:00 AM Eastern' : 'No launch date';
   return record.launch.badgeVerifiedAt ? `Free. Badge verified. Locked for ${date}.` : `Free. Badge not on the site yet. Target ${date}.`;
 }
 function updatedLabel(date = new Date()) {

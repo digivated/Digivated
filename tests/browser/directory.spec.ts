@@ -76,7 +76,13 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await expect(rail.getByRole('link', { name: 'Launches', exact: true })).toHaveAttribute('aria-current', 'page');
   await expect(rail.getByRole('link', { name: 'Submit a launch' })).toHaveAttribute('href', '/submit-project');
   await expect(rail).toHaveCSS('background-image', /radial-gradient/);
-  await expect(rail.locator('#header-account-link')).toHaveAttribute('href', '/login');
+  const login = rail.getByRole('link', { name: 'Log In', exact: true });
+  await expect(login).toHaveAttribute('href', '/login');
+  await expect(rail.locator('[data-open-search]')).toHaveCount(0);
+  const submit = rail.getByRole('link', { name: 'Submit a launch' });
+  const [loginBox, submitBox] = await Promise.all([login.boundingBox(), submit.boundingBox()]);
+  expect(loginBox!.x).toBeCloseTo(submitBox!.x, 0);
+  expect(loginBox!.width).toBeCloseTo(submitBox!.width, 0);
   await expect(page.locator('.dg-workspace-content > header')).toHaveCount(0);
   const [railBox, mainBox] = await Promise.all([rail.boundingBox(), page.locator('#main').boundingBox()]);
   expect(railBox!.x + railBox!.width).toBeLessThanOrEqual(mainBox!.x);
@@ -112,4 +118,17 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await directory.click();
   await expect(page).toHaveURL(base + '/discover');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+
+test('the upcoming batch and countdown agree on Monday, November 23', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-22T04:00:00Z'));
+  await page.route('**/api/projects*', route => route.fulfill({ json: { items: projects, next: null } }));
+  await page.route('**/api/launches?view=upcoming', route => route.fulfill({ json: { items: [{
+    id: 'upcoming-fixture', name: 'Scheduled fixture', launchAt: '2026-11-23T14:00:00.000Z', watchers: 1,
+  }] } }));
+  await page.goto(base + '/');
+  await expect(page.locator('#queue-countdown')).toHaveAttribute('datetime', '2026-11-23T14:00:00.000Z');
+  await expect(page.getByRole('region', { name: 'Launching next' })).toContainText('Mon, Nov 23 · 9:00 AM Eastern');
+  await expect(page.getByRole('button', { name: 'Notify me when Scheduled fixture launches' })).toBeVisible();
 });

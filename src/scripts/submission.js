@@ -295,7 +295,7 @@ if (form) {
       const response = await fetch('/api/submissions?action=launch-options', { cache: 'no-store' });
       if (!response.ok) return;
       const { instant, nextFreeLaunch } = await response.json();
-      if(nextFreeLaunch)document.getElementById('free-launch-date').textContent='Next free launch: '+new Date(nextFreeLaunch).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})+' (UTC).';
+      if(nextFreeLaunch)document.getElementById('free-launch-date').textContent='Next free launch: '+new Date(nextFreeLaunch).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})+' at 9:00 AM Eastern.';
       if (!instant) return;
       instantConfig = instant;
       const option = document.getElementById('submission-instant-option');

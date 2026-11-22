@@ -72,7 +72,7 @@ test('header supports keyboard navigation and search', async ({ page }) => {
   await expect(trigger).toBeFocused();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
-  await page.getByRole('button', { name: 'Search Digivated', exact: true }).click();
+  await page.keyboard.press('/');
   await expect(page.locator('#discovery-search')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.locator('#discovery-search')).toBeHidden();

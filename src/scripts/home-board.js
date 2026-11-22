@@ -1,7 +1,7 @@
 import { requestCardInteraction } from './card-actions.js';
 import { observeProjectViews } from './project-views.js';
 import { homeLaunchGroups } from '../lib/home-launches.mjs';
-import { fairOrder, launchBounds, launchTimestamp } from '../lib/launch-calendar.mjs';
+import { fairOrder, freeLaunchDay, launchBounds, launchTimestamp } from '../lib/launch-calendar.mjs';
 import { api, session } from './discussion.js';
 import { boostVotes } from '../lib/feedback-score.mjs';
 import { safeSearchHref } from '../lib/discovery-search.mjs';
@@ -100,7 +100,6 @@ const pendingVotes = new Set();
 const pendingWatch = new Set();
 const MEDAL = { 1: 'gold', 2: 'silver', 3: 'bronze' };
 const localTime = value => new Date(value).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' });
-const launchDay = value => new Date(value).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
 const scoreOf = p => Number.isFinite(Number(p.score)) && p.score !== null ? Number(p.score) : (Number(p.votes?.weekly) || 0) + boostVotes(p.boost);
 
 function groups() {
@@ -174,7 +173,7 @@ function upcomingRow(item) {
   li.dataset.upcomingId = item.id;
   const art = el('span', null, 'dg-logo-link'); art.setAttribute('aria-hidden', 'true'); art.append(logo({ name: item.name }, 'dg-logo'));
   const main = el('div', null, 'dg-main');
-  const title = el('h3'); title.append(el('span', item.name, 'dg-upcoming-name'), el('span', launchDay(item.launchAt), 'dg-badge dg-badge-date'));
+  const title = el('h3'); title.append(el('span', item.name, 'dg-upcoming-name'), el('span', freeLaunchDay(item.launchAt), 'dg-badge dg-badge-date'));
   main.append(title, el('p', item.description || 'Launching soon on Digivated.', 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
   meta.append(el('span', item.category || 'Project'));
@@ -246,10 +245,14 @@ async function toggleVote(p, button, li) {
   }
 }
 
-function sectionNote(key) {
+function sectionNote(key, items) {
   const howLink = () => Object.assign(el('a', 'How launches are ranked', 'dg-note-link'), { href: '/winners#how-ranking-works' });
   if (key === 'archive') return [];
-  if (key === 'upcoming') return [];
+  if (key === 'upcoming') {
+    const date = el('time', freeLaunchDay(items[0].launchAt));
+    date.dateTime = items[0].launchAt;
+    return [date, ' · 9:00 AM Eastern'];
+  }
   const bounds = launchBounds(key);
   const dates = `${shortDate(bounds.start)} – ${shortDate(bounds.end - 86_400_000)}`;
   if (key === 'current') return state.fair.active
@@ -305,7 +308,7 @@ function render({ animateSearch = false } = {}) {
     const count = section.querySelector('[data-section-count]');
     const note = section.querySelector('[data-section-note]');
     count.textContent = key === 'archive' ? `${items.length} ${items.length === 1 ? 'project' : 'projects'}` : key === 'upcoming' ? `${items.length} scheduled` : `${items.length} ${items.length === 1 ? 'launch' : 'launches'}`;
-    note.replaceChildren(...sectionNote(key));
+    note.replaceChildren(...sectionNote(key, items));
     const list = section.querySelector('[data-section-list]');
     const rows = items.slice(0, limit).map(p => key === 'upcoming' ? upcomingRow(p) : row(p, key));
     list.replaceChildren(...rows);

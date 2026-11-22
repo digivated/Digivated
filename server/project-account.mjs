@@ -1,3 +1,4 @@
+import { freeLaunchSchedule } from '../src/lib/launch-calendar.mjs';
 import { handleSignup } from './signup-code.mjs';
 import { badgeSnippet } from './launch-queue.mjs';
 import { projectPublic } from './admin-store.mjs';
@@ -105,7 +106,7 @@ export function makeProjectAccountHandler(deps={}) {
       if(!env.SUBMISSIONS_REDIS_REST_TOKEN)return send(503,{error:'Your submissions could not be loaded. Try again shortly.'});
       const redis=deps.redis||redisClient(env);
       const rows = await ownedSubmissions(redis, account, env.SUBMISSIONS_REDIS_REST_TOKEN);
-      const submissions = rows.map(row=>({id:row.id,name:row.name,url:row.url,date:row.date,status:row.status,...(projectPublic(row)?{pageUrl:projectPublic(row).pageUrl}:{}),...(row.launch?.kind==='free'&&row.accountId===account.id?{launch:{...row.launch,badge:badgeSnippet(row.id)}}:{}),feedback:row.reviewFeedback||'',reviewedAt:row.reviewedAt||null,...(row.accountId===account.id && row.status==='pending' && row.promotion?.included==='instant-launch' && !row.promotion.verified ? { awaitingInstantPayment:true } : {})}));
+      const submissions = rows.map(row=>({id:row.id,name:row.name,url:row.url,date:row.date,status:row.status,...(projectPublic(row)?{pageUrl:projectPublic(row).pageUrl}:{}),...(row.launch?.kind==='free'&&row.accountId===account.id?{launch:{...row.launch,...freeLaunchSchedule(row),badge:badgeSnippet(row.id)}}:{}),feedback:row.reviewFeedback||'',reviewedAt:row.reviewedAt||null,...(row.accountId===account.id && row.status==='pending' && row.promotion?.included==='instant-launch' && !row.promotion.verified ? { awaitingInstantPayment:true } : {})}));
       return send(200,{email:account.email,submissions,mailboxVerified:account.mailboxVerified!==false});
     } catch {return send(503,{error:'Your submissions could not be loaded. Try again shortly.'});}
   };

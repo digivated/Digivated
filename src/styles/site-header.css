@@ -87,7 +87,6 @@
     text-decoration: none !important;
     white-space: nowrap;
   }
-  .dg-shell-search, .dg-shell-search .lq-provider { display: contents; }
   .dg-shell .dg-shell-icon { width: 43px; padding: 0 !important; }
   .dg-shell :is(.dg-shell-icon,.site-menu-trigger) svg { filter: drop-shadow(0 0 2px #faf9f5); }
   .dg-shell[data-account="signed-out"] .dg-shell-notifications { display: none !important; }

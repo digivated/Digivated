@@ -4,9 +4,6 @@ import {
   ArrowDown01Icon, Award01Icon, BookOpen01Icon, BubbleChatIcon, Certificate01Icon,
   ChartLineData01Icon, News01Icon, Rocket01Icon, Store01Icon,
 } from '@hugeicons/core-free-icons';
-import { createElement } from 'react';
-import { renderToString } from 'react-dom/server';
-import { NavigationSearch } from './ui/navigation-search';
 import NavGlyph from './NavGlyph.astro';
 import UiIcon from './UiIcon.astro';
 import '../styles/site-header.css';
@@ -30,7 +27,6 @@ const linkIcons: Record<string, typeof Rocket01Icon> = {
     <a class="dg-shell-brand" href="/" aria-label="Digivated home"><img class="daylight-brand-mark" src="/digivated-daylight-mark.png" width="32" height="32" alt=""/><span>Digivated</span></a>
     <nav class="dg-shell-primary" aria-label="Primary navigation">{primaryLinks.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</nav>
     <div class="dg-shell-tools">
-      <div class="dg-shell-search" data-glass-search-root set:html={renderToString(createElement(NavigationSearch))}/>
       <a class="dg-shell-icon dg-shell-notifications" id="header-notifications-link" href="/notifications" aria-label="Notifications" aria-current={active('/notifications')?'page':undefined}><UiIcon name="bell" size={20}/><span id="header-notifications-badge" class="dg-shell-badge" hidden></span></a>
       <a class="dg-shell-login" id="header-account-link" href="/login" aria-current={active('/login')?'page':undefined}>Log In</a>
       <div class="dg-shell-account" id="header-account-menu" hidden>
@@ -95,10 +91,4 @@ import '../scripts/navigation-glass.js';
 import '../scripts/navigation-reflection.js';
 import '../scripts/account-header.js';
 import '../scripts/notification-bell.js';
-
-// The server-rendered button opens search immediately. Load its optics on interaction.
-const searchRoot = document.querySelector('[data-glass-search-root]');
-const hydrateSearch = () => { void import('../scripts/navigation-search'); };
-searchRoot?.addEventListener('pointerover', hydrateSearch, { once: true });
-searchRoot?.addEventListener('focusin', hydrateSearch, { once: true });
 </script>

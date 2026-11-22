@@ -68,7 +68,7 @@
   }
   .dg-workspace-content { min-inline-size: 0; }
   .dg-workspace-rail { display: contents !important; }
-  .dg-workspace :is(.dg-rail-brand,.dg-rail-submit,.dg-rail-navigation,.dg-rail-about,.dg-workspace-search-label) { display: none !important; }
+  .dg-workspace :is(.dg-rail-brand,.dg-rail-submit,.dg-rail-navigation,.dg-rail-about) { display: none !important; }
   .dg-site-backdrop { opacity: .24 !important; }
 
   .dg-workspace .dg-shell {
@@ -240,11 +240,10 @@
     }
     .dg-workspace .dg-shell :is(.dg-shell-brand,.dg-shell-primary) { display: none !important; }
     .dg-workspace .dg-shell .dg-shell-tools { width: 100%; gap: 6px; }
-    .dg-workspace .dg-shell [data-open-search] {
-      width: auto !important;
-      margin-inline-end: auto !important;
-      padding-inline: 8px !important;
-      white-space: nowrap;
+    .dg-workspace .dg-shell[data-account="signed-out"] .dg-shell-login {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 12px !important;
     }
   }
 

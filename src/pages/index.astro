@@ -11,7 +11,7 @@ import '../styles/home-hero.css';
   <DiscoveryHero/>
   <div class="dg-hero-panel">
     <dl class="dg-hero-stats">
-      <div class="dg-hero-stat is-countdown"><dt>Next free launch</dt><dd><time id="queue-countdown" role="timer" aria-live="off">—</time><span class="dg-week-bar" data-week-bar aria-hidden="true"></span></dd></div>
+      <div class="dg-hero-stat is-countdown"><dt>Next free launch</dt><dd><span data-countdown-fallback>Mondays, 9 AM ET</span><time id="queue-countdown" role="timer" aria-live="off" hidden></time><span class="dg-week-bar" data-week-bar aria-hidden="true"></span></dd></div>
       <div class="dg-hero-stat"><dt>Products</dt><dd data-stat-products>—</dd></div>
       <div class="dg-hero-stat"><dt>Browsing now</dt><dd class="dg-hero-activity"><span data-site-online>—</span><ActivityMark kind="orbit"/></dd></div>
       <div class="dg-hero-stat"><dt>Site visits</dt><dd class="dg-hero-activity"><span data-site-visits>—</span><ActivityMark kind="ribbon"/></dd></div>
@@ -46,30 +46,37 @@ import '../styles/home-hero.css';
 </Platform>
 
 <script>
+  import { freeLaunchDay, nextFreeLaunch } from '../lib/launch-calendar.mjs';
+
   const countdown = document.querySelector<HTMLTimeElement>('#queue-countdown');
   const weekBar = document.querySelector<HTMLElement>('[data-week-bar]');
+  const fallback = document.querySelector<HTMLElement>('[data-countdown-fallback]');
+  let timer: ReturnType<typeof setTimeout>;
+  let target = 0;
 
   function updateCountdown() {
-    if (!countdown) return;
-    const now = new Date();
-    // Free launches become eligible on Monday; the scheduled queue job
-    // publishes them on Mondays at 14:00 UTC (9:00 AM Eastern).
-    const daysUntilMonday = (8 - now.getUTCDay()) % 7;
-    let target = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilMonday, 14, 0);
-    if (target <= now.getTime()) target += 7 * 86_400_000;
-
-    const minutes = Math.ceil((target - now.getTime()) / 60_000);
+    clearTimeout(timer);
+    if (!countdown || document.hidden) return;
+    const now = Date.now();
+    if (now >= target) {
+      countdown.dateTime = nextFreeLaunch(now);
+      countdown.setAttribute('aria-label', `Next free launch on ${freeLaunchDay(countdown.dateTime)} at 9:00 AM Eastern`);
+      target = Date.parse(countdown.dateTime);
+      if (fallback) fallback.hidden = true;
+      countdown.hidden = false;
+    }
+    const remaining = target - now;
+    const minutes = Math.ceil(remaining / 60_000);
     const days = Math.floor(minutes / 1440);
     const hours = Math.floor(minutes / 60) % 24;
-    countdown.dateTime = new Date(target).toISOString();
     countdown.textContent = `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes % 60).padStart(2, '0')}m`;
     if (weekBar) {
-      const percent = (1 - (target - now.getTime()) / (7 * 86_400_000)) * 100;
-      weekBar.style.setProperty('--launch-progress', `${Math.max(0, Math.min(100, percent))}%`);
+      const percent = (1 - remaining / (7 * 86_400_000)) * 100;
+      weekBar.style.setProperty('--launch-progress', String(Math.max(0, Math.min(100, percent))) + '%');
     }
+    timer = setTimeout(updateCountdown, remaining % 60_000 || 60_000);
   }
 
   updateCountdown();
-  setInterval(updateCountdown, 1000);
+  document.addEventListener('visibilitychange', updateCountdown);
 </script>
-

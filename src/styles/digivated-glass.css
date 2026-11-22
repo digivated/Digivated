@@ -1,4 +1,4 @@
-/* Shared launch actions use the same material as the navigation search button. */
+/* Shared glass material for launch actions. */
 @layer daylight {
   html[data-theme="daylight"] body [data-glass-surface="action"] {
     position: relative;
@@ -20,12 +20,6 @@
   html[data-theme="daylight"] body [data-glass-surface="action"]:is(:hover, :focus-visible) {
     background: #d3d5cb99 !important;
     color: var(--fl-ink) !important;
-  }
-
-  .dg-shell .dg-glass-search:not([data-liquid-lens]) { backdrop-filter: none; }
-
-  .dg-shell .dg-shell-search .dg-glass-search:hover {
-    background: #ffffff40 !important;
   }
 
   @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {

@@ -30,8 +30,10 @@ test('reduced motion keeps all content visible and native search focus working',
 
  expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.id==='digivated-content-entrance').length)).toBe(0);
  expect(await page.locator('.dg-hero').evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
- await page.locator('[data-open-search]').click();await expect(page.locator('#unified-search-input')).toBeFocused();
- await page.keyboard.press('Escape');await expect(page.locator('[data-open-search]')).toBeFocused();
+ const login = page.getByRole('link', { name: 'Log In', exact: true });
+ await login.focus();
+ await page.keyboard.press('/');await expect(page.locator('#unified-search-input')).toBeFocused();
+ await page.keyboard.press('Escape');await expect(login).toBeFocused();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 test('section entrances never leave content hidden and stop after completion',async({page})=>{
@@ -55,7 +57,7 @@ test('hero stays readable when JavaScript is disabled',async({browser})=>{
 test('the new backdrop leaves resources search and home hero actions usable',async({page})=>{
  await page.setViewportSize({width:390,height:900});
  await page.goto(base+'/resources');
- await page.locator('[data-open-search]').click();
+ await page.keyboard.press('/');
  await expect(page.locator('#discovery-search')).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.goto(base+'/');
@@ -116,7 +118,7 @@ test('forced colors hides the backdrop and leaves search usable', async ({ page 
  await page.emulateMedia({ forcedColors: 'active' });
  await page.goto(base + '/discover');
  await expect(page.locator('[data-site-backdrop]')).toHaveCSS('visibility', 'hidden');
- await page.getByRole('button', { name: 'Search Digivated' }).click();
+ await page.keyboard.press('/');
  await expect(page.locator('#unified-search-input')).toBeFocused();
 });
 

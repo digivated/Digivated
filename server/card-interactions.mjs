@@ -95,7 +95,7 @@ export function makeCardInteractionHandler(deps={}) {
       if(!await isPublicItem(redis,type,id))return send(404,{error:'This item is not available.'});
       if(req.method==='GET'){
         const [likes,comments,count,fresh]=await Promise.all([redis(['GET',likeKey(type,id)]),listComments(redis,type,id),redis(['ZCARD',commentIndex(type,id)]),type==='project'?isFresh(redis,id):false]);
-        // Fair start: this week's counts stay hidden until Tuesday 14:00 UTC.
+        // Fair start: this week's counts stay hidden until Tuesday at 9:00 AM Eastern.
         return send(200,{likes:fresh?null:Number(likes||0),...(fresh?{fresh:true}:{}),comments,commentCount:Number(count||0)});
       }
       const ip=req.headers['x-real-ip'];

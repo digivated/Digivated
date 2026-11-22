@@ -1,4 +1,44 @@
-const DAY = 86400000;
+const DAY = 86_400_000;
+const easternDate = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric' });
+const easternHour = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hourCycle: 'h23' });
+
+function easternLaunchTime(utcDay) {
+  // At 14:00 UTC the local hour is either 09:00 or 10:00.
+  const candidate = utcDay + 14 * 3_600_000;
+  return candidate - (Number(easternHour.format(candidate)) - 9) * 3_600_000;
+}
+
+export function nextFreeLaunch(now = Date.now()) {
+  const parts = Object.fromEntries(easternDate.formatToParts(now).map(({ type, value }) => [type, Number(value)]));
+  const today = Date.UTC(parts.year, parts.month - 1, parts.day);
+  const monday = today + ((8 - new Date(today).getUTCDay()) % 7) * DAY;
+  const first = easternLaunchTime(monday);
+  return new Date(first > now ? first : easternLaunchTime(monday + 7 * DAY)).toISOString();
+}
+
+export const skippedNovemberBatch = Date.UTC(2026, 10, 30);
+export const novemberBatchTime = easternLaunchTime(Date.UTC(2026, 10, 23));
+
+export function freeLaunchTime(record) {
+  const date = Date.parse(record.launch?.scheduledAt);
+  if (!Number.isFinite(date) || record.launch?.kind !== 'free') return date;
+  if (date === skippedNovemberBatch) {
+    const saved = Date.parse(record.date);
+    // The previous booking rule put the Nov 16–22 cohort a week too late.
+    if (saved >= Date.UTC(2026, 10, 16) && saved < Date.UTC(2026, 10, 23)) return novemberBatchTime;
+  }
+  // Midnight UTC was a legacy calendar-date marker, never the intended publish time.
+  return date % DAY === 0 && new Date(date).getUTCDay() === 1 ? easternLaunchTime(date) : date;
+}
+
+export function freeLaunchSchedule(record) {
+  const time = freeLaunchTime(record);
+  return Number.isFinite(time) ? { scheduledAt: new Date(time).toISOString(), scheduledTimestamp: time } : {};
+}
+
+export const freeLaunchDay = value => new Date(value).toLocaleDateString('en-US', {
+  weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/New_York',
+});
 export function launchTimestamp(project) {
   // Only legacy records without publication metadata fall back to submission.
   return Date.parse(project.publishedAt || project.date);
@@ -31,13 +71,12 @@ export function rankingPeriodStarts(now) {
   return [day, launchBounds('current', now).start, Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)];
 }
 
-// Fair start: from Monday 00:00 UTC until Tuesday 14:00 UTC (24 hours after the
-// free batch goes live), this week's launches show in an hourly-shuffled order
+// Fair start ends 24 hours after Monday’s Eastern launch. Until then,
+// this week's launches show in an hourly-shuffled order
 // with upvote counts hidden, so an early burst can't lock in the top spots.
-export const FAIR_START_HOURS = 38;
 export function fairStart(now = Date.now()) {
   const { start } = launchBounds('current', now);
-  const endsAt = start + FAIR_START_HOURS * 3_600_000;
+  const endsAt = easternLaunchTime(start) + DAY;
   return { active: now >= start && now < endsAt, endsAt };
 }
 // Same order for everyone within an hour; it rotates every hour.

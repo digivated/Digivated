@@ -6,7 +6,7 @@ import { verifiedAccount } from './project-account.mjs';
 import { QUEUE } from './launch-queue.mjs';
 import { launchWatchersKey, launchWatchingKey } from './notifications.mjs';
 import { finalizeLastWeek, readWeek, PODIUM_WEEKS } from './launch-score.mjs';
-import { launchBounds } from '../src/lib/launch-calendar.mjs';
+import { freeLaunchSchedule, launchBounds } from '../src/lib/launch-calendar.mjs';
 import { guardPost, readJson, DiscussionError } from './discussions.mjs';
 
 const UPCOMING_LIMIT = 60;
@@ -19,8 +19,9 @@ async function upcomingRecord(redis, id) {
   try { record = JSON.parse(await redis(['GET', storageKey('submission', id)])); } catch { return null; }
   if (!record || record.status !== 'pending' || record.launch?.kind !== 'free' || !record.launch.badgeVerifiedAt) return null;
   const preview = projectPublic({ ...record, status: 'approved' });
-  if (!preview) return null;
-  return { id: record.id, name: preview.name, description: preview.description || '', category: preview.category || '', pricing: preview.pricing || '', creator: preview.creator || '', launchAt: new Date(record.launch.scheduledTimestamp || Date.parse(record.launch.scheduledAt)).toISOString() };
+  const { scheduledAt } = freeLaunchSchedule(record);
+  if (!preview || !scheduledAt) return null;
+  return { id: record.id, name: preview.name, description: preview.description || '', category: preview.category || '', pricing: preview.pricing || '', creator: preview.creator || '', launchAt: scheduledAt };
 }
 
 // Current public projection for podium rows; removed projects drop out.
