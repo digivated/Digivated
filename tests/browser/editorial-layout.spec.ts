@@ -27,7 +27,7 @@ test('homepage activity, launches and community sections stay in reading order',
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await expect(page.locator('#this-week .dg-list-title')).toBeInViewport();
-    const layout = await page.locator('#main').evaluate((main, wide) => {
+    const layout = await page.locator('#main').evaluate(main => {
       const box = (selector: string) => main.querySelector(selector)!.getBoundingClientRect();
       const art = box('[data-launch-id] .dg-logo-link');
       const copy = box('[data-launch-id] .dg-main');
@@ -35,13 +35,12 @@ test('homepage activity, launches and community sections stay in reading order',
       return {
         ordered: box('.dg-home-hero').bottom <= box('.dg-hero-panel').top &&
           box('.dg-hero-panel').bottom <= box('#this-week').top &&
-          (wide ? box('.dg-board').right <= box('.dg-home-extras').left :
-            box('.dg-board').bottom <= box('.dg-home-extras').top) &&
+          box('.dg-board').bottom <= box('.dg-home-extras').top &&
           Math.max(box('.dg-board').bottom, box('.dg-home-extras').bottom) <= box('.dg-about').top,
         separated: art.right <= copy.left && copy.right <= controls.left,
         overflow: document.documentElement.scrollWidth - innerWidth,
       };
-    }, width > 880);
+    });
     expect(layout, `Layout at ${width}px`).toEqual({ ordered: true, separated: true, overflow: 0 });
   }
   await page.setViewportSize({ width: 320, height: 900 });

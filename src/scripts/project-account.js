@@ -15,10 +15,11 @@ if(state){
  const recovering=callback.get('type')==='recovery'||new URLSearchParams(location.search).get('reset')==='password';
  const show=message=>{state.textContent=message;};
  const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- function setupTabs(){
+ function setupTabs(onSelect){
   const tabs=[...document.querySelectorAll('[data-account-tab]')];
   const select=(name,focus=false)=>{
    for(const tab of tabs){const on=tab.dataset.accountTab===name;tab.setAttribute('aria-selected',String(on));tab.tabIndex=on?0:-1;document.getElementById(tab.getAttribute('aria-controls')).hidden=!on;if(on&&focus)tab.focus();}
+   onSelect(name);
    const url=new URL(location.href);if(name==='projects')url.searchParams.delete('tab');else url.searchParams.set('tab',name);history.replaceState(null,'',url.pathname+url.search+url.hash);
   };
   tabs.forEach((tab,index)=>{tab.onclick=()=>select(tab.dataset.accountTab);tab.onkeydown=event=>{const step={ArrowRight:1,ArrowLeft:-1}[event.key];if(!step)return;event.preventDefault();select(tabs[(index+step+tabs.length)%tabs.length].dataset.accountTab,true);};});
@@ -59,7 +60,33 @@ if(state){
   panel.hidden=false;
   document.getElementById('account-submit-cta').hidden=false;
   document.getElementById('account-email').textContent=email||session?.user?.email||'';
-  setupTabs();
+  const projects = new Map();
+  const statsCache = new Map();
+  const selector = document.getElementById('analytics-project');
+  const result = document.getElementById('analytics-result');
+  function showAnalytics() {
+   if (!panel.querySelector('#account-panel-analytics').hidden && projects.has(selector.value)) {
+    const id = selector.value;
+    if (!statsCache.has(id)) statsCache.set(id, statsPanel(projects.get(id)));
+    result.replaceChildren(statsCache.get(id));
+   }
+  }
+  selector.onchange = showAnalytics;
+  function updateOverview() {
+   const items = [...projects.values()];
+   const live = items.filter(item => projectStage(item).key === 'live');
+   const counts = {total: items.length, live: live.length, scheduled: items.filter(item => projectStage(item).key === 'scheduled').length};
+   const totals = document.getElementById('launch-totals');
+   totals.hidden = false;
+   for (const field of totals.querySelectorAll('[data-count]')) field.textContent = counts[field.dataset.count];
+   const selected = selector.value;
+   selector.replaceChildren(...live.map(item => new Option(item.name, item.id)));
+   if (live.some(item => item.id === selected)) selector.value = selected;
+   document.getElementById('analytics-picker').hidden = live.length < 2;
+   if (!live.length) result.textContent = 'Views, visits, votes and comments appear here after your first launch goes live.';
+   else showAnalytics();
+  }
+  setupTabs(name => { if (name === 'analytics') showAnalytics(); });
   document.getElementById('account-reset-link').onclick=async event=>{
    const button=event.currentTarget,message=document.getElementById('account-reset-status');button.disabled=true;
    try{const {error}=await client.auth.resetPasswordForEmail(email||session.user.email,{redirectTo:`${location.origin}/account`});if(error)throw error;message.dataset.tone='ok';message.textContent='Check your inbox for a reset link.';}
@@ -72,6 +99,9 @@ if(state){
   state.hidden=true; // The dashboard bar already shows who is signed in.
   void loadSubmissions();
   function renderSubmissions(submissions){
+   projects.clear();
+   for (const item of submissions) projects.set(item.id, item);
+   updateOverview();
    list.replaceChildren();
    if(!submissions.length){
     const empty=document.createElement('div');empty.className='fl-card fl-panel-pad fl-empty';
@@ -98,17 +128,6 @@ if(state){
    if(['approved','featured'].includes(item.status)){const view=Object.assign(document.createElement('a'),{className:'button primary',href:item.pageUrl||'/projects/listing/'+encodeURIComponent(item.id),textContent:'View project and feedback'});actions.append(view);}
    if(item.awaitingInstantPayment){const finish=Object.assign(document.createElement('a'),{className:'button primary',href:'/submit-project?resume='+encodeURIComponent(item.id),textContent:'Finish publishing'});const cancel=Object.assign(document.createElement('button'),{type:'button',className:'button',textContent:'Cancel checkout'});cancel.dataset.cancelInstant=item.id;cancel.onclick=()=>cancelInstant(item,cancel);actions.append(finish,cancel);}
    if(actions.childElementCount)card.append(actions);
-   if (stage.key === 'live') {
-    const stats = document.createElement('details');
-    stats.className = 'account-project-stats';
-    const summary = document.createElement('summary');
-    summary.textContent = 'Launch stats';
-    stats.append(summary);
-    stats.addEventListener('toggle', () => {
-     if (stats.open && stats.childElementCount === 1) stats.append(statsPanel(item));
-    });
-    card.append(stats);
-   }
    const later=badgeLater(item,stage);if(later)card.append(later);
    if (item.feedback) {
     const feedback = document.createElement('div');
@@ -174,7 +193,7 @@ if(state){
    const card=document.getElementById('project-'+item.id),replacement=projectCard(updated);
    const note=document.createElement('p');note.className='fl-status';note.dataset.tone='ok';note.setAttribute('role','status');note.textContent=result.pageUrl?'Badge verified. Your project is live!':'Badge verified. Your launch is scheduled.';
    replacement.querySelector('.fl-tracker').after(note);
-   card.replaceWith(replacement);note.focus?.();
+   card.replaceWith(replacement);projects.set(updated.id,updated);updateOverview();note.focus?.();
    document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
   }
   // Unpaid Instant checkout: remove the draft (or publish it if the payment did go through).
@@ -188,9 +207,9 @@ if(state){
     const response=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${current.access_token}`},body:JSON.stringify({action:'cancel-instant',id:item.id}),signal:AbortSignal.timeout(30000)});
     const result=await response.json().catch(()=>({}));
     if(!response.ok)throw Error(result.error||'Could not cancel. Try again.');
-    if(result.published){const replacement=projectCard({...item,status:'approved',pageUrl:result.pageUrl,awaitingInstantPayment:false});card.replaceWith(replacement);return;}
+    if(result.published){const updated={...item,status:'approved',pageUrl:result.pageUrl,awaitingInstantPayment:false};card.replaceWith(projectCard(updated));projects.set(item.id,updated);updateOverview();return;}
     const done=document.createElement('p');done.className='fl-status';done.dataset.tone='ok';done.setAttribute('role','status');done.tabIndex=-1;done.textContent=`Cancelled “${item.name}”. You weren’t charged, and you can submit it again any time.`;
-    card.replaceWith(done);done.focus();
+    card.replaceWith(done);projects.delete(item.id);updateOverview();done.focus();
     document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
    }catch(error){note.textContent=error.message||'Could not cancel. Try again.';button.disabled=false;}
   }
@@ -198,10 +217,10 @@ if(state){
    try{
     const response=await fetch('/api/project-account',{headers:{Authorization:`Bearer ${session.access_token}`},cache:'no-store',signal:AbortSignal.timeout(20000)});
     const data=await response.json();
-    if(!response.ok){list.textContent=data.error||'Your submissions could not be loaded. Try again shortly.';return;}
+    if(!response.ok){result.textContent='Launch analytics could not be loaded.';list.textContent=data.error||'Your submissions could not be loaded. Try again shortly.';return;}
     renderSubmissions(data.submissions||[]);
     if(location.hash==='#account-submissions'||projectAnchor)(document.getElementById(location.hash.slice(1))||list).scrollIntoView({block:'start'});
-   }catch{list.textContent='Your submissions could not be loaded. Try again shortly.';}
+   }catch{result.textContent='Launch analytics could not be loaded.';list.textContent='Your submissions could not be loaded. Try again shortly.';}
   }
   const profileForm=document.getElementById('creator-profile-form'),profileStatus=document.getElementById('creator-profile-status'),profileLink=document.getElementById('creator-profile-link');
   const logoInput=document.getElementById('creator-logo-input'),logoPreview=document.getElementById('creator-logo-preview');let profileSaved=false;

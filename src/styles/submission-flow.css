@@ -285,5 +285,19 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
   html[data-theme="daylight"] #project-form :is(fieldset[id^="sub-step"], .submission-review, .submission-account-callout, .submission-account-status) {
     background: var(--fl-surface) !important;
   }
-  html[data-theme="daylight"] #project-import .dg-import-icon { color: currentColor !important; }
+}
+
+@layer workspace-preview {
+  #project-form .launch-start { background:#fff !important; }
+  #project-form .manual-launch { align-self:flex-start; padding:8px 0 !important; min-height:44px; border:0 !important; background:transparent !important; color:var(--fl-ink) !important; text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
+}
+
+@layer workspace-preview {
+  html[data-theme="daylight"] #project-form #project-import { border:1px solid #171717 !important; border-radius:9px !important; background:#171717 !important; color:#fff !important; min-height:44px !important; }
+  #project-import { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:8px 14px; cursor:pointer; }
+  #project-import[aria-busy="true"] { cursor:progress; }
+  #project-import .dg-import-icon { inline-size:1em; }
+  #project-import-status:not([hidden]) { margin:4px 0; color:var(--fl-ink); font-size:14px; }
+  #project-import-status[data-state="error"] { border-inline-start:2px solid currentColor; padding-inline-start:8px; }
+  .submission-workspace > .submission-preview-panel[hidden] { display:none !important; }
 }

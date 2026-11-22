@@ -128,6 +128,16 @@ if (form) {
   window.addEventListener('focus', onReturn);
   // Website import: accepts a bare domain, fills only empty fields, shows what changed.
   const urlInput=form.elements.url;
+  const editor = document.getElementById('launch-editor');
+  const manual = document.getElementById('manual-launch');
+  function openEditor(focus = false) {
+    editor.hidden = false;
+    manual.hidden = true;
+    document.querySelector('.submission-preview-panel').hidden = false;
+    if (intent.value === 'directory') void ensureReservation();
+    if (focus) form.elements.name.focus();
+  }
+  manual.addEventListener('click', () => openEditor(true));
   const normalizeUrl=()=>{const v=urlInput.value.trim();if(v&&!/^[a-z][a-z0-9+.-]*:\/\//i.test(v)&&/^[^\s/]+\.[^\s]+$/.test(v))urlInput.value=`https://${v}`;};
   urlInput.addEventListener('blur',normalizeUrl);
   urlInput.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.getElementById('project-import').click();}});
@@ -145,7 +155,6 @@ if (form) {
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
     return blob?new File([blob],`${(name||'logo').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'logo'}-logo.png`,{type:'image/png'}):null;
   };
-  const flash=el=>{el.classList.remove('is-imported');void el.offsetWidth;el.classList.add('is-imported');};
   document.getElementById('project-import').onclick=async()=>{
     const button=document.getElementById('project-import'),label=button.querySelector('.dg-import-label'),icon=button.querySelector('.dg-import-icon'),message=document.getElementById('project-import-status');
     const say=(state,text)=>{message.hidden=false;message.dataset.state=state;message.textContent=text;};
@@ -161,20 +170,20 @@ if (form) {
       const response=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${session.access_token}`},body:JSON.stringify({action:'read-site',url:urlInput.value}),signal:AbortSignal.timeout(40000)});
       const data=await response.json();if(!response.ok)throw Error(data.error||'Could not read that website.');
       let filled=0;
-      const fill=(key,value)=>{const field=form.elements[key];if(!field||!value||field.value.trim())return;field.value=value;flash(field.closest('label')||field);filled++;};
+      const fill=(key,value)=>{const field=form.elements[key];if(!field||!value||field.value.trim())return;field.value=value;filled++;};
       fill('name',data.name);fill('description',data.description);fill('social',data.social);
       const category=form.elements.category;
-      if(data.category&&category&&!category.value&&[...category.options].some(o=>o.value===data.category)){category.value=data.category;flash(category.closest('label')||category);filled++;}
+      if(data.category&&category&&!category.value&&[...category.options].some(o=>o.value===data.category)){category.value=data.category;filled++;}
       if(data.url&&data.url!==urlInput.value&&/^https:\/\//.test(data.url)){urlInput.value=data.url;}
       const imageInput=document.getElementById('project-image');
       if(data.logo&&imageInput&&!imageInput.files?.length){
-        try{const file=await iconToFile(data.logo,data.name);if(file){const dt=new DataTransfer();dt.items.add(file);imageInput.files=dt.files;imageInput.dispatchEvent(new Event('change',{bubbles:true}));flash(imageInput.closest('label')||imageInput);filled++;}}catch{}
+        try{const file=await iconToFile(data.logo,data.name);if(file){const dt=new DataTransfer();dt.items.add(file);imageInput.files=dt.files;imageInput.dispatchEvent(new Event('change',{bubbles:true}));filled++;}}catch{}
       }
       form.dispatchEvent(new Event('input',{bubbles:true}));
       if(filled)say('ok',`✓ ${filled} detail${filled===1?'':'s'} imported from ${host}. Check them below.`);
       else say('ok','Your fields were already filled, so nothing changed.');
     }catch(error){say('error',error.message||'Import unavailable. You can enter your details manually.');}
-    finally{clearInterval(spin);icon.textContent='⇣';label.textContent='Autofill';button.disabled=false;button.removeAttribute('aria-busy');}
+    finally{openEditor(document.activeElement === button);clearInterval(spin);icon.textContent='⇣';label.textContent='Draft from link';button.disabled=false;button.removeAttribute('aria-busy');}
   };
   const accountStatus=document.getElementById('submission-account-status');
   const details=document.getElementById('submission-details');
@@ -187,8 +196,10 @@ if (form) {
       if(response.ok){
         const account = await response.json();
         accountVerified=true;form.elements.email.value=session.user.email;form.elements.email.readOnly=true;document.getElementById('submission-account-callout').hidden=true;details.hidden=false;accountStatus.hidden=false;accountStatus.textContent=`Submitting as ${session.user.email}`;updateButton();
+        accountUserId = session.user.id || '';
+        if (query.get('membership') || query.get('spot') || query.get('resume')) openEditor();
         configureLaunch(account);
-        accountUserId=session.user.id||'';if(intent.value==='directory')ensureReservation();renderBadgeFirst();
+        renderBadgeFirst();
       }
       else {accountStatus.hidden=false;accountStatus.innerHTML='To submit a project, <a href="/login">sign in or create an account</a> first.';}
     }
@@ -318,7 +329,7 @@ if (form) {
   const badgeFirst=document.getElementById('badge-first');
   const reserveKey=()=>`digivated:badge-reserve:${accountUserId}`;
   const ensureReservation=async()=>{
-    if(reservedBadge||reserving||!accountVerified||!accountUserId)return reserving;
+    if(editor.hidden||reservedBadge||reserving||!accountVerified||!accountUserId)return reserving;
     try{const saved=JSON.parse(localStorage.getItem(reserveKey())||'null');if(typeof saved?.id==='string'&&typeof saved?.token==='string'&&saved.token){reservedBadge=saved;renderBadgeFirst();return;}}catch{}
     reserving=(async()=>{
       try{

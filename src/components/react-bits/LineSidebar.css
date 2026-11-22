@@ -36,13 +36,6 @@
   cursor: pointer;
 }
 
-/* Widen the pointer target so items react a touch before the cursor arrives */
-.line-sidebar__item::before {
-  content: '';
-  position: absolute;
-  inset: -6px -48px;
-}
-
 .line-sidebar__label {
   position: relative;
   display: inline-flex;

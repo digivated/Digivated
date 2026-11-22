@@ -108,6 +108,15 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   const search = page.getByRole('search', { name: 'Find a product' }).getByRole('searchbox');
   const status = page.locator('[data-launch-search-status]');
   await expect(page.locator('[data-stat-products]')).toHaveText('27');
+  const category = page.locator('[data-board-category]');
+  await category.selectOption('Education');
+  await expect(page.locator('[data-launch-id]:visible h3 a')).toHaveText(['Directory fixture 0']);
+  await category.selectOption('');
+  const order = page.locator('[data-board-sort]');
+  await order.selectOption('ranked');
+  await expect(page.locator('[data-launch-id] h3 a').first()).toHaveText('Directory fixture 0');
+  await order.selectOption('recent');
+  await expect(page.locator('[data-launch-id] h3 a').first()).toHaveText('Directory fixture 26');
   await search.fill('Directory fixture 26');
   await expect(status).toHaveText('1 of 27 launches');
   await expect(page.locator('[data-launch-id]:visible h3')).toHaveText(['Directory fixture 26']);
@@ -146,7 +155,8 @@ test('the desktop sidebar opens the current branch and scrolls in a short viewpo
   const rail = page.getByRole('complementary', { name: 'Digivated sidebar' });
   const nav = rail.getByRole('navigation', { name: 'Workspace navigation' });
   await expect(nav.getByRole('link', { name: 'Embed badges' })).toHaveAttribute('aria-current', 'page');
-  await expect(nav.locator('a[href="/news"]')).toBeHidden();
+  await expect(nav.locator('a[href="/news"]')).toBeVisible();
+  await expect(nav.locator('a[href="/resources"]')).toBeHidden();
   await expect(nav.locator('.site-menu-branch[open] .site-menu-connector').first()).toHaveCSS('animation-name', 'none');
   await nav.locator('summary', { hasText: 'Explore' }).press('Enter');
   await expect(nav.getByRole('link', { name: 'Weekly winners' })).toHaveAttribute('href', '/winners');
@@ -175,7 +185,7 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   await expect(page).toHaveURL(base + '/#launching-next');
   await expect(nav.getByRole('link', { name: 'Browse by category' })).toHaveAttribute('href', '/discover#directory-filters');
   await expect(page.getByRole('region', { name: 'Launching next' })).toContainText('Mon, Nov 23 · 9:00 AM Eastern');
-  await expect(page.locator('[data-upcoming-id="upcoming-fixture"]')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(page.locator('#launching-next .dg-list-rows')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.getByRole('button', { name: 'Notify me when Scheduled fixture launches' })).toBeVisible();
   const upcoming = page.locator('[data-upcoming-id="upcoming-fixture"] img');
   await expect(upcoming).toHaveAttribute('src', '/digivated-daylight-mark.png');

@@ -83,7 +83,7 @@ function renderSpots(featured, sponsored, instant) {
 // counts stay hidden. Last week: frozen final results with the podium.
 const state = {
   projects: [], fair: { active: false, endsAt: 0 }, podium: null, upcoming: null,
-  limits: { ...defaultLimits }, query: '', ready: false,
+  limits: { ...defaultLimits }, query: '', category: '', sort: 'recent', ready: false,
 };
 const pendingVotes = new Set();
 const pendingWatch = new Set();
@@ -162,7 +162,9 @@ function upcomingRow(item) {
   li.dataset.upcomingId = item.id;
   const art = el('span', null, 'dg-logo-link'); art.setAttribute('aria-hidden', 'true'); art.append(projectLogo(item, 'dg-logo'));
   const main = el('div', null, 'dg-main');
-  const title = el('h3'); title.append(el('span', item.name, 'dg-upcoming-name'), el('span', freeLaunchDay(item.launchAt), 'dg-badge dg-badge-date'));
+  const title = el('h3');
+  title.append(el('span', item.name, 'dg-upcoming-name'));
+  if (Number.isFinite(Date.parse(item.launchAt))) title.append(el('span', freeLaunchDay(item.launchAt), 'dg-badge dg-badge-date'));
   main.append(title, el('p', item.description || 'Launching soon on Digivated.', 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
   meta.append(el('span', item.category || 'Project'));
@@ -238,6 +240,7 @@ function sectionNote(key, items) {
   const howLink = () => Object.assign(el('a', 'How launches are ranked', 'dg-note-link'), { href: '/winners#how-ranking-works' });
   if (key === 'archive') return [];
   if (key === 'upcoming') {
+    if (!Number.isFinite(Date.parse(items[0].launchAt))) return [];
     const date = el('time', freeLaunchDay(items[0].launchAt));
     date.dateTime = items[0].launchAt;
     return [date, ' · 9:00 AM Eastern'];
@@ -281,7 +284,17 @@ function revealRows(rows) {
 
 function render({ animateSearch = false, only = null } = {}) {
   const g = groups();
-  const searching = !!state.query;
+  const searching = Boolean(state.query || state.category);
+  const categorySelect = document.querySelector('[data-board-category]');
+  if (categorySelect) {
+    const names = [...new Set(Object.values(g).flat().map(item => item.category).filter(Boolean))].sort();
+    if (state.category && !names.includes(state.category)) names.push(state.category);
+    if (categorySelect.options.length !== names.length + 1 || names.some((name, i) => categorySelect.options[i+1].value !== name)) {
+      categorySelect.replaceChildren(new Option('All categories',''), ...names.map(name => new Option(name, name)));
+      categorySelect.value = state.category;
+    }
+    categorySelect.closest('[data-board-filters]').hidden = false;
+  }
   const total = Object.values(g).reduce((sum, items) => sum + items.length, 0);
   if (!only) {
     const rising = board.querySelector('[data-rising]');
@@ -292,7 +305,8 @@ function render({ animateSearch = false, only = null } = {}) {
   const searchRows = [];
   for (const section of board.querySelectorAll('[data-board-section]')) {
     const key = section.dataset.boardSection, all = g[key] || [], limit = state.limits[key];
-    const items = searching ? all.filter(project => matchesQuery(project, state.query)) : all;
+    const items = all.filter(project => (!state.category || project.category === state.category) && (!state.query || matchesQuery(project, state.query)));
+    if (state.sort === 'recent' && key !== 'upcoming' && !(key === 'current' && state.fair.active)) items.sort((a,b) => launchTimestamp(b) - launchTimestamp(a));
     matches += items.length;
     if (only && key !== only) continue;
     section.hidden = !items.length && (searching || key === 'upcoming');
@@ -413,6 +427,14 @@ const featuredFrom = projects => projects.filter(p => p.status === 'featured').s
 const sponsoredFrom = projects => { const now = Date.now(); return projects.filter(p => p.sponsored && p.status !== 'featured' && now - launchTimestamp(p) < WEEK).sort((a, b) => launchTimestamp(b) - launchTimestamp(a)); };
 
 if (board) {
+  document.querySelector('[data-board-filters]')?.addEventListener('change', event => {
+    const field = event.target;
+    if (field.matches('[data-board-sort]')) state.sort = field.value;
+    else if (field.matches('[data-board-category]')) state.category = field.value;
+    else return;
+    state.limits = { ...defaultLimits };
+    render();
+  });
   const searchForm = document.querySelector('[data-launch-search]');
   const searchField = searchForm?.querySelector('input[type="search"]');
   const clearButton = searchForm?.querySelector('[data-clear-launch-search]');

@@ -48,7 +48,7 @@ async function listPage() {
   const search = $('#dg-forum-search'); if (search) search.value = query;
   const info = forum ? forumBySlug[forum] : null;
   $('[data-forum-title]').textContent = view === 'recent' ? 'Recent comments' : query ? `Search: “${query}”` : info ? info.name : 'Threads';
-  $('[data-forum-description]').textContent = view === 'recent' ? 'The latest replies across threads and product discussions.' : query ? 'Threads whose title or text match your search.' : info ? info.description : 'Ask questions, get feedback and talk about building with other makers.';
+  $('[data-forum-description]').textContent = view === 'recent' ? 'The latest replies across threads and product discussions.' : query ? 'Threads whose title or text match your search.' : info ? info.description : 'Share a build, ask a question, or give another maker feedback.';
   if (info) $('[data-forum-new]').href = `/threads/new?forum=${forum}`;
   document.title = `${view === 'recent' ? 'Recent comments' : info ? info.name : 'Threads'} · Digivated`;
 

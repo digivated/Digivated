@@ -20,17 +20,29 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
       <div class="fl-dash-bar"><p>Signed in as <strong id="account-email"></strong></p><button class="fl-link" id="account-sign-out" type="button">Sign out</button></div>
       <div class="fl-tabs" role="tablist" aria-label="Dashboard sections">
         <button type="button" role="tab" id="account-tab-projects" aria-controls="account-panel-projects" aria-selected="true" data-account-tab="projects">Overview</button>
+        <button type="button" role="tab" id="account-tab-analytics" aria-controls="account-panel-analytics" aria-selected="false" tabindex="-1" data-account-tab="analytics">Analytics</button>
         <button type="button" role="tab" id="account-tab-profile" aria-controls="account-panel-profile" aria-selected="false" tabindex="-1" data-account-tab="profile">Profile</button>
         <button type="button" role="tab" id="account-tab-following" aria-controls="account-panel-following" aria-selected="false" tabindex="-1" data-account-tab="following">Following</button>
         <button type="button" role="tab" id="account-tab-settings" aria-controls="account-panel-settings" aria-selected="false" tabindex="-1" data-account-tab="settings">Settings</button>
       </div>
       <section id="account-panel-projects" role="tabpanel" aria-labelledby="account-tab-projects" class="fl-tabpanel">
         <h2 id="account-submissions-title" class="sr-only">My submissions</h2>
+        <dl class="launch-totals" id="launch-totals" hidden>
+          <div><dt>Projects</dt><dd data-count="total"></dd></div>
+          <div><dt>Scheduled</dt><dd data-count="scheduled"></dd></div>
+          <div><dt>Live</dt><dd data-count="live"></dd></div>
+        </dl>
         <div id="account-submissions" aria-live="polite"><p class="fl-status">Loading your projects…</p></div>
         <details class="account-points">
           <summary>Feedback points</summary>
           <FeedbackPoints heading="Give feedback, get bonus upvotes on your launch."/>
         </details>
+      </section>
+      <section id="account-panel-analytics" role="tabpanel" aria-labelledby="account-tab-analytics" class="fl-tabpanel" hidden>
+        <div class="fl-card fl-panel-pad"><h2>Launch analytics</h2>
+          <label id="analytics-picker" hidden>Project <select id="analytics-project"></select></label>
+          <div id="analytics-result" aria-live="polite">Loading projects…</div>
+        </div>
       </section>
       <section id="account-panel-profile" role="tabpanel" aria-labelledby="account-tab-profile" class="fl-tabpanel" hidden>
         <section class="creator-profile-editor fl-card fl-panel-pad" aria-labelledby="creator-profile-title"><h2 id="creator-profile-title">Your profile</h2><p>Help builders find you and your projects. Your email and review notes stay private.</p><form id="creator-profile-form" class="fl-form"><div class="creator-logo-editor"><span class="creator-avatar" id="creator-logo-preview" aria-hidden="true">D</span><label>Profile logo <span class="quiet">(PNG, JPG or WebP)</span><input id="creator-logo-input" type="file" accept="image/png,image/jpeg,image/webp"/><small>Square images work best. Your logo appears on your creator profile.</small></label></div><label>Display name<input name="name" maxlength="60" required placeholder="Your name or studio"/></label><label>Short bio<textarea name="bio" maxlength="240" rows="3" placeholder="What are you building?"></textarea></label><label>Website <span class="quiet">(optional)</span><input name="website" type="url" maxlength="300" placeholder="https://your-site.com"/></label><label>Social profile <span class="quiet">(optional)</span><input name="social" type="url" maxlength="300" placeholder="https://x.com/yourname"/></label><label class="creator-profile-visibility"><input name="public" type="checkbox"/> Show my profile publicly</label><div class="creator-profile-actions fl-actions"><button class="button primary" type="submit">Save profile</button><a id="creator-profile-link" class="fl-btn" hidden>View public profile</a></div><p id="creator-profile-status" class="fl-status" role="status" aria-live="polite"></p></form></section>

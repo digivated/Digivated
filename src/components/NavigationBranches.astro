@@ -2,7 +2,7 @@
 import { menuGroups, isNavigationCurrent } from '../data/site-navigation.mjs';
 import {
   ArrowDown01Icon, Award01Icon, BookOpen01Icon, BubbleChatIcon, Certificate01Icon,
-  ChartLineData01Icon, News01Icon, Rocket01Icon, Store01Icon,
+  ChartLineData01Icon, Rocket01Icon, Store01Icon,
 } from '@hugeicons/core-free-icons';
 import NavGlyph from './NavGlyph.astro';
 
@@ -12,7 +12,6 @@ const active = (href: string) => isNavigationCurrent(path, href);
 const activeBranch = menuGroups.find(({ links }) => links.some(([href]) => active(href))) ?? menuGroups[0];
 const branchIcons = [BookOpen01Icon, Rocket01Icon];
 const linkIcons: Record<string, typeof Rocket01Icon> = {
-  '/news': News01Icon,
   '/winners': Award01Icon,
   '/resources': BookOpen01Icon,
   '/invstr': ChartLineData01Icon,

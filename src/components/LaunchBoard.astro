@@ -11,6 +11,10 @@ const sections = [
   { key: 'archive', id: 'earlier', navLabel: 'Earlier', title: 'Earlier launches', live: false, more: '/discover', moreLabel: 'Browse the directory' },
 ];
 ---
+<div class="board-filters" data-board-filters hidden>
+  <label>Sort <select data-board-sort><option value="recent">Most recent</option><option value="ranked">Board ranking</option></select></label>
+  <label>Category <select data-board-category><option value="">All categories</option></select></label>
+</div>
 <nav class="dg-launch-nav" aria-label="Browse launches">
   {sections.map(section => <a href={`#${section.id}`}>{section.navLabel}</a>)}
   <a href="/discover#directory-filters">Browse by category <UiIcon name="external" size={13}/></a>

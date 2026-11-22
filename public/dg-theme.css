@@ -61,19 +61,3 @@ html#digivated-root[data-ascii]{scrollbar-color:#2e2e2e #090909}
 @layer flow{
 @media (max-width:420px){html#digivated-root[data-ascii] body .compact-site-header .navigation-panel .dg-menu-main a{padding-inline:2px!important;font-size:10.5px!important;letter-spacing:0!important}}
 }
-
-
-/* ---------- Submit: website import ---------- */
-@layer flow{
-html#digivated-root[data-ascii] body #project-import.dg-import{display:flex!important;align-items:center;justify-content:center;gap:10px;width:100%!important;min-height:46px!important;margin:2px 0 6px!important;padding:10px 14px!important;border:1px dashed #4a3c66!important;border-radius:4px!important;background:#c3a0ff0d!important;color:#e7dcff!important;font-family:var(--fl-mono)!important;font-size:12.5px!important;font-weight:500!important;letter-spacing:.02em!important;cursor:pointer;transition:border-color .2s,background-color .2s,color .2s!important}
-html#digivated-root[data-ascii] body #project-import.dg-import:hover{border-style:solid!important;border-color:#c3a0ff!important;background:#c3a0ff1a!important;color:#fff!important}
-html#digivated-root[data-ascii] body #project-import.dg-import[aria-busy=true]{border-style:solid!important;border-color:#7a66a3!important;cursor:progress;opacity:1!important}
-html#digivated-root[data-ascii] body .dg-import-icon{display:inline-grid;place-items:center;width:16px;font-size:14px!important;line-height:1;color:#c3a0ff!important}
-html#digivated-root[data-ascii] body .dg-import-status{--st:#c3a0ff;display:block;margin:0 0 12px!important;padding:9px 12px!important;border:1px solid #262626!important;border-left:2px solid var(--st)!important;border-radius:0 4px 4px 0!important;background:#0d0d0d!important;font-family:var(--fl-mono)!important;font-size:12px!important;line-height:1.5!important;color:#cfcfcf!important}
-html#digivated-root[data-ascii] body .dg-import-status[hidden]{display:none!important}
-html#digivated-root[data-ascii] body .dg-import-status[data-state=ok]{--st:#8fd6a4;color:#d8f5e1!important}
-html#digivated-root[data-ascii] body .dg-import-status[data-state=error]{--st:#ef8f8f;color:#f6d3d3!important}
-}
-html#digivated-root[data-ascii] body .is-imported :is(input,select,textarea){animation:dg-imported 1.8s ease-out}
-@keyframes dg-imported{0%,35%{box-shadow:0 0 0 2px #c3a0ff99,0 0 18px -4px #c3a0ff}100%{box-shadow:0 0 0 0 #c3a0ff00}}
-@media (prefers-reduced-motion:reduce){html#digivated-root[data-ascii] body .is-imported :is(input,select,textarea){animation:none}}

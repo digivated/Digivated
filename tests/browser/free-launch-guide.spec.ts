@@ -22,12 +22,13 @@ async function signedIn(page){
 for(const width of [390,1440])test(`free launch instructions, saved badge and verified state at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});await signedIn(page);
  await page.goto(base+'/submit-project');
+ await page.getByRole('button', { name: 'Enter details manually' }).click();
  await expect(page.locator('#submission-details')).toBeVisible();
  await expect(page.getByLabel('Project URL')).toBeVisible();
  const form = page.locator('#project-form');
  await expect(form).toHaveCSS('background-color', 'rgb(255, 255, 255)');
  expect((await form.boundingBox())!.width).toBeLessThanOrEqual(Math.min(740,width));
- const sections = page.locator('#submission-details fieldset[id^=sub-step], #submission-details > .submission-review');
+ const sections = page.locator('#submission-details fieldset[id^=sub-step], #launch-editor > .submission-review');
  const boxes = await sections.evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().toJSON()));
  expect(boxes).toHaveLength(5);
  for (let i=1; i<boxes.length; i++) {
@@ -101,6 +102,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
 test('saved screen verifies the badge without leaving the page',async({page})=>{
  await page.setViewportSize({width:390,height:900});await signedIn(page);
  await page.goto(base+'/submit-project');
+ await page.getByRole('button', { name: 'Enter details manually' }).click();
  for(const [name,value] of Object.entries({name:'Orbit',url:'https://example.com',description:'A useful workspace for independent builders to organize projects.',creator:'Builder'}))await page.locator(`#project-form [name=${name}]`).fill(value);
  await page.locator('#project-form [name=category]').selectOption('Developer Tools');
  const image=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=64;c.getContext('2d')!.fillRect(0,0,64,64);return c.toDataURL('image/png').split(',')[1];});
@@ -134,4 +136,25 @@ test('badge examples stay optional and share one account link', async ({ page })
   await styles.getByText('Use a text badge', { exact: true }).click();
   await expect(styles.locator('[data-badge-style=text]')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
+
+test('product URL opens an editable draft without publishing', async ({ page }) => {
+ await signedIn(page);
+ const actions: string[] = [];
+ await page.route('**/api/submissions', async route => {
+  if (route.request().method() !== 'POST') return route.fallback();
+  const body = route.request().postDataJSON();
+  actions.push(body.action);
+  if (body.action === 'read-site') return route.fulfill({json:{name:'Orbit',description:'An independent planning tool for product makers.'}});
+  return route.fallback();
+ });
+ await page.goto(base+'/submit-project');
+ await expect(page.getByLabel('Project name')).toBeHidden();
+ await page.getByLabel('Project URL').fill('example.com');
+ await page.locator('#project-import').click();
+ await expect(page.getByLabel('Project name')).toHaveValue('Orbit');
+ await expect(page.getByLabel('Project URL')).toHaveValue('https://example.com');
+ await expect(page.locator('#submission-badge')).toBeHidden();
+ expect(actions).toContain('read-site');
+ expect(actions.filter(action => !action)).toHaveLength(0);
 });
