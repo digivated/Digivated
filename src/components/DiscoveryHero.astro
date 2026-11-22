@@ -19,3 +19,10 @@ import UiIcon from './UiIcon.astro';
     <p class="dg-launch-search-status" data-launch-search-status role="status" hidden></p>
   </div>
 </section>
+
+<script>
+  import { foldText } from '../scripts/fold-text.js';
+  // Title unfolds first; the smaller line follows a little faster and gentler.
+  foldText(document.getElementById('dg-home-title'));
+  foldText(document.querySelector<HTMLElement>('[data-discovery-hero] .board-introduction'), { splitBy: 'word', delay: 450, stagger: 70, duration: 560, foldAngle: 80, refoldAngle: 30, refoldRadius: 110 });
+</script>

@@ -313,3 +313,11 @@
 .dg-roll-strip.is-moving { filter: blur(.4px); }
 .dg-roll-char { display: inline-block; block-size: 1.25em; }
 @media (prefers-reduced-motion: reduce) { .dg-roll-strip { transition: none !important; filter: none !important; } }
+
+/* Paper fold hero text (fold-text.js). Letters hinge from their top edge. */
+.dg-fold-word { display: inline-block; white-space: nowrap; perspective: 700px; }
+.dg-fold-char { display: inline-block; transform-origin: 50% 0; backface-visibility: hidden; transform: rotateX(var(--fold, 0deg)); filter: brightness(var(--crease, 1)); transition: transform .28s cubic-bezier(.215,.61,.355,1), filter .28s ease-out; }
+@media (prefers-reduced-motion: reduce) { .dg-fold-char { transform: none !important; filter: none !important; transition: none !important; } }
+.dg-fold-word.dg-fold-char { perspective: none; }
+.dg-fold-text { display: inline; }
+.dg-fold-words { perspective: 700px; }
