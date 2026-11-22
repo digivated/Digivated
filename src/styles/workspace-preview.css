@@ -82,7 +82,6 @@
     .dg-workspace .line-sidebar__label { transform: none !important; }
     .dg-workspace .line-sidebar__marker { transform: translateY(-50%) !important; }
   }
-  .dg-workspace-content { min-inline-size: 0; }
   .dg-workspace-rail { display: contents !important; }
   .dg-workspace :is(.dg-rail-brand,.dg-rail-submit,.dg-rail-navigation,.dg-rail-footer) { display: none !important; }
   .dg-site-backdrop { opacity: .24 !important; }
@@ -121,14 +120,6 @@
     box-shadow: none !important;
   }
   .dg-workspace .dg-shell .dg-header-submit:focus-visible { outline-color: #161616 !important; }
-  .dg-workspace .dg-footer-submit {
-    border: 1px solid var(--fl-accent) !important;
-    border-radius: var(--fl-radius) !important;
-    background: var(--glass-dark) !important;
-    color: #fff !important;
-    box-shadow: var(--glass-dark-edge) !important;
-  }
-  .dg-workspace .dg-footer-submit:hover { background: #292929 !important; }
   .packet-workspace :is(.topbar,#site-navigation) {
     background: #000 !important;
     color: #f8f8f8 !important;
@@ -525,7 +516,6 @@
     color: #fff !important;
     text-decoration: none !important;
   }
-  .dg-workspace .dg-site-footer { background: var(--glass-light) !important; }
   @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     .dg-workspace :is(.dg-bell-panel,.dg-hero-panel,.dg-dir-controls) {
       -webkit-backdrop-filter: blur(16px) saturate(0) !important;

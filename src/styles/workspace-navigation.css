@@ -1,0 +1,58 @@
+@layer workspace-preview {
+  .dg-workspace {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 100svh;
+  }
+
+  .dg-workspace-content {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .dg-workspace-content > #main {
+    padding-block-end: clamp(26px, 4vw, 44px) !important;
+  }
+
+  .dg-workspace-content > .dg-site-footer {
+    align-self: center;
+    inline-size: min(100%, var(--daylight-content));
+  }
+
+  @media (min-width: 1120px) {
+    .dg-workspace { display: grid; }
+    .dg-workspace-content { min-block-size: 100svh; }
+  }
+}
+
+/* Native document navigation keeps each page's own scripts and normal browser history. */
+@media (prefers-reduced-motion: no-preference) {
+  .dg-workspace-content > #main { view-transition-name: workspace-page; }
+
+  @media (min-width: 1120px) {
+    .dg-workspace > .dg-workspace-rail { view-transition-name: workspace-navigation; }
+  }
+  @media (max-width: 1119px) {
+    .dg-workspace-rail > .dg-shell { view-transition-name: workspace-navigation; }
+  }
+
+  ::view-transition { pointer-events: none; }
+  ::view-transition-group(*) { animation-duration: 140ms; }
+  ::view-transition-old(root),
+  ::view-transition-old(workspace-page),
+  ::view-transition-old(workspace-navigation) { display: none; }
+
+  ::view-transition-new(root),
+  ::view-transition-new(workspace-navigation) { animation: none; }
+
+  ::view-transition-new(workspace-page) {
+    animation: dg-page-arrive 140ms var(--dg-motion-ease, ease-out);
+  }
+
+  @keyframes dg-page-arrive {
+    from { opacity: .9; }
+    to { opacity: 1; }
+  }
+}

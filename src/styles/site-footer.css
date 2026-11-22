@@ -7,6 +7,23 @@
     background: var(--fl-bg) !important;
     color: var(--fl-copy) !important;
   }
+  html[data-theme="daylight"] body .dg-workspace-content > .dg-site-footer {
+    margin-block-start: auto !important;
+    padding: 0 var(--daylight-inset) max(12px, env(safe-area-inset-bottom)) !important;
+    border: 0 !important;
+    background: transparent !important;
+  }
+  .dg-workspace-content > .dg-site-footer .dg-footer-inner {
+    --fl-ink: #fbfbfb;
+    --fl-copy: #d0d0d0;
+    --fl-muted: #bdbdbd;
+    --fl-line: #414141;
+    padding: clamp(10px, 1.2vw, 17px) clamp(11px, 2vw, 24px);
+    border: 1px solid #363636 !important;
+    border-radius: clamp(14px, 1.6vw, 22px) !important;
+    background: #171717 !important;
+    color: var(--fl-copy) !important;
+  }
   .dg-footer-inner {
     inline-size: min(100%, var(--daylight-content));
     margin-inline: auto;
@@ -35,12 +52,25 @@
   }
   .dg-site-footer .dg-footer-brand {
     color: var(--fl-ink) !important;
-    font-size: clamp(25px, 3vw, 38px) !important;
+    font-size: clamp(22px, 2.5vw, 32px) !important;
     font-weight: 650;
     letter-spacing: -.06em;
     line-height: 1.1 !important;
   }
   .dg-footer-brand img, .dg-footer-credit img { flex: none; object-fit: contain; }
+  .dg-workspace-content .dg-site-footer .dg-footer-group li > a { min-height: 26px !important; }
+  .dg-workspace-content .dg-footer-brand img { filter: brightness(0) invert(1) !important; }
+  .dg-workspace-content .dg-site-footer a:focus-visible {
+    outline-color: var(--fl-ink) !important;
+    outline-offset: 3px !important;
+  }
+  .dg-workspace-content .dg-site-footer .dg-footer-submit {
+    border: 1px solid #747474 !important;
+    background: #292929 !important;
+    color: var(--fl-ink) !important;
+    box-shadow: none !important;
+  }
+  .dg-workspace-content .dg-site-footer .dg-footer-submit:hover { background: #3a3a3a !important; }
   .dg-site-footer .dg-footer-submit {
     margin-block-start: 5px;
     min-height: 42px !important;
@@ -188,6 +218,12 @@
   }
   @media (max-width: 359px) {
     .dg-site-footer .dg-footer-group li > a { min-height: 26px !important; }
+    .dg-workspace-content .dg-site-footer .dg-footer-brand {
+      font-size: 18px !important;
+      white-space: nowrap;
+    }
+    .dg-workspace-content .dg-site-footer .dg-footer-brand img { width: 22px; height: 22px; }
+    .dg-workspace-content .dg-footer-bottom { font-size: 11px; }
   }
   @media (max-width: 670px) {
     .dg-footer-bottom {
