@@ -22,9 +22,6 @@ async function signedIn(page){
 for(const width of [390,1440])test(`free launch instructions, saved badge and verified state at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});await signedIn(page);
  await page.goto(base+'/submit-project');
- await expect(page.locator('.free-launch-guide ol>li')).toHaveCount(4);
- await expect(page.locator('.free-launch-guide')).toContainText('Launches go out every Monday');
- await expect(page.locator('.free-launch-guide')).toContainText('Monday at 9:00 AM Eastern');
  await expect(page.locator('#submission-details')).toBeVisible();
  await expect(page.locator('#submission-progress li.is-current')).toContainText('Project');
  const projectBox = (await page.locator('#sub-step-details').boundingBox())!;
@@ -44,6 +41,8 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await expect(page.locator('.free-launch-guide')).toBeHidden();
  await guide.click();
  await expect(page.locator('.free-launch-guide')).toBeVisible();
+ await expect(page.locator('.free-launch-guide')).toContainText('Mondays at 9:00 AM Eastern');
+ await expect(page.locator('.free-launch-guide a')).toHaveAttribute('href', '/account#account-submissions');
  await guide.click();
  const preview = page.getByText('Preview your public listing', { exact: true });
  await expect(page.locator('[data-listing-name]')).toBeHidden();
@@ -70,7 +69,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await picker.locator('[data-copy-badge=light]').click();
  await expect(picker.locator('[data-copy-badge=light]')).toHaveText('Copied ✓');
  await expect(page.locator('#submission-badge-launch')).toContainText('November 23, 2026');
- await expect(page.locator('#submission-badge')).toContainText('Once verified, you go live on launch day.');
+ await expect(page.locator('#submission-badge-launch')).toContainText('Projects publish every Monday at 9:00 AM Eastern.');
  await expect(page.locator('#sub-step-details')).toBeHidden();
  await expect(page.locator('#submission-badge .fl-tracker [aria-current=step]')).toContainText('Badge verified');
  await page.goto(base+'/account?tab=profile#project-badge-fixture');
@@ -119,4 +118,23 @@ test('saved screen verifies the badge without leaving the page',async({page})=>{
  await expect(page.locator('#submission-badge .fl-tracker [aria-current=step]')).toContainText('Launch day');
  await expect(verify).toBeHidden();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
+
+test('badge examples stay optional and share one account link', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('http://127.0.0.1:4321/badges');
+  const styles = page.getByRole('region', { name: 'Badge styles' });
+  const accountLinks = styles.locator('a[href^="/account"]');
+  await expect(accountLinks).toHaveCount(1);
+  await expect(accountLinks.first()).toHaveAttribute('href', '/account#account-submissions');
+
+  const darkBadge = styles.locator('[data-badge-style=dark]');
+  await expect(darkBadge.locator('img')).toBeVisible();
+  await expect(darkBadge.locator('code')).toBeHidden();
+  await darkBadge.getByText('Example embed code', { exact: true }).click();
+  await expect(darkBadge.locator('code')).toContainText('YOUR_PROJECT_ID?theme=dark');
+  await expect(darkBadge.locator('code')).toBeVisible();
+  await styles.getByText('Use a text badge', { exact: true }).click();
+  await expect(styles.locator('[data-badge-style=text]')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });

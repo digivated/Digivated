@@ -334,7 +334,7 @@ html body.platform.light-theme .comment-list strong,html body.platform.light-the
 html body.platform.light-theme .comment-form input,html body.platform.light-theme .comment-form textarea,html body.platform.light-theme .collection-dialog input { color:#222; background:#fff; border-color:#ccc; }
 html body.platform.light-theme .comment-form button { color:white; background:#171717; }
 html body.platform.light-theme .comment-status { color:#555; }
-html body.platform.light-theme :is(.saved-empty-panel,.community-empty,.about-values>div,.promo-details>div,.submission-note,.promo-callout) { background:#ffffffd9; color:#222; border-color:#ddd; }
+html body.platform.light-theme :is(.saved-empty-panel,.community-empty,.promo-details>div,.submission-note,.promo-callout) { background:#ffffffd9; color:#222; border-color:#ddd; }
 /* Keep the dashboard visit action an open text link, including legacy button states. */
 html body.platform.light-theme.projects-dashboard [data-live-projects] .project-copy .card-links .card-open.button,
 html body.platform.light-theme.projects-dashboard [data-live-projects] .project-copy .card-links .card-open.button:hover { background:transparent; color:#171717; border:0; box-shadow:none; }

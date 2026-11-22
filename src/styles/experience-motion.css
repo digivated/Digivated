@@ -1,5 +1,11 @@
 /* An editorial rhythm shared by public pages and the Prompt Packet. */
 @layer daylight {
+  :root {
+    --dg-motion-quick: 160ms;
+    --dg-motion-panel: 240ms;
+    --dg-motion-ease: cubic-bezier(.22, 1, .36, 1);
+  }
+
   .dg-reading-track {
     display: none;
     position: absolute;
@@ -26,16 +32,16 @@
     html[data-motion-ready] .dg-shell .dg-shell-disclosure[open] .site-menu-panel,
     html[data-motion-ready] .dg-shell .dg-shell-account-panel:not([hidden]),
     html[data-motion-ready] dialog#discovery-search[open] {
-      animation: dg-panel-arrive 360ms cubic-bezier(.22,1,.36,1);
+      animation: dg-panel-arrive var(--dg-motion-panel) var(--dg-motion-ease);
     }
     :is(.dg-home-hero .dg-btn, .dg-header-submit) svg {
-      transition: translate 320ms cubic-bezier(.22,1,.36,1);
+      transition: translate var(--dg-motion-panel) var(--dg-motion-ease);
     }
     :is(.dg-home-hero .dg-btn, .dg-header-submit):is(:hover, :focus-visible) svg {
-      translate: 3px 0;
+      translate: 2px 0;
     }
     @keyframes dg-panel-arrive {
-      from { opacity: .7; translate: 0 -8px; }
+      from { opacity: .9; translate: 0 -4px; }
       to { opacity: 1; translate: 0 0; }
     }
     @supports (animation-timeline: view()) {
@@ -45,7 +51,7 @@
         animation-range: entry 0% cover 26%;
       }
       @keyframes dg-mark-arrive {
-        from { opacity: .64; scale: .93; }
+        from { opacity: .9; scale: .98; }
         to { opacity: 1; scale: 1; }
       }
 

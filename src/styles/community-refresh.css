@@ -156,7 +156,7 @@
 .platform .page-intro { padding:32px 0 36px; max-width:760px; }
 .platform .page-intro h1 { font-size:clamp(2.25rem,4.5vw,3.5rem); font-weight:750; line-height:1.12; margin-bottom:20px; }
 .platform .page-intro .lede { font-size:1rem; }
-.platform .project-card,.platform .resource-card,.platform .product-feature,.platform .submission-form,.platform .submission-note,.platform .about-values>div,.platform .about-values>div:nth-child(n),.platform .browse-controls,.platform .community-empty,.platform .community-empty.compact,.platform .resource-grid>.resource-card:first-child { background:var(--color-brand-surface); border-color:var(--line); border-radius:12px; box-shadow:none; }
+.platform .project-card,.platform .resource-card,.platform .product-feature,.platform .submission-form,.platform .submission-note,.platform .browse-controls,.platform .community-empty,.platform .community-empty.compact,.platform .resource-grid>.resource-card:first-child { background:var(--color-brand-surface); border-color:var(--line); border-radius:12px; box-shadow:none; }
 .platform .project-image,.platform .project-image:has(>.tiny),.platform .product-art { background:var(--color-brand-card); }
 .platform .project-image>.tiny,.platform .tag,.platform .form-status:not(:empty) { color:var(--color-brand-copy); background:var(--color-brand-card); border-color:var(--line); }
 .platform .product-art img { mix-blend-mode:normal; transform:none; box-shadow:none; }

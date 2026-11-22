@@ -428,11 +428,6 @@ html[data-ascii] body .dg-tier-head strong::before{content:'( ) ';font-family:va
 html[data-ascii] body .dg-tier.is-selected .dg-tier-head strong::before{content:'(•) ';color:#fff}
 html[data-ascii] body .dg-tier-head b{font-family:var(--fl-mono)!important;font-size:14px!important;font-weight:500!important;color:var(--dgb-ink)!important}
 html[data-ascii] body .dg-tier-sub{font-family:var(--fl-sans)!important;font-size:13px!important;color:var(--dgb-muted)!important}
-html[data-ascii] body .dg-tier-instant .dg-tier-sub{font-family:var(--fl-mono)!important;font-size:11px!important;letter-spacing:.06em;text-transform:uppercase;color:#d9c6ff!important}
-html[data-ascii] body .dg-tier ul{display:grid;gap:3px;margin:2px 0 0!important;padding:0!important;list-style:none!important}
-html[data-ascii] body .dg-tier li{margin:0!important;padding:0!important;font-family:var(--fl-sans)!important;font-size:12.5px!important;line-height:1.5!important;color:var(--dgb-copy)!important}
-html[data-ascii] body .dg-tier li::before{content:'✓ ';font-family:var(--fl-mono);color:#8fd6a4}
-html[data-ascii] body .dg-tier-flag{position:absolute;top:-9px;right:14px;padding:1px 8px!important;border:1px solid #c3a0ff!important;border-radius:2px!important;background-color:#0b0b0b!important;font-family:var(--fl-mono)!important;font-size:9.5px!important;letter-spacing:.12em;text-transform:uppercase;color:#d9c6ff!important}
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){

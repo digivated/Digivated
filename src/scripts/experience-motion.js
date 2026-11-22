@@ -10,15 +10,16 @@ const subheads = [...(main?.querySelectorAll('h2:not(.sr-only):not([hidden])') |
 const introSelector = '.dg-hero-copy, .page-intro, .page-heading, .news-masthead, .dg-forum-header, .creator-social-heading, .login-heading, .membership-heading, .invstr-heading';
 const copySelector = '.lede, .dg-hero-lede, .news-intro, [data-forum-description], .login-heading > p:not(.eyebrow)';
 
+const easing = getComputedStyle(document.documentElement).getPropertyValue('--dg-motion-ease').trim() || 'ease-out';
 const cues = new Map();
 for (const heading of headings) {
-  cues.set(heading, { duration: 640, offset: 12, delay: 0 });
+  cues.set(heading, { duration: 420, offset: 6 });
   const intro = heading.closest(introSelector);
   const lede = intro?.querySelector(copySelector);
-  if (lede) cues.set(lede, { duration: 600, offset: 8, delay: 105 });
+  if (lede) cues.set(lede, { duration: 420, offset: 4, delay: 45 });
 }
 for (const heading of new Set([...subheads, ...sectionTitles])) {
-  cues.set(heading, { duration: 540, offset: 10, delay: 0 });
+  cues.set(heading, { duration: 360, offset: 4 });
 }
 for (const scene of document.querySelectorAll('[data-motion-scene]')) cues.set(scene, null);
 
@@ -49,9 +50,9 @@ function reveal(element) {
   // Keep a readable starting pose. Leaving the page or focusing a control restores it instantly.
   try {
     const animation = element.animate([
-      { opacity: cue.delay ? .86 : .76, translate: `0 ${cue.offset}px` },
+      { opacity: .9, translate: `0 ${cue.offset}px` },
       { opacity: 1, translate: '0 0' },
-    ], { duration: cue.duration, delay: cue.delay, fill: 'backwards', easing: 'cubic-bezier(.22,1,.36,1)' });
+    ], { duration: cue.duration, delay: cue.delay, fill: 'backwards', easing });
     animation.id = 'digivated-content-entrance';
     active.set(element, animation);
     animation.finished.then(() => finish(element), () => {

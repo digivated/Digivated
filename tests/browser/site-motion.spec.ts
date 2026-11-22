@@ -8,17 +8,28 @@ test('public, packet and owner headings share the gentle entrance', async ({ pag
   const headings: string[] = [];
   Object.defineProperty(window, '__animatedHeadings', { value: headings });
   Element.prototype.animate = function (...args: Parameters<Element['animate']>) {
-   if (this.matches('main#main h1') && args[1] && typeof args[1] === 'object' && args[1].duration === 640) {
+   if (this.matches('main#main h1') && args[1] && typeof args[1] === 'object' && args[1].duration === 420) {
     headings.push(this.textContent || '');
    }
    return original.apply(this, args);
   };
  });
  await page.setViewportSize({ width: 390, height: 844 });
+ let daylightFont: string | undefined;
  for (const route of ['/discover', '/threads', '/login', '/submit-project', '/creators', '/news', '/resources', '/membership', '/inbox', '/account', '/start', '/admin']) {
   await page.goto(base + route);
   await expect.poll(() => page.evaluate(() => (window as any).__animatedHeadings.length), { message: route }).toBeGreaterThan(0);
-  await expect(page.locator('#main h1:visible').first()).toBeVisible();
+  const heading = page.locator('#main h1:visible').first();
+  await expect(heading).toBeVisible();
+  if (route !== '/admin') {
+   const styles = await heading.evaluate(node => ({
+    font: getComputedStyle(node).fontFamily,
+    canvas: getComputedStyle(document.documentElement).backgroundColor,
+   }));
+   daylightFont ??= styles.font;
+   expect(styles.font, route).toBe(daylightFont);
+   expect(styles.canvas, route).toBe('rgb(240, 240, 240)');
+  }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route).toBe(true);
  }
  await page.emulateMedia({ reducedMotion: 'reduce' });

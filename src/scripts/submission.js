@@ -256,7 +256,6 @@ if (form) {
     const help = {directory:'free-launch-help',instant:'instant-launch-help','founding-feature':'membership-fields'};
     intent.setAttribute('aria-describedby', help[intent.value] || help.directory);
     document.getElementById('free-launch-help').hidden = intent.value !== 'directory';
-    document.getElementById('instant-launch-help').hidden = intent.value !== 'instant';
     if (membershipFields) membershipFields.hidden = intent.value !== 'founding-feature';
     syncTiers();
   };
@@ -399,7 +398,6 @@ if (form) {
         const when = Number.isFinite(scheduledDate.getTime()) ? scheduledDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}) : 'your launch day';
         status.textContent = `✓ Badge verified. Your project is in Launching Next for ${when}.`;
         badgePickerSlot.replaceChildren();
-        badgePanel.querySelector('.eyebrow').textContent = 'VERIFIED';
         document.getElementById('submission-badge-title').textContent = 'Badge found. You’re in the launch.';
         badgePanel.querySelector('.badge-next-steps')?.setAttribute('hidden', '');
         document.getElementById('submission-badge-launch').textContent = `Launch date: ${when}. Projects publish every Monday at 9:00 AM Eastern.`;
