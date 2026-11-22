@@ -1,0 +1,21 @@
+@layer daylight {
+  body:has(> .dg-site-backdrop) { isolation: isolate; }
+  .dg-site-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .dg-site-backdrop img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+  }
+
+  @media (forced-colors: active) {
+    .dg-site-backdrop { visibility: hidden; }
+  }
+}

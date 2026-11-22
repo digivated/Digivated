@@ -19,7 +19,7 @@ test('spot cards and launch rows stay lightweight and calm under reduced motion'
 test('reduced motion keeps all content visible and native search focus working',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:900});await page.goto(base+'/');
  await expect(page.locator('#dg-home-title')).toBeVisible();
- await expect(page.locator('.dg-launch-scene-hero canvas')).toBeHidden();
+ await expect(page.locator('[data-site-backdrop] img')).toBeVisible();
  await expect(page.locator('.dg-activity-dot').first()).toHaveCSS('animation-name', 'none');
  const [hero, title, actions] = await Promise.all(['[data-discovery-hero]', '#dg-home-title', '.dg-hero-actions'].map(selector => page.locator(selector).boundingBox()));
  for (const bounds of [title, actions]) {
@@ -43,9 +43,9 @@ test('section entrances never leave content hidden and stop after completion',as
 test('hero stays readable when JavaScript is disabled',async({browser})=>{
  const c=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});const p=await c.newPage();await p.goto(base+'/');
  await expect(p.locator('#dg-home-title')).toBeVisible();
- const poster = p.locator('.dg-launch-scene-hero .dg-scene-poster img');
+ const poster = p.locator('[data-site-backdrop] img');
  await expect.poll(() => poster.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
- await expect(p.locator('.dg-launch-scene-hero canvas')).toBeHidden();
+ expect(await poster.evaluate(image => (image as HTMLImageElement).currentSrc)).toContain('digivated-soft-led-mobile.webp');
  await expect(p.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
 });
@@ -63,37 +63,23 @@ test('the new backdrop leaves resources search and home hero actions usable',asy
  await expect(page).toHaveURL(/#this-week$/);
 });
 
-test('the ASCII field follows system motion preferences and keeps native launch links usable', async ({ page }) => {
+test('activity indicators follow system motion preferences and launch links stay usable', async ({ page }) => {
  await page.setViewportSize({ width: 1440, height: 900 });
- await page.clock.install();
  await page.goto(base + '/');
- const canvas = page.locator('.dg-launch-scene-hero canvas');
- await expect(canvas).toBeVisible();
  const orbit = page.locator('.dg-activity-mark-orbit .dg-activity-dot').first();
  const ribbon = page.locator('.dg-activity-mark-ribbon .dg-activity-dot').first();
  await expect(orbit).toHaveCSS('background-color', 'rgb(57, 100, 86)');
  await expect(ribbon).toHaveCSS('background-color', 'rgb(97, 99, 91)');
  await expect(orbit).toHaveCSS('animation-name', 'dg-orbit-signal');
  await expect(ribbon).toHaveCSS('animation-name', 'dg-ribbon-signal');
- const capture = () => canvas.evaluate(element => (element as HTMLCanvasElement).toDataURL());
- const first = await capture();
- await page.clock.runFor(8000);
- expect(await capture()).not.toBe(first);
-
  await expect(page.locator('[data-scene-toggle]')).toHaveCount(0);
  await page.emulateMedia({ reducedMotion: 'reduce' });
- await expect(canvas).toBeHidden();
- await expect(page.locator('.dg-scene-poster img')).toBeVisible();
+ await expect(page.locator('[data-site-backdrop] img')).toBeVisible();
  await expect(orbit).toHaveCSS('animation-name', 'none');
  await expect(ribbon).toHaveCSS('animation-name', 'none');
- const frozen = await capture();
- await page.clock.runFor(1200);
- expect(await capture()).toBe(frozen);
 
  await page.emulateMedia({ reducedMotion: 'no-preference' });
- await expect(canvas).toBeVisible();
- await page.clock.runFor(1200);
- expect(await capture()).not.toBe(frozen);
+ await expect(ribbon).toHaveCSS('animation-name', 'dg-ribbon-signal');
 
  await page.getByRole('link', { name: 'Browse launches', exact: true }).focus();
  await page.keyboard.press('Enter');
@@ -101,18 +87,17 @@ test('the ASCII field follows system motion preferences and keeps native launch 
 });
 
 
-test('the ASCII backdrop stays pinned beyond the masthead and carries across light layouts', async ({ page }) => {
+test('the Soft LED backdrop stays fixed and carries across light layouts', async ({ page }) => {
  await page.setViewportSize({ width: 1440, height: 900 });
  await page.emulateMedia({ reducedMotion: 'reduce' });
- for (const [path, variant] of [['/', 'hero'], ['/discover', 'masthead'], ['/login', 'quiet'], ['/start', 'quiet']]) {
+ for (const path of ['/', '/discover', '/login', '/start', '/submit-project']) {
   await page.goto(base + path);
-  const scene = page.locator('[data-launch-scene]');
+  const scene = page.locator('[data-site-backdrop]');
   await expect(scene).toHaveCount(1);
-  await expect(scene).toHaveAttribute('data-scene-size', variant);
   await expect(scene).toHaveAttribute('aria-hidden', 'true');
   await expect(scene).toHaveCSS('position', 'fixed');
   await expect(scene).toHaveCSS('pointer-events', 'none');
-  await expect(scene.locator('canvas')).toBeHidden();
+  await expect(scene.locator('canvas')).toHaveCount(0);
   await expect.poll(() => scene.locator('img').evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   const frame = await scene.boundingBox();
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
@@ -120,17 +105,10 @@ test('the ASCII backdrop stays pinned beyond the masthead and carries across lig
  }
 });
 
-test('the static ASCII art stays visible when a canvas context is unavailable', async ({ page }) => {
- await page.addInitScript(() => {
-  const getContext = HTMLCanvasElement.prototype.getContext;
-  HTMLCanvasElement.prototype.getContext = function (type: string, options?: object) {
-   return type === '2d' ? null : Reflect.apply(getContext, this, [type, options]);
-  } as typeof getContext;
- });
+test('forced colors hides the backdrop and leaves search usable', async ({ page }) => {
+ await page.emulateMedia({ forcedColors: 'active' });
  await page.goto(base + '/discover');
- const scene = page.locator('[data-launch-scene]');
- await expect(scene.locator('canvas')).toBeHidden();
- await expect.poll(() => scene.locator('img').evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+ await expect(page.locator('[data-site-backdrop]')).toHaveCSS('visibility', 'hidden');
  await page.getByRole('button', { name: 'Search Digivated' }).click();
  await expect(page.locator('#unified-search-input')).toBeFocused();
 });

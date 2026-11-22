@@ -46,10 +46,9 @@ test('editorial details animate during scrolling and menu interaction', async ({
   await page.route('**/api/**', route => route.fulfill({ json: { items: [], next: null, ready: false } }));
   await page.goto(base + '/discover');
 
-  const art = page.locator('.dg-launch-scene-masthead');
-  await expect(art).toHaveAttribute('data-scene-ready', '');
-  await expect(art.locator('canvas')).toBeVisible();
-  await expect(page.locator('[data-launch-scene]')).toHaveCount(1);
+  const art = page.locator('[data-site-backdrop]');
+  await expect(art).toHaveCount(1);
+  await expect(art.locator('img')).toBeVisible();
   const [artBounds, searchBounds] = await Promise.all([
     art.boundingBox(),
     page.locator('[data-dir-search]').boundingBox(),
@@ -73,6 +72,5 @@ test('editorial details animate during scrolling and menu interaction', async ({
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(track).toBeHidden();
   await expect(page.locator('html')).not.toHaveAttribute('data-motion-ready', '');
-  await expect(art.locator('canvas')).toBeHidden();
   await expect(art.locator('img')).toBeVisible();
 });
