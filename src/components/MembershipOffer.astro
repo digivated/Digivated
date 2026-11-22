@@ -14,9 +14,21 @@ import '../styles/membership.css';
   </section>
 
   <div class="shop-grid">
+    <article class="shop-card shop-free" aria-labelledby="shop-free-title">
+      <h2 id="shop-free-title">Free</h2>
+      <p class="shop-for">Your first project, on the house.</p>
+      <div class="shop-price"><strong>$0</strong><span>forever</span></div>
+      <ul class="shop-list">
+        <li>1 project on Digivated</li>
+        <li>Add the badge, launch on Monday</li>
+        <li>Public listing and project page</li>
+      </ul>
+      <a class="button shop-cta" href="/submit-project#project-form"><span class="dg-glass-action-label"><span>Start free</span><UiIcon name="arrow" size={16}/></span></a>
+      <p class="shop-note">Launches Mondays at 9 AM Eastern.</p>
+    </article>
+
     <article class="shop-card shop-spot" aria-labelledby="shop-spot-title" data-shop-spot>
-      <p class="shop-kicker"><span aria-hidden="true">⚡</span> Starter</p>
-      <h2 id="shop-spot-title">3 projects, live instantly</h2>
+      <h2 id="shop-spot-title">Starter</h2>
       <p class="shop-for">For makers with a few things to show.</p>
       <div class="shop-price"><strong data-shop-spot-price>$3</strong><span>once</span></div>
       <ul class="shop-list">
@@ -25,13 +37,12 @@ import '../styles/membership.css';
         <li>No queue, no badge needed</li>
       </ul>
       <a class="button primary shop-cta" href="/submit-project?spot=1#project-form" data-shop-spot-cta><span class="dg-glass-action-label"><span data-shop-spot-label>Get Starter</span><UiIcon name="arrow" size={16}/></span></a>
-      <p class="shop-note" data-shop-spot-note hidden></p>
+      <p class="shop-note" data-shop-spot-note>One-time. No renewals.</p>
     </article>
 
     <article class="shop-card membership-offer" aria-labelledby="shop-member-title">
-      <p class="shop-kicker shop-kicker-member"><span class="dg-member-mark" aria-hidden="true"></span> Membership</p>
-      <h2 id="shop-member-title">Become a member</h2>
-      <p class="shop-for">Unlimited projects and full access to everything on Digivated.</p>
+      <h2 id="shop-member-title">Membership</h2>
+      <p class="shop-for">Unlimited projects and full access to Digivated.</p>
       <div class="shop-price membership-price"><strong>${membership.priceUSD}</strong><span>once</span></div>
       <ul class="shop-list membership-benefits">
         <li>Unlimited projects, live instantly</li>

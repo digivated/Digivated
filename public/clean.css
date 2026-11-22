@@ -526,4 +526,38 @@
 #digivated-root .dg-plan-buy .submission-account-actions { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; margin: 10px 0 0 !important; }
 #digivated-root .dg-plan-buy .button[hidden] { display: none !important; }
 
+/* Shop: three minimal plan cards */
+#digivated-root .shop-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 16px !important; align-items: stretch !important; }
+#digivated-root .shop-card { position: relative !important; display: flex !important; flex-direction: column !important; gap: 0 !important; margin: 0 !important; padding: 30px 28px 26px !important; border: 1px solid #e4e4e8 !important; border-radius: 22px !important; background: #ffffff !important; box-shadow: none !important; overflow: visible !important; transition: border-color .2s, transform .2s !important; }
+#digivated-root .shop-card::before { display: none !important; content: none !important; }
+#digivated-root .shop-card:hover { border-color: #0b0b0c !important; box-shadow: none !important; transform: translateY(-2px) !important; }
+#digivated-root .shop-card h2 { margin: 0 !important; font-size: 15px !important; font-weight: 600 !important; letter-spacing: 0 !important; line-height: 1.3 !important; color: #0b0b0c !important; }
+#digivated-root .shop-card .shop-for { margin: 6px 0 0 !important; min-height: 42px !important; font-size: 14px !important; line-height: 1.5 !important; color: #71717a !important; }
+#digivated-root .shop-card .shop-price { display: flex !important; align-items: baseline !important; gap: 8px !important; margin: 26px 0 24px !important; }
+#digivated-root .shop-card .shop-price strong { font-size: 56px !important; font-weight: 600 !important; letter-spacing: -0.05em !important; line-height: 1 !important; color: #0b0b0c !important; }
+#digivated-root .shop-card .shop-price span { font-family: var(--fl-mono, ui-monospace, monospace) !important; font-size: 12px !important; letter-spacing: .04em !important; color: #71717a !important; }
+#digivated-root .shop-card .shop-list { display: grid !important; gap: 12px !important; margin: 0 0 28px !important; padding: 22px 0 0 !important; list-style: none !important; border: 0 !important; border-top: 1px solid #ececf0 !important; }
+#digivated-root .shop-card .shop-list li { position: relative !important; margin: 0 !important; padding: 0 0 0 26px !important; font-size: 14px !important; line-height: 1.45 !important; color: #27272a !important; }
+#digivated-root .shop-card .shop-list li::before { content: "" !important; position: absolute !important; left: 2px !important; top: 5px !important; width: 11px !important; height: 6px !important; border-left: 2px solid #0b0b0c !important; border-bottom: 2px solid #0b0b0c !important; transform: rotate(-45deg) !important; background: none !important; }
+#digivated-root .shop-card .shop-cta { width: 100% !important; margin-top: auto !important; justify-content: center !important; }
+#digivated-root .shop-card .shop-note { margin: 12px 0 0 !important; min-height: 18px !important; font-size: 12px !important; line-height: 1.5 !important; color: #71717a !important; text-align: center !important; }
+#digivated-root .shop-card .shop-note[hidden] { display: block !important; visibility: hidden !important; }
+#digivated-root .shop-spot.is-paused .shop-price { opacity: .45 !important; }
+/* Membership is the one inverted card. */
+#digivated-root .shop-card.membership-offer { background: #0b0b0c !important; border-color: #0b0b0c !important; }
+#digivated-root .shop-card.membership-offer:hover { border-color: #0b0b0c !important; }
+#digivated-root .membership-offer h2, #digivated-root .membership-offer .shop-price strong { color: #ffffff !important; }
+#digivated-root .membership-offer .shop-for, #digivated-root .membership-offer .shop-price span, #digivated-root .membership-offer .shop-note { color: #a1a1aa !important; }
+#digivated-root .membership-offer .shop-list { border-top-color: #2a2a2e !important; }
+#digivated-root .membership-offer .shop-list li { color: #e4e4e7 !important; }
+#digivated-root .membership-offer .shop-list li::before { border-color: #ffffff !important; }
+#digivated-root .membership-offer .shop-cta { background: #ffffff !important; border-color: #ffffff !important; color: #0b0b0c !important; }
+#digivated-root .membership-offer .shop-cta:disabled { opacity: .6 !important; }
+#digivated-root .shop-card .button:not(.primary).shop-cta { background: #ffffff !important; border: 1px solid #d4d4d8 !important; color: #0b0b0c !important; }
+@media (max-width: 1119px) {
+  #digivated-root .shop-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  #digivated-root .shop-card { padding: 24px 22px 22px !important; }
+  #digivated-root .shop-card .shop-for { min-height: 0 !important; }
+}
+
 }
