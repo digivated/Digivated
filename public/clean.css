@@ -515,5 +515,6 @@
 #digivated-root .account-delete-form .fl-status:empty { display: none !important; }
 #digivated-root .account-delete-form .fl-status[data-tone="error"] { color: #b42318 !important; }
 #digivated-root .account-delete-form .fl-status[data-tone="ok"] { color: #0b0b0c !important; font-weight: 600 !important; }
+#digivated-root .fl-dash .account-delete-form label { display: block !important; }
 
 }
