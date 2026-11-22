@@ -25,7 +25,11 @@ export async function sendActivityEmail(redis, item, {
   env = process.env, fetcher = fetch, accountClient, now = Date.now(),
 } = {}) {
   if (!Object.hasOwn(emailTitles, item.type)) return 'skipped';
-  const mailEnv = { RESEND_API_KEY: env.SIGNUP_RESEND_API_KEY, ACCOUNT_EMAIL_FROM: env.SIGNUP_EMAIL_FROM };
+  // Activity alerts come from the site sender (updates@digivated.com), like project updates.
+  // The sign-in sender is only a fallback, so alerts keep working if that key is missing.
+  const mailEnv = env.RESEND_API_KEY && env.ACCOUNT_EMAIL_FROM
+    ? { RESEND_API_KEY: env.RESEND_API_KEY, ACCOUNT_EMAIL_FROM: env.ACCOUNT_EMAIL_FROM }
+    : { RESEND_API_KEY: env.SIGNUP_RESEND_API_KEY, ACCOUNT_EMAIL_FROM: env.SIGNUP_EMAIL_FROM };
   if (!mailEnv.RESEND_API_KEY || !mailEnv.ACCOUNT_EMAIL_FROM ||
       (!accountClient && (!env.COMMUNITY_SUPABASE_URL || !env.COMMUNITY_SUPABASE_SECRET_KEY))) return 'unavailable';
 
