@@ -16,6 +16,12 @@ const valid=(a,b)=>typeof a==='string'&&Buffer.byteLength(a)===Buffer.byteLength
 const json=(res,status,data)=>{res.statusCode=status;res.setHeader('Content-Type','application/json; charset=utf-8');res.setHeader('Cache-Control','private, no-store');res.setHeader('X-Content-Type-Options','nosniff');res.end(JSON.stringify(data));};
 const admin=env=>createClient(env.COMMUNITY_SUPABASE_URL,env.COMMUNITY_SUPABASE_SECRET_KEY,{auth:{autoRefreshToken:false,persistSession:false,detectSessionInUrl:false}});
 const pending = { subscribed: false, pending: true };
+function weeklyMailer(env) {
+ if (env.SIGNUP_RESEND_API_KEY && env.SIGNUP_EMAIL_FROM) {
+  return { apiKey: env.SIGNUP_RESEND_API_KEY, from: env.SIGNUP_EMAIL_FROM };
+ }
+ return { apiKey: env.RESEND_API_KEY, from: env.WEEKLY_EMAIL_FROM || env.ACCOUNT_EMAIL_FROM };
+}
 const normalizeEmail = value => {
  const email = typeof value === 'string' ? value.trim().toLowerCase() : '';
  return email.length <= 254 && /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(email) ? email : '';
@@ -28,7 +34,7 @@ redis.call('ZADD',KEYS[3],'NX',0,ARGV[3])
 redis.call('DEL',KEYS[1],KEYS[4])
 return 1`;
 
-async function sendConfirmation(redis, { id, email }, env, fetcher) {
+async function sendConfirmation(redis, { id, email }, mailer, fetcher, logger) {
  const daily = `digivated:weekly:confirmation-day:${new Date().toISOString().slice(0,10)}`;
  const count = Number(await redis(['INCR', daily]));
  if (count === 1) await redis(['EXPIRE', daily, 172800]);
@@ -44,12 +50,15 @@ async function sendConfirmation(redis, { id, email }, env, fetcher) {
  });
  try {
   const response = await fetcher('https://api.resend.com/emails', {
-   method: 'POST', headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-   body: JSON.stringify({ from: env.ACCOUNT_EMAIL_FROM, to: [email], subject: 'Confirm your Digivated weekly email', ...message }),
+   method: 'POST', headers: { Authorization: `Bearer ${mailer.apiKey}`, 'Content-Type': 'application/json' },
+   body: JSON.stringify({ from: mailer.from, to: [email], subject: 'Confirm your Digivated weekly email', ...message }),
    signal: AbortSignal.timeout(8000), redirect: 'error',
   });
   if (response.ok) return { status: 200, body: pending };
- } catch { /* Both provider errors and unavailable connections leave the subscription unchanged. */ }
+  logger.warn('weekly-confirmation provider rejected send', { status: response.status });
+ } catch {
+  logger.warn('weekly-confirmation provider request failed');
+ }
  await redis(['DEL', key]);
  return { status: 503, body: { error: 'Could not send confirmation. Try again later.' } };
 }
@@ -58,8 +67,9 @@ async function bodyOf(req){let body=req.body;if(body===undefined){let size=0,chu
 
 export function makeReturnEmailHandler(deps={}){return async(req,res)=>{
  const env=deps.env||process.env;
+ const mailer=weeklyMailer(env),logger=deps.logger||console;
  try{
-  if(!env.SUBMISSIONS_REDIS_REST_TOKEN||!env.RESEND_API_KEY||!env.ACCOUNT_EMAIL_FROM)return json(res,503,{error:'Email preferences are temporarily unavailable.'});
+  if(!env.SUBMISSIONS_REDIS_REST_TOKEN||!mailer.apiKey||!mailer.from)return json(res,503,{error:'Email preferences are temporarily unavailable.'});
   const redis=deps.redis||redisClient(env),url=new URL(req.url,'https://digivated.com'),action=url.searchParams.get('action');
   if(req.method==='GET'&&action==='unsubscribe'){
    const id=url.searchParams.get('id'),signature=url.searchParams.get('signature');
@@ -108,7 +118,7 @@ export function makeReturnEmailHandler(deps={}){return async(req,res)=>{
    if(await redis(['GET',preference(id)]))return json(res,200,pending);
    const cooldown=`digivated:weekly:signup-cooldown:${id}`;
    if(await redis(['SET',cooldown,'1','NX','EX',900])!=='OK')return json(res,200,pending);
-   const result=await sendConfirmation(redis,{id,email},env,deps.fetcher||fetch);
+   const result=await sendConfirmation(redis,{id,email},mailer,deps.fetcher||fetch,logger);
    if(result.status!==200)await redis(['DEL',cooldown]);
    return json(res,result.status,result.body);
   }
@@ -133,7 +143,7 @@ export function makeReturnEmailHandler(deps={}){return async(req,res)=>{
    const limit=`digivated:weekly:request:${account.id}`;
    if(Number(await redis(['INCR',limit]))>3)return json(res,429,{error:'Please try again tomorrow.'});
    await redis(['EXPIRE',limit,86400]);
-   const result=await sendConfirmation(redis,{id:account.id,email:account.email},env,deps.fetcher||fetch);
+   const result=await sendConfirmation(redis,{id:account.id,email:account.email},mailer,deps.fetcher||fetch,logger);
    return json(res,result.status,result.body);
   }
   return json(res,404,{error:'Not found.'});
@@ -195,7 +205,8 @@ ${announcement}${projectList}
 export function makeWeeklyDigestHandler(deps={}){return async(req,res)=>{
  const env=deps.env||process.env;
  if(req.method!=='GET'||!env.CRON_SECRET||!valid(req.headers.authorization,`Bearer ${env.CRON_SECRET}`))return json(res,401,{error:'Unauthorized.'});
- if(!env.WEEKLY_EMAIL_POSTAL_ADDRESS||!env.RESEND_API_KEY||!env.ACCOUNT_EMAIL_FROM||!env.COMMUNITY_SUPABASE_SECRET_KEY)return json(res,503,{error:'Weekly emails are not configured.'});
+ const mailer=weeklyMailer(env);
+ if(!env.WEEKLY_EMAIL_POSTAL_ADDRESS||!mailer.apiKey||!mailer.from||!env.COMMUNITY_SUPABASE_SECRET_KEY)return json(res,503,{error:'Weekly emails are not configured.'});
  const logger = deps.logger || console;
  try {
   const redis = deps.redis || redisClient(env);
@@ -262,9 +273,9 @@ export function makeWeeklyDigestHandler(deps={}){return async(req,res)=>{
     const unsubscribe = `https://digivated.com/api/return-emails?action=unsubscribe&id=${emailId}&signature=${sign(emailId,env.SUBMISSIONS_REDIS_REST_TOKEN)}`;
     const response = await (deps.fetcher || fetch)('https://api.resend.com/emails', {
      method: 'POST',
-     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': `weekly-${emailId}-${issueDate}` },
+     headers: { Authorization: `Bearer ${mailer.apiKey}`, 'Content-Type': 'application/json', 'Idempotency-Key': `weekly-${emailId}-${issueDate}` },
      body: JSON.stringify({
-      from: env.WEEKLY_EMAIL_FROM || env.ACCOUNT_EMAIL_FROM, to: [email], subject: announce ? announcementTitle : 'New projects on Digivated',
+      from: mailer.from, to: [email], subject: announce ? announcementTitle : 'New projects on Digivated',
       ...digestContent(projects, unsubscribe, env.WEEKLY_EMAIL_POSTAL_ADDRESS, announce),
       headers: { 'List-Unsubscribe': `<${unsubscribe}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' }
      }),
