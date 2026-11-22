@@ -167,11 +167,11 @@ function row(p, key) {
   return li;
 }
 
-// A scheduled free launch: no page or logo yet, and a "Notify me" button.
+// A scheduled free launch shows its logo and a "Notify me" button.
 function upcomingRow(item) {
   const li = el('li', null, 'dg-row dg-row-upcoming');
   li.dataset.upcomingId = item.id;
-  const art = el('span', null, 'dg-logo-link'); art.setAttribute('aria-hidden', 'true'); art.append(logo({ name: item.name }, 'dg-logo'));
+  const art = el('span', null, 'dg-logo-link'); art.setAttribute('aria-hidden', 'true'); art.append(logo(item, 'dg-logo'));
   const main = el('div', null, 'dg-main');
   const title = el('h3'); title.append(el('span', item.name, 'dg-upcoming-name'), el('span', freeLaunchDay(item.launchAt), 'dg-badge dg-badge-date'));
   main.append(title, el('p', item.description || 'Launching soon on Digivated.', 'dg-tagline'));
