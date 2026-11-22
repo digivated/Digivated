@@ -387,53 +387,43 @@
   }
 
   html[data-theme="daylight"] body #main > .dg-home-hero {
-    isolation: isolate;
-    margin-block: clamp(10px, 1.5vw, 20px) 10px !important;
-    padding: clamp(14px, 2vw, 25px) !important;
-    border: 1px solid var(--fl-line) !important;
-    border-radius: clamp(18px, 2vw, 28px) !important;
-    background: var(--glass-light) !important;
-    box-shadow: var(--glass-edge), 0 15px 30px -29px #0007 !important;
-  }
-  .dg-home-hero::before,
-  .dg-home-hero::after {
-    position: absolute;
-    z-index: -1;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-  }
-  @media (min-width: 740px) and (prefers-reduced-transparency: no-preference) and (forced-colors: none) {
-    .dg-home-hero::before {
-      content: "";
-      background:
-        radial-gradient(ellipse 105% 150% at 104% 130%, transparent 45%, #ffffffec 46%, #9c9c9c50 47%, transparent 54%),
-        radial-gradient(ellipse 110% 220% at 109% 170%, transparent 50%, #ffffffd9 51%, #a5a5a542 52%, transparent 59%),
-        linear-gradient(155deg, #fff 7%, transparent 52%, #c2c2c273 100%);
-      mask-image: linear-gradient(90deg, transparent 38%, #000 100%);
-    }
-  }
-  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) and (prefers-reduced-transparency: no-preference) and (forced-colors: none) {
-    .dg-home-hero::after {
-      content: "";
-      padding: 1px;
-      background: radial-gradient(190px circle at var(--reflection-x, 50%) var(--reflection-y, 0), #fff, #a0a0a0a0 55%, transparent 100%);
-      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      mask-composite: exclude;
-      opacity: 0;
-      transition: opacity var(--dg-motion-quick) var(--dg-motion-ease);
-    }
-    .dg-home-hero[data-reflecting]::after { opacity: 1; }
+    display: grid !important;
+    justify-items: center;
+    overflow: visible;
+    margin-block: 0 10px !important;
+    padding: clamp(22px, 4.5vw, 60px) 0 clamp(16px, 3vw, 36px) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    text-align: center;
   }
   .dg-home-hero #dg-home-title {
+    margin: 0 !important;
+    text-wrap: balance;
     font-size: clamp(30px, 4.2vw, 52px) !important;
     letter-spacing: -.062em !important;
     line-height: 1.02 !important;
   }
-  .dg-home-hero #dg-home-title span { font-style: normal; font-weight: inherit; }
-  .dg-home-hero .dg-hero-copy { max-width: none !important; gap: 8px !important; }
-  .dg-home-hero .dg-hero-actions { gap: 8px !important; }
-  .dg-home-hero .dg-hero-actions .dg-btn { border-radius: var(--fl-radius) !important; }
+  .dg-home-hero #dg-home-title span { color: var(--fl-muted) !important; }
+  .dg-home-hero .dg-hero-copy {
+    justify-items: center !important;
+    min-width: 0;
+    width: min(100%, 620px);
+    max-width: none !important;
+    gap: 10px !important;
+  }
+  .dg-home-hero .dg-hero-actions {
+    justify-content: center;
+    width: 100%;
+    gap: 8px !important;
+  }
+  .dg-home-hero .dg-hero-actions .dg-btn {
+    min-height: 44px !important;
+    padding-inline: 16px !important;
+    border-radius: var(--fl-radius) !important;
+    white-space: nowrap;
+  }
   .dg-launch-search { position: relative; flex: 1 1 260px; max-width: 440px; margin: 0 !important; }
   .dg-launch-search > svg, .dg-dir-search > svg {
     position: absolute;
@@ -546,16 +536,20 @@
   }
   .home-refresh .dg-board .dg-list-rows .dg-row:not(.dg-row-empty),
   .dg-dir .dg-dir-list .dg-dir-row {
-    padding-inline: clamp(7px, 1.3vw, 13px) !important;
+    padding-inline: clamp(10px, 1.3vw, 14px) !important;
     border: 1px solid var(--fl-line) !important;
     border-radius: var(--fl-radius-card) !important;
     background: var(--glass-light) !important;
-    box-shadow: var(--glass-edge) !important;
+    box-shadow: none !important;
   }
   .home-refresh .dg-board .dg-list-rows .dg-row:not(.dg-row-empty):is(:hover,:focus-within),
   .dg-dir .dg-dir-list .dg-dir-row:is(:hover,:focus-within) {
-    background: linear-gradient(160deg, #fff, var(--daylight-hover)) !important;
+    background: var(--daylight-hover) !important;
     border-color: #ababab !important;
+  }
+  .dg-workspace :is(.dg-logo,.dg-spot-logo,.dg-rising-logo) img {
+    box-sizing: border-box;
+    padding: 3px;
   }
   .dg-workspace .dg-visit-arrow { width: 13px; height: 13px; flex: none; }
   .home-refresh .dg-home-extras > section {
@@ -593,8 +587,6 @@
     }
   }
   @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
-    .home-refresh .dg-board .dg-list-rows .dg-row:not(.dg-row-empty):is(:hover,:focus-within),
-    .dg-dir .dg-dir-list .dg-dir-row:is(:hover,:focus-within) { background: var(--daylight-hover) !important; }
     html[data-theme="daylight"] {
       --glass-light: #fff;
       --glass-dark: #242424;

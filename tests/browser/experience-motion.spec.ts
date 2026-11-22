@@ -23,10 +23,10 @@ test('reduced motion keeps all content visible and native search focus working',
  await expect(page.locator('.dg-activity-dot').first()).toHaveCSS('animation-name', 'none');
  const [hero, title, actions] = await Promise.all(['[data-discovery-hero]', '#dg-home-title', '.dg-hero-actions'].map(selector => page.locator(selector).boundingBox()));
  for (const bounds of [title, actions]) {
-  expect(bounds!.x).toBeGreaterThan(hero!.x);
+  expect(bounds!.x).toBeGreaterThanOrEqual(hero!.x);
   expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(hero!.x + hero!.width + 1);
  }
- expect(title!.x).toBeCloseTo(actions!.x, 0);
+ expect(title!.x + title!.width / 2).toBeCloseTo(actions!.x + actions!.width / 2, 0);
 
  expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.id==='digivated-content-entrance').length)).toBe(0);
  expect(await page.locator('.dg-hero').evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
@@ -47,7 +47,10 @@ test('hero stays readable when JavaScript is disabled',async({browser})=>{
  const c=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});const p=await c.newPage();await p.goto(base+'/');
  await expect(p.locator('#dg-home-title')).toBeVisible();
  await expect(p.locator('canvas[data-site-backdrop]')).toHaveAttribute('width', '1');
+ const menu = p.locator('.site-menu-trigger');
+ await menu.click();
  await expect(p.getByRole('link',{name:'Submit a product',exact:true})).toHaveAttribute('href','/submit-project');
+ await menu.click();
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await p.getByRole('searchbox').fill('indie projects');
  await p.getByRole('button',{name:'Search products',exact:true}).click();
@@ -63,7 +66,6 @@ test('the new backdrop leaves resources search and home hero actions usable',asy
  await page.goto(base+'/');
  await expect(page.locator('[data-ascii-field],.ascii-ambient')).toHaveCount(0);
  await expect(page.locator('.dg-hero-panel [role=timer]')).toBeVisible();
- await expect(page.getByRole('link',{name:'Submit a product',exact:true})).toHaveAttribute('href','/submit-project');
  await page.getByRole('link',{name:'Browse launches',exact:true}).click();
  await expect(page).toHaveURL(/#this-week$/);
 });
@@ -143,18 +145,19 @@ test('the particle field animates and becomes still when reduced motion is enabl
  }).toBe(true);
 });
 
-test('the search panel catches light on desktop and stays still with reduced motion', async ({ page }) => {
+test('the centered homepage search sits directly on the page background', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(base + '/');
-  const panel = page.locator('[data-discovery-hero]');
-  await panel.hover({ position: { x: 15, y: 15 } });
-  await expect(panel).toHaveAttribute('data-reflecting', '');
-  await expect.poll(() => panel.evaluate(element => getComputedStyle(element, '::after').opacity)).toBe('1');
-
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(panel).not.toHaveAttribute('data-reflecting', '');
-  await expect.poll(() => panel.evaluate(element => getComputedStyle(element, '::after').content)).toBe('none');
-  await expect(panel.getByRole('searchbox')).toBeVisible();
+  const hero = page.locator('[data-discovery-hero]');
+  await expect(hero).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(hero).toHaveCSS('background-image', 'none');
+  await expect(hero).toHaveCSS('border-top-width', '0px');
+  await expect(hero).toHaveCSS('box-shadow', 'none');
+  await expect(hero).not.toHaveAttribute('data-nav-reflection', '');
+  const title = (await hero.getByRole('heading').boundingBox())!;
+  const frame = (await page.locator('#main').boundingBox())!;
+  expect(title.x + title.width / 2).toBeCloseTo(frame.x + frame.width / 2, 0);
+  await expect(hero.getByRole('searchbox')).toBeVisible();
 });
 
 test('React Bits sidebar and action effects animate without changing link targets', async ({ page }) => {

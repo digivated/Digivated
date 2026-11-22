@@ -329,7 +329,6 @@ html[data-ascii] body .dg-badge-medal.is-silver{--medal:#c3c9d1}
 html[data-ascii] body .dg-badge-medal.is-bronze{--medal:#cf9a6b}
 html[data-ascii] body .dg-badge-date{color:#9a9a9a!important}
 html[data-ascii] body .dg-upcoming-name{color:var(--dgb-ink)!important}
-html[data-ascii] body .dg-row-upcoming .dg-logo{opacity:.8}
 html[data-ascii] body .dg-watch{display:inline-grid!important;grid-auto-flow:column;align-items:center;gap:7px;min-height:40px!important;padding:6px 12px!important;border:1px dashed #4a4a4a!important;border-radius:2px!important;background-color:#0c0c0c!important;color:#dcdcdc!important;font-family:var(--fl-mono)!important;font-size:11.5px!important;cursor:pointer;white-space:nowrap;transition:border-color .18s,background-color .18s,color .18s!important}
 html[data-ascii] body .dg-watch:hover{border-color:#8a8a8a!important;border-style:solid!important;text-decoration:none!important}
 html[data-ascii] body .dg-watch *{text-decoration:none!important}

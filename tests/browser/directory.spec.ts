@@ -164,7 +164,10 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   await page.route('**/api/projects*', route => route.fulfill({ json: { items: projects, next: null } }));
   await page.route('**/api/launches?view=upcoming', route => route.fulfill({ json: { items: [{
     id: 'upcoming-fixture', name: 'Scheduled fixture', image: '/digivated-daylight-mark.png', launchAt: '2026-11-23T14:00:00.000Z', watchers: 1,
+  }, {
+    id: 'missing-logo', name: 'Broken image fixture', image: '/missing-project-logo.webp', launchAt: '2026-11-23T14:00:00.000Z',
   }] } }));
+  await page.route('**/missing-project-logo.webp', route => route.fulfill({ status: 404 }));
   await page.goto(base + '/');
   await expect(page.locator('#queue-countdown')).toHaveAttribute('datetime', '2026-11-23T14:00:00.000Z');
   await expect(page.getByRole('region', { name: 'Launching next' })).toContainText('Mon, Nov 23 · 9:00 AM Eastern');
@@ -173,6 +176,13 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   await expect(upcoming).toHaveAttribute('src', '/digivated-daylight-mark.png');
   await upcoming.scrollIntoViewIfNeeded();
   await expect.poll(() => upcoming.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+  await expect(upcoming).toHaveCSS('object-fit', 'contain');
+  await expect(page.locator('[data-upcoming-id="upcoming-fixture"] .dg-monogram')).toBeHidden();
+  const missingLogo = page.locator('[data-upcoming-id="missing-logo"] .dg-logo');
+  await missingLogo.scrollIntoViewIfNeeded();
+  await expect(missingLogo.locator('img')).toHaveCount(0);
+  await expect(missingLogo.locator('.dg-monogram')).toHaveText('BR');
+  await expect(missingLogo.locator('.dg-monogram')).toBeVisible();
 });
 
 test('sidebar navigation keeps the content and footer aligned across destinations', async ({ page }) => {
