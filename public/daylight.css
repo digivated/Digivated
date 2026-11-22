@@ -135,7 +135,7 @@
     background: transparent !important;
     color: var(--fl-copy) !important;
   }
-  html[data-theme="daylight"] body .fl-tabs > :is(button,a):hover {
+  html[data-theme="daylight"] body .fl-tabs > :is(button,a):not([aria-selected="true"],[aria-current="page"],.active):hover {
     background: var(--daylight-hover) !important;
     color: var(--fl-ink) !important;
   }
