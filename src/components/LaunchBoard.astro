@@ -18,11 +18,14 @@ const sections = [
     <button type="button" data-board-sort="top" aria-pressed="false">Top voted</button>
     <span data-board-results aria-live="polite"></span>
   </div>
-  <div class="board-categories" role="group" aria-label="Filter by category" data-board-categories></div>
+  <div class="board-category-bar">
+    <div class="board-categories" role="group" aria-label="Filter by category" data-board-categories></div>
+    <a class="board-all-categories" href="/categories">All Categories <UiIcon name="external" size={13}/></a>
+  </div>
 </div>
 <nav class="dg-launch-nav" data-board-jumps aria-label="Browse launches">
   {sections.filter(section => section.navLabel).map(section => <a href={`#${section.id}`}>{section.navLabel}</a>)}
-  <a href="/categories">Browse by category <UiIcon name="external" size={13}/></a>
+  <a href="/categories" class="board-mobile-categories">Browse by category <UiIcon name="external" size={13}/></a>
 </nav>
 <div class="dg-board" data-board>
   {sections.map(section => (<>

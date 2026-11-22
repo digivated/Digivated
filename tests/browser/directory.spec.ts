@@ -155,7 +155,7 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('desktop categories wrap without a scrollbar and the home page still scrolls', async ({ page }) => {
+test('desktop shows four category shortcuts and links to all categories', async ({ page }) => {
   const categories = ['AI', 'Business', 'Design', 'Developer Tools', 'Education', 'Entertainment',
     'Finance', 'Health', 'Marketing', 'Productivity', 'Social', 'Travel', 'Video & Audio', 'Writing & Content'];
   const fixtures = categories.map((category, index) => ({ ...projects[index], category }));
@@ -163,7 +163,10 @@ test('desktop categories wrap without a scrollbar and the home page still scroll
   await page.route('**/api/projects*', route => route.fulfill({ json: { items: fixtures, next: null } }));
   await page.goto(base + '/');
   const filters = page.getByRole('group', { name: 'Filter by category' });
-  await expect(filters.getByRole('button')).toHaveCount(fixtures.length + 1);
+  await expect(filters.getByRole('button')).toHaveCount(5);
+  await expect(filters.getByRole('button', { name: 'Writing & Content', exact: true })).toHaveCount(0);
+  const allCategories = page.getByRole('link', { name: 'All Categories', exact: true });
+  await expect(allCategories).toBeVisible();
   await expect(filters).toHaveCSS('flex-wrap', 'wrap');
   await expect(page.locator('html')).toHaveCSS('scrollbar-width', 'none');
   await expect(page.locator('.dg-home')).toHaveCSS('max-width', '1040px');
@@ -175,6 +178,8 @@ test('desktop categories wrap without a scrollbar and the home page still scroll
   await expect(last).toHaveAttribute('aria-pressed', 'true');
   await page.keyboard.press('End');
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0);
+  await allCategories.click();
+  await expect(page).toHaveURL(base + '/categories');
 });
 
 test('the desktop menu keeps New Launch reachable in a short viewport', async ({ page }) => {
@@ -207,7 +212,7 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   const nav = page.getByRole('navigation', { name: 'Browse launches' });
   await nav.getByRole('link', { name: 'Upcoming' }).click();
   await expect(page).toHaveURL(base + '/#launching-next');
-  await expect(nav.getByRole('link', { name: 'Browse by category' })).toHaveAttribute('href', '/categories');
+  await expect(page.locator('.board-category-bar a')).toHaveAttribute('href', '/categories');
   await expect(page.getByRole('region', { name: 'Launching next' })).toContainText('Mon, Nov 23 · 9:00 AM Eastern');
   await expect(page.locator('#launching-next .dg-row').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.getByRole('button', { name: 'Notify me when Scheduled fixture launches' })).toBeVisible();
