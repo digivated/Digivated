@@ -1,4 +1,4 @@
-@layer workspace-preview {
+@layer clean-first {
   .notifications-page {
     width: 100%;
     padding: var(--editorial-space) 0 24px;
@@ -124,108 +124,96 @@
   .notifications-settings-head {
     justify-content: start;
     margin-bottom: 16px;
-    padding: 13px !important;
-    border-radius: 12px !important;
-    background: var(--fl-bg) !important;
   }
   .notifications-setting-icon {
     display: grid;
     place-items: center;
-    flex: 0 0 38px;
-    height: 38px;
-    border-radius: 10px !important;
+    flex: 0 0 36px;
+    height: 36px;
+    border-radius: 9px !important;
     background: var(--fl-raised) !important;
     color: var(--fl-ink) !important;
   }
-  .notifications-page .notifications-choice-list fieldset {
+  .notifications-page .notifications-options {
     min-inline-size: 0;
-    margin: 12px 0 0 !important;
+    margin: 18px 0 0 !important;
     padding: 0 !important;
     border: 0 !important;
   }
-  .notifications-page .notifications-choice-list legend {
+  .notifications-options legend {
     padding: 0 !important;
-    color: var(--fl-muted) !important;
+    color: var(--fl-ink) !important;
     font-size: 13px !important;
-    font-weight: 600;
+    font-weight: 650 !important;
   }
-  .notifications-page .notifications-choice-list label {
+  .notifications-page .notifications-choice {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: 12px;
-    min-height: 48px;
+    min-height: 50px;
     padding: 10px 0 !important;
     margin: 0 !important;
     border-bottom: 1px solid var(--fl-line) !important;
     cursor: pointer;
   }
-  .notifications-choice-list strong,
-  .notifications-choice-list small { display: block; overflow-wrap: anywhere; }
-  .notifications-choice-list strong { color: var(--fl-ink) !important; font-size: 14px !important; font-weight: 620 !important; }
-  .notifications-choice-list small { color: var(--fl-muted) !important; font-size: 12px !important; font-weight: 450 !important; line-height: 1.45; }
-  .notifications-page .notifications-choice-list input[type="checkbox"] {
-    appearance: auto !important;
-    width: 19px;
-    height: 19px;
-    margin: 0 !important;
-    accent-color: var(--fl-ink) !important;
-  }
   .notifications-page .notifications-master {
-    position: relative;
-    padding-bottom: 14px !important;
+    padding: 12px !important;
+    border: 1px solid var(--fl-outline) !important;
+    border-radius: 10px !important;
+    background: var(--fl-bg) !important;
   }
-  .notifications-choice-list fieldset label:has(input:checked) {
-    border-bottom-color: var(--fl-line-hi) !important;
+  .notifications-choice strong,
+  .notifications-choice small { display: block; overflow-wrap: anywhere; }
+  .notifications-choice strong { color: var(--fl-ink) !important; font-size: 14px !important; font-weight: 650 !important; }
+  .notifications-choice small { color: var(--fl-muted) !important; font-size: 13px !important; line-height: 1.45; }
+  .notifications-page .notifications-choice input {
+    appearance: auto !important;
+    inline-size: 19px !important;
+    block-size: 19px !important;
+    min-height: 0 !important;
+    margin: 0 2px 0 0 !important;
+    padding: 0 !important;
+    accent-color: var(--fl-ink) !important;
+    cursor: inherit;
   }
-  .notifications-page .notifications-master input[type="checkbox"] {
-    position: absolute;
-    inset: 0 0 0 auto;
-    width: 48px;
-    height: 100%;
-    opacity: 0;
-  }
-  .notifications-switch {
-    display: inline-flex;
-    width: 43px;
-    height: 25px;
-    padding: 3px;
-    box-sizing: border-box;
+  .notifications-page .notifications-master input {
+    appearance: none !important;
+    inline-size: 40px !important;
+    block-size: 24px !important;
     border: 1px solid var(--fl-line-hi) !important;
-    border-radius: 30px;
-    background: var(--fl-raised) !important;
-    pointer-events: none;
+    border-radius: 20px !important;
+    background: radial-gradient(circle at 11px center, var(--fl-muted) 7px, transparent 7.5px), var(--fl-raised) !important;
   }
-  .notifications-switch::after {
-    content: '';
-    width: 17px;
-    height: 17px;
-    border-radius: 50%;
-    background: #696969;
+  .notifications-page .notifications-master input:checked {
+    border-color: var(--fl-ink) !important;
+    background: radial-gradient(circle at 27px center, white 7px, transparent 7.5px), var(--fl-ink) !important;
   }
-  .notifications-master input:checked + .notifications-switch { background: #242424 !important; }
-  .notifications-master input:checked + .notifications-switch::after {
-    transform: translateX(18px);
-    background: #fff;
+  .notifications-service {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 10px !important;
+    background: var(--fl-bg) !important;
   }
-  .notifications-page :is(input,button,a,[role="tabpanel"]):focus-visible,
-  .notifications-master input:focus-visible + .notifications-switch {
+  .notifications-service svg { flex: none; margin-top: 2px; }
+  .notifications-service strong { color: var(--fl-ink) !important; }
+  .notifications-page :is(input,button,a,[role="tabpanel"]):focus-visible {
     outline: 2px solid #242424 !important;
     outline-offset: 3px !important;
   }
-  .notifications-choice-list label:has(input:disabled) { cursor: wait; }
+  .notifications-choice:has(input:disabled) { cursor: default; }
+  .notifications-options:disabled .notifications-choice strong { color: var(--fl-muted) !important; }
   .notifications-card .notifications-status:not(:empty) { padding-top: 8px; }
   .notifications-card .notifications-status:empty { margin: 0 !important; }
 
-  @media (min-width: 900px) {
-    .notifications-layout { grid-template-columns: minmax(0, 1.15fr) minmax(300px, 1fr); }
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .notifications-switch::after { transition: transform 160ms ease, background-color 160ms ease; }
+  @media (min-width: 1120px) {
+    .notifications-layout { grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr); }
+    :is(#notification-activity, #notification-preferences) { scroll-margin-block-start: 20px; }
   }
   @media (forced-colors: active) {
-    .notifications-switch { border-color: ButtonText !important; }
-    .notifications-switch::after { background: GrayText; }
-    .notifications-master input:checked + .notifications-switch::after { background: Highlight; }
+    .notifications-page .notifications-master input { appearance: auto !important; }
   }
 }

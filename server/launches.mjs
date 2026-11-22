@@ -4,7 +4,7 @@ import { redisClient } from './submissions.mjs';
 import { projectPublic, storageKey, validId } from './admin-store.mjs';
 import { verifiedAccount } from './project-account.mjs';
 import { QUEUE } from './launch-queue.mjs';
-import { launchWatchersKey, launchWatchingKey } from './notifications.mjs';
+import { getNotificationPreferences, launchWatchersKey, launchWatchingKey } from './notifications.mjs';
 import { finalizeLastWeek, readWeek, PODIUM_WEEKS } from './launch-score.mjs';
 import { freeLaunchSchedule, launchBounds } from '../src/lib/launch-calendar.mjs';
 import { guardPost, readJson, DiscussionError } from './discussions.mjs';
@@ -81,9 +81,12 @@ export function makeLaunchesHandler(deps = {}) {
         if (!['watch', 'unwatch'].includes(body.action)) return send(400, { error: 'Unknown action.' });
         if (!account) return send(401, { error: 'Sign in to get notified when this launch goes live.' });
         if (!validId(body.id) || !await upcomingRecord(redis, body.id)) return send(404, { error: 'This launch is no longer upcoming.' });
-        if (body.action === 'watch') { await redis(['SADD', launchWatchersKey(body.id), account.id]); await redis(['SADD', launchWatchingKey(account.id), body.id]); }
+        const watching = body.action === 'watch';
+        const preferences = watching ? await getNotificationPreferences(redis, account.id) : null;
+        if (watching) { await redis(['SADD', launchWatchersKey(body.id), account.id]); await redis(['SADD', launchWatchingKey(account.id), body.id]); }
         else { await redis(['SREM', launchWatchersKey(body.id), account.id]); await redis(['SREM', launchWatchingKey(account.id), body.id]); }
-        return send(200, { watching: body.action === 'watch', watchers: Number(await redis(['SCARD', launchWatchersKey(body.id)])) || 0 });
+        return send(200, { watching, watchers: Number(await redis(['SCARD', launchWatchersKey(body.id)])) || 0,
+          ...(preferences ? { alertsEnabled: preferences.enabled && preferences.launch } : {}) });
       }
 
       const view = url.searchParams.get('view');

@@ -3,6 +3,8 @@ import { notificationRow } from './notification-item.js';
 
 const $ = id => document.getElementById(id);
 const prefInputs = [...document.querySelectorAll('[data-notification-pref]')];
+const masterInput = $('notifications-enabled');
+const optionGroups = [...document.querySelectorAll('.notifications-options')];
 let token = '', preferences = null, items = [], busy = false, filter = 'all';
 let loadRequest = 0, lastUnread;
 const filterTabs = [...document.querySelectorAll('[data-notification-filter]')];
@@ -29,7 +31,9 @@ function announceUnread(count) {
   document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
 }
 function syncPreferences() {
-  $('notifications-enabled').checked = preferences.enabled;
+  masterInput.checked = preferences.enabled;
+  masterInput.disabled = busy;
+  for (const group of optionGroups) group.disabled = busy || !preferences.enabled;
   for (const input of prefInputs) input.checked = preferences[input.dataset.notificationPref];
 }
 function itemLink(item) {
@@ -52,7 +56,7 @@ function render() {
     const title = document.createElement('strong');
     const copy = document.createElement('p');
     if (filter === 'unread' && safe.length) { title.textContent = 'No unread notifications.'; copy.textContent = 'You’re all caught up.'; }
-    else { title.textContent = 'Nothing new right now.'; copy.textContent = preferences.enabled ? 'Comments, replies, upvotes and launch updates will appear here.' : 'Launch updates appear here automatically. Turn on activity alerts in Notification settings to see comments, replies, and other activity.'; }
+    else { title.textContent = 'You’re all caught up.'; copy.textContent = preferences.enabled ? 'New activity and project updates will appear here.' : 'Activity alerts are paused. Updates for your own projects will still appear here.'; }
     empty.append(title,copy); list.append(empty); return;
   }
   const groups = filter === 'unread' ? [['', shown]] : [['New', shown.filter(item => item.unread)], ['Earlier', shown.filter(item => !item.unread)]];
@@ -67,7 +71,7 @@ function renderApprovals(approvals) {
   list.replaceChildren();
   $('notifications-approval-status').textContent = !Array.isArray(approvals)
     ? 'Live projects couldn’t be checked. Try refreshing.'
-    : approvals.length ? 'Approved and live on Digivated.' : 'None yet. Track your launch progress in your dashboard.';
+    : approvals.length ? 'Published on Digivated.' : 'Track drafts and scheduled launches in Your Projects.';
   for (const project of approvals || []) {
     if (!project.href?.startsWith('/projects/')) continue;
     const link = document.createElement('a');
@@ -76,7 +80,7 @@ function renderApprovals(approvals) {
     const content = document.createElement('span');
     content.className = 'notification-copy';
     const state = document.createElement('small');
-    state.textContent = 'Approved and live';
+    state.textContent = 'Live';
     const title = document.createElement('strong');
     title.textContent = project.name;
     content.append(state, title);
@@ -94,22 +98,22 @@ async function load() {
 }
 async function savePreferences() {
   if (busy || !preferences) return;
-  const next = {enabled:$('notifications-enabled').checked};
-  for (const input of prefInputs) next[input.dataset.notificationPref] = input.checked;
+  const next = {enabled: masterInput.checked};
+  for (const input of prefInputs) if (!input.matches(':disabled')) next[input.dataset.notificationPref] = input.checked;
   loadRequest++;
   const focused = document.activeElement;
-  busy = true; $('notifications-enabled').disabled = true; prefInputs.forEach(input => { input.disabled = true; });
+  busy = true; masterInput.disabled = true;
+  for (const group of optionGroups) group.disabled = true;
   settingsStatus('Saving your choices…');
-  try { const data = await api('preferences',{preferences:next}); preferences = data.preferences; syncPreferences(); render(); settingsStatus('Preferences saved.'); }
-  catch(error) { syncPreferences(); settingsStatus(error.message); }
+  try { const data = await api('preferences',{preferences:next}); preferences = data.preferences; render(); settingsStatus('Preferences saved.'); }
+  catch(error) { settingsStatus(error.message); }
   finally {
     busy = false;
-    $('notifications-enabled').disabled = false;
-    prefInputs.forEach(input => { input.disabled = false; });
+    syncPreferences();
     if (document.activeElement === document.body && focused instanceof HTMLInputElement) focused.focus({ preventScroll: true });
   }
 }
-$('notifications-enabled').addEventListener('change',savePreferences);
+masterInput.addEventListener('change',savePreferences);
 for (const input of prefInputs) input.addEventListener('change',savePreferences);
 $('notifications-read-all').addEventListener('click',async () => {
   if (busy) return; loadRequest++; busy = true; $('notifications-read-all').disabled = true;

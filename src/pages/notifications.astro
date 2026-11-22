@@ -5,12 +5,12 @@ import SettingsMasthead from '../components/SettingsMasthead.astro';
 import '../styles/notifications.css';
 
 const activityChoices = [
-  ['feedback', 'Project comments', 'When someone comments on your project.'],
-  ['reply', 'Replies', 'When someone replies to your comment or thread.'],
-  ['upvote', 'Upvotes', 'A daily summary of upvotes on your projects, threads, and comments.'],
-  ['launch', 'Launch reminders', 'When a product you asked to hear about goes live.'],
-  ['award', 'Weekly podium', 'When your launch finishes in the top three.'],
-  ['follow', 'New followers', 'When someone follows your profile.'],
+  ['feedback', 'Project comments', 'New comments on your projects.'],
+  ['reply', 'Replies', 'Replies to your comments and threads.'],
+  ['upvote', 'Upvotes', 'Grouped by project, thread, or comment each day.'],
+  ['launch', 'Launch reminders', 'Products you turned on Notify me for, plus launches by makers you follow.'],
+  ['award', 'Weekly podium', 'An in-app alert when your launch finishes in the top three.'],
+  ['follow', 'New followers', 'When someone follows your public profile.'],
 ];
 ---
 <Platform title="Notifications" description="See your Digivated activity and manage your notification settings.">
@@ -49,7 +49,7 @@ const activityChoices = [
         <section class="notifications-approvals notifications-card" aria-labelledby="notifications-approvals-title">
           <header class="notifications-section-head">
             <div><h2 id="notifications-approvals-title">Your live projects</h2><p id="notifications-approval-status">Checking your live projects…</p></div>
-            <a class="fl-link" href="/account">Launch status →</a>
+            <a class="fl-link" href="/account">Your Projects <UiIcon name="arrow" size={15}/></a>
           </header>
           <div id="notifications-approvals" class="notifications-items"></div>
         </section>
@@ -58,25 +58,31 @@ const activityChoices = [
       <section id="notification-preferences" class="notifications-settings notifications-card" aria-labelledby="notifications-preferences-title">
         <header class="notifications-settings-head">
           <span class="notifications-setting-icon" aria-hidden="true"><UiIcon name="bell" size={20}/></span>
-          <div><h2 id="notifications-preferences-title">Notification settings</h2><p>Choose which alerts you receive. Your own launch and approval updates stay on.</p></div>
+          <div><h2 id="notifications-preferences-title">Notification settings</h2><p>Choose which activity appears here and what gets emailed.</p></div>
         </header>
         <div class="notifications-choice-list">
-          <label class="notifications-master">
-            <span><strong>Activity alerts</strong><small>Get alerts for the activity you choose below.</small></span>
-            <input type="checkbox" id="notifications-enabled" role="switch" aria-label="Activity alerts"/>
-            <span class="notifications-switch" aria-hidden="true"></span>
+          <label class="notifications-choice notifications-master">
+            <span><strong>Activity alerts</strong><small>Pause optional alerts without losing your choices.</small></span>
+            <input type="checkbox" id="notifications-enabled" role="switch" aria-label="Activity alerts" aria-describedby="notification-service-updates"/>
           </label>
-          <label>
-            <span><strong>Email me activity alerts</strong><small>Get selected alerts by email. Weekly podium emails are separate.</small></span>
-            <input type="checkbox" data-notification-pref="emailEnabled" aria-label="Email me activity alerts"/>
-          </label>
-          <fieldset>
-            <legend>Activity to follow</legend>
-            {activityChoices.map(([key, label, description]) => <label>
-              <span><strong>{label}</strong><small>{description}</small></span>
-              <input type="checkbox" data-notification-pref={key} aria-label={label}/>
+          <fieldset class="notifications-options">
+            <legend>Activity</legend>
+            {activityChoices.map(([key, label, description]) => <label class="notifications-choice">
+              <span><strong>{label}</strong><small id={`notification-help-${key}`}>{description}</small></span>
+              <input type="checkbox" data-notification-pref={key} aria-label={label} aria-describedby={`notification-help-${key}`}/>
             </label>)}
           </fieldset>
+          <fieldset class="notifications-options">
+            <legend>Email</legend>
+            <label class="notifications-choice">
+              <span><strong>Email me activity alerts</strong><small>Send eligible activity alerts to your verified email.</small></span>
+              <input type="checkbox" data-notification-pref="emailEnabled" aria-label="Email me activity alerts"/>
+            </label>
+          </fieldset>
+        </div>
+        <div class="notifications-service" id="notification-service-updates">
+          <UiIcon name="check" size={17}/>
+          <p><strong>Project updates stay on.</strong> Badge confirmation and go-live updates appear here. Project status and podium emails are sent separately.</p>
         </div>
         <p id="notifications-settings-status" class="notifications-status" role="status"></p>
       </section>

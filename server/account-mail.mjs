@@ -6,7 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 import { renderEmail, sendEmail } from './email-layout.mjs';
 
 const ACCOUNT = 'https://digivated.com/account';
-const footer = [{ label: 'Your projects', href: ACCOUNT }, { label: 'Notification settings', href: 'https://digivated.com/notifications' }];
+const footer = [{ label: 'Your projects', href: ACCOUNT }, { label: 'Notification settings', href: 'https://digivated.com/notifications#notification-preferences' }];
 const listing = record => `https://digivated.com/projects/listing/${encodeURIComponent(record.id)}`;
 
 const updates = {

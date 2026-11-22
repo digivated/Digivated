@@ -93,6 +93,7 @@ test('retired notices stay out of the feed and unread badge while their records 
     await redis(['ZADD',`digivated:notifications:index:${alice}`,Date.now(),id]);
     await redis(['SADD',`digivated:notifications:unread:${alice}`,id]);
   }
+  assert.equal((await notificationSummary(redis,alice)).unread, 0);
   const feed = await listNotifications(redis,alice);
   assert.deepEqual(feed.items, []);
   assert.equal(feed.unread, 0);
