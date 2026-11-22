@@ -22,8 +22,8 @@
     border-radius: inherit;
     background: linear-gradient(155deg, #ffffffed, #ffffff72 50%, #ffffff00 100%) !important;
     box-shadow: inset 0 1px 2px #fff, inset 0 -1px 0 #18181812 !important;
-    backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
+    backdrop-filter: blur(12px) !important;
     mask-image: linear-gradient(#000 55%, transparent 100%);
   }
 
