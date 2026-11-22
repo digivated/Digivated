@@ -1,6 +1,6 @@
 @layer daylight {
   html[data-theme="daylight"] body.platform #main :is(.dg-dir .dg-hero, .news-masthead, .dg-forum-header, .rl > .dg-hero) {
-    padding: clamp(28px, 5.5vw, 75px) 0 clamp(18px, 3vw, 36px) !important;
+    padding: clamp(20px, 3vw, 42px) 0 var(--editorial-space) !important;
     margin-block: 0 !important;
     border: 0 !important;
     border-radius: 0 !important;
@@ -8,11 +8,11 @@
   }
   html[data-theme="daylight"] body.platform #main :is(.dg-dir, .rl) .dg-hero-copy { max-width: min(100%, 880px) !important; }
   html[data-theme="daylight"] body.platform #main :is(.dg-dir, .news-masthead, .dg-forum-header, .rl) h1 {
-    font-size: clamp(39px, 6.9vw, 92px) !important;
+    font-size: var(--editorial-title) !important;
     margin-block: 0 8px !important;
     font-weight: 560 !important;
-    line-height: .98 !important;
-    letter-spacing: -.076em !important;
+    line-height: 1.07 !important;
+    letter-spacing: -.058em !important;
     overflow-wrap: anywhere;
   }
   html[data-theme="daylight"] body.platform #main :is(.dg-dir .dg-hero-lede, .news-intro, .dg-forum-header p, .rl .dg-hero-lede) {
@@ -57,9 +57,6 @@
   }
 
   @media (max-width: 700px) {
-    html[data-theme="daylight"] body.platform #main :is(.dg-dir .dg-hero, .news-masthead, .dg-forum-header, .rl > .dg-hero) {
-      padding-block-start: 28px !important;
-    }
     html[data-theme="daylight"] body.platform .dg-forum-header { align-items: start; }
   }
 }

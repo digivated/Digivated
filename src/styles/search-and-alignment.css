@@ -1,27 +1,3 @@
-/* One centered axis for the public header, hero and project directory. */
-html body.platform.light-theme.moments-theme .compact-site-header .header-inner {
-  display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
-  width:min(1160px,calc(100% - 48px)); max-width:1160px; margin-inline:auto; padding:10px 0; gap:20px;
-}
-html body.platform.light-theme.moments-theme .compact-site-header .platform-brand { justify-self:start; }
-html body.platform.light-theme.moments-theme .compact-site-header .header-primary { justify-self:center; margin:0; }
-html body.platform.light-theme.moments-theme .compact-site-header .compact-header-actions { justify-self:end; margin:0; }
-html body.platform.light-theme.moments-theme .launch-directory { max-width:100%; padding-inline:0; }
-@media(max-width:1000px) {
-  html body.platform.light-theme.moments-theme .compact-site-header .header-inner { grid-template-columns:auto minmax(0,1fr); }
-}
-@media(max-width:600px) {
-  html body.platform.light-theme.moments-theme .compact-site-header .header-inner { width:calc(100% - 32px); gap:8px; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial { width:calc(100% - 40px); min-height:460px; padding:48px 0 36px; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial h1 { font-size:clamp(38px,10vw,56px); letter-spacing:-.052em; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial>p:not(.home-editorial-kicker) { font-size:15px; margin-block:22px; max-width:36ch; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial-kicker { font-size:9px; letter-spacing:.12em; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial-actions { width:100%; gap:8px; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial-actions a { gap:8px; padding:10px 14px; font-size:12px; }
-  html body.platform.light-theme.moments-theme.home-refresh .home-editorial-scroll { margin-top:32px; font-size:9px; }
-  html body.platform.light-theme.moments-theme .wall-grid-view .wall-react-root { width:calc(100% - 32px); }
-}
-
 /* Search owns its geometry; only the results pane scrolls. */
 #discovery-search {
   box-sizing:border-box; width:min(640px,calc(100vw - 32px)); max-width:none;

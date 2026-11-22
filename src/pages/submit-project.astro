@@ -7,7 +7,7 @@ import { projectCategoryGroups } from '../data/community.mjs';
 import '../styles/submission-flow.css';
 
 ---
-<Platform title="Submit Your Project" description="Share what you built. Launch free, go live instantly, or launch as a member.">
+<Platform title="Launch your project" description="Submit your project to Digivated. Verify a badge for a free launch or choose a member launch.">
   <header class="page-intro submission-intro">
 
     <h1>Launch your project.</h1>
@@ -87,7 +87,7 @@ import '../styles/submission-flow.css';
             <details class="submission-disclosure">
               <summary>Social handle and review notes (optional)</summary>
               <div class="submission-optional-fields">
-                <label>Social handle <span class="quiet">(optional)</span><input name="social" maxlength="200" placeholder="@yourhandle — include the platform"/></label>
+                <label>Social handle <span class="quiet">(optional)</span><input name="social" maxlength="200" placeholder="@yourhandle and platform"/></label>
                 <label>Notes for the review <span class="quiet">(optional)</span><textarea name="notes" rows="3" maxlength="2000" placeholder="Anything else you’d like us to know?"></textarea><span class="field-help">Only the review team sees these notes.</span></label>
               </div>
             </details>
@@ -125,7 +125,7 @@ import '../styles/submission-flow.css';
 
         <div class="submission-review">
           <h2>Confirm and submit</h2>
-          <p>Track your project’s status in <a href="/account">Your Projects</a>.</p>
+          <p>Track your launch in <a href="/account">Your projects</a>.</p>
           <label class="honeypot" aria-hidden="true">Leave this empty<input name="company" tabindex="-1" autocomplete="off"/></label>
           <label class="consent"><input name="consent" type="checkbox" required checked/><span>I confirm that I own or am authorized to submit this project and allow Digivated to display the submitted information and project logo.</span></label>
           <label class="consent"><input name="emailOutreachConsent" type="checkbox" checked/><span>Send me one follow-up email about my launch. No newsletter unless I opt in.</span></label>
@@ -136,7 +136,7 @@ import '../styles/submission-flow.css';
           <p class="form-status" id="submission-status" role="status" aria-live="polite" tabindex="-1"></p>
           <section id="submission-badge" class="submission-option-detail" aria-labelledby="submission-badge-title" hidden>
             <p class="eyebrow">STEP 1 OF 4 DONE</p>
-            <h3 id="submission-badge-title" tabindex="-1">Project saved. Next: add your badge.</h3>
+            <h3 id="submission-badge-title" tabindex="-1">Project saved. Add your badge next.</h3>
             <div id="submission-badge-tracker"></div>
             <ol class="badge-next-steps fl-howto"><li><strong>Pick a badge style and copy the code.</strong></li><li><strong>Paste it into your site</strong>, like in the footer, and publish.</li><li><strong>Hit “Check my website.”</strong> Once we see it, your launch is locked in.</li></ol><p id="submission-badge-launch" class="field-help"></p><p class="field-help">Once verified, you go live on launch day.</p>
             <div id="submission-badge-picker"></div>

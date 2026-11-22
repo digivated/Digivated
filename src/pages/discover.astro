@@ -4,18 +4,18 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
 import '../styles/project-wall.css';
 import '../styles/all-time-directory.css';
 ---
-<Platform title="All-time product directory" description="Discover independent projects, tools, and the people building them.">
+<Platform title="Product directory" description="Find independent products by category, or search by product or maker.">
   <div class="dg-dir" data-directory>
     <section class="dg-hero" aria-labelledby="dg-dir-title">
       <div class="dg-hero-copy">
         <h1 id="dg-dir-title">Product directory</h1>
-        <p class="dg-hero-lede">Browse independent projects by category, or search by project or maker.</p>
+        <p class="dg-hero-lede">Find independent products by category, name or maker.</p>
       </div>
     </section>
 
     <div class="dg-dir-controls">
       <div class="dg-dir-searchrow">
-        <label class="dg-dir-search"><span class="sr-only">Search projects or makers</span><input type="search" data-dir-search placeholder="Search products or makers" autocomplete="off" enterkeyhint="search"/></label>
+        <label class="dg-dir-search"><span class="sr-only">Search products or makers</span><input type="search" data-dir-search placeholder="Search products or makers" autocomplete="off" enterkeyhint="search"/></label>
         <div class="dg-dir-collection" role="group" aria-label="Project collection"><button type="button" data-dir-collection="all" aria-pressed="true">All</button><button type="button" data-dir-collection="featured" aria-pressed="false">Members</button></div>
         <button type="button" class="dg-btn dg-dir-surprise" data-dir-surprise>Surprise me</button>
       </div>
@@ -26,9 +26,9 @@ import '../styles/all-time-directory.css';
     </div>
 
     <section id="project-wall" aria-labelledby="dg-dir-list-title">
-      <header class="dg-list-head"><h2 id="dg-dir-list-title"><span class="dg-list-title">Projects</span></h2></header>
-      <p class="dg-dir-needs" data-dir-needs hidden>✦ These projects have the least feedback. Hit <strong>Visit</strong>, spend 20+ seconds there, come back and leave a specific comment to earn points. <a href="/points">How points work →</a></p>
-      <ol class="dg-dir-list dg-list-rows" data-dir-list aria-label="Projects">
+      <header class="dg-list-head"><h2 id="dg-dir-list-title"><span class="dg-list-title">Browse products</span></h2></header>
+      <p class="dg-dir-needs" data-dir-needs hidden>These products have the least feedback. Visit one for at least 20 seconds, then come back and leave a helpful comment to earn points. <a href="/points">How points work →</a></p>
+      <ol class="dg-dir-list dg-list-rows" data-dir-list aria-label="Directory products">
         {Array.from({ length: 6 }, () => <li class="dg-row is-loading" aria-hidden="true"><span class="dg-logo"></span><span class="dg-main"></span></li>)}
       </ol>
       <p class="dg-dir-status" data-dir-status role="status" hidden></p>
@@ -40,7 +40,7 @@ import '../styles/all-time-directory.css';
     <section class="dg-dir-overview" data-section-reveal aria-labelledby="dg-dir-overview-title">
       <h2 id="dg-dir-overview-title">Directory activity</h2>
       <ul class="dg-dir-stats" aria-label="Directory totals">
-        <li><strong data-dir-stat="projects">—</strong><span>projects</span></li>
+        <li><strong data-dir-stat="projects">—</strong><span>products</span></li>
         <li><strong data-dir-stat="categories">—</strong><span>categories</span></li>
         <li><strong data-dir-stat="upvotes">—</strong><span>upvotes</span></li>
         <li><strong data-dir-stat="comments">—</strong><span>comments</span></li>
