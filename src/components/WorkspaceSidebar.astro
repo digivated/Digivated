@@ -22,8 +22,10 @@ const groups = [{ label: '', links: primaryLinks }, ...menuGroups].map(({ label,
     <span class="dg-rail-mark"><img src="/digivated-daylight-mark.png" alt="" width="34" height="34"/></span>
     <span>Digivated</span>
   </a>
-  <ReactBits surface="GlassAction" className="dg-rail-submit" href="/submit-project" label="Submit a launch" icon="upload" light aria-current={current('/submit-project') ? 'page' : undefined}/>
   <slot/>
   <ReactBits surface="RailLinks" groups={groups}/>
-  <a class="dg-rail-about" href="/about" aria-current={current('/about') ? 'page' : undefined}>About Digivated <UiIcon name="arrow" size={14}/></a>
+  <div class="dg-rail-footer">
+    <a class="dg-rail-about" href="/about" aria-current={current('/about') ? 'page' : undefined}>About Digivated <UiIcon name="arrow" size={14}/></a>
+    <ReactBits surface="GlassAction" className="dg-rail-submit" href="/submit-project" label="Submit a launch" icon="upload" light aria-current={current('/submit-project') ? 'page' : undefined}/>
+  </div>
 </aside>

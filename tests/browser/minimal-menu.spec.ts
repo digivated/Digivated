@@ -24,12 +24,12 @@ for (const width of [320, 390, 768, 920, 921, 1119]) {
     await trigger.click();
     if (mobile) await expect(trigger.locator('.dg-shell-menu-close')).toBeVisible();
     await expect(menu).toBeVisible();
-    await expect(menu).toHaveCSS('backdrop-filter', /blur/);
+    await expect(menu).toHaveCSS('background-color', 'rgb(0, 0, 0)');
     await expect(menu.locator('.site-menu-branch-trigger')).toHaveText(['Explore', 'For makers']);
     await expect(menu.getByRole('link', { name: 'News', exact: true })).toBeVisible();
     await expect(menu.getByRole('link', { name: 'Embed badges', exact: true })).toBeHidden();
     await expect(menu.locator('.site-menu-secondary a')).toHaveText([
-      'News', 'Weekly winners', 'Resources', 'For Investors', 'Embed badges', 'Feedback points', 'Shop',
+      'News', 'Resources', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
     ]);
     await expect(menu.locator('.site-menu-primary')).toBeVisible({ visible: mobile });
     const mainLinks = mobile ? menu.locator('.site-menu-primary') : primary;
@@ -100,6 +100,8 @@ test('the compact header branches are keyboard operable and open to the current 
   const trigger = page.locator('.site-menu-trigger');
   await trigger.press('ArrowDown');
   const badges = menu.getByRole('link', { name: 'Embed badges', exact: true });
+  await expect(menu.getByRole('link', { name: 'Feedback points', exact: true })).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(badges).toBeFocused();
   await expect(badges).toHaveAttribute('aria-current', 'page');
   const explore = menu.locator('summary', { hasText: 'Explore' });
@@ -158,41 +160,20 @@ test('the glass reflection follows a mouse across the bar and menu and respects 
 });
 
 
-test('the bevel optically displaces a real backdrop and keeps the labels outside the filter', async ({ page, browserName }) => {
-  test.skip(browserName !== 'chromium', 'Native backdrop displacement is enabled on Chromium.');
+test('navigation surfaces stay opaque over a bright backdrop', async ({ page }) => {
   await page.setViewportSize({ width: 1000, height: 850 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(base + '/');
-  const bar = page.locator('.dg-shell-bar');
-  const material = bar.locator('.dg-shell-material');
-  await expect(material).toHaveAttribute('data-liquid-lens', 'true');
+  const bar = page.locator('.dg-shell-material');
+  const trigger = page.locator('.site-menu-trigger');
   await page.addStyleTag({ content: 'body.platform::before{content:"";position:absolute;inset:0 0 auto;height:100px;z-index:-1;background:repeating-linear-gradient(120deg, #fff 0 5px,#171817 5px 10px)!important}' });
-
-  const optics = await material.evaluate(el => {
-    const id = (el as HTMLElement).style.getPropertyValue('--lq-lens').match(/#([^)]*)/)?.[1];
-    const filter = id && document.getElementById(id);
-    const glass = getComputedStyle(el);
-    const scales = filter ? [...filter.querySelectorAll('feDisplacementMap')].map(lens => Number(lens.getAttribute('scale'))) : [];
-    return { id, scales, backdrop: glass.backdropFilter, tint: Number(glass.backgroundColor.split(',').at(-1)?.replace(')', '')), foreground: getComputedStyle(el.parentElement!.querySelector('nav')!).filter };
-  });
-  expect(optics.scales.length).toBeGreaterThan(0);
-  expect(Math.min(...optics.scales)).toBeGreaterThan(0);
-  expect(optics.backdrop).toContain('url(');
-  expect(optics.tint).toBeLessThan(.12);
-  expect(optics.foreground).toBe('none');
-
-  const refracted = await bar.screenshot();
-  const setScale = (scale: number) => page.evaluate(({ id, scale }) => {
-    document.getElementById(id!)?.querySelectorAll('feDisplacementMap').forEach(lens => lens.setAttribute('scale', String(scale)));
-  }, { id: optics.id, scale });
-  await setScale(0);
-  const flat = await bar.screenshot();
-  expect(refracted.equals(flat)).toBe(false);
-
-  await page.locator('.site-menu-trigger').click();
+  await expect(bar).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+  await expect(bar).toHaveCSS('backdrop-filter', 'none');
+  await trigger.click();
   const menu = page.locator('#explore-navigation');
-  await expect(menu).toHaveAttribute('data-liquid-lens', 'true');
-  await expect(menu).toHaveCSS('backdrop-filter', /url\(/);
+  await expect(menu).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+  await expect(menu).toHaveCSS('backdrop-filter', 'none');
+  await expect(menu.getByRole('link', { name: 'News' })).toHaveCSS('color', 'rgb(248, 248, 248)');
   await page.keyboard.press('Escape');
-  await expect(page.locator('.site-menu-trigger')).toBeFocused();
+  await expect(trigger).toBeFocused();
 });

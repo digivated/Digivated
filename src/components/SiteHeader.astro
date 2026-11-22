@@ -23,7 +23,7 @@ const linkIcons: Record<string, typeof Rocket01Icon> = {
 ---
 <header class="dg-shell" data-site-header data-account="signed-out">
   <div class="dg-shell-bar" data-nav-reflection>
-    <div class="dg-shell-material" data-glass-surface="bar" aria-hidden="true"></div>
+    <div class="dg-shell-material" aria-hidden="true"></div>
     <a class="dg-shell-brand" href="/" aria-label="Digivated home"><img class="daylight-brand-mark" src="/digivated-daylight-mark.png" width="32" height="32" alt=""/><span>Digivated</span></a>
     <nav class="dg-shell-primary" aria-label="Primary navigation">{primaryLinks.map(([href,label])=><a href={href} aria-current={active(href)?'page':undefined}>{label}</a>)}</nav>
     <div class="dg-shell-tools">
@@ -31,7 +31,7 @@ const linkIcons: Record<string, typeof Rocket01Icon> = {
       <a class="dg-shell-login" id="header-account-link" href="/login" aria-current={active('/login')?'page':undefined}>Log In</a>
       <div class="dg-shell-account" id="header-account-menu" hidden>
         <button type="button" class="dg-shell-avatar-trigger" id="header-account-trigger" aria-labelledby="header-account-label" aria-haspopup="menu" aria-expanded="false" aria-controls="header-account-panel"><span class="dg-shell-avatar" id="header-account-avatar" aria-hidden="true">D</span><span class="fl-menu-name sr-only" id="header-account-label">Account menu</span><span class="dg-shell-account-caret" aria-hidden="true">▾</span><span id="header-account-dot" class="dg-shell-badge" hidden></span></button>
-        <div class="dg-shell-account-panel" data-glass-surface="menu" data-nav-reflection id="header-account-panel" role="menu" aria-labelledby="header-account-trigger" hidden>
+        <div class="dg-shell-account-panel" data-nav-reflection id="header-account-panel" role="menu" aria-labelledby="header-account-trigger" hidden>
           <span class="dg-shell-account-who" role="presentation"><strong>Signed in</strong><span id="header-account-email"></span><span class="fl-menu-points"><span aria-hidden="true">✦</span> <b id="header-menu-points" hidden>0</b> feedback points</span></span>
           <a role="menuitem" href="/account">Your projects</a>
           <a role="menuitem" href="/inbox">Inbox <span class="fl-menu-count" id="header-menu-inbox" hidden></span></a>
@@ -50,7 +50,7 @@ const linkIcons: Record<string, typeof Rocket01Icon> = {
           <span class="dg-shell-menu-open" aria-hidden="true"><UiIcon name="menu" size={18}/></span>
           <span class="dg-shell-menu-close" aria-hidden="true"><UiIcon name="close" size={18}/></span>
         </summary>
-        <nav id="explore-navigation" class="site-menu-panel" data-glass-surface="menu" data-nav-reflection aria-label="Site menu">
+        <nav id="explore-navigation" class="site-menu-panel" data-nav-reflection aria-label="Site menu">
           <div class="site-menu-primary site-menu-links">
             {primaryLinks.map(([href, label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}</a>)}
           </div>

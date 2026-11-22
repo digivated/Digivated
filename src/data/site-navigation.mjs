@@ -6,15 +6,15 @@ export const primaryLinks = [
 ];
 const moreExploreLinks = [
   ['/news', 'News'],
-  ['/winners', 'Weekly winners'],
   ['/resources', 'Resources'],
+  ['/winners', 'Weekly winners'],
   ['/invstr', 'For Investors'],
 ];
 export const menuGroups = [
   { label: 'Explore', links: moreExploreLinks },
   { label: 'For makers', links: [
-    ['/badges', 'Embed badges'],
     ['/points', 'Feedback points'],
+    ['/badges', 'Embed badges'],
     ['/shop', 'Shop'],
   ] },
 ];
