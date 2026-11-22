@@ -43,7 +43,9 @@ test('section entrances never leave content hidden and stop after completion',as
 test('hero stays readable when JavaScript is disabled',async({browser})=>{
  const c=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});const p=await c.newPage();await p.goto(base+'/');
  await expect(p.locator('#dg-home-title')).toBeVisible();
- await expect(p.locator('.dg-launch-scene-hero .dg-scene-poster img')).toHaveJSProperty('complete', true);
+ const poster = p.locator('.dg-launch-scene-hero .dg-scene-poster img');
+ await expect.poll(() => poster.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+ await expect(p.locator('.dg-launch-scene-hero canvas')).toBeHidden();
  await expect(p.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
 });
@@ -61,7 +63,7 @@ test('the new backdrop leaves resources search and home hero actions usable',asy
  await expect(page).toHaveURL(/#this-week$/);
 });
 
-test('the shared current moves, pauses, and keeps native launch links usable', async ({ page }) => {
+test('the ASCII field moves, pauses, and keeps native launch links usable', async ({ page }) => {
  await page.setViewportSize({ width: 1440, height: 900 });
  await page.clock.install();
  await page.goto(base + '/');
@@ -94,4 +96,39 @@ test('the shared current moves, pauses, and keeps native launch links usable', a
  await page.getByRole('link', { name: 'Browse launches', exact: true }).focus();
  await page.keyboard.press('Enter');
  await expect(page).toHaveURL(/#this-week$/);
+});
+
+
+test('the ASCII backdrop stays pinned beyond the masthead and carries across light layouts', async ({ page }) => {
+ await page.setViewportSize({ width: 1440, height: 900 });
+ await page.emulateMedia({ reducedMotion: 'reduce' });
+ for (const [path, variant] of [['/', 'hero'], ['/discover', 'masthead'], ['/login', 'quiet'], ['/start', 'quiet']]) {
+  await page.goto(base + path);
+  const scene = page.locator('[data-launch-scene]');
+  await expect(scene).toHaveCount(1);
+  await expect(scene).toHaveAttribute('data-scene-size', variant);
+  await expect(scene).toHaveAttribute('aria-hidden', 'true');
+  await expect(scene).toHaveCSS('position', 'fixed');
+  await expect(scene).toHaveCSS('pointer-events', 'none');
+  await expect(scene.locator('canvas')).toBeHidden();
+  await expect.poll(() => scene.locator('img').evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  const frame = await scene.boundingBox();
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  expect(await scene.boundingBox()).toEqual(frame);
+ }
+});
+
+test('the static ASCII art stays visible when a canvas context is unavailable', async ({ page }) => {
+ await page.addInitScript(() => {
+  const getContext = HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = function (type: string, options?: object) {
+   return type === '2d' ? null : Reflect.apply(getContext, this, [type, options]);
+  } as typeof getContext;
+ });
+ await page.goto(base + '/discover');
+ const scene = page.locator('[data-launch-scene]');
+ await expect(scene.locator('canvas')).toBeHidden();
+ await expect.poll(() => scene.locator('img').evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+ await page.getByRole('button', { name: 'Search Digivated' }).click();
+ await expect(page.locator('#unified-search-input')).toBeFocused();
 });

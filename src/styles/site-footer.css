@@ -160,6 +160,10 @@
   .dg-footer-bottom .dg-footer-utility { justify-self: end; }
   .dg-footer-bottom .dg-footer-utility a { font-size: inherit !important; }
 
+  html[data-theme="daylight"] body .dg-site-footer-compact .dg-footer-motion {
+    grid-column: -2 / -1;
+    justify-self: end;
+  }
   .dg-site-footer-compact .dg-footer-main {
     display: flex;
     flex-wrap: wrap;
@@ -214,6 +218,7 @@
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 4px 10px;
     }
+    html[data-theme="daylight"] body .dg-site-footer-compact .dg-footer-motion { grid-row: 1; }
     .dg-site-footer .dg-footer-credit { justify-self: end; }
     .dg-footer-bottom .dg-footer-utility { grid-column: 1 / -1; justify-self: start; }
   }

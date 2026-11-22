@@ -4,8 +4,8 @@ const { size = 'masthead' } = Astro.props;
 ---
 <div class:list={['dg-launch-scene', `dg-launch-scene-${size}`]} data-launch-scene data-scene-size={size} aria-hidden="true">
   <picture class="dg-scene-poster">
-    <source media="(max-width: 699px)" srcset="/media/digivated-current-narrow.webp"/>
-    <img src="/media/digivated-current.webp" width="1440" height="740" alt="" decoding="async"/>
+    <source media="(max-width: 699px)" srcset={`/media/digivated-ascii-${size}-narrow.webp`}/>
+    <img src={`/media/digivated-ascii-${size}.webp`} width="960" height="640" alt="" decoding="async"/>
   </picture>
   <canvas></canvas>
 </div>

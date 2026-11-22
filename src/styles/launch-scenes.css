@@ -1,21 +1,11 @@
 @layer daylight {
-  body.platform:has(> .dg-launch-scene) {
-    position: relative;
-    isolation: isolate;
-  }
+  body:has(> .dg-launch-scene) { isolation: isolate; }
   .dg-launch-scene {
-    position: absolute;
-    inset: 0 0 auto;
+    position: fixed;
+    inset: 0;
     z-index: -1;
-    height: var(--current-height);
+    overflow: hidden;
     pointer-events: none;
-    -webkit-mask-image: linear-gradient(#000 60%, transparent);
-    mask-image: linear-gradient(#000 60%, transparent);
-  }
-  .dg-launch-scene-hero { --current-height: clamp(640px, 86svh, 880px); }
-  .dg-launch-scene-masthead {
-    --current-height: clamp(350px, 54svh, 550px);
-    opacity: .54;
   }
   .dg-launch-scene :is(.dg-scene-poster, canvas) {
     position: absolute;
@@ -25,6 +15,9 @@
     height: 100%;
   }
   .dg-scene-poster img { width: 100%; height: 100%; object-fit: fill; }
+  @media (forced-colors: active) {
+    .dg-launch-scene { visibility: hidden; }
+  }
   .dg-launch-scene:not([data-scene-ready]) canvas,
   .dg-launch-scene[data-scene-ready] .dg-scene-poster { visibility: hidden; }
   html[data-theme="daylight"] body .dg-scene-toggle {
@@ -49,8 +42,4 @@
   .dg-scene-play { display: none; width: 0; height: 0; border: 6px solid transparent !important; border-left: 9px solid currentColor !important; margin-left: 6px; }
   .dg-scene-toggle[data-paused="true"] .dg-scene-pause { display: none; }
   .dg-scene-toggle[data-paused="true"] .dg-scene-play { display: block; }
-  @media (max-width: 700px) {
-    .dg-launch-scene-hero { --current-height: 620px; }
-    .dg-launch-scene-masthead { --current-height: 360px; opacity: .3; }
-  }
 }

@@ -1,13 +1,15 @@
 import { createLaunchScene } from '../lib/launch-scene.js';
 
 const preference = matchMedia('(prefers-reduced-motion: reduce)');
+const forcedColors = matchMedia('(forced-colors: active)');
 const connection = navigator.connection;
 const scenes = [...document.querySelectorAll('[data-launch-scene]')];
 const controls = [...document.querySelectorAll('[data-scene-toggle]')];
 let paused = false;
 try { paused = sessionStorage.getItem('digivated-scenes-paused') === '1'; } catch { /* Storage is optional. */ }
 
-const permitted = () => !paused && !preference.matches && !connection?.saveData && !document.hidden;
+const motionEnabled = () => !preference.matches && !forcedColors.matches && !connection?.saveData;
+const permitted = () => !paused && motionEnabled() && !document.hidden;
 const scenesOnscreen = new Set();
 const state = new Map();
 let frame = 0;
@@ -15,8 +17,8 @@ let previous = 0;
 
 function render(now) {
   frame = requestAnimationFrame(render);
-  if (previous && now - previous < 33) return;
-  const elapsed = previous ? Math.min(65, now - previous) / 1000 : 0;
+  if (previous && now - previous < 50) return;
+  const elapsed = previous ? Math.min(100, now - previous) / 1000 : 0;
   previous = now;
   for (const element of scenesOnscreen) {
     const scene = state.get(element);
@@ -28,9 +30,8 @@ function render(now) {
     scene.attract += (scene.targetEnergy - scene.attract) * .13;
     // The scene responds to native scrolling. It never captures wheel or touch.
     let scroll = 0;
-    if (element.dataset.sceneSize === 'hero') {
-      const box = element.getBoundingClientRect();
-      scroll = Math.max(0, Math.min(1, -box.top / box.height));
+    if (scene.hero && scene.height > 0) {
+      scroll = Math.max(0, Math.min(1, window.scrollY / scene.height));
     }
     scene.engine.render(scene.time, { x: scene.x, y: scene.y, scroll, attract: scene.attract, approach: scene.approach });
   }
@@ -39,7 +40,7 @@ function render(now) {
 function sync() {
   const allowed = permitted();
   document.documentElement.toggleAttribute('data-artwork-paused', paused);
-  const canAnimate = !preference.matches && !connection?.saveData;
+  const canAnimate = motionEnabled();
   controls.forEach(button => {
     button.hidden = !canAnimate;
     button.setAttribute('aria-label', paused ? 'Play animation' : 'Pause animation');
@@ -47,7 +48,7 @@ function sync() {
   });
   for (const element of scenes) {
     if (!canAnimate || paused) {
-      if (!paused || preference.matches || connection?.saveData) delete element.dataset.sceneReady;
+      if (!paused || !canAnimate) delete element.dataset.sceneReady;
       continue;
     }
     if (!scenesOnscreen.has(element)) continue;
@@ -66,17 +67,18 @@ function sync() {
 function init(element) {
   const canvas = element.querySelector('canvas');
   if (!canvas) return null;
-  const engine = createLaunchScene(canvas, { compact: element.dataset.sceneSize !== 'hero' });
+  const engine = createLaunchScene(canvas, { mode: element.dataset.sceneSize });
   if (!engine) return null;
-  const scene = { engine, time: 1.2, x: 0, y: 0, targetX: 0, targetY: 0, attract: 0, targetEnergy: 0, approach: 0, targetApproach: 0 };
+  const scene = { engine, hero: element.dataset.sceneSize === 'hero', height: 0, time: 1.2, x: 0, y: 0, targetX: 0, targetY: 0, attract: 0, targetEnergy: 0, approach: 0, targetApproach: 0 };
   state.set(element, scene);
   const resize = () => {
-    engine.resize(element.clientWidth, element.clientHeight, devicePixelRatio);
+    scene.height = element.clientHeight;
+    engine.resize(element.clientWidth, scene.height, devicePixelRatio);
     if (scenesOnscreen.has(element)) engine.render(scene.time, scene);
   };
   resize();
   new ResizeObserver(resize).observe(element);
-  const stage = document.querySelector('[data-discovery-hero]') || document.querySelector('main');
+  const stage = document.querySelector('main');
   stage.addEventListener('pointermove', event => {
     if (event.pointerType === 'touch' || !permitted()) return;
     const box = element.getBoundingClientRect();
@@ -120,6 +122,7 @@ if (scenes.length && 'IntersectionObserver' in window && 'ResizeObserver' in win
     sync();
   }));
   preference.addEventListener('change', sync);
+  forcedColors.addEventListener('change', sync);
   connection?.addEventListener('change', sync);
   document.addEventListener('visibilitychange', sync);
   window.addEventListener('pagehide', () => {
