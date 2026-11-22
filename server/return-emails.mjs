@@ -149,6 +149,8 @@ const notificationsUrl = 'https://digivated.com/notifications';
 const announcementIssue = '2026-11-15';
 const announcementTitle = 'What’s new on Digivated';
 const announcementCopy = 'When your project goes live, you’ll now see its approval in Notifications, with a link straight to your listing. You can also choose which replies, follows, messages, and project feedback you want to hear about. Thanks for sharing what you’re building.';
+const FIRST_MONDAY_DIGEST = Date.UTC(2026, 10, 23, 15);
+const LAST_SUNDAY_DIGEST = Date.UTC(2026, 10, 22, 15);
 function digestContent(projects, unsubscribe, address, announce = false) {
  const link = project => `https://digivated.com/projects/listing/${encodeURIComponent(project.id)}`;
  const text = [
@@ -199,9 +201,13 @@ export function makeWeeklyDigestHandler(deps={}){return async(req,res)=>{
   const redis = deps.redis || redisClient(env);
   const now = (deps.now || Date.now)(), week = 7 * 86400000;
   const issue = new Date(now);
-  issue.setUTCDate(issue.getUTCDate() - issue.getUTCDay());
+  const issueWeekday = now >= FIRST_MONDAY_DIGEST ? 1 : 0;
+  issue.setUTCDate(issue.getUTCDate() - ((issue.getUTCDay() - issueWeekday + 7) % 7));
   issue.setUTCHours(15, 0, 0, 0);
   if (+issue > now) issue.setUTCDate(issue.getUTCDate() - 7);
+  // The first Monday follows the last Sunday send by one day. Use the
+  // previous issue's actual cutoff so the two issues cannot share launches.
+  const since = +issue === FIRST_MONDAY_DIGEST ? LAST_SUNDAY_DIGEST : +issue - week;
   const issueDate = issue.toISOString().slice(0, 10);
   const finish = (status, summary) => {
    logger.info('weekly-digest result', { issue: issueDate, ...summary });
@@ -213,7 +219,7 @@ export function makeWeeklyDigestHandler(deps={}){return async(req,res)=>{
    if (!raw) return [];
    const project = JSON.parse(raw);
    const published = Date.parse(project.publishedAt || project.reviewedAt);
-   return ['approved', 'featured'].includes(project.status) && published > +issue - week && published <= +issue
+   return ['approved', 'featured'].includes(project.status) && published > since && published <= +issue
     ? [{ id: ids[index], name: project.name, published }] : [];
   }).sort((a,b) => b.published - a.published).slice(0,3);
   const announcementWeek = issueDate === announcementIssue;

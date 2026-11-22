@@ -16,11 +16,6 @@
     padding-block-end: clamp(26px, 4vw, 44px) !important;
   }
 
-  .dg-workspace-content > .dg-site-footer {
-    align-self: center;
-    inline-size: min(100%, var(--daylight-content));
-  }
-
   @media (min-width: 1120px) {
     .dg-workspace { display: grid; }
     .dg-workspace-content { min-block-size: 100svh; }

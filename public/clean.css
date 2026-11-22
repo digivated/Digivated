@@ -142,19 +142,6 @@
 #digivated-root :is(.dg-forum-sort, [role="tablist"]) > :is(button, a, [role="tab"]) { min-height: 30px !important; padding: 0 12px !important; border: 0 !important; border-radius: 8px !important; background: transparent !important; color: #71717a !important; font-size: 13px !important; font-weight: 550 !important; box-shadow: none !important; }
 #digivated-root :is(.dg-forum-sort, [role="tablist"]) > :is([aria-pressed="true"], [aria-selected="true"], [aria-current="page"]) { background: #fff !important; color: #0b0b0c !important; box-shadow: 0 1px 2px rgba(17,17,26,.1) !important; }
 
-/* Footer: one black card, like a newsletter block */
-#digivated-root .dg-site-footer { border: 0 !important; border-radius: 20px !important; background: #0b0b0c !important; color: #d4d4d8 !important; box-shadow: 0 10px 30px -12px rgba(0,0,0,.35) !important; }
-#digivated-root .dg-site-footer::before, #digivated-root .dg-site-footer::after { background: none !important; border: 0 !important; box-shadow: none !important; }
-#digivated-root .dg-footer-inner { background: transparent !important; border: 0 !important; box-shadow: none !important; }
-#digivated-root .dg-site-footer .dg-footer-brand { color: #fff !important; }
-#digivated-root .dg-footer-brand img { filter: invert(1) !important; }
-#digivated-root .dg-site-footer :is(p, small, span) { color: #a1a1aa !important; }
-#digivated-root .dg-site-footer a:not(.dg-footer-brand, .dg-footer-credit) { color: #d4d4d8 !important; }
-#digivated-root .dg-site-footer a:not(.dg-footer-brand, .dg-footer-credit):hover { color: #fff !important; }
-#digivated-root .dg-site-footer .dg-footer-group h2 { font-size: 12px !important; font-weight: 550 !important; color: #71717a !important; text-transform: none !important; letter-spacing: 0 !important; }
-#digivated-root .dg-site-footer :is(.dg-footer-bottom, .dg-footer-groups, .dg-footer-intro) { border-color: #232327 !important; }
-#digivated-root .dg-site-footer .dg-footer-credit, #digivated-root .dg-site-footer .dg-footer-credit * { color: #0b0b0c !important; }
-
 /* Docked top bar below the sidebar breakpoint (1120px): flush, square, solid white, hairline under it */
 @media (max-width: 1119px) {
   #digivated-root [data-site-header] { position: sticky !important; top: 0 !important; z-index: 50 !important; margin: 0 !important; }
@@ -223,44 +210,10 @@
 #digivated-root .dg-shell-icon { width: 36px !important; height: 36px !important; border: 0 !important; border-radius: 10px !important; background: transparent !important; }
 #digivated-root .dg-shell-tools { gap: 8px !important; }
 
-/* ---- Footer like the reference: dark sheet docked to the bottom, rounded on top, big faded wordmark ---- */
-#digivated-root .dg-site-footer { position: relative !important; overflow: hidden !important; margin-bottom: 0 !important; border-radius: 22px 22px 0 0 !important; padding-bottom: clamp(70px, 14vw, 150px) !important; }
-#digivated-root .dg-site-footer::after { content: "digivated" / "" !important; position: absolute !important; left: 50% !important; bottom: clamp(-26px, -2.4vw, -10px) !important; transform: translateX(-50%) !important; display: block !important; font-size: clamp(84px, 19vw, 230px) !important; font-weight: 800 !important; letter-spacing: -.06em !important; line-height: 1 !important; white-space: nowrap !important; color: rgba(255,255,255,.06) !important; pointer-events: none !important; }
-#digivated-root .dg-site-footer .dg-footer-inner { position: relative !important; z-index: 1 !important; }
 #digivated-root .dg-row .dg-vote { display: flex !important; flex-direction: column !important; align-items: center !important; }
 #digivated-root .dg-row .dg-vote > * { display: block !important; }
 @media (max-width: 520px) {
   #digivated-root .dg-row .dg-meta span:not(:first-child):not(.dg-meta-age) { display: none !important; }
-}
-
-/* ---- Footer, third pass: wider and shorter, like the reference ---- */
-/* Phones: nearly edge to edge, three link columns. Desktop: spans the whole content area,
-   intro on the left and links on the right, so it's about 400px tall instead of 600+. */
-#digivated-root .dg-site-footer { align-self: stretch !important; box-sizing: border-box !important; width: auto !important; max-width: none !important; margin: 28px 8px 0 !important; padding: 24px 20px 56px !important; }
-#digivated-root .dg-footer-intro { gap: 8px !important; }
-#digivated-root .dg-footer-brand { font-size: 14px !important; }
-#digivated-root .dg-footer-brand img { width: 22px !important; height: 22px !important; }
-#digivated-root .dg-footer-groups { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 12px !important; margin-top: 20px !important; }
-#digivated-root .dg-footer-group h2 { margin: 0 0 8px !important; }
-#digivated-root .dg-footer-group ul { display: grid !important; gap: 7px !important; margin: 0 !important; padding: 0 !important; }
-#digivated-root .dg-footer-group li { margin: 0 !important; padding: 0 !important; line-height: 1.3 !important; }
-#digivated-root .dg-footer-group a { display: inline !important; min-height: 0 !important; padding: 0 !important; font-size: 13px !important; }
-#digivated-root .dg-footer-bottom { flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; text-align: left !important; gap: 10px 16px !important; margin-top: 18px !important; padding-top: 14px !important; }
-#digivated-root .dg-footer-bottom > * { margin-inline: 0 !important; }
-#digivated-root .dg-footer-feature { display: flex !important; align-items: center !important; gap: 8px !important; }
-#digivated-root .dg-footer-feature > span { font-size: 12px !important; }
-#digivated-root .dg-footer-utility { display: flex !important; gap: 12px !important; }
-#digivated-root .dg-footer-utility a { font-size: 13px !important; min-height: 0 !important; padding: 0 !important; }
-#digivated-root .dg-footer-bottom small { font-size: 12px !important; margin-left: auto !important; }
-#digivated-root .dg-site-footer::after { font-size: clamp(80px, 22vw, 260px) !important; bottom: clamp(-30px, -2.6vw, -12px) !important; }
-@media (min-width: 900px) {
-  #digivated-root .dg-footer-inner { display: grid !important; grid-template-columns: minmax(260px, 1fr) minmax(0, 1.6fr) !important; column-gap: 48px !important; align-items: start !important; }
-  #digivated-root .dg-footer-groups { margin-top: 0 !important; }
-  #digivated-root .dg-footer-bottom { grid-column: 1 / -1 !important; }
-}
-@media (min-width: 1120px) {
-  #digivated-root .dg-site-footer { margin: 36px 12px 0 !important; padding: 32px 36px 110px !important; }
-  #digivated-root .dg-footer-group a { font-size: 13.5px !important; }
 }
 
 /* iOS Safari zooms into any field under 16px when tapped, so phones and tablets get 16px text in inputs */
