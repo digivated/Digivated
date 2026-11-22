@@ -40,17 +40,30 @@ html[data-ascii] body .dg-fp-icon{grid-area:icon;align-self:center;display:grid!
 html[data-ascii] body .dg-fp-strip-copy{grid-area:copy;display:grid!important;gap:2px;min-width:0;font-family:var(--fl-sans)!important;font-size:13px!important}
 html[data-ascii] body .dg-fp-strip-copy strong{display:block!important;margin:0!important;font-family:var(--fl-mono)!important;font-size:11px!important;font-weight:500!important;letter-spacing:.09em!important;text-transform:uppercase;color:#e7dcff!important}
 html[data-ascii] body .dg-fp-strip-copy span{display:block!important;color:#cfcfcf!important;line-height:1.4!important}
+html[data-ascii] body .dg-fp-summary-actions{display:contents!important}
 html[data-ascii] body .dg-fp-strip .dg-fp-me{grid-area:me}
 html[data-ascii] body .dg-fp-toggle{grid-area:toggle;display:inline-flex!important;align-items:center;gap:6px;min-height:30px;padding:4px 10px!important;border:1px solid #3b2f52!important;font-family:var(--fl-mono)!important;font-size:11px!important;color:#b9acd3!important;white-space:nowrap;transition:border-color .2s,color .2s,background-color .2s!important}
 html[data-ascii] body .dg-fp-toggle svg{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
 html[data-ascii] body .dg-fp-strip summary:hover .dg-fp-toggle{border-color:#7a66a3!important;background:#c3a0ff14!important;color:#fff!important}
 html[data-ascii] body .dg-fp-strip[open] .dg-fp-toggle svg{transform:rotate(180deg)}
-@media (max-width:640px){
- html[data-ascii] body .dg-fp-strip summary{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"icon copy toggle";gap:8px!important;padding:10px 12px!important}
- html[data-ascii] body .dg-fp-strip summary:has(.dg-fp-me:not([hidden])){grid-template-areas:"icon copy copy" "me me toggle"}
+@container (max-width:410px){
+ html[data-ascii] body .dg-fp-strip summary{
+  grid-template-columns:auto minmax(0,1fr);
+  grid-template-areas:"icon copy" "actions actions";
+  gap:8px!important;
+  padding:10px 12px!important;
+ }
+ html[data-ascii] body .dg-fp-summary-actions{
+  grid-area:actions;
+  display:flex!important;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+ }
  html[data-ascii] body .dg-fp-icon{width:30px!important;height:30px!important}
- html[data-ascii] body .dg-fp-strip .dg-fp-me{justify-self:start;align-self:center}
- html[data-ascii] body .dg-fp-toggle{justify-self:end;align-self:center;min-height:28px;padding:3px 10px!important}
+ html[data-ascii] body .dg-fp-strip .dg-fp-meter{min-width:min(132px,100%)}
+ html[data-ascii] body .dg-fp-toggle{margin-inline-start:auto;min-height:28px;padding:3px 10px!important}
 }
 }
 
@@ -115,7 +128,6 @@ html[data-ascii] body .dg-fp-meter[data-boosts]::after{content:attr(data-boosts)
 html[data-ascii] body .dg-fp-meter.is-bump{animation:dg-meter-bump .7s ease-out}
 @keyframes dg-meter-bump{0%{box-shadow:0 0 0 0 #c3a0ff00}30%{box-shadow:0 0 0 3px #c3a0ff40,0 0 22px -4px #c3a0ff}100%{box-shadow:0 0 0 0 #c3a0ff00}}
 html[data-ascii] body .dg-fp-progress .dg-fp-meter-bar{font-size:14px!important}
-@media (max-width:640px){html[data-ascii] body .dg-fp-strip .dg-fp-meter{min-width:0}}
 }
 /* Pixel icon: the arrow climbs one pixel at a time, like an upvote landing. */
 @layer flow {
