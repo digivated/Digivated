@@ -7,11 +7,32 @@ const icons: Record<string, string> = {
   '/': 'layers', '/categories': 'grid', '/account': 'profile', '/shop': 'save',
   '/news': 'book', '/threads': 'comment', '/resources': 'tool',
 };
+// Inside the maker dashboard, the Dashboard item opens into its sections.
+// Tab links carry data-account-link so the dashboard script can switch tabs in place.
+const inDashboard = ['/account', '/submit-project', '/notifications'].includes(path);
+const dashboardSections = [
+  { href: '/account', label: 'Overview', icon: 'grid', tab: 'projects' },
+  { href: '/account?tab=analytics', label: 'Analytics', icon: 'chart', tab: 'analytics' },
+  { href: '/submit-project', label: 'New launch', icon: 'upload', current: path === '/submit-project' },
+  { href: '/account?tab=profile', label: 'Profile', icon: 'user', tab: 'profile' },
+  { href: '/account?tab=settings', label: 'Settings', icon: 'sliders', tab: 'settings', current: path === '/notifications' },
+];
 ---
 <ul class="navigation-tree">
   {primaryLinks.map(([href, label]) => (
-    <li><a href={href} aria-current={isNavigationCurrent(path, href) ? 'page' : undefined}>
-      <UiIcon name={icons[href]} size={18}/><span>{label}</span>
-    </a></li>
+    <li class:list={{ 'has-sections': href === '/account' && inDashboard }}>
+      <a href={href} aria-current={isNavigationCurrent(path, href) ? 'page' : undefined}>
+        <UiIcon name={icons[href]} size={18}/><span>{label}</span>
+      </a>
+      {href === '/account' && inDashboard && (
+        <ul class="navigation-sections" aria-label="Dashboard pages">
+          {dashboardSections.map(section => (
+            <li><a href={section.href} data-account-link={section.tab} aria-current={section.current || (path === '/account' && section.tab === 'projects') ? 'page' : undefined}>
+              <UiIcon name={section.icon} size={16}/><span>{section.label}</span>
+            </a></li>
+          ))}
+        </ul>
+      )}
+    </li>
   ))}
 </ul>

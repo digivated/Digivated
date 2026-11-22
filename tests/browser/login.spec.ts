@@ -118,8 +118,10 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await expect(sidebar).toHaveCSS('border-top-right-radius', '0px');
   await expect(accountMenu.locator('#header-account-email')).toHaveAttribute('title', email);
   await expect(accountMenu.locator('#header-menu-points')).toHaveCSS('color', 'rgb(68, 68, 68)');
-  const primaryNav = sidebar.getByRole('navigation', { name: 'Workspace navigation' });
-  expect((await primaryNav.boundingBox())!.y).toBeGreaterThanOrEqual(panel.y + panel.height - 1);
+  // The account card sits at the bottom of the sidebar, below the page links.
+  const primaryNav = (await sidebar.getByRole('navigation', { name: 'Workspace navigation' }).boundingBox())!;
+  expect(primaryNav.y + primaryNav.height).toBeLessThanOrEqual(panel.y + 1);
+  expect(panel.y + panel.height).toBeLessThanOrEqual(rail.y + rail.height + 1);
   await page.setViewportSize({ width: 1120, height: 430 });
   await accountMenu.getByRole('menuitem', { name: 'Sign out' }).scrollIntoViewIfNeeded();
   await expect(accountMenu.getByRole('menuitem', { name: 'Sign out' })).toBeInViewport();
