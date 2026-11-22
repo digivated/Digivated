@@ -83,3 +83,27 @@
   }
   .board-category-count { margin-inline-start: 6px; font-variant-numeric: tabular-nums; opacity: .7; }
 }
+
+@media (min-width: 1120px) {
+  @layer workspace-preview {
+    /* Hide the home page scrollbar without changing document scrolling. */
+    html:has(> body.home-refresh) { scrollbar-width: none; }
+    html:has(> body.home-refresh)::-webkit-scrollbar { display: none; }
+
+    .home-refresh {
+      --launch-board-width: 1040px;
+      --section-title: clamp(28px, 2.6vw, 34px);
+    }
+    .home-refresh .launch-welcome #dg-home-title { font-size: clamp(48px, 4.3vw, 60px) !important; }
+    .home-refresh .launch-welcome .dg-hero-actions { width: min(100%, 610px); }
+
+    .home-refresh .board-categories {
+      flex-wrap: wrap;
+      overflow: visible;
+      gap: 7px;
+    }
+    .home-refresh #main .board-filters button { font-size: 14px !important; }
+    .home-refresh #main .dg-launch-nav a { font-size: 14px !important; }
+    .home-refresh #main .dg-board .dg-project-tile h3 { font-size: 17px !important; }
+  }
+}

@@ -155,6 +155,28 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
+test('desktop categories wrap without a scrollbar and the home page still scrolls', async ({ page }) => {
+  const categories = ['AI', 'Business', 'Design', 'Developer Tools', 'Education', 'Entertainment',
+    'Finance', 'Health', 'Marketing', 'Productivity', 'Social', 'Travel', 'Video & Audio', 'Writing & Content'];
+  const fixtures = categories.map((category, index) => ({ ...projects[index], category }));
+  await page.setViewportSize({ width: 1440, height: 800 });
+  await page.route('**/api/projects*', route => route.fulfill({ json: { items: fixtures, next: null } }));
+  await page.goto(base + '/');
+  const filters = page.getByRole('group', { name: 'Filter by category' });
+  await expect(filters.getByRole('button')).toHaveCount(fixtures.length + 1);
+  await expect(filters).toHaveCSS('flex-wrap', 'wrap');
+  await expect(page.locator('html')).toHaveCSS('scrollbar-width', 'none');
+  await expect(page.locator('.dg-home')).toHaveCSS('max-width', '1040px');
+  await expect(page.locator('#main')).toHaveCSS('border-right-width', '0px');
+  const last = filters.getByRole('button').last();
+  await last.focus();
+  await expect(last).toBeFocused();
+  await last.press('Space');
+  await expect(last).toHaveAttribute('aria-pressed', 'true');
+  await page.keyboard.press('End');
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0);
+});
+
 test('the desktop menu keeps New Launch reachable in a short viewport', async ({ page }) => {
   await page.setViewportSize({ width: 1120, height: 430 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
