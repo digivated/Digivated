@@ -66,7 +66,7 @@ for (const width of [390, 1440]) {
     await expect(page.locator('[data-dir-list] .dg-comments')).toHaveAttribute('href', '/projects/listing/directory-26#feedback');
     await page.locator('[data-dir-search]').fill('A search with no matching product');
     const clearFilters = page.getByRole('button', { name: 'Clear filters' });
-    await expect(clearFilters).toHaveCSS('color', 'rgb(48, 48, 48)');
+    await expect(clearFilters).toHaveCSS('color', 'rgb(42, 42, 46)');
     await clearFilters.click();
     await expect(rows.first()).toHaveText('Directory fixture 26');
     expect(errors).toEqual([]);
@@ -89,7 +89,7 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   const rail = page.getByRole('complementary', { name: 'Digivated sidebar' });
   const activeLaunches = rail.getByRole('link', { name: 'Home', exact: true });
   await expect(activeLaunches).toHaveAttribute('aria-current', 'page');
-  await expect(activeLaunches).toHaveCSS('background-color', 'rgb(23, 23, 23)');
+  await expect(activeLaunches).toHaveCSS('background-color', 'rgb(11, 11, 12)');
   await expect(rail.getByRole('link', { name: 'New Launch' })).toHaveAttribute('href', '/submit-project');
   await expect(rail).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(rail).toHaveCSS('background-image', 'none');
@@ -147,7 +147,7 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await page.setViewportSize({ width: 390, height: 800 });
   await expect(rail.locator('.dg-rail-navigation')).toBeHidden();
   await expect(rail.locator('.dg-shell-material')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-  await expect(login).toHaveCSS('color', 'rgb(23, 23, 23)');
+  await expect(login).toHaveCSS('color', 'rgb(11, 11, 12)');
   await page.locator('.site-menu-trigger').click();
   const directory = page.getByRole('navigation', { name: 'Site menu' }).getByRole('link', { name: 'Categories', exact: true });
   await expect(directory).toBeVisible();
@@ -267,7 +267,7 @@ test('sidebar navigation keeps the content and footer aligned across destination
   await nav.getByRole('link', { name: 'News', exact: true }).click();
   await expect(page).toHaveURL(base + '/news');
   await expect(nav.getByRole('link', { name: 'News', exact: true })).toHaveAttribute('aria-current', 'page');
-  await expect(page.getByRole('contentinfo').locator('.dg-footer-group h2').first()).toHaveCSS('color', 'rgb(65, 65, 65)');
+  await expect(page.getByRole('contentinfo').locator('.dg-footer-group h2').first()).toHaveCSS('color', 'rgb(113, 113, 122)');
   expect(await shell()).toEqual(categories);
 
   await page.goBack();

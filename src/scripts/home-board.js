@@ -29,6 +29,16 @@ const local = value => { const href = safeSearchHref(value); return href && href
 const outbound = value => { try { const url = new URL(safeSearchHref(value)); if (!/^https?:$/.test(url.protocol)) return ''; if (!url.searchParams.has('ref')) url.searchParams.set('ref', 'digivated'); return url.href; } catch { return ''; } };
 const liked = p => { if (p.liked !== undefined) return p.liked; try { return localStorage.getItem('digivated:liked:project:' + p.id) === '1'; } catch { return false; } };
 const shortDate = value => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+// Compact age for row meta: "5h ago", "3d ago", "2w ago". Empty for future or invalid times.
+const timeAgo = value => {
+  const ms = Date.now() - value;
+  if (!Number.isFinite(ms) || ms < 0) return '';
+  const h = Math.floor(ms / 3_600_000);
+  if (h < 1) return 'just now';
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  return d < 14 ? `${d}d ago` : `${Math.floor(d / 7)}w ago`;
+};
 const number = new Intl.NumberFormat('en-US');
 const canAnimate = () => !reduced.matches && document.documentElement.hasAttribute('data-motion-ready');
 
@@ -99,6 +109,7 @@ function row(p, key) {
   meta.append(el('span', p.category || 'Project'));
   if (p.creator) meta.append(el('span', 'By ' + p.creator));
   if (key === 'archive' && Number.isFinite(launchTimestamp(p))) meta.append(el('span', shortDate(launchTimestamp(p))));
+  else if (Number.isFinite(launchTimestamp(p)) && timeAgo(launchTimestamp(p))) meta.append(el('span', timeAgo(launchTimestamp(p)), 'dg-meta-age'));
   main.append(meta);
   const actions = el('div', null, 'dg-actions');
   if (outbound(p.url)) {
@@ -322,11 +333,21 @@ function render({ animateSearch = false, only = null } = {}) {
     const rows = items.slice(0, limit).map(p => key === 'upcoming' ? upcomingRow(p) : row(p, key));
     const ordered = [];
     let lastDay = '';
+    const grouped = state.sort === 'recent' && key !== 'upcoming' && !(key === 'current' && state.fair.active);
+    const thisYear = `, ${new Date().getFullYear()}`;
+    const dayOf = index => { const stamp = launchTimestamp(items[index]); return Number.isFinite(stamp) ? boardDay.format(stamp).replace(thisYear, '') : ''; };
+    const perDay = new Map();
+    if (grouped) items.forEach((_, index) => { const day = dayOf(index); if (day) perDay.set(day, (perDay.get(day) || 0) + 1); });
     for (const [index, node] of rows.entries()) {
-      if (state.sort === 'recent' && key !== 'upcoming' && !(key === 'current' && state.fair.active)) {
-        const stamp = launchTimestamp(items[index]);
-        const day = Number.isFinite(stamp) ? boardDay.format(stamp) : '';
-        if (day && day !== lastDay) ordered.push(el('li', day, 'board-date-divider'));
+      if (grouped) {
+        const day = dayOf(index);
+        if (day && day !== lastDay) {
+          // Day header: the date on the left, how many launches that day on the right.
+          const divider = el('li', null, 'board-date-divider');
+          const total = perDay.get(day) || 0;
+          divider.append(el('span', day, 'board-date-label'), el('span', `${total} ${total === 1 ? 'launch' : 'launches'}`, 'board-date-count'));
+          ordered.push(divider);
+        }
         lastDay = day;
       }
       ordered.push(node);

@@ -1,0 +1,278 @@
+/* Clean board theme (November 22, 2026)
+   Soft gray canvas, white cards with gentle shadows, compact type, black accents.
+   Everything sits in @layer clean-first, which Platform/Shell declare before the
+   older theme layers, so these declarations win without selector fights.
+   Paint and spacing only: no markup, script hook or behavior changes.
+   Roll back by removing the <link href="/clean.css"> from the layouts. */
+@layer clean-first {
+
+
+/* Design tokens: the older themes read these, so every page picks them up */
+#digivated-root {
+  --fl-bg: #f6f6f8 !important;
+  --fl-panel: #ffffff !important;
+  --fl-raised: #f3f3f6 !important;
+  --fl-surface: #ffffff !important;
+  --fl-line: #ececf0 !important;
+  --fl-rule: #ececf0 !important;
+  --fl-outline: #e4e4e9 !important;
+  --fl-line-hi: #c9c9d0 !important;
+  --fl-ink: #0b0b0c !important;
+  --fl-copy: #2a2a2e !important;
+  --fl-muted: #71717a !important;
+  --fl-accent: #0b0b0c !important;
+  --fl-accent-hover: #26262b !important;
+  --fl-radius: 10px !important;
+  --fl-radius-card: 16px !important;
+  --fl-shadow: 0 1px 2px rgba(17,17,26,.04), 0 6px 20px rgba(17,17,26,.045) !important;
+  --daylight-hover: #fafafb !important;
+  --daylight-wash: #f3f3f6 !important;
+  --dg-acc: #0b0b0c !important;
+  --dg-acc-ink: #26262b !important;
+  --dg-acc-text: #0b0b0c !important;
+  --dg-acc-line: #d4d4d8 !important;
+  --cl-faint: #a1a1aa !important;
+  --cl-shadow: 0 1px 2px rgba(17,17,26,.04), 0 6px 20px rgba(17,17,26,.045) !important;
+  background: #f6f6f8 !important;
+}
+#digivated-root body { background: #f6f6f8 !important; -webkit-font-smoothing: antialiased !important; }
+
+/* Header */
+#digivated-root .dg-shell-material { background: rgba(255,255,255,.94) !important; border-bottom: 1px solid #ececf0 !important; box-shadow: none !important; }
+#digivated-root .dg-shell-brand { font-size: 15px !important; font-weight: 650 !important; letter-spacing: -.01em !important; }
+#digivated-root .dg-shell-brand img { width: 28px !important; height: 28px !important; }
+#digivated-root :is(.dg-shell-login, .dg-shell-menu-label) { font-size: 13.5px !important; font-weight: 550 !important; }
+
+/* Homepage intro */
+#digivated-root .launch-welcome-mark { width: 36px !important; height: 36px !important; }
+#digivated-root .dg-home-hero h1 { font-size: clamp(27px, 6.6vw, 40px) !important; line-height: 1.12 !important; letter-spacing: -.03em !important; font-weight: 700 !important; color: #0b0b0c !important; }
+#digivated-root .dg-home-hero .board-introduction { font-size: 14.5px !important; color: #71717a !important; }
+#digivated-root .dg-launch-search { min-height: 44px !important; border: 1px solid #ececf0 !important; border-radius: 12px !important; background: #fff !important; box-shadow: 0 1px 2px rgba(17,17,26,.04) !important; }
+#digivated-root .dg-launch-search:focus-within { border-color: #c9c9d0 !important; box-shadow: 0 0 0 3px rgba(11,11,12,.06) !important; }
+#digivated-root .dg-launch-search input { font-size: 14px !important; }
+#digivated-root .dg-btn-primary { min-height: 44px !important; padding-inline: 16px !important; border-radius: 12px !important; border-color: #0b0b0c !important; background: #0b0b0c !important; color: #fff !important; font-size: 14px !important; font-weight: 600 !important; box-shadow: 0 1px 2px rgba(0,0,0,.14) !important; }
+#digivated-root .dg-btn-primary:hover { background: #26262b !important; }
+
+/* Stats card */
+#digivated-root .dg-hero-stats { border: 1px solid #ececf0 !important; border-radius: 16px !important; background: #fff !important; box-shadow: var(--cl-shadow) !important; overflow: hidden !important; }
+#digivated-root .dg-hero-stat { border-color: #ececf0 !important; padding-block: 12px !important; }
+#digivated-root .dg-hero-stat dt { font-size: 11.5px !important; color: #71717a !important; font-weight: 500 !important; }
+#digivated-root .dg-hero-stat dd { font-size: 17px !important; font-weight: 650 !important; color: #0b0b0c !important; letter-spacing: -.01em !important; }
+
+/* Sort control: gray track with a white thumb */
+#digivated-root .board-sort { gap: 2px !important; padding: 3px !important; border-radius: 11px !important; background: #ebebef !important; }
+#digivated-root .board-sort button { min-height: 30px !important; padding: 0 12px !important; border: 0 !important; border-radius: 8px !important; background: transparent !important; color: #71717a !important; font-size: 13px !important; font-weight: 550 !important; box-shadow: none !important; }
+#digivated-root .board-sort button[aria-pressed="true"] { background: #fff !important; color: #0b0b0c !important; box-shadow: 0 1px 2px rgba(17,17,26,.1) !important; }
+#digivated-root .board-sort [data-board-results] { font-size: 12px !important; color: #71717a !important; padding-inline: 10px 8px !important; }
+
+/* Category chips */
+#digivated-root .board-categories { gap: 6px !important; }
+#digivated-root .board-categories button { min-height: 30px !important; padding: 0 11px !important; border: 1px solid #ececf0 !important; border-radius: 999px !important; background: #fff !important; color: #2a2a2e !important; font-size: 12.5px !important; font-weight: 500 !important; box-shadow: none !important; }
+#digivated-root .board-categories button[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
+#digivated-root .board-category-count { font-size: 11px !important; color: #a1a1aa !important; }
+#digivated-root .board-categories button[aria-pressed="true"] .board-category-count { color: rgba(255,255,255,.6) !important; }
+
+/* Launch lists: one soft card per day, rows split by hairlines */
+#digivated-root .dg-list-title { font-size: 17px !important; font-weight: 650 !important; letter-spacing: -.015em !important; }
+#digivated-root :is(.dg-list-count, .dg-list-note) { font-size: 12px !important; color: #71717a !important; }
+#digivated-root .dg-list-rows { gap: 0 !important; }
+#digivated-root .board-date-divider { margin: 18px 2px 8px !important; padding: 0 !important; border: 0 !important; background: none !important; font-size: 13px !important; font-weight: 600 !important; color: #0b0b0c !important; }
+#digivated-root .board-date-divider:first-child { margin-top: 8px !important; }
+
+#digivated-root .dg-row:not(.dg-dir-row) {
+  grid-template-columns: 40px auto auto minmax(0, 1fr) auto !important;
+  grid-template-areas: "logo main main main vote" "logo visit comments . vote" !important;
+  column-gap: 12px !important;
+  row-gap: 5px !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 12px 12px 12px 14px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 1px #ececf0 !important;
+  transform: none !important;
+}
+#digivated-root .dg-row:not(.dg-dir-row):not(.is-loading) { padding-block: 12px !important; }
+#digivated-root .dg-list-rows > .dg-row:first-child,
+#digivated-root .board-date-divider + .dg-row { border-top-left-radius: 16px !important; border-top-right-radius: 16px !important; }
+#digivated-root .dg-list-rows > .dg-row:last-child,
+#digivated-root .dg-list-rows > .dg-row:has(+ :not(.dg-row)) { border-bottom-left-radius: 16px !important; border-bottom-right-radius: 16px !important; box-shadow: 0 0 0 1px #ececf0, 0 8px 18px -10px rgba(17,17,26,.12) !important; }
+#digivated-root .dg-row:not(.dg-dir-row):hover { background: #fafafb !important; }
+
+#digivated-root .dg-row:not(.dg-dir-row) .dg-logo-link { grid-area: logo !important; align-self: start !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-logo { width: 40px !important; height: 40px !important; border-radius: 10px !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-main { grid-area: main !important; min-width: 0 !important; }
+#digivated-root .dg-row .dg-main h3 { margin: 0 !important; font-size: 14.5px !important; line-height: 1.3 !important; font-weight: 650 !important; letter-spacing: -.01em !important; }
+#digivated-root .dg-row .dg-tagline { margin-top: 2px !important; font-size: 13px !important; line-height: 1.4 !important; color: #71717a !important; display: -webkit-box !important; -webkit-line-clamp: 1 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
+#digivated-root .dg-row .dg-meta { margin-top: 3px !important; font-size: 11.5px !important; color: #a1a1aa !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-actions { display: contents !important; }
+#digivated-root .dg-row :is(.dg-visit, .dg-comments) { min-height: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; font-size: 12px !important; font-weight: 500 !important; color: #71717a !important; gap: 4px !important; justify-self: start !important; }
+#digivated-root .dg-row :is(.dg-visit, .dg-comments):hover { color: #0b0b0c !important; }
+#digivated-root .dg-row :is(.dg-visit, .dg-comments) svg { width: 13px !important; height: 13px !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-visit { grid-area: visit !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-comments { grid-area: comments !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-actions > :is(button, .dg-notify, [data-notify]) { grid-area: vote !important; justify-self: end !important; }
+#digivated-root .dg-row .dg-vote { flex-direction: column !important; gap: 1px !important; width: 44px !important; min-width: 44px !important; height: 50px !important; min-height: 0 !important; padding: 0 !important; border: 1px solid #ececf0 !important; border-radius: 12px !important; background: #fff !important; color: #0b0b0c !important; font-size: 13px !important; }
+#digivated-root .dg-row .dg-vote:hover { border-color: #c9c9d0 !important; background: #fafafb !important; color: #0b0b0c !important; }
+#digivated-root .dg-row .dg-vote[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
+#digivated-root .dg-row .dg-vote .dg-vote-caret { font-size: 10px !important; line-height: 1 !important; }
+#digivated-root .dg-row .dg-vote strong { font-size: 13px !important; font-weight: 650 !important; }
+
+/* Upcoming launches: compact notify pill in the vote slot */
+#digivated-root .dg-row .dg-watch { min-height: 32px !important; height: 32px !important; padding: 0 11px !important; gap: 5px !important; border: 1px solid #ececf0 !important; border-radius: 999px !important; background: #fff !important; color: #2a2a2e !important; font-size: 12px !important; font-weight: 550 !important; box-shadow: none !important; white-space: nowrap !important; }
+#digivated-root .dg-row .dg-watch small { font-size: 11px !important; color: #a1a1aa !important; }
+#digivated-root .dg-row .dg-watch[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
+#digivated-root .dg-row .dg-badge-date { font-size: 11px !important; color: #a1a1aa !important; font-weight: 500 !important; }
+
+
+/* Page titles and breadcrumbs across the site */
+#digivated-root main h1:not(#dg-home-title) { font-size: clamp(26px, 6vw, 34px) !important; line-height: 1.15 !important; letter-spacing: -.028em !important; font-weight: 700 !important; color: #0b0b0c !important; }
+#digivated-root .site-breadcrumbs { gap: 6px !important; font-size: 12px !important; color: #a1a1aa !important; }
+#digivated-root .site-breadcrumbs a { color: #71717a !important; }
+#digivated-root .site-breadcrumbs [aria-current="page"] { padding: 3px 9px !important; border: 1px solid #ececf0 !important; border-radius: 7px !important; background: #fff !important; color: #0b0b0c !important; font-weight: 550 !important; box-shadow: 0 1px 2px rgba(17,17,26,.04) !important; }
+
+/* Form fields: soft filled inputs, sentence-case labels */
+#digivated-root main :is(input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="search"], input:not([type]), textarea, select):not(.dg-launch-search input) { border: 1px solid transparent !important; border-radius: 10px !important; background-color: #f3f3f6 !important; color: #0b0b0c !important; font-size: 14px !important; box-shadow: none !important; }
+#digivated-root main :is(input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="search"], input:not([type]), textarea, select):not(.dg-launch-search input):focus { border-color: #c9c9d0 !important; background-color: #fff !important; box-shadow: 0 0 0 3px rgba(11,11,12,.06) !important; outline: none !important; }
+#digivated-root main :is(input, textarea)::placeholder { color: #a1a1aa !important; }
+#digivated-root main label:not(:has(input[type="checkbox"], input[type="radio"])) { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; font-weight: 550 !important; color: #2a2a2e !important; }
+
+/* Segmented controls (thread sort, tab lists) match the board sort */
+#digivated-root :is(.dg-forum-sort, [role="tablist"]) { gap: 2px !important; padding: 3px !important; border: 0 !important; border-radius: 11px !important; background: #ebebef !important; width: max-content !important; max-width: 100% !important; }
+#digivated-root :is(.dg-forum-sort, [role="tablist"]) > :is(button, a, [role="tab"]) { min-height: 30px !important; padding: 0 12px !important; border: 0 !important; border-radius: 8px !important; background: transparent !important; color: #71717a !important; font-size: 13px !important; font-weight: 550 !important; box-shadow: none !important; }
+#digivated-root :is(.dg-forum-sort, [role="tablist"]) > :is([aria-pressed="true"], [aria-selected="true"], [aria-current="page"]) { background: #fff !important; color: #0b0b0c !important; box-shadow: 0 1px 2px rgba(17,17,26,.1) !important; }
+
+/* Footer: one black card, like a newsletter block */
+#digivated-root .dg-site-footer { border: 0 !important; border-radius: 20px !important; background: #0b0b0c !important; color: #d4d4d8 !important; box-shadow: 0 10px 30px -12px rgba(0,0,0,.35) !important; }
+#digivated-root .dg-site-footer::before, #digivated-root .dg-site-footer::after { background: none !important; border: 0 !important; box-shadow: none !important; }
+#digivated-root .dg-footer-inner { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+#digivated-root .dg-site-footer :is(.dg-footer-digest h2, .dg-footer-brand) { color: #fff !important; }
+#digivated-root .dg-footer-brand img { filter: invert(1) !important; }
+#digivated-root .dg-site-footer :is(p, small, span) { color: #a1a1aa !important; }
+#digivated-root .dg-site-footer a:not(.dg-footer-brand, .dg-footer-credit) { color: #d4d4d8 !important; }
+#digivated-root .dg-site-footer a:not(.dg-footer-brand, .dg-footer-credit):hover { color: #fff !important; }
+#digivated-root .dg-site-footer .dg-footer-group h2 { font-size: 12px !important; font-weight: 550 !important; color: #71717a !important; text-transform: none !important; letter-spacing: 0 !important; }
+#digivated-root .dg-site-footer .dg-footer-email-link { border: 1px solid #2e2e33 !important; border-radius: 10px !important; background: #18181b !important; color: #fff !important; }
+#digivated-root .dg-site-footer :is(.dg-footer-bottom, .dg-footer-groups, .dg-footer-intro) { border-color: #232327 !important; }
+#digivated-root .dg-site-footer .dg-footer-credit, #digivated-root .dg-site-footer .dg-footer-credit * { color: #0b0b0c !important; }
+
+/* Docked top bar below the sidebar breakpoint (1120px): flush, square, solid white, hairline under it */
+@media (max-width: 1119px) {
+  #digivated-root [data-site-header] { position: sticky !important; top: 0 !important; z-index: 50 !important; margin: 0 !important; }
+  #digivated-root .dg-shell-bar { min-height: 52px !important; padding: env(safe-area-inset-top) 16px 0 !important; }
+  #digivated-root .dg-shell-material { inset: 0 !important; border: 0 !important; border-bottom: 1px solid #ececf0 !important; border-radius: 0 !important; background: #ffffff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: none !important; }
+  #digivated-root .dg-reading-track { left: 0 !important; right: 0 !important; width: auto !important; top: auto !important; bottom: -1px !important; height: 2px !important; }
+  #digivated-root .dg-reading-track::after { background: #0b0b0c !important; opacity: 1 !important; }
+  #digivated-root .site-menu-panel { left: 10px !important; right: 10px !important; width: auto !important; top: calc(52px + env(safe-area-inset-top) + 8px) !important; }
+}
+/* Desktop side rail: same hairline as the cards */
+#digivated-root .dg-workspace-rail { border-right-color: #ececf0 !important; background: #ffffff !important; }
+
+/* Sidebar / menu links: no tree connector lines, black pill for the current page */
+#digivated-root .navigation-tree :is(li, a)::before, #digivated-root .navigation-tree :is(li, a)::after { content: none !important; display: none !important; }
+#digivated-root .navigation-tree { margin: 0 !important; padding: 0 !important; gap: 2px !important; }
+#digivated-root .navigation-tree li { margin: 0 !important; padding: 0 !important; }
+#digivated-root .navigation-tree a { min-height: 38px !important; padding: 0 12px !important; gap: 10px !important; border-radius: 10px !important; font-size: 14px !important; font-weight: 550 !important; color: #3f3f46 !important; }
+#digivated-root .navigation-tree a:hover { background: #f3f3f6 !important; color: #0b0b0c !important; }
+#digivated-root .navigation-tree a[aria-current="page"] { background: #0b0b0c !important; color: #fff !important; }
+
+/* ---- Board rows, reference-style (Nov 22, second pass) ---- */
+/* Day header: date left, launch count right */
+#digivated-root .board-date-divider { display: flex !important; align-items: baseline !important; justify-content: space-between !important; gap: 12px !important; margin: 22px 4px 10px !important; }
+#digivated-root .board-date-label { font-size: 15px !important; font-weight: 700 !important; letter-spacing: -.015em !important; color: #0b0b0c !important; }
+#digivated-root .board-date-count { font-size: 12.5px !important; font-weight: 500 !important; color: #8a8a93 !important; white-space: nowrap !important; }
+
+/* Long cards: rows fill the content width; the upvote is a full-height column on the right */
+#digivated-root .dg-list-rows { width: 100% !important; max-width: none !important; }
+#digivated-root .dg-row:not(.dg-dir-row) { position: relative !important; overflow: hidden !important; padding: 14px 0 14px 16px !important; column-gap: 14px !important; grid-template-columns: 44px auto auto minmax(0, 1fr) auto !important; }
+#digivated-root .dg-row:not(.dg-dir-row):not(.is-loading) { padding-block: 14px !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-logo { width: 44px !important; height: 44px !important; border-radius: 12px !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-logo-link { align-self: center !important; }
+#digivated-root .dg-row .dg-vote { align-self: stretch !important; justify-content: center !important; gap: 3px !important; width: 60px !important; min-width: 60px !important; height: auto !important; margin-block: -14px !important; padding: 0 !important; border: 0 !important; border-left: 1px dashed #e4e4e9 !important; border-radius: 0 !important; background: transparent !important; color: #0b0b0c !important; }
+#digivated-root .dg-row .dg-vote:hover { background: #f6f6f8 !important; border-color: #e4e4e9 !important; color: #0b0b0c !important; }
+#digivated-root .dg-row .dg-vote[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
+#digivated-root .dg-row .dg-vote .dg-vote-caret { font-size: 11px !important; }
+#digivated-root .dg-row .dg-vote strong { font-size: 14px !important; font-weight: 650 !important; }
+#digivated-root .dg-row .dg-watch { margin-right: 14px !important; }
+
+/* Name, tagline, meta */
+#digivated-root .dg-row .dg-main h3 { display: flex !important; flex-wrap: wrap !important; align-items: center !important; gap: 4px 7px !important; font-size: 15px !important; }
+#digivated-root .dg-row .dg-tagline { font-size: 13.5px !important; color: #52525b !important; }
+#digivated-root .dg-row .dg-meta { display: flex !important; flex-wrap: nowrap !important; gap: 0 6px !important; min-width: 0 !important; font-size: 12px !important; color: #a1a1aa !important; }
+#digivated-root .dg-row .dg-meta span { display: inline !important; flex: none !important; }
+#digivated-root .dg-row .dg-meta span + span::before { content: "·" !important; margin-right: 6px !important; color: #d4d4d8 !important; }
+#digivated-root .dg-row .dg-meta .dg-meta-age { order: 2 !important; }
+#digivated-root .dg-row .dg-meta span:not(:first-child):not(.dg-meta-age) { order: 3 !important; flex: 0 1 auto !important; min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+
+/* Labels next to the name: small tinted pills */
+#digivated-root .dg-row .dg-badge { display: inline-flex !important; align-items: center !important; gap: 4px !important; height: 20px !important; padding: 0 7px !important; border: 0 !important; border-radius: 6px !important; background: #f1f1f4 !important; color: #3f3f46 !important; font-size: 11px !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; line-height: 1 !important; }
+#digivated-root .dg-row .dg-badge-medal { background: #fdf3d7 !important; color: #8a5a00 !important; }
+#digivated-root .dg-row .dg-badge-medal.is-silver { background: #eef0f3 !important; color: #4b5563 !important; }
+#digivated-root .dg-row .dg-badge-medal.is-bronze { background: #f8eadf !important; color: #8a4b1c !important; }
+#digivated-root .dg-row .dg-badge-boost { background: #eef4ff !important; color: #1d4ed8 !important; }
+#digivated-root .dg-row .dg-badge-member { background: #0b0b0c !important; color: #fff !important; }
+#digivated-root .dg-row .dg-badge-date { height: auto !important; padding: 0 !important; background: none !important; color: #a1a1aa !important; font-weight: 500 !important; }
+
+/* ---- Top bar like the reference: brand left, round avatar and a small square menu button right ---- */
+#digivated-root .site-menu-trigger { width: 36px !important; height: 36px !important; min-height: 36px !important; padding: 0 !important; justify-content: center !important; border: 0 !important; border-radius: 10px !important; background: #f1f1f4 !important; color: #0b0b0c !important; }
+#digivated-root .site-menu-trigger:hover, #digivated-root .dg-shell-disclosure[open] .site-menu-trigger { background: #e7e7ec !important; }
+#digivated-root .dg-shell-menu-label { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; }
+#digivated-root .dg-shell-login { min-height: 34px !important; padding: 0 13px !important; border: 1px solid #e4e4e9 !important; border-radius: 999px !important; background: #fff !important; color: #0b0b0c !important; font-size: 13px !important; font-weight: 600 !important; }
+#digivated-root .dg-shell-avatar-trigger { padding: 0 !important; border: 0 !important; background: none !important; gap: 0 !important; }
+#digivated-root .dg-shell-avatar { width: 34px !important; height: 34px !important; border-radius: 999px !important; box-shadow: 0 0 0 2px #fff, 0 0 0 3px #e4e4e9 !important; }
+#digivated-root :is(.dg-shell-account-caption, .dg-shell-account-caret) { display: none !important; }
+#digivated-root .dg-shell-icon { width: 36px !important; height: 36px !important; border: 0 !important; border-radius: 10px !important; background: transparent !important; }
+#digivated-root .dg-shell-tools { gap: 8px !important; }
+
+/* ---- Footer like the reference: dark sheet docked to the bottom, rounded on top, big faded wordmark ---- */
+#digivated-root .dg-site-footer { position: relative !important; overflow: hidden !important; margin-bottom: 0 !important; border-radius: 22px 22px 0 0 !important; padding-bottom: clamp(70px, 14vw, 150px) !important; }
+#digivated-root .dg-site-footer::after { content: "digivated" / "" !important; position: absolute !important; left: 50% !important; bottom: clamp(-26px, -2.4vw, -10px) !important; transform: translateX(-50%) !important; display: block !important; font-size: clamp(84px, 19vw, 230px) !important; font-weight: 800 !important; letter-spacing: -.06em !important; line-height: 1 !important; white-space: nowrap !important; color: rgba(255,255,255,.06) !important; pointer-events: none !important; }
+#digivated-root .dg-site-footer .dg-footer-inner { position: relative !important; z-index: 1 !important; }
+#digivated-root .dg-row .dg-vote { display: flex !important; flex-direction: column !important; align-items: center !important; }
+#digivated-root .dg-row .dg-vote > * { display: block !important; }
+@media (max-width: 520px) {
+  #digivated-root .dg-row .dg-meta span:not(:first-child):not(.dg-meta-age) { display: none !important; }
+}
+
+/* ---- Footer, third pass: wider and shorter, like the reference ---- */
+/* Phones: nearly edge to edge, three link columns. Desktop: spans the whole content area,
+   intro on the left and links on the right, so it's about 400px tall instead of 600+. */
+#digivated-root .dg-site-footer { align-self: stretch !important; box-sizing: border-box !important; width: auto !important; max-width: none !important; margin: 28px 8px 0 !important; padding: 24px 20px 56px !important; }
+#digivated-root .dg-footer-intro { gap: 8px !important; }
+#digivated-root .dg-footer-brand { font-size: 14px !important; }
+#digivated-root .dg-footer-brand img { width: 22px !important; height: 22px !important; }
+#digivated-root .dg-footer-digest { display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: space-between !important; gap: 12px 16px !important; }
+#digivated-root .dg-footer-digest h2 { font-size: 19px !important; line-height: 1.2 !important; letter-spacing: -.02em !important; margin: 0 !important; }
+#digivated-root .dg-footer-digest p { font-size: 13px !important; margin: 3px 0 0 !important; }
+#digivated-root .dg-footer-email-link { min-height: 36px !important; padding: 0 12px !important; font-size: 13px !important; }
+#digivated-root .dg-footer-groups { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 12px !important; margin-top: 20px !important; }
+#digivated-root .dg-footer-group h2 { margin: 0 0 8px !important; }
+#digivated-root .dg-footer-group ul { display: grid !important; gap: 7px !important; margin: 0 !important; padding: 0 !important; }
+#digivated-root .dg-footer-group li { margin: 0 !important; padding: 0 !important; line-height: 1.3 !important; }
+#digivated-root .dg-footer-group a { display: inline !important; min-height: 0 !important; padding: 0 !important; font-size: 13px !important; }
+#digivated-root .dg-footer-bottom { flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; text-align: left !important; gap: 10px 16px !important; margin-top: 18px !important; padding-top: 14px !important; }
+#digivated-root .dg-footer-bottom > * { margin-inline: 0 !important; }
+#digivated-root .dg-footer-feature { display: flex !important; align-items: center !important; gap: 8px !important; }
+#digivated-root .dg-footer-feature > span { font-size: 12px !important; }
+#digivated-root .dg-footer-utility { display: flex !important; gap: 12px !important; }
+#digivated-root .dg-footer-utility a { font-size: 13px !important; min-height: 0 !important; padding: 0 !important; }
+#digivated-root .dg-footer-bottom small { font-size: 12px !important; margin-left: auto !important; }
+#digivated-root .dg-site-footer::after { font-size: clamp(80px, 22vw, 260px) !important; bottom: clamp(-30px, -2.6vw, -12px) !important; }
+@media (min-width: 900px) {
+  #digivated-root .dg-footer-inner { display: grid !important; grid-template-columns: minmax(260px, 1fr) minmax(0, 1.6fr) !important; column-gap: 48px !important; align-items: start !important; }
+  #digivated-root .dg-footer-digest { flex-direction: column !important; align-items: flex-start !important; }
+  #digivated-root .dg-footer-groups { margin-top: 0 !important; }
+  #digivated-root .dg-footer-bottom { grid-column: 1 / -1 !important; }
+}
+@media (min-width: 1120px) {
+  #digivated-root .dg-site-footer { margin: 36px 12px 0 !important; padding: 32px 36px 110px !important; }
+  #digivated-root .dg-footer-group a { font-size: 13.5px !important; }
+}
+
+/* iOS Safari zooms into any field under 16px when tapped, so phones and tablets get 16px text in inputs */
+@media (max-width: 1119px), (pointer: coarse) {
+  #digivated-root#digivated-root :is(input, textarea, select):not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"]) { font-size: 16px !important; }
+}
+
+}
