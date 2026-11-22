@@ -1,21 +1,13 @@
 ---
-import { primaryLinks, menuGroups } from '../data/site-navigation.mjs';
+import { primaryLinks, isNavigationCurrent } from '../data/site-navigation.mjs';
+import NavigationBranches from './NavigationBranches.astro';
 import UiIcon from './UiIcon.astro';
 import ReactBits from './ReactBits.astro';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const current = (href: string) => path === href || (href !== '/' && path.startsWith(href + '/')) ||
-  (href === '/discover' && (path === '/launch-template' || path.startsWith('/projects/'))) ||
-  (href === '/shop' && ['/membership', '/products', '/promote', '/founding-members'].includes(path));
-const icons = {
-  '/': 'layers', '/discover': 'grid', '/threads': 'comment', '/news': 'book',
-  '/winners': 'chart', '/resources': 'tool', '/invstr': 'chart',
-  '/badges': 'check', '/points': 'sparkle', '/shop': 'bookmark',
-};
-const groups = [{ label: '', links: primaryLinks }, ...menuGroups].map(({ label, links }) => ({
-  label,
-  links: links.map(([href, title]) => ({ href, label: title, current: current(href), icon: icons[href as keyof typeof icons] || 'arrow' })),
-}));
+const current = (href: string) => isNavigationCurrent(path, href);
+const icons: Record<string, string> = { '/': 'layers', '/discover': 'grid', '/threads': 'comment' };
+const links = primaryLinks.map(([href, label]) => ({ href, label, current: current(href), icon: icons[href] || 'arrow' }));
 ---
 <aside class="dg-workspace-rail" aria-label="Digivated sidebar">
   <a class="dg-rail-brand" href="/" aria-label="Digivated home">
@@ -23,7 +15,10 @@ const groups = [{ label: '', links: primaryLinks }, ...menuGroups].map(({ label,
     <span>Digivated</span>
   </a>
   <slot/>
-  <ReactBits surface="RailLinks" groups={groups}/>
+  <nav class="dg-rail-navigation" aria-label="Workspace navigation">
+    <div class="dg-rail-primary"><ReactBits surface="RailLinks" links={links}/></div>
+    <NavigationBranches path={path}/>
+  </nav>
   <div class="dg-rail-footer">
     <a class="dg-rail-about" href="/about" aria-current={current('/about') ? 'page' : undefined}>About Digivated <UiIcon name="arrow" size={14}/></a>
     <ReactBits surface="GlassAction" className="dg-rail-submit" href="/submit-project" label="Submit a launch" icon="upload" light aria-current={current('/submit-project') ? 'page' : undefined}/>

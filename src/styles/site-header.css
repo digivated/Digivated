@@ -144,9 +144,9 @@
   }
 
   .dg-shell .site-menu-primary { display: none; }
-  .dg-shell .site-menu-secondary { display: grid; gap: 4px; }
-  .dg-shell .site-menu-branch { min-width: 0; }
-  .dg-shell .site-menu-branch-trigger {
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-secondary { display: grid; gap: 4px; }
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-branch { min-width: 0; }
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-branch-trigger {
     display: flex !important;
     align-items: center;
     gap: 9px;
@@ -161,24 +161,24 @@
     list-style: none;
     cursor: pointer;
   }
-  .dg-shell .site-menu-branch-trigger::marker { content: ''; }
-  .dg-shell .site-menu-branch-trigger::-webkit-details-marker { display: none; }
-  .dg-shell .site-menu-branch-trigger:is(:hover,:focus-visible) { background: var(--shell-active) !important; }
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-branch-trigger::marker { content: ''; }
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-branch-trigger::-webkit-details-marker { display: none; }
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-branch-trigger:is(:hover,:focus-visible) { background: var(--shell-active) !important; }
   .site-menu-glyph { display: block; flex: none; }
   .site-menu-branch-chevron { margin-inline-start: auto; }
   .site-menu-branch[open] > summary .site-menu-branch-chevron { rotate: 180deg; }
 
-  .dg-shell .site-menu-branch-links {
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-branch-links {
     margin: 0 !important;
     padding: 0 !important;
     list-style: none !important;
   }
-  .dg-shell .site-menu-branch-links > li {
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-branch-links > li {
     position: relative;
     margin: 0 !important;
     padding-inline-start: 32px;
   }
-  .dg-shell .site-menu-connector {
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-connector {
     position: absolute;
     inset-block: 0;
     inset-inline-start: 15px;
@@ -188,13 +188,13 @@
     stroke-width: 1.5;
     pointer-events: none;
   }
-  .dg-shell .site-menu-branch-links > li:has(a:is(:hover,:focus-visible,[aria-current="page"])) .site-menu-elbow {
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-branch-links > li:has(a:is(:hover,:focus-visible,[aria-current="page"])) .site-menu-elbow {
     stroke: var(--shell-muted) !important;
   }
-  .dg-shell .site-menu-connector:dir(rtl) { scale: -1 1; }
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-connector:dir(rtl) { scale: -1 1; }
   @media (prefers-reduced-motion: no-preference) {
     html[data-motion-ready] .site-menu-branch-chevron { transition: rotate 240ms ease; }
-    html[data-motion-ready] .dg-shell-disclosure[open] .site-menu-branch[open]:not(:has(a:focus-visible)) .site-menu-connector {
+    html[data-motion-ready] :is(.dg-shell-disclosure[open],.dg-rail-navigation) .site-menu-branch[open]:not(:has(a:focus-visible)) .site-menu-connector {
       animation: dg-branch-draw 295ms cubic-bezier(.22,1,.36,1) var(--branch-delay, 0ms) both;
     }
     .site-menu-branch-links > li:nth-child(2) { --branch-delay: 35ms; }
@@ -215,7 +215,7 @@
       html[data-motion-ready] .site-menu-branch:has(:focus-visible)::details-content { transition: none; }
     }
   }
-  .dg-shell :is(.site-menu-links,.dg-shell-account-panel) :is(a,button) {
+  :is(.dg-shell .dg-shell-account-panel,.dg-shell .site-menu-links,.dg-rail-navigation .site-menu-links) :is(a,button) {
     display: flex !important;
     align-items: center;
     justify-content: flex-start;
@@ -230,12 +230,12 @@
     text-align: start;
     text-decoration: none !important;
   }
-  .dg-shell :is(.site-menu-links,.dg-shell-account-panel) :is(a,button):is(:hover,[aria-current="page"]) {
+  :is(.dg-shell .dg-shell-account-panel,.dg-shell .site-menu-links,.dg-rail-navigation .site-menu-links) :is(a,button):is(:hover,[aria-current="page"]) {
     background: var(--shell-active) !important;
     color: var(--shell-accent) !important;
   }
-  .dg-shell .site-menu-branch-links a { padding-inline: 6px !important; }
-  .dg-shell .site-menu-links a[aria-current="page"] {
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-branch-links a { padding-inline: 6px !important; }
+  :is(.dg-shell,.dg-rail-navigation) .site-menu-links a[aria-current="page"] {
     font-weight: 680;
     text-decoration: underline !important;
     text-underline-offset: 4px;
