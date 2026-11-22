@@ -1,0 +1,51 @@
+@layer workspace-preview {
+  .platform #main > .dg-home-hero {
+    padding: clamp(22px, 4vw, 56px) 0 10px !important;
+    margin: 0 auto !important;
+    max-width: 820px;
+    text-align: center;
+  }
+
+  .launch-welcome {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+  }
+
+  .launch-welcome-mark { display: block; object-fit: contain; }
+  .launch-welcome #dg-home-title {
+    margin: 0 !important;
+    font-size: clamp(30px, 4.2vw, 50px) !important;
+    font-weight: 740 !important;
+    line-height: 1.08 !important;
+    letter-spacing: -.05em;
+    text-wrap: balance;
+  }
+
+  .launch-welcome .dg-hero-actions {
+    display: grid !important;
+    align-items: center;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px !important;
+    width: min(100%, 550px);
+    margin-block: 6px !important;
+  }
+
+  .launch-welcome .dg-btn { min-height: 44px !important; white-space: nowrap; }
+  .launch-welcome .dg-launch-search { max-width: none; min-width: 0; }
+  .dg-board [data-board-section][hidden], [data-board-jumps][hidden] { display: none !important; }
+
+  .board-sort [data-board-results] {
+    margin-inline-start: auto;
+    padding-inline-end: 4px;
+    color: var(--fl-muted);
+    font-size: 12px;
+    text-align: end;
+  }
+
+  .home-refresh .dg-board .dg-list-head {
+    border-bottom: 1px solid var(--fl-line);
+    padding-bottom: 6px !important;
+    margin-bottom: 8px;
+  }
+}

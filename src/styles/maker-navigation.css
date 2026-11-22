@@ -1,4 +1,17 @@
 @layer workspace-preview {
+  html[data-theme="daylight"] #main > :is(.fl-dash-intro,.fl-dash,.submission-intro),
+  html[data-theme="daylight"] #main:has(> .fl-dash-intro) > .site-breadcrumbs {
+    width: min(100%, 740px) !important;
+    max-width: 740px !important;
+    margin-inline: auto !important;
+  }
+
+  #main > :is(.fl-dash-intro,.submission-intro) h1 {
+    font-size: clamp(30px, 4vw, 44px) !important;
+    line-height: 1.12 !important;
+    letter-spacing: -.04em;
+  }
+
   .maker-navigation {
     display: flex !important;
     flex-wrap: wrap;

@@ -16,7 +16,7 @@ const home = document.querySelector('[data-spots]');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const WEEK = 7 * 86_400_000;
 const PAGE = 10;
-const defaultLimits = { current: PAGE, upcoming: 5, previous: 5, archive: 5 };
+const defaultLimits = { current: PAGE, upcoming: 5, previous: 5, archive: 5, top: PAGE };
 
 const el = (tag, text, className) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node; };
 
@@ -239,6 +239,7 @@ async function toggleVote(p, button, li) {
 function sectionNote(key, items) {
   const howLink = () => Object.assign(el('a', 'How launches are ranked', 'dg-note-link'), { href: '/winners#how-ranking-works' });
   if (key === 'archive') return [];
+  if (key === 'top') return state.fair.active ? ['This week’s launches join the ranking when voting counts are revealed.'] : [];
   if (key === 'upcoming') {
     if (!Number.isFinite(Date.parse(items[0].launchAt))) return [];
     const date = el('time', freeLaunchDay(items[0].launchAt));
@@ -287,10 +288,18 @@ const boardDay = new Intl.DateTimeFormat('en-US', { weekday:'long', month:'short
 function render({ animateSearch = false, only = null } = {}) {
   const g = groups();
   const searching = Boolean(state.query || state.category);
+  const top = state.sort === 'top';
+  const activeGroups = top ? {
+    top: [...(state.fair.active ? [] : g.current.filter(project => !project.fresh)), ...g.previous, ...g.archive]
+      .sort((a, b) => (Number(b.votes?.all) || 0) - (Number(a.votes?.all) || 0)
+        || launchTimestamp(b) - launchTimestamp(a) || a.id.localeCompare(b.id)),
+  } : g;
+  const jumps = document.querySelector('[data-board-jumps]');
+  if (jumps) jumps.hidden = top;
   const categories = document.querySelector('[data-board-categories]');
   if (categories) {
     const counts = new Map();
-    for (const item of Object.values(g).flat()) {
+    for (const item of Object.values(activeGroups).flat()) {
       if (item.category) counts.set(item.category, (counts.get(item.category) || 0) + 1);
     }
     const names = ['', ...[...counts.keys()].sort((a,b) => counts.get(b) - counts.get(a) || a.localeCompare(b))];
@@ -310,21 +319,21 @@ function render({ animateSearch = false, only = null } = {}) {
     for (const button of filters.querySelectorAll('[data-board-sort]')) button.setAttribute('aria-pressed', String(button.dataset.boardSort === state.sort));
     filters.hidden = false;
   }
-  const total = Object.values(g).reduce((sum, items) => sum + items.length, 0);
+  const total = Object.values(activeGroups).reduce((sum, items) => sum + items.length, 0);
   if (!only) {
     const rising = board.querySelector('[data-rising]');
-    if (searching && rising) rising.hidden = true;
+    if ((searching || top) && rising) rising.hidden = true;
     else renderRising();
   }
   let matches = 0;
   const searchRows = [];
   for (const section of board.querySelectorAll('[data-board-section]')) {
-    const key = section.dataset.boardSection, all = g[key] || [], limit = state.limits[key];
+    const key = section.dataset.boardSection, all = activeGroups[key] || [], limit = state.limits[key];
     const items = all.filter(project => (!state.category || project.category === state.category) && (!state.query || matchesQuery(project, state.query)));
     if (state.sort === 'recent' && key !== 'upcoming' && !(key === 'current' && state.fair.active)) items.sort((a,b) => launchTimestamp(b) - launchTimestamp(a));
     matches += items.length;
     if (only && key !== only) continue;
-    section.hidden = !items.length && (searching || key === 'upcoming');
+    section.hidden = !Object.hasOwn(activeGroups, key) || (!items.length && (searching || key === 'upcoming'));
     if (section.hidden) continue;
     const count = section.querySelector('[data-section-count]');
     const note = section.querySelector('[data-section-note]');
@@ -362,6 +371,8 @@ function render({ animateSearch = false, only = null } = {}) {
     };
     more.textContent = `View ${Math.min(PAGE, items.length - limit)} more`;
   }
+  const results = document.querySelector('[data-board-results]');
+  if (results) results.textContent = `${number.format(matches)} ${matches === 1 ? 'launch' : 'launches'}`;
   if (animateSearch) revealRows(searchRows);
   const searchStatus = document.querySelector('[data-launch-search-status]');
   if (searchStatus) {

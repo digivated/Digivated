@@ -391,6 +391,6 @@
 }
 
 @layer workspace-preview {
-  .home-refresh .board-date-divider {padding:8px 14px !important;margin:0 !important;background:#f7f7f7 !important;color:#444 !important;font-size:12px !important;font-weight:600;list-style:none;}
-  .home-refresh .board-date-divider:first-child {border-radius:14px 14px 0 0;}
+  .home-refresh .board-date-divider {padding:6px 0 2px !important;margin:0 !important;background:transparent !important;color:#444 !important;font-size:12px !important;font-weight:600;list-style:none;}
+  .home-refresh .board-date-divider:first-child {border-radius:0;}
 }

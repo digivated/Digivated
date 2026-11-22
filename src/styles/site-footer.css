@@ -1,6 +1,9 @@
 @layer workspace-preview {
   html[data-theme="daylight"] body .dg-site-footer {
-    width:100% !important; margin:clamp(28px,6vw,72px) 0 0 !important;
+    width: calc(100% - 2 * var(--daylight-inset, 16px)) !important;
+    max-width: 1080px;
+    margin: clamp(28px,6vw,64px) auto 16px !important;
+    border-radius: 16px;
     padding:clamp(28px,5vw,64px) var(--daylight-inset,20px) max(28px,env(safe-area-inset-bottom)) !important;
     background:#101010 !important; color:#fafafa !important; border:0 !important;
   }

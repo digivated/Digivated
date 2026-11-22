@@ -1,0 +1,14 @@
+---
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import WorkspaceSidebar from '../components/WorkspaceSidebar.astro';
+import '../styles/workspace-navigation.css';
+---
+<a class="skip" href="#main">Skip to content</a>
+<div class="dg-workspace">
+  <WorkspaceSidebar><SiteHeader/></WorkspaceSidebar>
+  <div class="dg-workspace-content">
+    <main id="main" tabindex="-1"><slot/></main>
+    <SiteFooter/>
+  </div>
+</div>

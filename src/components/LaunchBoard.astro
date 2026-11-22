@@ -8,23 +8,25 @@ const sections = [
   { key: 'current', id: 'this-week', navLabel: 'This week', title: 'This week’s launches', live: true },
   { key: 'upcoming', id: 'launching-next', navLabel: 'Upcoming', title: 'Launching next', live: false, more: '/submit-project', moreLabel: 'Get a free launch date' },
   { key: 'previous', id: 'last-week', navLabel: 'Last week', title: 'Last week’s launches', live: false, more: '/winners', moreLabel: 'See weekly winners' },
+  { key: 'top', id: 'top-voted', title: 'Top voted', live: false },
   { key: 'archive', id: 'earlier', navLabel: 'Earlier', title: 'Earlier launches', live: false, more: '/discover', moreLabel: 'Browse the directory' },
 ];
 ---
 <div class="board-filters" data-board-filters hidden>
   <div class="board-sort" role="group" aria-label="Sort launches">
     <button type="button" data-board-sort="recent" aria-pressed="true">Most recent</button>
-    <button type="button" data-board-sort="ranked" aria-pressed="false">Board ranking</button>
+    <button type="button" data-board-sort="top" aria-pressed="false">Top voted</button>
+    <span data-board-results aria-live="polite"></span>
   </div>
   <div class="board-categories" role="group" aria-label="Filter by category" data-board-categories></div>
 </div>
-<nav class="dg-launch-nav" aria-label="Browse launches">
-  {sections.map(section => <a href={`#${section.id}`}>{section.navLabel}</a>)}
+<nav class="dg-launch-nav" data-board-jumps aria-label="Browse launches">
+  {sections.filter(section => section.navLabel).map(section => <a href={`#${section.id}`}>{section.navLabel}</a>)}
   <a href="/categories">Browse by category <UiIcon name="external" size={13}/></a>
 </nav>
 <div class="dg-board" data-board>
   {sections.map(section => (<>
-    <section id={section.id} class="dg-list" data-section-reveal data-board-section={section.key} aria-labelledby={`dg-list-${section.key}`} hidden={section.key === 'upcoming'}>
+    <section id={section.id} class="dg-list" data-section-reveal data-board-section={section.key} aria-labelledby={`dg-list-${section.key}`} hidden={section.key === 'upcoming' || section.key === 'top'}>
       <header class="dg-list-head">
         <h2 id={`dg-list-${section.key}`}>{section.live && <span class="dg-dot" aria-hidden="true"></span>}<span class="dg-list-title">{section.title}</span></h2>
 
