@@ -170,3 +170,41 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   await expect(page.getByRole('region', { name: 'Launching next' })).toContainText('Mon, Nov 23 · 9:00 AM Eastern');
   await expect(page.getByRole('button', { name: 'Notify me when Scheduled fixture launches' })).toBeVisible();
 });
+
+test('sidebar navigation keeps the content and footer aligned across destinations', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.route('**/api/**', route => route.fulfill({ json: { ready: false, items: [], threads: [] } }));
+  await page.goto(base + '/');
+  const nav = page.getByRole('navigation', { name: 'Workspace navigation' });
+  const shell = () => page.evaluate(() => {
+    const rail = document.querySelector('.dg-workspace-rail')!;
+    const main = document.querySelector('#main')!;
+    const footer = document.querySelector('.dg-footer-inner')!;
+    const railBox = rail.getBoundingClientRect();
+    const mainBox = main.getBoundingClientRect();
+    const style = getComputedStyle(main);
+    return {
+      rail: [railBox.x, railBox.width],
+      content: [mainBox.left + parseFloat(style.paddingLeft), mainBox.right - parseFloat(style.paddingRight)],
+      footer: [footer.getBoundingClientRect().left, footer.getBoundingClientRect().right],
+    };
+  });
+  const home = await shell();
+  expect(home.footer).toEqual(home.content);
+  await nav.getByRole('link', { name: 'Directory', exact: true }).click();
+  await expect(page).toHaveURL(base + '/discover');
+  await expect(nav.getByRole('link', { name: 'Directory', exact: true })).toHaveAttribute('aria-current', 'page');
+  expect(await shell()).toEqual(home);
+
+  await nav.getByRole('link', { name: 'News', exact: true }).click();
+  await expect(page).toHaveURL(base + '/news');
+  await expect(nav.getByRole('link', { name: 'News', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(page.getByRole('contentinfo').locator('.dg-footer-group h2').first()).toHaveCSS('color', 'rgb(251, 251, 251)');
+  expect(await shell()).toEqual(home);
+
+  await page.goBack();
+  await expect(page).toHaveURL(base + '/discover');
+  await expect(nav.getByRole('link', { name: 'Directory', exact: true })).toHaveAttribute('aria-current', 'page');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('#main')).toHaveCSS('view-transition-name', 'none');
+});
