@@ -238,7 +238,9 @@
   ],
   "rewrites": [
     { "source": "/creators", "destination": "/api/retired-creator-page" },
+    { "source": "/creators/", "destination": "/api/retired-creator-page" },
     { "source": "/inbox", "destination": "/api/retired-creator-page" },
+    { "source": "/inbox/", "destination": "/api/retired-creator-page" },
     { "source": "/creator", "destination": "/api/creator-page" },
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/googlef8b001e22ee0d4b9.html", "destination": "/api/google-site-verification" },
