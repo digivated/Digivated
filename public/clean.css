@@ -125,8 +125,6 @@
 #digivated-root .dg-row .dg-watch[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
 #digivated-root .dg-row .dg-badge-date { font-size: 11px !important; color: #a1a1aa !important; font-weight: 500 !important; }
 
-/* Homepage width: keep the board in a calm centered column on wide screens */
-#digivated-root :is(.dg-home, .dg-about, .dg-hero-panel) { max-width: 860px !important; margin-inline: auto !important; }
 
 /* Page titles and breadcrumbs across the site */
 #digivated-root main h1:not(#dg-home-title) { font-size: clamp(26px, 6vw, 34px) !important; line-height: 1.15 !important; letter-spacing: -.028em !important; font-weight: 700 !important; color: #0b0b0c !important; }
@@ -178,5 +176,58 @@
 #digivated-root .navigation-tree a { min-height: 38px !important; padding: 0 12px !important; gap: 10px !important; border-radius: 10px !important; font-size: 14px !important; font-weight: 550 !important; color: #3f3f46 !important; }
 #digivated-root .navigation-tree a:hover { background: #f3f3f6 !important; color: #0b0b0c !important; }
 #digivated-root .navigation-tree a[aria-current="page"] { background: #0b0b0c !important; color: #fff !important; }
+
+/* ---- Board rows, reference-style (Nov 22, second pass) ---- */
+/* Day header: date left, launch count right */
+#digivated-root .board-date-divider { display: flex !important; align-items: baseline !important; justify-content: space-between !important; gap: 12px !important; margin: 22px 4px 10px !important; }
+#digivated-root .board-date-label { font-size: 15px !important; font-weight: 700 !important; letter-spacing: -.015em !important; color: #0b0b0c !important; }
+#digivated-root .board-date-count { font-size: 12.5px !important; font-weight: 500 !important; color: #8a8a93 !important; white-space: nowrap !important; }
+
+/* Long cards: rows fill the content width; the upvote is a full-height column on the right */
+#digivated-root .dg-list-rows { width: 100% !important; max-width: none !important; }
+#digivated-root .dg-row:not(.dg-dir-row) { position: relative !important; overflow: hidden !important; padding: 14px 0 14px 16px !important; column-gap: 14px !important; grid-template-columns: 44px auto auto minmax(0, 1fr) auto !important; }
+#digivated-root .dg-row:not(.dg-dir-row):not(.is-loading) { padding-block: 14px !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-logo { width: 44px !important; height: 44px !important; border-radius: 12px !important; }
+#digivated-root .dg-row:not(.dg-dir-row) .dg-logo-link { align-self: center !important; }
+#digivated-root .dg-row .dg-vote { align-self: stretch !important; justify-content: center !important; gap: 3px !important; width: 60px !important; min-width: 60px !important; height: auto !important; margin-block: -14px !important; padding: 0 !important; border: 0 !important; border-left: 1px dashed #e4e4e9 !important; border-radius: 0 !important; background: transparent !important; color: #0b0b0c !important; }
+#digivated-root .dg-row .dg-vote:hover { background: #f6f6f8 !important; border-color: #e4e4e9 !important; color: #0b0b0c !important; }
+#digivated-root .dg-row .dg-vote[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
+#digivated-root .dg-row .dg-vote .dg-vote-caret { font-size: 11px !important; }
+#digivated-root .dg-row .dg-vote strong { font-size: 14px !important; font-weight: 650 !important; }
+#digivated-root .dg-row .dg-watch { margin-right: 14px !important; }
+
+/* Name, tagline, meta */
+#digivated-root .dg-row .dg-main h3 { display: flex !important; flex-wrap: wrap !important; align-items: center !important; gap: 4px 7px !important; font-size: 15px !important; }
+#digivated-root .dg-row .dg-tagline { font-size: 13.5px !important; color: #52525b !important; }
+#digivated-root .dg-row .dg-meta { display: flex !important; flex-wrap: nowrap !important; gap: 0 6px !important; min-width: 0 !important; font-size: 12px !important; color: #a1a1aa !important; }
+#digivated-root .dg-row .dg-meta span { display: inline !important; flex: none !important; }
+#digivated-root .dg-row .dg-meta span + span::before { content: "·" !important; margin-right: 6px !important; color: #d4d4d8 !important; }
+#digivated-root .dg-row .dg-meta .dg-meta-age { order: 2 !important; }
+#digivated-root .dg-row .dg-meta span:not(:first-child):not(.dg-meta-age) { order: 3 !important; flex: 0 1 auto !important; min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+
+/* Labels next to the name: small tinted pills */
+#digivated-root .dg-row .dg-badge { display: inline-flex !important; align-items: center !important; gap: 4px !important; height: 20px !important; padding: 0 7px !important; border: 0 !important; border-radius: 6px !important; background: #f1f1f4 !important; color: #3f3f46 !important; font-size: 11px !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; line-height: 1 !important; }
+#digivated-root .dg-row .dg-badge-medal { background: #fdf3d7 !important; color: #8a5a00 !important; }
+#digivated-root .dg-row .dg-badge-medal.is-silver { background: #eef0f3 !important; color: #4b5563 !important; }
+#digivated-root .dg-row .dg-badge-medal.is-bronze { background: #f8eadf !important; color: #8a4b1c !important; }
+#digivated-root .dg-row .dg-badge-boost { background: #eef4ff !important; color: #1d4ed8 !important; }
+#digivated-root .dg-row .dg-badge-member { background: #0b0b0c !important; color: #fff !important; }
+#digivated-root .dg-row .dg-badge-date { height: auto !important; padding: 0 !important; background: none !important; color: #a1a1aa !important; font-weight: 500 !important; }
+
+/* ---- Top bar like the reference: brand left, round avatar and a small square menu button right ---- */
+#digivated-root .site-menu-trigger { width: 36px !important; height: 36px !important; min-height: 36px !important; padding: 0 !important; justify-content: center !important; border: 0 !important; border-radius: 10px !important; background: #f1f1f4 !important; color: #0b0b0c !important; }
+#digivated-root .site-menu-trigger:hover, #digivated-root .dg-shell-disclosure[open] .site-menu-trigger { background: #e7e7ec !important; }
+#digivated-root .dg-shell-menu-label { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; }
+#digivated-root .dg-shell-login { min-height: 34px !important; padding: 0 13px !important; border: 1px solid #e4e4e9 !important; border-radius: 999px !important; background: #fff !important; color: #0b0b0c !important; font-size: 13px !important; font-weight: 600 !important; }
+#digivated-root .dg-shell-avatar-trigger { padding: 0 !important; border: 0 !important; background: none !important; gap: 0 !important; }
+#digivated-root .dg-shell-avatar { width: 34px !important; height: 34px !important; border-radius: 999px !important; box-shadow: 0 0 0 2px #fff, 0 0 0 3px #e4e4e9 !important; }
+#digivated-root :is(.dg-shell-account-caption, .dg-shell-account-caret) { display: none !important; }
+#digivated-root .dg-shell-icon { width: 36px !important; height: 36px !important; border: 0 !important; border-radius: 10px !important; background: transparent !important; }
+#digivated-root .dg-shell-tools { gap: 8px !important; }
+
+/* ---- Footer like the reference: dark sheet docked to the bottom, rounded on top, big faded wordmark ---- */
+#digivated-root .dg-site-footer { position: relative !important; overflow: hidden !important; margin-bottom: 0 !important; border-radius: 22px 22px 0 0 !important; padding-bottom: clamp(70px, 14vw, 150px) !important; }
+#digivated-root .dg-site-footer::after { content: "digivated" / "" !important; position: absolute !important; left: 50% !important; bottom: clamp(-26px, -2.4vw, -10px) !important; transform: translateX(-50%) !important; display: block !important; font-size: clamp(84px, 19vw, 230px) !important; font-weight: 800 !important; letter-spacing: -.06em !important; line-height: 1 !important; white-space: nowrap !important; color: rgba(255,255,255,.06) !important; pointer-events: none !important; }
+#digivated-root .dg-site-footer .dg-footer-inner { position: relative !important; z-index: 1 !important; }
 
 }
