@@ -62,6 +62,7 @@
   :is(.dg-workspace,.packet-workspace) .glare-hover { isolation: isolate; }
   .dg-workspace .glare-hover .glare-hover__glare { z-index: -1; }
   @media (prefers-reduced-motion: reduce), (forced-colors: active) {
+    .dg-workspace .glare-hover { transition: none !important; }
     .dg-workspace .glare-hover .glare-hover__glare { display: none; }
     .dg-workspace .line-sidebar__label { transform: none !important; }
     .dg-workspace .line-sidebar__marker { transform: translateY(-50%) !important; }
