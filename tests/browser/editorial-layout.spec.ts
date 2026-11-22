@@ -140,7 +140,7 @@ test('signed-in feedback points and the how-it-works control fit the homepage si
   for (const total of [0, 12345]) {
     await page.evaluate(total => document.dispatchEvent(new CustomEvent('digivated:points', { detail: { total } })), total);
     await expect(meter).toContainText(`${total} pts`);
-    for (const width of [320, 390, 900, 1024, 1440]) {
+    for (const width of [320, 390, 900, 1024, 1120, 1280, 1440]) {
       await page.setViewportSize({ width, height: 900 });
 
       for (const open of [false, true]) {

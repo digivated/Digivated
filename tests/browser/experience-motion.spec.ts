@@ -67,7 +67,7 @@ test('activity indicators follow system motion preferences and launch links stay
  const orbit = page.locator('.dg-activity-mark-orbit .dg-activity-dot').first();
  const ribbon = page.locator('.dg-activity-mark-ribbon .dg-activity-dot').first();
  await expect(orbit).toHaveCSS('background-color', 'rgb(57, 100, 86)');
- await expect(ribbon).toHaveCSS('background-color', 'rgb(97, 99, 91)');
+ await expect(ribbon).toHaveCSS('background-color', 'rgb(86, 98, 87)');
  await expect(orbit).toHaveCSS('animation-name', 'dg-orbit-signal');
  await expect(ribbon).toHaveCSS('animation-name', 'dg-ribbon-signal');
  await expect(page.locator('[data-scene-toggle]')).toHaveCount(0);

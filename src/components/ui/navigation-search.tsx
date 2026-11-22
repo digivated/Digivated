@@ -9,6 +9,7 @@ export function NavigationSearch() {
           <circle cx="10.5" cy="10.5" r="6.5" />
           <path d="m16 16 4.5 4.5" />
         </svg>
+        <span className="dg-workspace-search-label" aria-hidden="true">Search Digivated</span>
       </LiquidButton>
     </LiquefyProvider>
   );

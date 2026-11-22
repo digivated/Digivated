@@ -67,3 +67,34 @@ test('the retired Rankings route redirects and is absent from the sitemap', asyn
   const sitemap = await request.get(base + '/sitemap.xml');
   expect(await sitemap.text()).not.toContain('https://digivated.com/rankings');
 });
+
+test('workspace navigation and homepage search work on desktop and mobile', async ({ page }) => {
+  await page.route('**/api/projects*', route => route.fulfill({ json: { items: projects, next: null } }));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(base + '/');
+  const rail = page.getByRole('complementary', { name: 'Digivated sidebar' });
+  await expect(rail.getByRole('link', { name: 'Launches', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(rail.getByRole('link', { name: 'Submit a launch' })).toHaveAttribute('href', '/submit-project');
+  const [railBox, mainBox] = await Promise.all([rail.boundingBox(), page.locator('#main').boundingBox()]);
+  expect(railBox!.x + railBox!.width).toBeLessThanOrEqual(mainBox!.x);
+
+  const search = page.getByRole('search', { name: 'Find a product' }).getByRole('searchbox');
+  await search.fill('Directory fixture 26');
+  await search.press('Enter');
+  await expect(page).toHaveURL(/\/discover\?q=Directory\+fixture\+26$/);
+  await expect(rail.getByRole('link', { name: 'Directory', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('[data-dir-search]')).toHaveValue('Directory fixture 26');
+  await expect(page.locator('[data-dir-list] .dg-dir-open')).toHaveText(['Directory fixture 26']);
+  await page.reload();
+  await expect(page.locator('[data-dir-list] .dg-dir-open')).toHaveText(['Directory fixture 26']);
+
+  await page.setViewportSize({ width: 390, height: 800 });
+  await expect(rail).toBeHidden();
+  await page.locator('.site-menu-trigger').click();
+  await expect(page.getByRole('navigation', { name: 'Site menu' }).getByRole('link', { name: 'Directory', exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.locator('[data-dir-search]').press('Escape');
+  await expect(page).toHaveURL(base + '/discover');
+  await expect(page.locator('[data-dir-list] .dg-dir-open')).toHaveCount(24);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});

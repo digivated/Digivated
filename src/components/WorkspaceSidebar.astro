@@ -1,0 +1,40 @@
+---
+import { primaryLinks, menuGroups } from '../data/site-navigation.mjs';
+import UiIcon from './UiIcon.astro';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const current = (href: string) => path === href || (href !== '/' && path.startsWith(href + '/')) ||
+  (href === '/discover' && (path === '/launch-template' || path.startsWith('/projects/'))) ||
+  (href === '/shop' && ['/membership', '/products', '/promote', '/founding-members'].includes(path));
+const icons = {
+  '/': 'layers', '/discover': 'grid', '/threads': 'comment', '/news': 'book',
+  '/winners': 'chart', '/resources': 'tool', '/invstr': 'chart',
+  '/badges': 'check', '/points': 'sparkle', '/shop': 'bookmark',
+};
+const groups = [{ label: '', links: primaryLinks }, ...menuGroups];
+---
+<aside class="dg-workspace-rail" aria-label="Digivated sidebar">
+  <a class="dg-rail-brand" href="/" aria-label="Digivated home">
+    <span class="dg-rail-mark"><img src="/digivated-daylight-mark.png" alt="" width="26" height="26"/></span>
+    <span>Digivated</span>
+  </a>
+  <a class="dg-rail-submit" href="/submit-project" aria-current={current('/submit-project') ? 'page' : undefined}>
+    <UiIcon name="upload" size={17}/> Submit a launch
+  </a>
+  <nav class="dg-rail-navigation" aria-label="Workspace navigation">
+    {groups.map(({ label, links }) => (
+      <div class="dg-rail-group">
+        {label && <h2>{label}</h2>}
+        <ul>
+          {links.map(([href, label]) => (
+            <li><a href={href} aria-current={current(href) ? 'page' : undefined}>
+              <UiIcon name={icons[href as keyof typeof icons] ?? 'arrow'} size={17}/>
+              <span>{label}</span>
+            </a></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </nav>
+  <a class="dg-rail-about" href="/about" aria-current={current('/about') ? 'page' : undefined}>About Digivated <UiIcon name="arrow" size={14}/></a>
+</aside>
