@@ -38,6 +38,8 @@
     background: var(--glass-light) !important;
     box-shadow: var(--glass-edge) !important;
   }
+  .dg-workspace .about-copy .button:not(.primary) { color: var(--fl-ink) !important; }
+  .dg-workspace .about-copy .button:not(.primary):is(:hover,:focus-visible) { background: var(--daylight-hover) !important; }
   :is(.dg-workspace,.packet-workspace) :is(.dg-btn-primary,.fl-btn-primary,.button.primary) {
     background: var(--glass-dark) !important;
     border: 1px solid #585858 !important;

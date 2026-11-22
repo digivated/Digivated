@@ -27,7 +27,7 @@
     mask-image: linear-gradient(#000 55%, transparent 100%);
   }
 
-  .dg-site-footer .dg-footer-inner { max-width: 1000px; margin: auto; padding: 0 !important; }
+  .dg-site-footer .dg-footer-inner { width: 100%; max-width: 960px; margin: auto; padding: 0 !important; }
   .dg-site-footer .dg-footer-brand {
     display: inline-flex; align-items: center; gap: 8px;
     font-size: 19px !important; font-weight: 680;
@@ -49,7 +49,7 @@
   .dg-site-footer .dg-footer-digest p { color: #414141 !important; margin: 0 !important; font-size: 14px !important; }
   .dg-site-footer a.dg-footer-email-link {
     padding: 5px 11px !important; gap: 6px;
-    border: 1px solid #29292935; border-radius: 8px; background: #ffffff70 !important;
+    border: 1px solid #29292935 !important; border-radius: 8px; background: #ffffff70 !important;
   }
   .dg-site-footer .dg-footer-groups {
     display: grid !important;
