@@ -190,6 +190,7 @@ for (const width of [320, 1440]) {
     await page.route(base + listing, route => route.fulfill({ contentType: 'text/html', body: html }));
     await page.route(base + '/missing-project-screenshot.png', route => route.fulfill({ status: 404 }));
     await page.goto(base + listing);
+    await expect(page.locator('canvas[data-site-backdrop]')).toHaveCount(1);
     await expect(page.getByText('Screenshot currently unavailable.')).toBeVisible();
     await expect(page.locator('.launch-shot img')).toHaveCount(0);
     const card = page.locator('.launch-creator');

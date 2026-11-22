@@ -27,16 +27,16 @@ test('public, packet and owner headings share the gentle entrance', async ({ pag
  expect(await page.evaluate(() => (window as any).__animatedHeadings)).toEqual([]);
 });
 
-test('the editorial heading detail stays static with reduced motion', async ({ page }) => {
+test('the creators heading has no retired decorative underline', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(base + '/creators');
   const heading = page.locator('.creator-social-heading h1');
   await expect(heading).toBeVisible();
   const detail = await heading.evaluate(element => {
     const style = getComputedStyle(element, '::after');
-    return { width: parseFloat(style.width), animation: style.animationName };
+    return { content: style.content, animation: style.animationName };
   });
-  expect(detail.width).toBe(54);
+  expect(detail.content).toBe('none');
   expect(detail.animation).toBe('none');
 });
 
@@ -48,7 +48,7 @@ test('editorial details animate during scrolling and menu interaction', async ({
 
   const art = page.locator('[data-site-backdrop]');
   await expect(art).toHaveCount(1);
-  await expect(art.locator('img')).toBeVisible();
+  await expect(art).toHaveJSProperty('tagName', 'CANVAS');
   const [artBounds, searchBounds] = await Promise.all([
     art.boundingBox(),
     page.locator('[data-dir-search]').boundingBox(),
@@ -72,5 +72,5 @@ test('editorial details animate during scrolling and menu interaction', async ({
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(track).toBeHidden();
   await expect(page.locator('html')).not.toHaveAttribute('data-motion-ready', '');
-  await expect(art.locator('img')).toBeVisible();
+  await expect(art).toHaveJSProperty('tagName', 'CANVAS');
 });
