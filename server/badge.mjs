@@ -20,7 +20,7 @@ export function makeBadgeHandler(deps = {}) {
       // An award is drawn only for a podium place the project really earned.
       if (url.searchParams.get('award') === 'week') award = await bestPlace(redis, id);
       if (!award) {
-        // Fair start: this week's counts stay hidden until Tuesday 14:00 UTC.
+        // Fair start: this week's counts stay hidden until Tuesday at 9:00 AM Eastern.
         const [value, fresh] = await Promise.all([redis(['GET', `digivated:card:likes:project:${id}`]), isFresh(redis, id)]);
         count = fresh ? null : Number(value || 0);
       }

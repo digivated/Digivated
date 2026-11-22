@@ -1,0 +1,30 @@
+---
+import { createElement } from 'react';
+import { renderToString } from 'react-dom/server';
+import { surfaces } from './react-bits/DigivatedSurfaces.jsx';
+
+const { surface, ...props } = Astro.props;
+const html = renderToString(createElement(surfaces[surface as keyof typeof surfaces], props));
+---
+<div class="dg-react-bits" data-react-bits={surface} data-react-bits-props={JSON.stringify(props)} set:html={html}/>
+<script>
+import { createElement } from 'react';
+import { hydrateRoot } from 'react-dom/client';
+import { surfaces } from './react-bits/DigivatedSurfaces.jsx';
+
+const desktop = matchMedia('(min-width: 1120px)');
+for (const node of document.querySelectorAll<HTMLElement>('[data-react-bits]')) {
+  const name = node.dataset.reactBits as keyof typeof surfaces;
+  if (!node.dataset.reactBitsProps) continue;
+  const props = JSON.parse(node.dataset.reactBitsProps);
+  const hydrate = () => hydrateRoot(node, createElement(surfaces[name], props));
+  if (name === 'RailLinks' && !desktop.matches) {
+    const onDesktop = (event: MediaQueryListEvent) => {
+      if (!event.matches) return;
+      desktop.removeEventListener('change', onDesktop);
+      hydrate();
+    };
+    desktop.addEventListener('change', onDesktop);
+  } else hydrate();
+}
+</script>

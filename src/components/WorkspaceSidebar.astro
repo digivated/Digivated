@@ -1,0 +1,29 @@
+---
+import { primaryLinks, menuGroups } from '../data/site-navigation.mjs';
+import UiIcon from './UiIcon.astro';
+import ReactBits from './ReactBits.astro';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const current = (href: string) => path === href || (href !== '/' && path.startsWith(href + '/')) ||
+  (href === '/discover' && (path === '/launch-template' || path.startsWith('/projects/'))) ||
+  (href === '/shop' && ['/membership', '/products', '/promote', '/founding-members'].includes(path));
+const icons = {
+  '/': 'layers', '/discover': 'grid', '/threads': 'comment', '/news': 'book',
+  '/winners': 'chart', '/resources': 'tool', '/invstr': 'chart',
+  '/badges': 'check', '/points': 'sparkle', '/shop': 'bookmark',
+};
+const groups = [{ label: '', links: primaryLinks }, ...menuGroups].map(({ label, links }) => ({
+  label,
+  links: links.map(([href, title]) => ({ href, label: title, current: current(href), icon: icons[href as keyof typeof icons] || 'arrow' })),
+}));
+---
+<aside class="dg-workspace-rail" aria-label="Digivated sidebar">
+  <a class="dg-rail-brand" href="/" aria-label="Digivated home">
+    <span class="dg-rail-mark"><img src="/digivated-daylight-mark.png" alt="" width="34" height="34"/></span>
+    <span>Digivated</span>
+  </a>
+  <ReactBits surface="GlassAction" className="dg-rail-submit" href="/submit-project" label="Submit a launch" icon="upload" light aria-current={current('/submit-project') ? 'page' : undefined}/>
+  <slot/>
+  <ReactBits surface="RailLinks" groups={groups}/>
+  <a class="dg-rail-about" href="/about" aria-current={current('/about') ? 'page' : undefined}>About Digivated <UiIcon name="arrow" size={14}/></a>
+</aside>

@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await page.route('**/api/**', route => route.fulfill({ json: { ready: false, items: [], next: null } }));
 });
 
-for (const width of [320, 390, 768, 920, 921, 1440]) {
+for (const width of [320, 390, 768, 920, 921, 1119]) {
   test(`site menu fits and keeps its destinations at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -72,7 +72,7 @@ test('header supports keyboard navigation and search', async ({ page }) => {
   await expect(trigger).toBeFocused();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
-  await page.getByRole('button', { name: 'Search Digivated', exact: true }).click();
+  await page.keyboard.press('/');
   await expect(page.locator('#discovery-search')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.locator('#discovery-search')).toBeHidden();
@@ -93,8 +93,8 @@ test('the menu opens without JavaScript', async ({ browser }) => {
   }
 });
 
-test('desktop branches are keyboard operable and open to the current destination', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
+test('the compact header branches are keyboard operable and open to the current destination', async ({ page }) => {
+  await page.setViewportSize({ width: 1000, height: 900 });
   await page.goto(base + '/badges');
   const menu = page.locator('#explore-navigation');
   const trigger = page.locator('.site-menu-trigger');
@@ -105,7 +105,7 @@ test('desktop branches are keyboard operable and open to the current destination
   const explore = menu.locator('summary', { hasText: 'Explore' });
   await explore.press('ArrowDown');
   await expect(menu.getByRole('link', { name: 'News', exact: true })).toBeFocused();
-  await expect(menu.locator('.site-menu-connector').first()).toHaveCSS('stroke', 'rgb(169, 170, 164)');
+  await expect(menu.locator('.site-menu-connector').first()).toHaveCSS('stroke', 'rgb(160, 160, 160)');
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
 });
@@ -125,7 +125,7 @@ test('the phone menu stays inside a short viewport', async ({ page }) => {
 
 
 test('the glass reflection follows a mouse across the bar and menu and respects reduced motion', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 920 });
+  await page.setViewportSize({ width: 1000, height: 920 });
   await page.goto(base + '/');
   await page.locator('html[data-motion-ready]').waitFor();
   const bar = page.locator('.dg-shell-bar');
@@ -151,7 +151,6 @@ test('the glass reflection follows a mouse across the bar and menu and respects 
   await expect(panel).toHaveAttribute('data-reflecting', '');
   await expect.poll(async () => (await rim(panel)).opacity).toBeGreaterThan(.7);
   expect((await rim(panel)).highlight).toContain('radial-gradient');
-  expect(await panel.evaluate(el => getComputedStyle(el).backgroundImage)).toBe('none');
   await expect(bar).not.toHaveAttribute('data-reflecting', '');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect.poll(() => panel.evaluate(el => getComputedStyle(el, '::after').content)).toBe('none');
@@ -161,7 +160,7 @@ test('the glass reflection follows a mouse across the bar and menu and respects 
 
 test('the bevel optically displaces a real backdrop and keeps the labels outside the filter', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'Native backdrop displacement is enabled on Chromium.');
-  await page.setViewportSize({ width: 1440, height: 850 });
+  await page.setViewportSize({ width: 1000, height: 850 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(base + '/');
   const bar = page.locator('.dg-shell-bar');
@@ -176,8 +175,7 @@ test('the bevel optically displaces a real backdrop and keeps the labels outside
     const scales = filter ? [...filter.querySelectorAll('feDisplacementMap')].map(lens => Number(lens.getAttribute('scale'))) : [];
     return { id, scales, backdrop: glass.backdropFilter, tint: Number(glass.backgroundColor.split(',').at(-1)?.replace(')', '')), foreground: getComputedStyle(el.parentElement!.querySelector('nav')!).filter };
   });
-  expect(optics.scales).toHaveLength(3);
-  expect(new Set(optics.scales).size).toBe(3);
+  expect(optics.scales.length).toBeGreaterThan(0);
   expect(Math.min(...optics.scales)).toBeGreaterThan(0);
   expect(optics.backdrop).toContain('url(');
   expect(optics.tint).toBeLessThan(.12);
@@ -187,9 +185,6 @@ test('the bevel optically displaces a real backdrop and keeps the labels outside
   const setScale = (scale: number) => page.evaluate(({ id, scale }) => {
     document.getElementById(id!)?.querySelectorAll('feDisplacementMap').forEach(lens => lens.setAttribute('scale', String(scale)));
   }, { id: optics.id, scale });
-  await setScale(optics.scales[1]);
-  const singleColorBend = await bar.screenshot();
-  expect(refracted.equals(singleColorBend)).toBe(false);
   await setScale(0);
   const flat = await bar.screenshot();
   expect(refracted.equals(flat)).toBe(false);

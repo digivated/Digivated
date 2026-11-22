@@ -55,24 +55,16 @@ async function enrichSearch() {
   ]);
   projectsUnavailable=outcomes.some(result=>result.status==='rejected');requested=!projectsUnavailable;loading=false;renderSearch();
 }
-function openSearch(trigger) {if(document.querySelector('dialog[open],.wall-focus[role="dialog"]'))return;searchTrigger=trigger||document.activeElement;search.showModal();input.focus({preventScroll:true});search.scrollTop=0;renderSearch();enrichSearch();}
-document.querySelectorAll('[data-open-search]').forEach(button=>button.addEventListener('click',()=>openSearch(button)));
+export function openSearch(trigger) {if(document.querySelector('dialog[open],.wall-focus[role="dialog"]'))return;searchTrigger=trigger||document.activeElement;search.showModal();input.focus({preventScroll:true});search.scrollTop=0;renderSearch();enrichSearch();}
 search.querySelector('[data-close-search]').addEventListener('click',()=>search.close());
 search.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();search.close();}});
-search.addEventListener('close',()=>{const trigger=searchTrigger?.getClientRects().length?searchTrigger:document.querySelector('.header-search');trigger?.focus({preventScroll:true});});
+search.addEventListener('close',()=>{const trigger=searchTrigger?.getClientRects().length?searchTrigger:document.querySelector('#main');trigger?.focus({preventScroll:true});});
 input.addEventListener('input',()=>{renderSearch();results.parentElement.scrollTop=0;});
 $('#clear-discovery-search').addEventListener('click',()=>{input.value='';renderSearch();input.focus();});
 $('#reset-discovery-search').addEventListener('click',()=>{input.value='';scope='all';renderSearch();input.focus();enrichSearch();});
 input.addEventListener('keydown',event=>{if(event.key==='ArrowDown'){const first=results.querySelector('a');if(first){event.preventDefault();first.focus();}}if(event.key==='Enter'){const first=results.querySelector('a');if(first){event.preventDefault();first.click();}}});
 results.addEventListener('keydown',event=>{const links=[...results.querySelectorAll('a')],index=links.indexOf(document.activeElement);if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();const next=index+(event.key==='ArrowDown'?1:-1);if(next<0)input.focus();else links[Math.min(next,links.length-1)]?.focus();}});
 search.querySelectorAll('[data-search-type]').forEach(button=>button.addEventListener('click',()=>{scope=button.dataset.searchType;renderSearch();results.parentElement.scrollTop=0;}));
-document.addEventListener('keydown',event=>{
-  const editing=event.target instanceof Element&&event.target.closest('input,textarea,select,[contenteditable]:not([contenteditable="false"])');
-  const shortcut=(event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k';
-  const slash=event.key==='/'&&!event.metaKey&&!event.ctrlKey&&!event.altKey&&!editing;
-  if((shortcut||slash)&&!document.querySelector('dialog[open],.wall-focus[role="dialog"]')){event.preventDefault();openSearch();}
-});
-
 search.addEventListener('click', event => {
   if (event.target !== search) return;
   const bounds = search.getBoundingClientRect();

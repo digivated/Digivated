@@ -4,9 +4,12 @@ import { nextFreeLaunch, badgeSnippet, verifyProjectBadge, publishQueued, makeLa
 import { publicIPv4, readProjectSite, siteDetails, hasProjectBadge } from '../server/project-site.mjs';
 import { validateEdit } from '../server/admin-store.mjs';
 const record={id:'fixture-project',accountId:'owner',email:'owner@example.com',name:'Fixture',creator:'Builder',description:'A useful independent project.',category:'Other',url:'https://example.com',image:'data:image/png;base64,fixture',consent:true,status:'pending',date:'2026-11-13T00:00:00Z',launch:{kind:'free',scheduledAt:'2026-11-23T00:00:00Z',scheduledTimestamp:Date.parse('2026-11-23')}};
-test('free dates are Mondays 7–14 days away including year rollover',()=>{
- assert.equal(nextFreeLaunch(Date.parse('2026-11-13T12:00:00Z')),'2026-11-23T00:00:00.000Z');
- assert.equal(nextFreeLaunch(Date.parse('2026-12-28T12:00:00Z')),'2027-01-11T00:00:00.000Z');
+test('free dates pick the next 9 AM Eastern batch across DST and year changes',()=>{
+ assert.equal(nextFreeLaunch(Date.parse('2026-11-22T04:00:00Z')),'2026-11-23T14:00:00.000Z');
+ assert.equal(nextFreeLaunch(Date.parse('2026-11-23T13:59:59Z')),'2026-11-23T14:00:00.000Z');
+ assert.equal(nextFreeLaunch(Date.parse('2026-11-23T14:00:00Z')),'2026-11-30T14:00:00.000Z');
+ assert.equal(nextFreeLaunch(Date.parse('2026-12-28T14:00:00Z')),'2027-01-04T14:00:00.000Z');
+ assert.equal(nextFreeLaunch(Date.parse('2027-03-14T12:00:00Z')),'2027-03-15T13:00:00.000Z');
 });
 test('metadata import decodes text and caps form field lengths',()=>{
  assert.deepEqual(siteDetails('<title>A &amp; B</title><meta name="description" content="Useful &quot;tools&quot;">'),{name:'A & B',description:'Useful "tools"'});
@@ -133,7 +136,7 @@ test('verification runtime fits the website-check deadline and cycle has its own
  const config=JSON.parse(await readFile(new URL('../vercel.json',import.meta.url),'utf8'));
  assert.ok(config.functions['api/submissions.js'].maxDuration>=30);
  assert.ok(config.functions['api/[route].js'].maxDuration>=60);
- assert.ok(config.crons.some(c=>c.path==='/api/launch-queue'&&c.schedule==='0 14 * * 1'));
+ assert.ok(config.crons.some(c=>c.path==='/api/launch-queue'&&c.schedule==='0 13,14,15 * * 1'));
 });
 
 test('website verification follows apex/www redirects but refuses unrelated domains',async()=>{
@@ -150,4 +153,47 @@ test('website verification follows apex/www redirects but refuses unrelated doma
  requests=0;
  const hostile=(url,options,callback)=>transport(url,options,res=>{res.headers.location='https://other.example.net/';callback(res);});
  await assert.rejects(readProjectSite('https://example.com',{...options,transport:hostile}),/another site/);
+});
+
+
+test('November catch-up reads, publishes and preserves unrelated scheduled launches', async () => {
+ const old = Date.parse('2026-11-30T00:00:00Z');
+ const launch = {kind:'free',scheduledAt:new Date(old).toISOString(),scheduledTimestamp:old,badgeVerifiedAt:'2026-11-21T20:00:00Z'};
+ const moved = {...record, date:'2026-11-20T16:00:00Z', launch};
+ const preserved = {...moved, id:'different-booking', date:'2026-11-14T10:00:00Z'};
+ const items = new Map([[moved.id,moved],[preserved.id,preserved]]);
+ let now = Date.parse('2026-11-23T13:00:00Z');
+ const redis = async ([command,key,...args]) => {
+  if (command==='ZRANGEBYSCORE' && key==='digivated:launch:free') {
+   const [min,max] = args;
+   return min === '-inf' && max < old ? [] : [...items.values()].filter(item=>item.status==='pending').map(item=>item.id);
+  }
+  if (command==='GET') return JSON.stringify(items.get(key.split(':').at(-1)) || null);
+  if (command==='SCARD') return 1;
+  if (command==='EVAL' && args[1]==='digivated:submission:'+moved.id) {
+   const saved=JSON.parse(args[6]);
+   items.set(saved.id,saved);
+   return 1;
+  }
+  return null;
+ };
+ const {makeLaunchesHandler}=await import('../server/launches.mjs');
+ const upcoming=makeLaunchesHandler({redis,now:()=>now,env:{}});
+ const handler=makeLaunchQueueHandler({redis,now:()=>now,env:{CRON_SECRET:'fixture-secret'}});
+ async function run(fn,url){
+  const res={setHeader(){},end(body){this.body=JSON.parse(body);}};
+  await fn({method:'GET',url,headers:url.startsWith('/api/launches')?{}:{authorization:'Bearer fixture-secret'}},res);
+  assert.equal(res.statusCode,200);
+  return res.body;
+ }
+ const before=await run(upcoming,'/api/launches?view=upcoming');
+ assert.deepEqual(before.items.map(item=>[item.id,item.launchAt,item.watchers]),[
+  [moved.id,'2026-11-23T14:00:00.000Z',1],[preserved.id,'2026-11-30T14:00:00.000Z',1],
+ ]);
+ assert.equal((await run(handler,'/api/launch-queue')).published,0);
+ now=Date.parse('2026-11-23T14:00:00Z');
+ assert.equal((await run(handler,'/api/launch-queue')).published,1);
+ assert.equal(items.get(moved.id).launch.scheduledAt,'2026-11-23T14:00:00.000Z');
+ assert.equal(items.get(preserved.id).status,'pending');
+ assert.equal((await run(handler,'/api/launch-queue')).published,0);
 });

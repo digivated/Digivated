@@ -19,18 +19,14 @@ test('mobile glass menu remains readable and routes correctly',async({page})=>{
 test('glass search stays usable at desktop and narrow widths',async({page,browserName})=>{
  for(const width of [390,1440]){
   await page.setViewportSize({width,height:900});await page.goto(base+'/');
-  const search = page.getByRole('button', { name: 'Search Digivated', exact: true });
-  await expect(search).toHaveClass(/lq-button/);
-  await search.focus();
-  if (browserName === 'chromium') await expect(search).toHaveAttribute('data-liquid-lens', 'true');
-  await search.click();
+  await page.keyboard.press('/');
   const dialog=page.locator('#discovery-search');await expect(dialog).toBeVisible();
   await expect(dialog).toHaveCSS('backdrop-filter', /blur/);
   if (browserName === 'chromium') await expect(dialog).toHaveCSS('backdrop-filter', /url\(/);
   const tint = await dialog.evaluate(element => Number(getComputedStyle(element).backgroundColor.split(',').at(-1)?.replace(')', '')));
   expect(tint).toBeGreaterThan(.8);
-  await expect(dialog.locator('.search-subtitle')).toHaveCSS('color', 'rgb(97, 99, 91)');
-  await expect(dialog.getByRole('button',{name:'Guides',exact:true})).toHaveCSS('color', 'rgb(97, 99, 91)');
+  await expect(dialog.locator('.search-subtitle')).toHaveCSS('color', 'rgb(73, 73, 73)');
+  await expect(dialog.getByRole('button',{name:'Guides',exact:true})).toHaveCSS('color', 'rgb(73, 73, 73)');
   await expect(page.locator('#unified-search-input')).toBeFocused();
   await page.keyboard.press('Escape');await expect(dialog).toBeHidden();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

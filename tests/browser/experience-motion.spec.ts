@@ -23,14 +23,17 @@ test('reduced motion keeps all content visible and native search focus working',
  await expect(page.locator('.dg-activity-dot').first()).toHaveCSS('animation-name', 'none');
  const [hero, title, actions] = await Promise.all(['[data-discovery-hero]', '#dg-home-title', '.dg-hero-actions'].map(selector => page.locator(selector).boundingBox()));
  for (const bounds of [title, actions]) {
-  expect(bounds!.x).toBeCloseTo(hero!.x, 0);
+  expect(bounds!.x).toBeGreaterThan(hero!.x);
   expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(hero!.x + hero!.width + 1);
  }
+ expect(title!.x).toBeCloseTo(actions!.x, 0);
 
  expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.id==='digivated-content-entrance').length)).toBe(0);
  expect(await page.locator('.dg-hero').evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
- await page.locator('[data-open-search]').click();await expect(page.locator('#unified-search-input')).toBeFocused();
- await page.keyboard.press('Escape');await expect(page.locator('[data-open-search]')).toBeFocused();
+ const login = page.getByRole('link', { name: 'Log In', exact: true });
+ await login.focus();
+ await page.keyboard.press('/');await expect(page.locator('#unified-search-input')).toBeFocused();
+ await page.keyboard.press('Escape');await expect(login).toBeFocused();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 test('section entrances never leave content hidden and stop after completion',async({page})=>{
@@ -44,19 +47,23 @@ test('hero stays readable when JavaScript is disabled',async({browser})=>{
  const c=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});const p=await c.newPage();await p.goto(base+'/');
  await expect(p.locator('#dg-home-title')).toBeVisible();
  await expect(p.locator('canvas[data-site-backdrop]')).toHaveAttribute('width', '1');
- await expect(p.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
- expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await c.close();
+ await expect(p.getByRole('link',{name:'Submit a product',exact:true})).toHaveAttribute('href','/submit-project');
+ expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await p.getByRole('searchbox').fill('indie projects');
+ await p.getByRole('button',{name:'Search products',exact:true}).click();
+ await expect(p).toHaveURL(/\/discover\?q=indie\+projects$/);
+ await c.close();
 });
 test('the new backdrop leaves resources search and home hero actions usable',async({page})=>{
  await page.setViewportSize({width:390,height:900});
  await page.goto(base+'/resources');
- await page.locator('[data-open-search]').click();
+ await page.keyboard.press('/');
  await expect(page.locator('#discovery-search')).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.goto(base+'/');
  await expect(page.locator('[data-ascii-field],.ascii-ambient')).toHaveCount(0);
  await expect(page.locator('.dg-hero-panel [role=timer]')).toBeVisible();
- await expect(page.getByRole('link',{name:'Submit your product',exact:true})).toHaveAttribute('href','/submit-project');
+ await expect(page.getByRole('link',{name:'Submit a product',exact:true})).toHaveAttribute('href','/submit-project');
  await page.getByRole('link',{name:'Browse launches',exact:true}).click();
  await expect(page).toHaveURL(/#this-week$/);
 });
@@ -66,8 +73,8 @@ test('activity indicators follow system motion preferences and launch links stay
  await page.goto(base + '/');
  const orbit = page.locator('.dg-activity-mark-orbit .dg-activity-dot').first();
  const ribbon = page.locator('.dg-activity-mark-ribbon .dg-activity-dot').first();
- await expect(orbit).toHaveCSS('background-color', 'rgb(57, 100, 86)');
- await expect(ribbon).toHaveCSS('background-color', 'rgb(97, 99, 91)');
+ await expect(orbit).toHaveCSS('background-color', 'rgb(68, 68, 68)');
+ await expect(ribbon).toHaveCSS('background-color', 'rgb(73, 73, 73)');
  await expect(orbit).toHaveCSS('animation-name', 'dg-orbit-signal');
  await expect(ribbon).toHaveCSS('animation-name', 'dg-ribbon-signal');
  await expect(page.locator('[data-scene-toggle]')).toHaveCount(0);
@@ -111,7 +118,7 @@ test('forced colors hides the backdrop and leaves search usable', async ({ page 
  await page.emulateMedia({ forcedColors: 'active' });
  await page.goto(base + '/discover');
  await expect(page.locator('[data-site-backdrop]')).toHaveCSS('visibility', 'hidden');
- await page.getByRole('button', { name: 'Search Digivated' }).click();
+ await page.keyboard.press('/');
  await expect(page.locator('#unified-search-input')).toBeFocused();
 });
 
@@ -134,4 +141,45 @@ test('the particle field animates and becomes still when reduced motion is enabl
   }));
   return await frame() === stillFrame;
  }).toBe(true);
+});
+
+test('the search panel catches light on desktop and stays still with reduced motion', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(base + '/');
+  const panel = page.locator('[data-discovery-hero]');
+  await panel.hover({ position: { x: 15, y: 15 } });
+  await expect(panel).toHaveAttribute('data-reflecting', '');
+  await expect.poll(() => panel.evaluate(element => getComputedStyle(element, '::after').opacity)).toBe('1');
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(panel).not.toHaveAttribute('data-reflecting', '');
+  await expect.poll(() => panel.evaluate(element => getComputedStyle(element, '::after').content)).toBe('none');
+  await expect(panel.getByRole('searchbox')).toBeVisible();
+});
+
+test('React Bits sidebar and action effects animate without changing link targets', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(base + '/');
+  const nav = page.getByRole('navigation', { name: 'Workspace navigation' });
+  const directory = nav.getByRole('link', { name: 'Directory', exact: true });
+  const row = nav.locator('.line-sidebar__item').filter({ has: page.getByRole('link', { name: 'Directory', exact: true }) });
+  const action = page.getByRole('link', { name: 'Browse launches', exact: true });
+  const band = action.locator('.glare-hover__band').first();
+  const bandTransform = () => band.evaluate(element => element.style.transform);
+  await expect.poll(bandTransform).toContain('translateX');
+
+  await directory.hover();
+  await expect.poll(() => row.evaluate(element => Number(element.style.getPropertyValue('--effect')))).toBeGreaterThan(.6);
+
+  const resting = await bandTransform();
+  await action.hover();
+  await expect.poll(bandTransform).not.toBe(resting);
+  await expect(action).toHaveAttribute('href', '#this-week');
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(action.locator('.glare-hover__glare')).toBeHidden();
+  await expect(directory.locator('.line-sidebar__label')).toHaveCSS('transform', 'none');
+  await directory.press('Enter');
+  await expect(page).toHaveURL(base + '/discover');
+  await expect(directory).toHaveAttribute('aria-current', 'page');
 });

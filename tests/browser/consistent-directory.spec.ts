@@ -49,8 +49,9 @@ test('the current brand mark loads on public pages',async({page})=>{
  await page.route('**/api/**',r=>r.fulfill({json:{items:[],next:null,ready:false}}));
  for(const path of ['/','/login','/discover','/news']){
   await page.goto(base+path);
-  const logo=page.locator('header img[src="/digivated-daylight-mark.png"]').first();
-  await expect(logo).toBeVisible();await expect(logo).toHaveCSS('filter','none');
+  const logo=page.locator('.dg-rail-brand img[src="/digivated-daylight-mark.png"]:visible, .dg-shell-brand img[src="/digivated-daylight-mark.png"]:visible');
+  await expect(logo).toBeVisible();await expect(logo).toHaveCSS('filter','brightness(0) invert(1)');
+  await expect(logo).toHaveCSS('width','34px');
   await expect.poll(()=>logo.evaluate(e=>(e as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href','/digivated-ascii-icon-transparent.png');
  }

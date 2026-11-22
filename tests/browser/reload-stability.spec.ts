@@ -8,7 +8,7 @@ for (const path of ['/', '/discover', '/creators', '/news']) {
     for (let attempt = 0; attempt < 3; attempt++) {
       await expect(page.locator('main#main h1').first()).toBeVisible();
       await expect(page.locator('#site-intro,[data-fl-reveal],.dg-rv')).toHaveCount(0);
-      await page.getByRole('button', { name: 'Search Digivated' }).click();
+      await page.keyboard.press('/');
       await expect(page.locator('#unified-search-input')).toBeFocused();
       if (attempt < 2) await page.reload({ waitUntil: 'domcontentloaded' });
     }

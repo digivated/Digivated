@@ -1,3 +1,4 @@
+import { freeLaunchTime } from '../src/lib/launch-calendar.mjs';
 // Transactional emails to a project's owner: status changes (including going
 // live from the weekly queue or Instant Publishing) and weekly podium places.
 // Private review feedback is never put in an email; it stays behind sign-in.
@@ -109,9 +110,9 @@ export async function sendAwardEmail(record, rank, weekStart, env = process.env,
 }
 
 // Free launches only go live once the badge is on the maker's site.
-const launchDay = record => new Date(record.launch.scheduledAt).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+const launchDay = record => new Date(freeLaunchTime(record)).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'America/New_York' });
 const badgeTip = 'Using an AI site builder or coding assistant? Copy your badge HTML from Digivated and paste it into the chat with this prompt: “Add this exact HTML to my homepage footer. Keep the link, image, and data attributes intact, and make sure the badge is in the published page’s HTML. Show me what changed so I can publish it.” Paste your badge HTML below the prompt.';
-const badgeWhen = record => Date.parse(record.launch.scheduledAt) > Date.now() ? `is booked for ${launchDay(record)}` : 'is waiting to go live';
+const badgeWhen = record => freeLaunchTime(record) > Date.now() ? `is booked for ${launchDay(record)}` : 'is waiting to go live';
 const badgeSteps = 'Copy the badge from Your Projects, add it to your homepage footer, and publish your site. Then click Check my website in Digivated. Once we find the badge, your project is ready for launch.';
 const badgeMessages = {
   finish: record => ({

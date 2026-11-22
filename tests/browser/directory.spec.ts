@@ -67,3 +67,68 @@ test('the retired Rankings route redirects and is absent from the sitemap', asyn
   const sitemap = await request.get(base + '/sitemap.xml');
   expect(await sitemap.text()).not.toContain('https://digivated.com/rankings');
 });
+
+test('workspace navigation and homepage search work on desktop and mobile', async ({ page }) => {
+  await page.route('**/api/projects*', route => route.fulfill({ json: { items: projects, next: null } }));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(base + '/');
+  const rail = page.getByRole('complementary', { name: 'Digivated sidebar' });
+  await expect(rail.getByRole('link', { name: 'Launches', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(rail.getByRole('link', { name: 'Submit a launch' })).toHaveAttribute('href', '/submit-project');
+  await expect(rail).toHaveCSS('background-image', /radial-gradient/);
+  const login = rail.getByRole('link', { name: 'Log In', exact: true });
+  await expect(login).toHaveAttribute('href', '/login');
+  await expect(rail.locator('[data-open-search]')).toHaveCount(0);
+  const submit = rail.getByRole('link', { name: 'Submit a launch' });
+  const [loginBox, submitBox] = await Promise.all([login.boundingBox(), submit.boundingBox()]);
+  expect(loginBox!.x).toBeCloseTo(submitBox!.x, 0);
+  expect(loginBox!.width).toBeCloseTo(submitBox!.width, 0);
+  await expect(page.locator('.dg-workspace-content > header')).toHaveCount(0);
+  const [railBox, mainBox] = await Promise.all([rail.boundingBox(), page.locator('#main').boundingBox()]);
+  expect(railBox!.x + railBox!.width).toBeLessThanOrEqual(mainBox!.x);
+
+  const search = page.getByRole('search', { name: 'Find a product' }).getByRole('searchbox');
+  const status = page.locator('[data-launch-search-status]');
+  await expect(page.locator('[data-stat-products]')).toHaveText('27');
+  await search.fill('Directory fixture 26');
+  await expect(status).toHaveText('1 of 27 launches');
+  await expect(page.locator('[data-launch-id]:visible h3')).toHaveText(['Directory fixture 26']);
+  await search.press('Enter');
+  await expect(page).toHaveURL(base + '/');
+  await search.press('ArrowDown');
+  await expect(page.getByRole('link', { name: 'Directory fixture 26', exact: true })).toBeFocused();
+  const clear = page.getByRole('button', { name: 'Clear launch search' });
+  await clear.click();
+  await expect(search).toBeFocused();
+  await expect(search).toHaveValue('');
+  await expect(clear).toBeHidden();
+  await search.fill('unmatched query');
+  await expect(status).toHaveText('No launches match your search.');
+  await expect(page.locator('[data-launch-id]:visible')).toHaveCount(0);
+  await search.press('Escape');
+  await expect(status).toBeHidden();
+  await expect(page.locator('[data-launch-id]:visible').first()).toBeVisible();
+
+  await page.setViewportSize({ width: 390, height: 800 });
+  await expect(rail.locator('.dg-rail-navigation')).toBeHidden();
+  await expect(rail.locator('.dg-shell-material')).toHaveCSS('backdrop-filter', /blur/);
+  await page.locator('.site-menu-trigger').click();
+  const directory = page.getByRole('navigation', { name: 'Site menu' }).getByRole('link', { name: 'Directory', exact: true });
+  await expect(directory).toBeVisible();
+  await directory.click();
+  await expect(page).toHaveURL(base + '/discover');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+
+test('the upcoming batch and countdown agree on Monday, November 23', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-22T04:00:00Z'));
+  await page.route('**/api/projects*', route => route.fulfill({ json: { items: projects, next: null } }));
+  await page.route('**/api/launches?view=upcoming', route => route.fulfill({ json: { items: [{
+    id: 'upcoming-fixture', name: 'Scheduled fixture', launchAt: '2026-11-23T14:00:00.000Z', watchers: 1,
+  }] } }));
+  await page.goto(base + '/');
+  await expect(page.locator('#queue-countdown')).toHaveAttribute('datetime', '2026-11-23T14:00:00.000Z');
+  await expect(page.getByRole('region', { name: 'Launching next' })).toContainText('Mon, Nov 23 · 9:00 AM Eastern');
+  await expect(page.getByRole('button', { name: 'Notify me when Scheduled fixture launches' })).toBeVisible();
+});

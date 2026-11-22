@@ -37,7 +37,12 @@ test('membership sign-in preserves the verified member spotlight flow',async({pa
  await page.route('**/api/founding-access',async r=>{
   const body=r.request().postDataJSON();expect(body).toEqual({email:'member@example.com'});member=true;await r.fulfill({json:{ok:true}});
  });
- await page.goto(base+'/membership');await page.locator('#founding-access-form input[name=email]').fill('member@example.com');
+ await page.goto(base+'/membership');
+ const faq = page.locator('.membership-faq details').first();
+ await faq.locator('summary').click();
+ await expect(faq.locator('p')).toHaveCSS('color', 'rgb(73, 73, 73)');
+ await expect(page.getByText('Purchase email', { exact: true })).toHaveCSS('color', 'rgb(27, 27, 27)');
+ await page.locator('#founding-access-form input[name=email]').fill('member@example.com');
  await page.locator('#founding-access-form button').click();
  await expect(page.locator('#membership-verified')).toBeVisible();
  await expect(page.locator('#founding-access-form')).toBeHidden();

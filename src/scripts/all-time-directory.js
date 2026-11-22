@@ -60,7 +60,7 @@ if (root) {
   const params = new URLSearchParams(location.search);
   const state = {
     projects: [], loaded: false, failed: false,
-    query: '', category: categoryFromLink(params.get('category') || ''),
+    query: (params.get('q') || '').trim().slice(0, 120), category: categoryFromLink(params.get('category') || ''),
     sort: sortKeys.includes(params.get('sort')) ? params.get('sort') : DEFAULT_SORT,
     featured: params.get('view') === 'featured',
     limit: PAGE, selected: null,
@@ -69,11 +69,13 @@ if (root) {
   const $ = selector => root.querySelector(selector);
   const list = $('[data-dir-list]'), status = $('[data-dir-status]'), more = $('[data-dir-more]'), shown = $('[data-dir-shown]');
   const category = $('[data-dir-chips]'), sort = $('[data-dir-sorts]'), search = $('[data-dir-search]');
+  search.value = state.query;
 
   // ---------- URL state ----------
   function syncUrl() {
     const url = new URL(location.href);
     const set = (key, value) => value ? url.searchParams.set(key, value) : url.searchParams.delete(key);
+    set('q', state.query);
     set('view', state.featured ? 'featured' : ''); set('category', state.category); set('sort', state.sort === DEFAULT_SORT ? '' : state.sort);
     history.replaceState(history.state, '', url.pathname + url.search + url.hash);
   }
@@ -96,8 +98,8 @@ if (root) {
     state.featured = button.dataset.dirCollection === 'featured'; state.limit = PAGE; syncUrl(); render();
   }));
   let typing = 0;
-  search.addEventListener('input', () => { clearTimeout(typing); typing = setTimeout(() => { state.query = search.value; state.limit = PAGE; render(); }, 120); });
-  search.addEventListener('keydown', event => { if (event.key === 'Escape' && search.value) { search.value = ''; state.query = ''; render(); } });
+  search.addEventListener('input', () => { clearTimeout(typing); typing = setTimeout(() => { state.query = search.value.trim().slice(0, 120); state.limit = PAGE; syncUrl(); render(); }, 120); });
+  search.addEventListener('keydown', event => { if (event.key === 'Escape' && search.value) { clearTimeout(typing); search.value = ''; state.query = ''; syncUrl(); render(); } });
   more.addEventListener('click', () => {
     const next = list.querySelectorAll('.dg-row').length;
     state.limit += PAGE; render(false);
@@ -139,7 +141,9 @@ if (root) {
     const box = el('div', null, 'dg-actions');
     const visit = visitLink(p, 'dg-visit dg-dir-visit');
     if (visit) {
-      visit.append(el('span', 'Visit'), el('span', '↗', 'dg-visit-arrow'), el('span', '✦', 'dg-dir-visit-pts'));
+      const arrow = icon('external');
+      arrow.classList.add('dg-visit-arrow');
+      visit.append(el('span', 'Visit'), arrow, el('span', '✦', 'dg-dir-visit-pts'));
       visit.setAttribute('aria-label', `Visit ${p.name} (opens in a new tab). Leave specific feedback when you’re back to earn points.`);
       visit.title = 'Visit, then leave specific feedback to earn points';
       box.append(visit);
@@ -312,7 +316,7 @@ if (root) {
     let id = null;
     try { id = location.hash.startsWith('#project-') ? decodeURIComponent(location.hash.slice(9)) : null; } catch { return; }
     if (!id) { if (dialog) closeProject(); return; }
-    if (state.projects.some(p => p.id === id)) { state.featured = false; state.query = ''; search.value = ''; render(); openProject(id); }
+    if (state.projects.some(p => p.id === id)) { state.featured = false; state.query = ''; search.value = ''; syncUrl(); render(); openProject(id); }
   }
   addEventListener('hashchange', openFromHash);
 

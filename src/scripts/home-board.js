@@ -1,12 +1,13 @@
 import { requestCardInteraction } from './card-actions.js';
 import { observeProjectViews } from './project-views.js';
 import { homeLaunchGroups } from '../lib/home-launches.mjs';
-import { fairOrder, launchBounds, launchTimestamp } from '../lib/launch-calendar.mjs';
+import { fairOrder, freeLaunchDay, launchBounds, launchTimestamp } from '../lib/launch-calendar.mjs';
 import { api, session } from './discussion.js';
 import { boostVotes } from '../lib/feedback-score.mjs';
 import { safeSearchHref } from '../lib/discovery-search.mjs';
 import { cardIconMarkup } from '../lib/card-icons.mjs';
 import { projectMarks } from '../lib/project-marks.mjs';
+import { matchesQuery } from '../lib/directory-sort.mjs';
 
 // One catalogue supplies the launch lists and featured products.
 const board = document.querySelector('[data-board]');
@@ -14,6 +15,7 @@ const home = document.querySelector('[data-spots]');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const WEEK = 7 * 86_400_000;
 const PAGE = 10;
+const defaultLimits = { current: PAGE, upcoming: 5, previous: 5, archive: 5 };
 
 const el = (tag, text, className) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node; };
 
@@ -59,7 +61,7 @@ function spotCard(item, price) {
   if (!item) {
     // Open cards are paid spots only: they always lead to $3 Instant Publishing.
     card.href = '/submit-project?spot=1#project-form';
-    card.append(el('strong', 'Feature your product'), el('span', 'See instant publishing options →'));
+    card.append(el('strong', 'Feature your product'), el('span', 'Instant publishing →'));
     card.setAttribute('aria-label', `Feature your product with instant publishing${price ? ` for ${price}` : ''}`);
     return card;
   }
@@ -92,13 +94,12 @@ function renderSpots(featured, sponsored, instant) {
 // counts stay hidden. Last week: frozen final results with the podium.
 const state = {
   projects: [], fair: { active: false, endsAt: 0 }, podium: null, upcoming: null,
-  limits: { current: PAGE, upcoming: 5, previous: 5, archive: 5 },
+  limits: { ...defaultLimits }, query: '', ready: false,
 };
 const pendingVotes = new Set();
 const pendingWatch = new Set();
 const MEDAL = { 1: 'gold', 2: 'silver', 3: 'bronze' };
 const localTime = value => new Date(value).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' });
-const launchDay = value => new Date(value).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
 const scoreOf = p => Number.isFinite(Number(p.score)) && p.score !== null ? Number(p.score) : (Number(p.votes?.weekly) || 0) + boostVotes(p.boost);
 
 function groups() {
@@ -172,7 +173,7 @@ function upcomingRow(item) {
   li.dataset.upcomingId = item.id;
   const art = el('span', null, 'dg-logo-link'); art.setAttribute('aria-hidden', 'true'); art.append(logo({ name: item.name }, 'dg-logo'));
   const main = el('div', null, 'dg-main');
-  const title = el('h3'); title.append(el('span', item.name, 'dg-upcoming-name'), el('span', launchDay(item.launchAt), 'dg-badge dg-badge-date'));
+  const title = el('h3'); title.append(el('span', item.name, 'dg-upcoming-name'), el('span', freeLaunchDay(item.launchAt), 'dg-badge dg-badge-date'));
   main.append(title, el('p', item.description || 'Launching soon on Digivated.', 'dg-tagline'));
   const meta = el('p', null, 'dg-meta');
   meta.append(el('span', item.category || 'Project'));
@@ -244,16 +245,20 @@ async function toggleVote(p, button, li) {
   }
 }
 
-function sectionNote(key) {
+function sectionNote(key, items) {
   const howLink = () => Object.assign(el('a', 'How launches are ranked', 'dg-note-link'), { href: '/winners#how-ranking-works' });
-  if (key === 'archive') return ['Sorted by all-time upvotes.'];
-  if (key === 'upcoming') return [`Get a notification when a product launches.`];
+  if (key === 'archive') return [];
+  if (key === 'upcoming') {
+    const date = el('time', freeLaunchDay(items[0].launchAt));
+    date.dateTime = items[0].launchAt;
+    return [date, ' · 9:00 AM Eastern'];
+  }
   const bounds = launchBounds(key);
   const dates = `${shortDate(bounds.start)} – ${shortDate(bounds.end - 86_400_000)}`;
   if (key === 'current') return state.fair.active
     ? [`${dates} · launches rotate hourly. Upvote counts appear ${localTime(state.fair.endsAt)} · `, howLink()]
     : [`${dates} · `, howLink()];
-  return state.podium?.order?.length ? [`${dates} · Final results · `, Object.assign(el('a', 'Winners', 'dg-note-link'), { href: '/winners' })] : [`${dates} · Sorted by upvotes`];
+  return state.podium?.order?.length ? [`${dates} · `, Object.assign(el('a', 'Winners', 'dg-note-link'), { href: '/winners' })] : [dates];
 }
 
 function renderRising() {
@@ -275,18 +280,39 @@ function renderRising() {
   }));
 }
 
-function render() {
+function revealRows(rows) {
+  if (!canAnimate() || document.hidden) return;
+  for (const [index, item] of rows.slice(0, 5).entries()) {
+    if (item.contains(document.activeElement)) continue;
+    item.animate([{ opacity: .78, translate: '0 5px' }, { opacity: 1, translate: '0 0' }], {
+      duration: 260, delay: index * 24, fill: 'backwards', easing: 'cubic-bezier(.22,1,.36,1)',
+    });
+  }
+}
+
+function render({ animateSearch = false } = {}) {
   const g = groups();
-  renderRising();
+  const searching = !!state.query;
+  const total = Object.values(g).reduce((sum, items) => sum + items.length, 0);
+  const rising = board.querySelector('[data-rising]');
+  if (searching && rising) rising.hidden = true;
+  else renderRising();
+  let matches = 0;
+  const searchRows = [];
   for (const section of board.querySelectorAll('[data-board-section]')) {
-    const key = section.dataset.boardSection, items = g[key] || [], limit = state.limits[key];
-    if (key === 'upcoming') { section.hidden = !items.length; if (!items.length) continue; }
+    const key = section.dataset.boardSection, all = g[key] || [], limit = state.limits[key];
+    const items = searching ? all.filter(project => matchesQuery(project, state.query)) : all;
+    matches += items.length;
+    section.hidden = !items.length && (searching || key === 'upcoming');
+    if (section.hidden) continue;
     const count = section.querySelector('[data-section-count]');
     const note = section.querySelector('[data-section-note]');
     count.textContent = key === 'archive' ? `${items.length} ${items.length === 1 ? 'project' : 'projects'}` : key === 'upcoming' ? `${items.length} scheduled` : `${items.length} ${items.length === 1 ? 'launch' : 'launches'}`;
-    note.replaceChildren(...sectionNote(key));
+    note.replaceChildren(...sectionNote(key, items));
     const list = section.querySelector('[data-section-list]');
-    list.replaceChildren(...items.slice(0, limit).map(p => key === 'upcoming' ? upcomingRow(p) : row(p, key)));
+    const rows = items.slice(0, limit).map(p => key === 'upcoming' ? upcomingRow(p) : row(p, key));
+    list.replaceChildren(...rows);
+    if (animateSearch) searchRows.push(...rows.slice(0, Math.max(0, 5 - searchRows.length)));
     if (!items.length) {
       const empty = el('li', null, 'dg-row dg-row-empty');
       if (key === 'current') { const cta = el('a', 'Submit a product for this week'); cta.href = '/submit-project'; empty.append(cta); }
@@ -300,15 +326,17 @@ function render() {
       render();
       const revealed = Array.from(list.children).slice(limit);
       if (event.detail === 0) revealed[0]?.querySelector('h3 a, button')?.focus();
-      if (!canAnimate()) return;
-      for (const [index, item] of revealed.slice(0, 5).entries()) {
-        if (item.contains(document.activeElement)) continue;
-        item.animate([{ opacity: .55, translate: '0 8px' }, { opacity: 1, translate: '0 0' }], {
-          duration: 420, delay: index * 38, fill: 'backwards', easing: 'cubic-bezier(.22,1,.36,1)',
-        });
-      }
+      revealRows(revealed);
     };
     more.textContent = `View ${Math.min(PAGE, items.length - limit)} more`;
+  }
+  if (animateSearch) revealRows(searchRows);
+  const searchStatus = document.querySelector('[data-launch-search-status]');
+  if (searchStatus) {
+    searchStatus.hidden = !searching;
+    searchStatus.textContent = !searching ? '' : matches
+      ? `${number.format(matches)} of ${number.format(total)} launches`
+      : 'No launches match your search.';
   }
   const upvotes = state.projects.reduce((sum, p) => sum + (Number(p.votes?.all) || 0), 0);
   document.querySelectorAll('[data-stat-upvotes]').forEach(node => { node.textContent = number.format(upvotes); });
@@ -392,11 +420,64 @@ const featuredFrom = projects => projects.filter(p => p.status === 'featured').s
 const sponsoredFrom = projects => { const now = Date.now(); return projects.filter(p => p.sponsored && p.status !== 'featured' && now - launchTimestamp(p) < WEEK).sort((a, b) => launchTimestamp(b) - launchTimestamp(a)); };
 
 if (board) {
+  const searchForm = document.querySelector('[data-launch-search]');
+  const searchField = searchForm?.querySelector('input[type="search"]');
+  const clearButton = searchForm?.querySelector('[data-clear-launch-search]');
+  if (searchField && clearButton) {
+    searchForm.setAttribute('data-search-enhanced', '');
+    const updateClear = () => { clearButton.hidden = !searchField.value; };
+    updateClear();
+    let timer = 0;
+    const applyQuery = () => {
+      const query = searchField.value.trim().slice(0, 120);
+      if (query === state.query) return;
+      state.query = query;
+      state.limits = { ...defaultLimits };
+      if (state.ready) render({ animateSearch: !!query });
+    };
+    const clearQuery = () => {
+      clearTimeout(timer);
+      searchField.value = '';
+      updateClear();
+      applyQuery();
+      searchField.focus();
+    };
+    clearButton.addEventListener('click', clearQuery);
+    searchForm.addEventListener('submit', event => {
+      if (!state.ready) return; // The directory remains a fallback while the board loads or is unavailable.
+      event.preventDefault();
+      clearTimeout(timer);
+      applyQuery();
+    });
+    searchField.addEventListener('input', event => {
+      updateClear();
+      clearTimeout(timer);
+      if (!event.isComposing) timer = setTimeout(applyQuery, 100);
+    });
+    searchField.addEventListener('compositionend', applyQuery);
+    searchField.addEventListener('keydown', event => {
+      if (event.isComposing) return;
+      if (event.key === 'Escape' && searchField.value) {
+        event.preventDefault();
+        clearQuery();
+      }
+      if (event.key === 'ArrowDown' && searchField.value.trim() && state.ready) {
+        clearTimeout(timer);
+        applyQuery();
+        const firstResult = board.querySelector('[data-board-section]:not([hidden]) .dg-row:not(.dg-row-empty) :is(h3 a,.dg-watch)');
+        if (firstResult) {
+          event.preventDefault();
+          firstResult.focus();
+        }
+      }
+    });
+  }
   pointsChip();
   railThreads();
   const cached = readCache();
   if (cached) {
     state.projects = cached.projects;
+    state.ready = true;
     state.fair = cached.fair || state.fair;
     if (cached.podium?.order) state.podium = cached.podium;
     render();
@@ -404,10 +485,11 @@ if (board) {
   }
   const catalogue = loadCatalogue();
   // Last week's final results and the podium arrive separately; lists re-render when they do.
-  loadLaunches('podium').then(data => { if (!data?.order) return; state.podium = data; writeCache({ podium: data }); if (state.projects.length) { render(); } });
-  loadLaunches('upcoming').then(data => { if (!data?.items) return; state.upcoming = data; if (state.projects.length) { render(); } });
+  loadLaunches('podium').then(data => { if (!data?.order) return; state.podium = data; writeCache({ podium: data }); if (state.ready) render(); });
+  loadLaunches('upcoming').then(data => { if (!data?.items) return; state.upcoming = data; if (state.ready) render(); });
   catalogue.then(projects => {
     state.projects = projects;
+    state.ready = true;
     render();
     writeCache({ at: Date.now(), projects: projects.map(({ liked, ...p }) => p), fair: state.fair });
   }).catch(error => {

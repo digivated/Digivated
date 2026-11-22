@@ -34,12 +34,15 @@ if (bell) {
   }
   const close = (focus = false) => { if (panel.hidden) return; panel.hidden = true; bell.setAttribute('aria-expanded', 'false'); if (focus) bell.focus(); };
   async function open() {
+    panel.hidden = false;
     const bounds = siteHeader?.getBoundingClientRect();
     if (bounds) {
+      const maxRight = innerWidth - panel.offsetWidth - 12;
+      const right = Math.min(maxRight, Math.floor(innerWidth - bounds.right));
       panel.style.setProperty('--bell-top', `${Math.ceil(bounds.bottom) + 8}px`);
-      panel.style.setProperty('--bell-right', `${Math.max(12, Math.floor(innerWidth - bounds.right))}px`);
+      panel.style.setProperty('--bell-right', `${Math.max(12, right)}px`);
     }
-    panel.hidden = false; bell.setAttribute('aria-expanded', 'true');
+    bell.setAttribute('aria-expanded', 'true');
     list.replaceChildren(el('p', 'Loading…', 'dg-bell-empty'));
     try {
       const response = await fetch('/api/notifications?action=list', { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });

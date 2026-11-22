@@ -308,7 +308,8 @@ export function makeSubmissionHandler(deps={}) {
           } catch { /* Save the submission so the maker can retry verification from their dashboard. */ }
         }
       }
-      const stored={...record,...(!record.promotion?{launch:{kind:'free',version:1,scheduledAt:nextFreeLaunch(now.getTime()),scheduledTimestamp:Date.parse(nextFreeLaunch(now.getTime())),...(badgeVerifiedAt?{badgeVerifiedAt}:{})}}:{}),...(account?{accountId:account.id}:{}),id,date:now.toISOString(),consentedAt:now.toISOString(),...(record.emailOutreachConsent?{emailOutreachConsentedAt:now.toISOString(),emailOutreachConsentVersion:2}:{})};
+      const scheduledAt=nextFreeLaunch(now.getTime());
+      const stored={...record,...(!record.promotion?{launch:{kind:'free',version:1,scheduledAt,scheduledTimestamp:Date.parse(scheduledAt),...(badgeVerifiedAt?{badgeVerifiedAt}:{})}}:{}),...(account?{accountId:account.id}:{}),id,date:now.toISOString(),consentedAt:now.toISOString(),...(record.emailOutreachConsent?{emailOutreachConsentedAt:now.toISOString(),emailOutreachConsentVersion:2}:{})};
       const accountKey=accountIndex(record.email,env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only');
       const activityNotifications = body.activityNotifications;
       if (activityNotifications !== undefined && typeof activityNotifications !== 'boolean') throw new SubmissionError(400, 'Choose a valid activity notification setting.');

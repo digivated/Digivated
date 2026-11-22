@@ -7,11 +7,11 @@ export const formatDate = value => {
   const date = new Date(value);
   return Number.isFinite(date.getTime()) ? date.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : '';
 };
-// Publication runs Mondays at 14:00 UTC (9:00 AM Eastern); show that locally too.
+// The server supplies the scheduled Monday at 9:00 AM Eastern.
 export const localLaunchTime = value => {
   const time = Date.parse(value);
   if (!Number.isFinite(time)) return '';
-  return new Date(Date.UTC(new Date(time).getUTCFullYear(), new Date(time).getUTCMonth(), new Date(time).getUTCDate(), 14)).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  return new Date(time).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 };
 export const daysUntil = (value, now = Date.now()) => {
   const time = Date.parse(value);
