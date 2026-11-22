@@ -110,11 +110,6 @@ html[data-ascii] body .fl-project[data-stage=scheduled] .fl-next-copy{border-col
 html[data-ascii] body .fl-feedback{padding:12px 14px!important;border-left:2px solid var(--fl-line-hi)!important;color:var(--fl-copy)!important;font-size:13px;white-space:pre-wrap}
 html[data-ascii] body .fl-feedback strong{display:block;color:var(--fl-ink)!important;margin-bottom:4px}
 html[data-ascii] body .fl-feedback p{margin:0!important}
-html[data-ascii] body .fl-settings{display:grid;gap:12px}
-html[data-ascii] body .fl-setting{display:flex!important;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-html[data-ascii] body .fl-setting h3{margin:0 0 4px!important;font-size:15px!important}
-html[data-ascii] body .fl-setting p{margin:0!important;color:var(--fl-muted)!important;font-size:13px}
-html[data-ascii] body .fl-setting[hidden]{display:none!important}
 html[data-ascii] body .fl-dash .creator-profile-editor{margin:0!important}
 html[data-ascii] body .fl-dash .creator-following-feed{margin:0!important}
 
@@ -198,7 +193,7 @@ html[data-ascii] body :is(h1,h2,h3,h4){font-family:var(--fl-sans)!important;font
 html[data-ascii] body h1{letter-spacing:-.04em!important;line-height:1.04!important}
 html[data-ascii] body :is(h2,h3){letter-spacing:-.025em!important;line-height:1.15!important}
 html[data-ascii] body :is(p,li){line-height:1.6!important}
-html[data-ascii] body #main :is(.page-intro,.notifications-heading,.fl-auth-heading) h1{font-size:clamp(36px,5vw,60px)!important}
+html[data-ascii] body #main :is(.page-intro,.fl-auth-heading) h1{font-size:clamp(36px,5vw,60px)!important}
 html[data-ascii] body :is(.eyebrow,.home-editorial-kicker,.home-about-label,.submission-step-label,.fl-label){font-size:11px!important;font-weight:400!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:var(--fl-label)!important}
 html[data-ascii] body .lede{color:#a9a9a9!important;font-size:16px!important}
 
@@ -243,7 +238,6 @@ html[data-ascii] body .compact-site-header .header-inner::before{left:calc(var(-
 html[data-ascii] body .compact-site-header .header-inner::after{right:calc(var(--canvas-gutter) - 28px)}
 @media (max-width:760px){html[data-ascii] body :is(.compact-site-header .header-inner,.platform:not(.owner) #main){background-image:none!important}html[data-ascii] body .compact-site-header .header-inner::before,html[data-ascii] body .compact-site-header .header-inner::after{display:none}}
 
-html[data-ascii] body #main .notifications-heading{display:flex!important;align-items:flex-end;justify-content:space-between}
 
 /* Header: brand, ruled nav, quiet utilities. */
 html[data-ascii] body .brand-spinner{animation:none!important;transform:none!important}

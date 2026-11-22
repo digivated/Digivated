@@ -1,0 +1,31 @@
+---
+import UiIcon from './UiIcon.astro';
+import '../styles/settings-masthead.css';
+
+const { id, title, description, icon = 'bell', level = 'h2' } = Astro.props;
+const Heading = level;
+---
+<header class="settings-masthead">
+  <div class="settings-motion" data-settings-motion aria-hidden="true"></div>
+  <div class="settings-masthead-copy">
+    <span class="settings-masthead-icon"><UiIcon name={icon} size={22}/></span>
+    <Heading id={id}>{title}</Heading>
+    <p>{description}</p>
+  </div>
+  {Astro.slots.has('default') && <div class="settings-masthead-actions"><slot/></div>}
+</header>
+
+<script>
+  if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const observer = new IntersectionObserver(entries => {
+      for (const { target, isIntersecting } of entries) {
+        if (!isIntersecting) continue;
+        observer.unobserve(target);
+        import('./settings-motion.jsx').then(({ mountSettingsMotion }) => {
+          mountSettingsMotion(target);
+        }).catch(() => { /* The masthead has a static background. */ });
+      }
+    }, { rootMargin: '40px' });
+    document.querySelectorAll('[data-settings-motion]').forEach(layer => observer.observe(layer));
+  }
+</script>

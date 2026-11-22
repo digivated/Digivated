@@ -326,7 +326,7 @@
   }
   .home-refresh .dg-board { gap: clamp(22px, 3.5vw, 40px); }
   .home-refresh .dg-board .dg-list-note:empty { display: none !important; }
-  .dg-workspace #main :is(.page-intro, .page-heading, .notifications-heading) :is(.lede, p) {
+  .dg-workspace #main :is(.page-intro, .page-heading) :is(.lede, p) {
     color: var(--fl-copy) !important;
     font-size: 16px !important;
     line-height: 1.55 !important;

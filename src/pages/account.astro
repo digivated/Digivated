@@ -4,6 +4,7 @@ import Platform from '../layouts/Platform.astro';
 import '../styles/project-account.css';
 import MakerNavigation from '../components/MakerNavigation.astro';
 import FeedbackPoints from '../components/FeedbackPoints.astro';
+import SettingsMasthead from '../components/SettingsMasthead.astro';
 ---
 <Platform title="Your Projects" description="Your Digivated dashboard: track launches, read feedback, and manage your profile.">
   <header class="page-intro fl-dash-intro"><div><h1>Maker dashboard</h1><p class="lede">Track your launches.</p></div></header>
@@ -71,11 +72,31 @@ import FeedbackPoints from '../components/FeedbackPoints.astro';
         </section>
       </section>
       <section id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" class="fl-tabpanel" hidden>
-        <header class="maker-section-heading"><h2>Account settings</h2></header>
-        <div class="fl-settings">
-          <div class="fl-card fl-panel-pad fl-setting"><div><h3>Notifications</h3><p>Manage activity alerts and choose which ones arrive by email.</p></div><a class="fl-btn" href="/notifications#notification-preferences">Manage notifications <UiIcon name="arrow" size={15}/></a></div>
-          <section id="weekly-email" class="fl-card fl-panel-pad fl-setting" hidden><div><h3>Weekly email</h3><p>Get new projects by email. Unsubscribe anytime.</p><p id="weekly-status" class="fl-status" role="status" aria-live="polite"></p></div><button class="fl-btn" id="weekly-toggle" type="button">Get weekly emails</button></section>
-          <div class="fl-card fl-panel-pad fl-setting"><div><h3>Password</h3><p>Send a reset link to your account email.</p><p id="account-reset-status" class="fl-status" role="status" aria-live="polite"></p></div><button class="fl-btn" id="account-reset-link" type="button">Email me a reset link</button></div>
+        <SettingsMasthead title="Account settings" description="Manage alerts, the weekly launch email, and your password." icon="sliders"/>
+        <div class="account-settings-grid">
+          <section class="account-setting-card account-setting-feature" aria-labelledby="account-notifications-title">
+            <span class="account-setting-icon"><UiIcon name="bell" size={23}/></span>
+            <div>
+              <h3 id="account-notifications-title">Notifications</h3>
+              <p>Choose which activity you hear about, from project feedback to launch reminders.</p>
+            </div>
+            <a class="button primary" href="/notifications#notification-preferences">Manage notifications <UiIcon name="arrow" size={16}/></a>
+            <a class="account-setting-link" href="/notifications#notification-activity">View recent activity</a>
+          </section>
+          <div class="account-settings-secondary">
+            <section id="weekly-email" class="account-setting-card" aria-labelledby="account-weekly-title" hidden>
+              <span class="account-setting-icon"><UiIcon name="mail" size={21}/></span>
+              <div><h3 id="account-weekly-title">Weekly email</h3><p>Get new projects in your inbox. Unsubscribe anytime.</p></div>
+              <button class="fl-btn" id="weekly-toggle" type="button">Get weekly emails</button>
+              <p id="weekly-status" class="fl-status" role="status" aria-live="polite"></p>
+            </section>
+            <section class="account-setting-card" aria-labelledby="account-password-title">
+              <span class="account-setting-icon"><UiIcon name="lock" size={21}/></span>
+              <div><h3 id="account-password-title">Password</h3><p>Send a reset link to your account email.</p></div>
+              <button class="fl-btn" id="account-reset-link" type="button">Email me a reset link</button>
+              <p id="account-reset-status" class="fl-status" role="status" aria-live="polite"></p>
+            </section>
+          </div>
         </div>
       </section>
     </div>

@@ -51,6 +51,17 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
     } : { status });
   });
   await page.route('https://fixture.supabase.co/auth/v1/**', route => route.fulfill({ json: user }));
+  let resetEmail = '';
+  await page.route('https://fixture.supabase.co/auth/v1/recover**', route => {
+    resetEmail = route.request().postDataJSON().email;
+    return route.fulfill({ json: {} });
+  });
+  let weeklySubscribed = false;
+  await page.route('**/api/return-emails?*', route => {
+    const action = new URL(route.request().url()).searchParams.get('action');
+    if (action !== 'status') weeklySubscribed = action === 'on';
+    return route.fulfill({ json: { subscribed: weeklySubscribed, available: true } });
+  });
   await page.route('**/api/notifications?action=list', route => route.fulfill({ json: { items: [] } }));
   await page.route('**/api/feedback-points?action=me', route => route.fulfill({ json: { total: 12, week: 4 } }));
   await page.goto('http://127.0.0.1:4321/discover?view=featured&signed_in=1');
@@ -132,9 +143,17 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await account.getByRole('tab', { name: 'Settings' }).click();
   await expect(account.getByRole('tab', { name: 'Settings' })).toHaveAttribute('aria-selected', 'true');
   const settings = page.getByRole('tabpanel', { name: 'Settings' });
+  await expect(settings.getByRole('heading', { name: 'Account settings' })).toBeVisible();
+  await expect(settings.getByRole('link', { name: 'View recent activity' })).toHaveAttribute('href', '/notifications#notification-activity');
   await expect(settings.getByRole('link', { name: 'Manage notifications' })).toHaveAttribute('href', '/notifications#notification-preferences');
   await expect(settings.getByRole('link', { name: 'Open inbox' })).toHaveCount(0);
-  await expect(settings.getByRole('button', { name: 'Email me a reset link' })).toBeVisible();
+  await settings.getByRole('button', { name: 'Get weekly emails' }).click();
+  await expect(settings.getByRole('button', { name: 'Stop weekly emails' })).toBeVisible();
+  await settings.getByRole('button', { name: 'Stop weekly emails' }).click();
+  await expect(settings.getByRole('button', { name: 'Get weekly emails' })).toBeVisible();
+  await settings.getByRole('button', { name: 'Email me a reset link' }).click();
+  await expect(settings.getByText('Check your inbox', { exact: false })).toBeVisible();
+  expect(resetEmail).toBe(email);
   await menu.click();
   await expect(accountMenu.getByRole('menuitem', { name: 'Settings' })).toHaveAttribute('aria-current', 'page');
   await expect(accountMenu).toHaveCSS('position', 'absolute');
@@ -161,6 +180,9 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await expect(page).toHaveURL(/\/notifications#notification-preferences$/);
   const notificationSettings = page.getByRole('region', { name: 'Notification settings' });
   await expect(notificationSettings.getByRole('heading')).toBeInViewport();
+  const sections = page.getByRole('navigation', { name: 'Notifications sections' });
+  await expect(sections.getByRole('link', { name: 'Activity' })).toHaveAttribute('href', '#notification-activity');
+  await expect(sections.getByRole('link', { name: 'Preferences' })).toHaveAttribute('href', '#notification-preferences');
   await expect(notificationSettings.getByRole('switch', { name: 'Activity alerts' })).toBeChecked();
   const emailAlerts = notificationSettings.getByRole('checkbox', { name: 'Email me activity alerts' });
   await emailAlerts.check();

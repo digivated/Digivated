@@ -4,7 +4,7 @@
     padding: var(--editorial-space) 0 24px;
   }
   .notifications-page [hidden] { display: none !important; }
-  .notifications-heading,
+  .notifications-page .settings-masthead { margin-bottom: 16px; }
   .notifications-section-head,
   .notifications-settings-head {
     display: flex;
@@ -12,17 +12,6 @@
     align-items: start;
     gap: 12px 16px;
   }
-  .notifications-heading {
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-  }
-  .notifications-heading h1 {
-    margin: 0 0 6px !important;
-    font-size: clamp(34px, 4.4vw, 52px) !important;
-    line-height: 1.1 !important;
-  }
-  .notifications-heading p,
   .notifications-card p:not(.dg-note-line) {
     margin: 0 !important;
     color: var(--fl-muted) !important;
@@ -44,7 +33,25 @@
     background: var(--fl-surface) !important;
   }
   .notifications-auth a { margin-top: 12px !important; }
-  .notifications-settings { scroll-margin-block-start: 94px; }
+  :is(#notification-activity, #notification-preferences) { scroll-margin-block-start: 94px; }
+  .notifications-jumps {
+    grid-column: 1 / -1;
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 5px 14px;
+    padding: 0 0 4px !important;
+    border-bottom: 1px solid var(--fl-line) !important;
+  }
+  .notifications-jumps a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 44px;
+    padding: 5px 11px !important;
+    border-radius: 8px !important;
+    color: var(--fl-ink) !important;
+  }
+  .notifications-jumps a:is(:hover, :focus-visible) { background: var(--fl-raised) !important; }
   .notifications-card h2 {
     margin: 0 0 4px !important;
     color: var(--fl-ink) !important;
@@ -53,7 +60,7 @@
   }
   .notifications-section-head { flex-wrap: wrap; }
   .notifications-feed-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-  .notifications-page :is(.notifications-heading,.notifications-feed-actions) .fl-btn {
+  .notifications-page .notifications-feed-actions .fl-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -116,7 +123,10 @@
 
   .notifications-settings-head {
     justify-content: start;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    padding: 13px !important;
+    border-radius: 12px !important;
+    background: var(--fl-bg) !important;
   }
   .notifications-setting-icon {
     display: grid;
@@ -161,7 +171,13 @@
     margin: 0 !important;
     accent-color: var(--fl-ink) !important;
   }
-  .notifications-page .notifications-master { position: relative; }
+  .notifications-page .notifications-master {
+    position: relative;
+    padding-bottom: 14px !important;
+  }
+  .notifications-choice-list fieldset label:has(input:checked) {
+    border-bottom-color: var(--fl-line-hi) !important;
+  }
   .notifications-page .notifications-master input[type="checkbox"] {
     position: absolute;
     inset: 0 0 0 auto;
@@ -202,15 +218,9 @@
   .notifications-card .notifications-status:empty { margin: 0 !important; }
 
   @media (min-width: 900px) {
-    .notifications-layout { grid-template-columns: minmax(0, 1.45fr) minmax(285px, 1fr); }
+    .notifications-layout { grid-template-columns: minmax(0, 1.15fr) minmax(300px, 1fr); }
   }
-  /* React Bits Fade Content pattern, scoped to the initial settings reveal. */
   @media (prefers-reduced-motion: no-preference) {
-    .notifications-layout:not([hidden]) .notifications-settings { animation: notifications-settings-in 220ms ease-out both; }
-    @keyframes notifications-settings-in {
-      from { opacity: .76; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
     .notifications-switch::after { transition: transform 160ms ease, background-color 160ms ease; }
   }
   @media (forced-colors: active) {
