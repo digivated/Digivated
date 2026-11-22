@@ -23,7 +23,7 @@ test('login entry point exposes sign-in and sign-up email flows', async ({ page 
 
 test('verified account keeps notifications, menu, welcome, and sign-out usable at both layouts', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
-  const email = 'verified@example.invalid';
+  const email = 'verified-builder-with-a-long-account-name@example.invalid';
   const user = { id: '4ad90c9b-5666-482d-899c-d0d3ef41ee46', email, email_confirmed_at: '2026-10-23T00:00:00Z', role: 'authenticated', aud: 'authenticated' };
   const expires = Math.floor(Date.now() / 1000) + 3600;
   const token = [Buffer.from(JSON.stringify({ alg: 'HS256' })).toString('base64url'), Buffer.from(JSON.stringify({ sub: user.id, email, exp: expires, amr: [{ method: 'magiclink' }] })).toString('base64url'), 'fixture'].join('.');
@@ -47,6 +47,7 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   } : { status: 204 }));
   await page.route('https://fixture.supabase.co/auth/v1/**', route => route.fulfill({ json: user }));
   await page.route('**/api/notifications?action=list', route => route.fulfill({ json: { items: [] } }));
+  await page.route('**/api/feedback-points?action=me', route => route.fulfill({ json: { total: 0, week: 0 } }));
   await page.goto('http://127.0.0.1:4321/discover?view=featured&signed_in=1');
   const menu = page.getByRole('button', { name: `Account menu for ${email}` });
   await expect(menu).toBeVisible();
@@ -81,7 +82,18 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   const panel = (await accountMenu.boundingBox())!;
   expect(panel.x).toBeGreaterThanOrEqual(rail.x);
   expect(panel.x + panel.width).toBeLessThanOrEqual(rail.x + rail.width);
-  await expect(page.getByRole('menu')).toContainText(email);
+  await expect(accountMenu).toContainText(email);
+  await expect(accountMenu).toHaveCSS('position', 'static');
+  await expect(accountMenu).toHaveCSS('overflow-y', 'visible');
+  await expect(sidebar).toHaveCSS('border-top-right-radius', '18px');
+  await expect(accountMenu.locator('#header-account-email')).toHaveAttribute('title', email);
+  await expect(accountMenu.locator('#header-menu-points')).toHaveCSS('color', 'rgb(208, 208, 208)');
+  const primaryNav = sidebar.getByRole('navigation', { name: 'Workspace navigation' });
+  expect((await primaryNav.boundingBox())!.y).toBeGreaterThanOrEqual(panel.y + panel.height - 1);
+  await page.setViewportSize({ width: 1120, height: 430 });
+  await accountMenu.getByRole('menuitem', { name: 'Sign out' }).scrollIntoViewIfNeeded();
+  await expect(accountMenu.getByRole('menuitem', { name: 'Sign out' })).toBeInViewport();
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.getByRole('menuitem', { name: 'Your projects' }).click();
   await expect(page.locator('#account-state')).toContainText(`You're logged in as ${email}.`);
   await expect(page.locator('#creator-profile-link')).toHaveAttribute('href', `/creator?id=${user.id}`);
@@ -98,6 +110,11 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await expect(settings.getByRole('link', { name: 'Manage notifications' })).toHaveAttribute('href', '/notifications');
   await expect(settings.getByRole('link', { name: 'Open inbox' })).toHaveAttribute('href', '/inbox');
   await expect(settings.getByRole('button', { name: 'Email me a reset link' })).toBeVisible();
+  await menu.click();
+  await expect(accountMenu.getByRole('menuitem', { name: 'Settings' })).toHaveAttribute('aria-current', 'page');
+  await expect(accountMenu).toHaveCSS('position', 'absolute');
+  await accountMenu.getByRole('menuitem', { name: 'Settings' }).press('Escape');
+  await expect(accountMenu).toBeHidden();
   await page.locator('#account-sign-out').click();
   await expect(page).toHaveURL(/\/login\/?$/);
   await expect(page.getByRole('link', { name: 'Log In', exact: true })).toBeVisible();

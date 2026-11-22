@@ -241,6 +241,15 @@
     text-underline-offset: 4px;
   }
   .dg-shell .dg-shell-account-panel { gap: 2px; width: min(300px, calc(100vw - 24px)); }
+  .dg-shell-account-caption { display: none; }
+  .dg-shell .dg-shell-account-links { display: grid; gap: 2px; }
+  .dg-shell .dg-shell-account-who .fl-menu-points:has(b[hidden]) { display: none; }
+  .dg-shell .dg-shell-account-who .fl-menu-points b { color: inherit !important; }
+  .dg-shell .dg-shell-account-panel #header-sign-out {
+    border-block-start: 1px solid var(--shell-border) !important;
+    border-start-start-radius: 0 !important;
+    border-start-end-radius: 0 !important;
+  }
   .dg-shell .dg-shell-account-who {
     display: grid;
     gap: 3px;

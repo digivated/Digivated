@@ -16,14 +16,15 @@ const active = (href: string) => isNavigationCurrent(path, href);
       <a class="dg-shell-icon dg-shell-notifications" id="header-notifications-link" href="/notifications" aria-label="Notifications" aria-current={active('/notifications')?'page':undefined}><UiIcon name="bell" size={20}/><span id="header-notifications-badge" class="dg-shell-badge" hidden></span></a>
       <a class="dg-shell-login" id="header-account-link" href="/login" aria-current={active('/login')?'page':undefined}>Log In</a>
       <div class="dg-shell-account" id="header-account-menu" hidden>
-        <button type="button" class="dg-shell-avatar-trigger" id="header-account-trigger" aria-labelledby="header-account-label" aria-haspopup="menu" aria-expanded="false" aria-controls="header-account-panel"><span class="dg-shell-avatar" id="header-account-avatar" aria-hidden="true">D</span><span class="fl-menu-name sr-only" id="header-account-label">Account menu</span><span class="dg-shell-account-caret" aria-hidden="true">▾</span><span id="header-account-dot" class="dg-shell-badge" hidden></span></button>
+        <button type="button" class="dg-shell-avatar-trigger" id="header-account-trigger" aria-labelledby="header-account-label" aria-haspopup="menu" aria-expanded="false" aria-controls="header-account-panel"><span class="dg-shell-avatar" id="header-account-avatar" aria-hidden="true">D</span><span class="fl-menu-name sr-only" id="header-account-label">Account menu</span><span class="dg-shell-account-caption" aria-hidden="true">Account</span><span class="dg-shell-account-caret" aria-hidden="true">▾</span><span id="header-account-dot" class="dg-shell-badge" hidden></span></button>
         <div class="dg-shell-account-panel" data-nav-reflection id="header-account-panel" role="menu" aria-labelledby="header-account-trigger" hidden>
-          <span class="dg-shell-account-who" role="presentation"><strong>Signed in</strong><span id="header-account-email"></span><span class="fl-menu-points"><span aria-hidden="true">✦</span> <b id="header-menu-points" hidden>0</b> feedback points</span></span>
-          <a role="menuitem" href="/account">Your projects</a>
-          <a role="menuitem" href="/inbox">Inbox <span class="fl-menu-count" id="header-menu-inbox" hidden></span></a>
-          <a role="menuitem" href="/saved">Saved items</a>
-          <a role="menuitem" href="/account?tab=settings">Settings</a>
-          <hr/>
+          <span class="dg-shell-account-who" role="presentation"><span id="header-account-email"></span><span class="fl-menu-points"><span aria-hidden="true">✦</span> <b id="header-menu-points" hidden>0</b> feedback points</span></span>
+          <div class="dg-shell-account-links" role="presentation">
+            <a role="menuitem" href="/account">Your projects</a>
+            <a role="menuitem" href="/inbox" aria-current={active('/inbox') ? 'page' : undefined}>Inbox <span class="fl-menu-count" id="header-menu-inbox" hidden></span></a>
+            <a role="menuitem" href="/saved" aria-current={active('/saved') ? 'page' : undefined}>Saved items</a>
+            <a role="menuitem" href="/account?tab=settings">Settings</a>
+          </div>
           <button role="menuitem" type="button" id="header-sign-out">Sign out</button>
         </div>
       </div>

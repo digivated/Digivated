@@ -108,7 +108,7 @@
   .dg-workspace .dg-shell .daylight-brand-mark { object-fit: contain; filter: brightness(0) invert(1) !important; }
   .dg-workspace .dg-shell :is(a,button,summary):focus-visible { outline-color: #fff !important; outline-offset: -3px !important; }
   .dg-workspace .dg-shell .dg-shell-badge { color: #000 !important; }
-  .dg-workspace .dg-shell .dg-shell-account-who :is(.fl-menu-points,.fl-menu-count) { color: #d0d0d0 !important; }
+  .dg-workspace .dg-shell .dg-shell-account-who :is(.fl-menu-points,.fl-menu-points b,.fl-menu-count) { color: #d0d0d0 !important; }
   .dg-workspace .dg-shell [data-nav-reflection]::after {
     background-image: radial-gradient(ellipse 115px 76px at var(--reflection-x,0px) var(--reflection-y,0px), #fff9 0%, #acacac55 50%, transparent 100%) !important;
   }
@@ -150,9 +150,11 @@
       display: flex !important;
       flex-direction: column;
       position: sticky;
-      top: 0;
-      height: 100dvh;
-      max-height: 100dvh;
+      top: 8px;
+      block-size: calc(100dvh - 16px);
+      margin-block: 8px;
+      border-start-end-radius: 18px !important;
+      border-end-end-radius: 18px !important;
       overflow: hidden auto;
       overscroll-behavior: contain;
       gap: 10px;
@@ -291,15 +293,76 @@
       outline-color: #f3f3f3 !important;
     }
     .dg-workspace .dg-workspace-rail .dg-shell :is(.dg-shell-icon,.dg-shell-avatar-trigger) svg { filter: none; }
-    .dg-workspace .dg-workspace-rail .dg-shell .dg-shell-account {
-      position: static !important;
-      margin-inline-start: auto;
+    .dg-workspace .dg-shell .dg-shell-account:not([hidden]) { display: contents !important; }
+    .dg-workspace .dg-shell .dg-shell-avatar-trigger {
+      min-width: 0;
+      justify-content: flex-start;
+      gap: 6px;
+      padding-inline: 6px !important;
     }
-    .dg-workspace .dg-workspace-rail .dg-shell-account-panel {
-      right: 0 !important;
-      width: 100% !important;
-      max-height: min(300px, 45dvh) !important;
-      overflow-wrap: anywhere;
+    .dg-workspace .dg-shell-account-caption {
+      display: inline !important;
+      font-size: 13px;
+    }
+    .dg-workspace .dg-shell-account-caret { margin-inline-start: auto; }
+    .dg-workspace .dg-shell-avatar-trigger[aria-expanded="true"] .dg-shell-account-caret { rotate: 180deg; }
+    .dg-workspace .dg-shell .dg-shell-avatar { flex: none; }
+    .dg-workspace .dg-shell .dg-shell-account-panel {
+      position: static !important;
+      grid-column: 1 / -1;
+      width: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      padding: 4px 0 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    .dg-workspace .dg-shell .dg-shell-account-panel::after { display: none; }
+    .dg-workspace .dg-shell .dg-shell-account-who { padding: 4px 8px 8px; }
+    .dg-workspace .dg-shell #header-account-email {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+    .dg-workspace .dg-shell .dg-shell-account-links {
+      padding-inline-start: 16px;
+    }
+    .dg-workspace .dg-shell-account-links a {
+      position: relative;
+      min-height: 36px !important;
+      padding-inline: 8px !important;
+      font-size: 13px !important;
+    }
+    .dg-workspace .dg-shell-account-links a::before {
+      content: "" !important;
+      position: absolute;
+      inset-inline-start: -9px;
+      inset-block-start: -2px;
+      inline-size: 8px;
+      block-size: calc(100% + 2px);
+      border-inline-start: 1px solid #797979 !important;
+      pointer-events: none;
+    }
+    .dg-workspace .dg-shell-account-links a::after {
+      content: "" !important;
+      position: absolute;
+      inset-inline-start: -9px;
+      inset-block-start: 0;
+      inline-size: 8px;
+      block-size: 50%;
+      border-inline-start: 1px solid #797979 !important;
+      border-block-end: 1px solid #797979 !important;
+      border-end-start-radius: 5px;
+      pointer-events: none;
+    }
+    .dg-workspace .dg-shell-account-links a:last-child::before { content: none !important; }
+    .dg-workspace .dg-shell .dg-shell-account-panel #header-sign-out {
+      min-height: 37px !important;
+      margin-block-start: 5px;
+      padding-inline: 8px !important;
+      font-size: 13px !important;
     }
     .dg-workspace .dg-shell-bar {
       min-height: 42px !important;
@@ -308,8 +371,15 @@
       border: 0 !important;
     }
     .dg-workspace .dg-shell :is(.dg-shell-brand,.dg-shell-primary) { display: none !important; }
-    .dg-workspace .dg-shell .dg-shell-tools { width: 100%; gap: 6px; }
+    .dg-workspace .dg-shell .dg-shell-tools {
+      display: grid !important;
+      grid-template-columns: 42px minmax(0, 1fr);
+      align-items: start !important;
+      width: 100%;
+      gap: 5px 6px;
+    }
     .dg-workspace .dg-shell[data-account="signed-out"] .dg-shell-login {
+      grid-column: 1 / -1;
       width: 100%;
       min-height: 44px;
       border-radius: 8px !important;
