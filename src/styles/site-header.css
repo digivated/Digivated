@@ -281,6 +281,7 @@
     .dg-shell .site-menu-panel { left: 8px; width: auto; max-height: min(82dvh, 660px, calc(100dvh - 78px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); }
   }
   @media (max-width: 359px) {
+    .dg-shell .site-menu-trigger { gap: 3px; padding-inline: 3px !important; }
     .dg-shell .dg-shell-account-caret { display: none; }
   }
 }

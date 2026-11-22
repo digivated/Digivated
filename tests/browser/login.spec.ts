@@ -51,6 +51,11 @@ test('verified account shows a named mobile account menu, welcome, account, and 
   await page.goto('http://127.0.0.1:4321/discover?view=featured&signed_in=1');
   const menu = page.getByRole('button', { name: `Account menu for ${email}` });
   await expect(menu).toBeVisible();
+  await page.setViewportSize({ width: 320, height: 900 });
+  const bar = (await page.locator('.dg-shell-bar').boundingBox())!;
+  const siteMenu = (await page.locator('.site-menu-trigger').boundingBox())!;
+  expect(siteMenu.x + siteMenu.width).toBeLessThanOrEqual(bar.x + bar.width);
+  await page.setViewportSize({ width: 390, height: 900 });
   const avatar = page.locator('#header-account-avatar');
   await expect(avatar.locator('img')).toBeVisible();
   avatarAvailable = false;
