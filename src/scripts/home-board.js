@@ -172,9 +172,11 @@ async function toggleWatch(item, button) {
   if (!token) { location.href = '/login?mode=signup&next=' + encodeURIComponent('/#launching-next'); return; }
   pendingWatch.add(item.id); button.setAttribute('aria-busy', 'true');
   let failure = '';
+  let alertsEnabled = true;
   try {
     const result = await api('/api/launches', { action: item.watching ? 'unwatch' : 'watch', id: item.id });
     item.watching = result.watching; item.watchers = result.watchers;
+    alertsEnabled = result.alertsEnabled !== false;
   } catch (error) { failure = error.message || 'Couldn’t update your launch reminder. Try again.'; }
   finally {
     pendingWatch.delete(item.id);
@@ -182,7 +184,11 @@ async function toggleWatch(item, button) {
     render();
     const note = section.querySelector('[data-section-note]');
     if (failure) note.textContent = failure;
-    else if (item.watching) note.textContent = `We’ll notify you when ${item.name} goes live.`;
+    else if (item.watching && !alertsEnabled) {
+      const settings = el('a', 'Notification settings');
+      settings.href = '/notifications#notification-preferences';
+      note.replaceChildren('Reminder saved. Turn on launch alerts in ', settings, '.');
+    } else if (item.watching) note.textContent = `We’ll notify you when ${item.name} goes live.`;
     if (focused) section.querySelector(`[data-upcoming-id="${CSS.escape(item.id)}"] .dg-watch`)?.focus({ preventScroll: true });
   }
 }

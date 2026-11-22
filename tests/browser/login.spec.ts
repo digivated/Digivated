@@ -171,7 +171,7 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   } }));
   await page.route('**/api/notifications?action=preferences', route => {
     if (rejectSave) return route.fulfill({ status: 503, json: { error: 'Please try again.' } });
-    preferences = route.request().postDataJSON().preferences;
+    preferences = { ...preferences, ...route.request().postDataJSON().preferences };
     return route.fulfill({ json: { preferences } });
   });
   await page.route('**/api/notifications?action=read-all', route => {
@@ -194,6 +194,16 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   rejectSave = true;
   await emailAlerts.click();
   await expect(notificationSettings.getByRole('status')).toHaveText('Please try again.');
+  await expect(emailAlerts).toBeChecked();
+  rejectSave = false;
+  const activityAlerts = notificationSettings.getByRole('switch', { name: 'Activity alerts' });
+  await activityAlerts.click();
+  await expect(notificationSettings.getByRole('status')).toHaveText('Preferences saved.');
+  await expect(emailAlerts).toBeDisabled();
+  await expect(notificationSettings.getByRole('checkbox', { name: 'Weekly podium' })).toBeDisabled();
+  await expect(notificationSettings.getByText('Project updates stay on.')).toBeVisible();
+  await activityAlerts.click();
+  await expect(emailAlerts).toBeEnabled();
   await expect(emailAlerts).toBeChecked();
   await page.setViewportSize({ width: 1440, height: 900 });
   const recent = page.getByRole('region', { name: 'Recent activity' });

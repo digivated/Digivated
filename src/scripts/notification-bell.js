@@ -28,7 +28,7 @@ if (bell) {
   };
   const post = (action, body) => fetch(`/api/notifications?action=${action}`, { method: 'POST', credentials: 'same-origin', keepalive: true, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   function render() {
-    if (!items.length) { list.replaceChildren(el('p', 'You’re all caught up. Comments, replies and upvotes on your work will show here.', 'dg-bell-empty')); syncBadge(); return; }
+    if (!items.length) { list.replaceChildren(el('p', 'You’re all caught up. New activity and project updates will appear here.', 'dg-bell-empty')); syncBadge(); return; }
     list.replaceChildren(...items.slice(0, 7).map(item => notificationRow(item, { onOpen: opened => { if (opened.unread) { opened.unread = false; post('read', { id: opened.id }).catch(() => {}); } } })));
     syncBadge();
   }
@@ -62,7 +62,21 @@ if (bell) {
     }
     if (panel.hidden) open(); else close();
   });
-  readAll.addEventListener('click', () => { items.forEach(item => { item.unread = false; }); post('read-all', {}).catch(() => {}); render(); });
+  readAll.addEventListener('click', async () => {
+    readAll.disabled = true;
+    panel.querySelector('[role="status"]')?.remove();
+    try {
+      if (!(await post('read-all', {})).ok) throw new Error();
+      items.forEach(item => { item.unread = false; });
+      render();
+      if (!panel.hidden) foot.focus({ preventScroll: true });
+      document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
+    } catch {
+      const status = el('p', 'Couldn’t mark notifications as read. Try again.', 'dg-bell-empty');
+      status.setAttribute('role', 'status');
+      list.before(status);
+    } finally { readAll.disabled = false; }
+  });
   document.addEventListener('click', event => { if (!panel.hidden && !panel.contains(event.target) && !bell.contains(event.target)) close(); });
   panel.addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); close(true); } });
   addEventListener('resize', () => close(), { passive: true });

@@ -51,7 +51,7 @@ export async function sendActivityEmail(redis, item, {
       title,
       paragraphs: ['Sign in to Digivated to see the activity.'],
       cta: { label: 'Open Notifications', href: notificationsUrl },
-      footer: [{ label: 'Manage activity emails', href: notificationsUrl }],
+      footer: [{ label: 'Manage activity emails', href: `${notificationsUrl}#notification-preferences` }],
     });
     return await sendEmail(mailEnv, boundedFetch, {
       ...message, to: user.email, subject: `${title} on Digivated`, idempotencyKey: `activity-${item.id}`,

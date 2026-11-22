@@ -8,7 +8,7 @@ import { makeDiscussionHandler } from '../server/discussions.mjs';
 import { makeLaunchesHandler } from '../server/launches.mjs';
 import { makeMakerStatsHandler } from '../server/maker-stats.mjs';
 import { makeBadgeHandler, renderAwardBadge } from '../server/badge.mjs';
-import { listNotifications, notifyProjectApproval } from '../server/notifications.mjs';
+import { listNotifications, notifyProjectApproval, saveNotificationPreferences } from '../server/notifications.mjs';
 import { awardBadgeSnippet } from '../server/badge-snippets.mjs';
 import {
   VOTE_WEIGHT, bumpStat, finalizeLastWeek, forgetVoteWeight, isFresh, launchScores, notePost, readStats,
@@ -160,7 +160,11 @@ test('real Redis: upcoming launches, Notify me, and one alert to watchers and fo
     assert.equal((await launches('POST', '/api/launches', { action: 'watch', id: 'nextup' })).status, 401);
     assert.equal((await launches('POST', '/api/launches', { action: 'watch', id: 'unverified' }, { as: 'sam' })).status, 404);
     const watched = await launches('POST', '/api/launches', { action: 'watch', id: 'nextup' }, { as: 'sam' });
-    assert.deepEqual(watched.data, { watching: true, watchers: 1 });
+    assert.deepEqual(watched.data, { watching: true, watchers: 1, alertsEnabled: true });
+    await saveNotificationPreferences(redis, people.sam.id, { enabled: true, launch: false });
+    const paused = await launches('POST', '/api/launches', { action: 'watch', id: 'nextup' }, { as: 'sam' });
+    assert.deepEqual(paused.data, { watching: true, watchers: 1, alertsEnabled: false });
+    await saveNotificationPreferences(redis, people.sam.id, { enabled: true, launch: true });
     assert.equal((await launches('GET', '/api/launches?view=upcoming', null, { as: 'sam' })).data.items[0].watching, true);
     // Dev follows the maker; both hear about the launch exactly once.
     await redis(['SADD', `digivated:creator:followers:${people.maker.id}`, people.dev.id, people.sam.id]);

@@ -1,11 +1,12 @@
 import { sendActivityEmail } from './activity-email.mjs';
 import { randomUUID } from 'node:crypto';
 import { projectPublic, validId } from './admin-store.mjs';
+import { freeLaunchSchedule, freeLaunchDay } from '../src/lib/launch-calendar.mjs';
 
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 const TYPES = ['reply', 'follow', 'message', 'feedback', 'upvote', 'launch', 'award', 'approved', 'scheduled'];
 const TITLES = {
-  approved: 'Your project is approved and live',
+  approved: 'Your project is live',
   scheduled: 'Badge verified. Your launch is scheduled',
   reply: 'Someone replied to your post',
   follow: 'A creator followed you',
@@ -123,10 +124,22 @@ async function trimFeed(redis, recipientId) {
   return true;
 }
 
+function readVisibleNotification(raw, userId) {
+  try {
+    const item = JSON.parse(raw);
+    if (item?.recipientId !== userId || !UUID.test(item.id) || !TYPES.includes(item.type) || item.type === 'message') return null;
+    if (typeof item.href !== 'string' || !/^\/(?![\/\\])/.test(item.href) || /^\/(?:inbox|creators)(?:[/?#]|$)/.test(item.href)) return null;
+    return item;
+  } catch { return null; }
+}
+
 export async function notificationSummary(redis, userId) {
   const preferences = await getNotificationPreferences(redis, userId);
   await pruneExpired(redis, userId);
-  return { enabled: preferences.enabled, unread: Number(await redis(['SCARD', unreadKey(userId)])) || 0 };
+  const ids = await redis(['SMEMBERS', unreadKey(userId)]);
+  const rows = ids.length ? await redis(['MGET', ...ids.map(itemKey)]) : [];
+  const unread = rows.filter(raw => readVisibleNotification(raw, userId)).length;
+  return { enabled: preferences.enabled, unread };
 }
 
 export async function listNotifications(redis, userId) {
@@ -136,20 +149,16 @@ export async function listNotifications(redis, userId) {
   const raws = ids.length ? await redis(['MGET', ...ids.map(itemKey)]) : [];
   const unread = new Set(await redis(['SMEMBERS', unreadKey(userId)]));
   const retiredUnread = [];
-  const items = raws.flatMap(raw => {
-    try {
-      const item = JSON.parse(raw);
-      if (item.recipientId !== userId || !UUID.test(item.id) || !TYPES.includes(item.type)) return [];
-      if (item.type === 'message' || /^\/(?:inbox|creators)(?:[/?#]|$)/.test(item.href)) {
-        if (unread.delete(item.id)) retiredUnread.push(item.id);
-        return [];
-      }
-      return [{ id:item.id, type:item.type, title:TITLES[item.type], href:item.href, createdAt:item.createdAt, unread:unread.has(item.id), ...detail({ actorName:item.actor, verb:item.verb, subject:item.subject, excerpt:item.excerpt, count:item.count }) }];
+  const items = raws.flatMap((raw, index) => {
+    const item = readVisibleNotification(raw, userId);
+    if (!item) {
+      if (unread.delete(ids[index])) retiredUnread.push(ids[index]);
+      return [];
     }
-    catch { return []; }
+    return [{ id:item.id, type:item.type, title:TITLES[item.type], href:item.href, createdAt:item.createdAt, unread:unread.has(item.id), ...detail({ actorName:item.actor, verb:item.verb, subject:item.subject, excerpt:item.excerpt, count:item.count }) }];
   });
   if (retiredUnread.length) await redis(['SREM', unreadKey(userId), ...retiredUnread]);
-  return { preferences, items, unread: unread.size };
+  return { preferences, items, unread: items.filter(item => item.unread).length };
 }
 
 export async function markNotificationRead(redis, userId, id) {
@@ -208,7 +217,8 @@ async function writeApproval(redis, userId, record, project, publishedAt) {
   if (!UUID.test(userId || '')) return false;
   const id = randomUUID();
   const item = { id, recipientId:userId, type:'approved', title:TITLES.approved,
-    href:project.pageUrl, createdAt:new Date(publishedAt).toISOString() };
+    href:project.pageUrl, createdAt:new Date(publishedAt).toISOString(),
+    ...detail({ actorName: project.name, verb: 'is live on Digivated' }) };
   const marker = `digivated:notifications:approval:${userId}:${record.id}`;
   return await redis(['EVAL',APPROVAL_NOTICE,4,marker,
     itemKey(id),indexKey(userId),unreadKey(userId),
@@ -262,8 +272,12 @@ export async function notifyLaunchScheduled(redis, record) {
   const userId = record?.accountId;
   if (!UUID.test(userId || '') || !validId(record?.id) || !record.launch?.badgeVerifiedAt) return false;
   const id = randomUUID(), now = Date.now();
+  const { scheduledAt, scheduledTimestamp } = freeLaunchSchedule(record);
   const item = { id, recipientId:userId, type:'scheduled', title:TITLES.scheduled,
-    href:`/account#project-${record.id}`, createdAt:new Date(now).toISOString() };
+    href:`/account#project-${record.id}`, createdAt:new Date(now).toISOString(),
+    ...detail({ actorName: record.name, verb: scheduledTimestamp > now
+      ? `is scheduled for ${freeLaunchDay(scheduledAt)} at 9 AM Eastern`
+      : 'has a verified launch badge' }) };
   const marker = `digivated:notifications:scheduled:${userId}:${record.id}`;
   return await redis(['EVAL',APPROVAL_NOTICE,4,marker,
     itemKey(id),indexKey(userId),unreadKey(userId),
