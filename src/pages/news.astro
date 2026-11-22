@@ -6,9 +6,10 @@ import '../styles/news.css';
 <Platform showBreadcrumb={false} title="AI, tech and markets news" description="Member briefings on AI and technology, markets, and security, with original sources and publication times." canonicalPath="/news">
   <section class="news-page" data-news-page aria-labelledby="news-title">
     <header class="news-masthead">
-      <div><h1 id="news-title">News</h1><p class="news-intro">The latest in AI, technology and markets, with original sources.</p></div>
-      <div class="news-check"><div class="news-check-status"><span data-news-checked>Checking for updates</span><div class="news-countdown"><span>Next source check</span><time data-news-countdown role="timer" aria-live="off">Checking…</time></div></div><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><span>Refresh</span></button></div>
+      <div><h1 id="news-title">News</h1><p class="news-intro">AI, tech, markets, and security.</p></div>
+      <div class="news-check"><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><span>Refresh</span></button></div>
     </header>
+    <p class="news-status" data-news-paused hidden>Source checks are paused.</p>
     <p class="news-access-status" data-news-access-status role="status">Loading stories…</p>
     <nav class="news-toolbar" hidden aria-label="Browse News">
       <div class="news-filters" role="group" aria-label="News category">
@@ -23,7 +24,7 @@ import '../styles/news.css';
       <div class="news-editorial">
         <section class="news-feature" data-news-feature aria-label="Featured story" hidden></section>
         <section class="news-latest" data-section-reveal aria-labelledby="news-latest-title">
-          <header class="news-section-heading"><h2 id="news-latest-title" data-news-latest-title>Latest</h2><span data-news-scope>Newest first</span></header>
+          <header class="news-section-heading"><h2 id="news-latest-title" data-news-latest-title>Latest</h2></header>
           <p class="news-results" data-news-results hidden role="status"></p>
           <p class="news-status" data-news-status role="status">Loading the latest stories…</p>
           <div class="news-feed" data-news-feed aria-busy="true"></div>
@@ -33,15 +34,15 @@ import '../styles/news.css';
       </div>
       <aside class="news-sidebar" aria-label="Market data and editorial standards" data-news-sidebar>
         <section class="news-market" data-section-reveal aria-labelledby="news-markets-title">
-          <header class="news-section-heading"><h2 id="news-markets-title">Market snapshot</h2><span class="news-data-label">DATA</span></header>
+          <header class="news-section-heading"><h2 id="news-markets-title">Market snapshot</h2></header>
           <p class="news-market-note" data-news-market-note>Checking available market data</p>
           <dl class="news-quotes" data-news-quotes></dl>
           <div class="news-market-footer" data-news-market-footer></div>
         </section>
-        <details class="news-standards"><summary>How this feed is published <UiIcon name="chevron" size={15}/></summary><div><p>Every story links to its original source. You’ll see when the source published it and when we did.</p><p><strong>Breaking</strong> marks a big, verified development. Everything else is labeled <strong>Update</strong>.</p><p>Company announcements are labeled. We skip stories we can’t verify and fix summaries as news develops.</p></div></details>
+        <details class="news-standards"><summary>How this feed is published <UiIcon name="chevron" size={15}/></summary><div><p>Stories link to original sources. We label company announcements, verify breaking news, and mark corrections.</p></div></details>
       </aside>
     </div>
-    <section class="news-gate" data-news-gate hidden aria-labelledby="news-gate-title"><p class="news-eyebrow">MEMBER ACCESS</p><h2 id="news-gate-title">Full news archive</h2><p>Read five stories free. Members get the full archive and market snapshot.</p><a class="dg-btn dg-btn-primary" href="/membership#member-sign-in">Read the full archive <span aria-hidden="true">↗</span></a><p>Already a member? Verify on the Shop page, then come back.</p></section>
+    <section class="news-gate" data-news-gate hidden aria-labelledby="news-gate-title"><h2 id="news-gate-title">News archive</h2><p>Five stories are free. Members get the archive and market snapshot.</p><a class="dg-btn dg-btn-primary" href="/shop">View membership</a> <a href="/shop#member-sign-in">Verify a purchase</a></section>
     <noscript><p class="news-status">JavaScript is needed to load and filter the News feed.</p></noscript>
   </section>
 </Platform>

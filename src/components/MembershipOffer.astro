@@ -10,7 +10,7 @@ import '../styles/membership.css';
   <section class="dg-hero shop-hero" aria-labelledby="shop-title">
     <div class="dg-hero-copy">
       <h1 id="shop-title">Plans and membership</h1>
-      <p class="dg-hero-lede">Your first project is free. Upgrade with a one-time payment.</p>
+      <p class="dg-hero-lede">One free project. Paid plans are one-time purchases.</p>
     </div>
   </section>
 
@@ -47,17 +47,15 @@ import '../styles/membership.css';
         <li>Full News archive</li>
         <li>UI/UX Playbook, prompt builder and workflows</li>
       </ul>
-      {membership.checkoutReady ? <a class="button primary membership-checkout shop-cta" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get membership · $5 once</a> : <><button class="button primary membership-checkout shop-cta" disabled>Checking checkout…</button><p class="membership-checkout-note shop-note" role="status">Loading checkout. Give it a second.</p></>}
+      {membership.checkoutReady ? <a class="button primary membership-checkout shop-cta" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get membership · $5 once</a> : <><button class="button primary membership-checkout shop-cta" disabled>Checking checkout…</button><p class="membership-checkout-note shop-note" role="status" hidden></p></>}
     </article>
   </div>
 
   <section id="member-sign-in" class="membership-access" aria-labelledby="membership-access-title"><div><p class="eyebrow">Already a member?</p><h2 id="membership-access-title">Verify your purchase</h2><p>Use your Gumroad email or license key.</p><p id="membership-verified" hidden>You’re verified. <a href="/submit-project?membership=1#project-form">Publish a project</a>.</p></div><div><form id="founding-access-form" class="carousel-access" method="post" action="/api/founding-access"><label>Gumroad license key<input name="license" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="35"/></label><p class="quiet">or</p><label>Purchase email<input name="email" type="email" autocomplete="email" maxlength="254"/></label><button type="submit" class="button primary">Verify membership</button><p id="founding-access-status" role="status"></p></form><button class="button" id="founding-sign-out" type="button" hidden>Sign out of membership</button></div></section>
 
   <section class="membership-faq" aria-labelledby="membership-questions"><h2 id="membership-questions">Questions</h2>
-    <details><summary>Which one should I pick?</summary><p>Free gives you 1 project, launched on Monday after you add a badge. Starter ($3) gives you up to 3 projects that go live instantly. Membership ($5) gives you unlimited projects that go live instantly, plus the News archive, the UI/UX Playbook and every member guide.</p></details>
-    <details><summary>How do project slots work?</summary><p>Your plan counts the projects you have on Digivated right now, live or waiting. Archive or delete one in Your Projects to free a slot. Buy with the same email as your Digivated account, then press “I’ve paid, check again” on the submit page.</p></details>
-    <details><summary>Is anything a subscription?</summary><p>No. Both are one-time payments. Nothing renews.</p></details>
-    <details><summary>Do paid projects skip review?</summary><p>Starter and Membership projects go live as soon as you publish. They still have to follow the listing rules, and we remove anything that doesn’t. Paying doesn’t promise traffic.</p></details>
+    <details><summary>How do project slots work?</summary><p>Pending and live projects count. Archive or delete a project to free a slot. After paying with your Digivated email, choose “I’ve paid, check again” on the launch form.</p></details>
+    <details><summary>Do paid projects skip review?</summary><p>Starter and Membership publish instantly after payment verification. Listing rules still apply.</p></details>
     <details><summary>How do I open the Prompt Packet?</summary><p>Verify above, then open the Packet. You can also use your license key at <a href="/access">digivated.com/access</a>.</p></details>
     <details><summary>Can I read News first?</summary><p>Yes. <a href="/news">Five stories are free</a>. Verify your membership to read the rest.</p></details>
     <details id="previous-purchases"><summary>What about a previous purchase?</summary><p>Older purchases still work. <a href="/access">Open your Prompt Packet</a> or use the form above. Bought a promotion? <a href="/submit-project?promotion=1#project-form">Submit it for review</a>.</p></details>

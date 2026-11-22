@@ -39,9 +39,6 @@
     color:var(--fl-muted);
     font-size:12px;
   }
-  .news-check-status { display:grid; gap:4px; }
-  .news-countdown { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 8px; }
-  .news-countdown time { color:var(--dg-acc-text); font-variant-numeric:tabular-nums; }
 
   .news-toolbar {
     display:flex!important;

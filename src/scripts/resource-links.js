@@ -90,8 +90,6 @@ if (root) {
   function renderTop() {
     const box = $('[data-rl-top]'), list = $('[data-rl-top-list]');
     const top = Object.entries(counts).filter(([id]) => byId.has(id)).sort((a, b) => b[1] - a[1]).slice(0, 6);
-    const total = Object.values(counts).reduce((sum, n) => sum + n, 0);
-    $('[data-rl-total]').textContent = nice.format(total);
     box.hidden = top.length < 3;
     if (box.hidden) return;
     list.replaceChildren(...top.map(([id, votes], i) => {
@@ -116,7 +114,7 @@ if (root) {
       const response = await fetch('/api/link-votes', { cache: 'no-store', signal: AbortSignal.timeout(8000) });
       if (!response.ok) throw new Error('unavailable');
       counts = (await response.json()).counts || {};
-    } catch { counts = {}; $('[data-rl-total]').textContent = '—'; return; }
+    } catch { counts = {}; return; }
     items.forEach(paintVote);
     renderTop();
     render();

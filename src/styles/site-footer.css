@@ -34,23 +34,6 @@
   }
   .dg-footer-brand img { filter: brightness(0) !important; }
   .dg-footer-intro { display: grid; gap: 12px; justify-items: start; }
-  .dg-footer-digest {
-    width: 100%; display: flex; align-items: center; flex-wrap: wrap;
-    justify-content: space-between; gap: 9px 18px;
-    padding-bottom: 18px;
-    border-bottom: 1px solid #29292925;
-  }
-  .dg-site-footer .dg-footer-digest h2 {
-    color: #1b1b1b !important;
-    font-size: clamp(20px, 2.6vw, 28px) !important;
-    letter-spacing: -.025em;
-    margin: 0 0 4px !important;
-  }
-  .dg-site-footer .dg-footer-digest p { color: #414141 !important; margin: 0 !important; font-size: 14px !important; }
-  .dg-site-footer a.dg-footer-email-link {
-    padding: 5px 11px !important; gap: 6px;
-    border: 1px solid #29292935 !important; border-radius: 8px; background: #ffffff70 !important;
-  }
   .dg-site-footer .dg-footer-groups {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr));

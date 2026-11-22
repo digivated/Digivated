@@ -11,26 +11,15 @@ const mono = name => name.replace(/^(app|get|use|try|go)\.|^the/,'').replace(/[^
 <div class="rl" data-link-directory>
   <section class="dg-hero" aria-labelledby="links-title">
     <div class="dg-hero-copy">
-      <h1 id="links-title">Extra Tools</h1>
-      <p class="dg-hero-lede">Tools for designing, building, and growing.</p>
-      <ul class="dg-dir-stats" aria-label="Resource totals">
-        <li><strong>{nice.format(resourceLinkCount)}</strong><span>links</span></li>
-        <li><strong>{resourceGroups.length}</strong><span>categories</span></li>
-        <li><strong data-rl-total>—</strong><span>upvotes</span></li>
-      </ul>
+      <h1 id="links-title">Tools</h1>
     </div>
-  </section>
-
-  <section class="rl-top" data-section-reveal aria-labelledby="rl-top-title" data-rl-top hidden>
-    <header class="dg-list-head"><h2 id="rl-top-title"><span class="dg-list-title">Most helpful</span></h2></header>
-    <ol class="rl-top-list" data-rl-top-list></ol>
   </section>
 
   <div class="rl-controls">
     <label class="dg-dir-search"><span class="sr-only">Search resources</span><input data-link-search type="search" placeholder="Search tools" autocomplete="off" enterkeyhint="search"/></label>
     <div class="rl-sorts" role="group" aria-label="Sort resources">
-      <button type="button" data-rl-sort="top" aria-pressed="true">most helpful</button>
-      <button type="button" data-rl-sort="az" aria-pressed="false">a–z</button>
+      <button type="button" data-rl-sort="top" aria-pressed="true">Most helpful</button>
+      <button type="button" data-rl-sort="az" aria-pressed="false">A–Z</button>
     </div>
     <label class="rl-select"><span class="sr-only">Choose a category</span><select data-link-select>{resourceGroups.map(group=><option value={group.id}>{group.title} ({group.links.length})</option>)}</select></label>
   </div>
@@ -49,6 +38,10 @@ const mono = name => name.replace(/^(app|get|use|try|go)\.|^the/,'').replace(/[^
       <p class="rl-empty" data-link-empty hidden>Nothing matches that. Try another word or category.</p>
     </div>
   </div>
+  <details class="rl-top" data-rl-top hidden>
+    <summary>Most helpful across all categories</summary>
+    <ol class="rl-top-list" data-rl-top-list></ol>
+  </details>
 </div>
 </Platform>
 <script>import '../../scripts/resource-links.js';</script>

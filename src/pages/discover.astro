@@ -25,8 +25,8 @@ import '../styles/all-time-directory.css';
     </div>
 
     <section id="project-wall" aria-labelledby="dg-dir-list-title">
-      <header class="dg-list-head"><h2 id="dg-dir-list-title"><span class="dg-list-title">Browse products</span></h2></header>
-      <p class="dg-dir-needs" data-dir-needs hidden>Visit one of these products for 20 seconds, then leave feedback to earn points.</p>
+      <h2 id="dg-dir-list-title" class="sr-only">Products</h2>
+      <p class="dg-dir-needs" data-dir-needs hidden>Visit for 20 seconds and leave feedback to earn points.</p>
       <ol class="dg-dir-list dg-list-rows dg-project-list" data-dir-list aria-label="Directory products">
         {Array.from({ length: 6 }, () => <li class="dg-row is-loading" aria-hidden="true"><span class="dg-logo"></span><span class="dg-main"></span></li>)}
       </ol>
@@ -36,16 +36,6 @@ import '../styles/all-time-directory.css';
       <noscript><p>JavaScript is needed to browse projects.</p></noscript>
     </section>
 
-    <section class="dg-dir-overview" data-section-reveal aria-labelledby="dg-dir-overview-title">
-      <h2 id="dg-dir-overview-title">Directory activity</h2>
-      <ul class="dg-dir-stats" aria-label="Directory totals">
-        <li><strong data-dir-stat="projects">—</strong><span>products</span></li>
-        <li><strong data-dir-stat="categories">—</strong><span>categories</span></li>
-        <li><strong data-dir-stat="upvotes">—</strong><span>upvotes</span></li>
-        <li><strong data-dir-stat="comments">—</strong><span>comments</span></li>
-      </ul>
-      <nav class="dg-dir-launchnav" aria-label="Launches"><a href="/#this-week">This week’s launches →</a><a href="/#last-week">Last week →</a></nav>
-    </section>
   </div>
 </Platform>
 <script>import '../scripts/all-time-directory.js'; import '../scripts/visit-feedback.js';</script>

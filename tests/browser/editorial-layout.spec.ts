@@ -39,8 +39,7 @@ test('homepage activity, launches and launch information stay in reading order',
       const controls = box('[data-launch-id] .dg-actions');
       return {
         ordered: box('.dg-home-hero').bottom <= box('.dg-hero-panel').top &&
-          box('.dg-hero-panel').bottom <= box('#this-week').top &&
-          box('.dg-board').bottom <= box('.dg-about').top,
+          box('.dg-hero-panel').bottom <= box('#this-week').top,
         separated: art.right <= copy.left && (stackActions ? copy.bottom <= controls.top + 1 : copy.right <= controls.left),
         overflow: document.documentElement.scrollWidth - innerWidth,
       };
@@ -52,10 +51,8 @@ test('homepage activity, launches and launch information stay in reading order',
       await expect(launch.locator('.dg-tagline')).toHaveCSS('white-space', 'normal');
       await expect(launch.locator('.dg-meta')).toContainText('By An independent maker');
       await expect(launch.locator('.dg-meta')).toBeVisible();
-      const [board, about] = await Promise.all(['.dg-home', '.dg-about'].map(selector => page.locator(selector).boundingBox()));
-      expect(board!.x).toBeCloseTo(about!.x, 0);
+      const board = await page.locator('.dg-home').boundingBox();
       expect(board!.width).toBeCloseTo(1120, 0);
-      expect(board!.width).toBeCloseTo(about!.width, 0);
     }
   }
   await page.setViewportSize({ width: 320, height: 900 });

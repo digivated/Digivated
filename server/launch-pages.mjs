@@ -83,7 +83,7 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
     <h2 id="launch-details-title">Project details</h2>
     <dl class="launch-facts">
       <div><dt>Category</dt><dd><a href="${e(categoryHref)}">${e(item.category)}</a></dd></div>
-      ${website ? `<div><dt>Website</dt><dd><a href="${e(website)}" target="_blank" rel="noopener noreferrer"${visitAttrs}>${e(new URL(website).hostname)} ${cardIconMarkup('external')}</a></dd></div>` : ''}
+      ${website && website !== destination ? `<div><dt>Website</dt><dd><a href="${e(website)}" target="_blank" rel="noopener noreferrer"${visitAttrs}>${e(new URL(website).hostname)} ${cardIconMarkup('external')}</a></dd></div>` : ''}
       ${projectPricingOptions.includes(item.pricing) ? `<div><dt>Pricing</dt><dd>${e(item.pricing)}</dd></div>` : ''}
       ${listedDate ? `<div><dt>${item.publishedAt ? 'Published' : 'Submitted'}</dt><dd><time datetime="${listedDate.toISOString().slice(0,10)}">${e(listedDate.toLocaleDateString('en-US',{dateStyle:'medium',timeZone:'UTC'}))}</time></dd></div>` : ''}
     </dl>
@@ -95,13 +95,13 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
   </section>`;
   const community = draft ? '' : `<section id="feedback" class="launch-panel launch-comments" data-project-comments="${e(item.id)}" aria-labelledby="launch-comments-title" tabindex="-1">
     <h2 id="launch-comments-title">Discussion</h2>
-    <p data-project-comments-message role="status">Loading the discussion…</p>
+    <p data-project-comments-message role="status">Loading discussion…</p>
     <noscript><p>Turn on JavaScript to read and join the discussion.</p></noscript>
   </section>
   <section id="similar" class="launch-panel" data-launch-related="${e(item.id)}" data-category="${e(item.category)}" aria-labelledby="launch-related-title">
     <h2 id="launch-related-title">More in ${e(item.category)}</h2>
     <ul class="launch-related-list" hidden></ul>
-    <a class="launch-category-link" href="${e(categoryHref)}">Browse this category <span aria-hidden="true">→</span></a>
+    <a class="launch-category-link" href="${e(categoryHref)}">Browse category <span aria-hidden="true">→</span></a>
   </section>`;
   const body = `${draftNotice}<article class="launch-page">
     <nav class="launch-breadcrumb" aria-label="Breadcrumb"><a href="/discover">Projects</a><span aria-hidden="true">/</span><a href="${e(categoryHref)}">${e(item.category)}</a></nav>

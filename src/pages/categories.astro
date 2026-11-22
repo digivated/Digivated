@@ -3,7 +3,7 @@ import Platform from '../layouts/Platform.astro';
 ---
 <Platform title="Product categories" description="Explore Digivated projects by category and discover the makers behind them." showBreadcrumb={false}>
   <section class="category-index">
-    <header><h1>Categories</h1><p>Explore products by what they do.</p></header>
+    <header><h1>Categories</h1></header>
     <p role="status" id="category-status">Loading categories…</p>
     <ul id="category-list"></ul>
     <a href="/discover">Browse all products →</a>
@@ -41,5 +41,5 @@ import Platform from '../layouts/Platform.astro';
     }
     status.hidden = groups.size > 0;
     status.textContent = groups.size ? '' : 'No categories yet.';
-  }).catch(() => {status.textContent = 'Categories could not load. Try the product directory below.';});
+  }).catch(() => {status.textContent = 'Couldn’t load categories.';});
 </script>

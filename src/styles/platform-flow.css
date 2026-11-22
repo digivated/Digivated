@@ -28,12 +28,6 @@
     margin: 0 0 clamp(22px, 3.5vw, 42px) !important;
     padding-block: 0 16px !important;
   }
-  html[data-theme="daylight"] body.platform .dg-dir #project-wall .dg-list-head { padding-block-end: 10px !important; }
-  html[data-theme="daylight"] body.platform .dg-dir #project-wall .dg-list-title { font-size: clamp(25px, 3vw, 35px) !important; }
-  html[data-theme="daylight"] body.platform .dg-dir .dg-dir-stats {
-    background: transparent !important;
-    border: 0 !important;
-  }
   html[data-theme="daylight"] body.platform .dg-forum:not(.dg-forum-secondary) { row-gap: clamp(18px, 3vw, 32px); }
   html[data-theme="daylight"] body.platform .dg-forum-header { align-items: end; }
   html[data-theme="daylight"] body.platform .dg-forum-main .dg-forum-toolbar {

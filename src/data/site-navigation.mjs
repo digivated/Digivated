@@ -15,12 +15,12 @@ export function isNavigationCurrent(path, href) {
     (href === '/shop' && ['/membership', '/products', '/promote', '/founding-members'].includes(path))
   );
 }
-// Footer: the same destinations as the header and menu, plus account pages and socials.
+// Footer shortcuts and account, help, and social links.
 export const footerGroups = [
-  { title: 'Explore', links: [...primaryLinks.filter(([href]) => href !== '/account'), ['/discover', 'Directory']] },
+  { title: 'Explore', links: [['/discover', 'Directory'], ['/news', 'News'], ['/resources', 'Tools']] },
   { title: 'For makers', links: [
     ['/submit-project', 'New Launch'], ['/account', 'Dashboard'], ['/notifications', 'Notifications'],
-    ['/saved', 'Saved items'], ['/badges', 'Embed badges'],
+    ['/saved', 'Saved items'], ['/badges', 'Embed badges'], ['/account?tab=settings', 'Email settings'],
   ] },
   { title: 'Company', links: [
     ['/about', 'About'], ['/privacy', 'Privacy'], ['/terms', 'Terms'],

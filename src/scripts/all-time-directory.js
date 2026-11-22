@@ -224,15 +224,6 @@ if (root) {
     status.hidden = true;
     observeProjectViews();
   }
-  function renderStats() {
-    const ps = state.projects;
-    const set = (key, value) => root.querySelectorAll(`[data-dir-stat="${key}"]`).forEach(node => { node.textContent = number.format(value); });
-    set('projects', ps.length);
-    set('categories', new Set(ps.map(p => p.category).filter(Boolean)).size);
-    set('upvotes', ps.reduce((sum, p) => sum + (Number(p.votes?.all) || 0), 0));
-    set('comments', ps.reduce((sum, p) => sum + (Number(p.comments) || 0), 0));
-  }
-
   // ---------- Dialog (projects without a page, and #project-<id> links) ----------
   let dialog = null, returnFocus = null, selectedList = [];
   function closeProject() {
@@ -320,7 +311,7 @@ if (root) {
   }
   function accept(projects) {
     state.projects = projects; state.loaded = true;
-    renderStats(); render(!root.dataset.painted); root.dataset.painted = 'true';
+    render(!root.dataset.painted); root.dataset.painted = 'true';
   }
 
   const feedbackTarget = params.get('feedback');

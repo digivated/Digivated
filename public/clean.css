@@ -44,7 +44,6 @@
 #digivated-root :is(.dg-shell-login, .dg-shell-menu-label) { font-size: 13.5px !important; font-weight: 550 !important; }
 
 /* Homepage intro */
-#digivated-root .launch-welcome-mark { width: 36px !important; height: 36px !important; }
 #digivated-root .dg-home-hero h1 { font-size: clamp(27px, 6.6vw, 40px) !important; line-height: 1.12 !important; letter-spacing: -.03em !important; font-weight: 700 !important; color: #0b0b0c !important; }
 #digivated-root .dg-home-hero .board-introduction { font-size: 14.5px !important; color: #71717a !important; }
 #digivated-root .dg-launch-search { min-height: 44px !important; border: 1px solid #ececf0 !important; border-radius: 12px !important; background: #fff !important; box-shadow: 0 1px 2px rgba(17,17,26,.04) !important; }
@@ -147,13 +146,12 @@
 #digivated-root .dg-site-footer { border: 0 !important; border-radius: 20px !important; background: #0b0b0c !important; color: #d4d4d8 !important; box-shadow: 0 10px 30px -12px rgba(0,0,0,.35) !important; }
 #digivated-root .dg-site-footer::before, #digivated-root .dg-site-footer::after { background: none !important; border: 0 !important; box-shadow: none !important; }
 #digivated-root .dg-footer-inner { background: transparent !important; border: 0 !important; box-shadow: none !important; }
-#digivated-root .dg-site-footer :is(.dg-footer-digest h2, .dg-footer-brand) { color: #fff !important; }
+#digivated-root .dg-site-footer .dg-footer-brand { color: #fff !important; }
 #digivated-root .dg-footer-brand img { filter: invert(1) !important; }
 #digivated-root .dg-site-footer :is(p, small, span) { color: #a1a1aa !important; }
 #digivated-root .dg-site-footer a:not(.dg-footer-brand, .dg-footer-credit) { color: #d4d4d8 !important; }
 #digivated-root .dg-site-footer a:not(.dg-footer-brand, .dg-footer-credit):hover { color: #fff !important; }
 #digivated-root .dg-site-footer .dg-footer-group h2 { font-size: 12px !important; font-weight: 550 !important; color: #71717a !important; text-transform: none !important; letter-spacing: 0 !important; }
-#digivated-root .dg-site-footer .dg-footer-email-link { border: 1px solid #2e2e33 !important; border-radius: 10px !important; background: #18181b !important; color: #fff !important; }
 #digivated-root .dg-site-footer :is(.dg-footer-bottom, .dg-footer-groups, .dg-footer-intro) { border-color: #232327 !important; }
 #digivated-root .dg-site-footer .dg-footer-credit, #digivated-root .dg-site-footer .dg-footer-credit * { color: #0b0b0c !important; }
 
@@ -242,10 +240,6 @@
 #digivated-root .dg-footer-intro { gap: 8px !important; }
 #digivated-root .dg-footer-brand { font-size: 14px !important; }
 #digivated-root .dg-footer-brand img { width: 22px !important; height: 22px !important; }
-#digivated-root .dg-footer-digest { display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: space-between !important; gap: 12px 16px !important; }
-#digivated-root .dg-footer-digest h2 { font-size: 19px !important; line-height: 1.2 !important; letter-spacing: -.02em !important; margin: 0 !important; }
-#digivated-root .dg-footer-digest p { font-size: 13px !important; margin: 3px 0 0 !important; }
-#digivated-root .dg-footer-email-link { min-height: 36px !important; padding: 0 12px !important; font-size: 13px !important; }
 #digivated-root .dg-footer-groups { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 12px !important; margin-top: 20px !important; }
 #digivated-root .dg-footer-group h2 { margin: 0 0 8px !important; }
 #digivated-root .dg-footer-group ul { display: grid !important; gap: 7px !important; margin: 0 !important; padding: 0 !important; }
@@ -261,7 +255,6 @@
 #digivated-root .dg-site-footer::after { font-size: clamp(80px, 22vw, 260px) !important; bottom: clamp(-30px, -2.6vw, -12px) !important; }
 @media (min-width: 900px) {
   #digivated-root .dg-footer-inner { display: grid !important; grid-template-columns: minmax(260px, 1fr) minmax(0, 1.6fr) !important; column-gap: 48px !important; align-items: start !important; }
-  #digivated-root .dg-footer-digest { flex-direction: column !important; align-items: flex-start !important; }
   #digivated-root .dg-footer-groups { margin-top: 0 !important; }
   #digivated-root .dg-footer-bottom { grid-column: 1 / -1 !important; }
 }
