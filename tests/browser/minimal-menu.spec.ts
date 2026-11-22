@@ -14,39 +14,17 @@ for (const width of [320, 390, 768, 920, 921, 1119]) {
     const trigger = page.locator('.site-menu-trigger');
     const menu = page.locator('#explore-navigation');
 
-    const mobile = width <= 920;
-    const primary = page.getByRole('navigation', { name: 'Primary navigation' });
-    await expect(trigger).toHaveAccessibleName(mobile ? 'Menu' : 'More');
+    await expect(trigger).toHaveAccessibleName('Menu');
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
-    await expect(trigger.locator(mobile ? '.dg-shell-menu-open' : '.dg-shell-more-arrow')).toBeVisible();
-    if (mobile) await expect(page.locator('.dg-shell-tools > a:visible')).toHaveText(['Log In']);
     await expect(menu).toBeHidden();
     await trigger.click();
-    if (mobile) await expect(trigger.locator('.dg-shell-menu-close')).toBeVisible();
     await expect(menu).toBeVisible();
     await expect(menu).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-    await expect(menu.locator('.site-menu-branch-trigger')).toHaveText(['Explore', 'For makers']);
-    await expect((mobile ? menu : primary).getByRole('link', { name: 'News', exact: true })).toBeVisible();
-    await expect(menu.getByRole('link', { name: 'Embed badges', exact: true })).toBeHidden();
-    await expect(menu.locator('.site-menu-secondary a')).toHaveText([
-      'Categories', 'Threads', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
-    ]);
-    await expect(menu.locator('.site-menu-primary')).toBeVisible({ visible: mobile });
-    const mainLinks = mobile ? menu.locator('.site-menu-primary') : primary;
-    await expect(mainLinks.getByRole('link')).toHaveText(['New Launch', 'Home', 'Directory', 'Dashboard', 'News', 'Extra Tools']);
-    const destinations = await page.locator('.dg-shell-primary a:visible, .dg-shell-tools a:visible').evaluateAll(
-      links => links.map(link => link.getAttribute('href')),
-    );
-    expect(new Set(destinations).size).toBe(destinations.length);
-    if (mobile) {
-      const primaryBounds = (await mainLinks.boundingBox())!;
-      const secondaryBounds = (await menu.locator('.site-menu-secondary').boundingBox())!;
-      expect(secondaryBounds.y).toBeGreaterThanOrEqual(primaryBounds.y + primaryBounds.height);
-      expect(Math.abs(secondaryBounds.width - primaryBounds.width)).toBeLessThanOrEqual(1);
-    } else {
-      const headerBounds = (await page.locator('.dg-shell-bar').boundingBox())!;
-      expect(headerBounds.height).toBeLessThanOrEqual(76);
-    }
+    await expect(menu.getByRole('link')).toHaveText(['Home', 'Categories', 'Dashboard', 'Shop', 'News', 'Threads', 'Tools', 'New Launch']);
+    const current = menu.getByRole('link', { name: 'Home', exact: true });
+    await expect(current).toHaveAttribute('aria-current','page');
+    await expect(current).toHaveCSS('background-color','rgb(23, 23, 23)');
+    await expect(menu.getByRole('button', { name: 'Close menu' })).toBeVisible();
     const bounds = (await menu.boundingBox())!;
     expect(bounds.x).toBeGreaterThanOrEqual(0);
     expect(bounds.x + bounds.width).toBeLessThanOrEqual(width + 1);
@@ -65,7 +43,7 @@ test('header supports keyboard navigation and search', async ({ page }) => {
   await trigger.focus();
   await page.keyboard.press('ArrowDown');
   const menu = page.locator('#explore-navigation');
-  await expect(menu.getByRole('link', { name: 'New Launch', exact: true })).toBeFocused();
+  await expect(menu.getByRole('link', { name: 'Home', exact: true })).toBeFocused();
   await expect(menu.getByRole('link', { name: 'Threads', exact: true })).toHaveAttribute('aria-current', 'page');
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await page.keyboard.press('Escape');
@@ -85,30 +63,22 @@ test('the menu opens without JavaScript', async ({ browser }) => {
     await page.goto(base + '/');
     await page.locator('.site-menu-trigger').click();
     const menu = page.locator('#explore-navigation');
-    await expect(menu.getByRole('link', { name: 'Directory', exact: true })).toHaveAttribute('href', '/discover');
-    await menu.locator('summary', { hasText: 'For makers' }).click();
-    await expect(menu.getByRole('link', { name: 'Embed badges', exact: true })).toHaveAttribute('href', '/badges');
+    await expect(menu.getByRole('link', { name: 'Categories', exact: true })).toHaveAttribute('href', '/categories');
+    await expect(menu.getByRole('link', { name: 'Shop', exact: true })).toHaveAttribute('href', '/shop');
   } finally {
     await context.close();
   }
 });
 
-test('the compact header branches are keyboard operable and open to the current destination', async ({ page }) => {
+test('the drawer close button restores focus', async ({ page }) => {
   await page.setViewportSize({ width: 1000, height: 900 });
-  await page.goto(base + '/badges');
-  const menu = page.locator('#explore-navigation');
+  await page.goto(base + '/account');
   const trigger = page.locator('.site-menu-trigger');
-  await trigger.press('ArrowDown');
-  const badges = menu.getByRole('link', { name: 'Embed badges', exact: true });
-  await expect(menu.getByRole('link', { name: 'Feedback points', exact: true })).toBeFocused();
-  await page.keyboard.press('Tab');
-  await expect(badges).toBeFocused();
-  await expect(badges).toHaveAttribute('aria-current', 'page');
-  const explore = menu.locator('summary', { hasText: 'Explore' });
-  await explore.press('ArrowDown');
-  await expect(menu.getByRole('link', { name: 'Categories', exact: true })).toBeFocused();
-  await expect(menu.locator('.site-menu-connector').first()).toHaveCSS('stroke', 'rgb(160, 160, 160)');
-  await page.keyboard.press('Escape');
+  await trigger.click();
+  const menu = page.getByRole('navigation', { name: 'Site menu' });
+  await expect(menu.getByRole('link', { name: 'Dashboard' })).toHaveAttribute('aria-current', 'page');
+  await menu.getByRole('button', { name: 'Close menu' }).click();
+  await expect(menu).toBeHidden();
   await expect(trigger).toBeFocused();
 });
 
@@ -120,9 +90,8 @@ test('the phone menu stays inside a short viewport', async ({ page }) => {
   const menu = page.locator('#explore-navigation');
   const bounds = (await menu.boundingBox())!;
   expect(bounds.y + bounds.height).toBeLessThanOrEqual(360);
-  await menu.locator('summary', { hasText: 'For makers' }).click();
-  await menu.getByRole('link', { name: 'Embed badges', exact: true }).click();
-  await expect(page).toHaveURL(/\/badges$/);
+  await menu.getByRole('link', { name: 'New Launch', exact: true }).click();
+  await expect(page).toHaveURL(/\/submit-project$/);
 });
 
 
@@ -139,7 +108,7 @@ test('navigation surfaces stay opaque over a bright backdrop', async ({ page }) 
   const menu = page.locator('#explore-navigation');
   await expect(menu).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(menu).toHaveCSS('backdrop-filter', 'none');
-  await expect(menu.getByRole('link', { name: 'Categories' })).toHaveCSS('color', 'rgb(23, 23, 23)');
+  await expect(menu.getByRole('link', { name: 'Categories' })).toHaveCSS('color', 'rgb(51, 51, 51)');
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
 });

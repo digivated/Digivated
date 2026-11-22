@@ -10,6 +10,9 @@ if (menu) {
     sync();
     if (restoreFocus && menu.contains(document.activeElement)) trigger.focus();
   };
+  const closeButton = panel.querySelector('[data-menu-close]');
+  closeButton.hidden = false;
+  closeButton.addEventListener('click', () => close(true));
   menu.addEventListener('toggle', sync);
   trigger.addEventListener('click', event => {
     if (menu.open) { event.preventDefault(); close(true); }
@@ -19,10 +22,7 @@ if (menu) {
       event.preventDefault();
       menu.open = true;
       sync();
-      // Focus the first visible destination for the current layout.
-      const links = panel.querySelectorAll('a');
-      const first = [...links].find(link => !link.closest('.site-menu-branch:not([open])') && link.getClientRects().length);
-      (first || panel.querySelector('.site-menu-branch-trigger'))?.focus();
+      panel.querySelector('.navigation-tree a')?.focus();
     }
   });
   document.addEventListener('keydown', event => {
@@ -33,17 +33,4 @@ if (menu) {
   menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => close()));
   menu.querySelectorAll('[data-open-search]').forEach(button => button.addEventListener('click', () => close()));
   sync();
-}
-
-for (const group of document.querySelectorAll('.site-menu-secondary')) {
-  group.addEventListener('keydown', event => {
-    const summary = event.target.closest('.site-menu-branch-trigger');
-    if (event.key !== 'ArrowDown' || !summary) return;
-    event.preventDefault();
-    const branch = summary.parentElement;
-    branch.open = true;
-    requestAnimationFrame(() => {
-      if (branch.open && document.activeElement === summary) branch.querySelector('a')?.focus();
-    });
-  });
 }

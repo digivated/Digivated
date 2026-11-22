@@ -70,7 +70,7 @@
     --dg-rail-gutter: 11px;
   }
   .dg-workspace-rail { display: contents !important; }
-  .dg-workspace :is(.dg-rail-brand,.dg-rail-navigation,.dg-rail-footer) { display: none !important; }
+  .dg-workspace :is(.dg-rail-brand,.dg-rail-navigation) { display: none !important; }
 
   .dg-workspace :is(.dg-shell,.dg-rail-navigation) {
     --shell-bar-glass: #fff !important;
@@ -151,52 +151,6 @@
       flex: none;
       gap: 8px;
       padding-inline: var(--dg-rail-gutter);
-    }
-    .dg-rail-navigation .site-menu-secondary {
-      padding-block-start: 7px;
-      border-block-start: 1px solid #ddd !important;
-    }
-    .dg-rail-navigation .site-menu-branch-trigger { min-height: 39px; text-decoration: none !important; }
-    .dg-rail-navigation .site-menu-branch-trigger:has(+ ul a[aria-current="page"]) { color: #171717 !important; }
-    .dg-rail-navigation .site-menu-branch-links > li { padding-inline-start: 24px; }
-    .dg-rail-navigation .site-menu-connector {
-      inset-inline-start: 13px;
-      width: 13px;
-      stroke: #797979 !important;
-    }
-    .dg-rail-navigation .site-menu-branch-links a {
-      gap: 6px;
-      min-height: 36px !important;
-      font-size: 13px !important;
-    }
-    .dg-rail-navigation .site-menu-branch-links .site-menu-glyph { width: 15px; height: 15px; }
-    .dg-workspace-rail :is(.dg-rail-primary a,.dg-rail-about) {
-      display: flex !important;
-      align-items: center;
-      gap: 8px;
-      min-height: 37px;
-      padding: 5px 8px !important;
-      border-radius: 8px !important;
-      color: var(--shell-ink, #171717) !important;
-      font-size: 14px !important;
-      text-decoration: none !important;
-    }
-    .dg-workspace-rail :is(.dg-rail-primary a,.dg-rail-about):is(:hover,:focus-visible,[aria-current="page"]) {
-      background: #ededed !important;
-      box-shadow: none !important;
-      color: #171717 !important;
-    }
-    .dg-workspace-rail .dg-rail-primary a[aria-current="page"] {
-      font-weight: 650;
-      box-shadow: inset 2px 0 #171717 !important;
-    }
-    .dg-workspace .dg-rail-footer {
-      margin-top: auto;
-      padding: 9px var(--dg-rail-gutter) 12px;
-      display: grid !important;
-      flex: none;
-      gap: 5px;
-      border-top: 1px solid #dedede;
     }
     .dg-workspace-rail :is(a,summary):focus-visible { outline-color: #e6e6e6 !important; outline-offset: -3px; }
     .dg-workspace .dg-shell {
@@ -298,7 +252,7 @@
       padding-inline: 0 !important;
       border: 0 !important;
     }
-    .dg-workspace .dg-shell :is(.dg-shell-brand,.dg-shell-primary) { display: none !important; }
+    .dg-workspace .dg-shell .dg-shell-brand { display: none !important; }
     .dg-workspace .dg-shell .dg-shell-tools {
       display: grid !important;
       grid-template-columns: 42px minmax(0, 1fr);

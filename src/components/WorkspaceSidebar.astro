@@ -1,12 +1,10 @@
 ---
-import { primaryLinks, isNavigationCurrent } from '../data/site-navigation.mjs';
-import NavigationBranches from './NavigationBranches.astro';
+import { isNavigationCurrent } from '../data/site-navigation.mjs';
+import NavigationTree from './NavigationTree.astro';
 import UiIcon from './UiIcon.astro';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const current = (href: string) => isNavigationCurrent(path, href);
-const icons: Record<string, string> = { '/submit-project': 'upload', '/': 'layers', '/discover': 'grid', '/account': 'profile', '/news': 'book', '/resources': 'tool' };
-const links = primaryLinks.map(([href, label]) => ({ href, label, current: current(href), icon: icons[href] || 'arrow' }));
 ---
 <aside class="dg-workspace-rail" aria-label="Digivated sidebar">
   <a class="dg-rail-brand" href="/" aria-label="Digivated home">
@@ -15,10 +13,7 @@ const links = primaryLinks.map(([href, label]) => ({ href, label, current: curre
   </a>
   <slot/>
   <nav class="dg-rail-navigation" aria-label="Workspace navigation">
-    <div class="dg-rail-primary">{links.map(link => <a href={link.href} aria-current={link.current ? 'page' : undefined}><UiIcon name={link.icon} size={17}/>{link.label}</a>)}</div>
-    <NavigationBranches path={path}/>
+    <NavigationTree path={path}/>
+    <a class="navigation-launch" href="/submit-project" aria-current={current('/submit-project') ? 'page' : undefined}><UiIcon name="upload" size={16}/>New Launch</a>
   </nav>
-  <div class="dg-rail-footer">
-    <a class="dg-rail-about" href="/about" aria-current={current('/about') ? 'page' : undefined}>About Digivated <UiIcon name="arrow" size={14}/></a>
-  </div>
 </aside>

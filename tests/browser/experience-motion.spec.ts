@@ -132,6 +132,6 @@ test('sidebar and launch actions work with reduced motion and no hydrated visual
   await page.goto(base+'/');
   await expect(page.locator('[data-react-bits]')).toHaveCount(0);
   await expect(page.locator('.dg-home-hero').getByRole('link',{name:'New Launch',exact:true})).toHaveAttribute('href','/submit-project');
-  await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:'Directory'}).press('Enter');
-  await expect(page).toHaveURL(base+'/discover');
+  await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:'Categories'}).press('Enter');
+  await expect(page).toHaveURL(base+'/categories');
 });

@@ -1,0 +1,17 @@
+---
+import { primaryLinks, isNavigationCurrent } from '../data/site-navigation.mjs';
+import UiIcon from './UiIcon.astro';
+
+const { path } = Astro.props;
+const icons: Record<string, string> = {
+  '/': 'layers', '/categories': 'grid', '/account': 'profile', '/shop': 'save',
+  '/news': 'book', '/threads': 'comment', '/resources': 'tool',
+};
+---
+<ul class="navigation-tree">
+  {primaryLinks.map(([href, label]) => (
+    <li><a href={href} aria-current={isNavigationCurrent(path, href) ? 'page' : undefined}>
+      <UiIcon name={icons[href]} size={18}/><span>{label}</span>
+    </a></li>
+  ))}
+</ul>

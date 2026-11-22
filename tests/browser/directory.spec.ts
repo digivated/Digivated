@@ -25,7 +25,7 @@ for (const width of [390, 1440]) {
     await page.goto(base + '/discover');
 
     await expect(page.locator('.site-breadcrumbs [aria-current="page"]')).toHaveText('Directory');
-    await expect(page.locator('header a[href="/discover"]').first()).toHaveText('Directory');
+    await expect(page.locator('.navigation-tree a[href="/categories"]').first()).toHaveAttribute('aria-current', 'page');
     await expect(page.locator('a[href^="/rankings"]')).toHaveCount(0);
     await expect(page.locator('[data-dir-podium]')).toHaveCount(0);
     const rows = page.locator('[data-dir-list] .dg-dir-open');
@@ -75,23 +75,15 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   const rail = page.getByRole('complementary', { name: 'Digivated sidebar' });
   const activeLaunches = rail.getByRole('link', { name: 'Home', exact: true });
   await expect(activeLaunches).toHaveAttribute('aria-current', 'page');
-  await expect(activeLaunches).toHaveCSS('box-shadow', /inset/);
+  await expect(activeLaunches).toHaveCSS('background-color', 'rgb(23, 23, 23)');
   await expect(rail.getByRole('link', { name: 'New Launch' })).toHaveAttribute('href', '/submit-project');
   await expect(rail).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(rail).toHaveCSS('background-image', 'none');
   const workspace = rail.getByRole('navigation', { name: 'Workspace navigation' });
   await expect(workspace.locator('a')).toHaveText([
-    'New Launch', 'Home', 'Directory', 'Dashboard', 'News', 'Extra Tools', 'Categories', 'Threads', 'Weekly winners', 'For Investors', 'Feedback points', 'Embed badges', 'Shop',
+    'Home', 'Categories', 'Dashboard', 'Shop', 'News', 'Threads', 'Tools', 'New Launch',
   ]);
   await expect(workspace.getByRole('link', { name: 'News', exact: true })).toBeVisible();
-  await expect(workspace.locator('a[href="/badges"]')).toBeHidden();
-  const makers = workspace.locator('summary', { hasText: 'For makers' });
-  await makers.press('ArrowDown');
-  await expect(workspace.getByRole('link', { name: 'Feedback points' })).toBeFocused();
-  await expect(workspace.getByRole('link', { name: 'Embed badges' })).toHaveAttribute('href', '/badges');
-  await expect(workspace.locator('.site-menu-connector').first()).toBeVisible();
-  await makers.press('Enter');
-  await expect(workspace.locator('a[href="/badges"]')).toBeHidden();
   const login = rail.getByRole('link', { name: 'Log In', exact: true });
   await expect(login).toHaveAttribute('href', '/login');
   await expect(rail.locator('[data-open-search]')).toHaveCount(0);
@@ -143,25 +135,20 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   await expect(rail.locator('.dg-shell-material')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(login).toHaveCSS('color', 'rgb(23, 23, 23)');
   await page.locator('.site-menu-trigger').click();
-  const directory = page.getByRole('navigation', { name: 'Site menu' }).getByRole('link', { name: 'Directory', exact: true });
+  const directory = page.getByRole('navigation', { name: 'Site menu' }).getByRole('link', { name: 'Categories', exact: true });
   await expect(directory).toBeVisible();
   await directory.click();
-  await expect(page).toHaveURL(base + '/discover');
+  await expect(page).toHaveURL(base + '/categories');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('the desktop sidebar opens the current branch and scrolls in a short viewport', async ({ page }) => {
+test('the desktop menu keeps New Launch reachable in a short viewport', async ({ page }) => {
   await page.setViewportSize({ width: 1120, height: 430 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(base + '/badges');
   const rail = page.getByRole('complementary', { name: 'Digivated sidebar' });
   const nav = rail.getByRole('navigation', { name: 'Workspace navigation' });
-  await expect(nav.getByRole('link', { name: 'Embed badges' })).toHaveAttribute('aria-current', 'page');
-  await expect(nav.locator('a[href="/news"]')).toBeVisible();
-  await expect(nav.locator('a[href="/categories"]')).toBeHidden();
-  await expect(nav.locator('.site-menu-branch[open] .site-menu-connector').first()).toHaveCSS('animation-name', 'none');
-  await nav.locator('summary', { hasText: 'Explore' }).press('Enter');
-  await expect(nav.getByRole('link', { name: 'Weekly winners' })).toHaveAttribute('href', '/winners');
+  await expect(nav.getByRole('link', { name: 'Shop', exact:true })).toHaveAttribute('href', '/shop');
   const action = rail.getByRole('link', { name: 'New Launch' });
   await action.scrollIntoViewIfNeeded();
   await expect(action).toBeInViewport();
@@ -222,9 +209,9 @@ test('sidebar navigation keeps the content and footer aligned across destination
   });
   const home = await shell();
   expect(home.footer[0]).toBeGreaterThanOrEqual(home.rail[1]);
-  await nav.getByRole('link', { name: 'Directory', exact: true }).click();
-  await expect(page).toHaveURL(base + '/discover');
-  await expect(nav.getByRole('link', { name: 'Directory', exact: true })).toHaveAttribute('aria-current', 'page');
+  await nav.getByRole('link', { name: 'Categories', exact: true }).click();
+  await expect(page).toHaveURL(base + '/categories');
+  await expect(nav.getByRole('link', { name: 'Categories', exact: true })).toHaveAttribute('aria-current', 'page');
   expect(await shell()).toEqual(home);
 
   await nav.getByRole('link', { name: 'News', exact: true }).click();
@@ -234,8 +221,8 @@ test('sidebar navigation keeps the content and footer aligned across destination
   expect(await shell()).toEqual(home);
 
   await page.goBack();
-  await expect(page).toHaveURL(base + '/discover');
-  await expect(nav.getByRole('link', { name: 'Directory', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(page).toHaveURL(base + '/categories');
+  await expect(nav.getByRole('link', { name: 'Categories', exact: true })).toHaveAttribute('aria-current', 'page');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('#main')).toHaveCSS('view-transition-name', 'none');
 });
