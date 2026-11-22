@@ -33,7 +33,7 @@
   }
   .home-refresh .dg-hero-stat dt {
     color: var(--fl-muted);
-    font-size: 12px;
+    font-size: clamp(12px, 1vw, 14px);
     line-height: 1.35;
   }
   .home-refresh .dg-hero-stat dd {
@@ -272,7 +272,7 @@
   }
   html[data-theme="daylight"] body.home-refresh .dg-home-spots .dg-spot-grid { display: grid !important; gap: 0; }
   html[data-theme="daylight"] body.home-refresh .dg-home-spots .dg-spot {
-    grid-template-columns: 34px minmax(0, 1fr);
+    grid-template-columns: 42px minmax(0, 1fr);
     align-content: start;
     min-inline-size: 0;
     min-block-size: 0;
@@ -283,7 +283,7 @@
     border-radius: 0 !important;
     background: transparent !important;
   }
-  .home-refresh .dg-spot-logo { grid-column: 1; grid-row: 1 / span 3; width: 34px; height: 34px; }
+  .home-refresh .dg-spot-logo { grid-column: 1; grid-row: 1 / span 3; width: 42px; height: 42px; }
   .home-refresh :is(.dg-spot-name, .dg-spot-copy, .dg-spot-tag) { grid-column: 2; }
   html[data-theme="daylight"] body.home-refresh .dg-spot-name {
     color: var(--fl-ink) !important;
@@ -334,12 +334,8 @@
   html[data-theme="daylight"] body.home-refresh .dg-about p { font-size: 14px !important; }
 
   @media (prefers-reduced-motion: no-preference) {
-    html[data-motion-ready] .home-refresh .dg-row :is(.dg-logo, .dg-vote-caret) {
-      transition: translate 360ms cubic-bezier(.22,1,.36,1), scale 360ms cubic-bezier(.22,1,.36,1) !important;
-    }
-    html[data-motion-ready] .home-refresh .dg-row:has(h3 a:is(:hover, :focus-visible)) .dg-logo {
-      translate: 0 -3px;
-      scale: 1.07;
+    html[data-motion-ready] .home-refresh .dg-row .dg-vote-caret {
+      transition: translate 360ms cubic-bezier(.22,1,.36,1) !important;
     }
     html[data-motion-ready] .home-refresh .dg-row :is(.dg-vote:hover, .dg-vote:focus-visible) .dg-vote-caret { translate: 0 -2px; }
     @supports (animation-timeline: view()) {
@@ -349,8 +345,8 @@
         animation-range: entry 0% cover 24%;
       }
       @keyframes dg-launch-row-enter {
-        from { opacity: .65; translate: 0 12px; }
-        to { opacity: 1; translate: 0 0; }
+        from { translate: 0 4px; }
+        to { translate: 0 0; }
       }
     }
   }

@@ -40,10 +40,8 @@
   gap: 10px 22px;
   padding: var(--launch-pad);
 }
-.launch-cover:has(img) + .launch-hero { padding-block-start: 0; }
-.launch-cover:has(img) + .launch-hero .launch-identity { margin-block-start: -30px; }
 .launch-identity {
-  --project-logo-inset: 6px;
+  --project-logo-inset: 2px;
   grid-column: 1 / -1;
   width: clamp(55px, 9vw, 88px);
   aspect-ratio: 1;

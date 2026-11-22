@@ -6,9 +6,9 @@ export async function prepareProjectImage(file){
   const image=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error('This logo could not be opened. Choose another file.'));img.src=url;});
   const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;
   const ctx=canvas.getContext('2d');if(!ctx)throw Error('Logo processing is unavailable. Please try another browser.');
-  // Transparent padding, preserved proportions, and no enlargement of small originals.
+  // Give every logo the same visual area while preserving its proportions and alpha.
   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-  const scale=Math.min(1,464/image.naturalWidth,464/image.naturalHeight);
+  const scale=464/Math.max(image.naturalWidth,image.naturalHeight);
   const w=image.naturalWidth*scale,h=image.naturalHeight*scale;
   ctx.drawImage(image,(512-w)/2,(512-h)/2,w,h);
   const fits=result=>Math.ceil((result.length-result.indexOf(',')-1)*3/4)<=500*1024;

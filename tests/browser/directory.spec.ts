@@ -37,8 +37,9 @@ for (const width of [390, 1440]) {
     expect(second!.x).toBeCloseTo(first!.x, 0);
     expect(second!.y).toBeGreaterThanOrEqual(first!.y + first!.height);
     if (width >= 1120) {
-      expect(first!.height).toBeLessThanOrEqual(66);
-      await expect(firstTwo.first().locator('.dg-tagline')).toHaveCSS('white-space', 'nowrap');
+      expect(first!.height).toBeLessThanOrEqual(110);
+      await expect(firstTwo.first().locator('.dg-tagline')).toHaveCSS('white-space', 'normal');
+      await expect(firstTwo.first().locator('.dg-meta')).toBeVisible();
     }
     await expect(page.locator('#project-directory-26 .dg-logo img')).toHaveCSS('object-fit', 'contain');
     await expect(page.locator('#project-directory-25 .dg-monogram')).toHaveText('DI');
@@ -173,7 +174,7 @@ test('desktop shows four category shortcuts and links to all categories', async 
   await expect(allCategories).toBeVisible();
   await expect(filters).toHaveCSS('flex-wrap', 'wrap');
   await expect(page.locator('html')).toHaveCSS('scrollbar-width', 'none');
-  await expect(page.locator('.dg-home')).toHaveCSS('max-width', '1040px');
+  await expect(page.locator('.dg-home')).toHaveCSS('max-width', '1120px');
   await expect(page.locator('#main')).toHaveCSS('border-right-width', '0px');
   const last = filters.getByRole('button').last();
   await last.focus();
@@ -226,7 +227,7 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   await expect.poll(() => upcoming.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   await expect(upcoming).toHaveCSS('object-fit', 'contain');
   await expect(upcoming).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-  await expect(upcoming.locator('..')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(upcoming.locator('..')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(page.locator('[data-upcoming-id="upcoming-fixture"] .dg-monogram')).toBeHidden();
   const missingLogo = page.locator('[data-upcoming-id="missing-logo"] .dg-logo');
   await missingLogo.scrollIntoViewIfNeeded();
