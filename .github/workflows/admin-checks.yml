@@ -1,4 +1,4 @@
-name: Owner dashboard verification
+name: Admin checks
 on:
   pull_request:
   push:

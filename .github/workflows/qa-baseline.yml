@@ -1,4 +1,4 @@
-name: Digivated QA baseline refresh
+name: QA baseline refresh
 
 # Manual only. Regenerates the committed screenshot baseline from the live site and opens a pull
 # request so the visual change is reviewed before it replaces the baseline. It never touches main.

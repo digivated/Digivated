@@ -1,4 +1,4 @@
-name: Community pause verification
+name: Community checks
 on:
   pull_request:
 permissions:

@@ -1,4 +1,4 @@
-name: Digivated QA monitor
+name: QA monitor
 
 on:
   schedule:
