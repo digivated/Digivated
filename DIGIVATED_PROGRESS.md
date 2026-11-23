@@ -28,3 +28,16 @@
 
 ### Remaining phases
 2 AEO, 3 scans/emails, 4 performance, 5 verification/deploy.
+
+## Phase 2: AEO / AI discoverability — branch `seo-phase-2` (stacked on seo-phase-1; not merged, not deployed)
+### Finding
+Most AI crawlers do not run JavaScript. Homepage, /discover, /categories and creator-page project lists are filled in the browser, so those crawlers see no product names or links. Existing `llms.txt` is fine to keep but is not evidence of better ranking or citations.
+
+### Change
+- New server-rendered **/projects**: every published project as plain links grouped by category (name, maker, 180-char description), CollectionPage + ItemList JSON-LD, short shared cache (s-maxage 300), 503 + noindex on failure. Uses only the existing public projection (`projectPublic`), so nothing unpublished appears.
+- Same template pattern as /creator: `src/pages/projects.astro` -> `server/generated/projects.html` -> served by `server/project-index.mjs` through the existing public router (no new serverless function). `vercel.json` rewrite for `/projects` and `/projects/`.
+- Linked from footer "Explore" (all pages), sitemap and llms.txt.
+- Tests: `tests/project-index.test.mjs` + `launch-schema.test.mjs`, 7/7 pass. NOT run locally: `astro build`, existing suite, browser check (deps not installable offline). Verify on the Vercel preview: /projects renders with site chrome, no console errors, /discover and /creator unchanged.
+
+### Not done (ideas, need decision)
+- Per-category pages (`/categories/<name>`) with their own copy; weekly launch archive pages (`/launches/<week>`); render project lists inside creator profiles server-side. Each needs the same server-render pattern.

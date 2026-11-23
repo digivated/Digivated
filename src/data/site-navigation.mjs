@@ -17,7 +17,7 @@ export function isNavigationCurrent(path, href) {
 }
 // Footer shortcuts and account, help, and social links.
 export const footerGroups = [
-  { title: 'Explore', links: [['/discover', 'Directory'], ['/news', 'News'], ['/tools', 'Tools']] },
+  { title: 'Explore', links: [['/discover', 'Directory'], ['/projects', 'All projects'], ['/news', 'News'], ['/tools', 'Tools']] },
   { title: 'For makers', links: [
     ['/new-launch', 'New Launch'], ['/dashboard', 'Dashboard'], ['/notifications', 'Notifications'],
     ['/saved', 'Saved items'], ['/badges', 'Embed badges'], ['/dashboard?tab=settings', 'Email settings'],

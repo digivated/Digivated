@@ -9,6 +9,7 @@ Digivated (https://digivated.com) publishes this site. Launch pages are written 
 - [Home](https://digivated.com/): this week's launches, rising products and last week's ranked launches
 - [Categories](https://digivated.com/categories): every product grouped by category
 - [Directory](https://digivated.com/discover): search and filter all launched products
+- [All projects](https://digivated.com/projects): every published product as a plain list by category, with maker and description
 - [New Launch](https://digivated.com/new-launch): submit a product; free launches go live on Mondays at 9 AM Eastern
 - [Shop](https://digivated.com/shop): plans for instant publishing and featured placement
 - [News](https://digivated.com/news): AI, tech, markets and security news, each item linked to its source
