@@ -311,7 +311,10 @@ test('last week pins ranked launches before newer entries and keeps them above e
   await section.getByRole('button', { name: 'View 2 more' }).click();
   await expect(names).toHaveText(ordered);
   await page.locator('[data-board-category="Apps"]').click();
-  await expect(names).toHaveText(ordered.filter(name => name !== previous[0].name));
+  const filtered = ordered.filter(name => name !== previous[0].name);
+  await expect(names).toHaveText(filtered.slice(0, 5));
+  await section.getByRole('button', { name: 'View 1 more' }).click();
+  await expect(names).toHaveText(filtered);
 });
 
 test('the upcoming batch and countdown agree on Monday, November 23', async ({ page }) => {
