@@ -33,13 +33,17 @@ export function sanitizeEvent(event, source) {
     if (phases.has(event.tags?.phase)) clean.tags.phase = event.tags.phase;
     if (/^5\d\d$/.test(String(event.tags?.status))) clean.tags.status = String(event.tags.status);
   } else {
+    const values = (event.exception?.values || [{}]).slice(0, 3);
     clean.exception = {
-      values: (event.exception?.values || [{}]).slice(0, 3).map(value => ({
+      values: values.map(value => ({
         type: errorTypes.has(value.type) ? value.type : 'Error',
         value: 'Browser error (message omitted for privacy)',
         stacktrace: { frames: (value.stacktrace?.frames || []).map(safeFrame).filter(Boolean).slice(-30) },
       })),
     };
+    // One of three fixed values: tells app bugs apart from extension or cross-origin noise without sending any content.
+    const seen = values.some(value => (value.stacktrace?.frames || []).length);
+    clean.tags.error_origin = clean.exception.values.some(value => value.stacktrace.frames.length) ? 'app' : seen ? 'external' : 'none';
   }
   // Request data, cookies, user identity, breadcrumbs, custom contexts, locals and
   // raw exception messages are intentionally absent from this allowlisted object.
