@@ -282,6 +282,28 @@ test('the desktop menu keeps New Launch reachable in a short viewport', async ({
 });
 
 
+test('touch sort changes selection without a second animated thumb', async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  try {
+    const page = await context.newPage();
+    await page.route('**/api/projects*', route => route.fulfill({ json: { items: projects, next: null } }));
+    await page.goto(base + '/');
+    const group = page.getByRole('group', { name: 'Sort launches' });
+    const recent = group.getByRole('button', { name: 'Most recent' });
+    const top = group.getByRole('button', { name: 'Top voted' });
+    await expect(recent).toHaveCSS('-webkit-tap-highlight-color', 'rgba(0, 0, 0, 0)');
+    await top.tap();
+    await expect(top).toHaveAttribute('aria-pressed', 'true');
+    await expect(recent).toHaveAttribute('aria-pressed', 'false');
+    await expect(group.locator('.gm-pill')).toHaveCount(0);
+    await recent.tap();
+    await expect(recent).toHaveAttribute('aria-pressed', 'true');
+    await expect(top).toHaveAttribute('aria-pressed', 'false');
+  } finally {
+    await context.close();
+  }
+});
+
 test('last week pins ranked launches before newer entries and keeps them above expanded rows', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   await page.clock.setFixedTime(new Date('2026-11-22T04:00:00Z'));

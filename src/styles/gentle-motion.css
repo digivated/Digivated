@@ -19,10 +19,24 @@
   #digivated-root [data-gm-gliding] > :is(button, a, [role="tab"]) { position: relative; z-index: 1; }
   #digivated-root#digivated-root#digivated-root [data-gm-gliding] > :is([aria-pressed="true"], [aria-selected="true"]) { background: transparent !important; box-shadow: none !important; border-color: transparent !important; }
 
+  @media (hover: none) and (pointer: coarse) {
+    #digivated-root :is(a[href], button, summary, [role="tab"]) {
+      -webkit-tap-highlight-color: transparent;
+    }
+    /* The stretched title link is the hit area for the entire launch row. */
+    #digivated-root .dg-row h3 a::after { -webkit-tap-highlight-color: transparent; }
+  }
+
   /* Soft press feedback on primary controls. */
   @media (prefers-reduced-motion: no-preference) {
     #digivated-root :is(.dg-btn, .button, .dg-vote, .dg-more, .navigation-launch, .dg-watch, .board-sort button, .board-categories button, .dg-dir-collection button) { transition-property: background-color, border-color, color, box-shadow, scale !important; transition-duration: 180ms !important; transition-timing-function: var(--gm-ease) !important; }
     #digivated-root :is(.dg-btn, .button, .dg-vote, .dg-more, .navigation-launch, .dg-watch):active:not(:disabled) { scale: .97 !important; }
+    @media (hover: none) and (pointer: coarse) {
+      #digivated-root#digivated-root :is(.dg-btn, .button, .dg-vote, .dg-more, .navigation-launch, .dg-watch):active:not(:disabled) {
+        transform: none !important;
+        scale: .99 !important;
+      }
+    }
     #digivated-root .dg-row { transition: background-color 220ms var(--gm-ease), box-shadow 220ms var(--gm-ease) !important; }
   }
 
@@ -75,10 +89,9 @@
   }
 }
 
-/* Page changes: a true crossfade. The old page stays visible while the new one fades in, so there is never an empty frame between pages. */
+/* Keep the old snapshot opaque while the new one fades over it. */
 @media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(workspace-page) { display: block !important; animation: gm-page-out 200ms ease both !important; }
-  ::view-transition-new(workspace-page) { animation: gm-page-in 240ms cubic-bezier(.22, 1, .36, 1) both !important; }
-  @keyframes gm-page-out { to { opacity: 0; } }
-  @keyframes gm-page-in { from { opacity: 0; translate: 0 6px; } }
+  ::view-transition-old(workspace-page) { display: block !important; animation: none !important; }
+  ::view-transition-new(workspace-page) { animation: gm-page-in 180ms ease-out both !important; }
+  @keyframes gm-page-in { from { opacity: 0; } }
 }
