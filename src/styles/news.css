@@ -86,6 +86,8 @@
   .news-editorial, .news-sidebar { min-width:0; }
   .news-editorial { container-type:inline-size; }
   .news-page .news-sidebar { margin:0!important; padding:0!important; background:transparent!important; }
+  /* global.css hides every <aside> below 850px (an old mobile nav); the market snapshot stays visible. */
+  .news-page .news-sidebar:not([hidden]) { display:block!important; }
 
   .news-section-heading {
     display:flex;
