@@ -44,32 +44,34 @@ html body.platform.light-theme .comment-list strong{color:#222}
 html body.platform.light-theme .comment-list p{color:#555;line-height:1.5}
 @media(max-width:540px){html body.platform.light-theme .comment-dialog{width:calc(100% - 20px);max-height:calc(100dvh - 20px);border-radius:16px}html body.platform.light-theme .comment-dialog-header{padding:20px 18px 17px}html body.platform.light-theme .comment-dialog-body{padding:18px 18px 22px}.platform .feedback-form-actions{align-items:stretch;flex-direction:column-reverse;gap:10px}.platform .feedback-note{max-width:none}html body.platform.light-theme .comment-form button[type=submit]{width:100%;justify-content:center}}
 
+@layer clean-first {
 /* Visit prompt ("How was X?"): clean light card. Scoped to .dg-review so no other dialog or form changes.
    The id selector beats the older dark-theme and global focus-ring rules. The global ring (2px, 3px offset)
    used to sit on top of the label above the textarea. */
-html#digivated-root[data-theme="daylight"] body .dg-review{gap:16px;width:min(420px,calc(100vw - 24px));padding:20px!important;border:1px solid var(--fl-line,#e4e4e8)!important;border-radius:16px!important;background:#fff!important;color:#171717!important;box-shadow:0 18px 60px rgba(0,0,0,.14)!important}
-html#digivated-root[data-theme="daylight"] body .dg-review-head{grid-template-columns:44px minmax(0,1fr) auto;gap:14px;align-items:center}
-html#digivated-root[data-theme="daylight"] body .dg-review-logo{width:44px;height:44px;border-radius:11px}
+html#digivated-root[data-theme="daylight"] body .dg-review{gap:16px!important;width:min(420px,calc(100vw - 24px))!important;padding:20px!important;border:1px solid var(--fl-line,#e4e4e8)!important;border-radius:16px!important;background:#fff!important;color:#171717!important;box-shadow:0 18px 60px rgba(0,0,0,.14)!important}
+html#digivated-root[data-theme="daylight"] body .dg-review-head{grid-template-columns:44px minmax(0,1fr) auto!important;gap:14px!important;align-items:center!important}
+html#digivated-root[data-theme="daylight"] body .dg-review-logo{width:44px!important;height:44px!important;border-radius:11px!important}
 html#digivated-root[data-theme="daylight"] body .dg-review .dg-label{margin:0 0 3px!important;font-family:var(--fl-sans)!important;font-size:12px!important;font-weight:500!important;letter-spacing:0!important;text-transform:none!important;color:#6b6b72!important}
-html#digivated-root[data-theme="daylight"] body .dg-review-head h2{margin:0!important;font-size:18px!important;font-weight:650;line-height:1.25!important;letter-spacing:-.02em!important;color:#111!important}
+html#digivated-root[data-theme="daylight"] body .dg-review-head h2{margin:0!important;font-size:18px!important;font-weight:650!important;line-height:1.25!important;letter-spacing:-.02em!important;color:#111!important}
 html#digivated-root[data-theme="daylight"] body .dg-review-close{width:32px!important;height:32px!important;border:0!important;border-radius:999px!important;background:#f3f3f5!important;color:#555!important;font-size:18px!important}
 html#digivated-root[data-theme="daylight"] body .dg-review-close:hover{background:#e8e8ec!important;color:#111!important}
 html#digivated-root[data-theme="daylight"] body .dg-review-content,
-html#digivated-root[data-theme="daylight"] body .dg-review-form{gap:14px}
-html#digivated-root[data-theme="daylight"] body .dg-review-field{gap:8px}
+html#digivated-root[data-theme="daylight"] body .dg-review-form{gap:14px!important}
+html#digivated-root[data-theme="daylight"] body .dg-review-field{gap:8px!important}
 html#digivated-root[data-theme="daylight"] body .dg-review-field>span{font-size:13px!important;font-weight:600!important;line-height:1.35!important;color:#222!important}
-html#digivated-root[data-theme="daylight"] body .dg-review :is(textarea,input){min-height:0;padding:12px 14px!important;border:1px solid #dcdce1!important;border-radius:12px!important;background:#fafafb!important;color:#171717!important;box-shadow:none!important;resize:vertical}
-html#digivated-root[data-theme="daylight"] body .dg-review textarea{min-height:108px}
-html#digivated-root[data-theme="daylight"] body .dg-review :is(textarea,input)::placeholder{color:#8d8d95}
+html#digivated-root[data-theme="daylight"] body .dg-review :is(textarea,input){min-height:0!important;padding:12px 14px!important;border:1px solid #dcdce1!important;border-radius:12px!important;background:#fafafb!important;color:#171717!important;box-shadow:none!important;resize:vertical!important}
+html#digivated-root[data-theme="daylight"] body .dg-review textarea{min-height:108px!important}
+html#digivated-root[data-theme="daylight"] body .dg-review :is(textarea,input)::placeholder{color:#8d8d95!important}
 html#digivated-root[data-theme="daylight"] body .dg-review :is(textarea,input):is(:focus,:focus-visible){outline:none!important;border-color:#b9b9c1!important;background:#fff!important;box-shadow:0 0 0 3px rgba(11,11,12,.07)!important}
 html#digivated-root[data-theme="daylight"] body .dg-review-note{font-family:var(--fl-sans)!important;font-size:12px!important;line-height:1.5!important;color:#6b6b72!important}
-html#digivated-root[data-theme="daylight"] body .dg-review-actions{flex-wrap:nowrap;gap:10px}
-html#digivated-root[data-theme="daylight"] body .dg-review-actions .dg-btn{flex:1 1 0;min-height:42px;border-radius:11px!important}
+html#digivated-root[data-theme="daylight"] body .dg-review-actions{flex-wrap:nowrap!important;gap:10px!important}
+html#digivated-root[data-theme="daylight"] body .dg-review-actions .dg-btn{flex:1 1 0!important;min-height:42px!important;border-radius:11px!important}
 html#digivated-root[data-theme="daylight"] body .dg-review-actions .dg-btn:focus-visible,
 html#digivated-root[data-theme="daylight"] body .dg-review-close:focus-visible{outline:2px solid #111!important;outline-offset:2px!important}
-html#digivated-root[data-theme="daylight"] body .dg-review-actions .dg-btn:disabled{opacity:.4}
+html#digivated-root[data-theme="daylight"] body .dg-review-actions .dg-btn:disabled{opacity:.4!important}
 html#digivated-root[data-theme="daylight"] body .dg-review-status{font-size:12.5px!important;color:#555!important}
 /* Thank-you state: the old dark-theme gradient text is invisible on white. */
 html#digivated-root[data-theme="daylight"] body .dg-award strong{background-image:none!important;-webkit-text-fill-color:#111!important;color:#111!important;font-family:var(--fl-sans)!important;font-weight:650!important}
 html#digivated-root[data-theme="daylight"] body .dg-award>span:not(.dg-sparks){color:#6b6b72!important;font-family:var(--fl-sans)!important}
-@media(max-width:540px){html#digivated-root[data-theme="daylight"] body .dg-review{right:12px!important;left:12px;bottom:12px;width:auto;padding:18px!important}}
+@media(max-width:540px){html#digivated-root[data-theme="daylight"] body .dg-review{right:12px!important;left:12px!important;bottom:12px!important;width:auto!important;padding:18px!important}}
+}
