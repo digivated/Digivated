@@ -149,7 +149,8 @@ document.addEventListener('click', event => {
   if (!enabled()) return;
   const button = event.target.closest?.('button, [role="tab"]');
   const group = button?.parentElement?.closest(GROUPS);
-  if (!group || button.parentElement !== group) return;
+  // This board already updates its selected button and results in the same paint.
+  if (!group || button.parentElement !== group || group.matches('.board-sort')) return;
   const current = pressedIn(group);
   if (!current || current === button) return;
   const from = boxOf(current, group);

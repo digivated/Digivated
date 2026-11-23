@@ -24,6 +24,11 @@
   border-radius: var(--fl-radius-card);
   scroll-margin-block-start: calc(var(--launch-nav-top) + 60px);
 }
+.launch-page #feedback:focus { outline: none; }
+.launch-page #feedback:focus-visible {
+  outline: 2px solid var(--fl-muted);
+  outline-offset: -2px;
+}
 .launch-page .launch-intro { padding: 0; }
 .launch-cover {
   height: clamp(104px, 24vw, 265px);
