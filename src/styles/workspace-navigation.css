@@ -14,6 +14,8 @@
 
   .dg-workspace-content > #main {
     padding-block-end: clamp(26px, 4vw, 44px) !important;
+    /* The footer always starts below the fold, so a page that is still loading never pulls it up mid-screen. */
+    min-block-size: 100svh;
   }
 
   @media (min-width: 1120px) {
@@ -24,7 +26,8 @@
 
 /* Native document navigation keeps each page's own scripts and normal browser history. */
 @media (prefers-reduced-motion: no-preference) {
-  .dg-workspace-content > #main { view-transition-name: workspace-page; }
+  /* Page and footer move as one, so the footer never pops in over the outgoing page. */
+  .dg-workspace-content { view-transition-name: workspace-page; }
 
   @media (min-width: 1120px) {
     .dg-workspace > .dg-workspace-rail { view-transition-name: workspace-navigation; }

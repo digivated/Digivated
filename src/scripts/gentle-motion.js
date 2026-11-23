@@ -48,8 +48,13 @@ function flush() {
   });
 }
 
+// Right after a page transition, content that loads into the first screen just appears:
+// the whole page is already fading in, so a second fade on top of it reads as a flicker.
+const arrivedSettling = () => { const at = document.documentElement.getAttribute('data-vt-arrived'); return at !== null && performance.now() - Number(at) < 900; };
+
 function hold(el) {
   if (el.dataset.gm || el.closest('[data-gm]') || el.closest('dialog, [role="dialog"], .site-menu-panel')) return;
+  if (arrivedSettling() && el.getBoundingClientRect().top < innerHeight) return;
   const key = keyOf(el);
   if (key) { if (seen.has(key)) return; seen.add(key); }
   el.dataset.gm = 'wait';

@@ -35,6 +35,10 @@ function finish(element) {
   animation.cancel();
 }
 
+// A page that arrives through the page transition already moves as a whole; its first screen
+// should not animate a second time underneath it.
+const arrivedSettling = () => { const at = document.documentElement.getAttribute('data-vt-arrived'); return at !== null && performance.now() - Number(at) < 900; };
+
 function reveal(element) {
   if (!allowed() || !cues.has(element)) return;
   const cue = cues.get(element);
@@ -44,6 +48,7 @@ function reveal(element) {
     element.dataset.motionEntered = '';
     return;
   }
+  if (arrivedSettling()) return;
   if (!element.animate || element.contains(document.activeElement)) return;
   // Keep a readable starting pose. Leaving the page or focusing a control restores it instantly.
   try {

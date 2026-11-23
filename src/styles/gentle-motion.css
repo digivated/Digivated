@@ -89,22 +89,21 @@
   }
 }
 
-/* Page changes: the old page fades out and settles back while the new one fades in from slightly larger.
-   Both run together and blend additively (plus-lighter), so the page never dips to the background mid-swap. The header and rail stay put.
-   The old page scales around the middle of what was on screen (set by a tiny head script), the new one around its top. */
+/* Page changes: the old page fades out and settles back, then the new one fades in from slightly larger.
+   They hand over rather than overlap, so the two pages are never seen on top of each other.
+   About 550ms in all. The header and sidebar stay put. */
 @media (prefers-reduced-motion: no-preference) {
-  ::view-transition-group(workspace-page) { animation-duration: 550ms !important; }
-  ::view-transition-image-pair(workspace-page) { isolation: isolate; }
+  ::view-transition-group(workspace-page) { animation: none !important; }
   ::view-transition-old(workspace-page) {
     display: block !important;
+    /* Keep the outgoing page where it was on screen, even if it was scrolled. */
+    translate: 0 var(--gm-vt-shift, 0px);
     transform-origin: var(--gm-vt-origin, 50% 0);
-    mix-blend-mode: plus-lighter;
-    animation: gm-page-out 550ms cubic-bezier(.22, 1, .36, 1) both !important;
+    animation: gm-page-out 200ms cubic-bezier(.4, 0, 1, 1) both !important;
   }
   ::view-transition-new(workspace-page) {
     transform-origin: 50% 0;
-    mix-blend-mode: plus-lighter;
-    animation: gm-page-in 550ms cubic-bezier(.22, 1, .36, 1) both !important;
+    animation: gm-page-in 400ms cubic-bezier(.22, 1, .36, 1) 150ms both !important;
   }
   @keyframes gm-page-out { to { opacity: 0; scale: .95; } }
   @keyframes gm-page-in { from { opacity: 0; scale: 1.05; } }
