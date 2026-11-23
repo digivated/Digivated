@@ -17,7 +17,7 @@ const head = el('header', null, 'dg-review-head');
 const logo = el('span', null, 'dg-review-logo');
 const titles = el('div');
 const title = el('h2', 'How was it?'); title.id = 'dg-review-title';
-titles.append(el('p', '[ welcome back ]', 'dg-label'), title);
+titles.append(el('p', 'Welcome back', 'dg-label'), title);
 const close = el('button', '×', 'dg-review-close'); close.type = 'button'; close.setAttribute('aria-label', 'Close');
 head.append(logo, titles, close);
 const content = el('div', null, 'dg-review-content');

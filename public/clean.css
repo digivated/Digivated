@@ -570,3 +570,9 @@
   #digivated-root :is(.dg-vote, .dg-d-like, .rl-vote, .launch-vote, [data-like-id]) { transition: none !important; }
 }
 }
+
+/* Vote column: no dashed divider (it read as a scroll bar), and every tap inside it, number included, goes to the button itself. */
+#digivated-root .dg-row .dg-vote { border-left: 0 !important; z-index: 2 !important; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+#digivated-root .dg-row .dg-vote > * { pointer-events: none !important; }
+#digivated-root .dg-row .dg-vote:active { background: #f1f1f4 !important; }
+@media (hover: none) { #digivated-root .dg-row .dg-vote:hover:not([aria-pressed="true"]) { background: transparent !important; } }
