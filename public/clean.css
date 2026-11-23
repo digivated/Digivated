@@ -70,6 +70,9 @@
 #digivated-root .board-categories button[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
 #digivated-root .board-category-count { font-size: 11px !important; color: #a1a1aa !important; }
 #digivated-root .board-categories button[aria-pressed="true"] .board-category-count { color: rgba(255,255,255,.6) !important; }
+/* Category chips: no hover underline (it stuck on after a tap on phones), and a tap on the count still selects the chip. */
+#digivated-root .board-filters button, #digivated-root .board-filters button:is(:hover, :focus, [aria-pressed="true"]) { text-decoration: none !important; -webkit-tap-highlight-color: transparent; }
+#digivated-root .board-category-count { pointer-events: none; }
 
 /* Launch lists: one soft card per day, rows split by hairlines */
 #digivated-root .dg-list-title { font-size: 17px !important; font-weight: 650 !important; letter-spacing: -.015em !important; }
@@ -570,9 +573,3 @@
   #digivated-root :is(.dg-vote, .dg-d-like, .rl-vote, .launch-vote, [data-like-id]) { transition: none !important; }
 }
 }
-
-/* Vote column: no dashed divider (it read as a scroll bar), and every tap inside it, number included, goes to the button itself. */
-#digivated-root .dg-row .dg-vote { border-left: 0 !important; z-index: 2 !important; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-#digivated-root .dg-row .dg-vote > * { pointer-events: none !important; }
-#digivated-root .dg-row .dg-vote:active { background: #f1f1f4 !important; }
-@media (hover: none) { #digivated-root .dg-row .dg-vote:hover:not([aria-pressed="true"]) { background: transparent !important; } }

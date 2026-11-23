@@ -440,7 +440,9 @@ function writeCache(patch) {
 }
 if (board) {
   document.querySelector('[data-board-filters]')?.addEventListener('click', event => {
-    const field = event.target;
+    // The count inside a chip is its own element, so look up to the button.
+    const field = event.target.closest('[data-board-sort], [data-board-category]');
+    if (!field) return;
     if (field.matches('[data-board-sort]')) state.sort = field.dataset.boardSort;
     else if (field.matches('[data-board-category]')) state.category = field.dataset.boardCategory;
     else return;
