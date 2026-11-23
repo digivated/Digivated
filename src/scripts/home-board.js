@@ -284,8 +284,6 @@ function render({ animateSearch = false, only = null } = {}) {
       .sort((a, b) => (Number(b.votes?.all) || 0) - (Number(a.votes?.all) || 0)
         || launchTimestamp(b) - launchTimestamp(a) || a.id.localeCompare(b.id)),
   } : g;
-  const jumps = document.querySelector('[data-board-jumps]');
-  if (jumps) jumps.hidden = top;
   const categories = document.querySelector('[data-board-categories]');
   if (categories) {
     const activeItems = Object.values(activeGroups).flat();

@@ -5,11 +5,11 @@ import UiIcon from './UiIcon.astro';
 // /api/projects?ranking=1 (this week, earlier), /api/launches?view=podium (last
 // week's final results) and /api/launches?view=upcoming (launching next).
 const sections = [
-  { key: 'current', id: 'this-week', navLabel: 'This week', title: 'This week’s launches', live: true },
-  { key: 'upcoming', id: 'launching-next', navLabel: 'Upcoming', title: 'Launching next', live: false, more: '/submit-project', moreLabel: 'Get a free launch date' },
-  { key: 'previous', id: 'last-week', navLabel: 'Last week', title: 'Last week’s launches', live: false },
+  { key: 'current', id: 'this-week', title: 'This week’s launches', live: true },
+  { key: 'upcoming', id: 'launching-next', title: 'Launching next', live: false, more: '/submit-project', moreLabel: 'Get a free launch date' },
+  { key: 'previous', id: 'last-week', title: 'Last week’s launches', live: false },
   { key: 'top', id: 'top-voted', title: 'Top voted', live: false },
-  { key: 'archive', id: 'earlier', navLabel: 'Earlier', title: 'Earlier launches', live: false, more: '/discover', moreLabel: 'Browse the directory' },
+  { key: 'archive', id: 'earlier', title: 'Earlier launches', live: false, more: '/discover', moreLabel: 'Browse the directory' },
 ];
 ---
 <div class="board-filters" data-board-filters hidden>
@@ -23,10 +23,6 @@ const sections = [
     <a class="board-all-categories" href="/categories">All Categories <UiIcon name="external" size={13}/></a>
   </div>
 </div>
-<nav class="dg-launch-nav" data-board-jumps aria-label="Browse launches">
-  {sections.filter(section => section.navLabel).map(section => <a href={`#${section.id}`}>{section.navLabel}</a>)}
-  <a href="/categories" class="board-mobile-categories">Browse by category <UiIcon name="external" size={13}/></a>
-</nav>
 <div class="dg-board" data-board>
   {sections.map(section => (<>
     <section id={section.id} class="dg-list" data-section-reveal data-board-section={section.key} aria-labelledby={`dg-list-${section.key}`} hidden={section.key === 'upcoming' || section.key === 'top'}>
