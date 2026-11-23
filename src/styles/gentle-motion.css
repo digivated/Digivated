@@ -22,7 +22,7 @@
   /* Soft press feedback on primary controls. */
   @media (prefers-reduced-motion: no-preference) {
     #digivated-root :is(.dg-btn, .button, .dg-vote, .dg-more, .navigation-launch, .dg-watch, .board-sort button, .board-categories button, .dg-dir-collection button) { transition-property: background-color, border-color, color, box-shadow, scale !important; transition-duration: 180ms !important; transition-timing-function: var(--gm-ease) !important; }
-    #digivated-root :is(.dg-btn, .button, .dg-vote, .dg-more, .navigation-launch, .dg-watch):active:not(:disabled) { scale: .97; }
+    #digivated-root :is(.dg-btn, .button, .dg-vote, .dg-more, .navigation-launch, .dg-watch):active:not(:disabled) { scale: .97 !important; }
     #digivated-root .dg-row { transition: background-color 220ms var(--gm-ease), box-shadow 220ms var(--gm-ease) !important; }
   }
 
@@ -31,9 +31,9 @@
     /* A view-transition name would clip the backdrop blur to the header, so drop it while open. */
     #digivated-root .dg-shell:has(.dg-shell-disclosure[open]) { view-transition-name: none !important; }
     #digivated-root .dg-shell-disclosure[open]::before {
-      content: ""; position: fixed; inset: 0; z-index: 1;
-      background: rgba(24, 24, 34, .16);
-      -webkit-backdrop-filter: blur(5px) saturate(.9); backdrop-filter: blur(5px) saturate(.9);
+      content: "" !important; display: block !important; position: fixed !important; inset: 0 !important; z-index: 1 !important;
+      background: rgba(24, 24, 34, .16) !important;
+      -webkit-backdrop-filter: blur(5px) saturate(.9) !important; backdrop-filter: blur(5px) saturate(.9) !important;
     }
     #digivated-root .dg-shell-disclosure[open] > .site-menu-panel {
       position: fixed !important; z-index: 2 !important;
@@ -47,19 +47,19 @@
     }
     #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-launch { margin-top: auto !important; }
     @media (prefers-reduced-motion: no-preference) {
-      #digivated-root .dg-shell-disclosure[open]::before { animation: gm-fade-in 260ms var(--gm-ease) both; }
-      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel { animation: gm-drawer-in 420ms var(--gm-drawer-ease) both; }
-      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel :is(.drawer-heading, .navigation-tree > li, .navigation-launch) { animation: gm-item-in 420ms var(--gm-ease) both; }
-      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-tree > li:nth-child(1) { animation-delay: 60ms; }
-      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-tree > li:nth-child(2) { animation-delay: 95ms; }
-      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-tree > li:nth-child(3) { animation-delay: 130ms; }
-      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-tree > li:nth-child(4) { animation-delay: 165ms; }
-      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-tree > li:nth-child(n+5) { animation-delay: 200ms; }
-      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-launch { animation-delay: 220ms; }
+      #digivated-root .dg-shell-disclosure[open]::before { animation: gm-fade-in 260ms var(--gm-ease) both !important; }
+      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel { animation: gm-drawer-in 420ms var(--gm-drawer-ease) both !important; }
+      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel :is(.drawer-heading, .navigation-tree > li, .navigation-launch) { animation: gm-item-in 420ms var(--gm-ease) both !important; }
+      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-tree > li:nth-child(1) { animation-delay: 60ms !important; }
+      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-tree > li:nth-child(2) { animation-delay: 95ms !important; }
+      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-tree > li:nth-child(3) { animation-delay: 130ms !important; }
+      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-tree > li:nth-child(4) { animation-delay: 165ms !important; }
+      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-tree > li:nth-child(n+5) { animation-delay: 200ms !important; }
+      #digivated-root .dg-shell-disclosure[open] > .site-menu-panel .navigation-launch { animation-delay: 220ms !important; }
       /* Closing plays the same motion backwards before the menu is put away. */
-      #digivated-root .dg-shell-disclosure[data-closing]::before { animation: gm-fade-out 220ms ease-out both; }
-      #digivated-root .dg-shell-disclosure[data-closing] > .site-menu-panel { animation: gm-drawer-out 240ms cubic-bezier(.4, 0, 1, 1) both; }
-      #digivated-root .dg-shell-disclosure[data-closing] > .site-menu-panel :is(.drawer-heading, .navigation-tree > li, .navigation-launch) { animation: none; }
+      #digivated-root .dg-shell-disclosure[data-closing]::before { animation: gm-fade-out 220ms ease-out both !important; }
+      #digivated-root .dg-shell-disclosure[data-closing] > .site-menu-panel { animation: gm-drawer-out 240ms cubic-bezier(.4, 0, 1, 1) both !important; }
+      #digivated-root .dg-shell-disclosure[data-closing] > .site-menu-panel :is(.drawer-heading, .navigation-tree > li, .navigation-launch) { animation: none !important; }
     }
   }
   @keyframes gm-fade-in { from { opacity: 0; } }
@@ -70,7 +70,7 @@
 
   /* Desktop dropdowns (account menu, menu at wide sizes) settle in softly. */
   @media (prefers-reduced-motion: no-preference) {
-    #digivated-root .dg-shell-account-panel:not([hidden]) { animation: gm-drop-in 260ms var(--gm-ease) both; transform-origin: top right; }
+    #digivated-root .dg-shell-account-panel:not([hidden]) { animation: gm-drop-in 260ms var(--gm-ease) both !important; transform-origin: top right !important; }
     @keyframes gm-drop-in { from { opacity: 0; translate: 0 -6px; scale: .98; } }
   }
 }
