@@ -251,17 +251,6 @@
       transition: translate 360ms cubic-bezier(.22,1,.36,1) !important;
     }
     html[data-motion-ready] .home-refresh .dg-row :is(.dg-vote:hover, .dg-vote:focus-visible) .dg-vote-caret { translate: 0 -2px; }
-    @supports (animation-timeline: view()) {
-      html[data-motion-ready] .home-refresh .dg-list-rows .dg-row:not(.is-loading, .dg-row-empty, :focus-within) :is(.dg-tagline, .dg-meta) {
-        animation: dg-launch-row-enter linear both;
-        animation-timeline: view() !important;
-        animation-range: entry 0% cover 24%;
-      }
-      @keyframes dg-launch-row-enter {
-        from { translate: 0 4px; }
-        to { translate: 0 0; }
-      }
-    }
   }
 
   @media (max-width: 640px) {

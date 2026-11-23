@@ -111,6 +111,14 @@ for (const width of [390, 1440]) {
       await expect(firstTwo.first().locator('.dg-tagline')).toHaveCSS('white-space', 'normal');
       await expect(firstTwo.first().locator('.dg-meta')).toBeVisible();
     }
+    // The row's stretched title link must never sit on top of the vote, Visit and comments controls.
+    const covered = await page.evaluate(() => [...document.querySelectorAll('[data-dir-list] .dg-project-tile:nth-child(-n+3) :is(.dg-vote, .dg-visit, .dg-comments)')]
+      .filter(control => {
+        const box = control.getBoundingClientRect();
+        const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+        return box.width > 0 && box.bottom <= innerHeight && hit !== control && !control.contains(hit);
+      }).length);
+    expect(covered, 'row controls take their own clicks').toBe(0);
     await expect(page.locator('#project-directory-26 .dg-logo img')).toHaveCSS('object-fit', 'contain');
     await expect(page.locator('#project-directory-25 .dg-monogram')).toHaveText('DI');
     await page.getByLabel('Sort by').selectOption('top');
