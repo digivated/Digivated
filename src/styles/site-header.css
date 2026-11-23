@@ -40,7 +40,6 @@
     box-shadow: var(--shell-rim), 0 5px 14px -10px #191a184d, 0 0 0 1px #25252110 !important;
     pointer-events: none;
   }
-  .dg-shell .dg-reading-track { inset-inline: calc(var(--daylight-inset) + 18px); }
 
   .dg-shell .dg-shell-brand,
   .dg-shell .dg-shell-tools {

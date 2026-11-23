@@ -67,11 +67,10 @@ test('editorial details animate during scrolling and menu interaction', async ({
   await expect(menu).toBeFocused();
   await expect(menu).toHaveAttribute('aria-expanded', 'false');
 
-  const track = page.locator('[data-reading-progress]');
+  // No reading-progress line is drawn under the header while scrolling.
+  await expect(page.locator('[data-reading-progress], .dg-reading-track')).toHaveCount(0);
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-  await expect.poll(() => track.evaluate(node => Number((node as HTMLElement).style.getPropertyValue('--reading-progress')))).toBeGreaterThan(.95);
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(track).toBeHidden();
   await expect(page.locator('html')).not.toHaveAttribute('data-motion-ready', '');
 });
