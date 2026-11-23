@@ -14,7 +14,8 @@ const viewports = [{ name: 'mobile', width: 390, height: 900 }, { name: 'desktop
 const dynamic = new Map([
   ['/discover', 'main a[href^="/projects/"]'],
   ['/news', '[data-news-feed] > *'],
-  ['/creators', '#creators-feed > *, #creators-empty:not([hidden])'],
+  // /creators now serves the Threads page.
+  ['/creators', '[data-thread-list] > *'],
 ]);
 
 async function ready(page: Page, route: string) {
