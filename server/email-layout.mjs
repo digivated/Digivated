@@ -42,13 +42,29 @@ ${paragraphs.map(p).join('')}${items}${button}${after.map(p).join('')}
   return { html, text };
 }
 
-export async function sendEmail(env, fetcher, { to, subject, html, text, idempotencyKey, headers }) {
-  const response = await fetcher('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}) },
-    body: JSON.stringify({ from: env.ACCOUNT_EMAIL_FROM, to: [to], subject, html, text, ...(headers ? { headers } : {}) }),
-    signal: AbortSignal.timeout(8000),
-    redirect: 'error',
-  });
-  return response.ok;
+const postEmail = (key, from, fetcher, { to, subject, html, text, idempotencyKey, headers }) => fetcher('https://api.resend.com/emails', {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}) },
+  body: JSON.stringify({ from, to: [to], subject, html, text, ...(headers ? { headers } : {}) }),
+  signal: AbortSignal.timeout(8000),
+  redirect: 'error',
+});
+
+// A rejected key or sender (401/403/422), a rate limit or a provider error
+// gets one retry through the sign-in sender, which is a separate verified key.
+// A malformed message (400) is not retried.
+const retryable = status => [401, 403, 422, 429].includes(status) || status >= 500;
+
+export async function sendEmail(env, fetcher, message) {
+  const response = await postEmail(env.RESEND_API_KEY, env.ACCOUNT_EMAIL_FROM, fetcher, message);
+  if (response.ok) return true;
+  const fallback = env.SIGNUP_RESEND_API_KEY && env.SIGNUP_EMAIL_FROM && env.SIGNUP_RESEND_API_KEY !== env.RESEND_API_KEY;
+  if (!fallback || !retryable(response.status)) {
+    console.warn('Email provider rejected send', { status: response.status ?? null });
+    return false;
+  }
+  const retry = await postEmail(env.SIGNUP_RESEND_API_KEY, env.SIGNUP_EMAIL_FROM, fetcher,
+    { ...message, ...(message.idempotencyKey ? { idempotencyKey: `${message.idempotencyKey}:fallback` } : {}) });
+  console.warn('Email provider rejected send', { status: response.status ?? null, fallback: retry.ok ? 'sent' : (retry.status ?? null) });
+  return retry.ok;
 }
