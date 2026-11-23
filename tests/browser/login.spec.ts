@@ -213,7 +213,7 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await recent.getByRole('button', { name: 'Mark all read' }).click();
   await expect(recent.getByRole('tabpanel')).toContainText('No unread notifications.');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.goto('http://127.0.0.1:4321/account?tab=settings');
+  await page.goto('http://127.0.0.1:4321/dashboard?tab=settings');
   await page.locator('#account-sign-out').click();
   await expect(page).toHaveURL(/\/login\/?$/);
   await expect(page.getByRole('link', { name: 'Log In', exact: true })).toBeVisible();
@@ -246,7 +246,7 @@ test('signup requests a code, recovers from a typo, and signs in only after veri
     return route.fulfill({ json: { access_token: 'fixture', refresh_token: 'fixture', token_type: 'bearer', expires_in: 3600, user } });
   });
   await page.route('**/new-launch', route => route.fulfill({ body: 'Submission destination' }));
-  await page.goto('http://127.0.0.1:4321/login?mode=signup&next=%2Fsubmit-project');
+  await page.goto('http://127.0.0.1:4321/login?mode=signup&next=%2Fnew-launch');
   await expect(page.locator('#login-code-form')).toBeHidden();
   await page.locator('#login-email').fill(email);
   await page.locator('#login-password').fill(password);

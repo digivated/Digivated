@@ -162,7 +162,7 @@ for (const width of [320, 1440]) {
 
     await currentFooter.getByRole('link', { name: 'Email settings' }).click();
     await expect(page).toHaveURL(/\/dashboard\?tab=settings$/);
-    await expect(page.getByRole('link', { name: 'Log in or sign up' })).toHaveAttribute('href', '/login?next=%2Faccount%3Ftab%3Dsettings');
+    await expect(page.getByRole('link', { name: 'Log in or sign up' })).toHaveAttribute('href', '/login?next=%2Fdashboard%3Ftab%3Dsettings');
 
     await page.goto(base + '/start');
     const compact = page.getByRole('contentinfo');
