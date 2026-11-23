@@ -9,7 +9,7 @@
 
   /* Content reveal. gentle-motion.js sets data-gm="wait" only on content that has not
      been painted yet (below the fold, or freshly inserted), then "in" when it is seen. */
-  #digivated-root#digivated-root [data-gm] { transition: opacity 560ms var(--gm-ease), translate 640ms var(--gm-ease), filter 560ms var(--gm-ease) !important; transition-delay: var(--gm-delay, 0ms) !important; }
+  #digivated-root#digivated-root [data-gm] { transition: opacity 420ms var(--gm-ease), translate 460ms var(--gm-ease), filter 420ms var(--gm-ease) !important; transition-delay: var(--gm-delay, 0ms) !important; }
   #digivated-root#digivated-root [data-gm="wait"] { opacity: 0 !important; translate: 0 14px !important; filter: blur(3px) !important; }
   #digivated-root [data-gm="in"] { opacity: 1; translate: 0 0; filter: blur(0); }
   @media print { #digivated-root [data-gm] { opacity: 1 !important; translate: none !important; filter: none !important; } }
@@ -75,10 +75,10 @@
   }
 }
 
-/* Page changes: the old page fades away while the new one rises in softly. */
+/* Page changes: a true crossfade. The old page stays visible while the new one fades in, so there is never an empty frame between pages. */
 @media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(workspace-page) { display: block !important; animation: gm-page-out 180ms ease-out both !important; }
-  ::view-transition-new(workspace-page) { animation: gm-page-in 360ms cubic-bezier(.22, 1, .36, 1) 60ms both !important; }
+  ::view-transition-old(workspace-page) { display: block !important; animation: gm-page-out 200ms ease both !important; }
+  ::view-transition-new(workspace-page) { animation: gm-page-in 240ms cubic-bezier(.22, 1, .36, 1) both !important; }
   @keyframes gm-page-out { to { opacity: 0; } }
-  @keyframes gm-page-in { from { opacity: 0; translate: 0 8px; } }
+  @keyframes gm-page-in { from { opacity: 0; translate: 0 6px; } }
 }

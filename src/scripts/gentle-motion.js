@@ -15,7 +15,7 @@ const REVEAL = [
   '.maker-card', '.project-account-card', '.settings-card', '.account-card',
   '.site-footer', '.dg-footer', 'footer > *',
 ].join(',');
-const STAGGER = 45, MAX_STAGGER = 8;
+const STAGGER = 30, MAX_STAGGER = 5;
 
 // Rows that the page re-renders (votes, filters) keep their place without replaying.
 const seen = new Set();

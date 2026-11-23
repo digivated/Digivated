@@ -106,6 +106,8 @@
 #digivated-root .dg-row .dg-tagline { margin-top: 2px !important; font-size: 13px !important; line-height: 1.4 !important; color: #71717a !important; display: -webkit-box !important; -webkit-line-clamp: 1 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
 #digivated-root .dg-row .dg-meta { margin-top: 3px !important; font-size: 11.5px !important; color: #a1a1aa !important; }
 #digivated-root .dg-row .dg-actions { display: contents !important; }
+/* The row's stretched title link sits at z-index 0, and display:contents above removes the .dg-actions layer that used to lift the controls over it. Lift each control itself so votes, Visit and comments take their own clicks. */
+#digivated-root .dg-row :is(.dg-vote, .dg-visit, .dg-comments, .dg-watch) { position: relative !important; z-index: 1 !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments) { min-height: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; font-size: 12px !important; font-weight: 500 !important; color: #71717a !important; gap: 4px !important; justify-self: start !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments):hover { color: #0b0b0c !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments) svg { width: 13px !important; height: 13px !important; }
