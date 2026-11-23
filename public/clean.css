@@ -108,6 +108,12 @@
 #digivated-root .dg-row .dg-actions { display: contents !important; }
 /* The row's stretched title link sits at z-index 0, and display:contents above removes the .dg-actions layer that used to lift the controls over it. Lift each control itself so votes, Visit and comments take their own clicks. */
 #digivated-root .dg-row :is(.dg-vote, .dg-visit, .dg-comments, .dg-watch) { position: relative !important; z-index: 1 !important; }
+  /* Taps: phones keep :hover stuck after a tap, which left a grey chip on sort and filter buttons. */
+  @media (hover: none) {
+    #digivated-root :is(.dg-dir-collection, .dg-d-sort, .dg-forum-sort) button { transition: none !important; }
+    #digivated-root :is(.dg-dir-collection, .dg-d-sort, .dg-forum-sort) button:hover:not([aria-pressed="true"]) { background: transparent !important; }
+  }
+  #digivated-root :is(a, button, summary, label, [role="tab"]) { touch-action: manipulation; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments) { min-height: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; font-size: 12px !important; font-weight: 500 !important; color: #71717a !important; gap: 4px !important; justify-self: start !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments):hover { color: #0b0b0c !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments) svg { width: 13px !important; height: 13px !important; }

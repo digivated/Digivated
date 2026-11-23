@@ -147,6 +147,8 @@ function glide(group, from) {
 
 document.addEventListener('click', event => {
   if (!enabled()) return;
+  // On touch screens the pill glide fought the button's own colour change and left a chip behind; switch instantly.
+  if (matchMedia('(hover: none)').matches) return;
   const button = event.target.closest?.('button, [role="tab"]');
   const group = button?.parentElement?.closest(GROUPS);
   // This board already updates its selected button and results in the same paint.
