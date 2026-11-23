@@ -163,7 +163,7 @@
       margin: 0 var(--dg-rail-gutter) !important;
     }
     .dg-workspace .dg-workspace-rail > .dg-shell { flex: none; }
-    .dg-workspace .dg-shell :is(.dg-shell-material,.dg-reading-track,.dg-shell-disclosure) { display: none !important; }
+    .dg-workspace .dg-shell :is(.dg-shell-material,.dg-shell-disclosure) { display: none !important; }
     .dg-workspace .dg-workspace-rail .dg-shell :is(.dg-shell-icon,.dg-shell-login,.dg-shell-avatar-trigger) {
       background: #fff !important;
       color: #171717 !important;

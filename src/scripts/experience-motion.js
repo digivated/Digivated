@@ -3,7 +3,6 @@ import '../styles/experience-motion.css';
 const main = document.querySelector('main#main');
 const preference = matchMedia('(prefers-reduced-motion: reduce)');
 const connection = navigator.connection;
-const progress = document.querySelector('[data-reading-progress]');
 const headings = [...(main?.querySelectorAll('h1, [role="heading"][aria-level="1"]') || [])].slice(0, 2);
 const sectionTitles = main?.querySelectorAll('[data-section-reveal] > h2, [data-section-reveal] > header > h2') || [];
 const subheads = [...(main?.querySelectorAll('h2:not(.sr-only):not([hidden])') || [])].slice(0, 10);
@@ -25,7 +24,6 @@ for (const scene of document.querySelectorAll('[data-motion-scene]')) cues.set(s
 
 const active = new Map();
 let observer;
-let progressFrame = 0;
 let running = false;
 
 const allowed = () => !preference.matches && !connection?.saveData && !document.hidden;
@@ -61,25 +59,11 @@ function reveal(element) {
   } catch { /* Static content is always available. */ }
 }
 
-function paintProgress() {
-  progressFrame = 0;
-  const root = document.scrollingElement;
-  if (!progress || !root || !running) return;
-  const range = root.scrollHeight - root.clientHeight;
-  const ratio = range > 0 ? Math.min(1, Math.max(0, root.scrollTop / range)) : 0;
-  progress.style.setProperty('--reading-progress', String(ratio));
-}
-function scheduleProgress() {
-  if (running && progress && !progressFrame) progressFrame = requestAnimationFrame(paintProgress);
-}
-
 function stop() {
   running = false;
   document.documentElement.removeAttribute('data-motion-ready');
   observer?.disconnect();
   for (const element of active.keys()) finish(element);
-  cancelAnimationFrame(progressFrame);
-  progressFrame = 0;
 }
 
 function sync() {
@@ -104,7 +88,6 @@ function sync() {
     if (bounds.height && bounds.top < innerHeight * .93) reveal(element);
     else observer?.observe(element);
   }
-  scheduleProgress();
 }
 
 preference.addEventListener('change', sync);
@@ -115,9 +98,4 @@ window.addEventListener('pageshow', event => { if (event.persisted) sync(); });
 document.addEventListener('focusin', event => {
   for (const element of active.keys()) if (element.contains(event.target)) finish(element);
 });
-if (progress) {
-  window.addEventListener('scroll', scheduleProgress, { passive: true });
-  window.addEventListener('resize', scheduleProgress, { passive: true });
-  if (main && 'ResizeObserver' in window) new ResizeObserver(scheduleProgress).observe(main);
-}
 sync();

@@ -6,29 +6,8 @@
     --dg-motion-ease: cubic-bezier(.22, 1, .36, 1);
   }
 
-  .dg-reading-track {
-    display: none;
-    position: absolute;
-    inset-inline: 22px;
-    inset-block-end: 0;
-    height: 2px;
-    pointer-events: none;
-  }
-  .dg-reading-track::after {
-    content: '';
-    display: block;
-    height: 100%;
-    background: currentColor;
-    border-radius: 100vw;
-    opacity: .55;
-    transform: scaleX(var(--reading-progress, 0));
-    transform-origin: left center;
-  }
   body.packet-workspace .topbar { position: relative; }
-  body.packet-workspace .topbar .dg-reading-track { inset-inline: 14px; }
   @media (prefers-reduced-motion: no-preference) {
-    html[data-motion-ready] .dg-reading-track { display: block; }
-
     html[data-motion-ready] .dg-shell .dg-shell-disclosure[open] .site-menu-panel,
     html[data-motion-ready] .dg-shell .dg-shell-account-panel:not([hidden]),
     html[data-motion-ready] dialog#discovery-search[open] {
