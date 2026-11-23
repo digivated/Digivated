@@ -1,17 +1,20 @@
+/* Shared site footer: digest sign-up, three short link groups, credits and a
+   full wordmark. Container queries keep it right inside the sidebar layout. */
 @layer clean-first {
   #digivated-root .dg-site-footer {
     --footer-surface: #17181c;
     --footer-text: #f4f4f5;
     --footer-muted: #b6b7c0;
-    --footer-line: #41424a;
+    --footer-line: #34353c;
     align-self: stretch;
     box-sizing: border-box;
     width: auto !important;
     max-width: none !important;
-    margin: 24px clamp(8px, 2vw, 16px) 12px !important;
-    padding: clamp(14px, 2.5vw, 32px) clamp(14px, 4vw, 48px) !important;
+    margin: 32px clamp(8px, 2vw, 16px) 12px !important;
+    padding: clamp(24px, 4vw, 48px) clamp(18px, 4.5vw, 56px) 0 !important;
     border: 0 !important;
-    border-radius: 18px !important;
+    border-radius: 20px !important;
+    overflow: hidden;
     background: var(--footer-surface) !important;
     color: var(--footer-text) !important;
   }
@@ -25,29 +28,31 @@
 
   .dg-footer-main {
     display: grid;
-    gap: clamp(16px, 3.5vw, 48px);
+    gap: 32px;
     align-items: start;
   }
 
+  /* Digest sign-up */
   .dg-footer-signup { min-width: 0; }
-  .dg-footer-signup h2 {
-    margin: 0 0 5px !important;
+  #digivated-root .dg-site-footer .dg-footer-signup h2 {
+    margin: 0 0 6px !important;
     color: var(--footer-text) !important;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 650 !important;
+    letter-spacing: -.01em !important;
     line-height: 1.3 !important;
   }
-  #digivated-root .dg-footer-signup p {
+  #digivated-root .dg-site-footer .dg-footer-signup p {
+    max-width: 34ch;
     margin: 0 !important;
     color: var(--footer-muted) !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     line-height: 1.5 !important;
   }
-
-  .dg-footer-signup form {
+  #digivated-root .dg-site-footer .dg-footer-signup form {
     inline-size: 100% !important;
-    max-inline-size: none !important;
-    margin: 14px 0 0 !important;
+    max-inline-size: 400px !important;
+    margin: 18px 0 0 !important;
   }
   .dg-footer-signup-fields {
     display: grid !important;
@@ -55,9 +60,9 @@
     align-items: stretch;
     min-width: 0;
     padding: 4px;
-    border: 1px solid #55565f !important;
+    border: 1px solid #4a4b53 !important;
     border-radius: 12px !important;
-    background: #26272d !important;
+    background: #222329 !important;
   }
   #digivated-root .dg-footer-signup input {
     box-sizing: border-box;
@@ -65,7 +70,7 @@
     min-width: 0 !important;
     min-height: 42px !important;
     margin: 0 !important;
-    padding: 6px 9px !important;
+    padding: 6px 10px !important;
     border: 0 !important;
     background: transparent !important;
     color: var(--footer-text) !important;
@@ -76,7 +81,7 @@
     width: auto !important;
     margin: 0 !important;
     min-height: 42px !important;
-    padding: 8px 12px !important;
+    padding: 8px 14px !important;
     border-radius: 8px !important;
     border: 1px solid transparent !important;
     background: #f4f4f5 !important;
@@ -88,19 +93,20 @@
   #digivated-root .dg-footer-signup .button:hover:enabled { background: #dedee4 !important; }
   #digivated-root .dg-footer-signup [role="status"]:not(:empty) { margin-top: 8px !important; }
 
+  /* Link groups */
   .dg-site-footer .dg-footer-groups {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    gap: 20px 24px;
     margin: 0 !important;
     padding: 0 !important;
   }
-  .dg-site-footer .dg-footer-group h2 {
-    margin: 0 0 4px !important;
+  #digivated-root .dg-site-footer .dg-footer-group h2 {
+    margin: 0 0 8px !important;
     color: var(--footer-muted) !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
-    line-height: 1.9 !important;
+    line-height: 1.4 !important;
     letter-spacing: 0 !important;
     text-transform: none !important;
   }
@@ -113,17 +119,15 @@
   .dg-site-footer a {
     display: inline-flex;
     align-items: center;
-    min-height: 26px;
-    padding-block: 4px;
     color: var(--footer-text) !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     line-height: 1.35 !important;
     text-decoration: none !important;
   }
   .dg-site-footer a:hover { text-decoration: underline !important; text-underline-offset: 3px; }
-  .dg-site-footer :is(.dg-footer-group, .dg-footer-utility) a {
-    min-height: 32px !important;
-    padding: 3px 0 !important;
+  #digivated-root .dg-site-footer .dg-footer-group a {
+    min-height: 34px !important;
+    padding: 0 !important;
   }
   .dg-site-footer :is(a,button):focus-visible,
   .dg-footer-signup-fields:has(input:focus-visible) {
@@ -131,48 +135,57 @@
     outline-offset: 3px !important;
   }
 
+  /* Credits row */
   .dg-footer-bottom,
-  .dg-footer-credits,
   .dg-footer-feature,
+  .dg-footer-meta,
   .dg-site-footer .dg-footer-utility {
     display: flex !important;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px 14px;
+    gap: 8px 16px;
   }
   .dg-footer-bottom {
     justify-content: space-between;
-    margin-top: 14px;
-    padding-top: 10px;
+    margin-top: clamp(28px, 4vw, 44px);
+    padding-top: 18px;
     border-top: 1px solid var(--footer-line) !important;
   }
-  .dg-site-footer :is(.dg-footer-feature > span, a.dg-footer-brand) {
+  .dg-site-footer .dg-footer-utility { margin: 0 !important; padding: 0 !important; }
+  .dg-site-footer :is(.dg-footer-feature > span, a.dg-footer-brand, .dg-footer-utility a) {
+    min-height: 28px;
     color: var(--footer-muted) !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
   }
+  .dg-site-footer .dg-footer-utility a:hover { color: var(--footer-text) !important; }
+  .dg-site-footer .dg-footer-feature > span { display: inline-flex; align-items: center; }
   .dg-site-footer a.dg-footer-credit {
     gap: 6px;
-    padding: 4px 8px !important;
-    border-radius: 6px !important;
+    min-height: 28px;
+    padding: 4px 9px !important;
+    border-radius: 7px !important;
     background: #f4f4f5 !important;
     color: #17181c !important;
+    font-size: 13px !important;
   }
   .dg-footer-credit img { width: 16px; height: 16px; }
   .dg-footer-bottom small { margin: 0 !important; }
 
-  .dg-site-footer .dg-footer-wordmark {
-    block-size: clamp(30px, 10cqi, 78px);
-    margin-top: 8px;
-    overflow: hidden;
-    color: #fff !important;
-    font-size: clamp(46px, 20cqi, 200px) !important;
+  /* Wordmark: the whole word, sized to the footer width and fading down. */
+  #digivated-root .dg-site-footer .dg-footer-wordmark {
+    margin: clamp(12px, 2.5vw, 28px) 0 0;
+    padding-bottom: .12em;
+    font-size: clamp(60px, 23cqi, 260px) !important;
     font-weight: 800 !important;
-    letter-spacing: -.06em !important;
-    line-height: .8 !important;
+    line-height: 1 !important;
+    letter-spacing: -.055em !important;
     text-align: center;
     white-space: nowrap;
-    opacity: .15;
-    mask-image: linear-gradient(#000 15%, transparent 100%);
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    background: linear-gradient(180deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .07)) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
     pointer-events: none;
     user-select: none;
   }
@@ -181,28 +194,13 @@
     .dg-site-footer .dg-footer-wordmark { display: none !important; }
   }
 
-  @container footer-content (max-width: 739px) {
-    .dg-footer-main { gap: 10px; }
-    .dg-footer-signup form { margin-top: 8px !important; }
-    .dg-site-footer .dg-footer-group h2 { line-height: 1.35 !important; }
-    #digivated-root .dg-site-footer :is(.dg-footer-group, .dg-footer-utility) a {
-      box-sizing: border-box;
-      min-height: 28px !important;
-      padding-block: 2px !important;
-    }
-    .dg-footer-bottom { margin-top: 8px; padding-top: 6px; }
-    .dg-site-footer .dg-footer-wordmark {
-      block-size: clamp(26px, 7cqi, 48px);
-      margin-top: 5px;
-    }
-  }
-  @container footer-content (max-width: 399px) {
-    .dg-site-footer .dg-footer-groups { column-gap: 8px; }
-    .dg-site-footer .dg-footer-group a { overflow-wrap: anywhere; }
-    .dg-footer-bottom { gap: 4px 12px; }
-  }
   @container footer-content (min-width: 740px) {
-    .dg-footer-main { grid-template-columns: minmax(270px, 0.82fr) minmax(0, 1fr); }
-    .dg-site-footer .dg-footer-group a { min-height: 37px !important; }
+    .dg-footer-main { grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1fr); gap: clamp(32px, 5cqi, 64px); }
+  }
+  @container footer-content (max-width: 559px) {
+    #digivated-root .dg-site-footer .dg-footer-signup form { max-inline-size: none !important; }
+    .dg-site-footer .dg-footer-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
+    #digivated-root .dg-site-footer .dg-footer-group a { min-height: 32px !important; }
+    .dg-footer-bottom { flex-direction: column; align-items: flex-start; gap: 10px; }
   }
 }

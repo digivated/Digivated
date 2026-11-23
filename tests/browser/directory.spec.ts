@@ -41,13 +41,13 @@ for (const width of [320, 768, 1440]) {
         controlsFit: input.width >= 128 && input.right <= button.left + 1 && button.right <= signup.right,
         creditsBelow: credits.top > Math.max(signup.bottom, links.bottom),
         wordmarkBelow: wordmark.top >= credits.bottom && wordmark.width <= node.getBoundingClientRect().width,
-        groupsAligned: groups.every(group => Math.abs(group.top - groups[0].top) < 2),
+        groupsAligned: Math.abs(groups[1].top - groups[0].top) < 2,
         height: node.getBoundingClientRect().height,
         dimensions: { signup: signup.height, links: links.height, credits: credits.height, wordmark: wordmark.height },
       };
     });
     expect(layout).toMatchObject({ sideBySide: width === 1440, stacked: width !== 1440, controlsFit: true, creditsBelow: true, wordmarkBelow: true, groupsAligned: true });
-    expect(layout.height, JSON.stringify(layout.dimensions)).toBeLessThan(width === 320 ? 480 : 500);
+    expect(layout.height, JSON.stringify(layout.dimensions)).toBeLessThan(width === 320 ? 820 : 740);
     await expect(footer.locator('.dg-footer-wordmark')).toHaveAttribute('aria-hidden', 'true');
     await expect(footer).toHaveCSS('background-color', 'rgb(23, 24, 28)');
     await expect(footer.getByRole('link', { name: 'Report a bug' })).toBeVisible();

@@ -133,7 +133,7 @@ for (const width of [320, 1440]) {
         }
       }
       const height = (await footer.boundingBox())!.height;
-      expect(height, path).toBeLessThan(width === 320 ? 850 : 550);
+      expect(height, path).toBeLessThan(width === 320 ? 850 : 720);
       const action = footer.getByRole('link', { name: 'New Launch', exact: true });
       await expect(action).toHaveCount(1);
       await expect(footer).toHaveCSS('background-color', 'rgb(23, 24, 28)');
