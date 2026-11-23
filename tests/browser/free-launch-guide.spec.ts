@@ -21,7 +21,7 @@ async function signedIn(page){
 }
 for(const width of [390,1440])test(`free launch instructions, saved badge and verified state at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});await signedIn(page);
- await page.goto(base+'/submit-project');
+ await page.goto(base+'/new-launch');
  await page.getByRole('button', { name: 'Enter details manually' }).click();
  await expect(page.locator('#submission-details')).toBeVisible();
  await expect(page.getByLabel('Project URL')).toBeVisible();
@@ -40,7 +40,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await guide.click();
  await expect(page.locator('.free-launch-guide')).toBeVisible();
  await expect(page.locator('.free-launch-guide')).toContainText('Mondays at 9:00 AM Eastern');
- await expect(page.locator('.free-launch-guide a')).toHaveAttribute('href', '/account#account-submissions');
+ await expect(page.locator('.free-launch-guide a')).toHaveAttribute('href', '/dashboard#account-submissions');
  await guide.click();
  const preview = page.getByText('Preview your public listing', { exact: true });
  await expect(page.locator('[data-listing-name]')).toBeHidden();
@@ -70,12 +70,12 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await expect(page.locator('#submission-badge-launch')).toContainText('Projects publish every Monday at 9:00 AM Eastern.');
  await expect(page.locator('#sub-step-details')).toBeHidden();
  await expect(page.locator('#submission-badge .fl-tracker [aria-current=step]')).toContainText('Badge verified');
- await page.goto(base+'/account?tab=profile#project-badge-fixture');
- await expect(page).toHaveURL(/\/account#project-badge-fixture$/);
+ await page.goto(base+'/dashboard?tab=profile#project-badge-fixture');
+ await expect(page).toHaveURL(/\/dashboard#project-badge-fixture$/);
  await expect(page.locator('#project-badge-fixture')).toBeInViewport();
  if(width===390){
-  await page.goto(base+'/login?next='+encodeURIComponent('/account#project-badge-fixture'));
-  await expect(page).toHaveURL(/\/account#project-badge-fixture$/);
+  await page.goto(base+'/login?next='+encodeURIComponent('/dashboard#project-badge-fixture'));
+  await expect(page).toHaveURL(/\/dashboard#project-badge-fixture$/);
   await expect(page.locator('#project-badge-fixture')).toBeInViewport();
  }
  await expect(page.locator('[data-submission-state]')).toHaveText('Action needed');
@@ -101,7 +101,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
 
 test('saved screen verifies the badge without leaving the page',async({page})=>{
  await page.setViewportSize({width:390,height:900});await signedIn(page);
- await page.goto(base+'/submit-project');
+ await page.goto(base+'/new-launch');
  await page.getByRole('button', { name: 'Enter details manually' }).click();
  for(const [name,value] of Object.entries({name:'Orbit',url:'https://example.com',description:'A useful workspace for independent builders to organize projects.',creator:'Builder'}))await page.locator(`#project-form [name=${name}]`).fill(value);
  await page.locator('#project-form [name=category]').selectOption('Developer Tools');
@@ -123,9 +123,9 @@ test('badge examples stay optional and share one account link', async ({ page })
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('http://127.0.0.1:4321/badges');
   const styles = page.getByRole('region', { name: 'Badge styles' });
-  const accountLinks = styles.locator('a[href^="/account"]');
+  const accountLinks = styles.locator('a[href^="/dashboard"]');
   await expect(accountLinks).toHaveCount(1);
-  await expect(accountLinks.first()).toHaveAttribute('href', '/account#account-submissions');
+  await expect(accountLinks.first()).toHaveAttribute('href', '/dashboard#account-submissions');
 
   const darkBadge = styles.locator('[data-badge-style=dark]');
   await expect(darkBadge.locator('img')).toBeVisible();
@@ -148,7 +148,7 @@ test('product URL opens an editable draft without publishing', async ({ page }) 
   if (body.action === 'read-site') return route.fulfill({json:{name:'Orbit',description:'An independent planning tool for product makers.'}});
   return route.fallback();
  });
- await page.goto(base+'/submit-project');
+ await page.goto(base+'/new-launch');
  await expect(page.getByLabel('Project name')).toBeHidden();
  await expect(page.locator('#submission-account-status')).toBeVisible();
  for (const width of [320, 390, 1440]) {

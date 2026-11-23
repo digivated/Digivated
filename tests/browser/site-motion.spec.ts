@@ -16,7 +16,7 @@ test('public, packet and owner headings share the gentle entrance', async ({ pag
  });
  await page.setViewportSize({ width: 390, height: 844 });
  let daylightFont: string | undefined;
- for (const route of ['/discover', '/threads', '/login', '/submit-project', '/news', '/resources', '/membership', '/account', '/start', '/admin']) {
+ for (const route of ['/discover', '/threads', '/login', '/new-launch', '/news', '/tools', '/membership', '/dashboard', '/start', '/admin']) {
   await page.goto(base + route);
   await expect.poll(() => page.evaluate(() => (window as any).__animatedHeadings.length), { message: route }).toBeGreaterThan(0);
   const heading = page.locator('#main h1:visible').first();

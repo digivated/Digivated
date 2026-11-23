@@ -2,7 +2,7 @@ import { createHmac } from 'node:crypto';
 import { resourceGroups } from '../src/data/link-resources.mjs';
 import { redisClient } from './submissions.mjs';
 
-// Upvotes for the outbound links on /resources. One vote per visitor per link,
+// Upvotes for the outbound links on /tools. One vote per visitor per link,
 // counted in a single hash so the page can load every count in one call.
 export const LINK_VOTES = 'digivated:link-votes';
 const knownLinks = new Set(resourceGroups.flatMap(group => group.links.map(link => link.id)));

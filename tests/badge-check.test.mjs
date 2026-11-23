@@ -67,7 +67,7 @@ test('badge matching tolerates builder rewrites but not hidden or other badges',
 test('reminder emails name the launch day and link to the project', () => {
   const message = badgeEmail(base('mail', { launch: { kind: 'free', scheduledAt: '2026-11-23T14:00:00Z' } }), 'last-call');
   assert.match(message.subject, /Monday, Nov 23/);
-  assert.match(message.html, /account#project-mail/);
+  assert.match(message.html, /dashboard#project-mail/);
   assert.match(badgeEmail(base('mail', { launch: { kind: 'free', scheduledAt: '2026-11-23T14:00:00Z' } }), 'finish').html, /Check my website/);
   assert.equal(badgeEmail({ id: 'x' }, 'nudge'), null);
 });

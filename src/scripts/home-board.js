@@ -85,6 +85,8 @@ function groups() {
 
 function placeOf(id) { return state.podium?.week?.podium?.find(place => place.id === id)?.rank || 0; }
 
+// Link text names the product ("Visit Riff"), so crawlers and screen readers get a descriptive link; sighted users still see "Visit".
+const hiddenName = name => { const span = document.createElement('span'); span.className = 'sr-only'; span.textContent = ` ${name}`; span.style.cssText = 'position:absolute!important;width:1px!important;height:1px!important;margin:-1px!important;padding:0!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important'; return span; };
 function row(p, key) {
   const period = key === 'current' ? 'weekly' : 'all';
   const fresh = key === 'current' && (p.fresh || state.fair.active);
@@ -112,7 +114,7 @@ function row(p, key) {
     const visit = visitAttrs(el('a', null, 'dg-visit'), p);
     const arrow = icon('external');
     arrow.classList.add('dg-visit-arrow');
-    visit.append(el('span', 'Visit'), arrow);
+    visit.append(el('span', 'Visit'), hiddenName(p.name || 'project'), arrow);
     visit.setAttribute('aria-label', `Visit ${p.name} (opens in a new tab)`);
     actions.append(visit);
   }
@@ -367,7 +369,7 @@ function render({ animateSearch = false, only = null } = {}) {
     if (animateSearch) searchRows.push(...rows.slice(0, Math.max(0, 5 - searchRows.length)));
     if (!items.length) {
       const empty = el('li', null, 'dg-row dg-row-empty');
-      if (key === 'current') { const cta = el('a', 'Submit a product for this week'); cta.href = '/submit-project'; empty.append(cta); }
+      if (key === 'current') { const cta = el('a', 'Submit a product for this week'); cta.href = '/new-launch'; empty.append(cta); }
       else empty.textContent = 'No launches here yet.';
       list.append(empty);
     }

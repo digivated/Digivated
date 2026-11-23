@@ -52,7 +52,7 @@ test('hero stays readable when JavaScript is disabled',async({browser})=>{
  await expect(p.locator('[data-site-backdrop]')).toHaveCount(0);
  const menu = p.locator('.site-menu-trigger');
  await menu.click();
- await expect(p.getByRole('navigation',{name:'Site menu'}).getByRole('link',{name:'New Launch',exact:true})).toHaveAttribute('href','/submit-project');
+ await expect(p.getByRole('navigation',{name:'Site menu'}).getByRole('link',{name:'New Launch',exact:true})).toHaveAttribute('href','/new-launch');
  await menu.click();
  expect(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await p.getByRole('searchbox').fill('indie projects');
@@ -62,7 +62,7 @@ test('hero stays readable when JavaScript is disabled',async({browser})=>{
 });
 test('resources search and home hero actions stay usable',async({page})=>{
  await page.setViewportSize({width:390,height:900});
- await page.goto(base+'/resources');
+ await page.goto(base+'/tools');
  await page.keyboard.press('/');
  await expect(page.locator('#discovery-search')).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -70,7 +70,7 @@ test('resources search and home hero actions stay usable',async({page})=>{
  await expect(page.locator('[data-ascii-field],.ascii-ambient')).toHaveCount(0);
  await expect(page.locator('.dg-hero-panel [role=timer]')).toBeVisible();
  await page.locator('.dg-home-hero').getByRole('link',{name:'New Launch',exact:true}).click();
- await expect(page).toHaveURL(base + '/submit-project');
+ await expect(page).toHaveURL(base + '/new-launch');
 });
 
 test('activity indicators follow system motion preferences and launch links stay usable', async ({ page }) => {
@@ -93,13 +93,13 @@ test('activity indicators follow system motion preferences and launch links stay
 
  await page.locator('.dg-home-hero').getByRole('link', { name: 'New Launch', exact: true }).focus();
  await page.keyboard.press('Enter');
- await expect(page).toHaveURL(base + '/submit-project');
+ await expect(page).toHaveURL(base + '/new-launch');
 });
 
 
 test('public and account layouts use a static background without decorative canvas', async ({ page }) => {
  await page.setViewportSize({ width: 1440, height: 900 });
- for (const path of ['/', '/discover', '/threads', '/news', '/resources', '/login', '/account', '/start', '/submit-project']) {
+ for (const path of ['/', '/discover', '/threads', '/news', '/tools', '/login', '/dashboard', '/start', '/new-launch']) {
   await page.goto(base + path);
   await expect(page.locator('[data-site-backdrop], [data-ascii-field], .ascii-ambient, .ascii-rule')).toHaveCount(0);
   await expect(page.locator('body')).toHaveCSS('background-image', /^linear-gradient/);
@@ -133,7 +133,7 @@ test('sidebar and launch actions work with reduced motion and no hydrated visual
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.goto(base+'/');
   await expect(page.locator('[data-react-bits]')).toHaveCount(0);
-  await expect(page.locator('.dg-home-hero').getByRole('link',{name:'New Launch',exact:true})).toHaveAttribute('href','/submit-project');
+  await expect(page.locator('.dg-home-hero').getByRole('link',{name:'New Launch',exact:true})).toHaveAttribute('href','/new-launch');
   await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:'Categories'}).press('Enter');
   await expect(page).toHaveURL(base+'/categories');
 });

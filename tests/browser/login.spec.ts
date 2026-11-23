@@ -213,7 +213,7 @@ test('verified account keeps notifications, menu, welcome, and sign-out usable a
   await recent.getByRole('button', { name: 'Mark all read' }).click();
   await expect(recent.getByRole('tabpanel')).toContainText('No unread notifications.');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.goto('http://127.0.0.1:4321/account?tab=settings');
+  await page.goto('http://127.0.0.1:4321/dashboard?tab=settings');
   await page.locator('#account-sign-out').click();
   await expect(page).toHaveURL(/\/login\/?$/);
   await expect(page.getByRole('link', { name: 'Log In', exact: true })).toBeVisible();
@@ -245,8 +245,8 @@ test('signup requests a code, recovers from a typo, and signs in only after veri
     const user = { id: '4ad90c9b-5666-482d-899c-d0d3ef41ee46', email };
     return route.fulfill({ json: { access_token: 'fixture', refresh_token: 'fixture', token_type: 'bearer', expires_in: 3600, user } });
   });
-  await page.route('**/submit-project', route => route.fulfill({ body: 'Submission destination' }));
-  await page.goto('http://127.0.0.1:4321/login?mode=signup&next=%2Fsubmit-project');
+  await page.route('**/new-launch', route => route.fulfill({ body: 'Submission destination' }));
+  await page.goto('http://127.0.0.1:4321/login?mode=signup&next=%2Fnew-launch');
   await expect(page.locator('#login-code-form')).toBeHidden();
   await page.locator('#login-email').fill(email);
   await page.locator('#login-password').fill(password);
@@ -261,6 +261,6 @@ test('signup requests a code, recovers from a typo, and signs in only after veri
   await expect(page.locator('#login-status')).toContainText('incorrect or expired');
   await page.locator('#login-code').fill('123456');
   await page.getByRole('button', { name: 'Verify and create account' }).click();
-  await expect(page).toHaveURL(/\/submit-project$/);
+  await expect(page).toHaveURL(/\/new-launch$/);
   expect(attempts).toEqual(['654321', '123456']);
 });

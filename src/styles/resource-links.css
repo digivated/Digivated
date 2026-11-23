@@ -1,4 +1,4 @@
-/* Resources directory (/resources). Same layer as the ASCII sheets so these win. */
+/* Resources directory (/tools). Same layer as the ASCII sheets so these win. */
 @layer flow {
 html#digivated-root[data-ascii] body .rl{display:grid;gap:28px;width:min(1180px,100%);margin:0 auto!important;padding:0 0 64px!important}
 

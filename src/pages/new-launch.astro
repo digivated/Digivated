@@ -18,7 +18,7 @@ import '../styles/submission-flow.css';
     <form class="submission-form" id="project-form" action="/api/submissions" method="post">
       <div id="submission-account-callout" class="submission-account-callout">
         <strong>Create a free account to submit</strong>
-        <div class="submission-account-actions"><a class="button primary" href="/login?mode=signup&amp;next=%2Fsubmit-project">Create an account</a><a href="/login?next=%2Fsubmit-project">Sign in</a></div>
+        <div class="submission-account-actions"><a class="button primary" href="/login?mode=signup&amp;next=%2Fnew-launch">Create an account</a><a href="/login?next=%2Fnew-launch">Sign in</a></div>
       </div>
       <p id="submission-account-status" class="submission-account-status" role="status" aria-live="polite" hidden></p>
 
@@ -136,7 +136,7 @@ import '../styles/submission-flow.css';
             <div id="submission-badge-picker"></div>
             <div class="submission-account-actions fl-actions">
               <button class="button primary fl-btn-primary" id="submission-badge-verify" type="button" hidden>Check my website</button>
-              <a class="button" id="submission-badge-dashboard" href="/account#account-submissions">Go to my dashboard →</a>
+              <a class="button" id="submission-badge-dashboard" href="/dashboard#account-submissions">Go to my dashboard →</a>
             </div>
             <p class="fl-status" id="submission-badge-status" role="status" aria-live="polite"></p>
           </section>

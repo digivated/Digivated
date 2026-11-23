@@ -73,7 +73,7 @@ test('resource icons replace initials in one slot and votes stay separate', asyn
     });
   });
 
-  await page.goto(base + '/resources');
+  await page.goto(base + '/tools');
   const alphabeticalSort = page.getByRole('button', { name: 'a–z' });
   await expect(alphabeticalSort).toHaveCSS('color', 'rgb(27, 27, 27)');
   await alphabeticalSort.click();

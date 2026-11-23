@@ -3,7 +3,7 @@ for(const width of [390,1440])test(`Public site remains usable with Community pa
  await page.setViewportSize({width,height:900});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  // API fixtures keep this check isolated from member and production data.
  await page.route('**/api/**',r=>r.fulfill({json:{items:[],next:null,count:0}}));
- for(const path of ['/','/resources','/discover','/products','/submit-project','/about','/saved']){
+ for(const path of ['/','/tools','/discover','/products','/new-launch','/about','/saved']){
   await page.goto('http://127.0.0.1:4321'+path);
   await expect(page.locator('main')).toBeVisible();
   await expect(page.locator('a[href="/community"]')).toHaveCount(0);
@@ -65,7 +65,7 @@ test('Share a Product offers all activity alerts and submits the exact checkbox 
  await page.route('**/api/submissions**', route => route.fulfill({json:route.request().method()==='POST'
   ? {ok:true,id:'test-project',activityNotifications:false}
   : {instant:null}}));
- await page.goto('http://127.0.0.1:4321/submit-project');
+ await page.goto('http://127.0.0.1:4321/new-launch');
  await page.getByRole('button', { name: 'Enter details manually' }).click();
  const checkbox=page.getByRole('checkbox',{name:/Turn on all activity notifications/});
  await expect(checkbox).toBeVisible();
@@ -109,7 +109,7 @@ for (const width of [390, 1440]) test(`free launch can verify the badge and subm
   submitted = body;
   return route.fulfill({ status: 201, json: { ok: true, id: reservedId, status: 'pending', launch: { kind: 'free', scheduledAt: '2026-11-30T14:00:00.000Z', badgeVerifiedAt: '2026-11-19T00:00:00.000Z' } } });
  });
- await page.goto('http://127.0.0.1:4321/submit-project');
+ await page.goto('http://127.0.0.1:4321/new-launch');
  await page.getByRole('button', { name: 'Enter details manually' }).click();
  await expect(page.locator('[data-tier=founding-feature] .dg-tier-head b')).toHaveText('$5');
  await expect(page.locator('#badge-first')).toBeVisible();
@@ -191,8 +191,8 @@ test('signed-in overview keeps launch details and profile within reach', async (
   analyticsRequests++;
   return route.fulfill({ json: { days: [], totals: { views: 2, visits: 1, upvotes: 0, comments: 0 } } });
  });
- await page.goto('http://127.0.0.1:4321/account?tab=following');
- await expect(page).toHaveURL(/\/account$/);
+ await page.goto('http://127.0.0.1:4321/dashboard?tab=following');
+ await expect(page).toHaveURL(/\/dashboard$/);
  await expect(page.getByRole('tab', { name: 'Following' })).toHaveCount(0);
  await expect(page.getByRole('tab', { name: 'Overview' })).toHaveAttribute('aria-selected', 'true');
  const project = page.locator('#project-studio-notes');
@@ -206,11 +206,11 @@ test('signed-in overview keeps launch details and profile within reach', async (
  await page.getByRole('tab', { name: 'Settings' }).click();
  await expect(page.getByRole('link', { name: 'Manage notifications' })).toHaveAttribute('href', '/notifications#notification-preferences');
  await page.locator('#account-submit-cta').click();
- await expect(page).toHaveURL(/\/submit-project$/);
+ await expect(page).toHaveURL(/\/new-launch$/);
  await expect(page.getByRole('textbox', { name: 'Project URL' })).toBeVisible();
  const makerNavigation = page.getByRole('navigation', { name: 'Maker workspace' });
  await expect(makerNavigation.getByRole('link', {name:'New launch'})).toHaveAttribute('aria-current', 'page');
  await makerNavigation.getByRole('link', {name:'Analytics'}).click();
- await expect(page).toHaveURL(/\/account\?tab=analytics$/);
+ await expect(page).toHaveURL(/\/dashboard\?tab=analytics$/);
  await expect(page.getByRole('tab', {name:'Analytics'})).toHaveAttribute('aria-selected', 'true');
 });

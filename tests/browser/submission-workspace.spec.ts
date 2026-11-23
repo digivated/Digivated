@@ -16,7 +16,7 @@ async function account(page, signedIn = true) {
 for (const width of [390, 820, 1440]) test(`submission stays readable and usable at ${width}px`, async ({ page }) => {
   await page.setViewportSize({ width, height: 900 });
   await account(page);
-  await page.goto(base + '/submit-project');
+  await page.goto(base + '/new-launch');
   await expect(page.locator('#submission-details')).toBeVisible();
   await expect(page.locator('#submission-account-status')).toHaveCSS('background-color', 'rgb(24, 23, 30)');
   for (const fieldset of await page.locator('#project-form fieldset').all()) {
@@ -68,7 +68,7 @@ for (const width of [390, 820, 1440]) test(`submission stays readable and usable
 });
 test('signed-out visitors keep the account gate', async ({ page }) => {
   await account(page, false);
-  await page.goto(base + '/submit-project');
+  await page.goto(base + '/new-launch');
   await expect(page.locator('#submission-account-callout')).toBeVisible();
   await expect(page.locator('#submission-details')).toBeHidden();
   await expect(page.getByRole('link', { name: 'Create an account', exact: true })).toHaveAttribute('href', '/login?mode=signup');

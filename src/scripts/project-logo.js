@@ -1,5 +1,6 @@
 import { safeSearchHref } from '../lib/discovery-search.mjs';
 
+let eagerLogos = 4;
 export function resolveProjectLogo(art) {
   const image = art.querySelector('img');
   if (!image) return;
@@ -31,7 +32,9 @@ export function projectLogo(project, className) {
     image.alt = '';
     image.width = 44;
     image.height = 44;
-    image.loading = 'lazy';
+    // The first few logos sit above the fold, so they load right away (better LCP); the rest wait.
+    image.loading = eagerLogos > 0 ? 'eager' : 'lazy';
+    if (eagerLogos > 0) eagerLogos--;
     image.decoding = 'async';
     image.src = src;
     wrap.append(image);

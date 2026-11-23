@@ -28,7 +28,7 @@ async function signedIn(page,{paidAfterChecks=1,submissions=[] as any[]}={}){
  return calls;
 }
 async function fill(page){
- await page.goto(base+'/submit-project');
+ await page.goto(base+'/new-launch');
  await expect(page.locator('#submission-details')).toBeVisible();
  await page.getByRole('button', { name: 'Enter details manually' }).click();
  for(const [name,value] of Object.entries({name:'Orbit',url:'https://example.com',description:'A useful workspace for independent builders to organize projects.',creator:'Builder'}))await page.locator(`#project-form [name=${name}]`).fill(value);
@@ -83,7 +83,7 @@ test('free stays the default and keeps the badge flow when no purchase is found'
 });
 test('an older unpaid instant draft can still be cancelled',async({page})=>{
  const calls=await signedIn(page,{paidAfterChecks:99,submissions:[{id:'old-draft',name:'Orbit',status:'pending',awaitingInstantPayment:true}]});
- await page.goto(base+'/submit-project');
+ await page.goto(base+'/new-launch');
  await expect(page.locator('#instant-launch-resume')).toBeVisible();
  await page.locator('#instant-launch-cancel').click();
  await expect(page.locator('#instant-launch-resume')).toBeHidden();

@@ -14,7 +14,7 @@ if (card) (async () => {
     card.classList.add('is-paused');
     note.hidden = false;
     note.textContent = 'Starter is paused right now. Your free project is still available.';
-    cta.href = '/submit-project#project-form';
+    cta.href = '/new-launch#project-form';
     cta.querySelector('[data-shop-spot-label]').textContent = 'Launch free';
   } catch {}
 })();

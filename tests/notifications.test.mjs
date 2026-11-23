@@ -217,7 +217,7 @@ test('real Redis: verifying a badge sends one private launch-scheduled notice', 
     const feed = await listNotifications(redis,alice);
     const scheduled = feed.items.filter(item => item.type === 'scheduled');
     assert.equal(scheduled.length,1);
-    assert.equal(scheduled[0].href,`/account#project-${id}`);
+    assert.equal(scheduled[0].href,`/dashboard#project-${id}`);
     assert.equal((await listNotifications(redis,bob)).items.length,0);
   } finally { await redis(['FLUSHDB']); }
 });

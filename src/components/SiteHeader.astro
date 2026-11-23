@@ -19,9 +19,9 @@ const active = (href: string) => isNavigationCurrent(path, href);
         <div class="dg-shell-account-panel" id="header-account-panel" role="menu" aria-labelledby="header-account-trigger" hidden>
           <span class="dg-shell-account-who" role="presentation"><span id="header-account-email"></span><span class="fl-menu-points"><span aria-hidden="true">✦</span> <b id="header-menu-points" hidden>0</b> feedback points</span></span>
           <div class="dg-shell-account-links" role="presentation">
-            <a role="menuitem" href="/account">Your projects</a>
+            <a role="menuitem" href="/dashboard">Your projects</a>
             <a role="menuitem" href="/saved" aria-current={active('/saved') ? 'page' : undefined}>Saved items</a>
-            <a role="menuitem" href="/account?tab=settings">Settings</a>
+            <a role="menuitem" href="/dashboard?tab=settings">Settings</a>
           </div>
           <button role="menuitem" type="button" id="header-sign-out">Sign out</button>
         </div>
@@ -38,7 +38,7 @@ const active = (href: string) => isNavigationCurrent(path, href);
             <button type="button" data-menu-close aria-label="Close menu" hidden><UiIcon name="close" size={18}/></button>
           </div>
           <NavigationTree path={path}/>
-          <a class="navigation-launch" href="/submit-project" aria-current={active('/submit-project') ? 'page' : undefined}><UiIcon name="upload" size={16}/>New Launch</a>
+          <a class="navigation-launch" href="/new-launch" aria-current={active('/new-launch') ? 'page' : undefined}><UiIcon name="upload" size={16}/>New Launch</a>
         </nav>
       </details>
     </div>

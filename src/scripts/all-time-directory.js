@@ -128,13 +128,15 @@ if (root) {
     li.append(rankBox, art, main, actions(p));
     return li;
   }
+  // Link text names the product for crawlers and screen readers; sighted users still see "Visit".
+  const hiddenName = name => { const span = document.createElement('span'); span.className = 'sr-only'; span.textContent = ` ${name}`; span.style.cssText = 'position:absolute!important;width:1px!important;height:1px!important;margin:-1px!important;padding:0!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important'; return span; };
   function actions(p) {
     const box = el('div', null, 'dg-actions');
     const visit = visitLink(p, 'dg-visit dg-dir-visit');
     if (visit) {
       const arrow = icon('external');
       arrow.classList.add('dg-visit-arrow');
-      visit.append(el('span', 'Visit'), arrow, el('span', '✦', 'dg-dir-visit-pts'));
+      visit.append(el('span', 'Visit'), hiddenName(p.name || 'project'), arrow, el('span', '✦', 'dg-dir-visit-pts'));
       visit.setAttribute('aria-label', `Visit ${p.name} (opens in a new tab). Leave specific feedback when you’re back to earn points.`);
       visit.title = 'Visit, then leave specific feedback to earn points';
       box.append(visit);
@@ -328,7 +330,7 @@ if (root) {
       writeCache(projects);
       if (fair) try { const saved = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); localStorage.setItem(CACHE_KEY, JSON.stringify({ ...saved, fair: { active: !!fair.active, endsAt: Number(fair.endsAt) || 0 } })); } catch { /* optional */ }
     }
-    if (!projects.length) { status.hidden = false; status.textContent = 'No projects yet. '; const a = el('a', 'Be the first →'); a.href = '/submit-project'; status.append(a); }
+    if (!projects.length) { status.hidden = false; status.textContent = 'No projects yet. '; const a = el('a', 'Be the first →'); a.href = '/new-launch'; status.append(a); }
     openFromHash();
   }).catch(() => {
     if (state.loaded) return; // Keep showing the saved copy.

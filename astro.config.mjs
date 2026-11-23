@@ -6,7 +6,7 @@ export default defineConfig({
   // Vercel serves these redirects through the public router.
   redirects: process.env.VERCEL === '1' ? {} : {
     '/creators': '/threads',
-    '/inbox': '/account',
+    '/inbox': '/dashboard',
   },
   vite: {
     plugins: [tailwindcss()],

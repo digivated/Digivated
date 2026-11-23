@@ -68,7 +68,7 @@ export function makePublicRouter(handlers = defaultPublicHandlers()) {
     const retiredPage = path.replace(/\/$/, '');
     if (retiredPage === '/creators' || retiredPage === '/inbox') {
       res.statusCode = 308;
-      res.setHeader('Location', retiredPage === '/creators' ? '/threads' : '/account');
+      res.setHeader('Location', retiredPage === '/creators' ? '/threads' : '/dashboard');
       return res.end();
     }
     // Vercel preserves the original URL for rewritten requests.

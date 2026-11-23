@@ -123,7 +123,7 @@ test('signed-in composer keeps its forum selection, publishes and opens replies'
 for (const width of [320, 1440]) {
   test(`shared footer stays compact and preserves destinations at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ['/', '/discover', '/threads', '/news', '/submit-project']) {
+    for (const path of ['/', '/discover', '/threads', '/news', '/new-launch']) {
       await page.goto(base + path);
       const footer = page.getByRole('contentinfo');
       await expect(footer).toHaveCount(1);
@@ -139,7 +139,7 @@ for (const width of [320, 1440]) {
       await expect(footer).toHaveCSS('background-color', 'rgb(23, 24, 28)');
       await expect(footer.locator('a[href^="/creators"], a[href^="/inbox"], a[href*="threads.com"], a[href*="instagram.com"]')).toHaveCount(0);
       await expect(footer.locator('.dg-footer-group').filter({ has: page.getByRole('link', { name: 'New Launch', exact: true }) })).toHaveText(/For makers/);
-      await expect(footer.getByRole('link', { name: 'Email settings' })).toHaveAttribute('href', '/account?tab=settings');
+      await expect(footer.getByRole('link', { name: 'Email settings' })).toHaveAttribute('href', '/dashboard?tab=settings');
       await expect(footer.locator('[data-scene-toggle]')).toHaveCount(0);
       const grid = footer.locator('.dg-footer-groups');
       const positions = await grid.locator('h2').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().toJSON()));
@@ -161,14 +161,14 @@ for (const width of [320, 1440]) {
     await expect(dialog).toBeHidden();
 
     await currentFooter.getByRole('link', { name: 'Email settings' }).click();
-    await expect(page).toHaveURL(/\/account\?tab=settings$/);
-    await expect(page.getByRole('link', { name: 'Log in or sign up' })).toHaveAttribute('href', '/login?next=%2Faccount%3Ftab%3Dsettings');
+    await expect(page).toHaveURL(/\/dashboard\?tab=settings$/);
+    await expect(page.getByRole('link', { name: 'Log in or sign up' })).toHaveAttribute('href', '/login?next=%2Fdashboard%3Ftab%3Dsettings');
 
     await page.goto(base + '/start');
     const compact = page.getByRole('contentinfo');
     await expect(compact.locator('[data-scene-toggle]')).toHaveCount(0);
     await expect(compact.getByRole('link', { name: 'Digivated', exact:true })).toHaveAttribute('href', '/');
-    await expect(compact.getByRole('link', { name: 'Dashboard' })).toHaveAttribute('href', '/account');
+    await expect(compact.getByRole('link', { name: 'Dashboard' })).toHaveAttribute('href', '/dashboard');
     await expect(compact.getByRole('link', {name:'News',exact:true})).toHaveAttribute('href','/news');
   });
 

@@ -2,11 +2,11 @@
 export const primaryLinks = [
   ['/', 'Home'],
   ['/categories', 'Categories'],
-  ['/account', 'Dashboard'],
+  ['/dashboard', 'Dashboard'],
   ['/shop', 'Shop'],
   ['/news', 'News'],
   ['/threads', 'Threads'],
-  ['/resources', 'Tools'],
+  ['/tools', 'Tools'],
 ];
 export function isNavigationCurrent(path, href) {
   return !href.includes('?') && (
@@ -17,10 +17,10 @@ export function isNavigationCurrent(path, href) {
 }
 // Footer shortcuts and account, help, and social links.
 export const footerGroups = [
-  { title: 'Explore', links: [['/discover', 'Directory'], ['/news', 'News'], ['/resources', 'Tools']] },
+  { title: 'Explore', links: [['/discover', 'Directory'], ['/news', 'News'], ['/tools', 'Tools']] },
   { title: 'For makers', links: [
-    ['/submit-project', 'New Launch'], ['/account', 'Dashboard'], ['/notifications', 'Notifications'],
-    ['/saved', 'Saved items'], ['/badges', 'Embed badges'], ['/account?tab=settings', 'Email settings'],
+    ['/new-launch', 'New Launch'], ['/dashboard', 'Dashboard'], ['/notifications', 'Notifications'],
+    ['/saved', 'Saved items'], ['/badges', 'Embed badges'], ['/dashboard?tab=settings', 'Email settings'],
   ] },
   { title: 'Company', links: [
     ['/about', 'About'], ['/privacy', 'Privacy'], ['/terms', 'Terms'],

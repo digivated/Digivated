@@ -97,10 +97,10 @@ async function authFixture(page:any){
 test('password recovery validates confirmation, updates only authenticated account and removes callback',async({page})=>{
  const user=await authFixture(page);let updates=0;
  await page.route('https://fixture.supabase.co/auth/v1/**',route=>{if(route.request().method()==='PUT'){updates++;expect(route.request().postDataJSON().password).toBe('a-long-fixture-password');}return route.fulfill({json:user});});
- await page.goto(base+'/account#type=recovery');
+ await page.goto(base+'/dashboard#type=recovery');
  await expect(page.getByRole('heading',{name:'Choose a new password.'})).toBeVisible();
  await expect(page.locator('#account-password-reset')).toBeVisible();
- await expect(page).toHaveURL(base+'/account?reset=password');
+ await expect(page).toHaveURL(base+'/dashboard?reset=password');
  await page.reload();
  await expect(page.locator('#account-password-reset')).toBeVisible();
  await page.getByLabel('New password',{exact:true}).fill('a-long-fixture-password');
@@ -120,13 +120,13 @@ test('reset request uses the current account route, without sending any email',a
  await page.getByLabel('Email',{exact:true}).fill('fixture@example.invalid');
  await page.getByRole('button',{name:'Forgot password?'}).click();
  await expect(page.locator('#login-status')).toContainText('password reset link');
- expect(redirect).toBe(base+'/account');
+ expect(redirect).toBe(base+'/dashboard');
 });
 test('an unverified recovery callback never exposes the password form or writes an account',async({page})=>{
  await page.route('**/api/project-account**',route=>route.fulfill({json:{ready:true,url:'https://fixture.supabase.co',key:'sb_publishable_fixture'}}));
  let writes=0;
  await page.route('https://fixture.supabase.co/auth/v1/**',route=>{if(route.request().method()!=='GET')writes++;return route.fulfill({status:401,json:{error:'Invalid session'}})});
- await page.goto(base+'/account#type=recovery');
+ await page.goto(base+'/dashboard#type=recovery');
  await expect(page.locator('#account-state')).toContainText('could not be verified');
  await expect(page.locator('#account-password-reset')).not.toBeVisible();
  expect(writes).toBe(0);

@@ -22,7 +22,7 @@ for(const width of [320,375,390])test(`mobile controls and project card stay at 
 
 test('resource search and category picker use iOS-safe text sizes',async({page})=>{
  await page.setViewportSize({width:375,height:812});
- await page.goto(base+'/resources');
+ await page.goto(base+'/tools');
  for(const locator of [page.locator('[data-link-search]'),page.locator('[data-link-select]')]){
   await expect(locator).toBeVisible();
   expect(await locator.evaluate(element=>parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(16);
@@ -79,7 +79,7 @@ test('homepage stats fit at narrow sizes and between the desktop sidebars', asyn
 
 for(const width of [320,375])test(`primary mobile routes never force sideways scrolling at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:812});
- for(const path of ['/','/discover','/news','/resources','/membership','/account','/login','/submit-project']){
+ for(const path of ['/','/discover','/news','/tools','/membership','/dashboard','/login','/new-launch']){
   await page.goto(base+path);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),path).toBe(true);
  }

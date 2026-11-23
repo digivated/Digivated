@@ -31,7 +31,7 @@ test('featured failure leaves an honest fallback and empty featured sections dis
  await page.route('**/api/**',route=>{const u=new URL(route.request().url());if(u.pathname==='/api/projects'&&u.searchParams.get('view')==='featured')return route.fulfill(fail?{status:503,json:{error:'Unavailable'}}:{json:{items:[],next:null}});if(u.pathname==='/api/project-account')return route.fulfill({json:{ready:false}});return route.fulfill({json:{items:[],next:null,views:{},likes:{},counts:{}}})});
  await page.goto(base+'/');await expect(page.locator('[data-featured-status]')).toContainText('temporarily unavailable');
  await expect(page.locator('[data-spot-rail] .dg-spot:not(.is-open)')).toHaveCount(0);
- await expect(page.locator('[data-spot-rail] .dg-spot.is-open').first()).toHaveAttribute('href','/submit-project?spot=1#project-form');
+ await expect(page.locator('[data-spot-rail] .dg-spot.is-open').first()).toHaveAttribute('href','/new-launch?spot=1#project-form');
  fail=false;await page.reload();await expect(page.locator('[data-featured-status]')).toBeHidden();
  await expect(page.locator('.dg-hero h1')).toBeVisible();
 });

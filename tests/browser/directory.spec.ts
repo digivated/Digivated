@@ -16,7 +16,7 @@ test('the footer signs up an email and asks for confirmation on mobile', async (
   await digest.getByRole('textbox', { name: 'Email address' }).fill('reader@example.com');
   await digest.getByRole('button', { name: 'Subscribe' }).click();
   await expect(digest.getByRole('status')).toContainText('Check your inbox to confirm');
-  await expect(page.getByRole('contentinfo').getByRole('link', { name: 'Email settings' })).toHaveAttribute('href', '/account?tab=settings');
+  await expect(page.getByRole('contentinfo').getByRole('link', { name: 'Email settings' })).toHaveAttribute('href', '/dashboard?tab=settings');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 });
 
@@ -61,7 +61,7 @@ test('Tools puts search first and keeps the cross-category list available', asyn
   await page.route('**/api/link-votes', route => route.fulfill({
     json: { counts: Object.fromEntries(rankedLinks.map((link, index) => [link.id, 3 - index])) },
   }));
-  await page.goto(base + '/resources');
+  await page.goto(base + '/tools');
   const search = page.getByRole('searchbox', { name: 'Search resources' });
   const recommendations = page.locator('[data-rl-top]');
   await expect(search).toBeVisible();
@@ -198,7 +198,7 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
   const activeLaunches = rail.getByRole('link', { name: 'Home', exact: true });
   await expect(activeLaunches).toHaveAttribute('aria-current', 'page');
   await expect(activeLaunches).toHaveCSS('background-color', 'rgb(255, 255, 255)'); // white pill on the gray sidebar
-  await expect(rail.getByRole('link', { name: 'New Launch' })).toHaveAttribute('href', '/submit-project');
+  await expect(rail.getByRole('link', { name: 'New Launch' })).toHaveAttribute('href', '/new-launch');
   await expect(rail).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)'); // the sidebar sits on the gray canvas
   await expect(rail).toHaveCSS('background-image', 'none');
   const workspace = rail.getByRole('navigation', { name: 'Workspace navigation' });
@@ -318,7 +318,7 @@ test('the desktop menu keeps New Launch reachable in a short viewport', async ({
   await expect(action).toBeInViewport();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1120);
   await action.click();
-  await expect(page).toHaveURL(base + '/submit-project');
+  await expect(page).toHaveURL(base + '/new-launch');
 });
 
 

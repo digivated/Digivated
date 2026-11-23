@@ -7,11 +7,11 @@ index.unshift({type:'resource',title:'UI/UX Prompt Packet',description:'75 pract
 const pages = [
   ['/discover','Projects','Discover independent projects and their builders.','directory explore builders'],
   ['/news','News','Verified reporting on AI, technology, markets and security.','breaking latest AI tech markets security news'],
-  ['/resources','Resources','Find useful sites by category.','design AI developer marketing resources links'],
-  ['/submit-project','Submit a project','Share your work for review.','submit listing builder'],
+  ['/tools','Resources','Find useful sites by category.','design AI developer marketing resources links'],
+  ['/new-launch','Submit a project','Share your work for review.','submit listing builder'],
   ['/saved','Saved items','Return to your saved projects and collections.','favorites bookmarks collections'],
   ['/membership','Digivated Membership','$5 USD once: unlimited projects that go live instantly, News, the Prompt Packet, and member guides.','membership unlimited projects news summaries prompt packet guides one time starter plan'],
-  ['/account','Your projects','Manage your account, submissions, and feedback.','account profile email login'],
+  ['/dashboard','Your projects','Manage your account, submissions, and feedback.','account profile email login'],
   ['/about','About Digivated','Learn about Digivated.','about contact'],
 ].map(([href,title,description,keywords]) => ({type:'page',href,title,description,keywords,category:'Digivated'}));
 ---
@@ -23,7 +23,7 @@ const pages = [
     <div class="search-scopes" role="group" aria-label="Search content type"><button type="button" data-search-type="all" aria-pressed="true">All</button><button type="button" data-search-type="project" aria-pressed="false">Projects</button><button type="button" data-search-type="resource" aria-pressed="false">Guides</button></div>
   </div>
   <div class="search-body">
-    <nav class="search-shortcuts" id="search-shortcuts" aria-label="Explore Digivated"><a href="/discover"><UiIcon name="grid" size={16}/>Browse projects</a><a href="/resources"><UiIcon name="book" size={16}/>Resources</a></nav>
+    <nav class="search-shortcuts" id="search-shortcuts" aria-label="Explore Digivated"><a href="/discover"><UiIcon name="grid" size={16}/>Browse projects</a><a href="/tools"><UiIcon name="book" size={16}/>Resources</a></nav>
     <p class="search-count" id="unified-search-status" role="status" aria-live="polite"></p>
     <nav class="unified-results" id="unified-results" aria-label="Search results"></nav>
     <div class="search-empty" id="unified-search-empty" hidden><span class="search-empty-icon" aria-hidden="true"><UiIcon name="search" size={24}/></span><h3>No matches yet</h3><p>Try a project name, builder, or a broader topic.</p><button type="button" id="reset-discovery-search">Clear search and filters <UiIcon name="arrow" size={15}/></button></div>

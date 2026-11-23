@@ -17,7 +17,7 @@ test('published guides show stored counts before scrolling and update visible vi
     return route.fulfill({ json: { views: next } });
   });
   await page.setViewportSize({ width: 375, height: 700 });
-  await page.goto('http://127.0.0.1:4321/resources');
+  await page.goto('http://127.0.0.1:4321/tools');
   const cards = page.locator('[data-builtin-resource][data-resource-view-id]');
   await expect(cards.first()).toBeVisible();
   const last = cards.last();
