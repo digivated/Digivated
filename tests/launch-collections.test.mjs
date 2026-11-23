@@ -25,9 +25,12 @@ test('published project pages lead to feedback and further discovery', async () 
  const distinctSite = await renderLaunch({...item, website:'https://example.com/about'}, {template});
  assert.match(distinctSite, /<dt>Website<\/dt><dd><a href="https:\/\/example.com\/about"/);
  assert.match(html,/rel="canonical" href="https:\/\/digivated.com\/projects\/same-name-project-one"/);
- const schema=JSON.parse(html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)?.[1]||'{}');
+ const graph=JSON.parse(html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)?.[1]||'{}')['@graph']||[];
+ const schema=graph.find(node=>node['@type']==='WebPage')||{};
  assert.equal(schema.name,'Same name');
  assert.equal(schema.url,'https://digivated.com/projects/same-name-project-one');
+ assert.ok(graph.some(node=>node['@type']==='Organization')&&graph.some(node=>node['@type']==='WebSite'),'site nodes referenced by the page must exist');
+ assert.ok(graph.some(node=>node['@type']==='BreadcrumbList'));
 });
 test('project details keep the logo separate from the cover and preserve gallery uploads', async () => {
  const listing = {...record('project-one'), slug:'sample', status:'approved', pagePublished:true};
