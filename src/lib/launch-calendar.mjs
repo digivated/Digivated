@@ -43,18 +43,21 @@ export function launchTimestamp(project) {
   // Only legacy records without publication metadata fall back to submission.
   return Date.parse(project.publishedAt || project.date);
 }
-// Launch weeks run from Monday 9 AM Eastern to the next Monday 9 AM Eastern, so each
-// week ends exactly when the next free launch goes live and the weekly lists hand over at that moment.
+// A launch week still starts Monday 00:00 UTC (that is where launches are dated), but the
+// board only hands over to the next week at Monday 9 AM Eastern, when the free launch
+// goes live. Until then the week that is ending stays current, so lists never empty out
+// on Sunday evening (7 PM Eastern).
 function launchWeekMonday(now) {
-  const parts = Object.fromEntries(easternDate.formatToParts(now).map(({ type, value }) => [type, Number(value)]));
-  const today = Date.UTC(parts.year, parts.month - 1, parts.day);
-  let monday = today - ((new Date(today).getUTCDay() + 6) % 7) * DAY;
+  const date = new Date(now);
+  let monday = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) - ((date.getUTCDay() + 6) % 7) * DAY;
   if (easternLaunchTime(monday) > now) monday -= 7 * DAY;
   return monday;
 }
 export function launchBounds(batch, now = Date.now()) {
-  const monday = launchWeekMonday(now) - (batch === 'previous' ? 7 * DAY : 0);
-  return { start: easternLaunchTime(monday), end: easternLaunchTime(monday + 7 * DAY) };
+  const monday = launchWeekMonday(now);
+  const start = monday - (batch === 'previous' ? 7 * DAY : 0);
+  // The current week stays open until the hand-over, so launches published in the hold window count.
+  return { start, end: batch === 'previous' ? monday : easternLaunchTime(monday + 7 * DAY) };
 }
 export function inLaunchBatch(project, batch, now = Date.now()) {
   if (!['current','previous'].includes(batch)) return true;
@@ -66,9 +69,9 @@ export function readRankingPeriod(value,batch) {
   return ['daily','weekly','monthly','all'].includes(value) ? value : batch === 'current' ? 'weekly' : batch === 'previous' ? 'all' : 'daily';
 }
 export function launchBatchLabel(batch,now=Date.now()) {
-  const {start,end}=launchBounds(batch,now);
-  const format=value=>new Date(value).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'America/New_York'});
-  return `${batch==='previous'?'Last week’s':'This week’s'} launches · ${format(start)} – ${format(end-12*3_600_000)} (Eastern)`;
+  const {start}=launchBounds(batch,now);
+  const format=value=>new Date(value).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});
+  return `${batch==='previous'?'Last week’s':'This week’s'} launches · ${format(start)} – ${format(start+6*DAY)} (UTC)`;
 }
 
 
@@ -78,13 +81,14 @@ export function rankingPeriodStarts(now) {
   return [day, launchBounds('current', now).start, Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)];
 }
 
-// Fair start runs from Monday’s 9 AM Eastern launch and ends 24 hours later. Until then,
+// Fair start ends 24 hours after Monday’s Eastern launch. Until then,
 // this week's launches show in an hourly-shuffled order
 // with upvote counts hidden, so an early burst can't lock in the top spots.
 export function fairStart(now = Date.now()) {
   const { start } = launchBounds('current', now);
-  const endsAt = start + DAY;
-  return { active: now >= start && now < endsAt, endsAt };
+  const launch = easternLaunchTime(start);
+  const endsAt = launch + DAY;
+  return { active: now >= launch && now < endsAt, endsAt };
 }
 // Same order for everyone within an hour; it rotates every hour.
 export function fairOrder(id, now = Date.now()) {
