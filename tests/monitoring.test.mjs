@@ -50,3 +50,11 @@ test('ordinary client errors are not sent to Sentry', async () => {
   assert.equal(res.statusCode, 405);
   assert.equal(calls, 0);
 });
+
+test('browser errors are tagged with a fixed origin value and nothing else', () => {
+  const frame = filename => ({ stacktrace: { frames: [{ filename }] } });
+  const origin = values => sanitizeEvent({ exception: { values } }, 'browser').tags.error_origin;
+  assert.equal(origin([frame('https://digivated.com/_astro/app.js')]), 'app');
+  assert.equal(origin([frame('chrome-extension://abc/content.js')]), 'external');
+  assert.equal(origin([{}]), 'none');
+});
