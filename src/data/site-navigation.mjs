@@ -17,14 +17,9 @@ export function isNavigationCurrent(path, href) {
 }
 // Footer shortcuts and account, help, and social links.
 export const footerGroups = [
-  { title: 'Explore', links: [['/discover', 'Directory'], ['/projects', 'All projects'], ['/news', 'News'], ['/tools', 'Tools']] },
-  { title: 'For makers', links: [
-    ['/new-launch', 'New Launch'], ['/dashboard', 'Dashboard'], ['/notifications', 'Notifications'],
-    ['/saved', 'Saved items'], ['/badges', 'Embed badges'], ['/dashboard?tab=settings', 'Email settings'],
-  ] },
-  { title: 'Company', links: [
-    ['/about', 'About'], ['/privacy', 'Privacy'], ['/terms', 'Terms'],
-  ] },
+  { title: 'Explore', links: [['/', 'Latest launches'], ['/categories', 'Categories'], ['/news', 'News'], ['/threads', 'Threads'], ['/tools', 'Tools']] },
+  { title: 'For makers', links: [['/new-launch', 'New Launch'], ['/dashboard', 'Dashboard'], ['/badges', 'Embed badges'], ['/dashboard?tab=settings', 'Email settings']] },
+  { title: 'Company', links: [['/about', 'About'], ['/privacy', 'Privacy'], ['/terms', 'Terms']] },
   { title: 'Follow', links: [
     ['https://x.com/digivatedx', 'X'],
     ['https://www.pinterest.com/digivated/', 'Pinterest'],
