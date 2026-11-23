@@ -20,7 +20,7 @@ Compared against production `origin/main`, these files are byte-for-byte untouch
 ## Changed files
 
 - API/server: `api/{admin,content,projects}.js`, `server/{admin-auth,admin-handler,admin-store,public-community}.mjs`.
-- Dashboard: `src/layouts/Admin.astro`, `src/pages/admin.astro`, `src/scripts/admin.js`, `src/styles/admin.css`.
+- Dashboard: `src/layouts/Admin.astro`, `src/pages/admin.astro`, `src/scripts/admin.js`, `src/styles/owner-desk.css`.
 - Live publishing: `src/components/LiveProjects.astro`, `src/scripts/live-content.js`, `src/pages/resources/read.astro`; updates to Home, Discover, Resources, Products, directory filtering, and platform styles.
 - Operations: `scripts/setup-admin.mjs`, `scripts/moderate-projects.mjs`, this report and the owner guide; historical platform/validation guides now point to current instructions.
 - Tests/CI: `tests/admin.test.mjs`, `tests/browser/admin.spec.ts`, `tests/helpers/redis.mjs`, `.github/workflows/admin-checks.yml`.

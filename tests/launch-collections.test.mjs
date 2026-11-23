@@ -90,3 +90,10 @@ test('launch rendering preserves literal content and removes scripts from privat
  assert.ok(html.includes('<h1>LAUNCH_DESCRIPTION $&amp; &lt;script&gt;</h1>'));
  assert.doesNotMatch(html,/<script\b/);assert.match(html,/noindex,nofollow/);assert.doesNotMatch(html,/SECRET_EMAIL|SECRET_NOTES/);
 });
+
+test('project meta descriptions are trimmed to a search-friendly length', async () => {
+  const { metaDescription } = await import('../server/launch-pages.mjs');
+  assert.equal(metaDescription('  short   text\nhere '), 'short text here');
+  const trimmed = metaDescription('word '.repeat(200));
+  assert.ok(trimmed.length <= 155 && trimmed.endsWith('…'));
+});

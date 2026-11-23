@@ -134,11 +134,11 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
   shell=shell.replace(/<script\b[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/i,'');
   const schema=draft?'':`<script type="application/ld+json">${JSON.stringify({
     '@context':'https://schema.org', '@type':'WebPage', '@id':`${canonical}#webpage`,
-    name:item.name, description:item.description, url:canonical,
+    name:item.name, description:metaDescription(item.description), url:canonical,
     isPartOf:{'@id':'https://digivated.com/#website'}, isAccessibleForFree:true,
   }).replace(/</g,'\\u003c')}</script>`;
   const substitutions = {
-    LAUNCH_TITLE:e(item.name), LAUNCH_DESCRIPTION:e(item.description),
+    LAUNCH_TITLE:e(item.name), LAUNCH_DESCRIPTION:e(metaDescription(item.description)),
     'launch-template':e(canonical),
     'digivated-tech-markets-banner.png':e((item.image || item.logo) && !draft ? new URL(item.image || item.logo,origin).href : `${origin}/digivated-tech-markets-banner.png`)
   };
@@ -146,6 +146,13 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
   return shell.replace(/LAUNCH_TITLE|LAUNCH_DESCRIPTION|https:\/\/digivated(?:\.vercel\.app|\.com)\/(launch-template|digivated-tech-markets-banner\.png)(?:\/)?/g,(match, asset)=>substitutions[asset || match])
     .replace('</head>',()=>`${schema}${hasOgUrl?'':`<meta property="og:url" content="${e(canonical)}">`}${draft?'<meta name="robots" content="noindex,nofollow">':''}</head>`)
     .replace('<!--LAUNCH_BODY-->',()=>body);
+}
+// Search results show about 155 characters, so a long project description is cut at a word boundary for the meta tags only.
+export function metaDescription(text, max = 155) {
+  const plain = String(text || '').replace(/\s+/g, ' ').trim();
+  if (plain.length <= max) return plain;
+  const cut = plain.slice(0, max - 1);
+  return cut.slice(0, Math.max(cut.lastIndexOf(' '), 80)).replace(/[\s,;:.\-–—]+$/, '') + '…';
 }
 export function makeLaunchHandler(deps = {}) {
   return async (req,res) => {
