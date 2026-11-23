@@ -25,3 +25,7 @@ The `Digivated QA control` workflow accepts `STOP`, `PAUSE`, or `RESUME`. It com
 Keep the monitor workflow enabled in GitHub; the committed mode controls whether browser checks execute. An owner can still disable the workflow as an emergency override. Exercise STOP and RESUME in GitHub before calling scheduling operational. GitHub's hourly schedule can run late. Protected preview checks need `VERCEL_AUTOMATION_BYPASS_SECRET` or an authorized local `QA_STORAGE_STATE` session. Never commit or upload that session. Repository settings must require the preview check before it can block merges.
 
 The monitor can create issues for reproduced failures, but it does not change application code, merge PRs, roll back deployments, or send user messages. Autonomous fixes would require a separately authorized agent runner with GitHub and Vercel permissions plus the protected-system approval gates in the request. For now, the workflow fails and leaves evidence for review. The [bug log](BUG_LOG.md) describes the issue record.
+
+## Screenshot comparison scope
+
+Preview deployments skip only the screenshot comparison; status codes, browser errors, overflow, assets, images and interactions are still checked. Production and the hourly schedule compare against the committed baseline. To refresh a stale baseline after an intentional redesign, run the `Digivated QA baseline refresh` workflow, review the pull request it opens, then merge.

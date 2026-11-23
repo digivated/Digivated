@@ -41,3 +41,17 @@ Most AI crawlers do not run JavaScript. Homepage, /discover, /categories and cre
 
 ### Not done (ideas, need decision)
 - Per-category pages (`/categories/<name>`) with their own copy; weekly launch archive pages (`/launches/<week>`); render project lists inside creator profiles server-side. Each needs the same server-render pattern.
+
+## Phase 3: Scans and repeated emails — branch `seo-phase-3` (stacked; not merged)
+### Findings (measured)
+- App emails are already idempotent: weekly digest has per-recipient sent keys + Resend Idempotency-Key; badge/launch mails use `SET NX`. The 4 Vercel crons (hourly Monday digest, launch-queue, badge-check, news-ingest) are by design, not the loop. `promptcove-threads` hourly runs are all `skipped` (no email).
+- **Repeated-email source: the `Digivated QA monitor` GitHub workflow.** Last 100 runs: 56 failed, 42 cancelled, 1 scheduled; the rest fire on `deployment_status` for every Preview and Production deployment (about 17 production deploys in 3 hours today).
+- Failures are screenshot drift, not site outages: 28 confirmed mismatches per run, e.g. `home-mobile` 91% of pixels differ. The baseline predates today's redesign changes. Each failed run sends a GitHub failure email.
+- Vercel "deployment failed" emails exist in the inbox (older); all 40 most recent deployments are READY, so no active build loop.
+### Changes
+- `qa/monitor.spec.ts`: screenshot comparison runs only against digivated.com; previews keep all functional checks.
+- New manual workflow `qa-baseline.yml`: regenerates the baseline on CI and opens a PR for review (the baseline cannot be refreshed here; production screenshots need CI).
+- `qa/README.md` documents both.
+### To finish
+- After merging, run "Digivated QA baseline refresh", review the PR images, merge. Until then production runs still fail on drift.
+- Not verified locally: workflow YAML parses, spec change is a 3-line conditional; Playwright not runnable offline.
