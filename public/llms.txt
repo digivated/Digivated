@@ -1,0 +1,25 @@
+# Digivated
+
+> Digivated is a launch site and directory for products from independent makers. New products launch free every Monday at 9 AM Eastern; visitors browse, upvote and discuss launches, and makers get feedback and traffic.
+
+Digivated (https://digivated.com) publishes this site. Launch pages are written by the makers who submit them. News items summarize and link to their original publishers.
+
+## Main sections
+
+- [Home](https://digivated.com/): this week's launches, rising products and last week's ranked launches
+- [Categories](https://digivated.com/categories): every product grouped by category
+- [Directory](https://digivated.com/discover): search and filter all launched products
+- [New Launch](https://digivated.com/new-launch): submit a product; free launches go live on Mondays at 9 AM Eastern
+- [Shop](https://digivated.com/shop): plans for instant publishing and featured placement
+- [News](https://digivated.com/news): AI, tech, markets and security news, each item linked to its source
+- [Threads](https://digivated.com/threads): community discussions for makers
+- [Tools](https://digivated.com/tools): a curated, upvoted list of tools and sites for designers, makers and founders
+- [Guides](https://digivated.com/resources/guides): step-by-step guides for makers
+
+## About
+
+- [About Digivated](https://digivated.com/about)
+- [Embed badges](https://digivated.com/badges)
+- [Privacy](https://digivated.com/privacy)
+- [Terms](https://digivated.com/terms)
+- [Sitemap](https://digivated.com/sitemap.xml)
