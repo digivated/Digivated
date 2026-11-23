@@ -74,7 +74,7 @@ document.addEventListener('click',async event=>{
    const data=await requestCardInteraction(type,id,{action:localLiked(type,id)?'remove-upvote':'upvote'});
    markLiked(type,id,data.liked);
    refreshLikes(type,id,data.likes,data.liked);
-   cardFeedback(target,data.liked?'Upvoted.':'Upvote removed.',data.liked);
+   cardFeedback(null,data.liked?'Upvoted.':'Upvote removed.');
   }catch(error){notice(error.message);}
   finally{pendingVotes.delete(item);setBusy(false);}
  }

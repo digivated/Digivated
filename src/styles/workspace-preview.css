@@ -475,14 +475,6 @@
     background: var(--fl-raised) !important;
     font-variant-numeric: tabular-nums;
   }
-  .dg-workspace #main .dg-project-tile .dg-vote[aria-pressed="true"] {
-    color: var(--fl-surface) !important;
-    background: var(--fl-ink) !important;
-  }
-  .dg-workspace #main .dg-project-tile .dg-vote[aria-pressed="true"] :is(strong,.dg-vote-caret) {
-    color: inherit !important;
-  }
-
   @media (min-width: 1120px) {
     .dg-workspace #main .dg-project-list { gap: 8px !important; }
     .dg-workspace #main :is(.dg-row.dg-project-tile, .dg-project-list > .is-loading) {

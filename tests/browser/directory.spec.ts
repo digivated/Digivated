@@ -86,6 +86,36 @@ const projects = Array.from({ length: 27 }, (_, i) => ({
   date: new Date(Date.UTC(2026, 9, i + 1)).toISOString(),
 }));
 
+for (const [path, width] of [['/', 390], ['/discover', 1440]] as const) {
+  test(`upvoting on ${path} at ${width}px changes the arrow and count without filling the row`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.route('**/api/projects*', route => route.fulfill({ json: { items: projects, next: null } }));
+    const actions: string[] = [];
+    await page.route('**/api/card-interactions', route => {
+      const action = route.request().postDataJSON().action;
+      actions.push(action);
+      const liked = action === 'upvote';
+      return route.fulfill({ json: { liked, votes: { all: liked ? 75 : 74, weekly: 0 } } });
+    });
+    await page.goto(base + path);
+    const vote = page.locator('[data-launch-id="directory-26"] .dg-vote, [data-project-id="directory-26"] .dg-vote').first();
+    await expect(vote).toHaveAttribute('aria-pressed', 'false');
+    await vote.focus();
+    await page.keyboard.press('Space');
+    await expect(vote).toHaveAttribute('aria-pressed', 'true');
+    await expect(vote).toBeFocused();
+    await expect(vote).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(vote.locator('.dg-vote-caret')).toHaveCSS('color', 'rgb(8, 116, 62)');
+    await expect(vote.locator('strong')).toHaveCSS('color', 'rgb(8, 116, 62)');
+    await expect(vote.locator('strong')).toHaveText('75');
+    await page.keyboard.press('Space');
+    await expect(vote).toHaveAttribute('aria-pressed', 'false');
+    await expect(vote.locator('strong')).toHaveText('74');
+    await expect(vote.locator('strong')).not.toHaveCSS('color', 'rgb(8, 116, 62)');
+    expect(actions).toEqual(['upvote', 'remove-upvote']);
+  });
+}
+
 for (const width of [390, 1440]) {
   test(`Directory navigation and project controls work at ${width}px`, async ({ page }) => {
     const errors: string[] = [];
