@@ -41,7 +41,7 @@ async function invoke({body=valid,method='POST',origin='https://digivated.com',r
 }
 test('an account is required even for a direct submission request',async()=>{
  const result=await invoke({headers:{authorization:''},redis:async()=>{throw Error('should not write');}});
- assert.equal(result.status,401);assert.match(result.data.error,/dashboard or sign in/i);
+ assert.equal(result.status,401);assert.match(result.data.error,/account or sign in/i);
 });
 test('successful save is private and pending, storage is required',async()=>{
  let command;const response=await invoke({redis:async c=>{command=c;return 1;}});assert.equal(response.status,201);assert.equal(response.data.status,'pending');assert.equal(JSON.parse(command[7]).status,'pending');

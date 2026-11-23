@@ -8,7 +8,7 @@ const saved = { ...previous, status:'approved', revision:1, reviewFeedback:'Priv
 test('account project updates link to private feedback without including it in email',()=>{
   const update=projectUpdate(previous,saved);
   assert.equal(update.to,previous.email);
-  assert.match(update.text,/https:\/\/digivated.com\/account/);
+  assert.match(update.text,/https:\/\/digivated.com\/dashboard/);
   assert.doesNotMatch(JSON.stringify(update),/Private owner feedback/);
   assert.equal(projectUpdate(previous,{...previous,revision:1}),null);
   assert.equal(projectUpdate(previous,{...saved,accountId:null}),null);
