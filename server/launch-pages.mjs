@@ -8,6 +8,7 @@ import { safeUrl } from '../src/data/community.mjs';
 import { projectPublic, validId, storageKey } from './admin-store.mjs';
 import { AdminError } from './admin-auth.mjs';
 import { redisClient, validateSubmission } from './submissions.mjs';
+import { launchSchemaScript } from './launch-schema.mjs';
 export const ctaLabels = ['Visit project', 'Try the app', 'Join the waitlist'];
 const clean = (value, max, required = false) => {
   if (typeof value !== 'string' || value.trim().length > max || (required && !value.trim())) throw new AdminError(400, 'Check the launch page fields.');
@@ -131,12 +132,9 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
   </article>`;
   let shell = template || await readFile(new URL('./generated/project.html', import.meta.url),'utf8');
   if(draft) shell=shell.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'');
+  const templateSchema=shell.match(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/i)?.[1]||'';
   shell=shell.replace(/<script\b[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/i,'');
-  const schema=draft?'':`<script type="application/ld+json">${JSON.stringify({
-    '@context':'https://schema.org', '@type':'WebPage', '@id':`${canonical}#webpage`,
-    name:item.name, description:metaDescription(item.description), url:canonical,
-    isPartOf:{'@id':'https://digivated.com/#website'}, isAccessibleForFree:true,
-  }).replace(/</g,'\\u003c')}</script>`;
+  const schema=draft?'':launchSchemaScript({ item, canonical, description:metaDescription(item.description), templateSchema });
   const substitutions = {
     LAUNCH_TITLE:e(item.name), LAUNCH_DESCRIPTION:e(metaDescription(item.description)),
     'launch-template':e(canonical),

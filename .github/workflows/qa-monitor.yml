@@ -28,9 +28,19 @@ jobs:
         id: switch
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          DEPLOY_ENV: ${{ github.event.deployment.environment }}
+          BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: |
           mode=$(gh api "repos/$GITHUB_REPOSITORY/contents/qa/mode.json?ref=main" --jq '.content' | base64 --decode | jq -r '.mode')
-          echo "active=$([ "$mode" = ACTIVE ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          active=$([ "$mode" = ACTIVE ] && echo true || echo false)
+          # Protected previews redirect to a Vercel sign-in page without the bypass secret, so the
+          # check can only fail. Skip it with a visible notice instead of sending a failure email.
+          if [ "$EVENT" = deployment_status ] && [ "$DEPLOY_ENV" = Preview ] && [ -z "$BYPASS" ]; then
+            echo "::notice::Preview checks skipped: add the VERCEL_AUTOMATION_BYPASS_SECRET repository secret to enable them."
+            active=false
+          fi
+          echo "active=$active" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
         if: steps.switch.outputs.active == 'true'
       - uses: actions/setup-node@v4

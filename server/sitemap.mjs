@@ -8,10 +8,10 @@ const SITEMAP_LIMIT = 50000;
 
 // Public HTML that is not a private account, an auth form, or a redirected alias.
 export const staticPublicPages = [
-  '/', '/categories', '/discover', '/news', '/tools', '/resources/guides',
+  '/', '/categories', '/discover', '/projects', '/news', '/tools', '/resources/guides',
   '/threads', '/invstr', '/shop', '/new-launch', '/badges', '/about', '/privacy', '/terms',
   '/ui-ux-prompt-packet', '/packet-example', '/start', '/library', '/fixes',
-  '/builder', '/workflows', '/checklists', '/learn', '/toolkit', '/access',
+  '/builder', '/workflows', '/checklists', '/learn', '/access',
 ];
 
 const blockedPath = /^\/(?:admin|api|rankings|community|carousels|video-player|launch-template)(?:\/|$)|^\/(?:connect-x\.html|research\.html|dashboard|account|login|inbox|notifications|saved|email-preferences)(?:\/|$)/;
