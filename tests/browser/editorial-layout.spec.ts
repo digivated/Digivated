@@ -56,15 +56,10 @@ test('homepage activity, launches and launch information stay in reading order',
     }
   }
   await page.setViewportSize({ width: 320, height: 900 });
-  const launchNav = page.getByRole('navigation', { name: 'Browse launches' });
-  const [thisWeek, lastWeek] = await Promise.all(['This week', 'Last week'].map(
-    name => launchNav.getByRole('link', { name, exact: true }).boundingBox(),
-  ));
-  expect(thisWeek!.y).toBeCloseTo(lastWeek!.y, 0);
-  expect(lastWeek!.x).toBeGreaterThan(thisWeek!.x);
+  await expect(page.getByRole('navigation', { name: 'Browse launches' })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'This week’s launches' })).toBeVisible();
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.getByRole('navigation', { name: 'Browse launches' }).getByRole('link', { name: 'This week', exact: true }).click();
-  await expect(page).toHaveURL(/#this-week$/);
+  await expect(page.getByRole('navigation', { name: 'Browse launches' })).toHaveCount(0);
 });
 
 test('resource icons replace initials in one slot and votes stay separate', async ({ page }) => {

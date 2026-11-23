@@ -39,7 +39,7 @@
 
   .launch-welcome .dg-btn { min-height: 44px !important; white-space: nowrap; }
   .launch-welcome .dg-launch-search { max-width: none; min-width: 0; }
-  .dg-board [data-board-section][hidden], [data-board-jumps][hidden] { display: none !important; }
+  .dg-board [data-board-section][hidden] { display: none !important; }
 
   .board-sort [data-board-results] {
     margin-inline-start: auto;
@@ -125,8 +125,7 @@
       gap: 7px;
     }
     /* Keep the reset chip and the four most populated categories. */
-    .home-refresh .board-categories button:nth-child(n+6):not([aria-pressed="true"]),
-    .home-refresh #main .board-mobile-categories { display: none !important; }
+    .home-refresh .board-categories button:nth-child(n+6):not([aria-pressed="true"]) { display: none !important; }
     .home-refresh #main .board-all-categories {
       display: inline-flex !important;
       align-items: center;
@@ -139,6 +138,5 @@
       text-underline-offset: 3px;
     }
     .home-refresh #main .board-filters button { font-size: 14px !important; }
-    .home-refresh #main .dg-launch-nav a { font-size: 14px !important; }
   }
 }
