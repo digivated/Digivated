@@ -13,7 +13,11 @@ async function context(opts) {
   const ctx = await browser.newContext({ colorScheme: 'light', reducedMotion: 'reduce', ...opts });
   // Block analytics and any write beacons (POST), but let read-only GETs load live counts.
   await ctx.route(/_vercel\/insights|google-analytics|googletagmanager|sentry/, r => r.abort());
-  await ctx.route(/\/api\/(project-views|site-activity|visitors)/, r => r.request().method() === 'GET' ? r.continue() : r.abort());
+  await ctx.route(/\/api\/(project-views|site-activity|visitors)/, r => {
+    // The live visit/browsing counts come back from one activity beacon; allow exactly one (the first home load).
+    if (r.request().url().includes('site-activity') && !globalThis.__activityAllowed) { globalThis.__activityAllowed = true; return r.continue(); }
+    return r.request().method() === 'GET' ? r.continue() : r.abort();
+  });
   return ctx;
 }
 async function settle(page, ms = 1500) {
