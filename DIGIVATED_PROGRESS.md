@@ -68,3 +68,9 @@ Most AI crawlers do not run JavaScript. Homepage, /discover, /categories and cre
 - ~226 KB of global stylesheets in `public/` (`clean.css` 67 KB, `dg-board.css` 50 KB, `ascii-flow.css` 46 KB, `ascii-silver.css` 33 KB, `daylight.css` 29 KB) plus many Astro bundles, all render-blocking and layered. Possible overlap with the older ASCII theme, but removing rules blind risks visual regressions.
 - `public/media` is 2.1 MB; confirm which files pages actually load.
 - Run Lighthouse / Vercel Speed Insights on the preview and production before changing anything: LCP, INP, CLS are unmeasured.
+
+## Phase 5: Verification — draft PR #291 (seo-phase-4, stacked phases 1-4) — NOT merged, NOT deployed
+- First CI run on #291 failed `launch-collections.test.mjs` (existing test expected flat JSON-LD). Cause: my Phase 1 change. Test updated to read the WebPage from `@graph` and assert Organization/WebSite/Breadcrumb exist. Re-run: **Verify "Tests and production build" passed**, plus admin, community, Vercel preview deploy.
+- Second QA root cause found: Preview QA runs fail because `VERCEL_AUTOMATION_BYPASS_SECRET` is empty, so every preview lands on Vercel login. `qa-monitor.yml` now skips Preview runs with a notice while the secret is unset. Add the secret to turn them back on.
+- Production QA still fails on stale screenshots until the baseline refresh workflow is run after merge.
+- Not verified: browser check of /projects and project JSON-LD on a preview; production deployment (none done).
