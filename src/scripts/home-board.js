@@ -70,6 +70,7 @@ const state = {
 const pendingVotes = new Set();
 const pendingWatch = new Set();
 const MEDAL = { 1: 'gold', 2: 'silver', 3: 'bronze' };
+const UNRANKED = 4;
 const localTime = value => new Date(value).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' });
 const scoreOf = p => Number.isFinite(Number(p.score)) && p.score !== null ? Number(p.score) : (Number(p.votes?.weekly) || 0) + boostVotes(p.boost);
 
@@ -78,11 +79,6 @@ function groups() {
   const now = Date.now();
   if (state.fair.active) g.current = g.current.slice().sort((a, b) => fairOrder(a.id, now) - fairOrder(b.id, now));
   else g.current = g.current.map((p, i) => [p, i]).sort((a, b) => scoreOf(b[0]) - scoreOf(a[0]) || a[1] - b[1]).map(([p]) => p);
-  const order = state.podium?.order || [];
-  if (order.length) {
-    const at = new Map(order.map((id, i) => [id, i]));
-    g.previous = g.previous.map((p, i) => [p, i]).sort((a, b) => (at.get(a[0].id) ?? 1e6 + a[1]) - (at.get(b[0].id) ?? 1e6 + b[1])).map(([p]) => p);
-  }
   g.upcoming = (state.upcoming?.items || []).slice().sort((a, b) => Date.parse(a.launchAt) - Date.parse(b.launchAt) || b.watchers - a.watchers || a.name.localeCompare(b.name));
   return g;
 }
@@ -332,7 +328,12 @@ function render({ animateSearch = false, only = null } = {}) {
   for (const section of board.querySelectorAll('[data-board-section]')) {
     const key = section.dataset.boardSection, all = activeGroups[key] || [], limit = state.limits[key];
     const items = all.filter(project => (!state.category || project.category === state.category) && (!state.query || matchesQuery(project, state.query)));
-    if (state.sort === 'recent' && key !== 'upcoming' && !(key === 'current' && state.fair.active)) items.sort((a,b) => launchTimestamp(b) - launchTimestamp(a));
+    if (state.sort === 'recent' && key !== 'upcoming' && !(key === 'current' && state.fair.active)) {
+      items.sort((a, b) => {
+        const rank = key === 'previous' ? (placeOf(a.id) || UNRANKED) - (placeOf(b.id) || UNRANKED) : 0;
+        return rank || launchTimestamp(b) - launchTimestamp(a);
+      });
+    }
     matches += items.length;
     if (only && key !== only) continue;
     section.hidden = !Object.hasOwn(activeGroups, key) || (!items.length && (searching || key === 'upcoming'));

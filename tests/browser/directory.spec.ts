@@ -282,6 +282,38 @@ test('the desktop menu keeps New Launch reachable in a short viewport', async ({
 });
 
 
+test('last week pins ranked launches before newer entries and keeps them above expanded rows', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.clock.setFixedTime(new Date('2026-11-22T04:00:00Z'));
+  const previous = projects.slice(0, 7).map((project, index) => ({
+    ...project,
+    date: new Date(Date.UTC(2026, 10, 9 + index, 16)).toISOString(),
+  }));
+  await page.route('**/api/projects*', route => route.fulfill({ json: { items: previous, next: null } }));
+  let showPodium!: () => void;
+  const podiumReady = new Promise<void>(resolve => { showPodium = resolve; });
+  await page.route('**/api/launches?view=podium', async route => {
+    await podiumReady;
+    const podium = [{ id: previous[0].id, rank: 1 }, { id: previous[1].id, rank: 2 }];
+    await route.fulfill({ json: { order: podium.map(place => place.id), week: { podium } } });
+  });
+  await page.goto(base + '/');
+  const section = page.locator('[data-board-section="previous"]');
+  const names = section.locator('[data-launch-id] h3 a');
+  try {
+    await expect(names.first()).toHaveText(previous[6].name);
+  } finally {
+    showPodium();
+  }
+  const ordered = [...previous.slice(0, 2), ...previous.slice(2).reverse()].map(project => project.name);
+  await expect(names).toHaveText(ordered.slice(0, 5));
+  await expect(section.locator('.dg-badge-medal')).toHaveText(['★ #1 of the week', '★ #2 of the week']);
+  await section.getByRole('button', { name: 'View 2 more' }).click();
+  await expect(names).toHaveText(ordered);
+  await page.locator('[data-board-category="Apps"]').click();
+  await expect(names).toHaveText(ordered.filter(name => name !== previous[0].name));
+});
+
 test('the upcoming batch and countdown agree on Monday, November 23', async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-11-22T04:00:00Z'));
   await page.route('**/api/projects*', route => route.fulfill({ json: { items: projects, next: null } }));
