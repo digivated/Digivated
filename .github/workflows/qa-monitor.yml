@@ -41,9 +41,9 @@ jobs:
             active=false
           fi
           echo "active=$active" >> "$GITHUB_OUTPUT"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: steps.switch.outputs.active == 'true'
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: steps.switch.outputs.active == 'true'
         with:
           node-version: 24
@@ -65,7 +65,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           QA_ISSUES_ENABLED: 'true'
         run: node qa/triage.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always() && steps.switch.outputs.active == 'true'
         with:
           name: digivated-qa-evidence
