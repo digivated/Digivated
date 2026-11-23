@@ -29,8 +29,8 @@ test('fair start runs from the Monday 9 AM Eastern hand-over for 24 hours and sh
   assert.equal(fairStart(Date.parse('2026-11-21T12:00:00Z')).active, false);
   const ids = ['a', 'b', 'c', 'd', 'e', 'f'];
   const order = at => ids.slice().sort((x, y) => fairOrder(x, at) - fairOrder(y, at)).join('');
-  assert.equal(order(monday + 60_000), order(monday + 3_000_000), 'stable within the hour');
-  assert.ok([1, 2, 3, 4, 5].some(h => order(monday + h * 3_600_000) !== order(monday)), 'rotates across hours');
+  assert.equal(order(launch + 60_000), order(launch + 3_000_000), 'stable within the hour');
+  assert.ok([1, 2, 3, 4, 5].some(h => order(launch + h * 3_600_000) !== order(launch)), 'rotates across hours');
 });
 
 test('award badges label the place and week, and the snippet keeps the verifying anchor', () => {

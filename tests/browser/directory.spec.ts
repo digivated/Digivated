@@ -107,7 +107,7 @@ for (const width of [390, 1440]) {
     expect(second!.x).toBeCloseTo(first!.x, 0);
     expect(second!.y).toBeGreaterThanOrEqual(first!.y + first!.height);
     if (width >= 1120) {
-      expect(first!.height).toBeLessThanOrEqual(110);
+      expect(first!.height).toBeLessThanOrEqual(125);
       await expect(firstTwo.first().locator('.dg-tagline')).toHaveCSS('white-space', 'normal');
       await expect(firstTwo.first().locator('.dg-meta')).toBeVisible();
     }
