@@ -75,10 +75,20 @@
   }
 }
 
-/* Page changes: a true crossfade. The old page stays visible while the new one fades in, so there is never an empty frame between pages. */
+/* Page changes: the old page fades out and settles back while the new one fades in from slightly larger.
+   Both run together, so there is never an empty frame. The header and rail stay put.
+   The old page scales around the middle of what was on screen (set by a tiny head script), the new one around its top. */
 @media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(workspace-page) { display: block !important; animation: gm-page-out 200ms ease both !important; }
-  ::view-transition-new(workspace-page) { animation: gm-page-in 240ms cubic-bezier(.22, 1, .36, 1) both !important; }
-  @keyframes gm-page-out { to { opacity: 0; } }
-  @keyframes gm-page-in { from { opacity: 0; translate: 0 6px; } }
+  ::view-transition-group(workspace-page) { animation-duration: 550ms !important; }
+  ::view-transition-old(workspace-page) {
+    display: block !important;
+    transform-origin: var(--gm-vt-origin, 50% 0);
+    animation: gm-page-out 550ms cubic-bezier(.22, 1, .36, 1) both !important;
+  }
+  ::view-transition-new(workspace-page) {
+    transform-origin: 50% 0;
+    animation: gm-page-in 550ms cubic-bezier(.22, 1, .36, 1) both !important;
+  }
+  @keyframes gm-page-out { to { opacity: 0; scale: .95; } }
+  @keyframes gm-page-in { from { opacity: 0; scale: 1.05; } }
 }
