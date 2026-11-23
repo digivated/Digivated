@@ -55,3 +55,16 @@ Most AI crawlers do not run JavaScript. Homepage, /discover, /categories and cre
 ### To finish
 - After merging, run "Digivated QA baseline refresh", review the PR images, merge. Until then production runs still fail on drift.
 - Not verified locally: workflow YAML parses, spec change is a 3-line conditional; Playwright not runnable offline.
+
+## Phase 4: Performance and cleanup — branch `seo-phase-4` (stacked; not merged)
+### Verified and changed
+- Removed two dependencies with zero references anywhere in the repo (src, server, api, scripts, tests, qa, public, configs): `three` and `@hugeicons/core-free-icons`. `package.json` and `package-lock.json` updated with `npm uninstall --package-lock-only` (both parse; no other lock entries changed). Runtime behaviour unchanged since nothing imported them; benefit is a smaller install and less supply-chain surface. `npm ci` / `npm run build` not run here (no network) — Vercel preview will confirm.
+### Checked, left alone (no evidence of a problem)
+- Analytics: GA4 loads async, only on digivated.com, minimal events, no ad signals. Nothing to trim.
+- Weekly digest/launch/badge emails: idempotent (see Phase 3).
+- Other deps (`react`, `react-dom`, `@base-ui/react`, `@liquefy-ui/core`, `jose`, Sentry, Supabase, `@vercel/firewall`, Playwright, Checkly) are all imported.
+- Homepage pulls the full project list in 100-item pages with `cache: 'no-store'` on the client, while the server already sets a 10-minute CDN cache on that path. Changing client caching could show stale rankings/fair-start state, so not changed.
+### Candidates needing measurement first (no numbers yet)
+- ~226 KB of global stylesheets in `public/` (`clean.css` 67 KB, `dg-board.css` 50 KB, `ascii-flow.css` 46 KB, `ascii-silver.css` 33 KB, `daylight.css` 29 KB) plus many Astro bundles, all render-blocking and layered. Possible overlap with the older ASCII theme, but removing rules blind risks visual regressions.
+- `public/media` is 2.1 MB; confirm which files pages actually load.
+- Run Lighthouse / Vercel Speed Insights on the preview and production before changing anything: LCP, INP, CLS are unmeasured.
