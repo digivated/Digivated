@@ -263,6 +263,7 @@
     { "source": "/projects/listing/:id", "destination": "/api/project-page?listing=:id" },
     { "source": "/badge/:id", "destination": "/api/badge?id=:id" },
     { "source": "/threads/:slug((?!new$|thread$)[a-z0-9][a-z0-9-]{0,99})", "destination": "/api/thread-page?slug=:slug" },
+    { "source": "/news/:slug([a-z0-9-]{0,101}[a-f0-9]{24})", "destination": "/api/news-story-page?id=:slug" },
     {
       "source": "/projects/:slug",
       "destination": "/api/project-page?slug=:slug"

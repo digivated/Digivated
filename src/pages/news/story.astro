@@ -1,0 +1,12 @@
+---
+import Platform from '../../layouts/Platform.astro';
+import '../../styles/news.css';
+// Served for /news/<headline>-<id> through a rewrite. The server fills in the story;
+// local previews load it in the browser instead.
+---
+<Platform showBreadcrumb={false} title="News" description="Source-linked news on AI and technology, markets, and security." canonicalPath="/news">
+  <section class="news-story-page" data-news-story-page aria-labelledby="news-article-title">
+    <div class="news-story-root" data-news-story-root aria-live="polite"><p class="news-story-loading" data-news-story-status role="status">Loading story…</p></div>
+  </section>
+</Platform>
+<script>import '../../scripts/news-story.js';</script>

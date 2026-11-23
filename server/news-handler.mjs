@@ -1,5 +1,18 @@
 import {NEWS,CATEGORIES,newsStatus} from './news-store.mjs';
 import {redisClient} from './submissions.mjs';
+import {validNewsId} from '../src/lib/news-story.mjs';
+const parse=value=>{try{return value?JSON.parse(value):null;}catch{return null;}};
+// One published story plus a few others to read next (same topic first).
+export async function loadNewsStory(redis,id,now=Date.now()){
+ if(!validNewsId(id))return null;
+ const [raw,score,ids]=await Promise.all([redis(['GET',NEWS+'public:'+id]),redis(['ZSCORE',NEWS+'index:published',id]),redis(['ZREVRANGE',NEWS+'index:published',0,40])]);
+ const record=parse(raw);
+ if(!record||record.id!==id||score===null||score===undefined)return null;
+ const others=(ids||[]).filter(other=>other!==id);
+ const rows=others.length?(await redis(['MGET',...others.map(other=>NEWS+'public:'+other)])).map(parse).filter(item=>item&&validNewsId(item.id)):[];
+ const related=[...rows.filter(item=>item.category===record.category),...rows.filter(item=>item.category!==record.category)].slice(0,4);
+ return {story:publicNewsItem(record,now),related:related.map(item=>publicNewsItem(item,now))};
+}
 // News is free for everyone: every visitor gets the full archive, summaries and market snapshot.
 export function publicNewsItem(record,now=Date.now()){
  return {id:record.id,sourceType:record.sourceType||'reporting',tickers:Array.isArray(record.tickers)?record.tickers:[],headline:record.headline,summary:record.summary,category:record.category,classification:record.classification==='breaking'&&now-Date.parse(record.sourcePublishedAt)<=6*3600000?'breaking':'update',sourceName:record.sourceName,sourceUrl:record.sourceUrl,sourcePublishedAt:record.sourcePublishedAt,publishedAt:record.publishedAt,verifiedAt:record.verifiedAt,summaryMethod:record.summaryMethod,correctedAt:record.updatedAt!==record.publishedAt?record.updatedAt:null};
@@ -11,6 +24,7 @@ export function makeNewsHandler(deps={}){
   if(req.method!=='GET'){res.setHeader('Allow','GET');return send(405,{error:'Use GET.'});}
   try{
    const env=deps.env||process.env,redis=deps.redis||redisClient(env),url=new URL(req.url,'https://digivated.com');
+   if(url.searchParams.has('id')){const result=await loadNewsStory(redis,url.searchParams.get('id'),deps.now?.()||Date.now());return result?send(200,result):send(404,{error:'This story is not available.'});}
    const category=url.searchParams.get('category')||'all',q=(url.searchParams.get('q')||'').trim().slice(0,120).toLowerCase().replace(/^\$(?=[a-z0-9.-]+$)/,''),cursor=Number(url.searchParams.get('cursor')||0);
    if((category!=='all'&&!CATEGORIES.includes(category))||!Number.isInteger(cursor)||cursor<0||cursor>500)return send(400,{error:'Choose a valid category or page.'});
    const ids=await redis(['ZREVRANGE',NEWS+'index:published',0,499]);
