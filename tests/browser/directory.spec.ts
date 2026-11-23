@@ -11,7 +11,7 @@ test('the footer signs up an email and asks for confirmation on mobile', async (
     return route.fulfill({ json: { pending: true } });
   });
   await page.goto(base + '/');
-  const digest = page.getByRole('region', { name: 'The weekly launch digest' });
+  const digest = page.getByRole('region', { name: 'One email every Monday' });
   await expect(digest).toContainText('every Monday');
   await digest.getByRole('textbox', { name: 'Email address' }).fill('reader@example.com');
   await digest.getByRole('button', { name: 'Subscribe' }).click();
