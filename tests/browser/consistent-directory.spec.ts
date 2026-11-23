@@ -31,7 +31,7 @@ for(const width of [320,390,768,1440])test(`plain pagination, category filtering
  await page.screenshot({path:test.info().outputPath(`directory-${width}.png`),fullPage:true});
 });
 for(const width of [320,1440])test(`Resources category and search navigation at ${width}px`,async({page})=>{
- await page.setViewportSize({width,height:900});await page.goto(base+'/resources');
+ await page.setViewportSize({width,height:900});await page.goto(base+'/tools');
  await expect(page.locator('[data-link-group]:visible')).toHaveCount(1);
  await expect(page.locator('a[href="https://60fps.design"]')).toBeVisible();
  if(width<760)await page.locator('[data-link-select]').selectOption('security-privacy');

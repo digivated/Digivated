@@ -328,7 +328,7 @@ if (root) {
       writeCache(projects);
       if (fair) try { const saved = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); localStorage.setItem(CACHE_KEY, JSON.stringify({ ...saved, fair: { active: !!fair.active, endsAt: Number(fair.endsAt) || 0 } })); } catch { /* optional */ }
     }
-    if (!projects.length) { status.hidden = false; status.textContent = 'No projects yet. '; const a = el('a', 'Be the first →'); a.href = '/submit-project'; status.append(a); }
+    if (!projects.length) { status.hidden = false; status.textContent = 'No projects yet. '; const a = el('a', 'Be the first →'); a.href = '/new-launch'; status.append(a); }
     openFromHash();
   }).catch(() => {
     if (state.loaded) return; // Keep showing the saved copy.

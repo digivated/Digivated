@@ -21,7 +21,7 @@ function setTab(name) {
   if (name === 'projects') { current.hidden = false; return; }
   // Home › Dashboard › Analytics, with Dashboard linking back to the overview.
   current.hidden = true;
-  const link = Object.assign(document.createElement('a'), { href: '/account', textContent: 'Dashboard' });
+  const link = Object.assign(document.createElement('a'), { href: '/dashboard', textContent: 'Dashboard' });
   const separator = Object.assign(document.createElement('span'), { className: 'breadcrumb-separator', textContent: '›' });
   separator.setAttribute('aria-hidden', 'true');
   const section = Object.assign(document.createElement('span'), { textContent: labels[name] });

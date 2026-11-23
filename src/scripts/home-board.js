@@ -367,7 +367,7 @@ function render({ animateSearch = false, only = null } = {}) {
     if (animateSearch) searchRows.push(...rows.slice(0, Math.max(0, 5 - searchRows.length)));
     if (!items.length) {
       const empty = el('li', null, 'dg-row dg-row-empty');
-      if (key === 'current') { const cta = el('a', 'Submit a product for this week'); cta.href = '/submit-project'; empty.append(cta); }
+      if (key === 'current') { const cta = el('a', 'Submit a product for this week'); cta.href = '/new-launch'; empty.append(cta); }
       else empty.textContent = 'No launches here yet.';
       list.append(empty);
     }

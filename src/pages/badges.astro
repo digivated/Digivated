@@ -8,7 +8,7 @@ const src = (style: string) => 'data:image/svg+xml;charset=utf-8,' + encodeURICo
 <Platform title="Embed badges" description="Add a Featured on Digivated badge to your website. It shows your live upvotes and links to your project listing.">
   <header class="page-intro"><h1>Embed badges</h1><p class="lede">Link to your listing, show live upvotes, and qualify for a free launch.</p></header>
   <section class="fl-badges-page" aria-label="Badge styles">
-    <p class="fl-badges-intro"><a class="button primary" href="/account#account-submissions">Get your badge code</a></p>
+    <p class="fl-badges-intro"><a class="button primary" href="/dashboard#account-submissions">Get your badge code</a></p>
     <div class="fl-badges" data-badge-examples>
       {BADGE_STYLES.filter(style => style.key !== 'text').map(style => (
         <article class="fl-badge-card" data-badge-style={style.key}>

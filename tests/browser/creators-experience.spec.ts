@@ -6,7 +6,7 @@ const people=[{id:'11111111-1111-4111-8111-111111111111',name:'Ada Maker',bio:'B
 test('retired creator pages forward bookmarks without exposing the old pages', async ({page}) => {
  for (const [source, destination, heading] of [
   ['/creators?post=old-post', '/threads', /Threads/],
-  ['/inbox?id=old-contact', '/account', 'Maker dashboard'],
+  ['/inbox?id=old-contact', '/dashboard', 'Maker dashboard'],
  ] as const) {
   await page.goto(base + source);
   await expect(page).toHaveURL(base + destination);

@@ -500,7 +500,7 @@ if (form) {
         form.classList.add('is-saved');
         const savedItem = { id: data.id, name: payload.name, url: payload.url, date: new Date().toISOString(), status: 'pending', launch: data.launch };
         document.getElementById('submission-badge-tracker').replaceChildren(trackerElement(projectStage(savedItem)));
-        document.getElementById('submission-badge-dashboard').href = '/account#project-' + encodeURIComponent(data.id);
+        document.getElementById('submission-badge-dashboard').href = '/dashboard#project-' + encodeURIComponent(data.id);
         badgePanel.scrollIntoView({ block: 'start' });
         document.getElementById('submission-badge-title').focus();
         return;
@@ -517,13 +517,13 @@ if (form) {
           form.classList.add('is-saved');
           const savedItem = { id: data.id, name: payload.name, url: payload.url, date: new Date().toISOString(), status: 'pending', launch: data.launch };
           document.getElementById('submission-badge-tracker').replaceChildren(trackerElement(projectStage(savedItem)));
-          document.getElementById('submission-badge-dashboard').href = '/account#project-' + encodeURIComponent(data.id);
+          document.getElementById('submission-badge-dashboard').href = '/dashboard#project-' + encodeURIComponent(data.id);
           setupBadgeCheck(savedItem, Boolean(session?.user?.email_confirmed_at));
           badgePanel.scrollIntoView({ block: 'start' });
           document.getElementById('submission-badge-title').focus();
         } else {
           status.replaceChildren('Project saved. ', Object.assign(document.createElement('a'), {
-            href: '/account#account-submissions', textContent: 'Get your website badge in Your Projects →'
+            href: '/dashboard#account-submissions', textContent: 'Get your website badge in Your Projects →'
           }));
           status.focus();
         }

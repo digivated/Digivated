@@ -10,8 +10,8 @@ if(state){
  const clearAuthFragment=()=>{
   if(location.hash&&location.hash!=='#account-submissions'&&location.hash!==projectAnchor)history.replaceState(null,'',location.pathname+location.search);
  };
- const signInDestination = projectAnchor ? '/account' + projectAnchor
-  : new URLSearchParams(location.search).get('tab') === 'settings' ? '/account?tab=settings' : '';
+ const signInDestination = projectAnchor ? '/dashboard' + projectAnchor
+  : new URLSearchParams(location.search).get('tab') === 'settings' ? '/dashboard?tab=settings' : '';
  if(signInDestination)form.querySelector('a[href="/login"]').href='/login?next='+encodeURIComponent(signInDestination);
  const arrivingFromEmail=callback.has('access_token');
  const callbackError=callback.get('error_description');
@@ -39,7 +39,7 @@ if(state){
    if(callbackError||!session||authState!=='signed-in'){
     form.hidden=false;show('This password reset link could not be verified. Request a fresh link from the login page.');return;
    }
-   history.replaceState(null,'','/account?reset=password');
+   history.replaceState(null,'','/dashboard?reset=password');
    const reset=document.getElementById('account-password-reset'),submit=reset.querySelector('button');
    reset.hidden=false;show('Your reset link is verified. Choose your new password below.');
    reset.elements.password.focus();
@@ -50,7 +50,7 @@ if(state){
     try{
      const {error}=await client.auth.updateUser({password:reset.elements.password.value});
      if(error)throw error;
-     reset.reset();location.replace('/account');
+     reset.reset();location.replace('/dashboard');
     }catch(error){show(error.message||'Your password could not be saved. Please try again.');submit.disabled=false;}
    };
    return;
@@ -156,7 +156,7 @@ if(state){
    copy.textContent = description;
    const action = document.createElement('a');
    action.className = 'button primary';
-   action.href = '/submit-project';
+   action.href = '/new-launch';
    action.textContent = 'New Launch';
    card.append(mark, heading, copy, action);
    return card;
@@ -188,7 +188,7 @@ if(state){
    else if(message){const next=document.createElement('p');next.className='fl-next-copy'+(stage.key==='scheduled'?' account-launch':'');next.textContent=message;card.append(next);}
    const actions=document.createElement('div');actions.className='fl-actions';
    if(['approved','featured'].includes(item.status)){const view=Object.assign(document.createElement('a'),{className:'button primary',href:item.pageUrl||'/projects/listing/'+encodeURIComponent(item.id),textContent:'View project and feedback'});actions.append(view);}
-   if(item.awaitingInstantPayment){const finish=Object.assign(document.createElement('a'),{className:'button primary',href:'/submit-project?resume='+encodeURIComponent(item.id),textContent:'Finish publishing'});const cancel=Object.assign(document.createElement('button'),{type:'button',className:'button',textContent:'Cancel checkout'});cancel.dataset.cancelInstant=item.id;cancel.onclick=()=>cancelInstant(item,cancel);actions.append(finish,cancel);}
+   if(item.awaitingInstantPayment){const finish=Object.assign(document.createElement('a'),{className:'button primary',href:'/new-launch?resume='+encodeURIComponent(item.id),textContent:'Finish publishing'});const cancel=Object.assign(document.createElement('button'),{type:'button',className:'button',textContent:'Cancel checkout'});cancel.dataset.cancelInstant=item.id;cancel.onclick=()=>cancelInstant(item,cancel);actions.append(finish,cancel);}
    if(actions.childElementCount)card.append(actions);
    const later=badgeLater(item,stage);if(later)card.append(later);
    if (item.feedback) {

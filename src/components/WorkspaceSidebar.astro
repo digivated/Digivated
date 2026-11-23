@@ -14,6 +14,6 @@ const current = (href: string) => isNavigationCurrent(path, href);
   <slot/>
   <nav class="dg-rail-navigation" aria-label="Workspace navigation">
     <NavigationTree path={path}/>
-    <a class="navigation-launch" href="/submit-project" aria-current={current('/submit-project') ? 'page' : undefined}><UiIcon name="upload" size={16}/>New Launch</a>
+    <a class="navigation-launch" href="/new-launch" aria-current={current('/new-launch') ? 'page' : undefined}><UiIcon name="upload" size={16}/>New Launch</a>
   </nav>
 </aside>

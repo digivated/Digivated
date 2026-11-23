@@ -4,30 +4,30 @@ import UiIcon from './UiIcon.astro';
 
 const { path } = Astro.props;
 const icons: Record<string, string> = {
-  '/': 'layers', '/categories': 'grid', '/account': 'profile', '/shop': 'save',
-  '/news': 'book', '/threads': 'comment', '/resources': 'tool',
+  '/': 'layers', '/categories': 'grid', '/dashboard': 'profile', '/shop': 'save',
+  '/news': 'book', '/threads': 'comment', '/tools': 'tool',
 };
 // Inside the maker dashboard, the Dashboard item opens into its sections.
 // Tab links carry data-account-link so the dashboard script can switch tabs in place.
-const inDashboard = ['/account', '/submit-project', '/notifications'].includes(path);
+const inDashboard = ['/dashboard', '/new-launch', '/notifications'].includes(path);
 const dashboardSections = [
-  { href: '/account', label: 'Overview', icon: 'grid', tab: 'projects' },
-  { href: '/account?tab=analytics', label: 'Analytics', icon: 'chart', tab: 'analytics' },
-  { href: '/submit-project', label: 'New launch', icon: 'upload', current: path === '/submit-project' },
-  { href: '/account?tab=profile', label: 'Profile', icon: 'user', tab: 'profile' },
-  { href: '/account?tab=settings', label: 'Settings', icon: 'sliders', tab: 'settings', current: path === '/notifications' },
+  { href: '/dashboard', label: 'Overview', icon: 'grid', tab: 'projects' },
+  { href: '/dashboard?tab=analytics', label: 'Analytics', icon: 'chart', tab: 'analytics' },
+  { href: '/new-launch', label: 'New launch', icon: 'upload', current: path === '/new-launch' },
+  { href: '/dashboard?tab=profile', label: 'Profile', icon: 'user', tab: 'profile' },
+  { href: '/dashboard?tab=settings', label: 'Settings', icon: 'sliders', tab: 'settings', current: path === '/notifications' },
 ];
 ---
 <ul class="navigation-tree">
   {primaryLinks.map(([href, label]) => (
-    <li class:list={{ 'has-sections': href === '/account' && inDashboard }}>
+    <li class:list={{ 'has-sections': href === '/dashboard' && inDashboard }}>
       <a href={href} aria-current={isNavigationCurrent(path, href) ? 'page' : undefined}>
         <UiIcon name={icons[href]} size={18}/><span>{label}</span>
       </a>
-      {href === '/account' && inDashboard && (
+      {href === '/dashboard' && inDashboard && (
         <ul class="navigation-sections" aria-label="Dashboard pages">
           {dashboardSections.map(section => (
-            <li><a href={section.href} data-account-link={section.tab} aria-current={section.current || (path === '/account' && section.tab === 'projects') ? 'page' : undefined}>
+            <li><a href={section.href} data-account-link={section.tab} aria-current={section.current || (path === '/dashboard' && section.tab === 'projects') ? 'page' : undefined}>
               <UiIcon name={section.icon} size={16}/><span>{section.label}</span>
             </a></li>
           ))}

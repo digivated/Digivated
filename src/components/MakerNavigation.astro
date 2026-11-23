@@ -4,10 +4,10 @@ import '../styles/maker-navigation.css';
 
 const { submitting = false } = Astro.props;
 const sections = [
-  { id: 'projects', label: 'Overview', href: '/account', icon: 'grid' },
-  { id: 'analytics', label: 'Analytics', href: '/account?tab=analytics', icon: 'chart' },
-  { id: 'profile', label: 'Profile', href: '/account?tab=profile', icon: 'user' },
-  { id: 'settings', label: 'Settings', href: '/account?tab=settings', icon: 'sliders' },
+  { id: 'projects', label: 'Overview', href: '/dashboard', icon: 'grid' },
+  { id: 'analytics', label: 'Analytics', href: '/dashboard?tab=analytics', icon: 'chart' },
+  { id: 'profile', label: 'Profile', href: '/dashboard?tab=profile', icon: 'user' },
+  { id: 'settings', label: 'Settings', href: '/dashboard?tab=settings', icon: 'sliders' },
 ];
 ---
 <nav class="maker-navigation" aria-label="Maker workspace">
@@ -22,5 +22,5 @@ const sections = [
       ))}
     </div>
   )}
-  <a class="maker-navigation-launch" id={submitting ? undefined : 'account-submit-cta'} href="/submit-project" aria-current={submitting ? 'page' : undefined}><UiIcon name="upload" size={15}/>New Launch</a>
+  <a class="maker-navigation-launch" id={submitting ? undefined : 'account-submit-cta'} href="/new-launch" aria-current={submitting ? 'page' : undefined}><UiIcon name="upload" size={15}/>New Launch</a>
 </nav>

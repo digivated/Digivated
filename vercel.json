@@ -121,12 +121,15 @@
     { "source": "/winners", "destination": "/#last-week", "permanent": true },
     { "source": "/points", "destination": "/discover?sort=needs", "permanent": true },
     { "source": "/rankings", "destination": "/discover", "permanent": true },
+    {"source":"/account","destination":"/dashboard","permanent":true},
+    {"source":"/submit-project","destination":"/new-launch","permanent":true},
+    {"source":"/resources","destination":"/tools","permanent":true},
     {"source":"/carousels","destination":"/resources/guides","permanent":true},
     {"source":"/carousels/:slug","destination":"/resources/guides","permanent":true},
     {"source":"/carousels/read","destination":"/resources/guides","permanent":true},
     {
       "source": "/ai-tools",
-      "destination": "/resources",
+      "destination": "/tools",
       "permanent": true
     },
     {

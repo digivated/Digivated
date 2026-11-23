@@ -24,7 +24,7 @@ test('unknown routes cannot invoke handlers, including prototype properties', ()
 });
 test('retired community pages redirect without carrying old post or contact identifiers', () => {
   const router = makePublicRouter({});
-  for (const [path, destination] of [['/creators?post=old-post', '/threads'], ['/inbox/?id=old-contact', '/account']]) {
+  for (const [path, destination] of [['/creators?post=old-post', '/threads'], ['/inbox/?id=old-contact', '/dashboard']]) {
     const headers = {};
     const res = {setHeader:(name,value)=>headers[name]=value,end(){}};
     router({url:path},res);

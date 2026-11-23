@@ -63,7 +63,7 @@ test('sitemap lists public pages and drops private, redirected, and member-only 
   const xml = renderSitemap(entries);
   assert.match(xml, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
   assert.match(xml, /<loc>https:\/\/digivated\.com\/projects\/fieldnotes-1<\/loc><lastmod>2026-04-02<\/lastmod>/);
-  assert.doesNotMatch(xml, /secret-draft|paused-article|example\.com|\/admin|\/api\/|\/account|\/login|\/inbox|\/creators|\/saved|connect-x|research\.html|\/carousels/);
+  assert.doesNotMatch(xml, /secret-draft|paused-article|example\.com|\/admin|\/api\/|\/dashboard|\/login|\/inbox|\/creators|\/saved|connect-x|research\.html|\/carousels/);
 });
 
 test('renderer escapes query separators', () => {
@@ -131,7 +131,7 @@ test('sitemap stays static when public storage is not configured', async () => {
 
 test('preview sitemap reads the public project and creator responses', async () => {
   const pages = {
-    'https://digivated.com/api/projects?offset=0': { items: [{ pageUrl: '/projects/listing/project-one', date: '2026-03-03', email: 'hidden@example.com' }, { pageUrl: '/account' }], next: 100 },
+    'https://digivated.com/api/projects?offset=0': { items: [{ pageUrl: '/projects/listing/project-one', date: '2026-03-03', email: 'hidden@example.com' }, { pageUrl: '/dashboard' }], next: 100 },
     'https://digivated.com/api/projects?offset=100': { items: [{ pageUrl: '/projects/fieldnotes-1', publishedAt: '2026-04-02T00:00:00.000Z' }], next: null },
     'https://digivated.com/api/creator-profile?action=discover': { creators: [{ id: creator, name: 'Ada' }, { id: 'private' }] },
     'https://digivated.com/api/news': { items: [{ publishedAt: '2026-05-05T00:00:00.000Z' }], featured: { publishedAt: '2026-05-06T00:00:00.000Z' } },
@@ -142,7 +142,7 @@ test('preview sitemap reads the public project and creator responses', async () 
   assert.ok(locs.includes('https://digivated.com/projects/listing/project-one'));
   assert.ok(locs.includes('https://digivated.com/projects/fieldnotes-1'));
   assert.ok(locs.includes(`https://digivated.com/creator?id=${creator}`));
-  assert.equal(locs.includes('https://digivated.com/account'), false);
+  assert.equal(locs.includes('https://digivated.com/dashboard'), false);
   assert.equal(locs.filter(loc => loc.includes('/creator?id=')).length, 1);
   assert.equal(entries.find(entry => entry.loc === 'https://digivated.com/news').lastmod, '2026-05-06');
   assert.equal(JSON.stringify(entries).includes('hidden@example.com'), false);

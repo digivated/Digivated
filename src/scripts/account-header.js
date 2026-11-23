@@ -87,10 +87,10 @@ if(menu&&trigger&&panel){
  const items=()=>[...panel.querySelectorAll('[role=menuitem]')];
  const close=(focus=false)=>{if(panel.hidden)return;panel.hidden=true;trigger.setAttribute('aria-expanded','false');if(focus)trigger.focus();};
  const open=(first=false)=>{
-  if(location.pathname.replace(/\/$/,'')==='/account'){
+  if(location.pathname.replace(/\/$/,'')==='/dashboard'){
    const activeTab=new URLSearchParams(location.search).get('tab');
-   panel.querySelectorAll('a[href^="/account"]').forEach(item=>{
-    const settings=item.getAttribute('href')==='/account?tab=settings';
+   panel.querySelectorAll('a[href^="/dashboard"]').forEach(item=>{
+    const settings=item.getAttribute('href')==='/dashboard?tab=settings';
     if(settings===(activeTab==='settings')) item.setAttribute('aria-current','page');
     else item.removeAttribute('aria-current');
    });
@@ -117,7 +117,7 @@ if(menu&&trigger&&panel){
 }
 
 // Let an incoming email callback establish its session on the account page first.
-if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.includes('access_token='))){
+if(link&&!(location.pathname.replace(/\/$/,'')==='/dashboard'&&location.hash.includes('access_token='))){
  let request=0,signedIn=false;
  const update=async(fresh=false,refreshAvatar=false)=>{
   const current=++request;
@@ -130,7 +130,7 @@ if(link&&!(location.pathname.replace(/\/$/,'')==='/account'&&location.hash.inclu
    header?.setAttribute('data-account',hasAccount?'signed-in':'signed-out');
    // The text link stays as the fallback when the dropdown is unavailable.
    link.textContent=hasAccount?'My account':'Log In';
-   link.href=hasAccount?'/account':'/login';
+   link.href=hasAccount?'/dashboard':'/login';
    if(state==='signed-in')link.setAttribute('aria-label',`My account, signed in as ${email}`);
    else if(hasAccount)link.setAttribute('aria-label','My account, account connection needs attention');
    else link.removeAttribute('aria-label');

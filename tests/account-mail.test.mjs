@@ -70,7 +70,7 @@ test('missing-badge reminders give an AI prompt and use the verified transaction
     const message = badgeEmail(record, stage);
     assert.match(message.text, /Check my website/);
     assert.match(message.text, /Add this exact HTML to my homepage footer/);
-    assert.match(message.text, /account#project-project-1/);
+    assert.match(message.text, /dashboard#project-project-1/);
   }
   for (const [stage, from] of [['finish', env.SIGNUP_EMAIL_FROM], ['verified', env.ACCOUNT_EMAIL_FROM]]) {
     const sent = await sendBadgeEmail(record, stage, env, async (_url, request) => {

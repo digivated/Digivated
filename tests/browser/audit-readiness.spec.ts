@@ -12,7 +12,7 @@ test('public crawl files list canonical pages and exclude private routes',async(
  expect(xml).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
  expect(xml).toContain('<loc>https://digivated.com/discover</loc>');
  expect(xml).toContain('<loc>https://digivated.com/resources/guides</loc>');
- expect(xml).not.toMatch(/<loc>[^<]*\/(?:admin|account|inbox|login|saved)(?:<|\/)/);
+ expect(xml).not.toMatch(/<loc>[^<]*\/(?:admin|dashboard|account|inbox|login|saved)(?:<|\/)/);
 });
 
 for(const width of [390,1366]) test(`home shows launches without the extra panels at ${width}px`,async({page})=>{

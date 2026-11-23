@@ -16,7 +16,7 @@ const activityChoices = [
 <Platform title="Notifications" description="See your Digivated activity and manage your notification settings.">
   <section class="notifications-page" aria-labelledby="notifications-title">
     <SettingsMasthead title="Notifications" id="notifications-title" level="h1" description="Launch updates and activity.">
-      <a href="/account?tab=settings"><UiIcon name="arrow-left" size={16}/> Account settings</a>
+      <a href="/dashboard?tab=settings"><UiIcon name="arrow-left" size={16}/> Account settings</a>
     </SettingsMasthead>
 
     <div id="notifications-auth" class="notifications-auth notifications-card" role="status">
@@ -49,7 +49,7 @@ const activityChoices = [
         <section class="notifications-approvals notifications-card" aria-labelledby="notifications-approvals-title">
           <header class="notifications-section-head">
             <div><h2 id="notifications-approvals-title">Your live projects</h2><p id="notifications-approval-status">Checking your live projects…</p></div>
-            <a class="fl-link" href="/account">Your Projects <UiIcon name="arrow" size={15}/></a>
+            <a class="fl-link" href="/dashboard">Your Projects <UiIcon name="arrow" size={15}/></a>
           </header>
           <div id="notifications-approvals" class="notifications-items"></div>
         </section>

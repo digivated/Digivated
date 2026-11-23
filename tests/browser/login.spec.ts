@@ -245,7 +245,7 @@ test('signup requests a code, recovers from a typo, and signs in only after veri
     const user = { id: '4ad90c9b-5666-482d-899c-d0d3ef41ee46', email };
     return route.fulfill({ json: { access_token: 'fixture', refresh_token: 'fixture', token_type: 'bearer', expires_in: 3600, user } });
   });
-  await page.route('**/submit-project', route => route.fulfill({ body: 'Submission destination' }));
+  await page.route('**/new-launch', route => route.fulfill({ body: 'Submission destination' }));
   await page.goto('http://127.0.0.1:4321/login?mode=signup&next=%2Fsubmit-project');
   await expect(page.locator('#login-code-form')).toBeHidden();
   await page.locator('#login-email').fill(email);
@@ -261,6 +261,6 @@ test('signup requests a code, recovers from a typo, and signs in only after veri
   await expect(page.locator('#login-status')).toContainText('incorrect or expired');
   await page.locator('#login-code').fill('123456');
   await page.getByRole('button', { name: 'Verify and create account' }).click();
-  await expect(page).toHaveURL(/\/submit-project$/);
+  await expect(page).toHaveURL(/\/new-launch$/);
   expect(attempts).toEqual(['654321', '123456']);
 });

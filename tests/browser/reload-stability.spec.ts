@@ -17,8 +17,8 @@ for (const path of ['/', '/discover', '/news']) {
 
 test('the homepage still forwards email sign-in callbacks to the dashboard', async ({ page }) => {
   const callback = '#access_token=fixture-token&refresh_token=fixture-refresh';
-  const dashboard = page.waitForURL(url => url.pathname === '/account' && url.hash === callback);
-  await page.route('**/account', route => route.fulfill({ contentType: 'text/html', body: '<title>Account callback fixture</title>' }));
+  const dashboard = page.waitForURL(url => url.pathname === '/dashboard' && url.hash === callback);
+  await page.route('**/dashboard', route => route.fulfill({ contentType: 'text/html', body: '<title>Account callback fixture</title>' }));
   await page.goto(base + '/' + callback).catch(error => {
     if (!String(error).includes('ERR_ABORTED')) throw error;
   });

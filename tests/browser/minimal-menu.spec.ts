@@ -72,7 +72,7 @@ test('the menu opens without JavaScript', async ({ browser }) => {
 
 test('the drawer close button restores focus', async ({ page }) => {
   await page.setViewportSize({ width: 1000, height: 900 });
-  await page.goto(base + '/account');
+  await page.goto(base + '/dashboard');
   const trigger = page.locator('.site-menu-trigger');
   await trigger.click();
   const menu = page.getByRole('navigation', { name: 'Site menu' });
@@ -91,7 +91,7 @@ test('the phone menu stays inside a short viewport', async ({ page }) => {
   const bounds = (await menu.boundingBox())!;
   expect(bounds.y + bounds.height).toBeLessThanOrEqual(360);
   await menu.getByRole('link', { name: 'New Launch', exact: true }).click();
-  await expect(page).toHaveURL(/\/submit-project$/);
+  await expect(page).toHaveURL(/\/new-launch$/);
 });
 
 

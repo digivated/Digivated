@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { makeSubmissionHandler } from '../../server/submissions.mjs';
 const base='http://127.0.0.1:4321';
-const routes=['/','/discover','/resources','/products','/submit-project','/about','/ui-ux-prompt-packet','/access','/library','/privacy','/terms'];
+const routes=['/','/discover','/tools','/products','/new-launch','/about','/ui-ux-prompt-packet','/access','/library','/privacy','/terms'];
 for(const width of [375,768,1440]){
  test(`platform and protected purchase pages fit ${width}px`,async({page})=>{
   await page.setViewportSize({width,height:900});
@@ -43,7 +43,7 @@ test('submission UI reaches real validation handler and only confirms a stored p
   const response={set statusCode(value:number){status=value;},setHeader:(k:string,v:string)=>headers[k]=v,end:(value:string)=>body=value};
   await handler(request,response);await route.fulfill({status,headers,body});
  });
- await page.goto(base+'/submit-project');
+ await page.goto(base+'/new-launch');
  await page.getByLabel('Creator Name').fill('Browser fixture');await page.getByLabel('Email',{exact:false}).fill('fixture@example.com');await page.getByLabel('Project Name',{exact:true}).fill('Test fixture only');await page.getByLabel('Project URL').fill('https://example.com');await page.getByLabel('Project Description').fill('A test-only project used to verify private review submission.');await page.getByRole('combobox',{name:'Category',exact:true}).selectOption('Apps');
  await page.getByRole('button',{name:/Submit Your Project/}).click();expect(saved).toBeUndefined();
  await page.getByRole('checkbox').check();await page.getByRole('button',{name:/Submit Your Project/}).click();await expect(page.locator('#submission-status')).toContainText('received for review');expect(saved.status).toBe('pending');expect(saved.email).toBe('fixture@example.com');
@@ -51,7 +51,7 @@ test('submission UI reaches real validation handler and only confirms a stored p
 });
 test('storage unavailable retains entered details and does not claim success',async({page})=>{
  await page.route('**/api/submissions',r=>r.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Submissions are not open yet. Please check back soon.'})}));
- await page.goto(base+'/submit-project');
+ await page.goto(base+'/new-launch');
  await page.getByLabel('Creator Name').fill('Browser fixture');await page.getByLabel('Email',{exact:false}).fill('fixture@example.com');await page.getByLabel('Project Name',{exact:true}).fill('Retain my project');await page.getByLabel('Project URL').fill('https://example.com');await page.getByLabel('Project Description').fill('A test-only description for the unavailable storage response.');await page.getByRole('combobox',{name:'Category',exact:true}).selectOption('Apps');await page.getByRole('checkbox').check();await page.getByRole('button',{name:/Submit Your Project/}).click();await expect(page.locator('#submission-status')).toContainText('not open yet');await expect(page.getByLabel('Project Name',{exact:true})).toHaveValue('Retain my project');
 });
 

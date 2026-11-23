@@ -33,9 +33,9 @@ for (const width of [390, 1440]) test(`shop plans lead to the correct launch pat
  const membership = page.getByRole('article', { name: 'Membership', exact: true });
  await expect(free.locator('.shop-price')).toHaveText('$0');
  await expect(starter.locator('[data-shop-spot-price]')).toHaveText('$3');
- await expect(free.getByRole('link', { name: 'Start free' })).toHaveAttribute('href', '/submit-project#project-form');
+ await expect(free.getByRole('link', { name: 'Start free' })).toHaveAttribute('href', '/new-launch#project-form');
  await expect(free.getByRole('link', { name: 'Start free' })).toHaveCSS('color', 'rgb(11, 11, 12)');
- await expect(starter.getByRole('link', { name: 'Get Starter' })).toHaveAttribute('href', '/submit-project?spot=1#project-form');
+ await expect(starter.getByRole('link', { name: 'Get Starter' })).toHaveAttribute('href', '/new-launch?spot=1#project-form');
  await expect(membership.locator('.shop-list')).toHaveCSS('row-gap', '9px');
 
  const bounds = await Promise.all([free.boundingBox(), starter.boundingBox(), membership.boundingBox()]);
@@ -56,10 +56,10 @@ test('paused Starter checkout still points to the free launch', async ({ page })
  await page.goto(base + '/shop');
  const starter = page.getByRole('article', { name: 'Starter', exact: true });
  await expect(starter.getByRole('status')).toContainText('Starter is paused');
- await expect(starter.getByRole('link', { name: 'Launch free' })).toHaveAttribute('href', '/submit-project#project-form');
+ await expect(starter.getByRole('link', { name: 'Launch free' })).toHaveAttribute('href', '/new-launch#project-form');
 });
 test('previous purchase pages keep working without standalone buy links',async({page})=>{
- for(const path of ['/access','/library','/ui-ux-prompt-packet','/resources','/carousels','/submit-project']){
+ for(const path of ['/access','/library','/ui-ux-prompt-packet','/tools','/carousels','/new-launch']){
   await page.goto(base+path);await expect(page.locator('main')).toBeVisible();
   await expect(page.locator('a[href*="gumroad.com/l/"]')).toHaveCount(0);
  }
@@ -80,7 +80,7 @@ test('membership sign-in preserves the verified member spotlight flow',async({pa
  await page.locator('#founding-access-form button').click();
  await expect(page.locator('#membership-verified')).toBeVisible();
  await expect(page.locator('#founding-access-form')).toBeHidden();
- await expect(page.locator('#membership-verified a')).toHaveAttribute('href','/submit-project?membership=1#project-form');
+ await expect(page.locator('#membership-verified a')).toHaveAttribute('href','/new-launch?membership=1#project-form');
 });
 
 test('checkout readiness preserves same-origin preview access cookies', async ({ page, context }) => {

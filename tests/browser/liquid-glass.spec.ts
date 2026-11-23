@@ -11,7 +11,7 @@ test('white mobile menu remains readable and routes correctly',async({page})=>{
  const material=await menu.evaluate(element=>({filter:getComputedStyle(element).backdropFilter,background:getComputedStyle(element).backgroundColor}));
  expect(material).toEqual({filter:'none',background:'rgb(255, 255, 255)'});
  await menu.getByRole('link',{name:'Tools'}).click();
- await expect(page).toHaveURL(/\/resources\/?$/);
+ await expect(page).toHaveURL(/\/tools\/?$/);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 
@@ -33,7 +33,7 @@ test('reduced motion keeps the glass surfaces and readable controls',async({page
  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:390,height:844});await page.goto(base+'/');
  const launch = page.locator('.dg-home-hero').getByRole('link', { name: 'New Launch', exact: true });
  await expect(launch).toBeVisible();
- await expect(launch).toHaveAttribute('href', '/submit-project');
+ await expect(launch).toHaveAttribute('href', '/new-launch');
  await expect(launch).toHaveCSS('transition-duration', '0s');
  await page.locator('.site-menu-trigger').click();
  await expect(page.locator('#explore-navigation')).toBeVisible();

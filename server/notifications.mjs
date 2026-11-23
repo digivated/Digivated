@@ -274,7 +274,7 @@ export async function notifyLaunchScheduled(redis, record) {
   const id = randomUUID(), now = Date.now();
   const { scheduledAt, scheduledTimestamp } = freeLaunchSchedule(record);
   const item = { id, recipientId:userId, type:'scheduled', title:TITLES.scheduled,
-    href:`/account#project-${record.id}`, createdAt:new Date(now).toISOString(),
+    href:`/dashboard#project-${record.id}`, createdAt:new Date(now).toISOString(),
     ...detail({ actorName: record.name, verb: scheduledTimestamp > now
       ? `is scheduled for ${freeLaunchDay(scheduledAt)} at 9 AM Eastern`
       : 'has a verified launch badge' }) };

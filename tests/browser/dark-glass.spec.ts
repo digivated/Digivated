@@ -10,7 +10,7 @@ test.beforeEach(async({page})=>{
 });
 for(const width of [390,1440])test(`dark surfaces stay readable across all layouts at ${width}px`,async({page})=>{
   await page.setViewportSize({width,height:900});
-  for(const path of ['/','/submit-project','/saved','/about','/resources','/login','/library','/builder','/toolkit','/admin']){
+  for(const path of ['/','/new-launch','/saved','/about','/tools','/login','/library','/builder','/toolkit','/admin']){
     await page.goto(base+path);
     await expect(page.locator('html')).toHaveCSS('color-scheme','dark');
     await expect(page.locator('body')).toHaveCSS('background-color','rgb(5, 5, 5)');
