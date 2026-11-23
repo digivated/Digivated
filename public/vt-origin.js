@@ -1,2 +1,21 @@
 /* Page transitions: remember the middle of what was on screen so the outgoing page scales around it. */
-(()=>{const k='gm-vt-origin',m=()=>document.querySelector('.dg-workspace-content > #main');addEventListener('pageswap',e=>{try{const el=m();if(e.viewTransition&&el)sessionStorage.setItem(k,String(Math.round(innerHeight/2-el.getBoundingClientRect().top)))}catch{}});addEventListener('pagereveal',e=>{let y=null;try{y=sessionStorage.getItem(k);sessionStorage.removeItem(k)}catch{}const vt=e.viewTransition,r=document.documentElement;if(!vt||!y||!/^-?\d+$/.test(y))return;r.style.setProperty('--gm-vt-origin','50% '+y+'px');vt.finished.finally(()=>r.style.removeProperty('--gm-vt-origin'))})})();
+(() => {
+  const key = 'gm-vt-origin';
+  const main = () => document.querySelector('.dg-workspace-content > #main');
+  addEventListener('pageswap', event => {
+    try {
+      const el = main();
+      if (event.viewTransition && el) sessionStorage.setItem(key, String(Math.round(innerHeight / 2 - el.getBoundingClientRect().top)));
+      else sessionStorage.removeItem(key);
+    } catch {}
+  });
+  addEventListener('pagereveal', event => {
+    let y = null;
+    try { y = sessionStorage.getItem(key); sessionStorage.removeItem(key); } catch {}
+    const transition = event.viewTransition, root = document.documentElement;
+    if (!transition || !y || !/^-?\d+$/.test(y)) return;
+    root.style.setProperty('--gm-vt-origin', `50% ${y}px`);
+    const clear = () => root.style.removeProperty('--gm-vt-origin');
+    transition.finished.then(clear, clear);
+  });
+})();
