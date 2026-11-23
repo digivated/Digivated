@@ -19,12 +19,13 @@ const DAY = 86_400_000;
 const live = !process.env.DIGIVATED_TEST_REDIS_PORT;
 const secret = 'test-only';
 
-test('fair start runs from Monday 00:00 UTC to Tuesday 14:00 UTC and shuffles hourly', () => {
-  const monday = Date.parse('2026-11-16T00:00:00Z');
+test('fair start runs from Monday 9 AM Eastern to Tuesday 9 AM Eastern and shuffles hourly', () => {
+  const monday = Date.parse('2026-11-16T14:00:00Z');
+  assert.equal(fairStart(monday - 1).active, false);
   assert.equal(fairStart(monday + 3_600_000).active, true);
-  assert.equal(fairStart(monday + 37 * 3_600_000).active, true);
-  assert.equal(fairStart(monday + 38 * 3_600_000).active, false);
-  assert.equal(fairStart(monday + 38 * 3_600_000).endsAt, Date.parse('2026-11-17T14:00:00Z'));
+  assert.equal(fairStart(monday + 23 * 3_600_000).active, true);
+  assert.equal(fairStart(monday + 24 * 3_600_000).active, false);
+  assert.equal(fairStart(monday + 24 * 3_600_000).endsAt, Date.parse('2026-11-17T14:00:00Z'));
   assert.equal(fairStart(Date.parse('2026-11-21T12:00:00Z')).active, false);
   const ids = ['a', 'b', 'c', 'd', 'e', 'f'];
   const order = at => ids.slice().sort((x, y) => fairOrder(x, at) - fairOrder(y, at)).join('');
