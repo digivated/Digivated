@@ -11,7 +11,9 @@ const browser = await chromium.launch();
 
 async function context(opts) {
   const ctx = await browser.newContext({ colorScheme: 'light', reducedMotion: 'reduce', ...opts });
-  await ctx.route(/\/api\/(project-views|site-activity|visitors)|_vercel\/insights|google-analytics|googletagmanager|sentry/, r => r.abort());
+  // Block analytics and any write beacons (POST), but let read-only GETs load live counts.
+  await ctx.route(/_vercel\/insights|google-analytics|googletagmanager|sentry/, r => r.abort());
+  await ctx.route(/\/api\/(project-views|site-activity|visitors)/, r => r.request().method() === 'GET' ? r.continue() : r.abort());
   return ctx;
 }
 async function settle(page, ms = 1500) {
