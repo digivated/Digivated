@@ -1,6 +1,6 @@
 # Digivated membership checkout history
 
-Digivated's public offer is **$5 USD once**. It includes unlimited project uploads that go live instantly and full News summaries. The $3 Starter listing (`/l/instant-launch`, copy in `starter-product.json`) gives 3 projects. Running the setup at `/admin#gumroad-setup` updates both listings; it never changes the Starter price. The News section is live. Check the current offer and access instructions on `/membership` before changing seller settings.
+Digivated's public offer is **$5 USD once**. It includes unlimited project uploads that go live instantly, the UI/UX Prompt Packet and member guides. News is free for everyone and is not part of the offer. The $3 Starter listing (`/l/instant-launch`, copy in `starter-product.json`) gives 3 projects. Running the setup at `/admin#gumroad-setup` updates both listings; it never changes the Starter price. The News section is live. Check the current offer and access instructions on `/membership` before changing seller settings.
 
 The remap procedure below is retained as an operations record; it is not a routine deployment step. Existing packet, founding membership, and promotional purchases retain their original access and benefits. Preserve the existing one-time product ID and permalink because purchase verification depends on them.
 
@@ -15,13 +15,13 @@ The remap procedure below is retained as an operations record; it is not a routi
 1. Deploy the site and images first. Set `GUMROAD_ACCESS_TOKEN` through secure environment settings, with product-edit access (`edit_products`); profile-edit access is optional. Never paste tokens in chat or commit them.
 2. Run `node scripts/remap-gumroad-membership.mjs` for a read-only account/product check.
 3. Run `node scripts/remap-gumroad-membership.mjs --apply` to update the existing membership's metadata and images, publish the matching storefront, and unpublish only the three old standalone products named in the script. It does not delete products, buyer files, sales, or licenses. A private backup is written to `/tmp`.
-4. Verify the public listing and checkout show $5 USD once, the two benefits, and News coming soon. Set `checkoutReady: true` in `src/data/membership.mjs`, rebuild, and deploy.
+4. Verify the public listing and checkout show $5 USD once and the current benefits, with no News claim. Set `checkoutReady: true` in `src/data/membership.mjs`, rebuild, and deploy.
 
 A failed or incomplete remap must leave checkout disabled. Gumroad checkout itself remains Gumroad-managed. The custom profile and cover assets carry Digivated's theme.
 
-## Access and future News
+## Access
 
-Existing server-only Gumroad verification, product ID, encrypted cookies, refund/chargeback checks and atomic one-feature claim are preserved. Internal `founding-*` names remain compatible with existing licenses; they are not a second public offer. The new News section must use server-side verified membership (`readMember`) before returning paid content; no new News content or entitlement is served by this staging change.
+Existing server-only Gumroad verification, product ID, encrypted cookies, refund/chargeback checks and atomic one-feature claim are preserved. Internal `founding-*` names remain compatible with existing licenses; they are not a second public offer. News no longer checks membership.
 
 The seller-edit token is an operator credential for this one-time remap. It is not used by the deployed site and should not replace the site's read-only purchase-verification credential.
 

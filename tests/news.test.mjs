@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {NEWS_SOURCES,parseFeed,verifyArticle,canonicalNewsUrl} from '../server/news-sources.mjs';
 import {assessCandidate} from '../server/news-verification.mjs';
-import {makeNewsHandler,newsMember} from '../server/news-handler.mjs';
+import {makeNewsHandler} from '../server/news-handler.mjs';
 import {makeNewsIngestHandler} from '../server/news-ingest-handler.mjs';
 import {runNewsIngest} from '../server/news-pipeline.mjs';
 import {NEWS,insertNews,getNewsRecord,saveNewsRecord} from '../server/news-store.mjs';
@@ -36,21 +36,16 @@ test('rumors, negated claims, stale stories and uncertain importance cannot auto
  assert.equal(assessCandidate({...c,headline:'How to protect Windows'},{now}).classification,'update');
  assert.equal(assessCandidate({...c,sourcePublishedAt:new Date(now-7*3600000).toISOString(),evidence:{...c.evidence,articlePublishedAt:null}},{now}).classification,'update');
 });
-test('public News is limited to five recent stories; members get the archive and markets',async()=>{
- const record={id:'a'.repeat(24),...verified(),tickers:[{symbol:'SMALL',exchange:'NASDAQ'}],summary:'PRIVATE MEMBER SUMMARY',publishedAt:new Date(now).toISOString(),updatedAt:new Date(now).toISOString(),classification:'breaking',importance:95};
- const redis=async cmd=>cmd[0]==='ZREVRANGE'?[record.id]:cmd[0]==='MGET'?[JSON.stringify(record)]:null;
- const handler=member=>makeNewsHandler({redis,env:{},member:async()=>member,now:()=>now});
- const publicResult=await call(handler(false));assert.equal(publicResult.code,200);assert.equal(publicResult.body.member,false);assert.equal(publicResult.body.items[0].summary,record.summary);assert.equal(publicResult.body.next,null);assert.equal(publicResult.headers.Vary,'Cookie');assert.match(publicResult.headers['Cache-Control'],/no-store/);
- for(const secret of ['sourceText','contentHash','feedSummary'])assert.equal(JSON.stringify(publicResult.body).includes(secret),false);
- assert.equal((await call(handler(false),'/api/news?q=%24SMALL')).body.items.length,1);
- assert.equal((await call(handler(false),'/api/news?q=PRIVATE')).body.items.length,0);
- assert.equal((await call(handler(true))).body.items[0].summary,record.summary);
- assert.equal((await call(handler(true),'/api/news?q=PRIVATE')).body.items.length,1);
- assert.equal((await call(handler(false),'/api/news?category=invalid')).code,400);
-});
-test('owner dashboard cookie does not unlock the public News archive',async()=>{
- const req={headers:{cookie:'__Host-digivated-admin=owner-session'}};
- assert.equal(await newsMember(req,async()=>{throw Error('Admin Redis must not be consulted');},{},async()=>{throw Error('Gumroad must not be consulted');}),false);
+test('News is free: every visitor gets the archive, summaries, search and markets',async()=>{
+ const record={id:'a'.repeat(24),...verified(),tickers:[{symbol:'SMALL',exchange:'NASDAQ'}],summary:'FULL SUMMARY TEXT',publishedAt:new Date(now).toISOString(),updatedAt:new Date(now).toISOString(),classification:'breaking',importance:95};
+ const ranges=[];const redis=async cmd=>{if(cmd[0]==='ZREVRANGE'){ranges.push(cmd[3]);return [record.id];}return cmd[0]==='MGET'?[JSON.stringify(record)]:cmd[0]==='GET'&&String(cmd[1]).endsWith('markets')?JSON.stringify({status:'ok',items:[],updatedAt:new Date(now).toISOString()}):null;};
+ const handler=makeNewsHandler({redis,env:{},now:()=>now});
+ const result=await call(handler);assert.equal(result.code,200);assert.equal(result.body.items[0].summary,record.summary);assert.equal(Object.hasOwn(result.body.items[0],'locked'),false);assert.equal(Object.hasOwn(result.body,'member'),false);assert.equal(result.body.markets.status,'ok');assert.match(result.headers['Cache-Control'],/no-store/);
+ assert.deepEqual(ranges,[499]);
+ for(const secret of ['sourceText','contentHash','feedSummary'])assert.equal(JSON.stringify(result.body).includes(secret),false);
+ assert.equal((await call(handler,'/api/news?q=%24SMALL')).body.items.length,1);
+ assert.equal((await call(handler,'/api/news?q=FULL SUMMARY')).body.items.length,1);
+ assert.equal((await call(handler,'/api/news?category=invalid')).code,400);
 });
 test('public visitors cannot trigger source ingestion',async()=>{
  let called=false;const handler=makeNewsIngestHandler({env:{CRON_SECRET:'s'.repeat(40)},redis:async()=>null,run:async()=>{called=true;return {status:'ok'};}});

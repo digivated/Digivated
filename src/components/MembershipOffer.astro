@@ -43,7 +43,6 @@ import '../styles/membership.css';
       <div class="shop-price membership-price"><strong>${membership.priceUSD}</strong><span>once</span></div>
       <ul class="shop-list membership-benefits">
         <li>Unlimited launches (instant)</li>
-        <li>Full News access</li>
         <li>Additional UI/UX Playbook w/ Prompt Builder &amp; Workflows</li>
       </ul>
       {membership.checkoutReady ? <a class="button primary membership-checkout shop-cta" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get membership · $5 once</a> : <><button class="button primary membership-checkout shop-cta" disabled>Checking checkout…</button><p class="membership-checkout-note shop-note" role="status" hidden></p></>}
@@ -56,7 +55,7 @@ import '../styles/membership.css';
     <details><summary>How do project slots work?</summary><p>Pending and live projects count. Archive or delete a project to free a slot. After paying with your Digivated email, choose “I’ve paid, check again” on the launch form.</p></details>
     <details><summary>Do paid projects skip review?</summary><p>Starter and Membership publish instantly after payment verification. Listing rules still apply.</p></details>
     <details><summary>How do I open the Prompt Packet?</summary><p>Verify above, then open the Packet. You can also use your license key at <a href="/access">digivated.com/access</a>.</p></details>
-    <details><summary>Can I read News first?</summary><p>Yes. <a href="/news">Five stories are free</a>. Verify your membership to read the rest.</p></details>
+    <details><summary>Is News part of membership?</summary><p>No. <a href="/news">News</a> is free for everyone, with the full archive and market snapshot.</p></details>
     <details id="previous-purchases"><summary>What about a previous purchase?</summary><p>Older purchases still work. <a href="/access">Open your Prompt Packet</a> or use the form above. Bought a promotion? <a href="/new-launch?promotion=1#project-form">Submit it for review</a>.</p></details>
   </section>
 </div>

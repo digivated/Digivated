@@ -3,7 +3,7 @@ import Platform from '../layouts/Platform.astro';
 import UiIcon from '../components/UiIcon.astro';
 import '../styles/news.css';
 ---
-<Platform showBreadcrumb={false} title="AI, tech and markets news" description="Member briefings on AI and technology, markets, and security, with original sources and publication times." canonicalPath="/news">
+<Platform showBreadcrumb={false} title="AI, tech and markets news" description="Free, source-linked news on AI and technology, markets, and security, with original sources and publication times." canonicalPath="/news">
   <section class="news-page" data-news-page aria-labelledby="news-title">
     <header class="news-masthead">
       <div><h1 id="news-title">News</h1><p class="news-intro">AI, tech, markets, and security.</p></div>
@@ -42,7 +42,6 @@ import '../styles/news.css';
         <details class="news-standards"><summary>How this feed is published <UiIcon name="chevron" size={15}/></summary><div><p>Stories link to original sources. We label company announcements, verify breaking news, and mark corrections.</p></div></details>
       </aside>
     </div>
-    <section class="news-gate" data-news-gate hidden aria-labelledby="news-gate-title"><h2 id="news-gate-title">News archive</h2><p>Five stories are free. Members get the archive and market snapshot.</p><a class="dg-btn dg-btn-primary" href="/shop">View membership</a> <a href="/shop#member-sign-in">Verify a purchase</a></section>
     <noscript><p class="news-status">JavaScript is needed to load and filter the News feed.</p></noscript>
   </section>
 </Platform>

@@ -245,13 +245,14 @@ test('one-time membership advertises one offer and leaves checkout gated during 
   assert.equal(membership.priceUSD, 5);
   assert.equal(membership.billing, 'one-time');
   assert.equal(membership.projectLimit, 0); // unlimited
-  assert.equal(membership.newsStatus, 'live');
+  assert.equal(membership.newsAccess, 'free');
   const payload = JSON.parse(readFileSync(new URL('../gumroad/membership-product.json', import.meta.url), 'utf8'));
   assert.equal(payload.price, 500);
   assert.equal(payload.name, membership.name);
   assert.equal(Object.hasOwn(payload, 'subscription_duration'), false);
   assert.equal(Object.hasOwn(payload, 'files'), false); // Preserve existing buyers' delivered files.
-  assert.match(payload.description, /full News access/i);
+  assert.doesNotMatch(payload.description, /full News access/i);
+  assert.doesNotMatch(payload.custom_receipt, /News briefings/i);
   assert.match(payload.custom_receipt, /unlimited project uploads/i);
   assert.match(payload.description, /unlimited project uploads/i);
   const page = readFileSync(new URL('../src/components/MembershipOffer.astro', import.meta.url), 'utf8');
