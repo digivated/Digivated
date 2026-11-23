@@ -1,4 +1,4 @@
-name: Verify
+name: Site checks
 
 on:
   pull_request:

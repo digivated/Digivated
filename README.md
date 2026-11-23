@@ -12,7 +12,8 @@ Digivated is a home for independent projects and the people building them. Visit
 | `supabase` | Database migrations and Edge Functions |
 | `tests` | API, policy, and browser checks |
 | `docs` | Feature and operations guides, including dated historical notes in `docs/archive` |
-| `marketing-exports`, `media` | Editable marketing source and exported assets |
+| `qa`, `monitoring` | Scheduled visual QA and production monitoring |
+| `scripts` | One-off owner and maintenance scripts |
 
 The site is built as static Astro pages with Vercel functions for account, project, membership, news, and administrative flows. Upstash Redis stores site content and activity. Supabase supports account identity and media storage. Gumroad handles the one-time Digivated Membership checkout. Access checks happen on the server.
 
@@ -39,7 +40,7 @@ npm run check:syntax
 
 - [Admin dashboard](docs/DIGIVATED-ADMIN.md): submissions, publishing, and owner workflows.
 - [News](docs/NEWS.md): source rules, automatic publication, corrections, and member access.
-- [Account email setup](docs/account-email-setup.md): transactional email configuration.
+- [Email setup](docs/account-email-setup.md): senders, keys, fallback and key rotation.
 - [Monitoring](docs/monitoring.md): deployment and error monitoring.
 - [Latest operations audit](docs/operations-audit-2026-11-09.md): verified platform state and follow-up findings.
 - [Gumroad checkout history](gumroad/README.md): the one-time membership remap and storefront notes.
