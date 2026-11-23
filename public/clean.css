@@ -78,7 +78,7 @@
 #digivated-root .board-date-divider { margin: 18px 2px 8px !important; padding: 0 !important; border: 0 !important; background: none !important; font-size: 13px !important; font-weight: 600 !important; color: #0b0b0c !important; }
 #digivated-root .board-date-divider:first-child { margin-top: 8px !important; }
 
-#digivated-root .dg-row:not(.dg-dir-row) {
+#digivated-root .dg-row {
   grid-template-columns: 40px auto auto minmax(0, 1fr) auto !important;
   grid-template-areas: "logo main main main vote" "logo visit comments . vote" !important;
   column-gap: 12px !important;
@@ -92,26 +92,26 @@
   box-shadow: 0 0 0 1px #ececf0 !important;
   transform: none !important;
 }
-#digivated-root .dg-row:not(.dg-dir-row):not(.is-loading) { padding-block: 12px !important; }
+#digivated-root .dg-row:not(.is-loading) { padding-block: 12px !important; }
 #digivated-root .dg-list-rows > .dg-row:first-child,
 #digivated-root .board-date-divider + .dg-row { border-top-left-radius: 16px !important; border-top-right-radius: 16px !important; }
 #digivated-root .dg-list-rows > .dg-row:last-child,
 #digivated-root .dg-list-rows > .dg-row:has(+ :not(.dg-row)) { border-bottom-left-radius: 16px !important; border-bottom-right-radius: 16px !important; box-shadow: 0 0 0 1px #ececf0, 0 8px 18px -10px rgba(17,17,26,.12) !important; }
-#digivated-root .dg-row:not(.dg-dir-row):hover { background: #fafafb !important; }
+#digivated-root .dg-row:hover { background: #fafafb !important; }
 
-#digivated-root .dg-row:not(.dg-dir-row) .dg-logo-link { grid-area: logo !important; align-self: start !important; }
-#digivated-root .dg-row:not(.dg-dir-row) .dg-logo { width: 40px !important; height: 40px !important; border-radius: 10px !important; }
-#digivated-root .dg-row:not(.dg-dir-row) .dg-main { grid-area: main !important; min-width: 0 !important; }
+#digivated-root .dg-row .dg-logo-link { grid-area: logo !important; align-self: start !important; }
+#digivated-root .dg-row .dg-logo { width: 40px !important; height: 40px !important; border-radius: 10px !important; }
+#digivated-root .dg-row .dg-main { grid-area: main !important; min-width: 0 !important; }
 #digivated-root .dg-row .dg-main h3 { margin: 0 !important; font-size: 14.5px !important; line-height: 1.3 !important; font-weight: 650 !important; letter-spacing: -.01em !important; }
 #digivated-root .dg-row .dg-tagline { margin-top: 2px !important; font-size: 13px !important; line-height: 1.4 !important; color: #71717a !important; display: -webkit-box !important; -webkit-line-clamp: 1 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
 #digivated-root .dg-row .dg-meta { margin-top: 3px !important; font-size: 11.5px !important; color: #a1a1aa !important; }
-#digivated-root .dg-row:not(.dg-dir-row) .dg-actions { display: contents !important; }
+#digivated-root .dg-row .dg-actions { display: contents !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments) { min-height: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; font-size: 12px !important; font-weight: 500 !important; color: #71717a !important; gap: 4px !important; justify-self: start !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments):hover { color: #0b0b0c !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments) svg { width: 13px !important; height: 13px !important; }
-#digivated-root .dg-row:not(.dg-dir-row) .dg-visit { grid-area: visit !important; }
-#digivated-root .dg-row:not(.dg-dir-row) .dg-comments { grid-area: comments !important; }
-#digivated-root .dg-row:not(.dg-dir-row) .dg-actions > :is(button, .dg-notify, [data-notify]) { grid-area: vote !important; justify-self: end !important; }
+#digivated-root .dg-row .dg-visit { grid-area: visit !important; }
+#digivated-root .dg-row .dg-comments { grid-area: comments !important; }
+#digivated-root .dg-row .dg-actions > :is(button, .dg-notify, [data-notify]) { grid-area: vote !important; justify-self: end !important; }
 #digivated-root .dg-row .dg-vote { flex-direction: column !important; gap: 1px !important; width: 44px !important; min-width: 44px !important; height: 50px !important; min-height: 0 !important; padding: 0 !important; border: 1px solid #ececf0 !important; border-radius: 12px !important; background: #fff !important; color: #0b0b0c !important; font-size: 13px !important; }
 #digivated-root .dg-row .dg-vote:hover { border-color: #c9c9d0 !important; background: #fafafb !important; color: #0b0b0c !important; }
 #digivated-root .dg-row .dg-vote[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
@@ -170,10 +170,10 @@
 
 /* Long cards: rows fill the content width; the upvote is a full-height column on the right */
 #digivated-root .dg-list-rows { width: 100% !important; max-width: none !important; }
-#digivated-root .dg-row:not(.dg-dir-row) { position: relative !important; overflow: hidden !important; padding: 14px 0 14px 16px !important; column-gap: 14px !important; grid-template-columns: 44px auto auto minmax(0, 1fr) auto !important; }
-#digivated-root .dg-row:not(.dg-dir-row):not(.is-loading) { padding-block: 14px !important; }
-#digivated-root .dg-row:not(.dg-dir-row) .dg-logo { width: 44px !important; height: 44px !important; border-radius: 12px !important; }
-#digivated-root .dg-row:not(.dg-dir-row) .dg-logo-link { align-self: center !important; }
+#digivated-root .dg-row { position: relative !important; overflow: hidden !important; padding: 14px 0 14px 16px !important; column-gap: 14px !important; grid-template-columns: 44px auto auto minmax(0, 1fr) auto !important; }
+#digivated-root .dg-row:not(.is-loading) { padding-block: 14px !important; }
+#digivated-root .dg-row .dg-logo { width: 44px !important; height: 44px !important; border-radius: 12px !important; }
+#digivated-root .dg-row .dg-logo-link { align-self: center !important; }
 #digivated-root .dg-row .dg-vote { align-self: stretch !important; justify-content: center !important; gap: 3px !important; width: 60px !important; min-width: 60px !important; height: auto !important; margin-block: -14px !important; padding: 0 !important; border: 0 !important; border-left: 1px dashed #e4e4e9 !important; border-radius: 0 !important; background: transparent !important; color: #0b0b0c !important; }
 #digivated-root .dg-row .dg-vote:hover { background: #f6f6f8 !important; border-color: #e4e4e9 !important; color: #0b0b0c !important; }
 #digivated-root .dg-row .dg-vote[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
@@ -515,3 +515,8 @@
 }
 
 }
+
+/* Directory rows use the same clean cards as the homepage; the rank number is not shown */
+#digivated-root .dg-row.dg-dir-row .dg-dir-rank { display: none !important; }
+#digivated-root .dg-row .dg-dir-open { display: inline !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; color: inherit !important; font: inherit !important; text-align: left !important; text-decoration: none !important; }
+#digivated-root .dg-row .dg-dir-visit-pts { color: #a1a1aa !important; font-size: 10px !important; }
