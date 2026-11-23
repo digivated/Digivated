@@ -116,7 +116,6 @@
 #digivated-root .dg-row .dg-actions > :is(button, .dg-notify, [data-notify]) { grid-area: vote !important; justify-self: end !important; }
 #digivated-root .dg-row .dg-vote { flex-direction: column !important; gap: 1px !important; width: 44px !important; min-width: 44px !important; height: 50px !important; min-height: 0 !important; padding: 0 !important; border: 1px solid #ececf0 !important; border-radius: 12px !important; background: #fff !important; color: #0b0b0c !important; font-size: 13px !important; }
 #digivated-root .dg-row .dg-vote:hover { border-color: #c9c9d0 !important; background: #fafafb !important; color: #0b0b0c !important; }
-#digivated-root .dg-row .dg-vote[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
 #digivated-root .dg-row .dg-vote .dg-vote-caret { font-size: 10px !important; line-height: 1 !important; }
 #digivated-root .dg-row .dg-vote strong { font-size: 13px !important; font-weight: 650 !important; }
 
@@ -176,7 +175,6 @@
 #digivated-root .dg-row .dg-logo-link { align-self: center !important; }
 #digivated-root .dg-row .dg-vote { align-self: stretch !important; justify-content: center !important; gap: 3px !important; width: 60px !important; min-width: 60px !important; height: auto !important; margin-block: -14px !important; padding: 0 !important; border: 0 !important; border-left: 1px dashed #e4e4e9 !important; border-radius: 0 !important; background: transparent !important; color: #0b0b0c !important; }
 #digivated-root .dg-row .dg-vote:hover { background: #f6f6f8 !important; border-color: #e4e4e9 !important; color: #0b0b0c !important; }
-#digivated-root .dg-row .dg-vote[aria-pressed="true"] { background: #0b0b0c !important; border-color: #0b0b0c !important; color: #fff !important; }
 #digivated-root .dg-row .dg-vote .dg-vote-caret { font-size: 11px !important; }
 #digivated-root .dg-row .dg-vote strong { font-size: 14px !important; font-weight: 650 !important; }
 #digivated-root .dg-row .dg-watch { margin-right: 14px !important; }
@@ -529,4 +527,40 @@
 #digivated-root .dg-dir-divider::before, #digivated-root .dg-dir-divider::after { content: none !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments) { text-transform: none !important; letter-spacing: 0 !important; font-family: inherit !important; }
 #digivated-root .dg-row .dg-dir-visit-pts { display: none !important; }
+/* A confirmed upvote colors the arrow and count while the control keeps its neutral surface. */
+#digivated-root {
+  --upvote-ink: #08743e;
+}
+#digivated-root :is(.dg-vote, .dg-d-like, .rl-vote, .launch-vote, [data-like-id])[aria-pressed="true"] {
+  color: var(--upvote-ink) !important;
+  background: var(--fl-surface) !important;
+  border-color: var(--fl-line) !important;
+  box-shadow: none !important;
+}
+#digivated-root .dg-row .dg-vote[aria-pressed="true"] {
+  color: var(--upvote-ink) !important;
+  background: transparent !important;
+  border-color: #e4e4e9 !important;
+}
+#digivated-root :is(.dg-vote, .dg-d-like, .rl-vote)[aria-pressed="true"] > :is(span, strong) {
+  color: inherit !important;
+  animation: none !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  #digivated-root :is(.dg-row .dg-vote, .dg-vote, .dg-d-like, .rl-vote, .launch-vote, [data-like-id]) {
+    transition: color 160ms ease-out, background-color 160ms ease-out, scale 160ms ease-out !important;
+  }
+  /* Home and directory replace vote buttons after saving. Start the new button at its old color. */
+  @starting-style {
+    #digivated-root :is(.dg-row .dg-vote, .dg-vote)[data-vote-changed][aria-pressed="true"] {
+      color: var(--fl-ink) !important;
+    }
+    #digivated-root :is(.dg-row .dg-vote, .dg-vote)[data-vote-changed][aria-pressed="false"] {
+      color: var(--upvote-ink) !important;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #digivated-root :is(.dg-vote, .dg-d-like, .rl-vote, .launch-vote, [data-like-id]) { transition: none !important; }
+}
 }

@@ -192,7 +192,6 @@
   .launch-mark { background: var(--fl-raised) !important; }
   .launch-page .launch-vote { border: 1px solid var(--fl-line-hi) !important; border-radius: var(--fl-radius) !important; background: var(--fl-surface) !important; color: var(--fl-ink) !important; }
   .launch-page .launch-vote:hover { background: var(--fl-raised) !important; }
-  .launch-page .launch-vote[aria-pressed="true"] { background: var(--fl-ink) !important; color: var(--fl-surface) !important; }
   .launch-page .launch-share > button { color: var(--fl-copy) !important; }
   .launch-page .launch-section-nav { border: 1px solid var(--fl-line) !important; background: var(--fl-surface) !important; box-shadow: 0 3px 9px #0000000d !important; }
   .launch-page .launch-section-nav a { color: var(--fl-copy) !important; }

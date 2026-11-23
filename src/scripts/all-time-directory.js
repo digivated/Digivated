@@ -172,11 +172,14 @@ if (root) {
     finally {
       pending.delete(p.id);
       const focused = document.activeElement === button;
-      for (const node of document.querySelectorAll(`[data-vote-id="${CSS.escape(p.id)}"]`)) node.replaceWith(vote(p));
+      for (const node of document.querySelectorAll(`[data-vote-id="${CSS.escape(p.id)}"]`)) {
+        const replacement = vote(p);
+        if (!failure && node.getAttribute('aria-pressed') !== replacement.getAttribute('aria-pressed')) replacement.setAttribute('data-vote-changed', '');
+        node.replaceWith(replacement);
+      }
       const next = document.querySelector(`.dg-dir-row[data-project-id="${CSS.escape(p.id)}"] .dg-vote, .wall-focus [data-vote-id="${CSS.escape(p.id)}"]`);
       if (focused) next?.focus({ preventScroll: true });
       if (failure) say(failure);
-      else if (p.liked && next && !reduced.matches) next.animate([{ transform: 'none' }, { transform: 'translateY(-4px) scale(1.06)' }, { transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.2,.9,.3,1.4)' });
     }
   }
   const live = $('[data-dir-live]');

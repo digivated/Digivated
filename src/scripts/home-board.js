@@ -217,7 +217,7 @@ async function toggleVote(p, button, li) {
     if (failure) section.querySelector('[data-section-note]').textContent = failure;
     const next = section.querySelector(`[data-launch-id="${CSS.escape(p.id)}"] .dg-vote`);
     if (focused) next?.focus({ preventScroll: true });
-    if (!failure && p.liked && next && canAnimate()) next.animate([{ transform: 'none' }, { transform: 'translateY(-4px) scale(1.06)' }, { transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.2,.9,.3,1.4)' });
+    if (!failure && button.getAttribute('aria-pressed') !== next?.getAttribute('aria-pressed')) next?.setAttribute('data-vote-changed', '');
   }
 }
 
