@@ -6,7 +6,8 @@ export const membership = Object.freeze({
   checkoutReady: false,
   checkoutUrl: 'https://digivated.gumroad.com/l/founding-member-pass',
   gumroadProductId: 'ECtpJt5BlrNuDT2z1Ka8Jg==',
-  newsStatus: 'live',
+  // News is free for everyone and is not a membership benefit.
+  newsAccess: 'free',
   // Unlimited project uploads that publish instantly (see src/lib/plans.mjs).
   projectLimit: 0,
 });

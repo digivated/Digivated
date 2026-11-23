@@ -251,7 +251,8 @@ test('carousel routes stay on the shared function and do not add an API file', a
   assert.match(offer, /Digivated Membership/);
   assert.match(offer, /\$5 USD/);
   assert.doesNotMatch(offer, /\$2/);
-  assert.match(offer, /full member News summaries/i);
+  assert.doesNotMatch(offer, /full member News summaries|Full News access/i);
+  assert.match(offer, /News is free for everyone/);
   assert.match(offer, /checkoutReady: false/);
   assert.equal(offer.includes('\u2014'), false);
 });
