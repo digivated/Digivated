@@ -42,10 +42,9 @@ import '../styles/membership.css';
       <h2 id="shop-member-title">Membership</h2>
       <div class="shop-price membership-price"><strong>${membership.priceUSD}</strong><span>once</span></div>
       <ul class="shop-list membership-benefits">
-        <li>Unlimited instant launches</li>
-        <li>Full site access</li>
-        <li>Full News archive</li>
-        <li>UI/UX Playbook, prompt builder and workflows</li>
+        <li>Unlimited launches (instant)</li>
+        <li>Full News access</li>
+        <li>Additional UI/UX Playbook w/ Prompt Builder &amp; Workflows</li>
       </ul>
       {membership.checkoutReady ? <a class="button primary membership-checkout shop-cta" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get membership · $5 once</a> : <><button class="button primary membership-checkout shop-cta" disabled>Checking checkout…</button><p class="membership-checkout-note shop-note" role="status" hidden></p></>}
     </article>
