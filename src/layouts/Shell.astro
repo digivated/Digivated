@@ -22,7 +22,7 @@ import '../styles/readability.css';
   <nav class="packet-tools" aria-label="Packet navigation">
     <a href="/ui-ux-prompt-packet">Prompt Packet</a>
     <details><summary>Packet tools</summary><div>{links.map(([slug,label])=><a href={'/'+slug} aria-current={section===slug?'page':undefined}>{label}</a>)}</div></details>
-    <span id="edition-label">Free edition</span><a href="/access">Packet access</a><a href="/membership">Membership</a>
+    <span id="edition-label">Free edition</span><a href="/access">Packet access</a><a href="/membership">Pro</a>
   </nav>
   <slot/>
 </SiteCanvas>

@@ -141,7 +141,7 @@ test('anonymous readers receive four slides and no locked image bytes', async ()
   const detail = await call(handler, { url: '/api/carousels?slug=how-indexes-work' });
   assert.equal(detail.json.item.slides.length, 4);
   assert.equal(detail.json.item.slides[0].text, 'Private lesson 1');
-  assert.equal(detail.json.item.locked.message, 'The rest of this carousel is for Digivated Members.');
+  assert.equal(detail.json.item.locked.message, 'The rest of this carousel is for Digivated Pro.');
   assert.equal(detail.json.item.locked.href, '/founding-members');
   assert.deepEqual(detail.json.item.references, []);
   assert.equal(JSON.stringify(detail.json).includes(PNG), false);
@@ -248,7 +248,7 @@ test('carousel routes stay on the shared function and do not add an API file', a
   const teaser = readFileSync(new URL('../src/components/FoundingPassTeaser.astro', import.meta.url), 'utf8');
   const offer = `${offerPages}\n${teaser}\n${source}\n${readFileSync(new URL('../src/components/MembershipOffer.astro', import.meta.url), 'utf8')}\n${readFileSync(new URL('../src/data/membership.mjs', import.meta.url), 'utf8')}`;
   assert.match(offer, /https:\/\/digivated\.gumroad\.com\/l\/founding-member-pass/);
-  assert.match(offer, /Digivated Membership/);
+  assert.match(offer, /Digivated Pro/);
   assert.match(offer, /\$5 USD/);
   assert.doesNotMatch(offer, /\$2/);
   assert.doesNotMatch(offer, /full member News summaries|Full News access/i);

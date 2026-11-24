@@ -1,9 +1,9 @@
 {
-  "name": "Digivated Membership",
+  "name": "Digivated Pro",
   "price": 500,
   "price_currency_type": "usd",
   "customizable_price": false,
   "custom_summary": "Unlimited launches, each live the moment you publish. $5 once.",
-  "description": "<h2>Launch as much as you want.</h2><p>Membership is <strong>$5, paid once</strong>. It's not a subscription and nothing renews.</p><p>You get <strong>unlimited project uploads</strong>, and each one goes live the moment you publish. No review queue, no badge needed. Starter caps you at 3 projects. Membership doesn't.</p><h3>How to use it</h3><p>Buy with the email you use on Digivated. Then open https://digivated.com/new-launch and press “I’ve paid, check again”. Your account switches to unlimited right away.</p><p>News and your first launch stay free for everyone. Projects still follow the listing rules, and traffic or sales aren't guaranteed.</p>",
-  "custom_receipt": "Thanks for joining Digivated. Your $5 Membership is a one-time purchase with unlimited project uploads, each live the moment you publish. Use the same email as your Digivated account, then press “I’ve paid, check again” at https://digivated.com/new-launch. Keep your license key private."
+  "description": "<h2>Launch as much as you want.</h2><p>Pro is <strong>$5, paid once</strong>. It's not a subscription and nothing renews.</p><p>You get <strong>unlimited project uploads</strong>, and each one goes live the moment you publish. No review queue, no badge needed. Starter caps you at 3 projects. Pro doesn't.</p><h3>How to use it</h3><p>Buy with the email you use on Digivated. Then open https://digivated.com/new-launch and press “I’ve paid, check again”. Your account switches to unlimited right away.</p><p>News and your first launch stay free for everyone. Projects still follow the listing rules, and traffic or sales aren't guaranteed.</p>",
+  "custom_receipt": "Thanks for getting Digivated Pro. Your $5 purchase is one-time, with unlimited project uploads, each live the moment you publish. Use the same email as your Digivated account, then press “I’ve paid, check again” at https://digivated.com/new-launch. Keep your license key private."
 }

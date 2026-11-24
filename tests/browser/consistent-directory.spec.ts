@@ -8,7 +8,7 @@ test('Newest launches stay in order after loading more and switching collections
  const names=()=>page.locator('.dg-dir-open').allTextContents();
  await expect.poll(names).toEqual(catalog.slice(0,24).map(p=>p.name));
  await page.getByRole('button',{name:'Show 3 more'}).click();await expect.poll(names).toEqual(catalog.map(p=>p.name));
- await page.getByRole('button',{name:'Members',exact:true}).click();await expect.poll(names).toEqual(['Project 5','Project 13']);
+ await page.getByRole('button',{name:'Pro',exact:true}).click();await expect.poll(names).toEqual(['Project 5','Project 13']);
  await page.getByRole('button',{name:'All',exact:true}).click();await expect.poll(names).toEqual(catalog.slice(0,24).map(p=>p.name));
  await page.getByRole('button',{name:'Open Project 0',exact:true}).click();await expect(page.locator('#wall-focus-title')).toHaveText('Project 0');
  await page.keyboard.press('Escape');await page.reload();await expect.poll(names).toEqual(catalog.slice(0,24).map(p=>p.name));

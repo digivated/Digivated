@@ -11,7 +11,7 @@ export function projectMarks(project) {
 }
 
 export const PROJECT_MARK_LABEL = Object.freeze({
-  member: 'Member',
+  member: 'Pro',
   spot: 'Spot',
   fresh: 'New this week',
   rising: 'Rising',

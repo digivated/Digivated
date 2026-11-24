@@ -17,7 +17,7 @@ const defaultLimits = { current: PAGE, upcoming: 5, previous: 5, archive: 5, top
 const el = (tag, text, className) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node; };
 
 // Membership projects show the Digivated member mark (not a generic "featured").
-const memberBadge = () => { const badge = el('span', null, 'dg-badge dg-badge-member'); badge.title = 'Digivated member'; badge.append(el('span', null, 'dg-member-mark'), 'Member'); return badge; };
+const memberBadge = () => { const badge = el('span', null, 'dg-badge dg-badge-member'); badge.title = 'Digivated Pro'; badge.append(el('span', null, 'dg-member-mark'), 'Pro'); return badge; };
 const markBadge = key => {
   if (key === 'member') return memberBadge();
   const rising = key === 'rising';

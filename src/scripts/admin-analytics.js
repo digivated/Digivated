@@ -3,7 +3,7 @@ const format = value => new Intl.NumberFormat().format(value || 0);
 const labels = {
   project_open: 'Project opens', project_site_visit: 'Project website visits',
   project_feedback_open: 'Feedback opened', project_submit: 'Projects submitted',
-  membership_checkout: 'Checkout clicks', membership_verified: 'Memberships verified',
+  membership_checkout: 'Checkout clicks', membership_verified: 'Pro verified',
   news_category_select: 'News category choices', creator_post_publish: 'Creator posts',
   creator_reply_publish: 'Creator replies',
 };

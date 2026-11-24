@@ -64,7 +64,7 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
     ...(draft ? [] : [['feedback', 'Discussion'], ['similar', 'Similar']]),
   ];
   const marks = projectMarks(item).map(key => key === 'member'
-    ? '<span class="launch-mark"><span class="dg-member-mark" aria-hidden="true"></span>Member</span>'
+    ? '<span class="launch-mark"><span class="dg-member-mark" aria-hidden="true"></span>Pro</span>'
     : `<span class="launch-mark">${e(PROJECT_MARK_LABEL[key])}</span>`).join('');
   const draftNotice = draft
     ? '<p class="launch-draft" role="status">Private draft preview · Only an explicit Publish launch page action makes this public.</p>'

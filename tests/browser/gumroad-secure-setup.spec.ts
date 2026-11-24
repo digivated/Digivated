@@ -25,7 +25,7 @@ test('membership checkout opens only for the exact verified five-dollar one-time
  await page.addInitScript(()=>sessionStorage.setItem('digivated-announcement-seen-v2','1'));
  await page.route('**/api/**',r=>r.fulfill({json:{items:[],member:false,next:null}}));
  await page.route('**/api/membership-checkout',r=>r.fulfill({json:{ready:true,priceUSD:5,billing:'one-time',checkoutUrl:'https://digivated.gumroad.com/l/founding-member-pass'}}));
- await page.goto(base+'/membership');await expect(page.locator('a.membership-checkout')).toHaveText('Get membership · $5 once');
+ await page.goto(base+'/membership');await expect(page.locator('a.membership-checkout')).toHaveText('Get Pro · $5 once');
  await expect(page.locator('.membership-checkout-note')).toBeHidden();
  await page.route('**/api/membership-checkout',r=>r.fulfill({json:{ready:true,priceUSD:5,billing:'monthly',checkoutUrl:'https://other.invalid/'}}));
  await page.reload();await expect(page.locator('button.membership-checkout')).toBeDisabled();

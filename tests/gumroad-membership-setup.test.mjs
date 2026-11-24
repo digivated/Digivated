@@ -16,7 +16,7 @@ function provider(failAt='',failureStatus=403){
   if(`${opts.method} ${path}`===failAt)return new Response(JSON.stringify({success:false,error:key}),{status:failureStatus});
   let data={success:true};
   if(path==='/products'&&opts.method==='GET')data.products=products;
-  else if(path==='/user/preview_custom_html')data={success:true,custom_html:'<style>body{color:white}</style><h1>One membership.</h1>',sanitization_report:{truncated:false}};
+  else if(path==='/user/preview_custom_html')data={success:true,custom_html:'<style>body{color:white}</style><h1>Digivated Pro</h1>',sanitization_report:{truncated:false}};
   else if(path==='/user/custom_html')data.previous_custom_html='<p>Previous storefront</p>';
   else if(opts.method==='DELETE'&&path.endsWith('/covers/old-cover'))data.covers=[{id:'new-cover'}];
   else if(path.endsWith('/covers'))data.covers=[{id:'old-cover'},{id:'new-cover'}];
@@ -29,7 +29,7 @@ function provider(failAt='',failureStatus=403){
   return new Response(JSON.stringify(data),{status:200});
  };return{fetcher,calls,products,product,starter};
 }
-const assets={offer:{name:membership.name,price:500,price_currency_type:'usd',description:'Unlimited project uploads, live instantly.'},html:'<style>body{background:black}</style><h1>One membership.</h1>',starter:{name:'Digivated Starter',permalink:'instant-launch',price:300,custom_summary:'Up to 3 projects.',description:'<p>Up to 3 projects on Digivated, live instantly.</p>',custom_receipt:'Thanks.'}};
+const assets={offer:{name:membership.name,price:500,price_currency_type:'usd',description:'Unlimited project uploads, live instantly.'},html:'<style>body{background:black}</style><h1>Digivated Pro</h1>',starter:{name:'Digivated Starter',permalink:'instant-launch',price:300,custom_summary:'Up to 3 projects.',description:'<p>Up to 3 projects on Digivated, live instantly.</p>',custom_receipt:'Thanks.'}};
 test('seller remap publishes the exact one-time offer, retires only known products, and never persists the key',async()=>{
  const db=storage(),p=provider();const result=await remapGumroadMembership({token:key,redis:db.redis,fetcher:p.fetcher,assets});
  assert.equal(result.ready,true);assert.equal(result.checkoutUrl,membership.checkoutUrl);

@@ -5,11 +5,11 @@ import { membership } from '../data/membership.mjs';
 import { PLANS } from '../lib/plans.mjs';
 import '../styles/membership.css';
 ---
-<Platform canonicalPath="/shop" title="Plans and membership" description="Digivated plans: 1 project free, Starter for 3 projects, or Membership for unlimited projects and full site access.">
+<Platform canonicalPath="/shop" title="Plans" description="Digivated plans: 1 project free, Starter for 3 projects, or Pro for unlimited projects and full site access.">
 <div class="shop">
   <section class="dg-hero shop-hero" aria-labelledby="shop-title">
     <div class="dg-hero-copy">
-      <h1 id="shop-title">Plans and membership</h1>
+      <h1 id="shop-title">Plans</h1>
       <p class="dg-hero-lede">One free project. Paid plans are one-time purchases.</p>
     </div>
   </section>
@@ -39,22 +39,22 @@ import '../styles/membership.css';
     </article>
 
     <article class="shop-card membership-offer" aria-labelledby="shop-member-title">
-      <h2 id="shop-member-title">Membership</h2>
+      <h2 id="shop-member-title">Pro</h2>
       <div class="shop-price membership-price"><strong>${membership.priceUSD}</strong><span>once</span></div>
       <ul class="shop-list membership-benefits">
         <li>Unlimited launches (instant)</li>
         <li>Skip the queue and badge</li>
       </ul>
-      {membership.checkoutReady ? <a class="button primary membership-checkout shop-cta" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get membership · $5 once</a> : <><button class="button primary membership-checkout shop-cta" disabled>Checking checkout…</button><p class="membership-checkout-note shop-note" role="status" hidden></p></>}
+      {membership.checkoutReady ? <a class="button primary membership-checkout shop-cta" href={membership.checkoutUrl} target="_blank" rel="noopener noreferrer">Get Pro · $5 once</a> : <><button class="button primary membership-checkout shop-cta" disabled>Checking checkout…</button><p class="membership-checkout-note shop-note" role="status" hidden></p></>}
     </article>
   </div>
 
-  <section id="member-sign-in" class="membership-access" aria-labelledby="membership-access-title"><div><p class="eyebrow">Already a member?</p><h2 id="membership-access-title">Verify your purchase</h2><p>Use your Gumroad email or license key.</p><p id="membership-verified" hidden>You’re verified. <a href="/new-launch?membership=1#project-form">Publish a project</a>.</p></div><div><form id="founding-access-form" class="carousel-access" method="post" action="/api/founding-access"><label>Gumroad license key<input name="license" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="35"/></label><p class="quiet">or</p><label>Purchase email<input name="email" type="email" autocomplete="email" maxlength="254"/></label><button type="submit" class="button primary">Verify membership</button><p id="founding-access-status" role="status"></p></form><button class="button" id="founding-sign-out" type="button" hidden>Sign out of membership</button></div></section>
+  <section id="member-sign-in" class="membership-access" aria-labelledby="membership-access-title"><div><p class="eyebrow">Already have Pro?</p><h2 id="membership-access-title">Verify your purchase</h2><p>Use your Gumroad email or license key.</p><p id="membership-verified" hidden>You’re verified. <a href="/new-launch?membership=1#project-form">Publish a project</a>.</p></div><div><form id="founding-access-form" class="carousel-access" method="post" action="/api/founding-access"><label>Gumroad license key<input name="license" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="35"/></label><p class="quiet">or</p><label>Purchase email<input name="email" type="email" autocomplete="email" maxlength="254"/></label><button type="submit" class="button primary">Verify Pro</button><p id="founding-access-status" role="status"></p></form><button class="button" id="founding-sign-out" type="button" hidden>Sign out of Pro</button></div></section>
 
   <section class="membership-faq" aria-labelledby="membership-questions"><h2 id="membership-questions">Questions</h2>
     <details><summary>How do project slots work?</summary><p>Pending and live projects count. Archive or delete a project to free a slot. After paying with your Digivated email, choose “I’ve paid, check again” on the launch form.</p></details>
-    <details><summary>Do paid projects skip review?</summary><p>Starter and Membership publish instantly after payment verification. Listing rules still apply.</p></details>
-    <details><summary>Is News part of membership?</summary><p>No. <a href="/news">News</a> is free for everyone, with the full archive and market snapshot.</p></details>
+    <details><summary>Do paid projects skip review?</summary><p>Starter and Pro publish instantly after payment verification. Listing rules still apply.</p></details>
+    <details><summary>Is News part of Pro?</summary><p>No. <a href="/news">News</a> is free for everyone, with the full archive and market snapshot.</p></details>
     <details id="previous-purchases"><summary>What about a previous purchase?</summary><p>Older purchases still work. <a href="/access">Open your Prompt Packet</a> or use the form above. Bought a promotion? <a href="/new-launch?promotion=1#project-form">Submit it for review</a>.</p></details>
   </section>
 </div>

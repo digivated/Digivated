@@ -4,7 +4,7 @@
 export const PLANS = Object.freeze({
   free: Object.freeze({ id: 'free', name: 'Free', priceUSD: 0, limit: 1, instant: false }),
   starter: Object.freeze({ id: 'starter', name: 'Starter', priceUSD: 3, limit: 3, instant: true }),
-  member: Object.freeze({ id: 'member', name: 'Membership', priceUSD: 5, limit: 0, instant: true }),
+  member: Object.freeze({ id: 'member', name: 'Pro', priceUSD: 5, limit: 0, instant: true }),
 });
 
 export const planOf = id => PLANS[id] || PLANS.free;

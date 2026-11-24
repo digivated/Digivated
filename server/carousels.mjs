@@ -16,9 +16,9 @@ const INDEX_KEY = 'digivated:carousel:index';
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+){0,12}$/;
 
 const LOCKED_COPY = {
-  prelaunch: 'The rest of this carousel is for Digivated Members.',
+  prelaunch: 'The rest of this carousel is for Digivated Pro.',
   unavailable: 'The rest of this carousel is temporarily unavailable.',
-  open: 'The rest of this carousel is for Digivated Members.',
+  open: 'The rest of this carousel is for Digivated Pro.',
 };
 
 function storage(env, deps) {
