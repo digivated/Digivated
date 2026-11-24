@@ -6,22 +6,22 @@ const { active = 'home', showStart = false, showSearch = true } = Astro.props;
 ---
 <aside class="dg-forum-nav" aria-label="Threads navigation">
   <nav class="dg-forum-links" aria-label="Threads">
-    <a href="/threads" data-forum-link="home" aria-current={active === 'home' ? 'page' : undefined}>All threads</a>
-    <a href="/threads?view=recent" data-forum-link="recent" aria-current={active === 'recent' ? 'page' : undefined}>Recent comments</a>
+    <a href="/threads" data-forum-link="home" aria-current={active === 'home' ? 'page' : undefined}><span class="dg-forum-glyph dg-topic-mark" aria-hidden="true"><UiIcon name="grid" size={15}/></span><span class="dg-forum-name">All threads</span></a>
+    <a href="/threads?view=recent" data-forum-link="recent" aria-current={active === 'recent' ? 'page' : undefined}><span class="dg-forum-glyph dg-topic-mark" aria-hidden="true"><UiIcon name="comment" size={15}/></span><span class="dg-forum-name">Recent comments</span></a>
   </nav>
   {showSearch && <form class="dg-forum-search" action="/threads" method="get" role="search">
     <label class="sr-only" for="dg-forum-search">Search all threads</label>
-    <input id="dg-forum-search" name="q" type="search" placeholder="Search threads" maxlength="80" autocomplete="off"/>
+    <span class="dg-forum-field"><span class="dg-forum-search-icon" aria-hidden="true"><UiIcon name="search" size={16}/></span><input id="dg-forum-search" name="q" type="search" placeholder="Search threads" maxlength="80" autocomplete="off"/></span>
     <button class="dg-btn" type="submit">Search</button>
   </form>}
   <details class="dg-forum-topics" open>
-    <summary>Topic forums</summary>
+    <summary><span>Topics</span><UiIcon name="chevron" size={14}/></summary>
     <div class="dg-forum-chip-scroll">
     <nav class="dg-forum-list" aria-label="Topic forums">
       {forums.map(forum => <a href={`/threads?forum=${forum.slug}`} data-forum-link={forum.slug} data-topic={forum.slug} aria-current={active === forum.slug ? 'page' : undefined}><span class="dg-forum-glyph dg-topic-mark" aria-hidden="true"><UiIcon name={forum.icon} size={15}/></span><span class="dg-forum-name">{forum.name}</span><span class="dg-forum-count" data-forum-count={forum.slug}></span></a>)}
     </nav>
     </div>
   </details>
-  {showStart && <a href="/threads/new" class="dg-forum-start">Start a thread</a>}
-  <a class="dg-forum-directory" href="/discover">Browse product discussions <UiIcon name="external" size={14}/></a>
+  {showStart && <a href="/threads/new" class="dg-btn dg-btn-primary dg-forum-start"><UiIcon name="plus" size={16}/>Start a thread</a>}
+  <a class="dg-forum-directory" href="/discover"><span>Browse product discussions</span> <UiIcon name="external" size={14}/></a>
 </aside>

@@ -9,6 +9,8 @@ const el = (tag, text, className) => { const node = document.createElement(tag);
 const $ = selector => document.querySelector(selector);
 const dot = () => { const node = el('span', '·', 'dg-dot'); node.setAttribute('aria-hidden', 'true'); return node; };
 const validNewsId = id => /^[a-f0-9]{24}$/.test(id || '');
+const icon = (name, className = 'dg-ico') => { const node = el('span', null, className); node.setAttribute('aria-hidden', 'true'); node.innerHTML = cardIconMarkup(name); return node; };
+const setSkeleton = (on, selector = '[data-forum-skeleton]') => { const node = $(selector); if (node) node.hidden = !on; };
 
 function topicLink(slug, className = 'dg-thread-forum') {
   const forum = forumBySlug[slug];
@@ -35,7 +37,7 @@ function voteButton(thread, big = false) {
   const update = () => {
     button.setAttribute('aria-pressed', String(Boolean(thread.voted)));
     button.setAttribute('aria-label', `${thread.voted ? 'Remove upvote from' : 'Upvote'} “${thread.title}”, ${thread.votes} upvote${thread.votes === 1 ? '' : 's'}`);
-    button.replaceChildren(el('span', '▲', 'dg-vote-caret'), el('strong', String(thread.votes)));
+    button.replaceChildren(icon('like', 'dg-vote-caret'), el('strong', String(thread.votes)));
   };
   update();
   button.addEventListener('click', async () => {
@@ -54,8 +56,9 @@ function reactionRow(thread) {
   const row = $('[data-thread-react]');
   if (!row) return;
   const kinds = [['useful', 'Useful', 'sparkle'], ['learned', 'Learned', 'book'], ['shipped', 'Shipped', 'upload']];
+  const iconNode = icon;
   row.hidden = false;
-  row.replaceChildren(...kinds.map(([kind, label, icon]) => {
+  row.replaceChildren(...kinds.map(([kind, label, iconName]) => {
     const button = el('button', null, 'dg-react');
     button.type = 'button';
     const paint = () => {
@@ -63,9 +66,7 @@ function reactionRow(thread) {
       const mine = Boolean(thread.reacted?.[kind]);
       button.setAttribute('aria-pressed', String(mine));
       button.setAttribute('aria-label', `${mine ? 'Remove' : 'Add'} ${label}${count ? `, ${count}` : ''}`);
-      const mark = el('span');
-      mark.innerHTML = cardIconMarkup(icon);
-      button.replaceChildren(mark, el('span', label), ...(count ? [el('strong', String(count))] : []));
+      button.replaceChildren(iconNode(iconName), el('span', label), ...(count ? [el('strong', String(count))] : []));
     };
     paint();
     button.addEventListener('click', async () => {
@@ -102,6 +103,11 @@ async function listPage() {
   description.textContent = view === 'recent' ? 'The latest replies on threads and product pages.' : info?.description || 'Talk shop with other builders. Share, ask, get feedback.';
   description.hidden = false;
   if (info) $('[data-forum-new]').href = `/threads/new?forum=${forum}`;
+  const mark = $('[data-forum-mark]');
+  if (mark) {
+    mark.innerHTML = cardIconMarkup(view === 'recent' ? 'comment' : query ? 'search' : info?.icon || 'comment');
+    if (info && view !== 'recent' && !query) mark.dataset.topic = forum; else delete mark.dataset.topic;
+  }
   document.title = `${view === 'recent' ? 'Recent comments' : info ? info.name : 'Threads'} · Digivated`;
   const today = $('[data-today]');
   if (today) today.hidden = true;
@@ -110,6 +116,7 @@ async function listPage() {
     $('[data-forum-toolbar]').hidden = true;
     try {
       const data = await api('/api/threads?view=recent');
+      setSkeleton(false);
       paintCounts(data.counts);
       const comments = data.comments || [];
       status.textContent = comments.length ? '' : 'No comments yet.'; status.hidden = !!comments.length;
@@ -122,7 +129,7 @@ async function listPage() {
         const body = el('a', c.body, 'dg-recent-body'); body.href = c.subject.href;
         li.append(meta, body); return li;
       }));
-    } catch (error) { status.textContent = error.message; }
+    } catch (error) { setSkeleton(false); status.textContent = error.message; }
     return;
   }
 
@@ -139,34 +146,44 @@ async function listPage() {
     for (const starter of starters) {
       const link = el('a', null, 'dg-starter');
       link.href = starterPath(starter.id);
-      link.append(el('span', starter.label), el('small', starter.detail));
+      const mark = icon(forumBySlug[starter.forum]?.icon || 'comment', 'dg-topic-mark');
+      mark.dataset.topic = starter.forum;
+      const text = el('span', null, 'dg-starter-text');
+      text.append(el('span', starter.label), el('small', starter.detail));
+      link.append(mark, text, icon('arrow', 'dg-starter-go'));
       choices.append(link);
     }
     empty.append(choices);
   }
 
-  function row(thread) {
-    const li = el('li', null, 'dg-thread-row');
+  function row(thread, index = 0) {
+    const li = el('li', null, 'dg-thread-row' + (thread.pinned ? ' is-pinned' : ''));
+    li.dataset.topic = thread.forum;
+    li.style.setProperty('--i', String(Math.min(index, 8)));
     const main = el('div', null, 'dg-thread-main');
+    const top = el('p', null, 'dg-thread-top');
+    const topic = topicLink(thread.forum);
+    if (topic) top.append(topic);
+    if (thread.pinned) { const pin = el('span', null, 'dg-badge dg-pin'); pin.append(icon('pin'), el('span', 'Pinned')); top.append(pin); }
+    if (kindLabel[thread.kind]) top.append(el('span', kindLabel[thread.kind], 'dg-thread-kind'));
+    const time = el('time', timeAgo(thread.createdAt)); time.dateTime = thread.createdAt; time.title = new Date(thread.createdAt).toLocaleString();
+    top.append(dot(), time);
     const h = el('h2');
-    if (thread.pinned) h.append(el('span', 'Pinned', 'dg-badge'));
     const a = el('a', thread.title); a.href = `/threads/${thread.slug}`; h.append(a);
-    if (kindLabel[thread.kind]) h.append(el('span', kindLabel[thread.kind], 'dg-thread-kind'));
     const foot = el('p', null, 'dg-thread-foot');
-    foot.append(personName(thread.author, 'span'), dot());
-    const comments = el('a', thread.comments === 1 ? '1 reply' : `${thread.comments} replies`);
+    foot.append(avatar(thread.author, 22), personName(thread.author, 'span'));
+    const comments = el('a', null, 'dg-thread-replies');
     comments.href = `/threads/${thread.slug}#replies`;
     comments.setAttribute('aria-label', `${thread.comments} ${thread.comments === 1 ? 'reply' : 'replies'}`);
-    const time = el('time', timeAgo(thread.createdAt)); time.dateTime = thread.createdAt; time.title = new Date(thread.createdAt).toLocaleString();
-    foot.append(comments, dot(), time);
-    const topic = topicLink(thread.forum);
-    if (topic) foot.append(dot(), topic);
-    main.append(h, el('p', thread.excerpt, 'dg-thread-excerpt'), foot);
+    comments.append(icon('comment'), el('span', thread.comments === 1 ? '1 reply' : `${thread.comments} replies`));
+    foot.append(comments);
+    main.append(top, h, el('p', thread.excerpt, 'dg-thread-excerpt'), foot);
     const side = el('div', null, 'dg-thread-side');
     side.append(voteButton(thread));
     li.append(main, side);
     return li;
   }
+  const todayIcon = { 'Hottest thread': 'chart', News: 'book', Launch: 'calendar' };
   function paintToday(hot) {
     if (!today || forum || query || offset) return;
     const bits = [];
@@ -179,7 +196,9 @@ async function listPage() {
         const li = el('li');
         const link = el('a');
         link.href = item.href;
-        link.append(el('span', item.kicker, 'dg-today-kicker'), el('span', item.title, 'dg-today-title'));
+        const text = el('span', null, 'dg-today-text');
+        text.append(el('span', item.kicker, 'dg-today-kicker'), el('span', item.title, 'dg-today-title'));
+        link.append(icon(todayIcon[item.kicker] || 'sparkle', 'dg-today-ico'), text, icon('arrow', 'dg-today-go'));
         li.append(link);
         ol.append(li);
       }
@@ -202,11 +221,12 @@ async function listPage() {
   async function load(append) {
     const version = ++requestVersion;
     more.hidden = true;
-    if (!append) { status.hidden = false; status.textContent = 'Loading threads…'; if (empty) empty.hidden = true; list.replaceChildren(); }
+    if (!append) { status.hidden = false; status.textContent = 'Loading threads…'; if (empty) empty.hidden = true; list.replaceChildren(); setSkeleton(true); }
     try {
       const qs = new URLSearchParams({ sort, offset: String(offset), ...(forum ? { forum } : {}), ...(query ? { q: query } : {}) });
       const data = await api(`/api/threads?${qs}`);
       if (version !== requestVersion) return;
+      setSkeleton(false);
       paintCounts(data.counts);
       $('[data-forum-total]').textContent = data.total ? `${data.total} ${data.total === 1 ? 'thread' : 'threads'}` : '';
       list.append(...data.threads.map(row));
@@ -225,6 +245,7 @@ async function listPage() {
       offset = data.next ?? offset; more.hidden = data.next == null;
     } catch (error) {
       if (version !== requestVersion) return;
+      setSkeleton(false);
       status.hidden = false; status.textContent = error.message;
       if (append) more.hidden = false;
     }
@@ -255,10 +276,10 @@ async function showLinkedStory(newsId) {
 async function threadPage() {
   const slug = location.pathname.replace(/\/+$/, '').split('/').pop();
   const status = $('[data-thread-status]');
-  if (!/^[a-z0-9-]{1,100}$/.test(slug) || slug === 'thread') { status.textContent = 'This thread could not be found. '; const back = el('a', 'Back to Threads →'); back.href = '/threads'; status.append(back); return; }
+  if (!/^[a-z0-9-]{1,100}$/.test(slug) || slug === 'thread') { setSkeleton(false, '[data-thread-skeleton]'); status.textContent = 'This thread could not be found. '; const back = el('a', 'Back to Threads →'); back.href = '/threads'; status.append(back); return; }
   let thread;
   try { ({ thread } = await api(`/api/threads?slug=${encodeURIComponent(slug)}`)); }
-  catch (error) { status.textContent = `${error.message} `; const back = el('a', 'Back to Threads →'); back.href = '/threads'; status.append(back); return; }
+  catch (error) { setSkeleton(false, '[data-thread-skeleton]'); status.textContent = `${error.message} `; const back = el('a', 'Back to Threads →'); back.href = '/threads'; status.append(back); return; }
   document.title = `${thread.title} · Digivated Threads`;
   document.querySelector('link[rel=canonical]')?.setAttribute('href', `${location.origin}/threads/${thread.slug}`);
   document.querySelectorAll('[data-forum-link]').forEach(link => { if (link.dataset.forumLink === thread.forum) link.setAttribute('aria-current', 'page'); });
@@ -270,7 +291,7 @@ async function threadPage() {
   title.textContent = thread.title;
   if (kindLabel[thread.kind]) title.prepend(el('span', kindLabel[thread.kind] + ' ', 'dg-thread-kind'));
   const line = el('p', null, 'dg-thread-meta dg-thread-byline');
-  line.append(avatar(thread.author, 20), personName(thread.author, 'span'));
+  line.append(avatar(thread.author, 32), personName(thread.author, 'span'));
   const time = el('time', timeAgo(thread.createdAt)); time.dateTime = thread.createdAt; time.title = new Date(thread.createdAt).toLocaleString();
   line.append(time);
   $('[data-thread-byline]').replaceWith(line);
@@ -279,16 +300,19 @@ async function threadPage() {
   reactionRow(thread);
   showLinkedStory(thread.newsId);
   const actions = $('[data-thread-actions]');
-  const share = el('button', 'Share', 'dg-btn'); share.type = 'button';
-  share.addEventListener('click', async () => { const link = `${location.origin}/threads/${thread.slug}`; try { if (navigator.share && matchMedia('(pointer: coarse)').matches) await navigator.share({ title: thread.title, url: link }); else { await navigator.clipboard.writeText(link); share.textContent = 'Link copied'; setTimeout(() => { share.textContent = 'Share'; }, 1800); } } catch { /* cancelled */ } });
-  const reply = el('a', 'Reply', 'dg-btn'); reply.href = '#replies';
+  const share = el('button', null, 'dg-btn dg-action'); share.type = 'button';
+  const shareLabel = el('span', 'Share');
+  share.append(icon('share'), shareLabel);
+  share.addEventListener('click', async () => { const link = `${location.origin}/threads/${thread.slug}`; try { if (navigator.share && matchMedia('(pointer: coarse)').matches) await navigator.share({ title: thread.title, url: link }); else { await navigator.clipboard.writeText(link); shareLabel.textContent = 'Link copied'; setTimeout(() => { shareLabel.textContent = 'Share'; }, 1800); } } catch { /* cancelled */ } });
+  const reply = el('a', null, 'dg-btn dg-action'); reply.href = '#replies';
+  reply.append(icon('comment'), el('span', 'Reply'));
   actions.append(voteButton(thread, true), reply, share);
   if (thread.mine) {
-    const remove = el('button', 'Delete thread', 'dg-btn dg-d-danger'); remove.type = 'button';
+    const remove = el('button', 'Delete thread', 'dg-btn dg-action dg-d-danger'); remove.type = 'button';
     remove.addEventListener('click', async () => { if (!confirm('Delete this thread and its replies?')) return; remove.disabled = true; try { await api('/api/threads', { action: 'delete', id: thread.id }); location.href = '/threads'; } catch (error) { remove.disabled = false; status.hidden = false; status.textContent = error.message; } });
     actions.append(remove);
   }
-  status.hidden = true; $('[data-thread-root]').hidden = false;
+  status.hidden = true; setSkeleton(false, '[data-thread-skeleton]'); $('[data-thread-root]').hidden = false;
   const discussion = $('[data-thread-discussion]'); discussion.hidden = false; discussion.id = 'replies';
   mountDiscussion(discussion, {
     type: 'thread', id: thread.id,
@@ -337,7 +361,7 @@ async function newPage() {
   try { const me = await api('/api/creator-profile'); if (!me.profile?.name) form.querySelector('[data-new-name]').hidden = false; } catch { form.querySelector('[data-new-name]').hidden = false; }
   gate.hidden = true; form.hidden = false;
   applyHints(form);
-  form.querySelectorAll('[data-count-for]').forEach(counter => { const field = form.elements[counter.dataset.countFor]; const max = field.maxLength; const sync = () => { counter.textContent = `${field.value.length} / ${max}`; }; field.addEventListener('input', sync); sync(); });
+  form.querySelectorAll('[data-count-for]').forEach(counter => { const field = form.elements[counter.dataset.countFor]; const max = field.maxLength; const sync = () => { counter.textContent = `${field.value.length} / ${max}`; counter.classList.toggle('is-near', field.value.length > max * 0.9); }; field.addEventListener('input', sync); sync(); });
   form.elements.forum.forEach?.(radio => radio.addEventListener('change', () => applyHints(form)));
   [...form.querySelectorAll('input[name=forum], input[name=kind]')].forEach(radio => radio.addEventListener('change', () => applyHints(form)));
   const focus = form.elements.title;

@@ -32,6 +32,10 @@ export const iconStrokes = {
   close: '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" d="m6.5 6.5 11 11m0-11-11 11"/>',
   check: '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="m5 12.5 4.2 4L19 7"/>',
 };
+Object.assign(iconStrokes, {
+  plus: '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" d="M12 5v14M5 12h14"/>',
+  pin: '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M9 4h6l-1 5 3 3v1.5H7V12l3-3-1-5ZM12 13.5V20"/>',
+});
 Object.assign(iconStrokes, { user: iconStrokes.profile, bookmark: iconStrokes.save, message: iconStrokes.comment });
 export function cardIconMarkup(name) {
   return `<svg viewBox="0 0 24 24" width="21" height="21" fill="none" aria-hidden="true">${iconStrokes[name] || ''}</svg>`;
