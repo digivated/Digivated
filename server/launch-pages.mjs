@@ -109,7 +109,7 @@ export async function renderLaunch(item, { draft = false, origin = 'https://digi
     <header class="launch-panel launch-intro">
       ${cover ? `<div class="launch-cover" aria-hidden="true"><img src="${e(cover.image)}" alt="" width="1200" height="750" fetchpriority="high" decoding="async"></div>` : ''}
       <div class="launch-hero">
-        <div class="launch-identity dg-project-art" aria-hidden="true"><span class="dg-monogram">${e(item.name.slice(0,2).toUpperCase())}</span>${item.logo ? `<img src="${e(item.logo)}" alt="" width="96" height="96" decoding="async">` : ''}</div>
+        <div class="launch-identity dg-project-art" aria-hidden="true"><span class="dg-monogram"${item.logo ? ' hidden' : ''}>${e(item.name.slice(0,2).toUpperCase())}</span>${item.logo ? `<img src="${e(item.logo)}" alt="" width="96" height="96" decoding="async">` : ''}</div>
         <div class="launch-hero-copy">
           <h1>${e(item.name)}</h1>
           <p class="launch-byline">By ${e(item.creator)}</p>
