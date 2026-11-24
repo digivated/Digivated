@@ -42,7 +42,7 @@
     }
   }
   html[data-theme="daylight"] body.platform .news-toolbar { margin-block-end: clamp(14px, 2vw, 26px); }
-  html[data-theme="daylight"] body.platform .news-page :is(.news-feature, .news-standards, .news-market) {
+  html[data-theme="daylight"] body.platform .news-page .news-feature {
     padding-inline: 0 !important;
     border: 0 !important;
     border-block-start: 1px solid var(--fl-line) !important;

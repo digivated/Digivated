@@ -345,9 +345,10 @@
     border-radius:var(--fl-radius-card)!important;
     background:var(--fl-surface)!important;
   }
-  .news-pulse-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
-  html[data-ascii] body .news-page .news-pulse-head h2 { margin:0!important; font-size:17px!important; letter-spacing:-.01em; }
+  .news-pulse-head { display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:6px; }
+  html[data-ascii] body .news-page .news-pulse-head h2 { margin:0!important; font-size:16px!important; line-height:1.3!important; letter-spacing:-.01em; }
   .news-pulse-tag {
+    flex:none; white-space:nowrap;
     padding:2px 8px; border-radius:999px;
     background:var(--fl-raised,#f1f1f3)!important; color:var(--fl-muted)!important;
     font:500 11px/1.5 var(--fl-mono);

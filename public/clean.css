@@ -117,8 +117,10 @@
     #digivated-root :is(.dg-dir-collection, .dg-d-sort, .dg-forum-sort) button:hover:not([aria-pressed="true"]) { background: transparent !important; }
   }
   #digivated-root :is(a, button, summary, label, [role="tab"]) { touch-action: manipulation; }
-#digivated-root .dg-row :is(.dg-visit, .dg-comments) { min-height: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; font-size: 12px !important; font-weight: 500 !important; color: #71717a !important; gap: 4px !important; justify-self: start !important; }
-#digivated-root .dg-row :is(.dg-visit, .dg-comments):hover { color: #0b0b0c !important; }
+/* Visit and comments are small pill buttons, not bare text with an icon. */
+#digivated-root .dg-row :is(.dg-visit, .dg-comments) { display: inline-flex !important; align-items: center !important; min-height: 26px !important; padding: 4px 10px !important; border: 1px solid #e4e4e9 !important; border-radius: 999px !important; background: #fff !important; box-shadow: none !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1 !important; color: #3f3f46 !important; gap: 4px !important; justify-self: start !important; text-decoration: none !important; }
+#digivated-root .dg-row :is(.dg-visit, .dg-comments):hover { color: #0b0b0c !important; border-color: #c9c9d0 !important; background: #fafafb !important; }
+#digivated-root .dg-row .dg-visit .dg-visit-arrow { display: none !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments) svg { width: 13px !important; height: 13px !important; }
 #digivated-root .dg-row .dg-visit { grid-area: visit !important; }
 #digivated-root .dg-row .dg-comments { grid-area: comments !important; }
