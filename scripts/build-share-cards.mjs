@@ -52,13 +52,15 @@ const cards = {
   'thread': { kicker: 'Threads', h: ['Join the', 'discussion.'], sub: 'Read the thread and add your reply on Digivated Threads.', cta: 'Read the thread', mock: 'thread' },
   'projects': { kicker: 'Projects', h: ['Discover what', 'makers are building.'], sub: 'Independent products and the makers behind them.', cta: 'Browse projects' },
   'news': { kicker: 'News', h: ['Tech. AI. Markets.', 'What’s next.'], sub: 'Stories on what is moving tech, AI and markets.', cta: 'Read the news' },
+  'launch': { kicker: 'Project', h: ['A project worth', 'a look.'], sub: 'See it, upvote it and give the maker feedback.', cta: 'View project', mock: 'projects' },
+  'default': { kicker: 'Digivated', h: ['Get your product', 'discovered.'], sub: 'Free launches every Monday. Real upvotes and feedback.', cta: 'Launch free', mock: 'projects' },
   'creator': { kicker: 'Creator', h: ['Meet the builders', 'behind the work.'], sub: 'Profiles and projects from independent makers.', cta: 'View profile' }
 };
 
 const wrap = (text, max) => text.split(' ').reduce((lines, word) => { const last = lines[lines.length - 1]; if (last && (last + ' ' + word).length <= max) lines[lines.length - 1] = last + ' ' + word; else lines.push(word); return lines; }, []);
 const svg = (key, c) => {
-  const long = Math.max(...c.h.map(l => l.length)) > 16;
-  const size = long ? 64 : 76, lh = size + 6, top = 262;
+  const n = Math.max(...c.h.map(l => l.length)), long = n > 13;
+  const size = n > 18 ? 56 : n > 13 ? 62 : 76, lh = size + 6, top = 262;
   const kickerW = 40 + c.kicker.length * 11;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="${FONT}">
 <defs><radialGradient id="g" cx="8%" cy="0%" r="75%"><stop stop-color="#e3dffc"/><stop offset="1" stop-color="#f7f7fa"/></radialGradient>
