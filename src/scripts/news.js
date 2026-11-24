@@ -29,7 +29,8 @@ if(root){
   for(const t of (Array.isArray(story.tickers)?story.tickers:[]).slice(0,8)){if(/^[A-Z][A-Z0-9.-]{0,11}$/.test(t.symbol)&&/^[A-Z]+$/.test(t.exchange))head.append(element('span',t.exchange+': '+t.symbol,'news-story-kind news-story-kind--ticker'));}
  }
  function headline(story,tag){const h=element(tag);const a=element('a',story.headline,'news-story-link');a.href=newsStoryPath(story);a.addEventListener('click',()=>window.digivatedTrack?.('news_story_open',{news_category:story.category}));h.append(a);return h;}
- function meta(story){const line=element('div',null,'news-story-meta');line.append(sourceLink(story),element('span','·','news-dot'),ago(story.sourcePublishedAt));if(story.correctedAt)line.append(element('span','·','news-dot'),element('span','Corrected','news-story-corrected'));return line;}
+ function discussLink(story){const a=element('a','Discuss','news-discuss');a.href='/threads/new?news='+encodeURIComponent(story.id);return a;}
+ function meta(story){const line=element('div',null,'news-story-meta');line.append(sourceLink(story),element('span','·','news-dot'),ago(story.sourcePublishedAt));if(story.correctedAt)line.append(element('span','·','news-dot'),element('span','Corrected','news-story-corrected'));line.append(element('span','·','news-dot'),discussLink(story));return line;}
  function featureContents(story){
   const frag=document.createDocumentFragment();
   const head=element('div',null,'news-feature-top');head.append(element('span','Top story','news-feature-label'),element('span',categories[story.category],'news-story-category'));labels(story,head);

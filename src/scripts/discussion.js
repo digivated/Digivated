@@ -50,8 +50,10 @@ export function signInPrompt(text = 'Sign in to join the discussion.') {
   return box;
 }
 
-export function mountDiscussion(root, { type = 'project', id, onCount } = {}) {
+export function mountDiscussion(root, { type = 'project', id, onCount, helpful } = {}) {
   let comments = [], viewer = { signedIn: false }, sort = 'top', openReply = null, expanded = new Set();
+  let helpfulId = helpful?.commentId || '';
+  const canMarkHelpful = Boolean(helpful?.canMark && helpful?.threadId);
   const labelId = root.getAttribute('aria-labelledby');
   const replacesLabel = labelId && root.contains(root.ownerDocument.getElementById(labelId));
   root.classList.add('dg-discussion');
@@ -116,6 +118,7 @@ export function mountDiscussion(root, { type = 'project', id, onCount } = {}) {
     const meta = el('p', null, 'dg-d-meta');
     meta.append(personName(c.author));
     if (c.badge) meta.append(el('span', c.badge, 'dg-d-badge'));
+    if (c.id === helpfulId) meta.append(el('span', 'Most helpful', 'dg-d-badge'));
     const time = el('time', timeAgo(c.date)); time.dateTime = c.date; time.title = new Date(c.date).toLocaleString(); meta.append(time);
     const text = el('p', null, 'dg-d-text');
     if (isReply && c.replyTo) text.append(el('span', '@' + c.replyTo + ' ', 'dg-d-mention'));
@@ -140,6 +143,21 @@ export function mountDiscussion(root, { type = 'project', id, onCount } = {}) {
       try { if (navigator.share && matchMedia('(pointer: coarse)').matches) await navigator.share({ url: link }); else { await navigator.clipboard.writeText(link); share.textContent = 'Link copied'; setTimeout(() => { share.textContent = 'Share'; }, 1800); } } catch { /* cancelled */ }
     });
     actions.append(like, reply, share);
+    if (canMarkHelpful && !c.mine) {
+      const mark = el('button', c.id === helpfulId ? 'Helpful' : 'Mark helpful', 'dg-d-action');
+      mark.type = 'button';
+      mark.setAttribute('aria-pressed', String(c.id === helpfulId));
+      mark.addEventListener('click', async () => {
+        mark.disabled = true;
+        try {
+          const next = c.id === helpfulId ? '' : c.id;
+          const result = await api('/api/threads', { action: 'helpful', id: helpful.threadId, commentId: next });
+          helpfulId = result.helpfulCommentId || '';
+          render();
+        } catch (error) { mark.disabled = false; status.hidden = false; status.textContent = error.message; }
+      });
+      actions.append(mark);
+    }
     if (c.mine) {
       const remove = el('button', 'Delete', 'dg-d-action dg-d-danger'); remove.type = 'button';
       remove.addEventListener('click', async () => {

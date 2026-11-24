@@ -5,23 +5,34 @@ import ThreadsSidebar from '../../components/ThreadsSidebar.astro';
 <Platform showBreadcrumb={false} title="Threads" description="Ask questions, get feedback and talk about building with other independent makers on Digivated Threads." canonicalPath="/threads">
   <div class="dg-forum" data-threads-page="list">
     <header class="dg-forum-header">
-      <div>
-        <h1 id="dg-forum-title" data-forum-title>Threads</h1>
-        <p data-forum-description hidden></p>
-      </div>
-      <a class="dg-btn dg-btn-primary" href="/threads/new" data-forum-new>Start a thread</a>
-    </header>
-    <ThreadsSidebar/>
-    <section class="dg-forum-main" aria-labelledby="dg-forum-title">
-      <div class="dg-forum-toolbar" data-forum-toolbar>
-        <div class="dg-forum-sort" role="group" aria-label="Sort threads">
-          <button type="button" data-sort="trending" aria-pressed="true">Trending</button>
-          <button type="button" data-sort="new" aria-pressed="false">New</button>
-          <button type="button" data-sort="top" aria-pressed="false">Top</button>
+      <div class="dg-forum-heading">
+        <div class="dg-forum-titleline">
+          <h1 id="dg-forum-title" data-forum-title>Threads</h1>
+          <div class="dg-forum-toolbar" data-forum-toolbar>
+            <div class="dg-forum-sort" role="group" aria-label="Sort threads">
+              <button type="button" data-sort="trending" aria-pressed="true">Trending</button>
+              <button type="button" data-sort="new" aria-pressed="false">New</button>
+              <button type="button" data-sort="top" aria-pressed="false">Top</button>
+            </div>
+          </div>
         </div>
-        <span class="dg-forum-total" data-forum-total></span>
+        <p data-forum-description>Talk shop with other builders. Share, ask, get feedback.</p>
       </div>
+      <div class="dg-forum-tools">
+        <form class="dg-forum-search" action="/threads" method="get" role="search">
+          <label class="sr-only" for="dg-forum-search">Search all threads</label>
+          <input id="dg-forum-search" name="q" type="search" placeholder="Search threads" maxlength="80" autocomplete="off"/>
+          <button class="dg-btn" type="submit">Search</button>
+        </form>
+        <a class="dg-btn dg-btn-primary" href="/threads/new" data-forum-new>Start a thread</a>
+      </div>
+    </header>
+    <ThreadsSidebar showSearch={false}/>
+    <section class="dg-forum-main" aria-labelledby="dg-forum-title">
+      <section class="dg-today" data-today hidden aria-label="Today on Digivated"></section>
+      <p class="dg-forum-total" data-forum-total></p>
       <p class="dg-forum-status" data-forum-status role="status">Loading threads…</p>
+      <div class="dg-starters" data-forum-empty hidden></div>
       <ol class="dg-thread-list" data-thread-list></ol>
       <button type="button" class="dg-more" data-forum-more hidden>Load more</button>
     </section>

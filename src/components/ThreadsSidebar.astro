@@ -2,23 +2,25 @@
 import '../styles/threads.css';
 import UiIcon from './UiIcon.astro';
 import { forums } from '../data/forums.mjs';
-const { active = 'home', showStart = false } = Astro.props;
+const { active = 'home', showStart = false, showSearch = true } = Astro.props;
 ---
 <aside class="dg-forum-nav" aria-label="Threads navigation">
   <nav class="dg-forum-links" aria-label="Threads">
     <a href="/threads" data-forum-link="home" aria-current={active === 'home' ? 'page' : undefined}>All threads</a>
     <a href="/threads?view=recent" data-forum-link="recent" aria-current={active === 'recent' ? 'page' : undefined}>Recent comments</a>
   </nav>
-  <form class="dg-forum-search" action="/threads" method="get" role="search">
+  {showSearch && <form class="dg-forum-search" action="/threads" method="get" role="search">
     <label class="sr-only" for="dg-forum-search">Search all threads</label>
     <input id="dg-forum-search" name="q" type="search" placeholder="Search threads" maxlength="80" autocomplete="off"/>
     <button class="dg-btn" type="submit">Search</button>
-  </form>
+  </form>}
   <details class="dg-forum-topics" open>
     <summary>Topic forums</summary>
+    <div class="dg-forum-chip-scroll">
     <nav class="dg-forum-list" aria-label="Topic forums">
-      {forums.map(forum => <a href={`/threads?forum=${forum.slug}`} data-forum-link={forum.slug} aria-current={active === forum.slug ? 'page' : undefined}><span class="dg-forum-glyph" aria-hidden="true">{forum.glyph}</span><span>{forum.name}</span></a>)}
+      {forums.map(forum => <a href={`/threads?forum=${forum.slug}`} data-forum-link={forum.slug} data-topic={forum.slug} aria-current={active === forum.slug ? 'page' : undefined}><span class="dg-forum-glyph dg-topic-mark" aria-hidden="true"><UiIcon name={forum.icon} size={15}/></span><span class="dg-forum-name">{forum.name}</span><span class="dg-forum-count" data-forum-count={forum.slug}></span></a>)}
     </nav>
+    </div>
   </details>
   {showStart && <a href="/threads/new" class="dg-forum-start">Start a thread</a>}
   <a class="dg-forum-directory" href="/discover">Browse product discussions <UiIcon name="external" size={14}/></a>

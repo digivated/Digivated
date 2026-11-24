@@ -5,7 +5,8 @@ import { commentIndex, commentKey } from './card-interactions.mjs';
 import { notifyUpvoteDigest } from './notifications.mjs';
 import { storageKey, projectPublic } from './admin-store.mjs';
 import { DiscussionError, ensureIdentity, guardPost, memberIdentity, readJson, threadKey } from './discussions.mjs';
-import { forumBySlug, threadSlug, THREAD_BODY_MAX, THREAD_TITLE_MAX, THREAD_TITLE_MIN } from '../src/data/forums.mjs';
+import { forumBySlug, forums, threadSlug, THREAD_BODY_MAX, THREAD_TITLE_MAX, THREAD_TITLE_MIN } from '../src/data/forums.mjs';
+import { validNewsId } from '../src/lib/news-story.mjs';
 import { notePost } from './launch-score.mjs';
 
 // Product Hunt-style forums: topic forums, threads with a title and body,
@@ -15,6 +16,9 @@ const ALL = 'digivated:threads:all';
 const forumIndex = slug => `digivated:threads:forum:${slug}`;
 const slugKey = slug => `digivated:thread:slug:${slug}`;
 const votersKey = id => `digivated:thread:voters:${id}`;
+const newsThreadKey = id => `digivated:thread:news:${id}`;
+export const REACTIONS = ['useful', 'learned', 'shipped'];
+const reactKey = (kind, id) => `digivated:thread:react:${kind}:${id}`;
 const PAGE = 20;
 const SCAN = 400;
 const DAILY_THREADS = 5;
@@ -37,6 +41,7 @@ function card(thread, votes, comments, viewerVoted, viewerId) {
     id: thread.id, slug: thread.slug, forum: thread.forum, title: thread.title, excerpt: excerpt(thread.body),
     author: { name: thread.authorName, avatar: thread.authorAvatar || '', profileUrl: thread.authorProfileUrl || '' },
     createdAt: thread.createdAt, pinned: Boolean(thread.pinned), votes, comments,
+    ...(thread.kind === 'ask' || thread.kind === 'show' ? { kind: thread.kind } : {}),
     ...(viewerVoted ? { voted: true } : {}), ...(viewerId && viewerId === thread.authorId ? { mine: true } : {}),
   };
 }
@@ -99,7 +104,35 @@ export async function moderateThread(redis, id, { status, pinned } = {}) {
   await redis(['SET', threadKey(id), JSON.stringify(thread)]);
   if (thread.status === 'removed') { await redis(['ZREM', ALL, id]); await redis(['ZREM', forumIndex(thread.forum), id]); }
   else { const score = Date.parse(thread.createdAt); await redis(['ZADD', ALL, score, id]); await redis(['ZADD', forumIndex(thread.forum), score, id]); }
+  if (validNewsId(thread.newsId || '')) {
+    const key = newsThreadKey(thread.newsId);
+    const current = await redis(['GET', key]);
+    if (thread.status === 'removed') { if (current === id) await redis(['DEL', key]); }
+    else if (!current) await redis(['SET', key, id, 'NX']);
+  }
   return thread;
+}
+
+export async function forumCounts(redis) {
+  const counts = await Promise.all(forums.map(forum => redis(['ZCARD', forumIndex(forum.slug)])));
+  return Object.fromEntries(forums.map((forum, index) => [forum.slug, Number(counts[index]) || 0]));
+}
+
+async function publishedNews(redis, id) {
+  if (!validNewsId(id)) return false;
+  const score = await redis(['ZSCORE', 'digivated:news:index:published', id]);
+  return score !== null && score !== undefined;
+}
+
+async function reactionState(redis, id, viewerId) {
+  const [counts, mine] = await Promise.all([
+    Promise.all(REACTIONS.map(kind => redis(['SCARD', reactKey(kind, id)]))),
+    viewerId ? Promise.all(REACTIONS.map(kind => redis(['SISMEMBER', reactKey(kind, id), viewerId]))) : Promise.resolve([]),
+  ]);
+  return {
+    reactions: Object.fromEntries(REACTIONS.map((kind, index) => [kind, Number(counts[index]) || 0])),
+    reacted: Object.fromEntries(REACTIONS.filter((_, index) => Number(mine[index]) === 1).map(kind => [kind, true])),
+  };
 }
 
 export async function listThreadsForAdmin(redis, offset = 0) {
@@ -129,7 +162,16 @@ export function makeThreadsHandler(deps = {}) {
 
       if (req.method === 'GET') {
         const p = url.searchParams;
-        if (p.get('view') === 'recent') return send(200, { comments: await recentComments(redis) });
+        if (p.get('view') === 'counts') return send(200, { counts: await forumCounts(redis) });
+        if (p.get('view') === 'recent') return send(200, { comments: await recentComments(redis), counts: await forumCounts(redis) });
+        if (p.has('news')) {
+          const newsId = p.get('news');
+          if (!validNewsId(newsId)) return send(400, { error: 'That story is not available.' });
+          const linkedId = await redis(['GET', newsThreadKey(newsId)]);
+          const linked = linkedId ? parse(await redis(['GET', threadKey(linkedId)])) : null;
+          if (!linked || linked.status !== 'published' || linked.newsId !== newsId) return send(200, { thread: null });
+          return send(200, { thread: { slug: linked.slug, title: linked.title } });
+        }
         if (p.has('slug')) {
           const slug = p.get('slug');
           const id = /^[a-z0-9-]{1,100}$/.test(slug) ? await redis(['GET', slugKey(slug)]) : null;
@@ -137,7 +179,8 @@ export function makeThreadsHandler(deps = {}) {
           if (!thread) return send(404, { error: 'This thread could not be found.' });
           if (thread.status !== 'published') return send(410, { error: 'This thread was removed.' });
           const [item] = await enrich(redis, [thread], account?.id);
-          return send(200, { thread: { ...item, body: thread.body, forumName: forumBySlug[thread.forum]?.name || 'General' } });
+          const reactions = await reactionState(redis, thread.id, account?.id);
+          return send(200, { thread: { ...item, body: thread.body, forumName: forumBySlug[thread.forum]?.name || 'General', ...reactions, ...(thread.newsId ? { newsId: thread.newsId } : {}), ...(thread.helpfulCommentId ? { helpfulCommentId: thread.helpfulCommentId } : {}) } });
         }
         const forum = p.get('forum') || '';
         if (forum && !forumBySlug[forum]) return send(404, { error: 'This forum does not exist.' });
@@ -145,7 +188,8 @@ export function makeThreadsHandler(deps = {}) {
         const offset = Number(p.get('offset') || 0);
         if (!Number.isInteger(offset) || offset < 0 || offset > SCAN) return send(400, { error: 'Invalid page.' });
         const query = (p.get('q') || '').slice(0, 80);
-        return send(200, await listThreads(redis, { forum, sort, offset, query, viewerId: account?.id, now }));
+        const [page, counts] = await Promise.all([listThreads(redis, { forum, sort, offset, query, viewerId: account?.id, now }), forumCounts(redis)]);
+        return send(200, { ...page, counts });
       }
 
       guardPost(req, env);
@@ -160,13 +204,38 @@ export function makeThreadsHandler(deps = {}) {
         if (!forum) return send(400, { error: 'Choose a forum.' });
         if (title.length < THREAD_TITLE_MIN || title.length > THREAD_TITLE_MAX) return send(400, { error: `Write a title between ${THREAD_TITLE_MIN} and ${THREAD_TITLE_MAX} characters.` });
         if (text.length < 10 || text.length > THREAD_BODY_MAX) return send(400, { error: `Write between 10 and ${THREAD_BODY_MAX} characters.` });
+        const kind = body.kind === 'ask' || body.kind === 'show' ? body.kind : '';
+        if (body.kind && !kind) return send(400, { error: 'Choose a post type.' });
+        const newsId = typeof body.newsId === 'string' && body.newsId ? body.newsId : '';
+        if (newsId && !await publishedNews(redis, newsId)) return send(400, { error: 'That story is not available.' });
+        if (newsId) {
+          const existingId = await redis(['GET', newsThreadKey(newsId)]);
+          const existing = existingId ? parse(await redis(['GET', threadKey(existingId)])) : null;
+          if (existing?.status === 'published' && existing.newsId === newsId) {
+            const [item] = await enrich(redis, [existing], account.id);
+            return send(200, { thread: item, existing: true });
+          }
+        }
         const identity = await ensureIdentity(redis, account, body.displayName);
         const id = randomUUID();
-        const thread = { id, slug: threadSlug(title, id), forum, title, body: text, authorId: account.id, authorName: identity.name, authorAvatar: identity.avatar, authorProfileUrl: identity.profileUrl, createdAt: new Date(now).toISOString(), status: 'published', pinned: false };
+        const thread = { id, slug: threadSlug(title, id), forum, title, body: text, authorId: account.id, authorName: identity.name, authorAvatar: identity.avatar, authorProfileUrl: identity.profileUrl, createdAt: new Date(now).toISOString(), status: 'published', pinned: false, ...(kind ? { kind } : {}), ...(newsId ? { newsId } : {}) };
         const saved = await redis(['EVAL', CREATE, 5, `digivated:threads:limit:${account.id}`, threadKey(id), slugKey(thread.slug), ALL, forumIndex(forum), JSON.stringify(thread), now, id, DAILY_THREADS]);
         if (saved === 0) { res.setHeader('Retry-After', '86400'); return send(429, { error: 'You can start up to 5 threads a day. Please come back tomorrow.' }); }
         if (saved !== 1) return send(409, { error: 'Please try again.' });
         await redis(['ZADD', 'digivated:threads:log', now, id]);
+        if (newsId) {
+          const claimed = await redis(['SET', newsThreadKey(newsId), id, 'NX']);
+          if (claimed !== 'OK') {
+            await moderateThread(redis, id, { status: 'removed' });
+            const winnerId = await redis(['GET', newsThreadKey(newsId)]);
+            const winner = winnerId ? parse(await redis(['GET', threadKey(winnerId)])) : null;
+            if (winner?.status === 'published') {
+              const [item] = await enrich(redis, [winner], account.id);
+              return send(200, { thread: item, existing: true });
+            }
+            return send(409, { error: 'Please try again.' });
+          }
+        }
         await notePost(redis, account.id, now).catch(() => {});
         return send(201, { thread: card(thread, 0, 0, false, account.id) });
       }
@@ -175,6 +244,26 @@ export function makeThreadsHandler(deps = {}) {
       const thread = UUID.test(id || '') ? parse(await redis(['GET', threadKey(id)])) : null;
       if (!thread || thread.status !== 'published') return send(404, { error: 'This thread is not available.' });
 
+      if (body.action === 'react') {
+        if (!REACTIONS.includes(body.kind)) return send(400, { error: 'Choose a reaction.' });
+        const [reacted, count] = await redis(['EVAL', VOTE, 1, reactKey(body.kind, id), account.id]);
+        return send(200, { kind: body.kind, reacted: Number(reacted) === 1, count: Number(count) || 0 });
+      }
+      if (body.action === 'helpful') {
+        if (thread.authorId !== account.id) return send(403, { error: 'Only the thread author can mark a reply.' });
+        if (thread.forum !== 'feedback') return send(400, { error: 'Most helpful is for Ask for feedback threads.' });
+        const commentId = typeof body.commentId === 'string' ? body.commentId : '';
+        if (!commentId) delete thread.helpfulCommentId;
+        else {
+          if (!UUID.test(commentId)) return send(400, { error: 'That reply is not available.' });
+          const entry = parse(await redis(['GET', commentKey(commentId)]));
+          if (!entry || entry.status !== 'approved' || entry.type !== 'thread' || entry.itemId !== id) return send(404, { error: 'That reply is not available.' });
+          if (entry.accountId === account.id) return send(400, { error: 'Pick a reply from someone else.' });
+          thread.helpfulCommentId = commentId;
+        }
+        await redis(['SET', threadKey(id), JSON.stringify(thread)]);
+        return send(200, { helpfulCommentId: thread.helpfulCommentId || null });
+      }
       if (body.action === 'vote') {
         const [voted, votes] = await redis(['EVAL', VOTE, 1, votersKey(id), account.id]);
         if (Number(voted) === 1) await notifyUpvoteDigest(redis, { recipientId: thread.authorId, actorId: account.id, subjectKey: `thread:${id}`, subject: thread.title, link: `/threads/${thread.slug}`, noun: 'thread' }).catch(() => {});
