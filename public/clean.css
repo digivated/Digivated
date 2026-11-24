@@ -575,3 +575,7 @@
   #digivated-root :is(.dg-vote, .dg-d-like, .rl-vote, .launch-vote, [data-like-id]) { transition: none !important; }
 }
 }
+
+/* Notification icons use the site icon set inside a soft rounded tile. */
+#digivated-root .dg-note-icon { border-radius: 10px !important; color: #3f3f46 !important; }
+#digivated-root .dg-note-icon svg { width: 17px !important; height: 17px !important; display: block; }
