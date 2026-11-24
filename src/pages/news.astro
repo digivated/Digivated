@@ -6,8 +6,8 @@ import '../styles/news.css';
 <Platform showBreadcrumb={false} title="AI, tech and markets news" description="Free, source-linked news on AI and technology, markets, and security, with original sources and publication times." canonicalPath="/news">
   <section class="news-page" data-news-page aria-labelledby="news-title">
     <header class="news-masthead">
-      <div><h1 id="news-title">News</h1><p class="news-intro">AI, tech, markets, and security.</p></div>
-      <div class="news-check"><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><span>Refresh</span></button></div>
+      <div><p class="news-eyebrow">The daily briefing</p><h1 id="news-title">News</h1><p class="news-intro">What’s moving in AI, tech, markets, and security. Open any story for the quick read, then head to the source for the rest.</p></div>
+      <div class="news-check"><p class="news-updated" data-news-updated hidden></p><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><span>Refresh</span></button></div>
     </header>
     <p class="news-status" data-news-paused hidden>Source checks are paused.</p>
     <p class="news-access-status" data-news-access-status role="status">Loading stories…</p>
@@ -22,7 +22,7 @@ import '../styles/news.css';
     </nav>
     <div class="news-layout" hidden>
       <div class="news-editorial">
-        <section class="news-feature" data-news-feature aria-label="Featured story" hidden></section>
+        <section class="news-lead" data-news-feature aria-label="Top story" hidden></section>
         <section class="news-latest" data-section-reveal aria-labelledby="news-latest-title">
           <header class="news-section-heading"><h2 id="news-latest-title" data-news-latest-title>Latest</h2></header>
           <p class="news-results" data-news-results hidden role="status"></p>

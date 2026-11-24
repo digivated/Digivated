@@ -1,6 +1,7 @@
 import { resourceArticlesVisible } from '../src/data/resource-publication.mjs';
 import { contentPublic, projectPublic } from './admin-store.mjs';
 import { NEWS } from './news-store.mjs';
+import { newsStoryPath, validNewsId } from '../src/lib/news-story.mjs';
 import { redisClient } from './submissions.mjs';
 
 export const SITE_ORIGIN = 'https://digivated.com';
@@ -62,8 +63,8 @@ function remember(pages, path, lastmod) {
   else if (!previous && next) pages.set(href, next);
 }
 
-// News stories and carousel lessons do not have their own public HTML URLs.
-// Stories render inside /news. /carousels/:slug permanently redirects to /resources/guides.
+// News stories have their own server-rendered pages at /news/<headline>-<id>.
+// Carousel lessons do not. /carousels/:slug permanently redirects to /resources/guides.
 // Member-only article bodies stay out while resource publication is paused.
 export function buildSitemapEntries({
   resources = [],
@@ -71,6 +72,7 @@ export function buildSitemapEntries({
   creators = [],
   liveResources = [],
   threads = [],
+  newsStories = [],
   newsUpdatedAt = '',
   articlesVisible = resourceArticlesVisible,
 } = {}) {
@@ -88,6 +90,10 @@ export function buildSitemapEntries({
   for (const creator of creators) {
     if (!creatorId.test(creator?.id || '')) continue;
     remember(pages, `/creator?id=${encodeURIComponent(creator.id)}`, creator.updatedAt || '');
+  }
+  for (const story of newsStories) {
+    if (!validNewsId(story?.id) || typeof story.headline !== 'string' || !story.headline.trim()) continue;
+    remember(pages, newsStoryPath(story), story.correctedAt || story.updatedAt || story.publishedAt || '');
   }
   for (const thread of threads) {
     if (!threadSlug.test(thread?.slug || '') || ['new', 'thread'].includes(thread.slug)) continue;
@@ -180,10 +186,12 @@ export async function loadDynamicSitemapSources(env, redisFactory = redisClient)
   const storyRaws = storyIds.length ? await mget(redis, storyIds.map(id => `${NEWS}public:${id}`)) : [];
   let newsUpdatedAt = '';
   let newest = 0;
+  const newsStories = [];
   for (const raw of storyRaws) {
     if (typeof raw !== 'string') continue;
     try {
       const record = JSON.parse(raw);
+      if (validNewsId(record?.id) && typeof record.headline === 'string') newsStories.push({ id: record.id, headline: record.headline, publishedAt: record.publishedAt || '', updatedAt: record.updatedAt || '' });
       for (const value of [record.updatedAt, record.publishedAt]) {
         const time = Date.parse(value);
         if (Number.isFinite(time) && time >= newest && time <= Date.now() + 86400000) {
@@ -206,7 +214,7 @@ export async function loadDynamicSitemapSources(env, redisFactory = redisClient)
       } catch { /* Skip unreadable threads. */ }
     }
   } catch { /* Threads stay out if their index can't be read; the rest of the sitemap still builds. */ }
-  return { projects, creators, liveResources, newsUpdatedAt, threads };
+  return { projects, creators, liveResources, newsUpdatedAt, threads, newsStories };
 }
 
 async function readPublicJson(fetcher, url) {
@@ -234,12 +242,14 @@ export async function loadPublishedSiteSources(fetcher, origin = SITE_ORIGIN) {
     .filter(item => creatorId.test(item?.id || ''))
     .map(item => ({ id: item.id }));
   let newsUpdatedAt = '';
+  let newsStories = [];
   try {
     const news = await readPublicJson(fetcher, `${origin}/api/news`);
+    newsStories = [news.featured, ...(Array.isArray(news.items) ? news.items : [])].filter(item => validNewsId(item?.id) && typeof item.headline === 'string');
     const dates = [news.featured, ...(Array.isArray(news.items) ? news.items : [])].flatMap(item => [item?.publishedAt, item?.correctedAt]);
     newsUpdatedAt = dates.filter(value => sitemapLastmod(value)).sort().at(-1) || '';
   } catch { /* The news page stays listed when the briefing feed is unavailable. */ }
-  return { projects, creators, liveResources: [], newsUpdatedAt };
+  return { projects, creators, liveResources: [], newsUpdatedAt, newsStories };
 }
 
 export async function collectSitemapEntries({ resources = [], env = process.env, redisFactory = redisClient, fetcher } = {}) {
