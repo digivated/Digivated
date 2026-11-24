@@ -218,15 +218,22 @@ async function listPage() {
       render([...next, ...bits]);
     }).catch(() => {});
   }
+  const mainArea = $('.dg-forum-main');
+  let loadedOnce = false;
   async function load(append) {
     const version = ++requestVersion;
-    more.hidden = true;
-    if (!append) { status.hidden = false; status.textContent = 'Loading threads…'; if (empty) empty.hidden = true; list.replaceChildren(); setSkeleton(true); }
+    // After the first load, keep what is on screen and only dim it, so switching sort never flashes or shifts the page.
+    const firstLoad = !append && !loadedOnce;
+    if (append) more.hidden = true;
+    if (firstLoad) { status.hidden = false; status.textContent = 'Loading threads…'; if (empty) empty.hidden = true; list.replaceChildren(); setSkeleton(true); }
+    else if (!append) mainArea?.setAttribute('aria-busy', 'true');
     try {
       const qs = new URLSearchParams({ sort, offset: String(offset), ...(forum ? { forum } : {}), ...(query ? { q: query } : {}) });
       const data = await api(`/api/threads?${qs}`);
       if (version !== requestVersion) return;
       setSkeleton(false);
+      mainArea?.removeAttribute('aria-busy');
+      if (!append) { list.replaceChildren(); if (empty) empty.hidden = true; }
       paintCounts(data.counts);
       $('[data-forum-total]').textContent = data.total ? `${data.total} ${data.total === 1 ? 'thread' : 'threads'}` : '';
       list.append(...data.threads.map(row));
@@ -241,11 +248,13 @@ async function listPage() {
           showStarters();
         }
       }
-      if (!append) paintToday(data.threads[0]);
+      if (firstLoad) paintToday(data.threads[0]);
+      loadedOnce = true;
       offset = data.next ?? offset; more.hidden = data.next == null;
     } catch (error) {
       if (version !== requestVersion) return;
       setSkeleton(false);
+      mainArea?.removeAttribute('aria-busy');
       status.hidden = false; status.textContent = error.message;
       if (append) more.hidden = false;
     }
