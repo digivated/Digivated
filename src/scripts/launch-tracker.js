@@ -38,11 +38,11 @@ export function projectStage(item, now = Date.now()) {
       { label: 'Launch day', state: live ? 'done' : verified ? 'current' : 'todo', detail: when ? `${when}${!live && days !== null && days > 0 ? ` · ${relativeDays(days)}` : ''}` : '' },
       { label: 'Live', state: live ? 'done' : 'todo', detail: live ? 'On Digivated' : '' },
     ];
-    if (live) return { key: 'live', label: item.status === 'featured' ? 'Member' : 'Live', tone: 'ok', steps };
+    if (live) return { key: 'live', label: item.status === 'featured' ? 'Pro' : 'Live', tone: 'ok', steps };
     return verified ? { key: 'scheduled', label: 'Scheduled', tone: 'info', steps } : { key: 'badge', label: 'Action needed', tone: 'warn', steps };
   }
   const steps = [{ ...saved, label: 'Submitted' }, { label: 'In review', state: live ? 'done' : 'current' }, { label: 'Live', state: live ? 'done' : 'todo' }];
-  if (live) return { key: 'live', label: item.status === 'featured' ? 'Member' : 'Live', tone: 'ok', steps };
+  if (live) return { key: 'live', label: item.status === 'featured' ? 'Pro' : 'Live', tone: 'ok', steps };
   return { key: 'review', label: 'In review', tone: 'info', steps };
 }
 

@@ -46,7 +46,7 @@ import UiIcon from '../components/UiIcon.astro';
         <p id="owner-overview-status" class="owner-inline-status" role="status" aria-live="polite"></p>
         <ul class="owner-todo" aria-label="Things that need you">
           <li data-todo="review"><button type="button" data-open-kind="submission" data-open-stage="review"><strong data-overview-number="review">0</strong><span><b>Still waiting on you</b><small>Promos and anything off the automatic path</small></span><em>Open</em></button></li>
-          <li data-todo="spotlight"><button type="button" data-open-kind="submission" data-open-stage="spotlight"><strong data-overview-number="spotlight">0</strong><span><b>Member spotlights</b><small>One reviewed spotlight per Pro purchase</small></span><em>Review</em></button></li>
+          <li data-todo="spotlight"><button type="button" data-open-kind="submission" data-open-stage="spotlight"><strong data-overview-number="spotlight">0</strong><span><b>Pro spotlights</b><small>One reviewed spotlight per Pro purchase</small></span><em>Review</em></button></li>
           <li data-todo="comments"><button type="button" data-open-kind="comments" data-open-status="pending"><strong data-overview-number="comments">0</strong><span><b>Comments to approve</b><small>Held until you say yes</small></span><em>Moderate</em></button></li>
           <li data-todo="newsReview"><a href="/admin/news"><strong data-overview-number="newsReview">0</strong><span><b>News to review</b><small>Drafts on the news desk</small></span><em>Open</em></a></li>
           <li data-todo="payment"><button type="button" data-open-kind="submission" data-open-stage="payment"><strong data-overview-number="payment">0</strong><span><b>Instant checkouts</b><small>Saved, payment not in yet</small></span><em>See</em></button></li>
@@ -56,7 +56,7 @@ import UiIcon from '../components/UiIcon.astro';
         <h3 class="owner-subhead">At a glance</h3>
         <div class="owner-metrics">
           <button type="button" data-open-kind="submission" data-open-status="live" class="owner-metric"><span>Live</span><strong data-overview-number="published">0</strong></button>
-          <button type="button" data-open-kind="submission" data-open-status="featured" class="owner-metric"><span>Member projects</span><strong data-overview-number="featured">0</strong></button>
+          <button type="button" data-open-kind="submission" data-open-status="featured" class="owner-metric"><span>Pro projects</span><strong data-overview-number="featured">0</strong></button>
           <button type="button" data-open-kind="submission" data-open-status="pending" class="owner-metric"><span>In progress</span><strong data-overview-number="pending">0</strong></button>
           <button type="button" data-open-kind="submission" data-open-stage="badge" class="owner-metric"><span>Badge missing</span><strong data-overview-number="badge">0</strong></button>
           <button type="button" data-open-kind="submission" data-open-stage="scheduled" class="owner-metric"><span>Date locked</span><strong data-overview-number="scheduled">0</strong></button>
@@ -74,7 +74,7 @@ import UiIcon from '../components/UiIcon.astro';
           <li><button type="button" data-open-kind="submission" data-open-stage="badge"><span>1</span><b>Badge missing</b><small data-flow-number="badge">0</small></button></li>
           <li><button type="button" data-open-kind="submission" data-open-stage="scheduled"><span>2</span><b>Date locked</b><small data-flow-number="scheduled">0</small></button></li>
           <li><button type="button" data-open-kind="submission" data-open-status="live"><span>3</span><b>Live</b><small data-flow-number="published">0</small></button></li>
-          <li><button type="button" data-open-kind="submission" data-open-status="featured"><span>M</span><b>Member</b><small data-flow-number="featured">0</small></button></li>
+          <li><button type="button" data-open-kind="submission" data-open-status="featured"><span>P</span><b>Pro</b><small data-flow-number="featured">0</small></button></li>
         </ol>
 
         <h3 class="owner-subhead">Everything else</h3>

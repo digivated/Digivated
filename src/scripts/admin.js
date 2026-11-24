@@ -8,11 +8,11 @@ const stageLabels = {
   badge: 'Badge missing',
   scheduled: 'Date locked',
   payment: 'Instant, not paid',
-  spotlight: 'Member spotlight',
+  spotlight: 'Pro spotlight',
 };
 function launchDetails(record) {
   if (record.promotion?.included === 'instant-launch') return record.promotion.verified ? 'Instant. Payment in.' : 'Instant. Waiting for payment.';
-  if (record.promotion?.included === 'founding-membership') return 'Member launch. Spotlight review.';
+  if (record.promotion?.included === 'founding-membership') return 'Pro launch. Spotlight review.';
   if (record.launch?.kind !== 'free') return '';
   if (record.status !== 'pending') return 'Free launch. Live on its date.';
   const time = freeLaunchTime(record);
@@ -126,7 +126,7 @@ function renderList() {
       row.append(copy,actions);list.append(row);continue;
     }
     const mark=element('span',(record.name||record.title||'?').slice(0,2).toUpperCase(),'owner-row-mark');mark.setAttribute('aria-hidden','true');row.append(mark);
-    copy.append(element('span', record.status, 'tag')); if (record.promotion?.requested && record.promotion.included !== 'instant-launch') { const member=record.promotion.included==='founding-membership'; copy.append(element('span', record.promotion.verified ? (member ? 'Pro feature reviewed' : 'Promo purchase verified') : (member ? 'Member spotlight, review required' : 'Promo, verify the purchase'), 'tag')); } if (record.pick) copy.append(element('span','Digivated Pick','tag'));
+    copy.append(element('span', record.status, 'tag')); if (record.promotion?.requested && record.promotion.included !== 'instant-launch') { const member=record.promotion.included==='founding-membership'; copy.append(element('span', record.promotion.verified ? (member ? 'Pro feature reviewed' : 'Promo purchase verified') : (member ? 'Pro spotlight, review required' : 'Promo, verify the purchase'), 'tag')); } if (record.pick) copy.append(element('span','Digivated Pick','tag'));
     copy.append(element('h2', record.title || record.name)); copy.append(element('p', [record.creator,record.category,record.date?.slice(0,10)].filter(Boolean).join(' · '),'quiet'));
     const launch = state.kind === 'submission' ? launchDetails(record) : '';
     if (launch) copy.append(element('p', launch, 'quiet'));
