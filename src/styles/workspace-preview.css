@@ -561,6 +561,36 @@
     text-underline-offset: .25em;
   }
   .dg-workspace .dg-visit-arrow { width: 13px; height: 13px; flex: none; }
+
+  /* Launch rows: Visit and comments are clean pill buttons, not bare text with an icon. */
+  .dg-workspace #main .dg-project-tile :is(.dg-visit, .dg-comments) {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 5px;
+    min-height: 32px !important;
+    padding: 5px 12px !important;
+    border: 1px solid var(--fl-line) !important;
+    border-radius: 999px !important;
+    background: var(--fl-surface) !important;
+    color: var(--fl-copy) !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    text-decoration: none !important;
+  }
+  .dg-workspace #main .dg-project-tile :is(.dg-visit, .dg-comments):is(:hover, :focus-visible) {
+    border-color: var(--fl-line-hi) !important;
+    background: var(--fl-raised) !important;
+    color: var(--fl-ink) !important;
+  }
+  .dg-workspace #main .dg-project-tile .dg-visit .dg-visit-arrow { display: none !important; }
+  /* The directory hid the word and kept only the arrow on small screens; the pill always says Visit. */
+  .dg-workspace #main .dg-project-tile .dg-dir-visit > span:first-child { display: inline !important; }
+  .dg-workspace #main .dg-project-tile .dg-comments svg { width: 13px; height: 13px; flex: none; }
+
+  /* Logos sit in a rounded tile like app icons, so square logos look finished. */
+  .dg-workspace #main .dg-project-art { border-radius: 12px !important; }
+  .dg-workspace #main .dg-project-art img { border-radius: 11px; }
   .dg-dir > .dg-hero { padding-block: clamp(16px, 3vw, 30px) 22px !important; }
   .dg-dir .dg-dir-controls {
     scroll-margin-block-start: 92px;
