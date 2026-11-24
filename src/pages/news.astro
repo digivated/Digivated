@@ -32,14 +32,24 @@ import '../styles/news.css';
           <a class="news-top" data-news-top href="#news-title" hidden>Back to top ↑</a>
         </section>
       </div>
-      <aside class="news-sidebar" aria-label="Market data and editorial standards" data-news-sidebar>
-        <section class="news-market" data-section-reveal aria-labelledby="news-markets-title">
-          <header class="news-section-heading"><h2 id="news-markets-title">Market snapshot</h2></header>
-          <p class="news-market-note" data-news-market-note>Checking available market data</p>
-          <dl class="news-quotes" data-news-quotes></dl>
-          <div class="news-market-footer" data-news-market-footer></div>
+      <aside class="news-sidebar" aria-label="Markets" data-news-sidebar>
+        <section class="news-pulse" data-section-reveal aria-labelledby="news-pulse-title">
+          <header class="news-pulse-head">
+            <h2 id="news-pulse-title">Markets</h2>
+            <span class="news-pulse-tag">Daily</span>
+          </header>
+          <div class="news-pulse-block" data-news-stocks-block hidden>
+            <h3 class="news-pulse-label">Stocks in the news</h3>
+            <ol class="news-watch" data-news-stocks></ol>
+          </div>
+          <div class="news-pulse-block">
+            <h3 class="news-pulse-label">Rates and the dollar</h3>
+            <p class="news-market-note" data-news-market-note>Checking market data</p>
+            <dl class="news-rates" data-news-quotes></dl>
+          </div>
+          <p class="news-pulse-foot" data-news-market-footer></p>
         </section>
-        <details class="news-standards"><summary>How this feed is published <UiIcon name="chevron" size={15}/></summary><div><p>Stories link to original sources. We label company announcements, verify breaking news, and mark corrections.</p></div></details>
+        <details class="news-standards"><summary>How this feed is published <UiIcon name="chevron" size={15}/></summary><div><p>Stories link to original sources. We label company announcements, verify breaking news, and mark corrections. Stocks in the news counts companies named in recent stories. It is not a price feed or advice.</p></div></details>
       </aside>
     </div>
     <noscript><p class="news-status">JavaScript is needed to load and filter the News feed.</p></noscript>

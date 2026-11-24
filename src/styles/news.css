@@ -350,6 +350,74 @@
     .news-standards summary svg { transition:transform .18s ease; }
   }
 
+  /* Markets panel: stocks named in recent stories, then rates with small trend lines. */
+  html[data-ascii] body .news-page .news-pulse {
+    padding:18px 18px 14px!important;
+    border:1px solid var(--fl-line)!important;
+    border-radius:var(--fl-radius-card)!important;
+    background:var(--fl-surface)!important;
+  }
+  .news-pulse-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
+  html[data-ascii] body .news-page .news-pulse-head h2 { margin:0!important; font-size:17px!important; letter-spacing:-.01em; }
+  .news-pulse-tag {
+    padding:2px 8px; border-radius:999px;
+    background:var(--fl-raised,#f1f1f3)!important; color:var(--fl-muted)!important;
+    font:500 11px/1.5 var(--fl-mono);
+  }
+  .news-pulse-block { padding-top:12px; }
+  .news-pulse-block + .news-pulse-block { margin-top:12px; border-top:1px solid var(--fl-line)!important; }
+  html[data-ascii] body .news-page .news-pulse-label {
+    margin:0 0 6px!important;
+    color:var(--fl-muted)!important;
+    font:600 11px/1.4 var(--fl-sans)!important;
+    letter-spacing:.06em; text-transform:uppercase;
+  }
+  .news-pulse .news-market-note { margin:4px 0; font-size:12px; }
+
+  .news-watch { list-style:none; margin:0 -8px!important; padding:0!important; }
+  html[data-ascii] body .news-page .news-watch-row {
+    display:grid; grid-template-columns:auto minmax(0,1fr) 44px; align-items:center; gap:10px;
+    width:100%; min-height:48px;
+    padding:7px 8px!important;
+    border:0!important; border-radius:10px!important;
+    background:transparent!important; color:var(--fl-ink)!important;
+    text-align:left; cursor:pointer;
+  }
+  html[data-ascii] body .news-page .news-watch-row:hover { background:var(--fl-raised,#f4f4f5)!important; }
+  html[data-ascii] body .news-page .news-watch-row:focus-visible { outline:2px solid var(--fl-ink); outline-offset:-2px; }
+  .news-watch-symbol {
+    min-width:52px; padding:4px 7px; border-radius:7px;
+    background:var(--fl-ink)!important; color:var(--fl-surface,#fff)!important;
+    font:650 12px/1.2 var(--fl-mono)!important; letter-spacing:.02em; text-align:center;
+  }
+  .news-watch-text { display:grid; min-width:0; }
+  .news-watch-name { overflow:hidden; color:var(--fl-ink)!important; font-size:14px; font-weight:550; white-space:nowrap; text-overflow:ellipsis; }
+  .news-watch-meta { color:var(--fl-muted)!important; font:500 11px/1.4 var(--fl-mono); }
+  .news-watch-meter { height:4px; border-radius:99px; background:var(--fl-raised,#ececef)!important; overflow:hidden; }
+  .news-watch-meter > span { display:block; height:100%; border-radius:inherit; background:var(--fl-ink)!important; }
+
+  .news-rates { margin:0; }
+  .news-rate {
+    display:grid; grid-template-columns:minmax(0,1fr) 72px auto; align-items:center; gap:12px;
+    padding:9px 0;
+  }
+  .news-rate + .news-rate { border-top:1px dashed var(--fl-line)!important; }
+  .news-rate dt { display:grid; min-width:0; margin:0; }
+  .news-rate-name { color:var(--fl-ink)!important; font-size:13.5px; font-weight:550; }
+  .news-rate-when { color:var(--fl-muted)!important; font-size:11px; }
+  .news-rate dd { display:grid; justify-items:end; gap:2px; margin:0; }
+  .news-rate-value { color:var(--fl-ink)!important; font:600 15px/1.2 var(--fl-mono)!important; font-variant-numeric:tabular-nums; }
+  .news-rate-change { display:inline-flex; align-items:center; gap:3px; font:600 11px/1.3 var(--fl-mono)!important; color:var(--fl-muted)!important; }
+  .news-rate-arrow { font-size:8px; }
+  .news-rate--up .news-rate-change, .news-spark--up { color:#1d8156!important; }
+  .news-rate--down .news-rate-change, .news-spark--down { color:#c4372b!important; }
+  .news-spark { width:72px; height:24px; color:var(--fl-muted); overflow:visible; }
+  .news-spark-line { fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
+  .news-spark-area { fill:currentColor; opacity:.09; }
+  .news-spark-dot { fill:currentColor; }
+  html[data-ascii] body .news-page .news-pulse-foot { margin:10px 0 0!important; color:var(--fl-muted)!important; font-size:11px!important; line-height:1.5!important; }
+  .news-pulse-foot a { color:var(--fl-copy)!important; }
+
   /* Headlines wrap naturally. Balanced wrapping leaves short ragged lines in narrow columns. */
   html[data-ascii] body .news-page .news-story h3,
   html[data-ascii] body .news-story-page .news-read-card-title { text-wrap:pretty!important; }
