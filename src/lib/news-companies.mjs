@@ -88,23 +88,40 @@ export function storyCompanies(story) {
   return [...found.values()];
 }
 
+export const validStockSymbol = value => /^[A-Z][A-Z0-9.-]{0,11}$/.test(String(value || ''));
+
+// True when a story is about the company with this ticker.
+export function storyMentions(story, symbol) {
+  return validStockSymbol(symbol) && storyCompanies(story).some(company => company.symbol === symbol);
+}
+
 // Most-mentioned companies across recent stories. A headline mention counts double.
+// Each entry carries its latest headlines, mentions per day (oldest day first) and
+// the topic most of its stories fall under.
 export function stocksInTheNews(stories, { now = Date.now(), hours = 72, limit = 6 } = {}) {
-  const tally = new Map();
+  const tally = new Map(), days = Math.max(1, Math.ceil(hours / 24));
   for (const story of stories) {
     const published = Date.parse(story?.sourcePublishedAt);
     if (!Number.isFinite(published) || published > now + 300000 || now - published > hours * 3600000) continue;
     for (const company of storyCompanies(story)) {
-      const entry = tally.get(company.symbol) || { ...company, stories:0, score:0, latest:null };
+      const entry = tally.get(company.symbol) || { ...company, stories:0, score:0, latestAt:0, buzz:Array(days).fill(0), topics:{}, list:[] };
       const inHeadline = PATTERNS.find(p => p.symbol === company.symbol)?.pattern.test(story.headline || '');
       entry.stories += 1;
       entry.score += inHeadline ? 2 : 1;
-      if (!entry.latest || published > entry.latestAt) { entry.latest = { id:story.id, headline:story.headline }; entry.latestAt = published; }
+      entry.latestAt = Math.max(entry.latestAt, published);
+      const age = Math.min(days - 1, Math.max(0, Math.floor((now - published) / 86400000)));
+      entry.buzz[days - 1 - age] += 1;
+      if (story.category) entry.topics[story.category] = (entry.topics[story.category] || 0) + 1;
+      entry.list.push({ id:story.id, headline:story.headline, category:story.category, sourceName:story.sourceName || '', at:published });
       tally.set(company.symbol, entry);
     }
   }
   return [...tally.values()]
     .sort((a, b) => b.score - a.score || b.latestAt - a.latestAt || a.symbol.localeCompare(b.symbol))
     .slice(0, limit)
-    .map(({ symbol, exchange, name, stories, score, latest }) => ({ symbol, exchange, name, stories, score, latest }));
+    .map(({ symbol, exchange, name, stories, score, buzz, topics, list }) => {
+      const headlines = list.sort((a, b) => b.at - a.at).slice(0, 4).map(({ id, headline, category, sourceName }) => ({ id, headline, category, sourceName }));
+      const topic = Object.entries(topics).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+      return { symbol, exchange, name, stories, score, buzz, topic, headlines, latest: headlines[0] ? { id:headlines[0].id, headline:headlines[0].headline } : null };
+    });
 }

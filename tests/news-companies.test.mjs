@@ -40,3 +40,23 @@ test('rates keep a short history for trend lines', async () => {
   assert.equal(result.items[0].history.length, 22);
   assert.equal(result.items[0].history.at(-1), result.items[0].value);
 });
+
+import { storyMentions } from '../src/lib/news-companies.mjs';
+test('company matching uses any of its names, so Google stories count for Alphabet', () => {
+  assert.equal(storyMentions(story('g', 'A more tailored Google Search'), 'GOOGL'), true);
+  assert.equal(storyMentions(story('m', 'Meta-analysis of search'), 'META'), false);
+  assert.equal(storyMentions(story('x', 'Google'), 'not a ticker'), false);
+});
+
+test('each stock carries its headlines, daily buzz and main topic', () => {
+  const [first] = stocksInTheNews([
+    story('1', 'Google ships a search update', '', 2, { category: 'ai-tech', sourceName: 'The Verge' }),
+    story('2', 'Google Wallet adds passes', '', 30, { category: 'ai-tech', sourceName: 'Google' }),
+    story('3', 'Google patches a Chrome flaw', '', 50, { category: 'security', sourceName: 'BleepingComputer' }),
+  ], { now });
+  assert.equal(first.symbol, 'GOOGL');
+  assert.deepEqual(first.buzz, [1, 1, 1]);
+  assert.equal(first.topic, 'ai-tech');
+  assert.deepEqual(first.headlines.map(h => h.id), ['1', '2', '3']);
+  assert.equal(first.headlines[0].sourceName, 'The Verge');
+});

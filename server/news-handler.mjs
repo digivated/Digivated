@@ -1,7 +1,7 @@
 import {NEWS,CATEGORIES,newsStatus} from './news-store.mjs';
 import {redisClient} from './submissions.mjs';
 import {validNewsId} from '../src/lib/news-story.mjs';
-import {stocksInTheNews} from '../src/lib/news-companies.mjs';
+import {stocksInTheNews,storyMentions,validStockSymbol} from '../src/lib/news-companies.mjs';
 const parse=value=>{try{return value?JSON.parse(value):null;}catch{return null;}};
 // One published story plus a few others to read next (same topic first).
 export async function loadNewsStory(redis,id,now=Date.now()){
@@ -26,12 +26,12 @@ export function makeNewsHandler(deps={}){
   try{
    const env=deps.env||process.env,redis=deps.redis||redisClient(env),url=new URL(req.url,'https://digivated.com');
    if(url.searchParams.has('id')){const result=await loadNewsStory(redis,url.searchParams.get('id'),deps.now?.()||Date.now());return result?send(200,result):send(404,{error:'This story is not available.'});}
-   const category=url.searchParams.get('category')||'all',q=(url.searchParams.get('q')||'').trim().slice(0,120).toLowerCase().replace(/^\$(?=[a-z0-9.-]+$)/,''),cursor=Number(url.searchParams.get('cursor')||0);
-   if((category!=='all'&&!CATEGORIES.includes(category))||!Number.isInteger(cursor)||cursor<0||cursor>500)return send(400,{error:'Choose a valid category or page.'});
+   const stock=(url.searchParams.get('stock')||'').trim().toUpperCase(),category=url.searchParams.get('category')||'all',q=(url.searchParams.get('q')||'').trim().slice(0,120).toLowerCase().replace(/^\$(?=[a-z0-9.-]+$)/,''),cursor=Number(url.searchParams.get('cursor')||0);
+   if((stock&&!validStockSymbol(stock))||(category!=='all'&&!CATEGORIES.includes(category))||!Number.isInteger(cursor)||cursor<0||cursor>500)return send(400,{error:'Choose a valid category or page.'});
    const ids=await redis(['ZREVRANGE',NEWS+'index:published',0,499]);
    const raw=ids.length?await redis(['MGET',...ids.map(id=>NEWS+'public:'+id)]):[];
    const all=raw.filter(Boolean).flatMap(value=>{try{return[JSON.parse(value)];}catch{return[];}});
-   const records=all.filter(record=>(category==='all'||record.category===category)&&`${record.headline} ${record.category} ${record.sourceName} ${(record.tickers||[]).map(t=>t.exchange+':'+t.symbol).join(' ')}${' '+record.summary}`.toLowerCase().includes(q));
+   const records=all.filter(record=>(category==='all'||record.category===category)&&(!stock||storyMentions(record,stock))&&`${record.headline} ${record.category} ${record.sourceName} ${(record.tickers||[]).map(t=>t.exchange+':'+t.symbol).join(' ')}${' '+record.summary}`.toLowerCase().includes(q));
    const now=deps.now?.()||Date.now();const visible=records.slice(cursor,cursor+20);
    const featured=records.filter(record=>now-Date.parse(record.sourcePublishedAt)<=24*3600000).sort((a,b)=>(b.importance||0)-(a.importance||0)||Date.parse(b.sourcePublishedAt)-Date.parse(a.sourcePublishedAt))[0];
    const [status,market]=await Promise.all([newsStatus(redis),redis(['GET',NEWS+'markets'])]);
