@@ -12,7 +12,7 @@ test('the homepage uses a static summary card and does not load the promo video'
  await page.goto(base+'/membership');
  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content','summary_large_image');
  await expect(page.locator('meta[name="twitter:player"]')).toHaveCount(0);
- await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content','https://digivated.com/digivated-social-card.png');
+ await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content','https://digivated.com/share/default.png');
 });
 test('standalone player uses native controls and plays the real video',async({page})=>{
  await page.goto(base+'/video-player/index.html');const video=page.locator('video');await expect(video).toHaveAttribute('preload','none');await expect(video).toHaveAttribute('controls','');

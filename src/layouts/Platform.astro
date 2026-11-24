@@ -22,11 +22,11 @@ const canonicalUrl = new URL(canonicalPath || path, 'https://digivated.com').hre
 const pageType = ['/categories','/discover','/news','/tools','/threads'].includes(path) ? 'CollectionPage' : path === '/about' ? 'AboutPage' : 'WebPage';
 const privatePage = ['/dashboard','/notifications','/login','/saved','/email-preferences'].includes(path);
 const socialTitle = `${title} · Digivated`;
-// Homepage share card. Other platform pages keep /digivated-social-card.png, including /membership.
-// Threads, projects, news and creator pages have their own light share card (public/share/, built by scripts/build-share-cards.mjs).
-const shareCards: Record<string,string> = { '/threads':'threads', '/threads/thread':'thread', '/projects':'projects', '/news':'news', '/news/story':'news', '/creator':'creator' };
-const shareCard = shareCards[path];
-const socialImage = path === '/' ? 'https://digivated.com/digivated-social-card-v4.png' : shareCard ? `https://digivated.com/share/${shareCard}.png` : 'https://digivated.com/digivated-social-card.png';
+// Homepage share card.
+// Every page except the homepage uses a light share card: its own for threads, projects, news and creators, otherwise the default (public/share/, built by scripts/build-share-cards.mjs).
+const shareCards: Record<string,string> = { '/threads':'threads', '/threads/thread':'thread', '/projects':'projects', '/news':'news', '/news/story':'news', '/creator':'creator', '/launch-template':'launch' };
+const shareCard = path === '/' ? '' : (shareCards[path] || 'default');
+const socialImage = path === '/' ? 'https://digivated.com/digivated-social-card-v4.png' : `https://digivated.com/share/${shareCard}.png`;
 const socialImageAlt = 'Get your product discovered on Digivated. Free launches every Monday, shown beside this week\'s launch list.';
 const socialProfiles = footerGroups.find(group => group.title === 'Follow')?.links.map(([href]) => href) ?? [];
 const structuredData = {
