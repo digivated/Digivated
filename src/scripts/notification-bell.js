@@ -13,7 +13,7 @@ if (bell) {
   const readAll = el('button', 'Mark all read'); readAll.type = 'button'; readAll.hidden = true;
   head.append(el('strong', 'Notifications'), readAll);
   const list = el('div', null, 'dg-bell-list');
-  const foot = el('a', 'See all notifications →', 'dg-bell-foot'); foot.href = '/notifications';
+  const foot = el('a', 'See all notifications', 'dg-bell-foot'); foot.href = '/notifications';
   panel.append(head, list, foot);
   document.body.append(panel);
   bell.classList.add('dg-bell');
@@ -33,15 +33,29 @@ if (bell) {
     syncBadge();
   }
   const close = (focus = false) => { if (panel.hidden) return; panel.hidden = true; bell.setAttribute('aria-expanded', 'false'); if (focus) bell.focus(); };
+  // Keep the panel on screen. Under a top bar it drops below the bell. In the desktop
+  // sidebar the bell sits at the bottom, so the panel opens beside the sidebar instead.
+  function place() {
+    if (panel.hidden) return;
+    const bounds = siteHeader?.getBoundingClientRect(), b = bell.getBoundingClientRect();
+    const w = panel.offsetWidth, h = panel.offsetHeight, gap = 8, edge = 12;
+    const sidebar = bounds && bounds.right < innerWidth / 2 && b.bottom > innerHeight / 2;
+    let top, right;
+    if (sidebar) {
+      const left = Math.min(Math.ceil(bounds.right) + edge, innerWidth - w - edge);
+      right = innerWidth - left - w;
+      top = Math.min(b.bottom - h, innerHeight - h - edge);
+    } else {
+      right = Math.min(innerWidth - w - edge, Math.floor(innerWidth - (bounds ? bounds.right : b.right)));
+      top = b.bottom + gap;
+      if (top + h > innerHeight - edge && b.top - h - gap >= edge) top = b.top - h - gap;
+    }
+    panel.style.setProperty('--bell-top', `${Math.max(edge, Math.round(top))}px`);
+    panel.style.setProperty('--bell-right', `${Math.max(edge, Math.round(right))}px`);
+  }
   async function open() {
     panel.hidden = false;
-    const bounds = siteHeader?.getBoundingClientRect();
-    if (bounds) {
-      const maxRight = innerWidth - panel.offsetWidth - 12;
-      const right = Math.min(maxRight, Math.floor(innerWidth - bounds.right));
-      panel.style.setProperty('--bell-top', `${Math.ceil(bell.getBoundingClientRect().bottom) + 8}px`);
-      panel.style.setProperty('--bell-right', `${Math.max(12, right)}px`);
-    }
+    place();
     bell.setAttribute('aria-expanded', 'true');
     list.replaceChildren(el('p', 'Loading…', 'dg-bell-empty'));
     try {
@@ -49,8 +63,9 @@ if (bell) {
       if (!response.ok) throw Error();
       items = (await response.json()).items || [];
       render();
+      place();
       panel.querySelector('a')?.focus({ preventScroll: true });
-    } catch { list.replaceChildren(el('p', 'Notifications are unavailable right now.', 'dg-bell-empty')); }
+    } catch { list.replaceChildren(el('p', 'Notifications are unavailable right now.', 'dg-bell-empty')); place(); }
   }
   bell.addEventListener('click', async event => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button > 0) return;
