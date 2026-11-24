@@ -576,6 +576,7 @@
 }
 }
 
+@layer clean-first {
 /* Notification icons use the site icon set inside a soft rounded tile. */
 #digivated-root .dg-note-icon { border-radius: 10px !important; color: #3f3f46 !important; }
 #digivated-root .dg-note-icon svg { width: 17px !important; height: 17px !important; display: block; }
@@ -604,4 +605,5 @@
   #digivated-root .dg-workspace .dg-workspace-rail .dg-shell .dg-shell-icon[aria-expanded="true"] { background: #e8e8ed !important; color: #0b0b0c !important; }
   #digivated-root .dg-workspace .dg-workspace-rail .dg-shell .dg-shell-icon svg { width: 19px !important; height: 19px !important; }
   #digivated-root .dg-workspace .dg-shell .dg-shell-icon .dg-shell-badge { position: absolute !important; top: 5px !important; right: 5px !important; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: #e5484d !important; color: #fff !important; font: 700 10px/16px var(--fl-sans, system-ui) !important; text-align: center; box-shadow: 0 0 0 2px #f3f3f6 !important; }
+}
 }
