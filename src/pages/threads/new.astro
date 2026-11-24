@@ -3,32 +3,40 @@ import Platform from '../../layouts/Platform.astro';
 import ThreadsSidebar from '../../components/ThreadsSidebar.astro';
 import UiIcon from '../../components/UiIcon.astro';
 import { forums, postKinds, THREAD_BODY_MAX, THREAD_TITLE_MAX } from '../../data/forums.mjs';
+const kindIcon = { '': 'comment', ask: 'sparkle', show: 'upload' };
 ---
 <Platform showBreadcrumb={false} title="Start a thread" description="Start a new discussion on Digivated Threads." noindex>
   <div class="dg-forum dg-forum-secondary" data-threads-page="new">
     <section class="dg-forum-main" aria-labelledby="dg-new-title">
       <header class="dg-forum-header">
-        <div>
-          <h1 id="dg-new-title">Start a new thread</h1>
+        <div class="dg-forum-heading">
+          <div class="dg-forum-titleline">
+            <span class="dg-forum-mark" aria-hidden="true"><UiIcon name="plus" size={22}/></span>
+            <h1 id="dg-new-title">Start a new thread</h1>
+          </div>
           <p>Pick a topic first. One topic per thread.</p>
         </div>
       </header>
       <div data-new-gate><p class="dg-forum-status">Checking your account…</p></div>
       <form class="dg-new-thread" data-new-thread hidden>
-        <fieldset class="dg-new-forums">
-          <legend>Topic</legend>
-          {forums.map((forum, index) => <label data-topic={forum.slug}><input type="radio" name="forum" value={forum.slug} checked={index === 0}/><span><span class="dg-topic-mark" aria-hidden="true"><UiIcon name={forum.icon} size={15}/></span>{forum.name}<small>{forum.description}</small></span></label>)}
-        </fieldset>
-        <fieldset class="dg-new-kinds">
-          <legend>Style <small>Optional</small></legend>
-          {postKinds.map(kind => <label><input type="radio" name="kind" value={kind.id} checked={kind.id === ''}/><span>{kind.name}</span></label>)}
-        </fieldset>
-        <label class="dg-new-field" data-new-name hidden><span>Display name <small>Shown with your posts</small></span><input name="displayName" maxlength="40" autocomplete="nickname"/></label>
-        <label class="dg-new-field"><span>Title <small data-count-for="title">0 / {THREAD_TITLE_MAX}</small></span><input name="title" required minlength="8" maxlength={THREAD_TITLE_MAX} placeholder="What do you want to talk about?"/></label>
-        <label class="dg-new-field"><span>Details <small data-count-for="body">0 / {THREAD_BODY_MAX}</small></span><textarea name="body" required minlength="10" maxlength={THREAD_BODY_MAX} rows="9" placeholder="Give people enough context to give a useful answer."></textarea></label>
-        <input type="hidden" name="newsId" value=""/>
-        <input class="sr-only" name="company" tabindex="-1" autocomplete="off" aria-hidden="true"/>
-        <div class="dg-new-actions"><a class="dg-btn" href="/threads">Cancel</a><button class="dg-btn dg-btn-primary" type="submit">Post thread</button></div>
+        <div class="dg-new-card">
+          <fieldset class="dg-new-forums">
+            <legend>Topic</legend>
+            {forums.map((forum, index) => <label data-topic={forum.slug}><input type="radio" name="forum" value={forum.slug} checked={index === 0}/><span><span class="dg-topic-mark" aria-hidden="true"><UiIcon name={forum.icon} size={15}/></span>{forum.name}<small>{forum.description}</small></span></label>)}
+          </fieldset>
+          <fieldset class="dg-new-kinds">
+            <legend>Style <small>Optional</small></legend>
+            {postKinds.map(kind => <label><input type="radio" name="kind" value={kind.id} checked={kind.id === ''}/><span><UiIcon name={kindIcon[kind.id] || 'comment'} size={15}/>{kind.name}</span></label>)}
+          </fieldset>
+        </div>
+        <div class="dg-new-card">
+          <label class="dg-new-field" data-new-name hidden><span>Display name <small>Shown with your posts</small></span><input name="displayName" maxlength="40" autocomplete="nickname"/></label>
+          <label class="dg-new-field"><span>Title <small data-count-for="title">0 / {THREAD_TITLE_MAX}</small></span><input name="title" required minlength="8" maxlength={THREAD_TITLE_MAX} placeholder="What do you want to talk about?"/></label>
+          <label class="dg-new-field"><span>Details <small data-count-for="body">0 / {THREAD_BODY_MAX}</small></span><textarea name="body" required minlength="10" maxlength={THREAD_BODY_MAX} rows="9" placeholder="Give people enough context to give a useful answer."></textarea></label>
+          <input type="hidden" name="newsId" value=""/>
+          <input class="sr-only" name="company" tabindex="-1" autocomplete="off" aria-hidden="true"/>
+        </div>
+        <div class="dg-new-actions"><a class="dg-btn" href="/threads">Cancel</a><button class="dg-btn dg-btn-primary" type="submit">Post thread<UiIcon name="arrow" size={16}/></button></div>
         <p class="dg-forum-status" data-new-status role="status"></p>
       </form>
     </section>
