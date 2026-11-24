@@ -72,7 +72,7 @@ if(root){
   const [lx,ly]=pts.at(-1),dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',lx.toFixed(1));dot.setAttribute('cy',ly.toFixed(1));dot.setAttribute('r','2');dot.setAttribute('class','news-spark-dot');
   svg.append(area,line,dot);return svg;
  }
- const RATE_NAMES={UST10Y:'10-year Treasury',UST2Y:'2-year Treasury',USDBROAD:'U.S. dollar index'};
+ const RATE_NAMES={UST10Y:'10Y Treasury',UST2Y:'2Y Treasury',USDBROAD:'Dollar index'};
  function renderMarkets(markets){
   const quotes=$('[data-news-quotes]'),note=$('[data-news-market-note]'),footer=$('[data-news-market-footer]');quotes.replaceChildren();footer.replaceChildren();
   const rows=Array.isArray(markets?.items)?markets.items.filter(item=>typeof item.symbol==='string'&&(typeof item.displayValue==='string'||typeof item.value==='string'||Number.isFinite(item.value))&&timestamp(item.asOf)!==null):[];
@@ -83,7 +83,7 @@ if(root){
    const direction=move===null||move===0?'flat':move>0?'up':'down';
    const row=element('div',null,'news-rate news-rate--'+direction);
    const dt=element('dt');dt.append(element('span',RATE_NAMES[item.symbol]||item.label||item.symbol,'news-rate-name'));
-   const when=element('span',null,'news-rate-when');const at=time(item.asOf);when.append(document.createTextNode('Close · '),at);dt.append(when);
+   const when=element('span',null,'news-rate-when');const at=time(item.asOf);const asOf=timestamp(item.asOf);if(asOf!==null)at.textContent=new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',timeZone:'UTC'}).format(asOf);when.append(document.createTextNode('Close '),at);dt.append(when);
    const dd=element('dd');
    const value=typeof item.displayValue==='string'?item.displayValue:typeof item.value==='string'?item.value:new Intl.NumberFormat(undefined,{maximumFractionDigits:2}).format(item.value);
    const change=typeof item.displayChange==='string'?item.displayChange:pct===null?'':(pct>0?'+':'')+pct.toFixed(2)+'%';
@@ -106,9 +106,9 @@ if(root){
    const name=String(stock.name||stock.symbol).slice(0,40);
    button.setAttribute('aria-label',`${name} (${stock.symbol}), ${stock.stories} ${stock.stories===1?'story':'stories'}. Show stories about ${name}.`);
    const sym=element('span',stock.symbol,'news-watch-symbol');
-   const text=element('span',null,'news-watch-text');text.append(element('span',name,'news-watch-name'),element('span',`${stock.exchange} · ${stock.stories} ${stock.stories===1?'story':'stories'}`,'news-watch-meta'));
+   const text=element('span',null,'news-watch-text');text.append(element('span',name,'news-watch-name'),element('span',`${stock.stories} ${stock.stories===1?'story':'stories'}`,'news-watch-meta'));
    const meter=element('span',null,'news-watch-meter');meter.setAttribute('aria-hidden','true');const fill=element('span');fill.style.width=Math.max(18,Math.round(((Number(stock.score)||stock.stories)/top)*100))+'%';meter.append(fill);
-   button.append(sym,text,meter);
+   button.title=`${name} · ${stock.exchange}: ${stock.symbol}`;button.append(sym,text,meter);
    button.addEventListener('click',()=>{query=name;search.value=name;window.digivatedTrack?.('news_stock_select',{symbol:stock.symbol});change(true);root.querySelector('.news-toolbar')?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
    li.append(button);list.append(li);
   }
