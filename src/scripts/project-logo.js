@@ -5,8 +5,11 @@ export function resolveProjectLogo(art) {
   const image = art.querySelector('img');
   if (!image) return;
 
-  const showLogo = () => { art.querySelector('.dg-monogram').hidden = true; };
-  const showFallback = () => { image.remove(); };
+  // The initials start hidden whenever there is a logo, so nothing swaps in while
+  // it loads. They only come back if the image fails.
+  const monogram = art.querySelector('.dg-monogram');
+  const showLogo = () => { if (monogram) monogram.hidden = true; };
+  const showFallback = () => { image.remove(); if (monogram) monogram.hidden = false; };
   if (image.complete) {
     if (image.naturalWidth) showLogo();
     else showFallback();
@@ -28,6 +31,7 @@ export function projectLogo(project, className) {
 
   const src = safeSearchHref(project.image);
   if (src?.startsWith('/')) {
+    initials.hidden = true;
     const image = document.createElement('img');
     image.alt = '';
     image.width = 44;
