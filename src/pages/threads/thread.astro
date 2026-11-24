@@ -9,9 +9,11 @@ import ThreadsSidebar from '../../components/ThreadsSidebar.astro';
       <p class="dg-forum-status" data-thread-status role="status">Loading thread…</p>
       <div data-thread-root hidden>
         <p class="dg-thread-crumbs"><a href="/threads">Threads</a> <span aria-hidden="true">/</span> <a data-thread-forum href="/threads"></a></p>
+        <div class="dg-thread-news" data-thread-news hidden></div>
         <h1 data-thread-title></h1>
         <p class="dg-thread-byline" data-thread-byline></p>
         <div class="dg-thread-body" data-thread-body></div>
+        <div class="dg-thread-react" data-thread-react hidden></div>
         <div class="dg-thread-actions" data-thread-actions></div>
       </div>
       <section class="dg-thread-discussion" data-thread-discussion hidden aria-label="Replies"></section>

@@ -84,6 +84,10 @@ export function newsArticleMarkup(story, related = []) {
   const sourceButton = source
     ? `<a class="news-article-source" href="${escapeHtml(source)}" target="_blank" rel="noopener noreferrer"><span>Read the full story on ${escapeHtml(sourceName)}</span>${cardIconMarkup('external')}</a>`
     : '';
+  const discussHref = /^[a-f0-9]{24}$/.test(story?.id || '') ? `/threads/new?news=${story.id}` : '';
+  const discussButton = discussHref
+    ? `<a class="news-article-discuss" href="${escapeHtml(discussHref)}">${cardIconMarkup('comment')}<span>Discuss</span></a>`
+    : '';
   const facts = [
     ['Source', escapeHtml(sourceName)],
     ['Published by source', timeTag(story.sourcePublishedAt, absoluteTime(story.sourcePublishedAt))],
@@ -99,7 +103,7 @@ export function newsArticleMarkup(story, related = []) {
     + `<p class="news-article-byline"><span>${escapeHtml(sourceName)}</span><span aria-hidden="true">·</span>${timeTag(story.sourcePublishedAt, relativeTime(story.sourcePublishedAt)).replace('data-news-time', 'data-news-relative')}<span aria-hidden="true">·</span><span>${readMinutes(story)} min read</span></p>`
     + `</header>`
     + (paragraphs ? `<div class="news-article-body">${paragraphs}</div>` : `<div class="news-article-body"><p>This one is short on our side. The full report is on ${escapeHtml(sourceName)}.</p></div>`)
-    + `<div class="news-article-actions">${sourceButton}<button type="button" class="news-article-share" data-news-share>${cardIconMarkup('share')}<span>Copy link</span></button></div>`
+    + `<div class="news-article-actions">${sourceButton}${discussButton}<button type="button" class="news-article-share" data-news-share>${cardIconMarkup('share')}<span>Copy link</span></button></div>`
     + `<dl class="news-article-facts">${facts.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>`
     + `<p class="news-article-note">We summarize and link to the original. The source has the full story and any updates.</p>`
     + `</article>`

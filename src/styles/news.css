@@ -458,7 +458,7 @@
     font:600 13px/1.2 var(--fl-sans)!important; text-decoration:none!important;
   }
   html[data-ascii] body .news-story-page .news-article-more-head a:hover { background:var(--fl-raised,#f4f4f5)!important; }
-  html[data-ascii] body .news-story-page :is(.news-article-source,.news-article-share) { border-radius:999px!important; }
+  html[data-ascii] body .news-story-page :is(.news-article-source,.news-article-share,.news-article-discuss) { border-radius:999px!important; }
 
   /* Headlines wrap naturally. Balanced wrapping leaves short ragged lines in narrow columns. */
   html[data-ascii] body .news-page .news-story h3,
@@ -561,7 +561,7 @@
   }
   .news-story-page .news-article-body p:first-child::first-line { color:var(--fl-ink); }
   .news-article-actions { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 30px; }
-  html[data-ascii] body .news-story-page :is(.news-article-source,.news-article-share) {
+  html[data-ascii] body .news-story-page :is(.news-article-source,.news-article-share,.news-article-discuss) {
     display:inline-flex; align-items:center; gap:8px;
     min-height:46px;
     padding:11px 18px!important;
@@ -576,13 +576,15 @@
     color:var(--fl-surface,#fff)!important;
   }
   html[data-ascii] body .news-story-page .news-article-source:hover { opacity:.88; }
-  html[data-ascii] body .news-story-page .news-article-share {
+  html[data-ascii] body .news-story-page :is(.news-article-share,.news-article-discuss) {
     border:1px solid var(--fl-line-hi)!important;
     background:var(--fl-surface)!important;
     color:var(--fl-ink)!important;
   }
-  html[data-ascii] body .news-story-page .news-article-share:hover { background:var(--fl-raised)!important; }
-  .news-story-page :is(.news-article-source,.news-article-share) svg { width:16px; height:16px; }
+  html[data-ascii] body .news-story-page :is(.news-article-share,.news-article-discuss):hover { background:var(--fl-raised)!important; }
+  .news-story-page :is(.news-article-source,.news-article-share,.news-article-discuss) svg { width:16px; height:16px; }
+  .news-discuss { color:var(--fl-copy)!important; font-size:13px; text-decoration:none!important; white-space:nowrap; }
+  .news-discuss:hover { text-decoration:underline!important; }
   .news-article-facts {
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
