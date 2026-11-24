@@ -9,7 +9,7 @@
 
 /* Design tokens: the older themes read these, so every page picks them up */
 #digivated-root {
-  --fl-bg: #f6f6f8 !important;
+  --fl-bg: #f7f7fa !important;
   --fl-panel: #ffffff !important;
   --fl-raised: #f3f3f6 !important;
   --fl-surface: #ffffff !important;
@@ -33,9 +33,9 @@
   --dg-acc-line: #d4d4d8 !important;
   --cl-faint: #a1a1aa !important;
   --cl-shadow: 0 1px 2px rgba(17,17,26,.04), 0 6px 20px rgba(17,17,26,.045) !important;
-  background: #f6f6f8 !important;
+  background: #f7f7fa !important;
 }
-#digivated-root body { background: #f6f6f8 !important; -webkit-font-smoothing: antialiased !important; }
+#digivated-root body { background: #f7f7fa !important; -webkit-font-smoothing: antialiased !important; }
 
 /* Header */
 #digivated-root .dg-shell-material { background: rgba(255,255,255,.94) !important; border-bottom: 1px solid #ececf0 !important; box-shadow: none !important; }
@@ -154,11 +154,11 @@
 #digivated-root :is(.dg-forum-sort, [role="tablist"]) > :is(button, a, [role="tab"]) { min-height: 30px !important; padding: 0 12px !important; border: 0 !important; border-radius: 8px !important; background: transparent !important; color: #71717a !important; font-size: 13px !important; font-weight: 550 !important; box-shadow: none !important; }
 #digivated-root :is(.dg-forum-sort, [role="tablist"]) > :is([aria-pressed="true"], [aria-selected="true"], [aria-current="page"]) { background: #fff !important; color: #0b0b0c !important; box-shadow: 0 1px 2px rgba(17,17,26,.1) !important; }
 
-/* Docked top bar below the sidebar breakpoint (1120px): flush, square, solid white, hairline under it */
+/* Docked top bar below the sidebar breakpoint (1120px): frosted in the page tint, hairline under it */
 @media (max-width: 1119px) {
   #digivated-root [data-site-header] { position: sticky !important; top: 0 !important; z-index: 50 !important; margin: 0 !important; }
   #digivated-root .dg-shell-bar { min-height: 52px !important; padding: env(safe-area-inset-top) 16px 0 !important; }
-  #digivated-root .dg-shell-material { inset: 0 !important; border: 0 !important; border-bottom: 1px solid #ececf0 !important; border-radius: 0 !important; background: #ffffff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: none !important; }
+  #digivated-root .dg-shell-material { inset: 0 !important; border: 0 !important; border-bottom: 1px solid rgba(17,17,26,.06) !important; border-radius: 0 !important; background: rgba(247,247,250,.86) !important; -webkit-backdrop-filter: saturate(1.6) blur(14px) !important; backdrop-filter: saturate(1.6) blur(14px) !important; box-shadow: none !important; }
   #digivated-root .site-menu-panel { left: 10px !important; right: 10px !important; width: auto !important; top: calc(52px + env(safe-area-inset-top) + 8px) !important; }
 }
 /* Desktop side rail: same hairline as the cards */
