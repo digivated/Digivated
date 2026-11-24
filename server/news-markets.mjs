@@ -78,6 +78,8 @@ function parseSeries(csv, series, now) {
       ? (basisPointChange === null ? null : `${basisPointChange > 0 ? '+' : basisPointChange < 0 ? '−' : ''}${new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(Math.abs(basisPointChange))} bps`)
       : (changePercent === null ? null : `${signed(changePercent)}%`),
     asOf: latest[0],
+    // Recent daily closes for a small trend line. Values only, oldest first.
+    history: rows.slice(-22).map(([, value]) => value),
     ...SOURCE,
     sourceUrl: `${ORIGIN}/series/${series.id}`,
     delayLabel: isYield ? 'Daily observation' : 'Daily observation · delayed release',

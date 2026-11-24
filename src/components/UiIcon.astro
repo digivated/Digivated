@@ -2,4 +2,4 @@
 import { iconStrokes } from '../lib/card-icons.mjs';
 const { name = 'arrow', size = 18 } = Astro.props;
 ---
-<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={iconStrokes[name] || iconStrokes.arrow}/>
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" set:html={iconStrokes[name] || iconStrokes.arrow}/>

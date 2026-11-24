@@ -29,17 +29,19 @@ import '../styles/news.css';
           <p class="news-status" data-news-status role="status">Loading the latest stories…</p>
           <div class="news-feed" data-news-feed aria-busy="true"></div>
           <button class="news-more" data-news-more type="button" hidden>Load older stories</button>
-          <a class="news-top" data-news-top href="#news-title" hidden>Back to top ↑</a>
+          <a class="news-top" data-news-top href="#news-title" hidden>Back to top</a>
         </section>
       </div>
-      <aside class="news-sidebar" aria-label="Market data and editorial standards" data-news-sidebar>
-        <section class="news-market" data-section-reveal aria-labelledby="news-markets-title">
-          <header class="news-section-heading"><h2 id="news-markets-title">Market snapshot</h2></header>
-          <p class="news-market-note" data-news-market-note>Checking available market data</p>
-          <dl class="news-quotes" data-news-quotes></dl>
-          <div class="news-market-footer" data-news-market-footer></div>
+      <aside class="news-sidebar" aria-label="Stocks in the news" data-news-sidebar>
+        <section class="news-pulse" data-section-reveal aria-labelledby="news-pulse-title" data-news-stocks-block hidden>
+          <header class="news-pulse-head">
+            <h2 id="news-pulse-title">Stocks in the news</h2>
+            <span class="news-pulse-tag">Last 3 days</span>
+          </header>
+          <ol class="news-watch" data-news-stocks></ol>
+          <p class="news-pulse-foot">Companies named most in recent stories. Tap one to see its coverage.</p>
         </section>
-        <details class="news-standards"><summary>How this feed is published <UiIcon name="chevron" size={15}/></summary><div><p>Stories link to original sources. We label company announcements, verify breaking news, and mark corrections.</p></div></details>
+        <details class="news-standards"><summary>How this feed is published <UiIcon name="chevron" size={15}/></summary><div><p>Stories link to original sources. We label company announcements, verify breaking news, and mark corrections. Stocks in the news counts companies named in recent stories. It is not a price feed or investment advice.</p></div></details>
       </aside>
     </div>
     <noscript><p class="news-status">JavaScript is needed to load and filter the News feed.</p></noscript>

@@ -255,7 +255,8 @@ test('workspace navigation and homepage search work on desktop and mobile', asyn
 
   await page.setViewportSize({ width: 390, height: 800 });
   await expect(rail.locator('.dg-rail-navigation')).toBeHidden();
-  await expect(rail.locator('.dg-shell-material')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  // The docked phone bar is frosted in the page tint, not solid white.
+  await expect(rail.locator('.dg-shell-material')).toHaveCSS('background-color', 'rgba(247, 247, 250, 0.86)');
   await expect(login).toHaveCSS('color', 'rgb(11, 11, 12)');
   await page.locator('.site-menu-trigger').click();
   const directory = page.getByRole('navigation', { name: 'Site menu' }).getByRole('link', { name: 'Categories', exact: true });

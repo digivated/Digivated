@@ -9,7 +9,7 @@
 
 /* Design tokens: the older themes read these, so every page picks them up */
 #digivated-root {
-  --fl-bg: #f6f6f8 !important;
+  --fl-bg: #f7f7fa !important;
   --fl-panel: #ffffff !important;
   --fl-raised: #f3f3f6 !important;
   --fl-surface: #ffffff !important;
@@ -33,9 +33,9 @@
   --dg-acc-line: #d4d4d8 !important;
   --cl-faint: #a1a1aa !important;
   --cl-shadow: 0 1px 2px rgba(17,17,26,.04), 0 6px 20px rgba(17,17,26,.045) !important;
-  background: #f6f6f8 !important;
+  background: #f7f7fa !important;
 }
-#digivated-root body { background: #f6f6f8 !important; -webkit-font-smoothing: antialiased !important; }
+#digivated-root body { background: #f7f7fa !important; -webkit-font-smoothing: antialiased !important; }
 
 /* Header */
 #digivated-root .dg-shell-material { background: rgba(255,255,255,.94) !important; border-bottom: 1px solid #ececf0 !important; box-shadow: none !important; }
@@ -117,8 +117,10 @@
     #digivated-root :is(.dg-dir-collection, .dg-d-sort, .dg-forum-sort) button:hover:not([aria-pressed="true"]) { background: transparent !important; }
   }
   #digivated-root :is(a, button, summary, label, [role="tab"]) { touch-action: manipulation; }
-#digivated-root .dg-row :is(.dg-visit, .dg-comments) { min-height: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; font-size: 12px !important; font-weight: 500 !important; color: #71717a !important; gap: 4px !important; justify-self: start !important; }
-#digivated-root .dg-row :is(.dg-visit, .dg-comments):hover { color: #0b0b0c !important; }
+/* Visit and comments are small pill buttons, not bare text with an icon. */
+#digivated-root .dg-row :is(.dg-visit, .dg-comments) { display: inline-flex !important; align-items: center !important; min-height: 24px !important; padding: 3px 10px !important; border: 1px solid #e4e4e9 !important; border-radius: 999px !important; background: #fff !important; box-shadow: none !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1 !important; color: #3f3f46 !important; gap: 4px !important; justify-self: start !important; text-decoration: none !important; }
+#digivated-root .dg-row :is(.dg-visit, .dg-comments):hover { color: #0b0b0c !important; border-color: #c9c9d0 !important; background: #fafafb !important; }
+#digivated-root .dg-row .dg-visit .dg-visit-arrow { display: none !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments) svg { width: 13px !important; height: 13px !important; }
 #digivated-root .dg-row .dg-visit { grid-area: visit !important; }
 #digivated-root .dg-row .dg-comments { grid-area: comments !important; }
@@ -152,11 +154,11 @@
 #digivated-root :is(.dg-forum-sort, [role="tablist"]) > :is(button, a, [role="tab"]) { min-height: 30px !important; padding: 0 12px !important; border: 0 !important; border-radius: 8px !important; background: transparent !important; color: #71717a !important; font-size: 13px !important; font-weight: 550 !important; box-shadow: none !important; }
 #digivated-root :is(.dg-forum-sort, [role="tablist"]) > :is([aria-pressed="true"], [aria-selected="true"], [aria-current="page"]) { background: #fff !important; color: #0b0b0c !important; box-shadow: 0 1px 2px rgba(17,17,26,.1) !important; }
 
-/* Docked top bar below the sidebar breakpoint (1120px): flush, square, solid white, hairline under it */
+/* Docked top bar below the sidebar breakpoint (1120px): frosted in the page tint, hairline under it */
 @media (max-width: 1119px) {
   #digivated-root [data-site-header] { position: sticky !important; top: 0 !important; z-index: 50 !important; margin: 0 !important; }
   #digivated-root .dg-shell-bar { min-height: 52px !important; padding: env(safe-area-inset-top) 16px 0 !important; }
-  #digivated-root .dg-shell-material { inset: 0 !important; border: 0 !important; border-bottom: 1px solid #ececf0 !important; border-radius: 0 !important; background: #ffffff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: none !important; }
+  #digivated-root .dg-shell-material { inset: 0 !important; border: 0 !important; border-bottom: 1px solid rgba(17,17,26,.06) !important; border-radius: 0 !important; background: rgba(247,247,250,.86) !important; -webkit-backdrop-filter: saturate(1.6) blur(14px) !important; backdrop-filter: saturate(1.6) blur(14px) !important; box-shadow: none !important; }
   #digivated-root .site-menu-panel { left: 10px !important; right: 10px !important; width: auto !important; top: calc(52px + env(safe-area-inset-top) + 8px) !important; }
 }
 /* Desktop side rail: same hairline as the cards */
@@ -573,3 +575,7 @@
   #digivated-root :is(.dg-vote, .dg-d-like, .rl-vote, .launch-vote, [data-like-id]) { transition: none !important; }
 }
 }
+
+/* Notification icons use the site icon set inside a soft rounded tile. */
+#digivated-root .dg-note-icon { border-radius: 10px !important; color: #3f3f46 !important; }
+#digivated-root .dg-note-icon svg { width: 17px !important; height: 17px !important; display: block; }

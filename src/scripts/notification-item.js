@@ -1,5 +1,7 @@
 // One notification row, shared by the header preview and the Notifications page.
-const GLYPH = { reply: '>', feedback: '#', upvote: '▲', follow: '+', message: '@', launch: '↗', award: '★', approved: '✓', scheduled: '◷' };
+import { cardIconMarkup } from '../lib/card-icons.mjs';
+// Each kind of notification gets a matching icon from the site set.
+const NOTE_ICON = { reply: 'comment', feedback: 'message', upvote: 'like', follow: 'profile', message: 'mail', launch: 'sparkle', award: 'sparkle', approved: 'check', scheduled: 'clock' };
 const el = (tag, text, className) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node; };
 
 export function relativeTime(value) {
@@ -27,7 +29,7 @@ export function notificationRow(item, { onOpen } = {}) {
   if (validHref) link.href = item.href;
   else link.type = 'button';
   link.dataset.type = item.type;
-  const icon = el('span', GLYPH[item.type] || '*', 'dg-note-icon'); icon.setAttribute('aria-hidden', 'true');
+  const icon = el('span', null, 'dg-note-icon'); icon.setAttribute('aria-hidden', 'true'); icon.innerHTML = cardIconMarkup(NOTE_ICON[item.type] || 'bell');
   const copy = el('span', null, 'dg-note-copy');
   copy.append(notificationLine(item));
   if (item.excerpt) copy.append(el('span', item.excerpt, 'dg-note-quote'));

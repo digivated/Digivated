@@ -1,6 +1,7 @@
 import {NEWS,CATEGORIES,newsStatus} from './news-store.mjs';
 import {redisClient} from './submissions.mjs';
 import {validNewsId} from '../src/lib/news-story.mjs';
+import {stocksInTheNews} from '../src/lib/news-companies.mjs';
 const parse=value=>{try{return value?JSON.parse(value):null;}catch{return null;}};
 // One published story plus a few others to read next (same topic first).
 export async function loadNewsStory(redis,id,now=Date.now()){
@@ -29,13 +30,16 @@ export function makeNewsHandler(deps={}){
    if((category!=='all'&&!CATEGORIES.includes(category))||!Number.isInteger(cursor)||cursor<0||cursor>500)return send(400,{error:'Choose a valid category or page.'});
    const ids=await redis(['ZREVRANGE',NEWS+'index:published',0,499]);
    const raw=ids.length?await redis(['MGET',...ids.map(id=>NEWS+'public:'+id)]):[];
-   const records=raw.filter(Boolean).flatMap(value=>{try{return[JSON.parse(value)];}catch{return[];}}).filter(record=>(category==='all'||record.category===category)&&`${record.headline} ${record.category} ${record.sourceName} ${(record.tickers||[]).map(t=>t.exchange+':'+t.symbol).join(' ')}${' '+record.summary}`.toLowerCase().includes(q));
+   const all=raw.filter(Boolean).flatMap(value=>{try{return[JSON.parse(value)];}catch{return[];}});
+   const records=all.filter(record=>(category==='all'||record.category===category)&&`${record.headline} ${record.category} ${record.sourceName} ${(record.tickers||[]).map(t=>t.exchange+':'+t.symbol).join(' ')}${' '+record.summary}`.toLowerCase().includes(q));
    const now=deps.now?.()||Date.now();const visible=records.slice(cursor,cursor+20);
    const featured=records.filter(record=>now-Date.parse(record.sourcePublishedAt)<=24*3600000).sort((a,b)=>(b.importance||0)-(a.importance||0)||Date.parse(b.sourcePublishedAt)-Date.parse(a.sourcePublishedAt))[0];
    const [status,market]=await Promise.all([newsStatus(redis),redis(['GET',NEWS+'markets'])]);
    let markets={status:'unavailable',items:[],updatedAt:null};try{if(market)markets=JSON.parse(market);}catch{}
    if(markets.updatedAt&&now-Date.parse(markets.updatedAt)>48*3600000)markets={...markets,status:'stale'};
-   return send(200,{items:visible.map(record=>publicNewsItem(record,now)),featured:featured?publicNewsItem(featured,now):null,next:cursor+20<records.length?String(cursor+20):null,markets,updatedAt:status.lastCheckedAt,pipeline:{lastCheckedAt:status.lastCheckedAt,status:status.paused?'paused':status.status}});
+   // Stocks in the news looks at every recent story, so it holds steady while readers filter.
+   let stocks=[];try{stocks=stocksInTheNews(all,{now});}catch{}
+   return send(200,{items:visible.map(record=>publicNewsItem(record,now)),stocks,featured:featured?publicNewsItem(featured,now):null,next:cursor+20<records.length?String(cursor+20):null,markets,updatedAt:status.lastCheckedAt,pipeline:{lastCheckedAt:status.lastCheckedAt,status:status.paused?'paused':status.status}});
   }catch{return send(503,{error:'News is temporarily unavailable. Please try again shortly.'});}
  };
 }

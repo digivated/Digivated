@@ -3,7 +3,7 @@
 import { cardIconMarkup } from './card-icons.mjs';
 
 export const NEWS_CATEGORIES = { 'ai-tech': 'AI & Tech', markets: 'Markets', security: 'Security' };
-export const NEWS_CATEGORY_ICONS = { 'ai-tech': 'cpu', markets: 'chart', security: 'lock' };
+export const NEWS_CATEGORY_ICONS = { 'ai-tech': 'cpu', markets: 'chart', security: 'shield' };
 const ID = /^[a-f0-9]{24}$/;
 
 export const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));

@@ -561,6 +561,14 @@
     text-underline-offset: .25em;
   }
   .dg-workspace .dg-visit-arrow { width: 13px; height: 13px; flex: none; }
+
+  /* The directory hid the word and kept only the arrow on small screens; the pill always says Visit. */
+  .dg-workspace #main .dg-project-tile .dg-dir-visit > span:first-child { display: inline !important; }
+  .dg-workspace #main .dg-project-tile .dg-comments svg { width: 13px; height: 13px; flex: none; }
+
+  /* Logos sit in a rounded tile like app icons, so square logos look finished. */
+  .dg-workspace #main .dg-project-art { border-radius: 12px !important; }
+  .dg-workspace #main .dg-project-art img { border-radius: 11px; }
   .dg-dir > .dg-hero { padding-block: clamp(16px, 3vw, 30px) 22px !important; }
   .dg-dir .dg-dir-controls {
     scroll-margin-block-start: 92px;

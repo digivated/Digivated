@@ -22,7 +22,7 @@
   "1c0a6299-c518-46e9-b935-9583ac79735e": {
     "length": 211195,
     "sha256": "7aa558a792110a22427337fe65860d227adf67cd63adb2d51c929302f5eb50cf",
-    "source": "https://starinthetrend.com/favicon.ico?favicon.2qcac71x0j3xx.ico"
+    "source": "https://starinthetrend.com/icon.svg"
   },
   "20645cf2-cffa-48f7-8122-35301d87f817": {
     "length": 75439,
@@ -56,7 +56,7 @@
   "3d0206a4-016d-4007-9e17-457e5060faa5": {
     "length": 84607,
     "sha256": "9cb5db9a1339a1098eeed60411649b276ecbc907040677810f74cd862bff2f40",
-    "source": "https://productlair.com/favicon.ico?favicon.050xju424108n.ico"
+    "source": "https://productlair.com/icons/logo.svg"
   },
   "3ee46085-ae57-4e33-abc4-74f8e2d85390": {
     "length": 245522,
@@ -66,7 +66,7 @@
   "4447376f-cbfd-4b0b-9455-790ddc7559ee": {
     "length": 90643,
     "sha256": "f8d8394470772ae658b2135bb09fd3b687b88293269060a041120900cf9c2caa",
-    "source": "https://flaq.ai/favicon.ico?0419ba2923064082"
+    "source": "https://flaq.ai/icon.svg"
   },
   "4aeaf5cf-82a1-4529-a828-f3a0567e8024": {
     "length": 165143,
@@ -76,7 +76,7 @@
   "4dc09dd3-e896-4300-acd7-b8eea3f847d3": {
     "length": 105615,
     "sha256": "3b53db19296e2963b4c0c0cb562c38d93d78bab1a1de9c8ef021d2ccb352d2ed",
-    "source": "https://aivideoweb.com/apple-icon.png?apple-icon.07d33ae_m5sdn.png"
+    "source": "https://aivideoweb.com/icon.svg"
   },
   "506b94ff-c4a1-41e0-a916-e8a09d4ea4e4": {
     "length": 238691,
@@ -101,6 +101,11 @@
     "sha256": "afae45abb6791f5ebccd7e5c135861c4a73cb63bbc959e2fb20cb3df1b55192d",
     "source": "https://webdir.si/img/apple-touch-icon.png"
   },
+  "77341ea6-afb6-44ac-b924-51d5494478f7": {
+    "length": 48426,
+    "sha256": "f32ee65c1266963adc53ecd8d03fdd7d84c1c2e5734b1e3577e5431192b08efa",
+    "source": "Uploaded logo, trimmed to fill the tile"
+  },
   "77843ad5-3f1d-4e1d-b0ea-ffe8ee2a9ab5": {
     "length": 118555,
     "sha256": "40bd35ae9808e76a568740094ab2bdaad0bfb2d1decba6dce45732c917571adb"
@@ -120,6 +125,16 @@
     "sha256": "d76847174f6b9357ff7540e8a60793087a6a8b9c337edffa426c762e59e3d3e0",
     "source": "https://wordsintomusic.com/apple-icon.png"
   },
+  "8c0f54b3-a3d3-4de8-81fc-6623d940c172": {
+    "length": 16586,
+    "sha256": "bbe77a993582b89b8a2194882370f609bf3ac01367a56a9343952a74e77f440c",
+    "source": "https://arogo.app/apple-touch-icon.png"
+  },
+  "9992ff29-46ed-41e0-a5b8-a73dd20db5e7": {
+    "length": 20030,
+    "sha256": "11708e11098703d19c109af91165607163fbbedba0646cf59b3cf96cd132603d",
+    "source": "https://www.whatdidyoumake.com/icon.svg"
+  },
   "9aeaf58b-9a3c-4812-85d5-02593deaf5dc": {
     "length": 97907,
     "sha256": "35b3a8f470709743a802f82c63f6b62904ebb2110a2513fd457c3b6fa37cd384",
@@ -128,7 +143,7 @@
   "a0d34c29-fef4-461f-8fca-acd1e10c1c62": {
     "length": 71379,
     "sha256": "1529c7b0831154e7a2cf454052f7c5dc18a3045d334119ce7a3b750f7077f722",
-    "source": "https://flyne.ai/favicon.ico?favicon.1cmnse05urqlg.ico"
+    "source": "https://flyne.ai/icon.svg"
   },
   "abf33642-5e0c-4393-b02b-639a6cd44308": {
     "length": 186630,
