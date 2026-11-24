@@ -116,7 +116,9 @@ if(form){
   });
  };
  $('login-change-email').onclick=()=>{if(!busy){setMode('signup');email.focus();}};
- $('login-email-link').onclick=event=>action(event.currentTarget,async address=>{const {error}=await client.auth.signInWithOtp({email:address,options:{shouldCreateUser:false,emailRedirectTo:`${location.origin}/account`}});if(error)throw error;say(`If ${address} has an account, a sign-in link is on its way. Check your inbox.`,'ok');});
+ $('login-email-link').onclick=event=>action(event.currentTarget,async address=>{const {error}=await client.auth.signInWithOtp({email:address,options:{shouldCreateUser:false,emailRedirectTo:`${location.origin}/account`}});
+  // No account for this email: answer the same way as when there is one, so the form never reveals who has an account.
+  if(error&&!(error.code==='otp_disabled'||/signups not allowed/i.test(error.message||'')))throw error;say(`If ${address} has an account, a sign-in link is on its way. Check your inbox.`,'ok');});
  $('login-reset').onclick=event=>action(event.currentTarget,async address=>{const {error}=await client.auth.resetPasswordForEmail(address,{redirectTo:`${location.origin}/account`});if(error)throw error;say(`If ${address} has an account, a password reset link is on its way. Check your inbox.`,'ok');});
  $('login-google').onclick=async event=>{
   if(busy||!client)return;busy=true;event.currentTarget.disabled=true;say('Opening Google…');
