@@ -118,7 +118,7 @@
   }
   #digivated-root :is(a, button, summary, label, [role="tab"]) { touch-action: manipulation; }
 /* Visit and comments are small pill buttons, not bare text with an icon. */
-#digivated-root .dg-row :is(.dg-visit, .dg-comments) { display: inline-flex !important; align-items: center !important; min-height: 26px !important; padding: 4px 10px !important; border: 1px solid #e4e4e9 !important; border-radius: 999px !important; background: #fff !important; box-shadow: none !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1 !important; color: #3f3f46 !important; gap: 4px !important; justify-self: start !important; text-decoration: none !important; }
+#digivated-root .dg-row :is(.dg-visit, .dg-comments) { display: inline-flex !important; align-items: center !important; min-height: 24px !important; padding: 3px 10px !important; border: 1px solid #e4e4e9 !important; border-radius: 999px !important; background: #fff !important; box-shadow: none !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1 !important; color: #3f3f46 !important; gap: 4px !important; justify-self: start !important; text-decoration: none !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments):hover { color: #0b0b0c !important; border-color: #c9c9d0 !important; background: #fafafb !important; }
 #digivated-root .dg-row .dg-visit .dg-visit-arrow { display: none !important; }
 #digivated-root .dg-row :is(.dg-visit, .dg-comments) svg { width: 13px !important; height: 13px !important; }
