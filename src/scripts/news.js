@@ -113,6 +113,7 @@ if(root){
    li.append(button);list.append(li);
   }
  }
+ function updated(value){const line=$('[data-news-updated]');if(!line)return;const text=relativeTime(value);line.hidden=!text;line.replaceChildren();if(text){line.append(element('span',null,'news-live-dot'),document.createTextNode('Checked '+text.toLowerCase()));}}
  function controls(){for(const button of root.querySelectorAll('[data-news-category]'))button.setAttribute('aria-pressed',String(button.dataset.newsCategory===category));}
  function updateLocation(push=false){const u=new URL(location.href);if(category==='all')u.searchParams.delete('category');else u.searchParams.set('category',category);if(query)u.searchParams.set('q',query);else u.searchParams.delete('q');history[push?'pushState':'replaceState'](null,'',u.pathname+u.search+u.hash);}
  async function load(reset=true){
