@@ -320,8 +320,8 @@
   .news-page .news-standards { margin-top:12px; padding:12px 16px; }
   .news-standards summary {
     display:flex; align-items:center; justify-content:space-between;
-    gap:10px; color:var(--fl-ink);
-    cursor:pointer; font-size:13px; list-style:none;
+    gap:10px; color:var(--fl-ink)!important;
+    cursor:pointer; font-size:13px; font-weight:500; list-style:none;
   }
   .news-standards summary::-webkit-details-marker { display:none; }
   .news-standards[open] summary svg { transform:rotate(180deg); }
