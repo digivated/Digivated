@@ -32,7 +32,7 @@ import '../styles/project-account.css';
           <button class="button primary fl-btn fl-btn-primary" id="login-submit" type="submit">Sign in</button>
         </form>
         <form id="login-code-form" class="fl-form" hidden>
-          <p id="login-code-help">Enter the six-digit code we sent to <strong id="login-code-email"></strong>. It expires in 10 minutes.</p>
+          <p id="login-code-help">Enter the six-digit code we sent to <strong id="login-code-email"></strong>. It works for 30 minutes. Emails can take a few minutes to arrive.</p>
           <label for="login-code">Verification code</label>
           <input id="login-code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" aria-describedby="login-code-help" required/>
           <button class="button primary fl-btn fl-btn-primary" type="submit">Verify and create account</button>
