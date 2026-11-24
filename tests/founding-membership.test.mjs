@@ -194,7 +194,7 @@ test('Membership publishes unlimited projects instantly; without a plan the paid
   // No plan: the member option is refused before anything is saved.
   const refused = await submit({ ...project, submissionType: 'founding-feature', promotionVerified: true, status: 'featured' }, { redis: store.redis });
   assert.equal(refused.status, 403);
-  assert.match(refused.data.error, /Starter \(\$3\) or Membership \(\$5\)/);
+  assert.match(refused.data.error, /Starter \(\$3\) or Pro \(\$5\)/);
   assert.equal(store.saves().length, 0);
   // A Membership sign-in on this browser upgrades the account and publishes at once.
   const cookie = await memberCookie(foundingLicense, saleId);

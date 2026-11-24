@@ -216,8 +216,8 @@ end
 ` + SAVE_ACTIVITY_CHOICE;
 const PLAN_CHECK_FAILED = 'We couldn’t confirm your plan right now. Your details are still here; try again in a moment.';
 function limitMessage(plan) {
-  if (plan === 'starter') return 'Starter includes 3 projects on Digivated at a time. Get Membership ($5) for unlimited projects, or archive one in Your Projects.';
-  return 'Free accounts can have 1 project on Digivated at a time. Get Starter ($3) for 3 projects or Membership ($5) for unlimited, or archive your project in Your Projects.';
+  if (plan === 'starter') return 'Starter includes 3 projects on Digivated at a time. Get Pro ($5) for unlimited projects, or archive one in Your Projects.';
+  return 'Free accounts can have 1 project on Digivated at a time. Get Starter ($3) for 3 projects or Pro ($5) for unlimited, or archive your project in Your Projects.';
 }
 // Paid plans skip review: save, then publish in the same request. If publishing
 // fails for any reason, the project stays saved and waits for review instead.
@@ -319,7 +319,7 @@ export function makeSubmissionHandler(deps={}) {
       const paid=isPaidPlan(plan);
       // Paid plans publish instantly; the old per-project paid types now mean "use my plan".
       if (['instant-launch','founding-membership'].includes(record.promotion?.included)) {
-        if (!paid) throw new SubmissionError(403, checkFailed ? PLAN_CHECK_FAILED : 'Instant publishing comes with Starter ($3) or Membership ($5). Buy one with your account email, then publish.');
+        if (!paid) throw new SubmissionError(403, checkFailed ? PLAN_CHECK_FAILED : 'Instant publishing comes with Starter ($3) or Pro ($5). Buy one with your account email, then publish.');
         const { promotion, ...rest } = record; record = rest;
       }
       const ip=req.headers['x-real-ip'];

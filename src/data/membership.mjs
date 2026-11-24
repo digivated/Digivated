@@ -1,6 +1,6 @@
 // One public offer. Enable checkout only after the Gumroad listing matches it.
 export const membership = Object.freeze({
-  name: 'Digivated Membership',
+  name: 'Digivated Pro',
   priceUSD: 5,
   billing: 'one-time',
   checkoutReady: false,

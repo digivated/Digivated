@@ -20,7 +20,7 @@ for(const width of [390,1440])test(`one membership offer is honest and usable at
 test('verified one-time checkout exposes the correct Gumroad purchase link',async({page})=>{
  await page.route('**/api/membership-checkout',r=>r.fulfill({json:{ready:true,checkoutUrl:'https://digivated.gumroad.com/l/founding-member-pass',priceUSD:5,billing:'one-time'}}));
  await page.goto(base+'/membership');
- const checkout=page.getByRole('link',{name:/Get membership · \$5 once/});
+ const checkout=page.getByRole('link',{name:/Get Pro · \$5 once/});
  await expect(checkout).toHaveAttribute('href','https://digivated.gumroad.com/l/founding-member-pass');
  await expect(checkout).toHaveAttribute('target','_blank');
 });
@@ -30,7 +30,7 @@ for (const width of [390, 1440]) test(`shop plans lead to the correct launch pat
  await page.goto(base + '/shop');
  const free = page.getByRole('article', { name: 'Free', exact: true });
  const starter = page.getByRole('article', { name: 'Starter', exact: true });
- const membership = page.getByRole('article', { name: 'Membership', exact: true });
+ const membership = page.getByRole('article', { name: 'Pro', exact: true });
  await expect(free.locator('.shop-price')).toHaveText('$0');
  await expect(starter.locator('[data-shop-spot-price]')).toHaveText('$3');
  await expect(free.getByRole('link', { name: 'Start free' })).toHaveAttribute('href', '/new-launch#project-form');
@@ -92,5 +92,5 @@ test('checkout readiness preserves same-origin preview access cookies', async ({
    : { ready:false } });
  });
  await page.goto(base+'/membership');
- await expect(page.getByRole('link', { name: /Get membership · \$5 once/ })).toBeVisible();
+ await expect(page.getByRole('link', { name: /Get Pro · \$5 once/ })).toBeVisible();
 });

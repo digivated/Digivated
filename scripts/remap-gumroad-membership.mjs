@@ -18,7 +18,7 @@ function request(method, path, body) {
 }
 const products=request('GET','/products').products;
 const product=products.find(p=>p.id===membership.gumroadProductId);
-if(!product||!['Digivated Founding Membership',membership.name].includes(product.name))throw new Error('The expected existing membership product was not found. No writes made.');
+if(!product||!['Digivated Founding Membership','Digivated Membership',membership.name].includes(product.name))throw new Error('The expected existing Pro product was not found. No writes made.');
 if(product.subscription_duration||product.is_tiered_membership)throw new Error('Expected a one-time product, not recurring billing. No writes made.');
 const retiring=new Set(['ui-prompt-package','digivated-promo','support-digivated']);
 const oldProducts=products.filter(p=>retiring.has(p.custom_permalink||p.permalink)&&p.id!==product.id&&!p.deleted);

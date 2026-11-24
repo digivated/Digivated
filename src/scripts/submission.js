@@ -293,7 +293,7 @@ if (form) {
     membershipFields.hidden = !needsBuy;
     if (!needsBuy) return;
     const offer = tier === 'instant' ? planInfo?.offers?.starter : planInfo?.offers?.member;
-    const label = tier === 'instant' ? 'Starter' : 'Membership';
+    const label = tier === 'instant' ? 'Starter' : 'Pro';
     document.querySelectorAll('[data-plan-email]').forEach(node => { node.textContent = accountEmail || 'your account email'; });
     if (offer?.checkoutUrl && planBuy) {
       const url = new URL(offer.checkoutUrl);
@@ -441,7 +441,7 @@ if (form) {
     const full = Boolean(planInfo && !planInfo.checkFailed && planInfo.limit && planInfo.remaining === 0);
     button.disabled = !accountVerified || locked || full;
     button.textContent = !accountVerified ? 'Sign in to submit your project'
-      : locked ? `Buy ${intent.value === 'instant' ? 'Starter' : 'Membership'} above to publish`
+      : locked ? `Buy ${intent.value === 'instant' ? 'Starter' : 'Pro'} above to publish`
       : full ? 'No project slots left'
       : paidTier ? 'Publish now'
       : intent.value === 'directory' ? (reservedBadge ? 'Verify badge & submit' : 'Save and get your badge')

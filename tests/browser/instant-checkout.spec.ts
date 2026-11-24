@@ -73,7 +73,7 @@ test('free stays the default and keeps the badge flow when no purchase is found'
  const calls=await signedIn(page,{paidAfterChecks:99});
  await fill(page);
  await page.locator('.dg-tiers [data-tier="founding-feature"]').click();
- await expect(page.locator('#plan-buy')).toContainText('Buy Membership · $5 once');
+ await expect(page.locator('#plan-buy')).toContainText('Buy Pro · $5 once');
  await page.locator('#plan-recheck').click();
  await expect(page.locator('#plan-buy-status')).toContainText('No purchase found');
  await page.locator('.dg-tiers [data-tier="directory"]').click();

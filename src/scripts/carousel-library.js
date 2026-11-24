@@ -306,7 +306,7 @@ function renderDetail(root, payload) {
   const locked = el('section', undefined, 'carousel-locked');
   if (item.locked) {
     locked.append(el('h2', item.locked.message), el('p', `${item.locked.count} more slides are available to existing Founding Membership purchasers. Your previous access is preserved.`));
-    const buy = el('a', 'Membership & previous purchases', 'button');
+    const buy = el('a', 'Pro and previous purchases', 'button');
     buy.href = FOUNDING_CHECKOUT;
     buy.target = '_blank';
     buy.rel = 'noopener noreferrer';

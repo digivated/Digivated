@@ -16,7 +16,7 @@ import DiscoveryTools from '../components/DiscoveryTools.astro';
 import { footerGroups } from '../data/site-navigation.mjs';
 const { title = 'Tech. AI. Markets. What’s next.', description = 'Discover independent projects, useful tools, and the people building them on Digivated.', canonicalPath, noindex = false, showBreadcrumb = true } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const sectionNames: Record<string,string> = { '/threads':'Threads', '/threads/new':'Start a thread', '/discover':'Directory', '/tools':'Tools', '/products':'Membership', '/ui-ux-prompt-packet':'Prompt Packet', '/new-launch':'New Launch', '/dashboard':'Dashboard', '/login':'Log in', '/promote':'Membership', '/about':'About', '/privacy':'Privacy & Data', '/terms':'Terms of Use' };
+const sectionNames: Record<string,string> = { '/threads':'Threads', '/threads/new':'Start a thread', '/discover':'Directory', '/tools':'Tools', '/products':'Pro', '/ui-ux-prompt-packet':'Prompt Packet', '/new-launch':'New Launch', '/dashboard':'Dashboard', '/login':'Log in', '/promote':'Pro', '/about':'About', '/privacy':'Privacy & Data', '/terms':'Terms of Use' };
 const breadcrumb = sectionNames[path] || title;
 const canonicalUrl = new URL(canonicalPath || path, 'https://digivated.com').href;
 const pageType = ['/categories','/discover','/news','/tools','/threads'].includes(path) ? 'CollectionPage' : path === '/about' ? 'AboutPage' : 'WebPage';

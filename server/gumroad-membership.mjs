@@ -19,7 +19,7 @@ export async function remapGumroadMembership({token,redis,fetcher=fetch,assets})
   const timeout=AbortSignal.timeout(95000);
   const warnings=[];
   let preview=null;
-  const profileWarning='Membership listing, cover and thumbnail were updated. Custom storefront HTML is not enabled for this key/account, so the native storefront was kept. Set native colours in Gumroad Settings > Profile > Design: background #050505, accent #8652df.';
+  const profileWarning='Pro listing, cover and thumbnail were updated. Custom storefront HTML is not enabled for this key/account, so the native storefront was kept. Set native colours in Gumroad Settings > Profile > Design: background #050505, accent #8652df.';
   async function api(method,path,body) {
     const response=await fetcher(`https://api.gumroad.com/v2${path}`,{
       method,redirect:'error',cache:'no-store',signal:AbortSignal.any([timeout,AbortSignal.timeout(10000)]),
@@ -38,7 +38,7 @@ export async function remapGumroadMembership({token,redis,fetcher=fetch,assets})
     const products=(await api('GET','/products')).products;
     if(!Array.isArray(products))throw new Error('Invalid product list');
     const product=products.find(p=>p.id===membership.gumroadProductId);
-    if(!product||!['Digivated Founding Membership',membership.name].includes(product.name)||product.subscription_duration||product.is_tiered_membership)throw new AdminError(400,'This key must belong to the Digivated seller account with the existing one-time membership product.');
+    if(!product||!['Digivated Founding Membership','Digivated Membership',membership.name].includes(product.name)||product.subscription_duration||product.is_tiered_membership)throw new AdminError(400,'This key must belong to the Digivated seller account with the existing one-time Pro product.');
     const old=products.filter(p=>retiredSlugs.has(p.custom_permalink||p.permalink)&&p.id!==product.id&&!p.deleted);
     phase='loading the prepared membership assets';
     const offer=assets?.offer||JSON.parse(await readFile(new URL('../gumroad/membership-product.json',import.meta.url),'utf8'));
@@ -47,7 +47,7 @@ export async function remapGumroadMembership({token,redis,fetcher=fetch,assets})
     phase='checking storefront editing permission';
     try {
       preview=await api('POST','/user/preview_custom_html',{custom_html:html});
-      if(preview.sanitization_report?.truncated||!preview.custom_html?.includes('One membership.')||!preview.custom_html.includes('<style'))throw new ProviderError('custom_html_unavailable');
+      if(preview.sanitization_report?.truncated||!preview.custom_html?.includes('Digivated Pro')||!preview.custom_html.includes('<style'))throw new ProviderError('custom_html_unavailable');
     } catch(error) {
       if(!optionalProfileFailure(error))throw error;
       warnings.push(profileWarning);preview=null;
@@ -104,7 +104,7 @@ export async function remapGumroadMembership({token,redis,fetcher=fetch,assets})
     } catch(error) { if(error instanceof ProviderError||error?.code==='ENOENT'||error instanceof SyntaxError)warnings.push('The Starter listing copy could not be updated. Membership is done; update the $3 listing on Gumroad by hand.'); else throw error; }
     await redis(['SET',CHECKOUT_KEY,JSON.stringify({version:OFFER_VERSION,productId:product.id,price:500,billing:'one-time',status:'ready',verifiedAt:new Date().toISOString()})]);
     try{await redis(['SET',SETUP_DIAGNOSTIC_KEY,JSON.stringify({outcome:'ready',at:new Date().toISOString(),warnings}),'EX',86400]);}catch{/* Optional diagnostics cannot undo a completed update. */}
-    return {...await checkoutStatus(redis),ok:true,warnings,message:'Gumroad is updated. Membership checkout is now open. Your API key was not saved.'};
+    return {...await checkoutStatus(redis),ok:true,warnings,message:'Gumroad is updated. Pro checkout is now open. Your API key was not saved.'};
   } catch(error) {
     const reason=error instanceof ProviderError?error.reason:error?.code==='ENOENT'?'asset_unavailable':error instanceof AdminError?'account_mismatch':'network_or_setup_error';
     const status=error instanceof ProviderError?error.status:0;
