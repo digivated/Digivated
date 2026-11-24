@@ -10,6 +10,17 @@ const $ = selector => document.querySelector(selector);
 const dot = () => { const node = el('span', '·', 'dg-dot'); node.setAttribute('aria-hidden', 'true'); return node; };
 const validNewsId = id => /^[a-f0-9]{24}$/.test(id || '');
 const icon = (name, className = 'dg-ico') => { const node = el('span', null, className); node.setAttribute('aria-hidden', 'true'); node.innerHTML = cardIconMarkup(name); return node; };
+// Clipboard with a fallback for browsers or contexts where the async API is unavailable.
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; } catch { /* fall back below */ }
+  const field = document.createElement('textarea');
+  field.value = text; field.readOnly = true; field.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+  document.body.append(field); field.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch { /* unsupported */ }
+  field.remove();
+  return ok;
+}
 const setSkeleton = (on, selector = '[data-forum-skeleton]') => { const node = $(selector); if (node) node.hidden = !on; };
 
 function topicLink(slug, className = 'dg-thread-forum') {
@@ -309,10 +320,24 @@ async function threadPage() {
   reactionRow(thread);
   showLinkedStory(thread.newsId);
   const actions = $('[data-thread-actions]');
-  const share = el('button', null, 'dg-btn dg-action'); share.type = 'button';
-  const shareLabel = el('span', 'Share');
-  share.append(icon('share'), shareLabel);
-  share.addEventListener('click', async () => { const link = `${location.origin}/threads/${thread.slug}`; try { if (navigator.share && matchMedia('(pointer: coarse)').matches) await navigator.share({ title: thread.title, url: link }); else { await navigator.clipboard.writeText(link); shareLabel.textContent = 'Link copied'; setTimeout(() => { shareLabel.textContent = 'Share'; }, 1800); } } catch { /* cancelled */ } });
+  const share = el('button', null, 'dg-btn dg-action dg-share'); share.type = 'button';
+  const shareLabel = el('span', 'Share'); shareLabel.setAttribute('aria-live', 'polite');
+  let shareIcon = icon('share'), shareTimer = 0;
+  share.append(shareIcon, shareLabel);
+  const shareState = (name, text, done) => {
+    const next = icon(name); shareIcon.replaceWith(next); shareIcon = next;
+    shareLabel.textContent = text; share.classList.toggle('is-copied', done);
+    clearTimeout(shareTimer);
+    if (text !== 'Share') shareTimer = setTimeout(() => shareState('share', 'Share', false), 1800);
+  };
+  share.addEventListener('click', async () => {
+    const link = `${location.origin}/threads/${thread.slug}`;
+    if (navigator.share && matchMedia('(pointer: coarse)').matches) {
+      try { await navigator.share({ title: thread.title, text: 'A discussion on Digivated Threads', url: link }); } catch { /* cancelled */ }
+      return;
+    }
+    if (await copyText(link)) shareState('check', 'Link copied', true); else shareState('share', 'Couldn’t copy', false);
+  });
   const reply = el('a', null, 'dg-btn dg-action'); reply.href = '#replies';
   reply.append(icon('comment'), el('span', 'Reply'));
   actions.append(voteButton(thread, true), reply, share);

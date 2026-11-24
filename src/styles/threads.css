@@ -628,6 +628,8 @@
   }
   #digivated-root .dg-forum .dg-thread-actions :is(.dg-action, .dg-vote.is-big):hover { border-color: #c9c9d0 !important; background: var(--tf-hover) !important; }
   #digivated-root .dg-forum .dg-thread-actions .dg-vote.is-big .dg-vote-caret svg { inline-size: 15px !important; block-size: 15px !important; }
+  /* Share: brief confirmation after the link is copied. */
+  #digivated-root .dg-forum .dg-thread-actions .dg-action.is-copied { color: #08743e !important; border-color: #b9e0c8 !important; background: #f2faf5 !important; }
   #digivated-root .dg-forum .dg-thread-actions .dg-action svg { inline-size: 16px !important; block-size: 16px !important; }
   #digivated-root .dg-forum .dg-thread-actions .dg-d-danger { margin-inline-start: auto !important; border-color: #f1d4d1 !important; color: #b42318 !important; }
   #digivated-root .dg-forum .dg-thread-actions .dg-d-danger:hover { border-color: #e8b4af !important; background: #fef3f2 !important; }
