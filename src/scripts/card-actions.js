@@ -59,7 +59,9 @@ document.addEventListener('click',async event=>{
   openComments(target.dataset.commentType,target.dataset.commentId,target);return;}
  if(target.matches('[data-share-url]')){
   const url=new URL(target.dataset.shareUrl,location.origin).href;
-  try{if(navigator.share)await navigator.share({url});else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(url);notice('Link copied.');}else notice('Share this link: '+url);}catch(error){if(error.name!=='AbortError')notice('Could not share this link. Try again.');}return;
+  const name=(target.getAttribute('aria-label')||'').replace(/^Share\s+/i,'').trim();
+  const message=name&&name.toLowerCase()!=='share'?{title:`${name} · Digivated`,text:`${name} on Digivated`,url}:{title:'Digivated',text:'Found on Digivated',url};
+  try{if(navigator.share)await navigator.share(message);else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(url);notice('Link copied.');}else notice('Share this link: '+url);}catch(error){if(error.name!=='AbortError')notice('Could not share this link. Try again.');}return;
  }
  if(target.matches('[data-like-id]')){
   const type=target.dataset.likeType,id=target.dataset.likeId,item=key(type,id);
