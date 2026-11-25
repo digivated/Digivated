@@ -1,9 +1,14 @@
-import {randomUUID} from 'node:crypto';
+import {createHash,randomUUID} from 'node:crypto';
 import {collectCandidates,isTrustedNewsUrl} from './news-sources.mjs';
-import {assessCandidate,NEWS_MAX_AGE,BREAKING_MAX_AGE} from './news-verification.mjs';
+import {assessCandidate,NEWS_MAX_AGE,BREAKING_MAX_AGE,POLICY_VERSION} from './news-verification.mjs';
 import {fetchMarketSnapshot} from './news-markets.mjs';
 import {NEWS,CATEGORIES,attachNewsCoverage,insertNews,saveNewsRecord} from './news-store.mjs';
 import {sameNewsEvent,sourceSlotOpen} from '../src/lib/news-editorial.mjs';
+// Remembering what a run already judged lets later runs look at newer and deeper stories. The key carries the
+// policy version and a verification epoch, so changing either rule set makes earlier judgements expire at once.
+const SEEN_EPOCH='1';
+const seenKey=url=>NEWS+'seen:'+POLICY_VERSION+':'+SEEN_EPOCH+':'+createHash('sha256').update(url).digest('hex').slice(0,24);
+const REJECTED_TTL=7*86400,RETRY_TTL=4*3600;
 const RELEASE="if redis.call('GET',KEYS[1])==ARGV[1] then return redis.call('DEL',KEYS[1]) end return 0";
 export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Date.now,collect=collectCandidates,assess=assessCandidate,markets=fetchMarketSnapshot,backfill=false}={}){
  if(env.NEWS_AUTO_PUBLISH_ENABLED!=='true')return {status:'disabled',published:0};
@@ -28,14 +33,19 @@ export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Dat
   }
   let cachedMarket=null;try{cachedMarket=JSON.parse(await redis(['GET',NEWS+'markets']));}catch{}
   const marketTask=cachedMarket&&started-Date.parse(cachedMarket.updatedAt)<3600000?Promise.resolve(cachedMarket):markets({fetcher,now:started});
-  const [collection,snapshot]=await Promise.allSettled([collect({fetcher,now:started,knownUrls:existing.map(r=>r.sourceUrl),maxPerSource:backfill?15:5}),marketTask]);
+  const seen=async urls=>{
+   if(!urls.length)return new Set();
+   const values=await redis(['MGET',...urls.map(seenKey)]);
+   return new Set(urls.filter((url,index)=>Array.isArray(values)&&values[index]));
+  };
+  const [collection,snapshot]=await Promise.allSettled([collect({fetcher,now:started,knownUrls:existing.map(r=>r.sourceUrl),maxPerSource:backfill?15:8,seen}),marketTask]);
   if(snapshot.status==='fulfilled'){
    if(snapshot.value.items?.length)await redis(['SET',NEWS+'markets',JSON.stringify(snapshot.value),'EX',172800]);
    else report.errors.push('Market observations are unavailable; prior dated snapshot retained.');
   }else report.errors.push('Market observations could not be checked.');
   if(collection.status!=='fulfilled')throw Error('Source collection failed.');
   report.sources=collection.value.sources||[];
-  const candidates=(collection.value.candidates||[]).slice(0,backfill?150:75);
+  const candidates=(collection.value.candidates||[]).slice(0,backfill?150:120);
   const publishedBySource=new Map();
   for(const candidate of candidates){
    if(await redis(['GET',NEWS+'paused'])==='1'){report.status='paused';break;}
@@ -44,12 +54,13 @@ export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Dat
    if(result.category)candidate.category=result.category;
    // Why candidates were not published, by category and first reason, for the run log.
    const why=reason=>{const key=`${candidate.category||'unknown'}:${reason}`;report.reasons[key]=(report.reasons[key]||0)+1;};
-   if(result.decision==='reject'){why(result.reasons?.[0]||'rejected');report.rejected++;continue;}
-   if(result.decision!=='publish'){why(result.reasons?.[0]||'review');report.skipped++;continue;}
+   const remember=async ttl=>{try{await redis(['SET',seenKey(candidate.sourceUrl),'1','EX',ttl]);}catch{/* Remembering is an optimisation only. */}};
+   if(result.decision==='reject'){why(result.reasons?.[0]||'rejected');report.rejected++;await remember(REJECTED_TTL);continue;}
+   if(result.decision!=='publish'){why(result.reasons?.[0]||'review');report.skipped++;await remember(RETRY_TTL);continue;}
    const time=Date.parse(candidate.sourcePublishedAt);
    const evidence=candidate.evidence||{};
    const hardVerified=isTrustedNewsUrl(candidate.sourceUrl)&&CATEGORIES.includes(candidate.category)&&evidence.verified===true&&evidence.originalPublicationTimeConfirmed===true&&evidence.headlineMatched===true&&evidence.summarySupported===true&&Number.isFinite(time)&&time<=now()&&now()-time<=NEWS_MAX_AGE;
-   if(!hardVerified){why('not_hard_verified');report.skipped++;continue;}
+   if(!hardVerified){why('not_hard_verified');report.skipped++;await remember(RETRY_TTL);continue;}
    if(result.classification==='breaking'&&now()-time>BREAKING_MAX_AGE)result={...result,classification:'update'};
    const sameEvent=existing.find(record=>record.sourceUrl!==candidate.sourceUrl&&sameNewsEvent(record,candidate));
    if(sameEvent){

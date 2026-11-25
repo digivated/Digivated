@@ -4,7 +4,7 @@
 
 ## Automatic publication
 
-Vercel checks sources at **08:00 and 20:00 UTC** (`/api/news-ingest`, authenticated by `CRON_SECRET`). `NEWS_AUTO_PUBLISH_ENABLED=true` enables the worker. The owner can also run an extra check or pause it from `/admin/news`.
+Vercel checks sources **every two hours** (`0 */2 * * *` UTC) (`/api/news-ingest`, authenticated by `CRON_SECRET`). `NEWS_AUTO_PUBLISH_ENABLED=true` enables the worker. The owner can also run an extra check or pause it from `/admin/news`.
 
 The source list includes official publishers and independent reporting: Federal Reserve, SEC, OpenAI, Google, Microsoft Security, GitHub, TechCrunch, Ars Technica, The Verge, BleepingComputer, SecurityWeek, The Register, MarketWatch, Nasdaq, PR Newswire, and GlobeNewswire. Source hosts and feed URLs are fixed in `server/news-sources.mjs`; article links cannot expand that list. Feeds and articles have bounded response sizes and timeouts.
 
@@ -14,7 +14,9 @@ Independent-reporting feeds also pass a topic check before publication. This pre
 
 Significant official developments within six hours can be labeled **Breaking**. Independent reporting and older qualifying stories are labeled **Update**. Issuer releases are identified as company announcements. A source link is available on every story. These rules support prompt automated coverage but do not guarantee that every event is detected.
 
-The member-only market snapshot is separate from editorial articles. Its observations retain their source dates and refresh during the twice-daily checks; unavailable data leaves the prior dated snapshot in place.
+Stories a run has already judged are remembered (rejected ones for 7 days, held ones for 4 hours, keyed to the policy version) so each run reaches deeper into a busy feed instead of re-reading the newest few. Each source's report also records why its stories could not be verified, and the `news_ingest` log line carries those counts.
+
+The member-only market snapshot is separate from editorial articles. Its observations retain their source dates and refresh during the scheduled checks; unavailable data leaves the prior dated snapshot in place.
 
 ## Starter backfill
 

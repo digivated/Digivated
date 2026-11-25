@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
 import {NEWS_SOURCES,canonicalNewsUrl,plainText} from './news-sources.mjs';
 import {isCorporateFluff,isSmallIssuerWire} from '../src/lib/news-editorial.mjs';
+export const POLICY_VERSION='news-verified-updates-v5';
 export const BREAKING_MAX_AGE=6*3600000;
 export const NEWS_MAX_AGE=7*24*3600000;
 const negation=/\b(?:not|no|never)\b.{0,45}\b(?:actively exploited|active exploitation|confirmed breach|global outage)\b/i;
@@ -88,5 +89,5 @@ export function assessCandidate(candidate,{now=Date.now()}={}){
  if(!['ai-tech','markets','security'].includes(category))return review('category_unconfirmed');
  const summary=(candidate.sourceType==='issuer-release'?'Company announcement: ':'')+excerpt(candidate.sourceText);
  if(summary.length<60)return review('source_summary_too_short');
- return {decision:'publish',classification:selected.breaking&&candidate.sourceType!=='independent-reporting'&&age<=BREAKING_MAX_AGE?'breaking':'update',category,summary,importance:selected.importance,reasons:[selected.reason],eventKey:newsEventKey(candidate),policyVersion:'news-verified-updates-v5'};
+ return {decision:'publish',classification:selected.breaking&&candidate.sourceType!=='independent-reporting'&&age<=BREAKING_MAX_AGE?'breaking':'update',category,summary,importance:selected.importance,reasons:[selected.reason],eventKey:newsEventKey(candidate),policyVersion:POLICY_VERSION};
 }
