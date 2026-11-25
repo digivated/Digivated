@@ -17,6 +17,7 @@ const kindIcon = { '': 'comment', ask: 'sparkle', show: 'upload' };
           <p>Pick a topic first. One topic per thread.</p>
         </div>
       </header>
+      <div class="dg-thread-news" data-new-news hidden></div>
       <div data-new-gate><p class="dg-forum-status">Checking your account…</p></div>
       <form class="dg-new-thread" data-new-thread hidden>
         <div class="dg-new-card">
@@ -34,6 +35,10 @@ const kindIcon = { '': 'comment', ask: 'sparkle', show: 'upload' };
           <label class="dg-new-field"><span>Title <small data-count-for="title">0 / {THREAD_TITLE_MAX}</small></span><input name="title" required minlength="8" maxlength={THREAD_TITLE_MAX} placeholder="What do you want to talk about?"/></label>
           <label class="dg-new-field"><span>Details <small data-count-for="body">0 / {THREAD_BODY_MAX}</small></span><textarea name="body" required minlength="10" maxlength={THREAD_BODY_MAX} rows="9" placeholder="Give people enough context to give a useful answer."></textarea></label>
           <input type="hidden" name="newsId" value=""/>
+          <script is:inline>
+            const newsId = new URLSearchParams(location.search).get('news') || '';
+            if (/^[a-f0-9]{24}$/.test(newsId)) document.currentScript.previousElementSibling.value = newsId;
+          </script>
           <input class="sr-only" name="company" tabindex="-1" autocomplete="off" aria-hidden="true"/>
         </div>
         <div class="dg-new-actions"><a class="dg-btn" href="/threads">Cancel</a><button class="dg-btn dg-btn-primary" type="submit">Post thread<UiIcon name="arrow" size={16}/></button></div>

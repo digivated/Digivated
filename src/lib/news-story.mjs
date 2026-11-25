@@ -81,6 +81,12 @@ export function newsArticleMarkup(story, related = []) {
   for (const t of tickers(story)) chips.push(`<span class="news-chip news-chip--ticker">${escapeHtml(t.exchange)}: ${escapeHtml(t.symbol)}</span>`);
   const summary = String(story.summary || '').trim();
   const paragraphs = summary ? summary.split(/\n{2,}/).map(p => `<p>${escapeHtml(p.trim())}</p>`).join('') : '';
+  const why = typeof story.whyItMatters === 'string' && story.whyItMatters.trim() ? `<p class="news-why">Why it matters: ${escapeHtml(story.whyItMatters.trim())}</p>` : '';
+  const also = (Array.isArray(story.alsoCoveredBy) ? story.alsoCoveredBy : []).flatMap(item => {
+    const href = safeSourceUrl(item?.sourceUrl);
+    return href ? [`<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.sourceName || 'Source')}</a>`] : [];
+  });
+  const alsoLine = also.length ? `<p class="news-also">Also covered by ${also.join(', ')}</p>` : '';
   const sourceButton = source
     ? `<a class="news-article-source" href="${escapeHtml(source)}" target="_blank" rel="noopener noreferrer"><span>Read the full story on ${escapeHtml(sourceName)}</span>${cardIconMarkup('external')}</a>`
     : '';
@@ -102,7 +108,8 @@ export function newsArticleMarkup(story, related = []) {
     + `<h1 id="news-article-title">${escapeHtml(story.headline)}</h1>`
     + `<p class="news-article-byline"><span>${escapeHtml(sourceName)}</span><span aria-hidden="true">·</span>${timeTag(story.sourcePublishedAt, relativeTime(story.sourcePublishedAt)).replace('data-news-time', 'data-news-relative')}<span aria-hidden="true">·</span><span>${readMinutes(story)} min read</span></p>`
     + `</header>`
-    + (paragraphs ? `<div class="news-article-body">${paragraphs}</div>` : `<div class="news-article-body"><p>This one is short on our side. The full report is on ${escapeHtml(sourceName)}.</p></div>`)
+    + (paragraphs ? `<div class="news-article-body">${paragraphs}${why}</div>` : `<div class="news-article-body"><p>This one is short on our side. The full report is on ${escapeHtml(sourceName)}.</p>${why}</div>`)
+    + alsoLine
     + `<div class="news-article-actions">${sourceButton}${discussButton}<button type="button" class="news-article-share" data-news-share>${cardIconMarkup('share')}<span>Copy link</span></button></div>`
     + `<dl class="news-article-facts">${facts.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>`
     + `<p class="news-article-note">We summarize and link to the original. The source has the full story and any updates.</p>`

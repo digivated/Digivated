@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { redisClient } from './submissions.mjs';
 import { loadNewsStory } from './news-handler.mjs';
 import { NEWS_CATEGORIES, escapeHtml, newsArticleMarkup, newsIdFromPath, newsMissingMarkup, newsStoryPath, safeSourceUrl, validNewsId } from '../src/lib/news-story.mjs';
+import { truncateOnWord } from '../src/lib/news-editorial.mjs';
 
 const origin = 'https://digivated.com';
 
@@ -12,7 +13,7 @@ export function renderNewsStoryPage(template, { id = '', story = null, related =
   const canonical = available ? `${origin}${newsStoryPath(story)}` : `${origin}/news/${id}`;
   const title = available ? `${story.headline} · Digivated News` : 'News · Digivated';
   const description = available
-    ? (String(story.summary || '').replace(/\s+/g, ' ').trim().slice(0, 160) || `${NEWS_CATEGORIES[story.category] || 'News'} from ${story.sourceName || 'the source'}, on Digivated News.`)
+    ? (truncateOnWord(story.summary, 160) || `${NEWS_CATEGORIES[story.category] || 'News'} from ${story.sourceName || 'the source'}, on Digivated News.`)
     : 'Source-linked news on AI and technology, markets, and security.';
   let html = template.replace(/<title>[^<]*<\/title>/, () => `<title>${escapeHtml(title)}</title>`)
     .replace(/<link\b[^>]*rel="canonical"[^>]*>/, () => `<link rel="canonical" href="${escapeHtml(canonical)}">`)
@@ -25,9 +26,9 @@ export function renderNewsStoryPage(template, { id = '', story = null, related =
     for (const node of graph) if (node['@type'] === 'WebPage') Object.assign(node, { '@id':`${canonical}#webpage`, url:canonical, name:title, description });
     if (available) graph.push({
       '@type':'NewsArticle', '@id':`${canonical}#article`, mainEntityOfPage:{ '@id':`${canonical}#webpage` },
-      headline:String(story.headline).slice(0, 110), description, url:canonical,
+      headline:truncateOnWord(story.headline, 110), description, url:canonical,
       articleSection:NEWS_CATEGORIES[story.category] || 'News',
-      ...(story.publishedAt ? { datePublished:story.publishedAt } : {}),
+      ...(story.sourcePublishedAt || story.publishedAt ? { datePublished:story.sourcePublishedAt || story.publishedAt } : {}),
       ...(story.correctedAt || story.publishedAt ? { dateModified:story.correctedAt || story.publishedAt } : {}),
       ...(safeSourceUrl(story.sourceUrl) ? { isBasedOn:safeSourceUrl(story.sourceUrl) } : {}),
       publisher:{ '@id':'https://digivated.com/#organization' },
