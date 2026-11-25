@@ -86,3 +86,11 @@ test('feed checks progress past recorded URLs while keeping article fetches boun
  assert.deepEqual(result.candidates.map(c=>c.headline).sort(),['GitHub API update 1','GitHub API update 2','GitHub API update 3','GitHub API update 4']);
  assert.ok(result.candidates.every(c=>c.evidence.verified));
 });
+
+test('CNBC finance feed is a market source with strict article URLs',()=>{
+ const source=NEWS_SOURCES.find(s=>s.id==='cnbc-finance');
+ assert.equal(source.category,'markets');assert.equal(source.sourceType,'independent-reporting');
+ const xml=`<rss><channel><item><title>Stocks rise as bond yields fall ahead of the Fed decision</title><link>https://www.cnbc.com/2026/11/09/stocks-rise-bond-yields-fall.html</link><pubDate>Mon, 09 Nov 2026 01:00:00 GMT</pubDate><description>Stocks rose and bond yields fell as investors awaited the Federal Reserve decision.</description></item><item><title>Video page</title><link>https://www.cnbc.com/video/2026/11/09/some-video.html</link><pubDate>Mon, 09 Nov 2026 01:00:00 GMT</pubDate><description>Clip.</description></item><item><title>Off host</title><link>https://example.com/2026/11/09/x.html</link><pubDate>Mon, 09 Nov 2026 01:00:00 GMT</pubDate><description>Nope.</description></item></channel></rss>`;
+ const entries=parseFeed(xml,source);
+ assert.deepEqual(entries.map(e=>e.sourceUrl),['https://www.cnbc.com/2026/11/09/stocks-rise-bond-yields-fall.html']);
+});

@@ -15,6 +15,7 @@ export const NEWS_SOURCES=Object.freeze([
  {id:'securityweek',name:'SecurityWeek',feedUrl:'https://www.securityweek.com/feed/',hosts:['www.securityweek.com'],category:'security',sourceType:'independent-reporting'},
  {id:'the-register',name:'The Register',feedUrl:'https://api.theregister.com/api/v1/article?orderBy=published&site_id=2&remapper=rss&query=tag:security',hosts:['www.theregister.com'],category:'security',sourceType:'independent-reporting'},
  {id:'marketwatch',name:'MarketWatch',feedUrl:'https://feeds.content.dowjones.io/public/rss/mw_marketpulse',hosts:['www.marketwatch.com'],category:'markets',sourceType:'independent-reporting'},
+ {id:'cnbc-finance',name:'CNBC',feedUrl:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=10000664',hosts:['www.cnbc.com'],category:'markets',sourceType:'independent-reporting'},
  {id:'nasdaq-markets',name:'Nasdaq',paused:true,feedUrl:'https://www.nasdaq.com/feed/rssoutbound?category=Markets',hosts:['www.nasdaq.com'],category:'markets',sourceType:'independent-reporting'},
  {id:'prnewswire-earnings',name:'PR Newswire',feedUrl:'https://www.prnewswire.com/rss/financial-services-latest-news/earnings-list.rss',hosts:['www.prnewswire.com'],category:'markets',sourceType:'issuer-release'},
  {id:'globenewswire',name:'GlobeNewswire',paused:true,feedUrl:'https://www.globenewswire.com/RssFeed/subjectcode/27-Company%20Announcement/feedTitle/GlobeNewswire%20-%20Company%20Announcement',hosts:['www.globenewswire.com'],category:'markets',sourceType:'issuer-release'},
@@ -52,6 +53,7 @@ export function canonicalNewsUrl(value,source){
   if(source.id==='globenewswire'&&!u.pathname.startsWith('/news-release/'))return '';
   if(source.id==='openai'&&!u.pathname.startsWith('/index/'))return '';
   if(source.id==='marketwatch'&&!u.pathname.startsWith('/story/'))return '';
+  if(source.id==='cnbc-finance'&&!/^\/20\d\d\/\d\d\/\d\d\/[a-z0-9-]+\.html$/.test(u.pathname))return '';
   if(source.id==='the-register'&&!u.pathname.startsWith('/security/'))return '';
   if(source.id==='nasdaq-markets'&&!u.pathname.startsWith('/articles/'))return '';
   u.hash='';for(const name of [...u.searchParams.keys()])if(/^(utm_|fbclid$|gclid$)/i.test(name))u.searchParams.delete(name);
