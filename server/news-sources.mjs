@@ -61,19 +61,30 @@ export function canonicalNewsUrl(value,source){
  }catch{return '';}
 }
 async function getText(url,source,fetcher,limit=LIMIT){
- const allowed=url===source.feedUrl||canonicalNewsUrl(url,source);
- if(!allowed)throw new Error('source_url_not_allowed');
- const response=await fetcher(url,{redirect:'error',cache:'no-store',headers:{'User-Agent':USER_AGENT,Accept:'application/rss+xml,application/atom+xml,text/xml,text/html;q=0.9'},signal:AbortSignal.timeout(TIMEOUT)});
- if(!response.ok)throw new Error(`source_http_${response.status}`);
- if(Number(response.headers?.get?.('content-length')||0)>limit)throw new Error('source_too_large');
- const body=response.body;
- if(body?.getReader){
-  const reader=body.getReader(),chunks=[];let size=0;
-  try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>limit)throw new Error('source_too_large');chunks.push(value);}}
-  finally{try{await reader.cancel();}catch{}}
-  return Buffer.concat(chunks).toString('utf8');
+ // Redirects are followed by hand and only to another allowlisted article address of the same source (at most two hops).
+ let target=url;
+ for(let hop=0;hop<=2;hop++){
+  const allowed=target===source.feedUrl||canonicalNewsUrl(target,source);
+  if(!allowed)throw new Error('source_url_not_allowed');
+  const response=await fetcher(target,{redirect:'manual',cache:'no-store',headers:{'User-Agent':USER_AGENT,Accept:'application/rss+xml,application/atom+xml,text/xml,text/html;q=0.9'},signal:AbortSignal.timeout(TIMEOUT)});
+  if(response.status>=300&&response.status<400&&target!==source.feedUrl){
+   const next=response.headers?.get?.('location');
+   if(!next)throw new Error(`source_http_${response.status}`);
+   try{target=new URL(next,target).href;}catch{throw new Error('source_url_not_allowed');}
+   continue;
+  }
+  if(!response.ok)throw new Error(`source_http_${response.status}`);
+  if(Number(response.headers?.get?.('content-length')||0)>limit)throw new Error('source_too_large');
+  const body=response.body;
+  if(body?.getReader){
+   const reader=body.getReader(),chunks=[];let size=0;
+   try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>limit)throw new Error('source_too_large');chunks.push(value);}}
+   finally{try{await reader.cancel();}catch{}}
+   return Buffer.concat(chunks).toString('utf8');
+  }
+  const text=await response.text();if(Buffer.byteLength(text)>limit)throw new Error('source_too_large');return text;
  }
- const text=await response.text();if(Buffer.byteLength(text)>limit)throw new Error('source_too_large');return text;
+ throw new Error('source_redirect_limit');
 }
 function tag(block,name){return block.match(new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${name}\\s*>`,'i'))?.[1]||'';}
 function validTimestamp(raw){
@@ -109,17 +120,18 @@ function metadata(html){
 }
 export function verifyArticle(candidate,html,checkedAt=new Date().toISOString()){
  const source=NEWS_SOURCES.find(s=>s.id===candidate.sourceId);if(!source||!canonicalNewsUrl(candidate.sourceUrl,source))throw new Error('source_url_not_allowed');
- const metas=metadata(html),title=plainText(tag(html,'h1')||metas.find(m=>m.property==='og:title')?.content||tag(html,'title'));
+ const metas=metadata(html),titles=[...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1\s*>/gi)].map(m=>plainText(m[1])).concat(metas.filter(m=>['og:title','twitter:title'].includes((m.property||m.name||'').toLowerCase())).map(m=>plainText(m.content||'')),plainText(tag(html,'title'))).filter(Boolean);
  const scope=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1]||html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i)?.[1]||html;
  const text=plainText(scope).slice(0,70000);
  const dates=[...html.matchAll(/["']datePublished["']\s*:\s*["']([^"']+)["']/gi)].map(m=>validTimestamp(m[1]));
  dates.push(...metas.filter(m=>['article:published_time','date','dc.date','dcterms.created','datepublished'].includes((m.property||m.name||'').toLowerCase())).map(m=>validTimestamp(m.content)));
  const original=[...new Set(dates.filter(Boolean))];
  const norm=s=>plainText(s).toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
- const exactTitle=!!norm(title)&&norm(title).includes(norm(candidate.headline));
+ const exactTitle=!!norm(candidate.headline)&&titles.some(title=>norm(title).includes(norm(candidate.headline)));
  const finalHeadlineMatched=exactTitle;
  const firstParagraph=[...scope.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)].map(m=>plainText(m[1])).find(p=>p.length>=100&&!/cookie|newsletter|subscribe|copyright|register|advertisement|sponsored|image credits/i.test(p))||'';
- const sourceText=candidate.feedSummary?.length>=60&&norm(text).includes(norm(candidate.feedSummary))?candidate.feedSummary:firstParagraph;
+ const untruncated=(candidate.feedSummary||'').replace(/\s*(?:\[\s*(?:…|\.{3})\s*\]|…|\.{3})\s*$/,'').trim();
+ const sourceText=candidate.feedSummary?.length>=60&&norm(text).includes(norm(candidate.feedSummary))?candidate.feedSummary:untruncated.length>=60&&norm(text).includes(norm(untruncated))?untruncated:firstParagraph;
  const summarySupported=!!sourceText&&norm(text).includes(norm(sourceText));
  const feedTime=candidate.sourcePublishedAt;
  // Article publication metadata is authoritative. Feeds may round or update
@@ -158,7 +170,7 @@ export async function collectCandidates({fetcher=fetch,now=Date.now(),knownUrls=
    const current=fresh.filter(c=>!checked.has(c.sourceUrl)).slice(0,Math.max(1,Math.min(15,maxPerSource)));
    await Promise.all(current.map(async c=>{
     try{const result=verifyArticle(c,await getText(c.sourceUrl,source,fetcher),checkedAt);candidates.push(result);if(result.evidence.verified)status.verified++;else{status.unverified++;tally(result);}}
-    catch(error){status.unverified++;status.why.article_could_not_be_fetched=(status.why.article_could_not_be_fetched||0)+1;candidates.push({...c,sourceText:c.feedSummary,evidence:{verified:false,checkedAt,feedUrl:source.feedUrl,timePrecision:c.sourcePublishedAt?'second':'unknown',verificationReasons:['article_could_not_be_verified']}});}
+    catch(error){status.unverified++;{const why=/^(source_http_\d{3}|source_too_large|source_url_not_allowed|source_redirect_limit)$/.test(error.message||'')?error.message:/timeout|abort/i.test(error.name+' '+error.message)?'timeout':'network';const key='article_fetch_'+why;status.why[key]=(status.why[key]||0)+1;}candidates.push({...c,sourceText:c.feedSummary,evidence:{verified:false,checkedAt,feedUrl:source.feedUrl,timePrecision:c.sourcePublishedAt?'second':'unknown',verificationReasons:['article_could_not_be_verified']}});}
    }));
   }catch(error){status.status='failed';status.error=/^(source_http_\d{3}|source_too_large|source_url_not_allowed|xml_entities_not_allowed|invalid_feed)$/.test(error.message||'')?error.message:'source_fetch_failed';}
   sources.push(status);
