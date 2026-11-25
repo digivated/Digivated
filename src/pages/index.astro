@@ -18,20 +18,11 @@ import '../styles/launch-canvas.css';
     </dl>
   </section>
   <div class="dg-home">
-    <section class="dg-news-brief" aria-labelledby="dg-news-brief-title" data-home-news>
-      <header class="dg-news-brief-head">
-        <h2 id="dg-news-brief-title">Latest news</h2>
-        <a href="/news">All news</a>
-      </header>
-      <ol data-home-news-list hidden></ol>
-      <p class="dg-news-brief-fallback" data-home-news-fallback><a href="/news">AI, tech, markets, and security.</a></p>
-    </section>
     <div class="dg-launch-feed"><LaunchBoard/></div>
   </div>
 </Platform>
 
 <script>
-  import { newsStoryPath, relativeTime } from '../lib/news-story.mjs';
   import { freeLaunchDay, nextFreeLaunch } from '../lib/launch-calendar.mjs';
   import { rollingCounter } from '../scripts/rolling-counter.js';
 
@@ -68,33 +59,4 @@ import '../styles/launch-canvas.css';
 
   updateCountdown();
   document.addEventListener('visibilitychange', updateCountdown);
-
-  const newsBrief = document.querySelector<HTMLElement>('[data-home-news]');
-  const newsList = newsBrief?.querySelector<HTMLElement>('[data-home-news-list]');
-  const newsFallback = newsBrief?.querySelector<HTMLElement>('[data-home-news-fallback]');
-  if (newsList) {
-    fetch('/api/news?view=brief', { credentials: 'same-origin' }).then(async response => {
-      if (!response.ok) return;
-      const data = await response.json();
-      const items = Array.isArray(data?.items) ? data.items.filter((item: { id?: string; headline?: string }) => item?.id && item.headline).slice(0, 3) : [];
-      if (!items.length) return;
-      newsList.replaceChildren(...items.map((item: { id: string; headline: string; sourceName?: string; sourcePublishedAt?: string }) => {
-        const row = document.createElement('li');
-        const link = document.createElement('a');
-        link.href = newsStoryPath(item);
-        const title = document.createElement('span');
-        title.className = 'dg-news-brief-title';
-        title.textContent = item.headline;
-        const meta = document.createElement('span');
-        meta.className = 'dg-news-brief-meta';
-        const when = relativeTime(item.sourcePublishedAt);
-        meta.textContent = [item.sourceName, when].filter(Boolean).join(' · ');
-        link.append(title, meta);
-        row.append(link);
-        return row;
-      }));
-      newsList.hidden = false;
-      if (newsFallback) newsFallback.hidden = true;
-    }).catch(() => {});
-  }
 </script>
