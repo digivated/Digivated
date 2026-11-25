@@ -10,7 +10,7 @@ export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Dat
  if(await redis(['GET',NEWS+'paused'])==='1')return {status:'paused',published:0};
  const lease=randomUUID(),started=now();
  if(await redis(['SET',NEWS+'lock',lease,'NX','EX',260])!=='OK')return {status:'busy',published:0};
- const report={id:lease,status:'running',startedAt:new Date(started).toISOString(),published:0,reviewed:0,skipped:0,rejected:0,duplicates:0,sources:[],errors:[]};
+ const report={id:lease,status:'running',startedAt:new Date(started).toISOString(),published:0,reviewed:0,skipped:0,rejected:0,duplicates:0,sources:[],errors:[],reasons:{}};
  try{
   const ids=await redis(['ZREVRANGE',NEWS+'index:all',0,149]);
   const existing=ids.length?(await redis(['MGET',...ids.map(id=>NEWS+'story:'+id)])).filter(Boolean).map(JSON.parse):[];
@@ -42,12 +42,14 @@ export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Dat
    if(now()-started>235000){report.errors.push('Run reached its time budget; remaining sources deferred.');break;}
    let result=assess(candidate,{now:now()});
    if(result.category)candidate.category=result.category;
-   if(result.decision==='reject'){report.rejected++;continue;}
-   if(result.decision!=='publish'){report.skipped++;continue;}
+   // Why candidates were not published, by category and first reason, for the run log.
+   const why=reason=>{const key=`${candidate.category||'unknown'}:${reason}`;report.reasons[key]=(report.reasons[key]||0)+1;};
+   if(result.decision==='reject'){why(result.reasons?.[0]||'rejected');report.rejected++;continue;}
+   if(result.decision!=='publish'){why(result.reasons?.[0]||'review');report.skipped++;continue;}
    const time=Date.parse(candidate.sourcePublishedAt);
    const evidence=candidate.evidence||{};
    const hardVerified=isTrustedNewsUrl(candidate.sourceUrl)&&CATEGORIES.includes(candidate.category)&&evidence.verified===true&&evidence.originalPublicationTimeConfirmed===true&&evidence.headlineMatched===true&&evidence.summarySupported===true&&Number.isFinite(time)&&time<=now()&&now()-time<=NEWS_MAX_AGE;
-   if(!hardVerified){report.skipped++;continue;}
+   if(!hardVerified){why('not_hard_verified');report.skipped++;continue;}
    if(result.classification==='breaking'&&now()-time>BREAKING_MAX_AGE)result={...result,classification:'update'};
    const sameEvent=existing.find(record=>record.sourceUrl!==candidate.sourceUrl&&sameNewsEvent(record,candidate));
    if(sameEvent){
