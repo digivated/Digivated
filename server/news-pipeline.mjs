@@ -6,7 +6,7 @@ import {NEWS,CATEGORIES,attachNewsCoverage,insertNews,saveNewsRecord} from './ne
 import {sameNewsEvent,sourceSlotOpen} from '../src/lib/news-editorial.mjs';
 // Remembering what a run already judged lets later runs look at newer and deeper stories. The key carries the
 // policy version and a verification epoch, so changing either rule set makes earlier judgements expire at once.
-const SEEN_EPOCH='2';
+const SEEN_EPOCH='3';
 const seenKey=url=>NEWS+'seen:'+POLICY_VERSION+':'+SEEN_EPOCH+':'+createHash('sha256').update(url).digest('hex').slice(0,24);
 const REJECTED_TTL=7*86400,RETRY_TTL=4*3600;
 const RELEASE="if redis.call('GET',KEYS[1])==ARGV[1] then return redis.call('DEL',KEYS[1]) end return 0";
