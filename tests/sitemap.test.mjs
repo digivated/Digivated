@@ -147,3 +147,29 @@ test('preview sitemap reads the public project and creator responses', async () 
   assert.equal(entries.find(entry => entry.loc === 'https://digivated.com/news').lastmod, '2026-05-06');
   assert.equal(JSON.stringify(entries).includes('hidden@example.com'), false);
 });
+
+test('sitemap includes every published news story, past the old 200 cap', async () => {
+  const ids = Array.from({ length: 230 }, (_, index) => (index + 1).toString(16).padStart(24, '0'));
+  const strings = Object.fromEntries(ids.map(id => [`digivated:news:public:${id}`, JSON.stringify({ id, headline: `Story ${id.slice(-4)}`, publishedAt: '2026-11-01T00:00:00.000Z' })]));
+  const zsets = {
+    'digivated:news:index:published': ids,
+    'digivated:public:submissions': [],
+    'digivated:creator:public': [],
+    'digivated:public:resources': [],
+    'digivated:threads:all': [],
+  };
+  const redis = async command => {
+    const [op, ...args] = command;
+    if (op === 'ZCARD') return zsets[args[0]]?.length || 0;
+    if (op === 'ZREVRANGE') return (zsets[args[0]] || []).slice(Number(args[1]), Number(args[2]) + 1);
+    if (op === 'MGET') return args.map(key => strings[key] ?? null);
+    throw new Error(`unexpected ${op}`);
+  };
+  const entries = await collectSitemapEntries({
+    resources: [],
+    env: { SUBMISSIONS_REDIS_REST_URL: 'https://redis.example', SUBMISSIONS_REDIS_REST_TOKEN: 'token' },
+    redisFactory: () => redis,
+  });
+  assert.ok(entries.some(entry => entry.loc.endsWith(ids.at(-1))));
+  assert.equal(entries.filter(entry => entry.loc.includes('/news/')).length, 230);
+});

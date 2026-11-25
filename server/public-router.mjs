@@ -4,6 +4,7 @@ import { makeThreadPageHandler, threadSlugFromPath } from './thread-page.mjs';
 import { makeLaunchQueueHandler, makeBadgeCheckHandler } from './launch-queue.mjs';
 import {makeNewsHandler} from './news-handler.mjs';
 import { makeNewsStoryPageHandler } from './news-story-page.mjs';
+import { makeNewsFeedHandler, makeNewsPageHandler } from './news-feed-page.mjs';
 import { newsIdFromPath } from '../src/lib/news-story.mjs';
 import { makeMembershipCheckoutHandler } from './membership-checkout.mjs';
 import { makePublicHandler } from './public-community.mjs';
@@ -35,6 +36,8 @@ export function defaultPublicHandlers(overrides = {}) {
     'launch-queue':makeLaunchQueueHandler(),
     'badge-check':makeBadgeCheckHandler(),
     news:makeNewsHandler(),
+    'news-page': makeNewsPageHandler(),
+    'news-feed': makeNewsFeedHandler(),
     'news-story-page': makeNewsStoryPageHandler(),
     'site-activity': makeSiteActivityHandler(),
     'invstr-activity': makeSiteActivityHandler({}, 'invstr'),
@@ -77,7 +80,7 @@ export function makePublicRouter(handlers = defaultPublicHandlers()) {
       return res.end();
     }
     // Vercel preserves the original URL for rewritten requests.
-    const route = /^\/creator\/?$/.test(path) ? 'creator-page' : /^\/projects\/?$/.test(path) ? 'project-index' : threadSlugFromPath(path) ? 'thread-page' : newsIdFromPath(path) ? 'news-story-page' : /^\/badge\/[^/]+\/?$/.test(path) ? 'badge' : /^\/api\/([^/]+)$/.exec(path)?.[1];
+    const route = /^\/creator\/?$/.test(path) ? 'creator-page' : /^\/projects\/?$/.test(path) ? 'project-index' : /^\/news\/?$/.test(path) ? 'news-page' : /^\/news\/(?:feed|atom)\.xml$/.test(path) ? 'news-feed' : threadSlugFromPath(path) ? 'thread-page' : newsIdFromPath(path) ? 'news-story-page' : /^\/badge\/[^/]+\/?$/.test(path) ? 'badge' : /^\/api\/([^/]+)$/.exec(path)?.[1];
     if (route && Object.hasOwn(handlers, route)) return handlers[route](req, res);
     res.statusCode = 404;
     res.setHeader('Content-Type', 'application/json; charset=utf-8');

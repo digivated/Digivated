@@ -182,7 +182,7 @@ export async function loadDynamicSitemapSources(env, redisFactory = redisClient)
       } catch { return []; }
     });
   }
-  const storyIds = await zsetMembers(redis, `${NEWS}index:published`, 200);
+  const storyIds = await zsetMembers(redis, `${NEWS}index:published`, SITEMAP_LIMIT);
   const storyRaws = storyIds.length ? await mget(redis, storyIds.map(id => `${NEWS}public:${id}`)) : [];
   let newsUpdatedAt = '';
   let newest = 0;
@@ -244,10 +244,22 @@ export async function loadPublishedSiteSources(fetcher, origin = SITE_ORIGIN) {
   let newsUpdatedAt = '';
   let newsStories = [];
   try {
-    const news = await readPublicJson(fetcher, `${origin}/api/news`);
-    newsStories = [news.featured, ...(Array.isArray(news.items) ? news.items : [])].filter(item => validNewsId(item?.id) && typeof item.headline === 'string');
-    const dates = [news.featured, ...(Array.isArray(news.items) ? news.items : [])].flatMap(item => [item?.publishedAt, item?.correctedAt]);
-    newsUpdatedAt = dates.filter(value => sitemapLastmod(value)).sort().at(-1) || '';
+    const seen = new Set();
+    let cursor = '';
+    for (let page = 0; page < 40; page += 1) {
+      const news = await readPublicJson(fetcher, `${origin}/api/news${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ''}`);
+      const batch = [page === 0 ? news.featured : null, ...(Array.isArray(news.items) ? news.items : [])];
+      for (const item of batch) {
+        if (!validNewsId(item?.id) || typeof item.headline !== 'string' || seen.has(item.id)) continue;
+        seen.add(item.id);
+        newsStories.push(item);
+      }
+      const dates = batch.flatMap(item => [item?.publishedAt, item?.correctedAt, item?.updatedAt]);
+      const latest = dates.filter(value => sitemapLastmod(value)).sort().at(-1) || '';
+      if (latest > newsUpdatedAt) newsUpdatedAt = latest;
+      if (!news.next || String(news.next) === cursor) break;
+      cursor = String(news.next);
+    }
   } catch { /* The news page stays listed when the briefing feed is unavailable. */ }
   return { projects, creators, liveResources: [], newsUpdatedAt, newsStories };
 }

@@ -2,10 +2,9 @@ import {randomUUID} from 'node:crypto';
 import {collectCandidates,isTrustedNewsUrl} from './news-sources.mjs';
 import {assessCandidate,NEWS_MAX_AGE,BREAKING_MAX_AGE} from './news-verification.mjs';
 import {fetchMarketSnapshot} from './news-markets.mjs';
-import {NEWS,CATEGORIES,insertNews,saveNewsRecord} from './news-store.mjs';
+import {NEWS,CATEGORIES,attachNewsCoverage,insertNews,saveNewsRecord} from './news-store.mjs';
+import {sameNewsEvent,sourceSlotOpen} from '../src/lib/news-editorial.mjs';
 const RELEASE="if redis.call('GET',KEYS[1])==ARGV[1] then return redis.call('DEL',KEYS[1]) end return 0";
-function tokens(text){return new Set(String(text).toLowerCase().replace(/[^a-z0-9 -]/g,' ').split(/\s+/).filter(t=>t.length>3&&!['with','from','that','this','after','their','security','announces'].includes(t)));}
-function related(a,b){const x=tokens(a),y=tokens(b);if(x.size<5||y.size<5)return false;const shared=[...x].filter(t=>y.has(t)).length;return shared/Math.max(x.size,y.size)>=.78;}
 export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Date.now,collect=collectCandidates,assess=assessCandidate,markets=fetchMarketSnapshot,backfill=false}={}){
  if(env.NEWS_AUTO_PUBLISH_ENABLED!=='true')return {status:'disabled',published:0};
  if(await redis(['GET',NEWS+'paused'])==='1')return {status:'paused',published:0};
@@ -37,6 +36,7 @@ export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Dat
   if(collection.status!=='fulfilled')throw Error('Source collection failed.');
   report.sources=collection.value.sources||[];
   const candidates=(collection.value.candidates||[]).slice(0,backfill?150:75);
+  const publishedBySource=new Map();
   for(const candidate of candidates){
    if(await redis(['GET',NEWS+'paused'])==='1'){report.status='paused';break;}
    if(now()-started>235000){report.errors.push('Run reached its time budget; remaining sources deferred.');break;}
@@ -49,12 +49,16 @@ export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Dat
    const hardVerified=isTrustedNewsUrl(candidate.sourceUrl)&&CATEGORIES.includes(candidate.category)&&evidence.verified===true&&evidence.originalPublicationTimeConfirmed===true&&evidence.headlineMatched===true&&evidence.summarySupported===true&&Number.isFinite(time)&&time<=now()&&now()-time<=NEWS_MAX_AGE;
    if(!hardVerified){report.skipped++;continue;}
    if(result.classification==='breaking'&&now()-time>BREAKING_MAX_AGE)result={...result,classification:'update'};
-   const sameEvent=existing.find(record=>record.category===candidate.category&&Math.abs(Date.parse(record.sourcePublishedAt)-time)<48*3600000&&related(record.headline,candidate.headline)&&record.sourceUrl!==candidate.sourceUrl);
-   if(sameEvent){report.duplicates++;continue;}
+   const sameEvent=existing.find(record=>record.sourceUrl!==candidate.sourceUrl&&sameNewsEvent(record,candidate));
+   if(sameEvent){
+    if(sameEvent.status==='published'&&sameEvent.id){try{await attachNewsCoverage(redis,sameEvent.id,{sourceName:candidate.sourceName,sourceUrl:candidate.sourceUrl,sourcePublishedAt:candidate.sourcePublishedAt},now());}catch{/* The first story stays published. */}}
+    report.duplicates++;continue;
+   }
+   if(!sourceSlotOpen(publishedBySource,candidate.sourceId,result.importance)){report.skipped++;continue;}
    const saved=await insertNews(redis,candidate,result,now());
    if(!saved.inserted){report.duplicates++;continue;}
-   if(saved.status==='published')report.published++;else report.skipped++;
-   existing.push({...candidate,id:saved.id});
+   if(saved.status==='published'){report.published++;publishedBySource.set(candidate.sourceId,(publishedBySource.get(candidate.sourceId)||0)+1);}else report.skipped++;
+   existing.push({...candidate,id:saved.id,status:saved.status});
   }
   if(report.status==='running')report.status=report.sources.length&&report.sources.every(s=>s.status==='failed')?'failed':report.sources.some(s=>s.status==='failed')||report.errors.length?'partial':'ok';
  }catch{report.status='failed';report.errors.push('News source verification could not complete. Existing stories were preserved.');}

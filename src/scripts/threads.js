@@ -364,18 +364,39 @@ function applyHints(form) {
 }
 
 /* ---------- New thread ---------- */
+async function loadNewsPreview(newsId) {
+  const slot = $('[data-new-news]');
+  if (!slot || !validNewsId(newsId)) return;
+  try {
+    const response = await fetch(`/api/news?id=${newsId}`, { cache: 'no-store', signal: AbortSignal.timeout(12000) });
+    if (!response.ok) return;
+    const data = await response.json();
+    const story = data.story;
+    if (!story?.headline) return;
+    const link = el('a', null, 'dg-thread-news-card');
+    link.href = `/news/${story.id}`;
+    link.append(el('span', 'Discussing', 'dg-thread-news-kicker'), el('span', story.headline, 'dg-thread-news-title'));
+    if (story.sourceName) link.append(el('span', story.sourceName, 'dg-thread-news-kicker'));
+    slot.replaceChildren(link);
+    slot.hidden = false;
+  } catch { /* The sign-in prompt still explains the next step. */ }
+}
+
 async function newPage() {
   const gate = $('[data-new-gate]'), form = $('[data-new-thread]'), status = $('[data-new-status]');
   const params = new URLSearchParams(location.search);
   const newsId = validNewsId(params.get('news')) ? params.get('news') : '';
+  if (newsId && form?.elements?.newsId) form.elements.newsId.value = newsId;
+  const previewTask = newsId ? loadNewsPreview(newsId) : null;
   if (newsId && discussPath(newsId)) {
     try {
       const linked = await api(`/api/threads?news=${newsId}`);
       if (linked.thread?.slug) { location.replace(`/threads/${linked.thread.slug}`); return; }
     } catch { /* The composer can still start the discussion. */ }
   }
+  if (previewTask) await previewTask;
   const token = await session();
-  if (!token) { gate.replaceChildren(signInPrompt('Sign in to start a thread. Anyone can read Threads without an account.')); return; }
+  if (!token) { gate.replaceChildren(signInPrompt(newsId ? 'Sign in to discuss this story. Anyone can read Threads without an account.' : 'Sign in to start a thread. Anyone can read Threads without an account.')); return; }
   const starter = starterById(params.get('starter'));
   const preset = starter?.forum || params.get('forum');
   if (forumBySlug[preset]) form.querySelector(`input[name=forum][value="${preset}"]`).checked = true;

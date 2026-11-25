@@ -7,7 +7,7 @@ import '../styles/news.css';
   <section class="news-page" data-news-page aria-labelledby="news-title">
     <header class="news-masthead">
       <div><p class="news-eyebrow">The daily briefing</p><h1 id="news-title">News</h1><p class="news-intro">What’s moving in AI, tech, markets, and security. Open any story for the quick read, then head to the source for the rest.</p></div>
-      <div class="news-check"><p class="news-updated" data-news-updated hidden></p><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><span>Refresh</span></button></div>
+      <div class="news-check"><p class="news-updated" data-news-updated hidden></p><a class="news-rss" href="/news/feed.xml">RSS</a><button type="button" class="news-refresh" data-news-refresh aria-label="Refresh news"><span>Refresh</span></button></div>
     </header>
     <p class="news-status" data-news-paused hidden>Source checks are paused.</p>
     <p class="news-access-status" data-news-access-status role="status">Loading stories…</p>
@@ -44,7 +44,8 @@ import '../styles/news.css';
         <details class="news-standards"><summary>How this feed is published <UiIcon name="chevron" size={15}/></summary><div><p>Stories link to original sources. We label company announcements, verify breaking news, and mark corrections. Stocks in the news counts companies named in recent stories. It is not a price feed or investment advice.</p></div></details>
       </aside>
     </div>
-    <noscript><p class="news-status">JavaScript is needed to load and filter the News feed.</p></noscript>
+    <noscript><p class="news-status">JavaScript filters and searches this list. Story links below still open.</p></noscript>
+    <script type="application/json" id="news-boot" is:inline></script>
   </section>
 </Platform>
 <script>import '../scripts/news.js';</script>

@@ -1,5 +1,6 @@
 import {createHash,randomUUID} from 'node:crypto';
 import {AdminError} from './admin-auth.mjs';
+import {normalizeHeadline,normalizeSummary,whyItMattersLine} from '../src/lib/news-editorial.mjs';
 export const NEWS='digivated:news:';
 export const CATEGORIES=['ai-tech','markets','security'];
 export const newsKey=id=>NEWS+'story:'+id;
@@ -25,13 +26,21 @@ if ARGV[5]=='published' then redis.call('SET',KEYS[6],ARGV[6],'EX',31536000) els
 redis.call('LPUSH',KEYS[7],ARGV[7]);redis.call('LTRIM',KEYS[7],0,49);redis.call('EXPIRE',KEYS[7],31536000)
 return 1`;
 export function projection(record){
- return Object.fromEntries(['id','headline','summary','category','classification','sourceName','sourceUrl','sourcePublishedAt','publishedAt','verifiedAt','importance','summaryMethod','updatedAt','sourceType','tickers'].map(key=>[key,record[key]]));
+ const item=Object.fromEntries(['id','headline','summary','category','classification','sourceName','sourceUrl','sourcePublishedAt','publishedAt','verifiedAt','importance','summaryMethod','updatedAt','sourceType','tickers'].map(key=>[key,record[key]]));
+ if(Array.isArray(record.alsoCoveredBy)&&record.alsoCoveredBy.length)item.alsoCoveredBy=record.alsoCoveredBy.slice(0,6);
+ if(record.whyItMatters)item.whyItMatters=record.whyItMatters;
+ if(record.ownerEdited)item.ownerEdited=true;
+ return item;
 }
 export async function insertNews(redis,candidate,assessment,now=Date.now()){
  const canonical=new URL(candidate.sourceUrl);canonical.hash='';for(const key of [...canonical.searchParams.keys()])if(/^(utm_|fbclid|gclid)/i.test(key))canonical.searchParams.delete(key);
  const id=hash(canonical.href).slice(0,24),at=new Date(now).toISOString();
  const status=assessment.decision==='publish'?'published':'review';
- const record={id,sourceType:candidate.sourceType||'official-publisher',tickers:candidate.evidence?.verified===true?(candidate.tickers||[]).slice(0,8):[],headline:String(candidate.headline).slice(0,240),summary:assessment.summary||'',category:candidate.category,classification:assessment.classification||'update',sourceId:candidate.sourceId,sourceName:candidate.sourceName,sourceUrl:canonical.href,sourcePublishedAt:candidate.sourcePublishedAt,sourceText:String(candidate.sourceText||'').slice(0,16000),feedSummary:String(candidate.feedSummary||'').slice(0,2000),evidence:candidate.evidence||{},sourceHash:candidate.evidence?.contentHash||hash(candidate.sourceText||''),verifiedAt:candidate.evidence?.checkedAt||null,publishedAt:status==='published'?at:null,createdAt:at,updatedAt:at,revision:0,status,autoPublished:status==='published'&&!assessment.editorialReview,summaryMethod:assessment.summaryMethod||'source-extract',importance:assessment.importance||0,reasons:assessment.reasons||[],eventKey:assessment.eventKey||hash(candidate.category+':'+candidate.headline.toLowerCase().replace(/[^a-z0-9]/g,'')),original:{headline:candidate.headline,sourceUrl:canonical.href,sourcePublishedAt:candidate.sourcePublishedAt,summary:assessment.summary||''}};
+ const preserve=assessment.editorialReview===true||assessment.summaryMethod==='editorial-summary'||assessment.summaryMethod==='owner-edited';
+ const headline=(preserve?String(candidate.headline||''):normalizeHeadline(candidate.headline,candidate.sourceName)).slice(0,240);
+ const summary=preserve?(assessment.summary||''):normalizeSummary(assessment.summary||'');
+ const why=preserve?'':whyItMattersLine(assessment.reasons?.[0]);
+ const record={id,sourceType:candidate.sourceType||'official-publisher',tickers:candidate.evidence?.verified===true?(candidate.tickers||[]).slice(0,8):[],headline,summary,category:candidate.category,classification:assessment.classification||'update',sourceId:candidate.sourceId,sourceName:candidate.sourceName,sourceUrl:canonical.href,sourcePublishedAt:candidate.sourcePublishedAt,sourceText:String(candidate.sourceText||'').slice(0,16000),feedSummary:String(candidate.feedSummary||'').slice(0,2000),evidence:candidate.evidence||{},sourceHash:candidate.evidence?.contentHash||hash(candidate.sourceText||''),verifiedAt:candidate.evidence?.checkedAt||null,publishedAt:status==='published'?at:null,createdAt:at,updatedAt:at,revision:0,status,autoPublished:status==='published'&&!assessment.editorialReview,summaryMethod:assessment.summaryMethod||'source-extract',importance:assessment.importance||0,reasons:assessment.reasons||[],...(why?{whyItMatters:why}:{}),eventKey:assessment.eventKey||hash(candidate.category+':'+String(candidate.headline||'').toLowerCase().replace(/[^a-z0-9]/g,'')),original:{headline:candidate.headline,sourceUrl:canonical.href,sourcePublishedAt:candidate.sourcePublishedAt,summary:assessment.summary||''}};
  const eventKey=hash(record.eventKey);const audit={at,operation:status==='published'?(assessment.editorialReview?'editorial-publish':'auto-publish'):'queue-review',revision:0,reasons:record.reasons,snapshot:projection(record),evidence:record.evidence};
  const result=await redis(['EVAL',INSERT_NEWS,7,newsKey(id),NEWS+'url:'+hash(canonical.href),NEWS+'event:'+eventKey,NEWS+'index:'+status,NEWS+'index:all',NEWS+'public:'+id,NEWS+'audit:'+id,JSON.stringify(record),id,Date.parse(record.sourcePublishedAt)||now,status,JSON.stringify(projection(record)),JSON.stringify(audit)]);
  return {inserted:result==='inserted',id:result==='inserted'?id:result,status};
@@ -65,11 +74,27 @@ export async function saveNewsRecord(redis,input,now=Date.now()){
  if(input.status==='published'&&ownerConfirmed&&note.length<8)throw new AdminError(400,'Add a short verification note when confirming a source manually.');
  const sourceTime=Date.parse(sourcePublishedAt);if(input.status==='published'&&(!Number.isFinite(sourceTime)||sourceTime>now))throw new AdminError(400,'The original source publication time must be verified before publishing.');
  const at=new Date(now).toISOString();
- const record={...old,headline,summary,sourcePublishedAt,ownerVerified:input.status==='published'&&(ownerConfirmed||verifiedRecord),summaryMethod:summary!==old.summary?'owner-edited':old.summaryMethod,category:input.category,status:input.status,classification:input.classification==='breaking'&&now-sourceTime<=6*3600000?'breaking':'update',reviewNote:note,revision:old.revision+1,updatedAt:at,verifiedAt:ownerConfirmed?at:old.verifiedAt,publishedAt:input.status==='published'?(old.publishedAt||at):old.publishedAt,autoPublished:false};
+ const contentEdited=headline!==old.headline||summary!==old.summary;
+ const record={...old,headline,summary,sourcePublishedAt,ownerVerified:input.status==='published'&&(ownerConfirmed||verifiedRecord),summaryMethod:contentEdited?'owner-edited':old.summaryMethod,ownerEdited:old.ownerEdited===true||contentEdited,whyItMatters:contentEdited?'':(old.whyItMatters||''),category:input.category,status:input.status,classification:input.classification==='breaking'&&now-sourceTime<=6*3600000?'breaking':'update',reviewNote:note,revision:old.revision+1,updatedAt:at,verifiedAt:ownerConfirmed?at:old.verifiedAt,publishedAt:input.status==='published'?(old.publishedAt||at):old.publishedAt,autoPublished:false};
  const audit={at,operation:input.status==='removed'?'remove':input.status==='published'?'owner-publish':'owner-edit',revision:record.revision,note,before:projection(old),after:projection(record)};
  const result=await redis(['EVAL',EDIT_NEWS,7,newsKey(record.id),NEWS+'index:review',NEWS+'index:published',NEWS+'index:removed',NEWS+'index:'+record.status,NEWS+'public:'+record.id,NEWS+'audit:'+record.id,input.revision,JSON.stringify(record),record.id,Number.isFinite(sourceTime)?sourceTime:Date.parse(old.createdAt),record.status,JSON.stringify(projection(record)),JSON.stringify(audit)]);
  if(result!==1)throw new AdminError(result===-1?404:409,result===-1?'Story no longer exists.':'Another update changed this story. Reload before saving.');
  return record;
+}
+// Adds another outlet to an existing story. The headline, summary, and
+// updated time stay as they are, so this does not look like a correction.
+export async function attachNewsCoverage(redis, id, coverage, now = Date.now()) {
+  if (!ID.test(id || '') || !coverage?.sourceUrl) return null;
+  const { record } = await getNewsRecord(redis, id);
+  const also = Array.isArray(record.alsoCoveredBy) ? record.alsoCoveredBy : [];
+  if (record.sourceUrl === coverage.sourceUrl || also.some(item => item.sourceUrl === coverage.sourceUrl)) return record;
+  const next = [...also, { sourceName: String(coverage.sourceName || '').slice(0, 80), sourceUrl: coverage.sourceUrl, ...(coverage.sourcePublishedAt ? { sourcePublishedAt: coverage.sourcePublishedAt } : {}) }].slice(0, 6);
+  const updated = { ...record, alsoCoveredBy: next, revision: record.revision + 1 };
+  const sourceTime = Date.parse(record.sourcePublishedAt);
+  const audit = { at: new Date(now).toISOString(), operation: 'add-coverage', revision: updated.revision, note: 'Same event reported by another source.' };
+  const result = await redis(['EVAL', EDIT_NEWS, 7, newsKey(record.id), NEWS + 'index:review', NEWS + 'index:published', NEWS + 'index:removed', NEWS + 'index:' + record.status, NEWS + 'public:' + record.id, NEWS + 'audit:' + record.id, record.revision, JSON.stringify(updated), record.id, Number.isFinite(sourceTime) ? sourceTime : Date.parse(record.createdAt || 0), record.status, JSON.stringify(projection(updated)), JSON.stringify(audit)]);
+  if (result !== 1) return record;
+  return updated;
 }
 export async function newsStatus(redis){
  const raw=await redis(['GET',NEWS+'latest']);const report=raw?JSON.parse(raw):null;
