@@ -2,6 +2,7 @@ import { resourceArticlesVisible } from '../src/data/resource-publication.mjs';
 import { contentPublic, projectPublic } from './admin-store.mjs';
 import { NEWS } from './news-store.mjs';
 import { newsStoryPath, validNewsId } from '../src/lib/news-story.mjs';
+import { presentHeadline } from '../src/lib/news-editorial.mjs';
 import { redisClient } from './submissions.mjs';
 
 export const SITE_ORIGIN = 'https://digivated.com';
@@ -191,7 +192,8 @@ export async function loadDynamicSitemapSources(env, redisFactory = redisClient)
     if (typeof raw !== 'string') continue;
     try {
       const record = JSON.parse(raw);
-      if (validNewsId(record?.id) && typeof record.headline === 'string') newsStories.push({ id: record.id, headline: record.headline, publishedAt: record.publishedAt || '', updatedAt: record.updatedAt || '' });
+      // Use the headline readers see, so the sitemap URL matches the page's canonical URL.
+      if (validNewsId(record?.id) && typeof record.headline === 'string') newsStories.push({ id: record.id, headline: presentHeadline(record) || record.headline, publishedAt: record.publishedAt || '', updatedAt: record.updatedAt || '' });
       for (const value of [record.updatedAt, record.publishedAt]) {
         const time = Date.parse(value);
         if (Number.isFinite(time) && time >= newest && time <= Date.now() + 86400000) {
