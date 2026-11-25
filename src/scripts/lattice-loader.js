@@ -8,9 +8,10 @@ export function mountLattice(root, options = {}) {
   root.dataset.latticeReady = '1';
   const o = { grid: 3, cellSize: 6, gap: 2, step: 90, idleOpacity: 0.15, fontSize: 14, label: 'Loading', color: 'var(--fl-ink, #171717)', ...options };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  root.setAttribute('aria-hidden', 'true');
-  Object.assign(root.style, { display: 'inline-flex', alignItems: 'center', gap: '10px', color: o.color, fontSize: `${o.fontSize}px`, lineHeight: '1' });
+  if (!o.label) root.setAttribute('aria-hidden', 'true');
+  Object.assign(root.style, { display: 'inline-flex', alignItems: 'center', gap: '10px', verticalAlign: 'middle', color: o.color, fontSize: `${o.fontSize}px`, lineHeight: '1' });
   const grid = document.createElement('span');
+  grid.setAttribute('aria-hidden', 'true');
   Object.assign(grid.style, { display: 'grid', gridTemplateColumns: `repeat(${o.grid}, ${o.cellSize}px)`, gap: `${o.gap}px` });
   const cells = [];
   for (let r = 0; r < o.grid; r += 1) for (let c = 0; c < o.grid; c += 1) {
@@ -47,4 +48,27 @@ export function mountAllLattices(scope = document) {
   scope.querySelectorAll('[data-lattice]').forEach((node) => mountLattice(node, node.dataset.label ? { label: node.dataset.label } : {}));
 }
 
+// Site-wide: put the loader beside any "Loading…" placeholder. The loader holds no text, so the placeholder's
+// own text (read by screen readers, tests and server rendering) is unchanged, and when the page replaces the
+// text the loader goes with it.
+const LOADING = /^\s*Loading\b[^.]*…\s*$/;
+const CANDIDATES = '[role="status"], .loading, .dash-loading, .news-story-loading, [data-section-note], [aria-live] > p';
+const SKIP = '[data-lattice], [data-forum-status], [data-thread-status], [aria-hidden="true"], [hidden]';
+function decorate(scope = document) {
+  scope.querySelectorAll?.(CANDIDATES).forEach((node) => {
+    if (node.closest(SKIP) || node.querySelector('[data-lattice]') || !LOADING.test(node.textContent)) return;
+    const loader = document.createElement('span');
+    loader.dataset.lattice = '';
+    node.prepend(loader);
+    mountLattice(loader, { label: '', fontSize: 0 });
+    loader.style.marginInlineEnd = '10px';
+  });
+}
 mountAllLattices();
+decorate();
+let queued = false;
+new MutationObserver(() => {
+  if (queued) return;
+  queued = true;
+  requestAnimationFrame(() => { queued = false; decorate(); });
+}).observe(document.documentElement, { childList: true, subtree: true });
