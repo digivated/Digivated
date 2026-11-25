@@ -139,21 +139,26 @@ export function verifyArticle(candidate,html,checkedAt=new Date().toISOString())
  const verified=finalHeadlineMatched&&summarySupported&&!!matchingDate;
  return {...candidate,tickers:extractNewsTickers(candidate.headline+' '+sourceText+' '+firstParagraph),sourceText,articleText:text,sourcePublishedAt:matchingDate||feedTime,evidence:{verified,checkedAt,feedUrl:source.feedUrl,feedPublishedAt:feedTime,articleUrl:candidate.sourceUrl,articlePublishedAt:timeSource==='article_metadata'?(matchingDate||original[0]||null):null,articlePublishedDate,timeSource,originalPublicationTimeConfirmed:!!matchingDate,headlineMatched:finalHeadlineMatched,summarySupported,timePrecision:matchingDate||feedTime?'second':'unknown',contentHash:createHash('sha256').update(text).digest('hex'),verificationReasons:reasons}};
 }
-export async function collectCandidates({fetcher=fetch,now=Date.now(),knownUrls=[],maxPerSource=5}={}){
+export async function collectCandidates({fetcher=fetch,now=Date.now(),knownUrls=[],maxPerSource=5,seen=null}={}){
  const known=new Set(knownUrls);
  const checkedAt=new Date(now).toISOString(),candidates=[],sources=[];
  // Paused sources keep their trusted hosts (earlier stories stay valid) but are not fetched.
  // GlobeNewswire answers HTTP 403 and Nasdaq refuses the feed fetch from our servers; remove `paused` to retry.
  await Promise.all(NEWS_SOURCES.filter(source=>!source.paused).map(async source=>{
-  const status={id:source.id,name:source.name,status:'ok',checkedAt,feedUrl:source.feedUrl,found:0,verified:0,unverified:0};
+  const status={id:source.id,name:source.name,status:'ok',checkedAt,feedUrl:source.feedUrl,found:0,verified:0,unverified:0,alreadyChecked:0,why:{}};
+  const tally=result=>{for(const reason of result.evidence?.verificationReasons||[])status.why[reason]=(status.why[reason]||0)+1;};
   try{
    const entries=parseFeed(await getText(source.feedUrl,source,fetcher),source);status.found=entries.length;
    // The scheduled run checks a few items per publisher; the one-time starter
    // backfill can look farther into each feed without altering the source rules.
-   const current=entries.filter(c=>!known.has(c.sourceUrl)&&(!c.sourcePublishedAt||(Date.parse(c.sourcePublishedAt)>=now-7*24*3600000&&Date.parse(c.sourcePublishedAt)<=now+300000))).slice(0,Math.max(1,Math.min(15,maxPerSource)));
+   const fresh=entries.filter(c=>!known.has(c.sourceUrl)&&(!c.sourcePublishedAt||(Date.parse(c.sourcePublishedAt)>=now-7*24*3600000&&Date.parse(c.sourcePublishedAt)<=now+300000)));
+   // Stories an earlier run already judged are skipped, so each run reaches deeper into a busy feed instead of re-reading the same newest few.
+   let checked=new Set();if(seen){try{checked=await seen(fresh.map(c=>c.sourceUrl));}catch{checked=new Set();}}
+   status.alreadyChecked=fresh.filter(c=>checked.has(c.sourceUrl)).length;
+   const current=fresh.filter(c=>!checked.has(c.sourceUrl)).slice(0,Math.max(1,Math.min(15,maxPerSource)));
    await Promise.all(current.map(async c=>{
-    try{const result=verifyArticle(c,await getText(c.sourceUrl,source,fetcher),checkedAt);candidates.push(result);result.evidence.verified?status.verified++:status.unverified++;}
-    catch(error){status.unverified++;candidates.push({...c,sourceText:c.feedSummary,evidence:{verified:false,checkedAt,feedUrl:source.feedUrl,timePrecision:c.sourcePublishedAt?'second':'unknown',verificationReasons:['article_could_not_be_verified']}});}
+    try{const result=verifyArticle(c,await getText(c.sourceUrl,source,fetcher),checkedAt);candidates.push(result);if(result.evidence.verified)status.verified++;else{status.unverified++;tally(result);}}
+    catch(error){status.unverified++;status.why.article_could_not_be_fetched=(status.why.article_could_not_be_fetched||0)+1;candidates.push({...c,sourceText:c.feedSummary,evidence:{verified:false,checkedAt,feedUrl:source.feedUrl,timePrecision:c.sourcePublishedAt?'second':'unknown',verificationReasons:['article_could_not_be_verified']}});}
    }));
   }catch(error){status.status='failed';status.error=/^(source_http_\d{3}|source_too_large|source_url_not_allowed|xml_entities_not_allowed|invalid_feed)$/.test(error.message||'')?error.message:'source_fetch_failed';}
   sources.push(status);
