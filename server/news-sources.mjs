@@ -15,9 +15,9 @@ export const NEWS_SOURCES=Object.freeze([
  {id:'securityweek',name:'SecurityWeek',feedUrl:'https://www.securityweek.com/feed/',hosts:['www.securityweek.com'],category:'security',sourceType:'independent-reporting'},
  {id:'the-register',name:'The Register',feedUrl:'https://api.theregister.com/api/v1/article?orderBy=published&site_id=2&remapper=rss&query=tag:security',hosts:['www.theregister.com'],category:'security',sourceType:'independent-reporting'},
  {id:'marketwatch',name:'MarketWatch',feedUrl:'https://feeds.content.dowjones.io/public/rss/mw_marketpulse',hosts:['www.marketwatch.com'],category:'markets',sourceType:'independent-reporting'},
- {id:'nasdaq-markets',name:'Nasdaq',feedUrl:'https://www.nasdaq.com/feed/rssoutbound?category=Markets',hosts:['www.nasdaq.com'],category:'markets',sourceType:'independent-reporting'},
+ {id:'nasdaq-markets',name:'Nasdaq',paused:true,feedUrl:'https://www.nasdaq.com/feed/rssoutbound?category=Markets',hosts:['www.nasdaq.com'],category:'markets',sourceType:'independent-reporting'},
  {id:'prnewswire-earnings',name:'PR Newswire',feedUrl:'https://www.prnewswire.com/rss/financial-services-latest-news/earnings-list.rss',hosts:['www.prnewswire.com'],category:'markets',sourceType:'issuer-release'},
- {id:'globenewswire',name:'GlobeNewswire',feedUrl:'https://www.globenewswire.com/RssFeed/subjectcode/27-Company%20Announcement/feedTitle/GlobeNewswire%20-%20Company%20Announcement',hosts:['www.globenewswire.com'],category:'markets',sourceType:'issuer-release'},
+ {id:'globenewswire',name:'GlobeNewswire',paused:true,feedUrl:'https://www.globenewswire.com/RssFeed/subjectcode/27-Company%20Announcement/feedTitle/GlobeNewswire%20-%20Company%20Announcement',hosts:['www.globenewswire.com'],category:'markets',sourceType:'issuer-release'},
 ]);
 export function extractNewsTickers(text){
  const found=new Map();for(const match of String(text).matchAll(/\b(NASDAQ|NYSE(?:AMERICAN|ARCA)?|TSX(?:V)?|ASX|LSE|OTCQX|OTCQB|OTC)\s*:\s*([A-Z][A-Z0-9.-]{0,11})\b/gi)){
@@ -140,7 +140,9 @@ export function verifyArticle(candidate,html,checkedAt=new Date().toISOString())
 export async function collectCandidates({fetcher=fetch,now=Date.now(),knownUrls=[],maxPerSource=5}={}){
  const known=new Set(knownUrls);
  const checkedAt=new Date(now).toISOString(),candidates=[],sources=[];
- await Promise.all(NEWS_SOURCES.map(async source=>{
+ // Paused sources keep their trusted hosts (earlier stories stay valid) but are not fetched.
+ // GlobeNewswire answers HTTP 403 and Nasdaq refuses the feed fetch from our servers; remove `paused` to retry.
+ await Promise.all(NEWS_SOURCES.filter(source=>!source.paused).map(async source=>{
   const status={id:source.id,name:source.name,status:'ok',checkedAt,feedUrl:source.feedUrl,found:0,verified:0,unverified:0};
   try{
    const entries=parseFeed(await getText(source.feedUrl,source,fetcher),source);status.found=entries.length;
