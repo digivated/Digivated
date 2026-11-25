@@ -319,6 +319,11 @@
 
   .news-rss { color:var(--fl-muted); font:500 12px/1 var(--fl-mono); letter-spacing:.06em; text-decoration:none; }
   .news-rss:hover { color:var(--fl-ink); }
+  /* Long status text wraps between sentences, never inside "Wed, 3:00 AM EST", and the dot stays on the first line. */
+  .news-updated { align-items:flex-start; line-height:1.5; }
+  .news-updated .news-live-dot { flex:none; margin-top:.45em; }
+  .news-updated-text { min-width:0; }
+  .news-updated-part { white-space:nowrap; }
   .news-live-dot.is-quiet { background:var(--fl-muted,#8a8a93)!important; box-shadow:none!important; }
   .news-why { margin:0 0 8px; color:var(--fl-muted); font:500 12px/1.45 var(--fl-mono); }
   .news-also { flex-basis:100%; margin:2px 0 0; color:var(--fl-muted); font:500 11px/1.45 var(--fl-mono); }
