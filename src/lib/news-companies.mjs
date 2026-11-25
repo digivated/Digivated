@@ -2,6 +2,8 @@
 // sidebar can show which stocks are in the news. Names are matched whole and
 // case-sensitive, and words that are also everyday English (Block, Target, Arm,
 // Visa, Snap, X) are left out so a plain sentence never turns into a ticker.
+// Exchanges checked against company announcements in Nov 2026. Shopify (Mar 2025),
+// Walmart (Dec 2025) and General Motors (Nov 17, 2026) now trade on Nasdaq.
 export const NEWS_COMPANIES = [
   ['AAPL', 'NASDAQ', 'Apple', ['Apple']],
   ['MSFT', 'NASDAQ', 'Microsoft', ['Microsoft']],
@@ -41,7 +43,7 @@ export const NEWS_COMPANIES = [
   ['HPE', 'NYSE', 'HPE', ['Hewlett Packard Enterprise', 'HPE']],
   ['SMCI', 'NASDAQ', 'Supermicro', ['Supermicro', 'Super Micro']],
   ['ARM', 'NASDAQ', 'Arm Holdings', ['Arm Holdings']],
-  ['SHOP', 'NYSE', 'Shopify', ['Shopify']],
+  ['SHOP', 'NASDAQ', 'Shopify', ['Shopify']],
   ['UBER', 'NYSE', 'Uber', ['Uber']],
   ['ABNB', 'NASDAQ', 'Airbnb', ['Airbnb']],
   ['SPOT', 'NYSE', 'Spotify', ['Spotify']],
@@ -60,10 +62,10 @@ export const NEWS_COMPANIES = [
   ['VZ', 'NYSE', 'Verizon', ['Verizon']],
   ['TMUS', 'NASDAQ', 'T-Mobile', ['T-Mobile']],
   ['CMCSA', 'NASDAQ', 'Comcast', ['Comcast']],
-  ['WMT', 'NYSE', 'Walmart', ['Walmart']],
+  ['WMT', 'NASDAQ', 'Walmart', ['Walmart']],
   ['BA', 'NYSE', 'Boeing', ['Boeing']],
   ['F', 'NYSE', 'Ford', ['Ford Motor']],
-  ['GM', 'NYSE', 'General Motors', ['General Motors']],
+  ['GM', 'NASDAQ', 'General Motors', ['General Motors']],
   ['RIVN', 'NASDAQ', 'Rivian', ['Rivian']],
 ];
 
