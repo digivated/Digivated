@@ -40,3 +40,19 @@ test('redirects are followed only to another allowlisted article of the same sou
  const status=bad.sources.find(s=>s.id==='cnbc-finance');
  assert.equal(status.why.article_fetch_source_url_not_allowed,1);
 });
+
+test('a feed standfirst is supported by the same article page\'s own description metadata',()=>{
+ const source=NEWS_SOURCES.find(s=>s.id==='securityweek');
+ const standfirst='An account tied to a hacking group announced the return of the group, as researchers spot possible links between two crews';
+ const [candidate]=parseFeed(`<rss><channel><item><title>Hacking group claims comeback</title><link>https://www.securityweek.com/hacking-group-claims-comeback/</link><description>${standfirst}.</description><pubDate>${when}</pubDate></item></channel></rss>`,source);
+ const page=meta=>`<html><head><meta property="article:published_time" content="2026-11-25T10:00:00Z">${meta}</head><body><h1>Hacking group claims comeback</h1><div>Short.</div></body></html>`;
+ const ok=verifyArticle(candidate,page(`<meta property="og:description" content="${standfirst}.">`));
+ assert.equal(ok.evidence.summarySupported,true);
+ assert.match(ok.sourceText,/hacking group/);
+ assert.equal(verifyArticle(candidate,page('<meta property="og:description" content="Something unrelated that the feed does not say about this article at all, sixty characters or more.">')).evidence.summarySupported,false);
+ assert.equal(verifyArticle(candidate,page('')).evidence.summarySupported,false);
+});
+
+test('PR Newswire is paused because every article answers HTTP 403',()=>{
+ assert.equal(NEWS_SOURCES.find(s=>s.id==='prnewswire-earnings').paused,true);
+});

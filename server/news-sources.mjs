@@ -17,7 +17,7 @@ export const NEWS_SOURCES=Object.freeze([
  {id:'marketwatch',name:'MarketWatch',feedUrl:'https://feeds.content.dowjones.io/public/rss/mw_marketpulse',hosts:['www.marketwatch.com'],category:'markets',sourceType:'independent-reporting'},
  {id:'cnbc-finance',name:'CNBC',feedUrl:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=10000664',hosts:['www.cnbc.com'],category:'markets',sourceType:'independent-reporting'},
  {id:'nasdaq-markets',name:'Nasdaq',paused:true,feedUrl:'https://www.nasdaq.com/feed/rssoutbound?category=Markets',hosts:['www.nasdaq.com'],category:'markets',sourceType:'independent-reporting'},
- {id:'prnewswire-earnings',name:'PR Newswire',feedUrl:'https://www.prnewswire.com/rss/financial-services-latest-news/earnings-list.rss',hosts:['www.prnewswire.com'],category:'markets',sourceType:'issuer-release'},
+ {id:'prnewswire-earnings',name:'PR Newswire',paused:true,feedUrl:'https://www.prnewswire.com/rss/financial-services-latest-news/earnings-list.rss',hosts:['www.prnewswire.com'],category:'markets',sourceType:'issuer-release'},
  {id:'globenewswire',name:'GlobeNewswire',paused:true,feedUrl:'https://www.globenewswire.com/RssFeed/subjectcode/27-Company%20Announcement/feedTitle/GlobeNewswire%20-%20Company%20Announcement',hosts:['www.globenewswire.com'],category:'markets',sourceType:'issuer-release'},
 ]);
 export function extractNewsTickers(text){
@@ -131,8 +131,15 @@ export function verifyArticle(candidate,html,checkedAt=new Date().toISOString())
  const finalHeadlineMatched=exactTitle;
  const firstParagraph=[...scope.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)].map(m=>plainText(m[1])).find(p=>p.length>=100&&!/cookie|newsletter|subscribe|copyright|register|advertisement|sponsored|image credits/i.test(p))||'';
  const untruncated=(candidate.feedSummary||'').replace(/\s*(?:\[\s*(?:…|\.{3})\s*\]|…|\.{3})\s*$/,'').trim();
- const sourceText=candidate.feedSummary?.length>=60&&norm(text).includes(norm(candidate.feedSummary))?candidate.feedSummary:untruncated.length>=60&&norm(text).includes(norm(untruncated))?untruncated:firstParagraph;
- const summarySupported=!!sourceText&&norm(text).includes(norm(sourceText));
+ let sourceText=candidate.feedSummary?.length>=60&&norm(text).includes(norm(candidate.feedSummary))?candidate.feedSummary:untruncated.length>=60&&norm(text).includes(norm(untruncated))?untruncated:firstParagraph;
+let summarySupported=!!sourceText&&norm(text).includes(norm(sourceText));
+ // Some publishers give the feed a standfirst that the article page carries only in its own description metadata.
+ // That is still the publisher's page for this exact article, so it can support the summary when the body does not.
+ if(!summarySupported){
+  const feedNorm=norm(untruncated||candidate.feedSummary||'');
+  const described=metas.filter(m=>['description','og:description','twitter:description'].includes((m.property||m.name||'').toLowerCase())).map(m=>norm(m.content||'')).filter(d=>d.length>=60);
+  if(feedNorm.length>=60&&described.some(d=>d.includes(feedNorm)||feedNorm.includes(d))){summarySupported=true;sourceText=untruncated||candidate.feedSummary;}
+ }
  const feedTime=candidate.sourcePublishedAt;
  // Article publication metadata is authoritative. Feeds may round or update
  // timestamps; a bounded six-hour discrepancy can still be source-confirmed.
@@ -155,7 +162,7 @@ export async function collectCandidates({fetcher=fetch,now=Date.now(),knownUrls=
  const known=new Set(knownUrls);
  const checkedAt=new Date(now).toISOString(),candidates=[],sources=[];
  // Paused sources keep their trusted hosts (earlier stories stay valid) but are not fetched.
- // GlobeNewswire answers HTTP 403 and Nasdaq refuses the feed fetch from our servers; remove `paused` to retry.
+ // GlobeNewswire answers HTTP 403, Nasdaq refuses the feed fetch and PR Newswire answers HTTP 403 for every article from our servers; remove `paused` to retry.
  await Promise.all(NEWS_SOURCES.filter(source=>!source.paused).map(async source=>{
   const status={id:source.id,name:source.name,status:'ok',checkedAt,feedUrl:source.feedUrl,found:0,verified:0,unverified:0,alreadyChecked:0,why:{}};
   const tally=result=>{for(const reason of result.evidence?.verificationReasons||[])status.why[reason]=(status.why[reason]||0)+1;};
