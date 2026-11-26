@@ -2,6 +2,7 @@ import { projectCategory, isAiListing } from '../src/lib/project-taxonomy.mjs';
 import { projectPricingOptions } from '../src/lib/project-pricing.mjs';
 import { projectDisplayLogo } from './project-display-logo.mjs';
 import { launchFields, pageSlug } from './launch-pages.mjs';
+import { freeLaunchAtDate, freeLaunchTime } from '../src/lib/launch-calendar.mjs';
 import { AdminError } from './admin-auth.mjs';
 import { acceptedProjectCategories, resourceCategories, normalizeResourceCategory, safeUrl, statuses } from '../src/data/community.mjs';
 import { validateSubmission } from './submissions.mjs';
@@ -36,6 +37,14 @@ export function validateEdit(kind, input, previous) {
     if (input.status === 'featured' && !['approved', 'featured'].includes(previous.status)) throw new AdminError(400, 'Approve this project before featuring it.');
     const socialUrl = text(input.socialUrl, 'creator profile URL', 500, false);
     record = { ...previous, name: text(input.name, 'project name', 120), creator: text(input.creator, 'creator', 100), description: text(input.description, 'description', 600), category: input.category, status: input.status, reviewFeedback: text(input.reviewFeedback ?? previous.reviewFeedback ?? '', 'private review feedback', 1500, false), pickOverride: input.pick === true, pick: input.pick === true && ['approved', 'featured'].includes(input.status), socialUrl: socialUrl ? safeUrl(socialUrl) : '', url: safeUrl(text(input.url, 'project URL', 500)) };
+    if (input.launchAt !== undefined && input.launchAt !== '' && record.launch?.kind === 'free' && previous.status === 'pending' && record.status === 'pending') {
+      const scheduledAt = freeLaunchAtDate(input.launchAt);
+      if (!scheduledAt) throw new AdminError(400, 'Choose a Monday for the launch date.');
+      if (Date.parse(scheduledAt) !== freeLaunchTime(previous)) {
+        if (Date.parse(scheduledAt) <= Date.now()) throw new AdminError(400, 'Choose a launch Monday in the future.');
+        record.launch = { ...record.launch, scheduledAt, scheduledTimestamp: Date.parse(scheduledAt) };
+      }
+    }
     if(record.launch?.kind==='free'&&record.status==='pending'&&record.url!==previous.url){record.launch={...record.launch};delete record.launch.badgeVerifiedAt;}
     if (previous.promotion?.requested) {
       const approving = ['approved', 'featured'].includes(input.status);

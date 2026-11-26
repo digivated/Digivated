@@ -26,6 +26,17 @@ export function freeLaunchOptions(now = Date.now(), count = FREE_LAUNCH_CHOICES)
   return Array.from({ length: count }, (_, week) => new Date(easternLaunchTime(monday + week * 7 * DAY)).toISOString());
 }
 
+// Admin override: a YYYY-MM-DD Monday (Eastern) becomes that day's 9 AM Eastern launch, or null if invalid.
+export function freeLaunchAtDate(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''));
+  if (!match) return null;
+  const day = Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  const check = new Date(day);
+  if (check.toISOString().slice(0, 10) !== value || check.getUTCDay() !== 1) return null;
+  return new Date(easternLaunchTime(day)).toISOString();
+}
+export const freeLaunchDateInput = time => new Date(time).toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+
 export const skippedNovemberBatch = Date.UTC(2026, 10, 30);
 export const novemberBatchTime = easternLaunchTime(Date.UTC(2026, 10, 23));
 
