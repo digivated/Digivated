@@ -31,11 +31,11 @@ function aiBadgeGuide() {
   return el('div', { className: 'fl-ai-guide' },
     el('p', { className: 'fl-ai-guide-title', textContent: 'Add it with AI in about a minute' }),
     el('ol', {},
-      step(1, 'Copy the prompt.', 'Tap Copy prompt on a style below. Your badge code is already inside.'),
-      step(2, 'Paste it into your AI builder', 'such as Claude, ChatGPT, Cursor, Lovable, v0 or Bolt. It adds the badge to your footer.'),
+      step(1, 'Copy the prompt.', 'Press Copy prompt on a style below. Your badge code is inside.'),
+      step(2, 'Paste it into your AI builder', 'like Claude, ChatGPT, Cursor, Lovable or v0. It adds the badge to your footer.'),
       step(3, 'Publish your site,', 'then come back and check it. We look for the badge on your home page.'),
     ),
-    el('p', { className: 'fl-ai-guide-note', textContent: 'Prefer to do it yourself? Use Copy and paste the code into your footer HTML.' }),
+    el('p', { className: 'fl-ai-guide-note', textContent: 'Prefer to do it yourself? Press Copy and paste the code into your footer.' }),
   );
 }
 
