@@ -16,6 +16,16 @@ export function nextFreeLaunch(now = Date.now()) {
   return new Date(first > now ? first : easternLaunchTime(monday + 7 * DAY)).toISOString();
 }
 
+// The Mondays a creator may pick for a free launch: the next one, then the following weeks.
+export const FREE_LAUNCH_CHOICES = 8;
+export function freeLaunchOptions(now = Date.now(), count = FREE_LAUNCH_CHOICES) {
+  const first = Date.parse(nextFreeLaunch(now));
+  const parts = Object.fromEntries(easternDate.formatToParts(first).map(({ type, value }) => [type, Number(value)]));
+  const monday = Date.UTC(parts.year, parts.month - 1, parts.day);
+  // Step by calendar Mondays, not 7 x 24h, so the 9 AM Eastern hour survives daylight-saving changes.
+  return Array.from({ length: count }, (_, week) => new Date(easternLaunchTime(monday + week * 7 * DAY)).toISOString());
+}
+
 export const skippedNovemberBatch = Date.UTC(2026, 10, 30);
 export const novemberBatchTime = easternLaunchTime(Date.UTC(2026, 10, 23));
 

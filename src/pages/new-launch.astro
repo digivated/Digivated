@@ -106,7 +106,11 @@ import '../styles/submission-flow.css';
               <option value="founding-feature">Pro</option>
             </select>
           </label>
-          <p id="free-launch-help" class="field-help"><span id="free-launch-date"></span></p>
+          <div id="free-launch-help" class="dgm-launch">
+            <span class="dgm-launch-label" id="launch-day-label">Launch Monday</span>
+            <div class="dgm-launch-days" id="launch-days" role="radiogroup" aria-labelledby="launch-day-label"></div>
+            <p class="field-help"><span id="free-launch-date"></span></p>
+          </div>
           <div id="badge-first" class="dg-badge-first" hidden>
             <ol class="dg-badge-first-steps">
               <li><span aria-hidden="true">1</span><p><strong>Copy your project badge.</strong></p></li>

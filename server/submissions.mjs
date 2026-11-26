@@ -1,6 +1,6 @@
 import { defaultNotificationPreferences, notificationPreferencesKey, notifyProjectApproval, notifyLaunchScheduled } from './notifications.mjs';
 import { sendProjectUpdate } from './account-mail.mjs';
-import { badgeSnippet, nextFreeLaunch, verifyProjectBadge } from './launch-queue.mjs';
+import { badgeSnippet, nextFreeLaunch, freeLaunchOptions, verifyProjectBadge } from './launch-queue.mjs';
 import { readProjectSite, siteDetails, siteExtras, readPublicImage, hasProjectBadge } from './project-site.mjs';
 import { guessCategory } from '../src/lib/project-taxonomy.mjs';
 // Isolated from purchase handlers, sessions, rate-limit rules, and environment names.
@@ -256,7 +256,7 @@ export function makeSubmissionHandler(deps={}) {
       const env=deps.env||process.env;
       if (req.method === 'GET' && new URL(req.url || '/api/submissions', 'https://digivated.invalid').searchParams.get('action') === 'launch-options') {
         const instant = await instantLaunchConfig(env, deps.fetcher || fetch);
-        return send(200, instant ? { instant: { price: instant.price, checkoutUrl: instant.checkoutUrl }, nextFreeLaunch: nextFreeLaunch() } : { instant: null, nextFreeLaunch: nextFreeLaunch() });
+        return send(200, instant ? { instant: { price: instant.price, checkoutUrl: instant.checkoutUrl }, nextFreeLaunch: nextFreeLaunch(), launchOptions: freeLaunchOptions() } : { instant: null, nextFreeLaunch: nextFreeLaunch(), launchOptions: freeLaunchOptions() });
       }
       if(req.method!=='POST'){res.setHeader('Allow','GET, POST');throw new SubmissionError(405,'Use the project submission form.');}
       const origin=env.SUBMISSIONS_ORIGIN||'https://digivated.com';
@@ -346,7 +346,12 @@ export function makeSubmissionHandler(deps={}) {
           } catch { /* Save the submission so the maker can retry verification from their dashboard. */ }
         }
       }
-      const scheduledAt=nextFreeLaunch(now.getTime());
+      const requestedLaunch=body.launchAt;
+      if(requestedLaunch!==undefined&&requestedLaunch!==''&&typeof requestedLaunch!=='string')throw new SubmissionError(400,'Choose a valid launch Monday.');
+      const launchChoices=freeLaunchOptions(now.getTime());
+      // Only a Monday from the current list is accepted; an old page that sends nothing keeps the next one.
+      if(requestedLaunch&&!launchChoices.includes(requestedLaunch))throw new SubmissionError(400,'That launch Monday is no longer available. Pick another date.');
+      const scheduledAt=requestedLaunch||launchChoices[0];
       const stored={...record,plan,...(!record.promotion&&!paid?{launch:{kind:'free',version:1,scheduledAt,scheduledTimestamp:Date.parse(scheduledAt),...(badgeVerifiedAt?{badgeVerifiedAt}:{})}}:{}),...(account?{accountId:account.id}:{}),id,date:now.toISOString(),consentedAt:now.toISOString(),...(record.emailOutreachConsent?{emailOutreachConsentedAt:now.toISOString(),emailOutreachConsentVersion:2}:{})};
       const accountKey=accountIndex(record.email,env.SUBMISSIONS_REDIS_REST_TOKEN||'test-only');
       const activityNotifications = body.activityNotifications;
