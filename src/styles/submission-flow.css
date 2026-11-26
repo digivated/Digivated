@@ -475,6 +475,7 @@ html#digivated-root #project-form .submission-image-preview {
   border-radius: 12px !important;
   background: #fff !important;
 }
+html#digivated-root #project-form #project-image-preview[hidden] { display: none !important; }
 html#digivated-root .submission-image-preview img {
   width: 56px !important;
   height: 56px !important;
