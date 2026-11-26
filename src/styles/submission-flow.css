@@ -679,20 +679,32 @@ html#digivated-root .dg-badge-first .fl-badge-actions { display: flex; flex-wrap
     box-shadow: 0 0 0 1px #ececf0 !important;
     max-width: none !important;
   }
+  html#digivated-root .submission-preview-panel .dg-row .dg-tagline {
+    display: block !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+  }
   html#digivated-root .submission-preview-panel .dg-row :is(.dg-tagline, .dg-meta) {
     color: #3f3f46 !important;
   }
   html#digivated-root .submission-preview-panel .dg-row.dg-project-tile .dg-meta {
     flex-wrap: wrap !important;
     overflow: visible !important;
+    row-gap: 2px !important;
+  }
+  html#digivated-root .submission-preview-panel .dg-row.dg-project-tile .dg-meta span {
+    flex: none !important;
+    min-width: min-content !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: nowrap !important;
   }
   html#digivated-root .submission-preview-panel .dg-row.dg-project-tile .dg-meta span:not(:first-child):not(.dg-meta-age) {
     display: inline !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    white-space: normal !important;
-    flex: 1 1 auto !important;
-    min-width: 8ch !important;
   }
   html#digivated-root .submission-intro .lede,
   html#digivated-root .submission-form :is(input, textarea)::placeholder {
@@ -703,18 +715,39 @@ html#digivated-root .dg-badge-first .fl-badge-actions { display: flex; flex-wrap
     opacity: 1 !important;
   }
   html#digivated-root .submission-pricing-copy small { color: #3f3f46 !important; }
-  @media (min-width: 1120px) {
+  /* The sidebar leaves about 1120px of content at a 1440px window, so a viewport
+     query cannot tell when the card has room. The rail stays under the form until
+     the content box can hold a 460px card beside it. */
+  html#digivated-root #main:has(.submission-workspace) {
+    container-type: inline-size;
+    container-name: launch;
+  }
+  @container launch (min-width: 1100px) {
     html#digivated-root #main > :is(.submission-intro, .submission-workspace) {
-      max-width: 1080px !important;
+      max-width: none !important;
+      width: 100% !important;
     }
     html#digivated-root .submission-workspace {
-      grid-template-columns: minmax(0, 740px) minmax(220px, 1fr) !important;
+      grid-template-columns: minmax(0, 740px) 460px !important;
+      justify-content: start !important;
+      column-gap: 16px !important;
       align-items: start !important;
     }
-    html#digivated-root #project-form { max-width: 740px !important; }
+    html#digivated-root #project-form { max-width: 740px !important; width: 100% !important; }
     html#digivated-root .submission-rail {
+      width: 460px !important;
+      min-width: 460px !important;
+      max-width: 460px !important;
       position: sticky;
       top: calc(72px + env(safe-area-inset-top));
+      align-self: start;
+    }
+  }
+  @media (min-width: 1400px) {
+    html#digivated-root .dg-workspace-content > #main:has(.submission-workspace) {
+      width: 100% !important;
+      max-width: none !important;
+      padding-inline: 20px !important;
     }
   }
 }
