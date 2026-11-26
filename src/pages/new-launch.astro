@@ -176,7 +176,18 @@ import '../styles/submission-flow.css';
 
     <details hidden class="submission-preview-panel submission-disclosure">
       <summary><span>Preview your public listing</span><UiIcon name="chevron" size={16}/></summary>
-      <article class="submission-listing-preview"><div class="listing-preview-cover"><img data-listing-image alt="" hidden/><span data-listing-placeholder>Your project logo</span></div><div class="listing-preview-copy"><span data-listing-category>Category</span><h3 data-listing-name>Your project name</h3><p data-listing-description>A clear description of what your project does and who it helps.</p><span data-listing-domain>your-project.com</span></div><div class="listing-preview-footer"><span>Feedback <b>0</b></span><span>↑ Upvote <b>0</b></span></div></article>
+      <article class="dg-row dg-project-tile submission-listing-preview" data-project>
+        <span class="dg-logo-link" aria-hidden="true"><span class="dg-logo dg-project-art"><span class="dg-monogram" data-listing-placeholder>YO</span><img data-listing-image alt="" width="44" height="44" hidden/></span></span>
+        <div class="dg-main">
+          <h3><span data-listing-name>Your project name</span></h3>
+          <p class="dg-tagline" data-listing-description>A clear description of what your project does and who it helps.</p>
+          <p class="dg-meta"><span data-listing-category>Category</span><span data-listing-domain>your-project.com</span></p>
+        </div>
+        <div class="dg-actions" aria-hidden="true">
+          <span class="dg-comments"><UiIcon name="comment" size={13}/><span>0</span></span>
+          <button type="button" class="dg-vote" tabindex="-1"><span class="dg-vote-caret">▲</span><strong>0</strong></button>
+        </div>
+      </article>
       <p class="field-help">Your email, order details, and review notes stay private.</p>
     </details>
     <details class="submission-disclosure">

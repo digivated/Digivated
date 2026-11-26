@@ -1,10 +1,12 @@
 const form=document.getElementById('project-form');
 if(form){
  const panel=document.querySelector('.submission-preview-panel');
+ const initials=value=>Array.from(value.trim()||'Your project name').slice(0,2).join('').toUpperCase();
  const update=()=>{
   for(const [name,fallback] of [['name','Your project name'],['description','A clear description of what your project does and who it helps.'],['category','Category']])panel.querySelector('[data-listing-'+name+']').textContent=form.elements[name].value.trim()||fallback;
   let domain='your-project.com';try{domain=new URL(form.elements.url.value).hostname;}catch{}
   panel.querySelector('[data-listing-domain]').textContent=domain;
+  panel.querySelector('[data-listing-placeholder]').textContent=initials(form.elements.name.value);
  };
  form.addEventListener('input',update);
  const image=panel.querySelector('[data-listing-image]'),placeholder=panel.querySelector('[data-listing-placeholder]');let imageUrl;

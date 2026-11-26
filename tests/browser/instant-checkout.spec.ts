@@ -74,6 +74,8 @@ test('free stays the default and keeps the badge flow when no purchase is found'
  await fill(page);
  await page.locator('.dg-tiers [data-tier="founding-feature"]').click();
  await expect(page.locator('#plan-buy')).toContainText('Buy Pro · $5 once');
+ await expect(page.locator('#plan-recheck')).toHaveCSS('color', 'rgb(11, 11, 12)');
+ await expect(page.locator('#plan-buy-copy')).toHaveCSS('color', 'rgb(42, 42, 46)');
  await page.locator('#plan-recheck').click();
  await expect(page.locator('#plan-buy-status')).toContainText('No purchase found');
  await page.locator('.dg-tiers [data-tier="directory"]').click();

@@ -40,6 +40,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await guide.click();
  await expect(page.locator('.free-launch-guide')).toBeVisible();
  await expect(page.locator('.free-launch-guide')).toContainText('Mondays at 9:00 AM Eastern');
+ await expect(page.locator('.free-launch-guide li')).toHaveCount(3);
  await expect(page.locator('.free-launch-guide a')).toHaveAttribute('href', '/dashboard#account-submissions');
  await guide.click();
  const preview = page.getByText('Preview your public listing', { exact: true });
@@ -52,6 +53,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await preview.click();
  await expect(page.locator('[data-listing-name]')).toHaveText('Orbit');
  await expect(page.locator('[data-listing-category]')).toHaveText('Developer Tools');
+ await expect(page.locator('.submission-listing-preview')).toHaveClass(/dg-project-tile/);
  await preview.click();
  const image=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=64;c.getContext('2d')!.fillRect(0,0,64,64);return c.toDataURL('image/png').split(',')[1];});
  await page.locator('#project-image').setInputFiles({name:'logo.png',mimeType:'image/png',buffer:Buffer.from(image,'base64')});
