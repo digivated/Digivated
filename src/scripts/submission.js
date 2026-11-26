@@ -538,7 +538,7 @@ if (form) {
       if (data.launch) {
         if (data.launch.badge) {
           status.textContent = 'Project saved. Add and verify your website badge to join the launch cycle.';
-          badgePickerSlot.replaceChildren(badgePicker(data.id, { label: `Badge styles for ${payload.name}` }));
+          badgePickerSlot.replaceChildren(badgePicker(data.id, { label: `Badge styles for ${payload.name}`, aiPrompt: true }));
           const scheduledDate = new Date(data.launch.scheduledAt);
           document.getElementById('submission-badge-launch').textContent = Number.isFinite(scheduledDate.getTime())
             ? `Launch date: ${scheduledDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})}. Projects publish every Monday at 9:00 AM Eastern.`

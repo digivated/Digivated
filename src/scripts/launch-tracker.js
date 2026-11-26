@@ -75,7 +75,7 @@ export function badgeSteps(item, { onVerify } = {}) {
   const status = el('p', { className: 'fl-status', role: 'status' });
   status.setAttribute('data-badge-status', '');
   status.setAttribute('aria-live', 'polite');
-  const picker = badgePicker(item.id, { label: `Badge styles for ${item.name}` });
+  const picker = badgePicker(item.id, { label: `Badge styles for ${item.name}`, aiPrompt: true });
   const verify = el('button', { type: 'button', className: 'button primary fl-btn-primary', textContent: 'Check my website' });
   verify.setAttribute('data-verify-badge', item.id);
   verify.onclick = async () => {
@@ -121,7 +121,7 @@ export function badgeLater(item, stage) {
   const details = el('details', { className: 'fl-badge-later' }, el('summary', {}, el('span', { textContent: 'Your badge' }), el('small', { textContent: 'Get the embed code' })), body);
   details.setAttribute('data-badge-later', item.id);
   details.addEventListener('toggle', () => {
-    if (details.open && !body.querySelector('[data-badge-picker]')) body.append(badgePicker(item.id, { label: `Badge styles for ${item.name}` }));
+    if (details.open && !body.querySelector('[data-badge-picker]')) body.append(badgePicker(item.id, { label: `Badge styles for ${item.name}`, aiPrompt: true }));
   });
   return details;
 }
