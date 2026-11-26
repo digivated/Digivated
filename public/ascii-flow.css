@@ -401,14 +401,18 @@ html[data-ascii] body #submission-badge-status:empty{display:none}
 html[data-ascii] body #main :is(.button,.fl-btn,button,a)[hidden]{display:none!important}
 }
 
-/* ---- AI badge guide (badge picker) ---- */
-html[data-ascii] body .fl-ai-guide{display:grid;gap:12px;margin:0 0 14px!important;padding:16px!important;border:1px solid var(--fl-line)!important;border-radius:8px!important;background-color:var(--fl-panel)!important;min-width:0}
-html[data-ascii] body .fl-ai-guide-title{margin:0!important;color:var(--fl-ink)!important;font-size:15px!important;font-weight:650!important;line-height:1.3}
-html[data-ascii] body .fl-ai-guide ol{display:grid;gap:10px;margin:0!important;padding:0!important;list-style:none!important}
-html[data-ascii] body .fl-ai-guide li{display:grid;grid-template-columns:26px minmax(0,1fr);align-items:start;gap:10px;margin:0!important;padding:0!important}
-html[data-ascii] body .fl-ai-guide li::marker{content:""}
-html[data-ascii] body .fl-ai-guide li>span{display:grid;place-items:center;width:26px;height:26px;border-radius:7px;background-color:var(--fl-ink)!important;color:var(--fl-panel)!important;font-size:13px;font-weight:650;line-height:1}
-html[data-ascii] body .fl-ai-guide li>p{margin:0!important;color:var(--fl-copy)!important;font-size:14px;line-height:1.55}
-html[data-ascii] body .fl-ai-guide li strong{color:var(--fl-ink)!important;font-weight:650}
-html[data-ascii] body .fl-ai-guide-note{margin:0!important;padding-top:10px;border-top:1px solid var(--fl-line);color:var(--fl-muted)!important;font-size:13px!important;line-height:1.5}
-html[data-ascii] body .dg-badge-first .fl-ai-guide{display:none}
+@layer flow {
+/* ---- Simple badge picker: one preview, a style switcher, two buttons ---- */
+html[data-ascii] body .fl-badges.is-simple{display:grid;gap:12px;min-width:0}
+html[data-ascii] body .fl-badge-chooser{display:flex;gap:4px;padding:3px;border:1px solid var(--fl-line);border-radius:8px;background-color:var(--fl-panel)}
+html[data-ascii] body .fl-badge-choice{flex:1 1 0;min-width:0;min-height:40px;padding:0 6px;border:0!important;border-radius:6px!important;background:transparent!important;color:var(--fl-muted)!important;font:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+html[data-ascii] body .fl-badge-choice[aria-checked=true]{background:var(--fl-ink)!important;color:var(--fl-panel)!important}
+html[data-ascii] body .fl-badge-choice:focus-visible{outline:2px solid var(--fl-ink);outline-offset:2px}
+html[data-ascii] body .fl-badges.is-simple .fl-badge-card[hidden]{display:none!important}
+html[data-ascii] body .fl-badges.is-simple .fl-badge-bar{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;padding:12px!important}
+html[data-ascii] body .fl-badges.is-simple .fl-badge-bar>div:not(.fl-badge-actions){display:none!important}
+html[data-ascii] body .fl-badges.is-simple .fl-badge-bar>.fl-badge-actions{display:contents!important}
+html[data-ascii] body .fl-badges.is-simple .fl-badge-bar .fl-btn{width:100%;min-height:44px!important;margin:0!important}
+html[data-ascii] body .fl-badge-hint{margin:0!important;color:var(--fl-muted)!important;font-size:13px!important;line-height:1.5}
+@media (max-width:380px){html[data-ascii] body .fl-badges.is-simple .fl-badge-bar{grid-template-columns:1fr}}
+}

@@ -121,12 +121,11 @@ for (const width of [390, 1440]) test(`free launch can verify the badge and subm
   await expect(step.locator(':scope > span')).toHaveCSS('color', 'rgb(255, 255, 255)');
  }
  const disclosures = badgePanel.locator('summary:visible');
- await expect(disclosures).toHaveCount(2);
+ await expect(disclosures).toHaveCount(1);
  for (const disclosure of await disclosures.all()) {
   await expect(disclosure).toHaveCSS('color', 'rgb(11, 11, 12)');
  }
 
- await expect(page.locator('#badge-first .dg-badge-tip')).toContainText('ask your AI coding assistant');
  await expect(page.locator('#badge-first-later, #badge-first-later-note')).toHaveCount(0);
  const copyPrompt = page.getByRole('button', { name: 'Copy an AI prompt for the Dark badge' });
  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
@@ -143,12 +142,11 @@ for (const width of [390, 1440]) test(`free launch can verify the badge and subm
  await page.getByRole('button', { name: 'Copy Dark badge code' }).click();
  await expect(badgeCode).toBeVisible();
  await expect.poll(() => page.evaluate(() => getSelection()?.toString())).toContain(reservedId);
- const moreStyles = page.locator('#badge-first').getByText('More badge styles', { exact: true });
  await expect(page.locator('#badge-first [data-badge-style=light]')).toBeHidden();
- await moreStyles.click();
+ await page.locator('#badge-first').getByRole('radio', { name: 'Light' }).click();
  await expect(page.locator('#badge-first [data-badge-style=light]')).toBeVisible();
+ await expect(page.locator('#badge-first [data-badge-style=dark]')).toBeHidden();
  await expect(page.locator('#badge-first [data-badge-style=text] code')).toContainText(reservedId);
- await moreStyles.click();
  await page.locator('#project-form [name=name]').fill('Studio Notes');
  await page.locator('#project-form [name=url]').fill('https://example.com');
  await page.locator('#project-form [name=description]').fill('Simple project notes for independent developers.');

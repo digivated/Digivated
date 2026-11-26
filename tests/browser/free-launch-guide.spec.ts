@@ -64,6 +64,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  await expect(picker.locator('[data-badge-style=dark] code')).toContainText('data-digivated-project="badge-fixture"');
  await expect(picker.locator('[data-badge-style=text] code')).toHaveText(badge);
  await page.context().grantPermissions(['clipboard-read','clipboard-write']);
+ await picker.getByRole('radio',{name:'Light'}).click();
  await picker.locator('[data-copy-badge=light]').click();
  await expect(picker.locator('[data-copy-badge=light]')).toHaveText('Copied ✓');
  await expect(page.locator('#submission-badge-launch')).toContainText('November 23, 2026');
@@ -90,9 +91,8 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
  const later=page.locator('[data-badge-later]');
  await expect(later).toBeVisible();
  await later.locator('summary').click();
- await expect(later.locator('[data-badge-style=dark] .fl-badge-tag')).toHaveText('Recommended');
- await expect(later.locator('[data-copy-badge]:visible')).toHaveCount(3);
- await later.locator('.fl-badge-more summary').click();
+ await expect(later.locator('[data-copy-badge]:visible')).toHaveCount(1);
+ await later.getByRole('radio',{name:'Text link'}).click();
  await expect(later.locator('[data-copy-badge=text]')).toBeVisible();
  const bounds=await page.locator('.account-launch').boundingBox();
  expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(width+1);
