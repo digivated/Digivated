@@ -71,9 +71,9 @@ const pricingBlurbs = {
                 <legend class="sr-only">Project pricing</legend>
                 <p id="project-pricing-help" class="field-help">How people pay for your product.</p>
                 <div class="submission-pricing-options">
-                  <label><input type="radio" name="pricing" value="" checked/><span class="submission-pricing-copy"><b>Skip for now</b><small>Leave pricing off the listing</small></span></label>
+                  <label><input type="radio" name="pricing" value="" checked/><span class="submission-pricing-copy"><b>Skip for now</b><small aria-hidden="true">Leave pricing off the listing</small></span></label>
                   {projectPricingOptions.filter(option => option !== 'Open source').map(option => (
-                    <label><input type="radio" name="pricing" value={option}/><span class="submission-pricing-copy"><b>{option === 'Freemium' ? 'Free + paid plans' : option}</b><small>{pricingBlurbs[option]}</small></span></label>
+                    <label><input type="radio" name="pricing" value={option}/><span class="submission-pricing-copy"><b>{option === 'Freemium' ? 'Free + paid plans' : option}</b><small aria-hidden="true">{pricingBlurbs[option]}</small></span></label>
                   ))}
                 </div>
               </fieldset>
