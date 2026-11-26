@@ -1,4 +1,4 @@
-import { freeLaunchDay, freeLaunchTime } from '../lib/launch-calendar.mjs';
+import { freeLaunchDateInput, freeLaunchDay, freeLaunchTime } from '../lib/launch-calendar.mjs';
 import { projectCategories, resourceCategories, normalizeResourceCategory } from '../data/community.mjs';
 const $ = id => document.getElementById(id);
 const state = { csrf: '', kind: 'submission', panel:'overview', items: [], next: null, record: null, dirty: false, busy: false, request: 0, editorRequest: 0, overviewRequest:0 };
@@ -241,6 +241,7 @@ function renderEditor(record) {
       $('owner-fields').append(element('p','In Gumroad, match this submission email and order reference to a completed Digivated promo purchase. Confirm it is not refunded or disputed and has not been used for another promotion. This checkbox records your manual verification; it does not contact Gumroad.','quiet'));
       field('promotionVerified','I verified the Digivated promo purchase in Gumroad',record.promotion.verified,{type:'checkbox'});
     }
+    if(record.launch?.kind==='free'&&record.status==='pending'&&Number.isFinite(freeLaunchTime(record)))field('launchAt','Free launch date (Monday, 9:00 AM Eastern)',freeLaunchDateInput(freeLaunchTime(record)),{type:'date',help:'Pick a Monday. The launch queue publishes it on that morning once the badge is verified.'});
     field('pick','Digivated Pick',record.pick,{type:'checkbox'});
     $('owner-fields').append(element('h2','Launch page'));
     $('owner-fields').append(element('p',record.pagePublished?'Launch page is published. Saving page edits creates a private draft and unpublishes the current page.':'Launch page is private. Directory approval alone does not publish a page.','quiet'));

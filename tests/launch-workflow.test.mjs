@@ -213,3 +213,12 @@ test('free launch options are upcoming Mondays at 9 AM Eastern across daylight s
     assert.deepEqual(options, [...new Set(options)].sort());
   }
 });
+
+test('admin launch date accepts only Mondays at 9 AM Eastern', async () => {
+  const { freeLaunchAtDate } = await import('../src/lib/launch-calendar.mjs');
+  assert.equal(freeLaunchAtDate('2027-01-18'), '2027-01-18T14:00:00.000Z');
+  assert.equal(freeLaunchAtDate('2027-03-15'), '2027-03-15T13:00:00.000Z');
+  assert.equal(freeLaunchAtDate('2027-01-19'), null);
+  assert.equal(freeLaunchAtDate('2027-02-30'), null);
+  assert.equal(freeLaunchAtDate(''), null);
+});
