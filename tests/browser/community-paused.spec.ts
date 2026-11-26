@@ -121,7 +121,7 @@ for (const width of [390, 1440]) test(`free launch can verify the badge and subm
   await expect(step.locator(':scope > span')).toHaveCSS('color', 'rgb(255, 255, 255)');
  }
  const disclosures = badgePanel.locator('summary:visible');
- await expect(disclosures).toHaveCount(2);
+ await expect(disclosures).toHaveCount(1);
  for (const disclosure of await disclosures.all()) {
   await expect(disclosure).toHaveCSS('color', 'rgb(11, 11, 12)');
  }
