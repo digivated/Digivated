@@ -81,25 +81,11 @@ html#digivated-root body.platform .submission-preview-panel {
   display:block;align-self:stretch;min-width:0;padding:0;border:0;background:transparent!important;
 }
 html#digivated-root .submission-preview-panel h2 {margin:0 0 8px;font-size:20px;letter-spacing:-.025em}
-html#digivated-root .submission-listing-preview {margin-top:24px;overflow:hidden;border:1px solid var(--dg-line-strong);border-radius:12px}
-html#digivated-root .listing-preview-cover {
-  aspect-ratio:16/10;display:grid;place-items:center;overflow:hidden;font-size:13px;background:var(--dg-raised)!important;
-}
-html#digivated-root .listing-preview-cover img {width:100%;height:100%;min-height:0;object-fit:contain}
-html#digivated-root .listing-preview-copy {padding:20px;overflow-wrap:anywhere}
-html#digivated-root .listing-preview-copy>span {font-size:12px;color:var(--dg-muted)}
-html#digivated-root .listing-preview-copy h3 {margin:12px 0;font-size:20px;line-height:1.4;letter-spacing:-.025em}
-html#digivated-root .listing-preview-copy p {
-  margin:0 0 16px;font-size:14px;line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
-}
-html#digivated-root .listing-preview-footer {display:flex;gap:20px;padding:16px 20px;border-top:1px solid var(--dg-line);font-size:12px;color:var(--dg-muted)}
-html#digivated-root .listing-preview-footer b {font-weight:500;margin-left:4px}
 html#digivated-root .submission-form [hidden],html#digivated-root .submission-preview-panel [hidden] {display:none!important}
 @media(max-width:1000px) {
   html#digivated-root .submission-form .form-row {grid-template-columns:1fr}
 }
 @media(max-width:760px) {
-  html#digivated-root .submission-listing-preview {max-width:440px}
   html#digivated-root body.platform .submission-intro {padding:20px 0 12px}
 }
 @media(max-width:540px) {
@@ -111,9 +97,6 @@ html#digivated-root .submission-form [hidden],html#digivated-root .submission-pr
 
 /* Match the square logo upload and keep transparent marks fully visible. */
 html#digivated-root .submission-image-preview img { width:112px; height:112px; aspect-ratio:1; object-fit:contain; }
-html#digivated-root .listing-preview-cover { width:80px; height:80px; aspect-ratio:1; margin:20px 20px 0; border:1px solid var(--dg-line); border-radius:16px; }
-html#digivated-root .listing-preview-cover img { object-fit:contain; }
-html#digivated-root .listing-preview-cover>span { padding:8px; text-align:center; font-size:11px; }
 
 html#digivated-root .badge-next-steps{padding-left:20px;margin:14px 0;font-size:13px;line-height:1.9}
 
@@ -197,7 +180,7 @@ html#digivated-root .submission-disclosure > summary {
 html#digivated-root .submission-disclosure > :last-child:not(summary) {margin-bottom:12px}
 html#digivated-root .submission-optional-fields {display:grid;gap:12px}
 html#digivated-root body.platform .submission-preview-panel {padding-inline:14px;border:1px solid var(--fl-rule-hi, var(--dg-line-strong))}
-html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;margin-bottom:8px}
+html#digivated-root .submission-preview-panel .submission-listing-preview { margin: 0 0 10px; }
 @layer workspace-preview {
   .submission-form .dg-badge-first {
     display: grid;
@@ -211,7 +194,7 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
 
   .submission-form .dg-badge-first[hidden] { display: none !important; }
 
-  .dg-badge-first .dg-badge-first-steps {
+  :is(.dg-badge-first, .free-launch-guide) .dg-badge-first-steps {
     display: grid;
     gap: 10px;
     margin: 0 !important;
@@ -219,7 +202,7 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
     list-style: none !important;
   }
 
-  .dg-badge-first .dg-badge-first-steps li {
+  :is(.dg-badge-first, .free-launch-guide) .dg-badge-first-steps li {
     display: grid;
     grid-template-columns: 26px minmax(0, 1fr);
     align-items: start;
@@ -228,7 +211,7 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
     padding: 0 !important;
   }
 
-  .dg-badge-first .dg-badge-first-steps li > span {
+  :is(.dg-badge-first, .free-launch-guide) .dg-badge-first-steps li > span {
     display: grid;
     place-items: center;
     width: 26px;
@@ -240,7 +223,7 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
     font-weight: 650;
   }
 
-  .dg-badge-first .dg-badge-first-steps p,
+  :is(.dg-badge-first, .free-launch-guide) .dg-badge-first-steps p,
   .dg-badge-first .dg-badge-tip {
     margin: 0 !important;
     color: var(--fl-copy) !important;
@@ -248,7 +231,7 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
     line-height: 1.55;
   }
 
-  .dg-badge-first .dg-badge-first-steps :is(strong,b) {
+  :is(.dg-badge-first, .free-launch-guide) .dg-badge-first-steps :is(strong,b) {
     color: var(--fl-ink) !important;
     font-weight: 650;
     overflow-wrap: anywhere;
@@ -453,7 +436,7 @@ html#digivated-root .submission-dropzone-empty {
 }
 html#digivated-root .submission-dropzone-copy { display: grid; gap: 2px; min-width: 0; }
 html#digivated-root .submission-dropzone-copy strong { font-size: 14px; font-weight: 650; color: #0b0b0c; }
-html#digivated-root .submission-dropzone-empty .field-help { color: #71717a !important; }
+html#digivated-root .submission-dropzone-empty .field-help { color: #3f3f46 !important; }
 html#digivated-root .submission-file {
   position: absolute !important;
   width: 1px !important;
@@ -621,16 +604,28 @@ html#digivated-root .submission-slot-empty p { margin: 0; color: #0b0b0c; font-s
 html#digivated-root .submission-slot-empty .button { width: auto; min-height: 40px; }
 html#digivated-root .submission-form .submission-review { gap: 10px !important; padding: 14px 16px !important; }
 html#digivated-root .submission-review button[type="submit"] { border-radius: 12px !important; }
-html#digivated-root .submission-listing-preview {
-  display: grid !important;
-  grid-template-columns: 72px minmax(0, 1fr);
-  max-width: none !important;
-  margin: 0 0 8px !important;
+html#digivated-root .submission-intro .lede,
+html#digivated-root .submission-workspace :is(.field-help, .dg-tier-sub, .submission-section-help, #plan-buy-copy) {
+  color: #3f3f46 !important;
 }
-html#digivated-root .listing-preview-cover { aspect-ratio: 1 !important; min-height: 72px; }
-html#digivated-root .listing-preview-copy { padding: 12px !important; }
-html#digivated-root .listing-preview-copy h3 { margin: 4px 0 !important; font-size: 16px !important; }
-html#digivated-root .listing-preview-footer { grid-column: 1 / -1; padding: 10px 12px !important; }
+html#digivated-root .submission-workspace #plan-buy-copy,
+html#digivated-root .submission-workspace #plan-buy-copy strong { color: #2a2a2e !important; }
+html#digivated-root .submission-workspace :is(a.button, button.button, .fl-btn):not(.primary) {
+  color: #0b0b0c !important;
+  background: #fff !important;
+  border: 1px solid #c9c9d0 !important;
+}
+html#digivated-root .submission-workspace :is(button, .button, .fl-btn):disabled {
+  color: #3f3f46 !important;
+  background: #ededed !important;
+  border-color: #d4d4d8 !important;
+  opacity: 1 !important;
+}
+html#digivated-root .submission-preview-panel .dg-project-art :is(img, .dg-monogram)[hidden] { display: none !important; }
+html#digivated-root:has(.submission-workspace) { scroll-padding-top: calc(64px + env(safe-area-inset-top)); }
+html#digivated-root .submission-workspace :is(fieldset, .submission-disclosure, .submission-intro) {
+  scroll-margin-top: calc(68px + env(safe-area-inset-top));
+}
 html#digivated-root .dg-badge-first {
   gap: 10px !important;
   padding: 12px !important;
@@ -638,12 +633,12 @@ html#digivated-root .dg-badge-first {
   border-radius: 12px !important;
   background: #fff !important;
 }
-html#digivated-root .dg-badge-first .dg-badge-first-steps { gap: 8px !important; }
-html#digivated-root .dg-badge-first .dg-badge-first-steps li > span {
+html#digivated-root :is(.dg-badge-first, .free-launch-guide) .dg-badge-first-steps { gap: 8px !important; }
+html#digivated-root :is(.dg-badge-first, .free-launch-guide) .dg-badge-first-steps li > span {
   background: #0b0b0c !important;
   color: #fff !important;
 }
-html#digivated-root .dg-badge-first .dg-badge-first-steps :is(strong, b) { color: #0b0b0c !important; }
+html#digivated-root :is(.dg-badge-first, .free-launch-guide) .dg-badge-first-steps :is(strong, b) { color: #0b0b0c !important; }
 html#digivated-root .dg-badge-first .fl-badge-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 @media (min-width: 720px) {
   html#digivated-root .dg-badge-first .dg-badge-first-steps {
@@ -658,4 +653,36 @@ html#digivated-root .dg-badge-first .fl-badge-actions { display: flex; flex-wrap
 @media (prefers-reduced-motion: reduce) {
   html#digivated-root .submission-workspace .submission-disclosure > summary svg { transition: none; }
 }
+}
+
+/* These sit in the first layer so they beat the directory row and placeholder colors. */
+@layer clean-first {
+  html#digivated-root .submission-preview-panel .dg-row.dg-project-tile {
+    border-radius: 12px !important;
+    box-shadow: 0 0 0 1px #ececf0 !important;
+    max-width: none !important;
+  }
+  html#digivated-root .submission-preview-panel .dg-row :is(.dg-tagline, .dg-meta) {
+    color: #3f3f46 !important;
+  }
+  html#digivated-root .submission-preview-panel .dg-row.dg-project-tile .dg-meta {
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+  }
+  html#digivated-root .submission-preview-panel .dg-row.dg-project-tile .dg-meta span:not(:first-child):not(.dg-meta-age) {
+    display: inline !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    flex: 1 1 auto !important;
+    min-width: 8ch !important;
+  }
+  html#digivated-root .submission-intro .lede,
+  html#digivated-root .submission-form :is(input, textarea)::placeholder {
+    color: #3f3f46 !important;
+  }
+  html#digivated-root .submission-workspace :is(button.button, button.primary):disabled {
+    color: #3f3f46 !important;
+    opacity: 1 !important;
+  }
 }
