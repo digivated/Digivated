@@ -10,7 +10,7 @@ const active = (href: string) => isNavigationCurrent(path, href);
 <header class="dg-shell" data-site-header data-account="signed-out">
   <div class="dg-shell-bar">
     <div class="dg-shell-material" aria-hidden="true"></div>
-    <a class="dg-shell-brand" href="/" aria-label="Digivated home"><img class="daylight-brand-mark" src="/digivated-daylight-mark.png" width="32" height="32" alt=""/><span>Digivated</span></a>
+    <a class="dg-shell-brand" href="/" aria-label="Digivated home"><img class="daylight-brand-mark" src="/digivated-new-mark.svg" width="32" height="32" alt=""/><span>Digivated</span></a>
     <div class="dg-shell-tools">
       <a class="dg-shell-icon dg-shell-notifications" id="header-notifications-link" href="/notifications" aria-label="Notifications" aria-current={active('/notifications')?'page':undefined}><UiIcon name="bell" size={20}/><span id="header-notifications-badge" class="dg-shell-badge" hidden></span></a>
       <a class="dg-shell-login" id="header-account-link" href="/login" aria-current={active('/login')?'page':undefined}>Log In</a>
@@ -34,7 +34,7 @@ const active = (href: string) => isNavigationCurrent(path, href);
         </summary>
         <nav id="explore-navigation" class="site-menu-panel" aria-label="Site menu">
           <div class="drawer-heading">
-            <span><img src="/digivated-daylight-mark.png" width="28" height="28" alt=""/>Digivated</span>
+            <span><img src="/digivated-new-mark.svg" width="28" height="28" alt=""/>Digivated</span>
             <button type="button" data-menu-close aria-label="Close menu" hidden><UiIcon name="close" size={18}/></button>
           </div>
           <NavigationTree path={path}/>

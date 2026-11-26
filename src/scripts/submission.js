@@ -2,6 +2,7 @@ import { prepareProjectImage } from './submission-image.js';
 import { accountConnection } from './account-session.js';
 import { projectStage, trackerElement } from './launch-tracker.js';
 import { badgePicker } from './badge-picker.js';
+import { launchDateParts } from '../lib/launch-date-label.mjs';
 const form = document.getElementById('project-form');
 if (form) {
   let accountClient, accountVerified = false, instantConfig, pendingInstantId, planInfo = null;
@@ -252,18 +253,42 @@ if (form) {
   const imagePreview = document.getElementById('project-image-preview');
   const imagePreviewPicture = imagePreview?.querySelector('img');
   const imageName = document.getElementById('project-image-name');
+  const imageEmpty = document.getElementById('project-image-empty');
+  const imageDrop = document.querySelector('.submission-dropzone');
   let imagePreviewUrl;
   const updateImagePreview = () => {
     if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
     imagePreviewUrl = undefined;
     const file = imageInput?.files?.[0];
-    imagePreview.hidden = !file;
-    if (!file) { imagePreviewPicture.removeAttribute('src'); imageName.textContent = ''; return; }
+    if (imagePreview) imagePreview.hidden = !file;
+    if (imageEmpty) imageEmpty.hidden = Boolean(file);
+    if (!file) { imagePreviewPicture?.removeAttribute('src'); if (imageName) imageName.textContent = ''; return; }
     imageName.textContent = file.name;
     imagePreviewUrl = URL.createObjectURL(file);
     imagePreviewPicture.src = imagePreviewUrl;
   };
   imageInput?.addEventListener('change', updateImagePreview);
+  document.getElementById('project-image-replace')?.addEventListener('click', () => imageInput?.click());
+  document.getElementById('project-image-remove')?.addEventListener('click', () => {
+    if (!imageInput) return;
+    imageInput.value = '';
+    imageInput.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  if (imageDrop && imageInput) {
+    const logoTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+    imageDrop.addEventListener('dragover', event => { event.preventDefault(); imageDrop.classList.add('is-dragover'); });
+    imageDrop.addEventListener('dragleave', () => imageDrop.classList.remove('is-dragover'));
+    imageDrop.addEventListener('drop', event => {
+      event.preventDefault();
+      imageDrop.classList.remove('is-dragover');
+      const file = [...(event.dataTransfer?.files || [])].find(item => logoTypes.has(item.type));
+      if (!file) return;
+      const transfer = new DataTransfer();
+      transfer.items.add(file);
+      imageInput.files = transfer.files;
+      imageInput.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
   // Upload plans: Free 1 project, Starter 3, Membership unlimited. The server
   // decides; this only shows the plan, the slots left and how to upgrade.
   const PLAN_TIER = { free: 'directory', starter: 'instant', member: 'founding-feature' };
@@ -283,7 +308,12 @@ if (form) {
     const used = Number(planInfo.used) || 0;
     const slots = planInfo.limit ? `${Math.min(used, planInfo.limit)} of ${planInfo.limit} project${planInfo.limit === 1 ? '' : 's'} used` : `${used} project${used === 1 ? '' : 's'} · unlimited`;
     planStatus.replaceChildren('Your plan: ', Object.assign(document.createElement('strong'), { textContent: planInfo.name }), ` · ${slots}.`);
-    if (planInfo.limit && planInfo.remaining === 0) planStatus.append(planInfo.plan === 'member' ? '' : ' Upgrade below or archive a project in Your Projects to add another.');
+    if (planInfo.limit && planInfo.remaining === 0 && planInfo.plan !== 'member') {
+      const projects = document.createElement('a');
+      projects.href = '/dashboard#account-submissions';
+      projects.textContent = 'Your Projects';
+      planStatus.append(' Upgrade below or archive a project in ', projects, ' to add another.');
+    }
     planStatus.hidden = false;
   };
   function syncPlanBuy() {
@@ -381,25 +411,36 @@ if (form) {
   const renderLaunchDays = options => {
     if (!launchDays) return;
     const chosen = launchDays.querySelector('input:checked')?.value;
-    launchDays.replaceChildren(...options.map((iso, index) => {
-      const day = new Date(iso);
+    const labels = [];
+    options.forEach((iso, index) => {
+      const parts = launchDateParts(iso);
+      if (!parts) return;
       const label = document.createElement('label');
       label.className = 'dgm-launch-day';
       const input = document.createElement('input');
       input.type = 'radio'; input.name = 'launchAt'; input.value = iso;
-      input.checked = chosen ? chosen === iso : index === 0;
       const month = document.createElement('span');
       month.className = 'dgm-launch-month';
-      month.textContent = day.toLocaleDateString('en-US', { month: 'short', timeZone: 'America/New_York' });
+      month.textContent = parts.monthShort;
       const date = document.createElement('strong');
-      date.textContent = day.toLocaleDateString('en-US', { day: 'numeric', timeZone: 'America/New_York' });
-      label.append(input, month, date);
+      date.textContent = parts.day;
+      const weekday = document.createElement('span');
+      weekday.className = 'dgm-launch-weekday';
+      weekday.textContent = parts.weekdayShort;
+      label.append(input, month, date, weekday);
       if (index === 0) { const tag = document.createElement('em'); tag.textContent = 'Soonest'; label.append(tag); }
-      return label;
-    }));
+      labels.push(label);
+    });
+    launchDays.replaceChildren(...labels);
+    const inputs = [...launchDays.querySelectorAll('input')];
+    const pick = inputs.find(input => input.value === chosen) || inputs[0];
+    if (pick) pick.checked = true;
     const update = () => {
       const picked = launchDays.querySelector('input:checked');
-      if (launchNote && picked) launchNote.textContent = 'Goes live ' + new Date(picked.value).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/New_York' }) + ' at 9:00 AM Eastern.';
+      for (const label of launchDays.querySelectorAll('.dgm-launch-day')) label.classList.toggle('is-selected', label.contains(picked));
+      if (!launchNote) return;
+      const parts = picked ? launchDateParts(picked.value) : null;
+      launchNote.textContent = parts ? parts.sentence : '';
     };
     launchDays.onchange = update;
     update();
@@ -464,11 +505,29 @@ if (form) {
   };
   form.elements.url?.addEventListener('change',()=>renderBadgeFirst());
   intent.addEventListener('change',()=>{if(intent.value==='directory')ensureReservation();renderBadgeFirst();});
+  const slotEmpty = document.getElementById('submission-slot-empty');
+  document.getElementById('submission-upgrade')?.addEventListener('click', () => {
+    const starterCard = document.querySelector('[data-tier="instant"]');
+    const starterInput = starterCard?.querySelector('input');
+    const starterReady = Boolean(starterCard && !starterCard.hidden && starterInput && !starterInput.disabled && !ownsTier('instant'));
+    const next = starterReady ? 'instant' : 'founding-feature';
+    if (intent.value !== next) {
+      intent.value = next;
+      intent.dispatchEvent(new Event('change', { bubbles: true }));
+    } else {
+      syncIntent();
+      updateButton();
+    }
+    (document.getElementById('membership-fields') || document.getElementById('sub-step-launch'))?.scrollIntoView({ block: 'nearest' });
+  });
   const updateButton = () => {
     const paidTier = intent.value === 'instant' || intent.value === 'founding-feature';
     const locked = paidTier && !ownsTier(intent.value);
     const full = Boolean(planInfo && !planInfo.checkFailed && planInfo.limit && planInfo.remaining === 0);
+    const showUpgrade = Boolean(accountVerified && full && !locked);
     button.disabled = !accountVerified || locked || full;
+    button.hidden = showUpgrade;
+    if (slotEmpty) slotEmpty.hidden = !showUpgrade;
     button.textContent = !accountVerified ? 'Sign in to submit your project'
       : locked ? `Buy ${intent.value === 'instant' ? 'Starter' : 'Pro'} above to publish`
       : full ? 'No project slots left'
@@ -479,6 +538,7 @@ if (form) {
   updateButton();
   form.addEventListener('submit', async event => {
     event.preventDefault();
+    if (button.disabled) return;
     if (!accountVerified) { status.innerHTML='Please <a href="/login">sign in or create an account</a> before submitting.'; return; }
     if (!form.reportValidity()) return;
     // Open the checkout tab now, while this tap still counts as a user action

@@ -2,6 +2,7 @@
 import Platform from '../layouts/Platform.astro';
 import MakerNavigation from '../components/MakerNavigation.astro';
 import FreeLaunchGuide from '../components/FreeLaunchGuide.astro';
+import UiIcon from '../components/UiIcon.astro';
 import { projectPricingOptions } from '../lib/project-pricing.mjs';
 import { projectCategoryGroups } from '../data/community.mjs';
 import '../styles/submission-flow.css';
@@ -57,7 +58,7 @@ import '../styles/submission-flow.css';
             </div>
             <label>Project description<textarea name="description" rows="2" minlength="20" maxlength="600" required placeholder="What does it do, and who is it for?"></textarea><span class="field-help">20–600 characters.</span></label>
             <details class="submission-disclosure">
-              <summary>Project pricing (optional)</summary>
+              <summary><span>Project pricing (optional)</span><UiIcon name="chevron" size={16}/></summary>
               <fieldset class="submission-pricing" aria-describedby="project-pricing-help">
                 <legend class="sr-only">Project pricing</legend>
                 <p id="project-pricing-help" class="field-help">How people pay for your product.</p>
@@ -73,15 +74,33 @@ import '../styles/submission-flow.css';
 
           <fieldset id="sub-step-logo">
             <legend>Project logo</legend>
-            <label class="submission-upload"><span class="sr-only">Project logo</span><input name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/><span class="field-help" id="project-image-help">Square PNG, JPG, or WebP. Up to 10 MB.</span></label>
-            <div id="project-image-preview" class="submission-image-preview" hidden><img alt="Selected project logo preview"/><span id="project-image-name"></span></div>
+            <div class="submission-dropzone">
+              <label class="submission-dropzone-empty" id="project-image-empty">
+                <UiIcon name="upload" size={20}/>
+                <span class="submission-dropzone-copy">
+                  <strong>Upload a logo</strong>
+                  <span class="field-help" id="project-image-help">Square PNG, JPG, or WebP. Up to 10 MB.</span>
+                </span>
+                <input class="submission-file" name="image" id="project-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="project-image-help" required/>
+              </label>
+              <div id="project-image-preview" class="submission-image-preview" hidden>
+                <img alt="Selected project logo preview"/>
+                <span class="submission-image-meta">
+                  <span id="project-image-name"></span>
+                  <span class="submission-image-actions">
+                    <button type="button" class="submission-file-action" id="project-image-replace">Replace</button>
+                    <button type="button" class="submission-file-action" id="project-image-remove">Remove</button>
+                  </span>
+                </span>
+              </div>
+            </div>
           </fieldset>
 
           <fieldset id="sub-step-you">
             <legend>About you</legend>
             <div class="form-row"><label>Creator name<input name="creator" placeholder="Your name" autocomplete="name" maxlength="100" required/></label><label>Email<input name="email" placeholder="you@example.com" type="email" autocomplete="email" maxlength="254" required/><span class="field-help">Use your account email. It stays private.</span></label></div>
             <details class="submission-disclosure">
-              <summary>Social handle and review notes (optional)</summary>
+              <summary><span>Social handle and review notes (optional)</span><UiIcon name="chevron" size={16}/></summary>
               <div class="submission-optional-fields">
                 <label>Social handle<input name="social" maxlength="200" placeholder="@yourhandle and platform"/></label>
                 <label>Review notes<textarea name="notes" rows="3" maxlength="2000" ></textarea><span class="field-help">Only the review team sees these notes.</span></label>
@@ -129,6 +148,13 @@ import '../styles/submission-flow.css';
           <label class="consent"><input name="emailOutreachConsent" type="checkbox" checked/><span>Send me one follow-up email about my launch. No newsletter unless I opt in.</span></label>
           <label class="consent"><input name="activityNotifications" type="checkbox" aria-describedby="submission-notification-help" checked/><span><strong>Turn on all activity notifications</strong></span></label>
           <p id="submission-notification-help" class="field-help">Manage alerts in <a href="/notifications#notification-preferences">Notifications</a>.</p>
+          <div id="submission-slot-empty" class="submission-slot-empty" hidden>
+            <p>No project slots left on this plan.</p>
+            <div class="submission-account-actions">
+              <button type="button" class="button primary" id="submission-upgrade">Upgrade to submit</button>
+              <a href="/dashboard#account-submissions">Your Projects</a>
+            </div>
+          </div>
           <button class="button primary" type="submit" disabled>Sign in to submit your project</button>
           <noscript>Enable JavaScript to submit your project securely.</noscript>
           <p class="form-status" id="submission-status" role="status" aria-live="polite" tabindex="-1"></p>
@@ -149,12 +175,12 @@ import '../styles/submission-flow.css';
     </form>
 
     <details hidden class="submission-preview-panel submission-disclosure">
-      <summary>Preview your public listing</summary>
+      <summary><span>Preview your public listing</span><UiIcon name="chevron" size={16}/></summary>
       <article class="submission-listing-preview"><div class="listing-preview-cover"><img data-listing-image alt="" hidden/><span data-listing-placeholder>Your project logo</span></div><div class="listing-preview-copy"><span data-listing-category>Category</span><h3 data-listing-name>Your project name</h3><p data-listing-description>A clear description of what your project does and who it helps.</p><span data-listing-domain>your-project.com</span></div><div class="listing-preview-footer"><span>Feedback <b>0</b></span><span>↑ Upvote <b>0</b></span></div></article>
       <p class="field-help">Your email, order details, and review notes stay private.</p>
     </details>
     <details class="submission-disclosure">
-      <summary>How free launches work</summary>
+      <summary><span>How free launches work</span><UiIcon name="chevron" size={16}/></summary>
       <FreeLaunchGuide />
     </details>
   </div>
