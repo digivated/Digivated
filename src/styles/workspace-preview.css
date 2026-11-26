@@ -93,7 +93,7 @@
     backdrop-filter: none !important;
   }
   .dg-workspace .dg-shell :is(.dg-shell-icon svg,.site-menu-trigger svg) { filter: none !important; }
-  .dg-workspace .dg-shell .daylight-brand-mark { object-fit: contain; filter: brightness(0) !important; }
+  .dg-workspace .dg-shell .daylight-brand-mark { object-fit: contain; filter: none !important; }
   .dg-workspace .dg-shell :is(a,button,summary):focus-visible { outline-color: #171717 !important; outline-offset: -3px !important; }
   .dg-workspace .dg-shell .dg-shell-badge { color: #171717 !important; }
   .dg-workspace .dg-shell .dg-shell-account-who :is(.fl-menu-points,.fl-menu-points b,.fl-menu-count) { color: #444 !important; }
@@ -146,7 +146,7 @@
       width: 34px;
       height: 34px;
       object-fit: contain;
-      filter: brightness(0) !important;
+      filter: none !important;
     }
     .dg-workspace .dg-rail-navigation {
       display: grid !important;

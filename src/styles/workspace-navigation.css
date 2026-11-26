@@ -115,7 +115,7 @@
 
   .drawer-heading, .drawer-heading > span { display:flex; align-items:center; gap:9px; }
   .drawer-heading { justify-content:space-between; color:#171717; font-size:19px; font-weight:680; }
-  .drawer-heading img { object-fit:contain; filter:brightness(0); }
+  .drawer-heading img { object-fit:contain; filter:none; }
   .drawer-heading button:not([hidden]) {
     display:grid; place-items:center; width:38px; height:38px;
     padding:0 !important; border:1px solid #ddd !important; border-radius:50% !important;
