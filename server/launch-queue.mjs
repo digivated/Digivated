@@ -7,7 +7,7 @@ import { finalizeLastWeek } from './launch-score.mjs';
 import { sendProjectUpdate, sendBadgeEmail } from './account-mail.mjs';
 import { freeLaunchTime, freeLaunchSchedule, novemberBatchTime, skippedNovemberBatch } from '../src/lib/launch-calendar.mjs';
 export const QUEUE='digivated:launch:free';
-export { nextFreeLaunch } from '../src/lib/launch-calendar.mjs';
+export { nextFreeLaunch, freeLaunchOptions } from '../src/lib/launch-calendar.mjs';
 export { badgeSnippet, badgeSnippets } from './badge-snippets.mjs';
 export async function publishQueued(redis,record,now=Date.now(),{quiet=false}={}){
  const scheduled = freeLaunchSchedule(record);

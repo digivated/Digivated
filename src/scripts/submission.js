@@ -375,12 +375,41 @@ if (form) {
   const instantChoice = document.getElementById('submission-instant-option');
   if (instantChoice) new MutationObserver(syncTiers).observe(instantChoice, { attributes: true, characterData: true, childList: true, subtree: true });
   syncTiers();
+  // Free launches go live on a Monday at 9:00 AM Eastern; creators pick which upcoming one.
+  const launchDays = document.getElementById('launch-days');
+  const launchNote = document.getElementById('free-launch-date');
+  const renderLaunchDays = options => {
+    if (!launchDays) return;
+    const chosen = launchDays.querySelector('input:checked')?.value;
+    launchDays.replaceChildren(...options.map((iso, index) => {
+      const day = new Date(iso);
+      const label = document.createElement('label');
+      label.className = 'dgm-launch-day';
+      const input = document.createElement('input');
+      input.type = 'radio'; input.name = 'launchAt'; input.value = iso;
+      input.checked = chosen ? chosen === iso : index === 0;
+      const month = document.createElement('span');
+      month.className = 'dgm-launch-month';
+      month.textContent = day.toLocaleDateString('en-US', { month: 'short', timeZone: 'America/New_York' });
+      const date = document.createElement('strong');
+      date.textContent = day.toLocaleDateString('en-US', { day: 'numeric', timeZone: 'America/New_York' });
+      label.append(input, month, date);
+      if (index === 0) { const tag = document.createElement('em'); tag.textContent = 'Soonest'; label.append(tag); }
+      return label;
+    }));
+    const update = () => {
+      const picked = launchDays.querySelector('input:checked');
+      if (launchNote && picked) launchNote.textContent = 'Goes live ' + new Date(picked.value).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/New_York' }) + ' at 9:00 AM Eastern.';
+    };
+    launchDays.onchange = update;
+    update();
+  };
   const configureLaunch = async account => {
     try {
       const response = await fetch('/api/submissions?action=launch-options', { cache: 'no-store' });
       if (!response.ok) return;
-      const { instant, nextFreeLaunch } = await response.json();
-      if(nextFreeLaunch)document.getElementById('free-launch-date').textContent='Next free launch: '+new Date(nextFreeLaunch).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'})+' at 9:00 AM Eastern.';
+      const { instant, nextFreeLaunch, launchOptions } = await response.json();
+      renderLaunchDays(Array.isArray(launchOptions) && launchOptions.length ? launchOptions : nextFreeLaunch ? [nextFreeLaunch] : []);
       if (!instant) return;
       instantConfig = instant;
       syncTiers();
@@ -475,6 +504,7 @@ if (form) {
       if(!session?.user?.email_confirmed_at)throw new Error('Your session expired. Sign in again before submitting.');
       const response = await fetch('/api/submissions', {method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json',...(session?.user?.email_confirmed_at?{Authorization:`Bearer ${session.access_token}`}:{})},body:JSON.stringify(payload),signal:AbortSignal.timeout(payload.verifyBadge?45000:20000)});
       const data = await response.json().catch(()=>({}));
+      if (!response.ok && /launch Monday is no longer available/.test(data.error || '')) configureLaunch();
       if (!response.ok) throw new Error(data.error || 'Your project could not be submitted. Your details are still here; please try again.');
       document.dispatchEvent(new CustomEvent('digivated:notifications-updated'));
       window.digivatedTrack?.('project_submit', {project_category:payload.category});

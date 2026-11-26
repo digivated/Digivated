@@ -197,3 +197,19 @@ test('November catch-up reads, publishes and preserves unrelated scheduled launc
  assert.equal(items.get(preserved.id).status,'pending');
  assert.equal((await run(handler,'/api/launch-queue')).published,0);
 });
+
+test('free launch options are upcoming Mondays at 9 AM Eastern across daylight saving', async () => {
+  const { freeLaunchOptions, nextFreeLaunch } = await import('../src/lib/launch-calendar.mjs');
+  const hour = iso => Number(new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hourCycle: 'h23' }).format(Date.parse(iso)));
+  for (const now of [Date.parse('2026-02-26T15:00:00Z'), Date.parse('2026-10-27T15:00:00Z'), Date.parse('2026-11-26T18:45:00Z')]) {
+    const options = freeLaunchOptions(now);
+    assert.equal(options.length, 8);
+    assert.equal(options[0], nextFreeLaunch(now));
+    for (const iso of options) {
+      assert.equal(new Date(iso).getUTCDay(), 1);
+      assert.equal(hour(iso), 9);
+      assert.ok(Date.parse(iso) > now);
+    }
+    assert.deepEqual(options, [...new Set(options)].sort());
+  }
+});

@@ -329,3 +329,24 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
     display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px;
   }
 }
+
+/* Launch Monday picker */
+.dgm-launch { display: grid; gap: 8px; margin: 2px 0 6px; }
+.dgm-launch[hidden] { display: none; }
+.dgm-launch-label { font-size: 13px; font-weight: 700; letter-spacing: .02em; color: var(--fl-ink, #111); }
+.dgm-launch-days { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.dgm-launch-day {
+  position: relative; display: grid; justify-items: center; align-content: center; gap: 1px;
+  min-height: 64px; padding: 8px 4px; cursor: pointer; text-align: center;
+  border: 1px solid var(--fl-line, #dfdfda); border-radius: var(--fl-radius, 10px);
+  background: var(--fl-panel, #fff); color: var(--fl-ink, #111);
+  transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+.dgm-launch-day:hover { border-color: var(--fl-accent, #111); }
+.dgm-launch-day input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.dgm-launch-day:has(input:checked) { border-color: var(--fl-accent, #111); box-shadow: 0 0 0 1px var(--fl-accent, #111); }
+.dgm-launch-day:has(input:focus-visible) { outline: 2px solid var(--fl-accent, #111); outline-offset: 2px; }
+.dgm-launch-month { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; opacity: .65; }
+.dgm-launch-day strong { font-size: 20px; line-height: 1.1; }
+.dgm-launch-day em { font-size: 10px; font-style: normal; font-weight: 700; opacity: .65; }
+@media (max-width: 520px) { .dgm-launch-days { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; } }

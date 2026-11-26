@@ -1,6 +1,6 @@
 # Free project badge and launch cycle
 
-1. A signed-in creator saves a complete free project. The response includes its badge HTML and a Monday UTC launch date, 7–14 days away.
+1. A signed-in creator saves a complete free project. The response includes its badge HTML and the creator's chosen launch date: a Monday at 9:00 AM Eastern, picked on the submit form from the next eight (`launchAt`, validated server-side against `freeLaunchOptions`; omitted means the soonest Monday).
 2. The creator adds the badge as HTML on the saved public project URL, publishes that page, then chooses Verify website badge in Your Projects.
 3. Verification checks project ownership and the exact listing link/project ID. Comments, scripts, inert markup and directly hidden anchors do not qualify. Normal apex/www redirects are allowed; redirects to another site and private-network destinations are refused.
 4. Verification atomically saves the badge timestamp and inserts the project into the scheduled Redis queue. Future listings stay private.
