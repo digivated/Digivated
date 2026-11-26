@@ -22,6 +22,23 @@ async function copyText(text, fallbackNode) {
   }
 }
 
+// The prompt asks for exactly what verification checks: the link and project ID kept intact,
+// visible, and present in the page's HTML (the checker reads the page without running scripts).
+export const aiBadgePrompt = code => `Add this Digivated badge to the footer of my website. Paste it exactly as written, keeping the link and the data-digivated-project attribute, and don't hide it, comment it out or add rel="nofollow". Put it directly in the page HTML (not added by JavaScript) so it appears on my home page. Don't change anything else.\n\n${code}`;
+
+function aiBadgeGuide() {
+  const step = (n, title, text) => el('li', {}, el('span', { textContent: String(n), ariaHidden: 'true' }), el('p', {}, el('strong', { textContent: title }), ' ', text));
+  return el('div', { className: 'fl-ai-guide' },
+    el('p', { className: 'fl-ai-guide-title', textContent: 'Add it with AI in about a minute' }),
+    el('ol', {},
+      step(1, 'Copy the prompt.', 'Tap Copy prompt on a style below. Your badge code is already inside.'),
+      step(2, 'Paste it into your AI builder', 'such as Claude, ChatGPT, Cursor, Lovable, v0 or Bolt. It adds the badge to your footer.'),
+      step(3, 'Publish your site,', 'then come back and check it. We look for the badge on your home page.'),
+    ),
+    el('p', { className: 'fl-ai-guide-note', textContent: 'Prefer to do it yourself? Use Copy and paste the code into your footer HTML.' }),
+  );
+}
+
 // id: the project id (or a placeholder for the public examples page).
 // copy: false shows code without Copy buttons (public examples).
 // onCopy(style, copied): optional hook after a copy attempt.
@@ -61,7 +78,7 @@ export function badgePicker(id, { copy = true, count = null, onCopy, label = '',
         onCopy?.(style.key, copied);
       };
       if (aiPrompt) {
-        const prompt = `Add this Digivated badge to my site footer without changing anything else:\n${code}`;
+        const prompt = aiBadgePrompt(code);
         const promptButton = el('button', { type: 'button', className: 'fl-btn fl-btn-small fl-badge-prompt', textContent: 'Copy prompt' });
         promptButton.setAttribute('data-copy-badge-prompt', style.key);
         promptButton.setAttribute('aria-label', `Copy an AI prompt for the ${style.label} badge`);
@@ -89,6 +106,7 @@ export function badgePicker(id, { copy = true, count = null, onCopy, label = '',
     } else root.append(card);
   }
   if (alternatives) root.append(alternatives);
+  if (copy && aiPrompt) root.prepend(aiBadgeGuide());
   if (copy) root.append(status);
   return root;
 }

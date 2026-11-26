@@ -350,3 +350,12 @@ html#digivated-root .submission-listing-preview {max-width:440px;margin-top:0;ma
 .dgm-launch-day strong { font-size: 20px; line-height: 1.1; }
 .dgm-launch-day em { font-size: 10px; font-style: normal; font-weight: 700; opacity: .65; }
 @media (max-width: 520px) { .dgm-launch-days { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; } }
+
+/* AI badge guide */
+.fl-ai-guide { display: grid; gap: 10px; margin: 0 0 12px; padding: 14px 16px; border: 1px solid var(--fl-line, #dfdfda); border-radius: var(--fl-radius, 10px); background: var(--fl-panel, #fff); color: var(--fl-ink, #111); }
+.fl-ai-guide-title { margin: 0 !important; font-size: 14px; font-weight: 700; }
+.fl-ai-guide ol { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.fl-ai-guide li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; }
+.fl-ai-guide li > span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--fl-line, #dfdfda); font-size: 12px; font-weight: 700; }
+.fl-ai-guide li p { margin: 0 !important; font-size: 14px; line-height: 1.5; }
+.fl-ai-guide-note { margin: 0 !important; font-size: 13px; opacity: .7; }
