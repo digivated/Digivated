@@ -267,7 +267,16 @@ if (form) {
     imagePreviewUrl = URL.createObjectURL(file);
     imagePreviewPicture.src = imagePreviewUrl;
   };
-  imageInput?.addEventListener('change', updateImagePreview);
+  function markSteps() {
+    const filled = (name) => String(form.elements[name]?.value || '').trim();
+    document.getElementById('sub-step-details')?.classList.toggle('is-complete', Boolean(filled('name') && filled('category') && filled('description').length >= 20));
+    document.getElementById('sub-step-logo')?.classList.toggle('is-complete', Boolean(imageInput?.files?.length));
+    document.getElementById('sub-step-you')?.classList.toggle('is-complete', Boolean(filled('creator') && filled('email')));
+  }
+  form.addEventListener('input', markSteps);
+  form.addEventListener('change', markSteps);
+  imageInput?.addEventListener('change', () => { updateImagePreview(); markSteps(); });
+  markSteps();
   document.getElementById('project-image-replace')?.addEventListener('click', () => imageInput?.click());
   document.getElementById('project-image-remove')?.addEventListener('click', () => {
     if (!imageInput) return;

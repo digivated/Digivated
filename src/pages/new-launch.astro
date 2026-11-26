@@ -7,6 +7,13 @@ import { projectPricingOptions } from '../lib/project-pricing.mjs';
 import { projectCategoryGroups } from '../data/community.mjs';
 import '../styles/submission-flow.css';
 
+const pricingBlurbs = {
+  Free: 'No charge to use it',
+  Freemium: 'A free plan, plus a paid one',
+  Paid: 'People pay to use it',
+  'Contact for pricing': 'Visitors ask for a price',
+};
+
 ---
 <Platform title="Launch your project" description="Submit your project to Digivated. Verify a badge for a free launch or choose a member launch.">
   <div class="submission-maker-navigation" id="submission-maker-navigation" hidden><MakerNavigation submitting/></div>
@@ -39,6 +46,7 @@ import '../styles/submission-flow.css';
         <div class="submission-project-fields">
           <fieldset id="sub-step-details">
             <legend>Project details</legend>
+            <p class="submission-section-help">Name, category, and what the product does.</p>
             <div class="form-row">
               <label>Project name<input name="name" placeholder="Your product name" maxlength="120" required/></label>
               <label>
@@ -63,9 +71,9 @@ import '../styles/submission-flow.css';
                 <legend class="sr-only">Project pricing</legend>
                 <p id="project-pricing-help" class="field-help">How people pay for your product.</p>
                 <div class="submission-pricing-options">
-                  <label><input type="radio" name="pricing" value="" checked/><span>Skip for now</span></label>
+                  <label><input type="radio" name="pricing" value="" checked/><span class="submission-pricing-copy"><b>Skip for now</b><small aria-hidden="true">Leave pricing off the listing</small></span></label>
                   {projectPricingOptions.filter(option => option !== 'Open source').map(option => (
-                    <label><input type="radio" name="pricing" value={option}/><span>{option === 'Freemium' ? 'Free + paid plans' : option}</span></label>
+                    <label><input type="radio" name="pricing" value={option}/><span class="submission-pricing-copy"><b>{option === 'Freemium' ? 'Free + paid plans' : option}</b><small aria-hidden="true">{pricingBlurbs[option]}</small></span></label>
                   ))}
                 </div>
               </fieldset>
@@ -74,6 +82,7 @@ import '../styles/submission-flow.css';
 
           <fieldset id="sub-step-logo">
             <legend>Project logo</legend>
+            <p class="submission-section-help">A square mark for the public listing.</p>
             <div class="submission-dropzone">
               <label class="submission-dropzone-empty" id="project-image-empty">
                 <UiIcon name="upload" size={20}/>
@@ -98,6 +107,7 @@ import '../styles/submission-flow.css';
 
           <fieldset id="sub-step-you">
             <legend>About you</legend>
+            <p class="submission-section-help">Who is launching it. The email stays private.</p>
             <div class="form-row"><label>Creator name<input name="creator" placeholder="Your name" autocomplete="name" maxlength="100" required/></label><label>Email<input name="email" placeholder="you@example.com" type="email" autocomplete="email" maxlength="254" required/><span class="field-help">Use your account email. It stays private.</span></label></div>
             <details class="submission-disclosure">
               <summary><span>Social handle and review notes (optional)</span><UiIcon name="chevron" size={16}/></summary>
@@ -111,6 +121,7 @@ import '../styles/submission-flow.css';
 
         <fieldset class="submission-intent" id="sub-step-launch">
           <legend>Launch options</legend>
+          <p class="submission-section-help">Free goes live Monday after the badge check. Starter and Pro publish right away.</p>
           <!-- The tier cards drive the select used by submission and checkout. -->
           <p id="plan-status" class="dg-plan-status" role="status" hidden></p>
           <div class="dg-tiers" role="radiogroup" aria-label="Launch option" data-tiers>
@@ -174,8 +185,10 @@ import '../styles/submission-flow.css';
       </div>
     </form>
 
+    <aside class="submission-rail">
     <details hidden class="submission-preview-panel submission-disclosure">
       <summary><span>Preview your public listing</span><UiIcon name="chevron" size={16}/></summary>
+      <p class="submission-rail-kicker">This is the card on the directory.</p>
       <article class="dg-row dg-project-tile submission-listing-preview" data-project>
         <span class="dg-logo-link" aria-hidden="true"><span class="dg-logo dg-project-art"><span class="dg-monogram" data-listing-placeholder>YO</span><img data-listing-image alt="" width="44" height="44" hidden/></span></span>
         <div class="dg-main">
@@ -194,6 +207,7 @@ import '../styles/submission-flow.css';
       <summary><span>How free launches work</span><UiIcon name="chevron" size={16}/></summary>
       <FreeLaunchGuide />
     </details>
+    </aside>
   </div>
   <script>import '../scripts/submission.js'; import '../scripts/submission-preview.js';</script>
 </Platform>
