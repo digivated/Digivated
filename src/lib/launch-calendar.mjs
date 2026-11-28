@@ -1,4 +1,6 @@
 const DAY = 86_400_000;
+// Owner exceptions are recorded separately from a badge actually found on a site.
+export const freeLaunchApproved = record => record?.launch?.kind === 'free' && !!(record.launch.badgeVerifiedAt || record.launch.ownerApprovedAt);
 const easternDate = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric' });
 const easternHour = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hourCycle: 'h23' });
 

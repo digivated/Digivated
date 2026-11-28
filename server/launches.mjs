@@ -6,7 +6,7 @@ import { verifiedAccount } from './project-account.mjs';
 import { QUEUE } from './launch-queue.mjs';
 import { getNotificationPreferences, launchWatchersKey, launchWatchingKey } from './notifications.mjs';
 import { finalizeLastWeek, readWeek, PODIUM_WEEKS } from './launch-score.mjs';
-import { freeLaunchSchedule, launchBounds } from '../src/lib/launch-calendar.mjs';
+import { freeLaunchSchedule, freeLaunchApproved, launchBounds } from '../src/lib/launch-calendar.mjs';
 import { guardPost, readJson, DiscussionError } from './discussions.mjs';
 
 const UPCOMING_LIMIT = 60;
@@ -17,7 +17,7 @@ const WINNERS_PAGE = 6;
 async function upcomingRecord(redis, id) {
   let record;
   try { record = JSON.parse(await redis(['GET', storageKey('submission', id)])); } catch { return null; }
-  if (!record || record.status !== 'pending' || record.launch?.kind !== 'free' || !record.launch.badgeVerifiedAt) return null;
+  if (!record || record.status !== 'pending' || !freeLaunchApproved(record)) return null;
   const preview = projectPublic({ ...record, status: 'approved' });
   const { scheduledAt } = freeLaunchSchedule(record);
   if (!preview || !scheduledAt) return null;

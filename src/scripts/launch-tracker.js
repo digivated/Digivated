@@ -30,11 +30,11 @@ export function projectStage(item, now = Date.now()) {
   if (item.status === 'archived') return { key: 'archived', label: 'Archived', tone: 'muted', steps: [{ ...saved, label: 'Submitted' }, { label: 'Archived', state: 'stopped' }] };
   if (item.awaitingInstantPayment) return { key: 'payment', label: 'Payment needed', tone: 'warn', steps: [saved, { label: 'Payment', state: 'current', detail: 'Finish checkout' }, { label: 'Live', state: 'todo' }] };
   if (launch) {
-    const verified = !!launch.badgeVerifiedAt;
+    const verified = !!(launch.badgeVerifiedAt || launch.ownerApprovedAt);
     const when = formatDate(launch.scheduledAt), days = daysUntil(launch.scheduledAt, now);
     const steps = [
       saved,
-      { label: 'Badge verified', state: verified || live ? 'done' : 'current', detail: verified ? formatDate(launch.badgeVerifiedAt) : live ? '' : 'Action needed' },
+      { label: launch.ownerApprovedAt ? 'Owner approved' : 'Badge verified', state: verified || live ? 'done' : 'current', detail: verified ? formatDate(launch.badgeVerifiedAt || launch.ownerApprovedAt) : live ? '' : 'Action needed' },
       { label: 'Launch day', state: live ? 'done' : verified ? 'current' : 'todo', detail: when ? `${when}${!live && days !== null && days > 0 ? ` · ${relativeDays(days)}` : ''}` : '' },
       { label: 'Live', state: live ? 'done' : 'todo', detail: live ? 'On Digivated' : '' },
     ];
@@ -125,7 +125,7 @@ export function badgeLater(item, stage) {
 export function nextStepCopy(stage, item) {
   if (stage.key === 'scheduled') {
     const days = daysUntil(item.launch.scheduledAt);
-    return `You’re all set. ${item.name} goes live automatically on ${formatDate(item.launch.scheduledAt)}${days > 0 ? ` (${relativeDays(days)})` : ''} at 9:00 AM Eastern, which is ${localLaunchTime(item.launch.scheduledAt)} your time. Keep the badge on your site. The Monday 9:00 AM Eastern publish will publish your project. No admin approval needed.`;
+    return `You’re all set. ${item.name} goes live automatically on ${formatDate(item.launch.scheduledAt)}${days > 0 ? ` (${relativeDays(days)})` : ''} at 9:00 AM Eastern, which is ${localLaunchTime(item.launch.scheduledAt)} your time. ${item.launch.ownerApprovedAt ? 'Digivated approved your launch.' : 'Keep the badge on your site.'} The Monday 9:00 AM Eastern publish will publish your project. No admin approval needed.`;
   }
   if (stage.key === 'review') return 'Your submission is waiting for review. We’ll notify you when it’s published.';
   if (stage.key === 'rejected') return 'This project wasn’t selected. Review the feedback below. You can submit an improved version later.';
