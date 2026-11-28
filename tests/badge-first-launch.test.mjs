@@ -100,7 +100,7 @@ test('upcoming logos are served only for public, badge-verified projects in the 
   const list = JSON.parse((await get('view=upcoming')).body);
   assert.equal(list.items.length, 1);
   assert.equal(list.items[0].email, undefined);
-  assert.equal(list.items[0].image, '/api/launches?image=queued');
+  assert.match(list.items[0].image, /^\/api\/launches\?image=queued&v=[a-f0-9]{12}$/);
   const image = await get('image=queued');
   assert.equal(image.status, 200);
   assert.equal(image.headers['Content-Type'], 'image/png');

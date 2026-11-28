@@ -17,7 +17,7 @@ test('uploads reject disguised files and oversized payloads',()=>{
 test('original picks use verified IDs, preserve images, and respect owner removal',()=>{
  const record={id:'03e617c5-4841-43d1-8096-5fe4a556d053',name:'AppAtlas',creator:'Lloyd',description:'An original approved project with its unchanged data.',category:'Other',consent:true,status:'approved',pick:false,url:'https://www.appatlas.world/',image:'original',revision:0};
  assert.equal(projectPublic(record).pick,true);
- assert.equal(projectPublic(record).image,`/api/projects?image=${record.id}`);
+ assert.match(projectPublic(record).image,new RegExp(`^/api/projects\\?image=${record.id}&v=[a-f0-9]{12}$`));
  const edited=validateEdit('submission',{...record,image:undefined,pick:false},record);
  assert.equal(projectPublic(edited).pick,false);
  assert.equal(edited.image,'original');

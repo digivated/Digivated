@@ -8,6 +8,7 @@ import { getNotificationPreferences, launchWatchersKey, launchWatchingKey } from
 import { finalizeLastWeek, readWeek, PODIUM_WEEKS } from './launch-score.mjs';
 import { freeLaunchSchedule, freeLaunchApproved, launchBounds } from '../src/lib/launch-calendar.mjs';
 import { guardPost, readJson, DiscussionError } from './discussions.mjs';
+import { projectLogoVersion } from './project-display-logo.mjs';
 
 const UPCOMING_LIMIT = 60;
 const UPCOMING_GRACE_MS = 2 * 86_400_000;
@@ -23,7 +24,7 @@ async function upcomingRecord(redis, id) {
   if (!preview || !scheduledAt) return null;
   const logo = typeof record.image === 'string' && record.image.match(/^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/]+={0,2})$/);
   const { name, description = '', category = '', pricing = '', creator = '' } = preview;
-  const image = logo ? `/api/launches?image=${encodeURIComponent(id)}` : '';
+  const image = preview.image?.startsWith('/media/project-logos/') ? preview.image : logo ? `/api/launches?image=${encodeURIComponent(id)}&v=${projectLogoVersion(record)}` : '';
   return { item: { id: record.id, name, description, category, pricing, creator, launchAt: scheduledAt, image }, logo };
 }
 

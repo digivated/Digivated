@@ -183,6 +183,9 @@
 #digivated-root .dg-row { position: relative !important; overflow: hidden !important; padding: 14px 0 14px 16px !important; column-gap: 14px !important; grid-template-columns: 44px auto auto minmax(0, 1fr) auto !important; }
 #digivated-root .dg-row:not(.is-loading) { padding-block: 14px !important; }
 #digivated-root .dg-row .dg-logo { width: 44px !important; height: 44px !important; border-radius: 12px !important; }
+#digivated-root .dg-project-art { isolation: isolate; flex-shrink: 0; aspect-ratio: 1; overflow: hidden; border: 1px solid #10182814 !important; background: #fff !important; }
+#digivated-root .dg-project-art img { display: block; object-fit: contain !important; object-position: center !important; border-radius: inherit; background: #fff !important; filter: none !important; }
+#digivated-root .dg-row .dg-monogram { font: 600 15px/1 var(--fl-sans) !important; letter-spacing: -.03em; color: #667085 !important; }
 #digivated-root .dg-row .dg-logo-link { align-self: center !important; }
 #digivated-root .dg-row .dg-vote { align-self: stretch !important; justify-content: center !important; gap: 3px !important; width: 60px !important; min-width: 60px !important; height: auto !important; margin-block: -14px !important; padding: 0 !important; border: 0 !important; border-left: 1px dashed #e4e4e9 !important; border-radius: 0 !important; background: transparent !important; color: #0b0b0c !important; }
 #digivated-root .dg-row .dg-vote:hover { background: #f6f6f8 !important; border-color: #e4e4e9 !important; color: #0b0b0c !important; }

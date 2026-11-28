@@ -4,6 +4,40 @@ import { resourceGroups } from '../../src/data/link-resources.mjs';
 
 const base = 'http://127.0.0.1:4321';
 
+for (const width of [390, 1440]) {
+  test(`project logos stay uniform and failed images fall back cleanly at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    const items = ['square', 'wide', 'missing', 'broken'].map((kind, i) => ({
+      id: `logo-${kind}`, name: `Logo ${kind}`, creator: 'Maker', description: 'Logo presentation fixture.', category: 'Education', status: 'approved',
+      date: '2026-11-27T12:00:00Z', publishedAt: '2026-11-27T12:00:00Z', url: 'https://example.com', pageUrl: `/projects/listing/logo-${kind}`,
+      image: kind === 'missing' ? '' : `/logo-fixture-${kind}.svg`, votes: { all: i },
+    }));
+    await page.route('**/api/projects*', route => route.fulfill({ json: { items, next: null } }));
+    await page.route('**/api/launches*', route => route.fulfill({ json: { items: [] } }));
+    await page.route('**/logo-fixture-*.svg', route => {
+      if (route.request().url().includes('broken')) return route.fulfill({ status: 404, body: '' });
+      const wide = route.request().url().includes('wide');
+      return route.fulfill({ contentType: 'image/svg+xml', body: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${wide ? 240 : 96} 96"><rect width="100%" height="100%" fill="#2563eb"/></svg>` });
+    });
+    await page.goto(base + '/');
+    const logos = page.locator('[data-launch-id^="logo-"] .dg-logo');
+    await expect(logos).toHaveCount(4);
+    await expect(logos.locator('img')).toHaveCount(2);
+    for (const logo of await logos.all()) {
+      await expect(logo).toHaveCSS('width', '44px');
+      await expect(logo).toHaveCSS('height', '44px');
+      await expect(logo).toHaveCSS('border-radius', '12px');
+    }
+    for (const img of await logos.locator('img').all()) {
+      await expect(img).toHaveCSS('object-fit', 'contain');
+      expect(await img.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    }
+    await expect(page.locator('[data-launch-id="logo-missing"] .dg-monogram')).toBeVisible();
+    await expect(page.locator('[data-launch-id="logo-broken"] .dg-monogram')).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  });
+}
+
 test('the footer signs up an email and asks for confirmation on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 900 });
   await page.route('**/api/return-emails?action=subscribe', route => {
@@ -400,8 +434,8 @@ test('the upcoming batch and countdown agree on Monday, November 23', async ({ p
   await upcoming.scrollIntoViewIfNeeded();
   await expect.poll(() => upcoming.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   await expect(upcoming).toHaveCSS('object-fit', 'contain');
-  await expect(upcoming).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-  await expect(upcoming.locator('..')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(upcoming).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(upcoming.locator('..')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await expect(page.locator('[data-upcoming-id="upcoming-fixture"] .dg-monogram')).toBeHidden();
   const missingLogo = page.locator('[data-upcoming-id="missing-logo"] .dg-logo');
   await missingLogo.scrollIntoViewIfNeeded();

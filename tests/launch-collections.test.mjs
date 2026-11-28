@@ -36,7 +36,7 @@ test('project details keep the logo separate from the cover and preserve gallery
  const listing = {...record('project-one'), slug:'sample', status:'approved', pagePublished:true};
  const logoOnly = launchPublic({...listing, page:{consent:true}});
  const logoOnlyHtml = await renderLaunch(logoOnly,{template});
- assert.match(logoOnlyHtml,/class="launch-identity dg-project-art"[^]*src="\/api\/projects\?image=project-one"/);
+ assert.match(logoOnlyHtml,/class="launch-identity dg-project-art"[^]*src="\/api\/projects\?image=project-one&amp;v=[a-f0-9]{12}"/);
  assert.doesNotMatch(logoOnlyHtml,/class="launch-cover"/);
  assert.match(logoOnlyHtml,/id="gallery"/);
 
