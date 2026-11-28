@@ -53,7 +53,7 @@ async function saveVerified(redis,record,{quiet=false,now=Date.now()}={}){
  return {updated,project};
 }
 
-// Daily: makers often add the badge and never come back to press "Check my
+// Automatic: makers often add the badge and never come back to press "Check my
 // website". Check every waiting free launch for them, and remind the ones whose
 // badge is still missing (once a day after saving, once more before launch day).
 const DAY=86_400_000;

@@ -88,7 +88,7 @@ export function badgeSteps(item, { onVerify } = {}) {
   const days = daysUntil(item.launch.scheduledAt);
   panel.append(
     el('h4', { textContent: `Next: add your badge to ${site}` }),
-    el('p', { className: 'fl-next-lede', textContent: 'Free launches need our badge on your site. It takes about two minutes.' }),
+    el('p', { className: 'fl-next-lede', textContent: 'Add the badge and publish your site. We check automatically every 15 minutes. You can also check now below.' }),
     picker,
     el('div', { className: 'fl-actions' }, verify),
     status,

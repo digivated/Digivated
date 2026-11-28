@@ -4,6 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { checkPendingBadges, reminderStage, badgeSnippet, makeBadgeCheckHandler } from '../server/launch-queue.mjs';
 import { hasProjectBadge, badgeProblem } from '../server/project-site.mjs';
 import { badgeEmail } from '../server/account-mail.mjs';
+import { makeAdminHandler } from '../server/admin-handler.mjs';
+import { ADMIN_COOKIE, adminConfig, createSession } from '../server/admin-auth.mjs';
 
 const DAY = 86_400_000, now = Date.parse('2026-11-18T16:00:00Z');
 const base = (id, extra = {}) => ({ id, accountId: '11111111-1111-4111-8111-111111111111', email: `${id}@example.com`, name: id, creator: 'Maker', description: 'A useful project.', category: 'Other', url: `https://${id}.example`, image: 'data:image/png;base64,x', consent: true, status: 'pending', date: new Date(now - 2 * DAY).toISOString(), launch: { kind: 'free', scheduledAt: new Date(now + 5 * DAY).toISOString() }, ...extra });
@@ -16,7 +18,7 @@ function fakeRedis(records) {
     if (cmd === 'SET') { if (args.includes('NX') && keys.has(args[0])) return null; keys.add(args[0]); store.set(args[0], args[1]); return 'OK'; }
     if (cmd === 'DEL') { keys.delete(args[0]); store.delete(args[0]); return 1; }
     if (cmd === 'EXISTS') return keys.has(args[0]) ? 1 : 0;
-    if (cmd === 'EVAL') { store.set(args[2], args[7]); return 1; }
+    if (cmd === 'EVAL') { if (args[1] === 4) store.set(args[2], args[7]); return 1; }
     return null;
   };
   return { redis, store, keys };
@@ -31,6 +33,51 @@ test('daily check verifies badges makers added without pressing the button', asy
   assert.ok(JSON.parse(store.get('digivated:submission:found')).launch.badgeVerifiedAt);
   assert.equal(JSON.parse(store.get('digivated:submission:missing')).launch.badgeVerifiedAt, undefined);
   assert.deepEqual(mails.sort(), [['found', 'verified'], ['missing', 'finish']]);
+});
+
+test('a badge added after the first scan is automatically queued without changing its launch date', async () => {
+  const record = base('late-badge', { launch: { kind: 'free', scheduledAt: '2026-11-30T14:00:00.000Z' } });
+  const { redis, store } = fakeRedis([record]);
+  let html = '', reads = 0;
+  const mails = [];
+  const opts = { now, readSite: async () => { reads++; return { html }; }, mail: async (r, stage) => { mails.push(stage); return 'sent'; } };
+  await checkPendingBadges(redis, opts);
+  assert.equal(JSON.parse(store.get(`digivated:submission:${record.id}`)).launch.badgeVerifiedAt, undefined);
+  html = badgeSnippet(record.id);
+  const second = await checkPendingBadges(redis, { ...opts, now: now + 15 * 60_000 });
+  assert.equal(second.verified, 1);
+  const saved = JSON.parse(store.get(`digivated:submission:${record.id}`));
+  assert.equal(saved.status, 'pending');
+  assert.equal(saved.launch.scheduledAt, record.launch.scheduledAt);
+  assert.equal(saved.launch.scheduledTimestamp, Date.parse(record.launch.scheduledAt));
+  assert.ok(saved.launch.badgeVerifiedAt);
+  await checkPendingBadges(redis, { ...opts, now: now + 30 * 60_000 });
+  assert.equal(reads, 2);
+  assert.equal(store.get(`digivated:submission:${record.id}`), JSON.stringify(saved));
+  assert.deepEqual(mails, ['finish', 'verified']);
+});
+
+test('owner badge recovery requires a session and CSRF, then validates the real website', async () => {
+  const record = base('owner-check', { launch: { kind: 'free', scheduledAt: '2099-01-05T14:00:00.000Z' } });
+  const { redis, store } = fakeRedis([record]);
+  const env = { DIGIVATED_ADMIN_PASSWORD_HASH: `scrypt:${'a'.repeat(32)}:${'b'.repeat(128)}`, DIGIVATED_ADMIN_SESSION_SECRET: 'c'.repeat(64), DIGIVATED_ADMIN_ORIGIN: 'https://owner.test' };
+  const session = await createSession(redis, adminConfig(env));
+  let reads = 0;
+  const handler = makeAdminHandler({ env, redis, readSite: async () => { reads++; return { html: badgeSnippet(record.id) }; } });
+  const invoke = async headers => {
+    const res = { setHeader() {}, end(body) { this.body = JSON.parse(body); } };
+    await handler({ method: 'POST', url: '/api/admin', headers: { origin: env.DIGIVATED_ADMIN_ORIGIN, 'content-type': 'application/json', ...headers }, body: { action: 'check-badges' } }, res);
+    return res;
+  };
+  assert.equal((await invoke({})).statusCode, 401);
+  const cookie = `${ADMIN_COOKIE}=${session.token}`;
+  assert.equal((await invoke({ cookie })).statusCode, 403);
+  assert.equal(reads, 0);
+  const response = await invoke({ cookie, 'x-admin-csrf': session.csrf });
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.verified, 1);
+  assert.equal(response.body.reminded, 0);
+  assert.ok(JSON.parse(store.get(`digivated:submission:${record.id}`)).launch.badgeVerifiedAt);
 });
 
 test('reminders go out once per stage, and a failed send is retried next run', async () => {
@@ -68,7 +115,7 @@ test('reminder emails name the launch day and link to the project', () => {
   const message = badgeEmail(base('mail', { launch: { kind: 'free', scheduledAt: '2026-11-23T14:00:00Z' } }), 'last-call');
   assert.match(message.subject, /Monday, Nov 23/);
   assert.match(message.html, /dashboard#project-mail/);
-  assert.match(badgeEmail(base('mail', { launch: { kind: 'free', scheduledAt: '2026-11-23T14:00:00Z' } }), 'finish').html, /Check my website/);
+  assert.match(badgeEmail(base('mail', { launch: { kind: 'free', scheduledAt: '2026-11-23T14:00:00Z' } }), 'finish').html, /automatically every 15 minutes/);
   assert.equal(badgeEmail({ id: 'x' }, 'nudge'), null);
 });
 
@@ -83,12 +130,10 @@ test('finish notes reach projects past the first batch before a same-day second 
   assert.deepEqual(mails, [['soon', 'finish'], ['later', 'finish']]);
 });
 
-test('badge check runs before 9am Eastern', async () => {
+test('badge check runs every 15 minutes, including before Monday publication', async () => {
   const config = JSON.parse(await readFile(new URL('../vercel.json', import.meta.url), 'utf8'));
   const cron = config.crons.find(item => item.path === '/api/badge-check');
-  const [minute, hour] = cron.schedule.split(' ');
-  assert.equal(minute, '0');
-  assert.ok(Number(hour) < 14, cron.schedule);
+  assert.equal(cron.schedule, '*/15 * * * *');
 });
 
 test('a silent check queues a found badge and does not email', async () => {
