@@ -113,7 +113,7 @@ export async function sendAwardEmail(record, rank, weekStart, env = process.env,
 const launchDay = record => new Date(freeLaunchTime(record)).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'America/New_York' });
 const badgeTip = 'Using an AI site builder or coding assistant? Copy your badge HTML from Digivated and paste it into the chat with this prompt: “Add this exact HTML to my homepage footer. Keep the link, image, and data attributes intact, and make sure the badge is in the published page’s HTML. Show me what changed so I can publish it.” Paste your badge HTML below the prompt.';
 const badgeWhen = record => freeLaunchTime(record) > Date.now() ? `is booked for ${launchDay(record)}` : 'is waiting to go live';
-const badgeSteps = 'Copy the badge from Your Projects, add it to your homepage footer, and publish your site. Then click Check my website in Digivated. Once we find the badge, your project is ready for launch.';
+const badgeSteps = 'Copy the badge from Your Projects, add it to your homepage footer, and publish your site. We check automatically every 15 minutes; you do not need to click anything. Once we find the badge, your project is ready for launch.';
 const badgeMessages = {
   finish: record => ({
     subject: `One step left to launch ${record.name || 'your project'}`,
@@ -132,7 +132,7 @@ const badgeMessages = {
   'last-call': record => ({
     subject: `${record.name || 'Your project'} launches ${launchDay(record)}. Your badge is still missing`,
     label: 'DIGIVATED / LAST CALL', title: 'Your launch is almost here.',
-    paragraphs: [`${record.name || 'Your project'} launches ${launchDay(record)}, and the badge is still missing on ${record.url}.`, 'Add the badge to your homepage footer, publish your site, then click Check my website in Digivated. Your launch waits until the badge is verified.'],
+    paragraphs: [`${record.name || 'Your project'} launches ${launchDay(record)}, and the badge is still missing on ${record.url}.`, 'Add the badge to your homepage footer and publish your site. We check automatically every 15 minutes. Your launch waits until the badge is verified.'],
     cta: { label: 'Add your badge now', href: `${ACCOUNT}#project-${encodeURIComponent(record.id)}` },
     after: [badgeTip],
   }),

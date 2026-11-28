@@ -68,7 +68,7 @@ test('missing-badge reminders give an AI prompt and use the verified transaction
   const client = { auth: { admin: { getUserById: async () => ({ data: { user: { email: record.email, email_confirmed_at: '2026-10-25T00:00:00Z' } }, error: null }) } } };
   for (const stage of ['finish', 'nudge', 'last-call']) {
     const message = badgeEmail(record, stage);
-    assert.match(message.text, /Check my website/);
+    assert.match(message.text, /automatically every 15 minutes/);
     assert.match(message.text, /Add this exact HTML to my homepage footer/);
     assert.match(message.text, /dashboard#project-project-1/);
   }

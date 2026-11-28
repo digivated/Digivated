@@ -82,7 +82,7 @@ for(const width of [390,1440])test(`free launch instructions, saved badge and ve
   await expect(page.locator('#project-badge-fixture')).toBeInViewport();
  }
  await expect(page.locator('[data-submission-state]')).toHaveText('Action needed');
- await expect(page.locator('.account-launch')).toContainText('Free launches need our badge on your site.');
+ await expect(page.locator('.account-launch')).toContainText('We check automatically every 15 minutes.');
  await expect(page.locator('.account-launch [data-badge-style]')).toHaveCount(4);
  await page.locator('[data-verify-badge]').click();
  await expect(page.locator('[data-submission-state]')).toHaveText('Scheduled');

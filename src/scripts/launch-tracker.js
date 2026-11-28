@@ -88,11 +88,11 @@ export function badgeSteps(item, { onVerify } = {}) {
   const days = daysUntil(item.launch.scheduledAt);
   panel.append(
     el('h4', { textContent: `Next: add your badge to ${site}` }),
-    el('p', { className: 'fl-next-lede', textContent: 'Free launches need our badge on your site. It takes about two minutes.' }),
+    el('p', { className: 'fl-next-lede', textContent: 'Add the badge and publish your site. We check automatically every 15 minutes. You can also check now below.' }),
     picker,
     el('div', { className: 'fl-actions' }, verify),
     status,
-    el('p', { className: 'fl-hint', textContent: days !== null && days > 0 ? `Your launch day is ${formatDate(item.launch.scheduledAt)} (${relativeDays(days)}). Verify any time before then.` : 'Your launch date has arrived. Verify now and your project goes live right away.' }),
+    el('p', { className: 'fl-hint', textContent: days !== null && days > 0 ? `Your launch day is ${formatDate(item.launch.scheduledAt)} (${relativeDays(days)}). Publish your badge before then; we verify it automatically.` : 'Your launch date has arrived. Once we find your published badge, your project goes live automatically.' }),
     el('details', { className: 'fl-help' }, el('summary', { textContent: 'Badge not found? Common fixes' }),
       el('ul', {},
         el('li', { textContent: `Add it to the exact page you submitted (${item.url}), not a different page or subdomain.` }),

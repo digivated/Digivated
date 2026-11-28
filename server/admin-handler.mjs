@@ -14,6 +14,7 @@ import { listPendingComments, moderateComment } from './card-interactions.mjs';
 import { listAccounts, setAccountBan } from './admin-accounts.mjs';
 import { notifyProjectApproval } from './notifications.mjs';
 import { sendProjectUpdate } from './account-mail.mjs';
+import { checkPendingBadges } from './launch-queue.mjs';
 const LIMIT = `local n=redis.call('INCR',KEYS[1]); if n==1 then redis.call('EXPIRE',KEYS[1],900) end; return n`;
 export function makeAdminHandler(deps = {}) {
   return async (req, res) => {
@@ -58,6 +59,9 @@ export function makeAdminHandler(deps = {}) {
           await redis(['DEL', `digivated:admin:session:${digest(tokenFrom(req))}`]);
           res.setHeader('Set-Cookie', cookie('', true)); return send(200, { ok: true });
         }
+        // Owner recovery uses the same website validation and atomic queue save
+        // as the automatic checker; never trust a supplied verification flag.
+        if (body.action === 'check-badges') return send(200, await checkPendingBadges(redis, { silent: true, ...(deps.readSite ? { readSite: deps.readSite } : {}) }));
         if (body.action === 'moderate-comment') {
           const result=await moderateComment(redis,body.id,body.status);
           if(result===-3)throw new AdminError(400,'This feedback is private. The author did not give permission for a public quote.');
