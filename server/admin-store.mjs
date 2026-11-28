@@ -2,7 +2,7 @@ import { projectCategory, isAiListing } from '../src/lib/project-taxonomy.mjs';
 import { projectPricingOptions } from '../src/lib/project-pricing.mjs';
 import { projectDisplayLogo } from './project-display-logo.mjs';
 import { launchFields, pageSlug } from './launch-pages.mjs';
-import { freeLaunchAtDate, freeLaunchTime } from '../src/lib/launch-calendar.mjs';
+import { freeLaunchAtDate, freeLaunchTime, freeLaunchSchedule } from '../src/lib/launch-calendar.mjs';
 import { AdminError } from './admin-auth.mjs';
 import { acceptedProjectCategories, resourceCategories, normalizeResourceCategory, safeUrl, statuses } from '../src/data/community.mjs';
 import { validateSubmission } from './submissions.mjs';
@@ -45,7 +45,11 @@ export function validateEdit(kind, input, previous) {
         record.launch = { ...record.launch, scheduledAt, scheduledTimestamp: Date.parse(scheduledAt) };
       }
     }
-    if(record.launch?.kind==='free'&&record.status==='pending'&&record.url!==previous.url){record.launch={...record.launch};delete record.launch.badgeVerifiedAt;}
+    if(record.launch?.kind==='free'&&record.status==='pending'&&record.url!==previous.url){record.launch={...record.launch};delete record.launch.badgeVerifiedAt;delete record.launch.ownerApprovedAt;}
+    if (input.approveFreeLaunch === true) {
+      if (previous.status !== 'pending' || record.status !== 'pending' || record.launch?.kind !== 'free' || record.promotion || !(freeLaunchTime(record) > Date.now())) throw new AdminError(400, 'Only a pending free launch with a future launch date can be queued.');
+      record.launch = { ...record.launch, ...freeLaunchSchedule(record), ownerApprovedAt: now };
+    }
     if (previous.promotion?.requested) {
       const approving = ['approved', 'featured'].includes(input.status);
       if (previous.promotion.included === 'instant-launch' && approving && !previous.promotion.verified) {
@@ -145,7 +149,7 @@ redis.call('SET',KEYS[1],ARGV[2]); redis.call('ZADD',KEYS[2],ARGV[4],id)
 if ARGV[3]~='' then redis.call('SET',KEYS[3],ARGV[3]); redis.call('ZADD',KEYS[4],ARGV[4],id)
 else redis.call('DEL',KEYS[3]); redis.call('ZREM',KEYS[4],id) end
 if ARGV[5]=='submission' and record.launch and record.launch.kind=='free' then
- if record.status=='pending' and record.launch.badgeVerifiedAt and record.launch.scheduledTimestamp then redis.call('ZADD','digivated:launch:free',record.launch.scheduledTimestamp,id)
+ if record.status=='pending' and (record.launch.badgeVerifiedAt or record.launch.ownerApprovedAt) and record.launch.scheduledTimestamp then redis.call('ZADD','digivated:launch:free',record.launch.scheduledTimestamp,id)
  else redis.call('ZREM','digivated:launch:free',id) end
 end
 return 1`;
@@ -171,7 +175,7 @@ local function launchStage(r)
   if promotion.included == 'founding-membership' then return 'spotlight' end
   local launch = type(r.launch) == 'table' and r.launch or {}
   if launch.kind == 'free' then
-    if type(launch.badgeVerifiedAt) == 'string' and launch.badgeVerifiedAt ~= '' then return 'scheduled' end
+    if (type(launch.badgeVerifiedAt) == 'string' and launch.badgeVerifiedAt ~= '') or (type(launch.ownerApprovedAt) == 'string' and launch.ownerApprovedAt ~= '') then return 'scheduled' end
     return 'badge'
   end
   return 'review'

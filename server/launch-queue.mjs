@@ -5,13 +5,13 @@ import { redisClient } from './submissions.mjs';
 import { readProjectSite, hasProjectBadge, badgeProblem } from './project-site.mjs';
 import { finalizeLastWeek } from './launch-score.mjs';
 import { sendProjectUpdate, sendBadgeEmail } from './account-mail.mjs';
-import { freeLaunchTime, freeLaunchSchedule, novemberBatchTime, skippedNovemberBatch } from '../src/lib/launch-calendar.mjs';
+import { freeLaunchTime, freeLaunchSchedule, freeLaunchApproved, novemberBatchTime, skippedNovemberBatch } from '../src/lib/launch-calendar.mjs';
 export const QUEUE='digivated:launch:free';
 export { nextFreeLaunch, freeLaunchOptions } from '../src/lib/launch-calendar.mjs';
 export { badgeSnippet, badgeSnippets } from './badge-snippets.mjs';
 export async function publishQueued(redis,record,now=Date.now(),{quiet=false}={}){
  const scheduled = freeLaunchSchedule(record);
- if(record.status!=='pending'||record.launch?.kind!=='free'||!record.launch.badgeVerifiedAt||!scheduled.scheduledAt||scheduled.scheduledTimestamp>now)return null;
+ if(record.status!=='pending'||!freeLaunchApproved(record)||!scheduled.scheduledAt||scheduled.scheduledTimestamp>now)return null;
  const updated={...record,launch:{...record.launch,...scheduled},status:'approved',publishedAt:new Date(now).toISOString(),revision:(record.revision||0)+1};
  const projection=projectPublic(updated);if(!projection)return null;
  const saved=await redis(['EVAL',SAVE_EDIT,4,`digivated:submission:${record.id}`,'digivated:submissions',`digivated:public:submission:${record.id}`,'digivated:public:submissions',record.revision||0,JSON.stringify(updated),JSON.stringify(projection),Date.parse(record.date),'submission']);
@@ -27,14 +27,14 @@ export async function verifyProjectBadge(redis,account,id,readSite=readProjectSi
  if(!validId(id))throw Error('Choose one of your saved projects.');
  const record=JSON.parse(await redis(['GET',`digivated:submission:${id}`]));
  if(record?.accountId!==account.id||record?.launch?.kind!=='free')throw Error('This project is not awaiting badge verification.');
- const {badgeVerifiedAt}=record.launch;
+ const ready=freeLaunchApproved(record);
  const {scheduledAt,scheduledTimestamp}=freeLaunchSchedule(record);
- if(badgeVerifiedAt&&['approved','featured'].includes(record.status)){
+ if(ready&&['approved','featured'].includes(record.status)){
   return {verified:true,scheduledAt,pageUrl:projectPublic(record)?.pageUrl};
  }
  if(record.status!=='pending')throw Error('This project is not awaiting badge verification.');
  if(!scheduledAt)throw Error('This project has no valid launch date. Contact Digivated for help.');
- if(badgeVerifiedAt){
+ if(ready){
   const project=await publishQueued(redis,record);
   return {verified:true,scheduledAt,...(project?{pageUrl:project.pageUrl}:{})};
  }
@@ -57,7 +57,7 @@ async function saveVerified(redis,record,{quiet=false,now=Date.now()}={}){
 // website". Check every waiting free launch for them, and remind the ones whose
 // badge is still missing (once a day after saving, once more before launch day).
 const DAY=86_400_000;
-const awaitingBadge=record=>record&&record.status==='pending'&&record.launch?.kind==='free'&&!record.launch.badgeVerifiedAt&&record.consent===true&&record.accountId&&Number.isFinite(Date.parse(record.launch.scheduledAt));
+const awaitingBadge=record=>record&&record.status==='pending'&&record.launch?.kind==='free'&&!freeLaunchApproved(record)&&record.consent===true&&record.accountId&&Number.isFinite(Date.parse(record.launch.scheduledAt));
 export function reminderStage(record,now){
  const launch=freeLaunchTime(record),saved=Date.parse(record.date);
  if(launch>now&&launch-now<=3*DAY)return 'last-call';
@@ -71,7 +71,7 @@ if not raw then return 0 end
 local record = cjson.decode(raw)
 local launch = record.launch
 if record.status ~= 'pending' or type(launch) ~= 'table' or launch.kind ~= 'free'
- or type(launch.badgeVerifiedAt) ~= 'string' or type(launch.scheduledTimestamp) ~= 'number' then return 0 end
+ or (type(launch.badgeVerifiedAt) ~= 'string' and type(launch.ownerApprovedAt) ~= 'string') or type(launch.scheduledTimestamp) ~= 'number' then return 0 end
 return redis.call('ZADD', KEYS[2], 'NX', launch.scheduledTimestamp, record.id)
 `;
 export async function checkPendingBadges(redis,{now=Date.now(),readSite=readProjectSite,mail=sendBadgeEmail,maxChecks=40,budgetMs=75_000,silent=false}={}){
@@ -82,7 +82,7 @@ export async function checkPendingBadges(redis,{now=Date.now(),readSite=readProj
  for(const id of ids||[]){
   if(!validId(id))continue;
   let record;try{record=JSON.parse(await redis(['GET',`digivated:submission:${id}`]));}catch{continue;}
-  if(record?.status==='pending'&&record.launch?.kind==='free'&&record.launch.badgeVerifiedAt&&Number.isFinite(record.launch.scheduledTimestamp)){
+  if(record?.status==='pending'&&freeLaunchApproved(record)&&Number.isFinite(record.launch.scheduledTimestamp)){
    await redis(['EVAL',repairVerifiedQueue,2,`digivated:submission:${id}`,QUEUE]);
    continue;
   }

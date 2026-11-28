@@ -17,7 +17,7 @@ function launchDetails(record) {
   if (record.status !== 'pending') return 'Free launch. Live on its date.';
   const time = freeLaunchTime(record);
   const date = Number.isFinite(time) ? freeLaunchDay(time) + ' at 9:00 AM Eastern' : 'No launch date';
-  return record.launch.badgeVerifiedAt ? `Free. Badge verified. Locked for ${date}.` : `Free. Badge not on the site yet. Target ${date}.`;
+  return record.launch.ownerApprovedAt ? `Free. Owner approved. Locked for ${date}.` : record.launch.badgeVerifiedAt ? `Free. Badge verified. Locked for ${date}.` : `Free. Badge not on the site yet. Target ${date}.`;
 }
 function updatedLabel(date = new Date()) {
   return 'Updated ' + date.toLocaleTimeString(undefined, {hour:'2-digit', minute:'2-digit', second:'2-digit'});
