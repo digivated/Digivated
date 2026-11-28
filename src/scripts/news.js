@@ -9,7 +9,7 @@ if(root){
  const toolbar=$('.news-toolbar'),layout=$('.news-layout'),accessStatus=$('[data-news-access-status]'),sidebar=$('[data-news-sidebar]');
  const url=new URL(location.href);
  let category=Object.hasOwn(categories,url.searchParams.get('category'))?url.searchParams.get('category'):'all';
- let query=(url.searchParams.get('q')||'').slice(0,120),items=[],featured=null,next=null,controller,version=0,timer;
+ let query=(url.searchParams.get('q')||'').slice(0,120),items=[],indie=[],featured=null,next=null,controller,version=0,timer;
  const symbolOk=value=>/^[A-Z][A-Z0-9.-]{0,11}$/.test(value||'');
  let stock=symbolOk(url.searchParams.get('stock'))?url.searchParams.get('stock'):'',stockNames={},openStock='';
  search.value=query;
@@ -63,7 +63,11 @@ if(root){
  function renderStories(){
   feature.replaceChildren();feature.hidden=!featured;
   if(featured){feature.dataset.newsCat=featured.category;feature.append(featureContents(featured));}
-  const shown=items.filter(story=>story.id!==featured?.id);
+  const indieSection=$('[data-news-indie]'),indieFeed=$('[data-news-indie-feed]');
+  const showIndie=category==='all'&&!query&&!stock&&indie.length>0;
+  if(indieSection&&indieFeed){indieSection.hidden=!showIndie;indieFeed.replaceChildren();if(showIndie)for(const story of indie){const row=storyRow(story);row.id='indie-'+story.id;indieFeed.append(row);}}
+  const indieIds=new Set(showIndie?indie.map(story=>story.id):[]);
+  const shown=items.filter(story=>story.id!==featured?.id&&!indieIds.has(story.id));
   const groups=document.createDocumentFragment();let lastDay='';
   for(const story of shown){const date=timestamp(story.sourcePublishedAt),day=date===null?'':dayLabel(date);if(day!==lastDay){groups.append(element('h3',day,'news-day'));lastDay=day;}groups.append(storyRow(story));}
   feed.replaceChildren(groups);
@@ -115,8 +119,7 @@ if(root){
   }
   results.hidden=!query;results.textContent=query?(items.length?`Results for “${query}”`:`No results for “${query}”`):'';
  }
- // The check status line is intentionally not shown; the element stays hidden and can be driven from the back end later.
- function updated(){const line=$('[data-news-updated]');if(!line)return;line.hidden=true;line.replaceChildren();}
+ function updated(at,pipeline={}){const line=$('[data-news-updated]');if(!line)return;line.hidden=!at;line.textContent=at?`Sources checked ${relativeTime(at)}`:'';if(pipeline.status==='failed')line.textContent='Source check delayed';}
  function controls(){for(const button of root.querySelectorAll('[data-news-category]'))button.setAttribute('aria-pressed',String(button.dataset.newsCategory===category));}
  function updateLocation(push=false){const u=new URL(location.href);if(category==='all')u.searchParams.delete('category');else u.searchParams.set('category',category);if(query)u.searchParams.set('q',query);else u.searchParams.delete('q');if(stock)u.searchParams.set('stock',stock);else u.searchParams.delete('stock');history[push?'pushState':'replaceState'](null,'',u.pathname+u.search+u.hash);}
  let boot=null;try{const raw=document.getElementById('news-boot')?.textContent?.trim();if(raw)boot=JSON.parse(raw);}catch{boot=null;}
@@ -124,7 +127,7 @@ if(root){
   if(!Array.isArray(data.items))throw Error('Invalid news response');
   toolbar.hidden=false;layout.hidden=false;sidebar.hidden=false;accessStatus.hidden=true;$('[data-news-paused]').hidden=data.pipeline?.status!=='paused';
   const incoming=data.items.filter(valid),seen=new Set();items=(reset?incoming:[...items,...incoming]).filter(story=>{if(seen.has(story.id))return false;seen.add(story.id);return true;});
-  if(reset)featured=valid(data.featured)&&current(data.featured)?data.featured:null;
+  if(reset){featured=valid(data.featured)&&current(data.featured)?data.featured:null;indie=(Array.isArray(data.indie)?data.indie:[]).filter(valid).filter(story=>story.id!==featured?.id).slice(0,4);}
   next=data.next==null||String(data.next)===cursor?null:String(data.next);
   renderStories();if(reset)renderStocks(data.stocks);updated(data.updatedAt,data.pipeline||{});
   renderFilter();
@@ -149,6 +152,7 @@ if(root){
  search.addEventListener('input',()=>{query=search.value.trim().slice(0,120);if(query)stock='';change();});
  refresh.addEventListener('click',()=>{clearTimeout(timer);load(true);});more.addEventListener('click',()=>load(false));
  window.addEventListener('popstate',()=>{const u=new URL(location.href);category=Object.hasOwn(categories,u.searchParams.get('category'))?u.searchParams.get('category'):'all';query=(u.searchParams.get('q')||'').slice(0,120);stock=symbolOk(u.searchParams.get('stock'))?u.searchParams.get('stock'):'';search.value=query;controls();clearTimeout(timer);load(true);});
- window.addEventListener('pagehide',()=>{controller?.abort();clearTimeout(timer);});
+ const poll=setInterval(()=>{if(!document.hidden&&items.length<=20&&!query&&!stock&&!refresh.disabled)load(true);},180000);
+ window.addEventListener('pagehide',()=>{controller?.abort();clearTimeout(timer);clearInterval(poll);});
  controls();load(true);
 }

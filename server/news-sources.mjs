@@ -7,7 +7,14 @@ export const NEWS_SOURCES=Object.freeze([
  {id:'google',name:'Google',feedUrl:'https://blog.google/rss/',hosts:['blog.google'],category:'ai-tech'},
  {id:'openai',name:'OpenAI',feedUrl:'https://openai.com/news/rss.xml',hosts:['openai.com'],category:'ai-tech'},
  {id:'microsoft-security',name:'Microsoft Security',feedUrl:'https://www.microsoft.com/en-us/security/blog/feed/',hosts:['www.microsoft.com'],category:'security'},
- {id:'github',name:'GitHub',feedUrl:'https://github.blog/changelog/feed/',hosts:['github.blog'],category:'ai-tech'},
+ {id:'github',name:'GitHub',feedUrl:'https://github.blog/changelog/feed/',hosts:['github.blog'],category:'indie-building'},
+ {id:'vercel',name:'Vercel',feedUrl:'https://vercel.com/atom',hosts:['vercel.com'],category:'indie-building'},
+ {id:'supabase',name:'Supabase',feedUrl:'https://supabase.com/rss.xml',hosts:['supabase.com'],category:'indie-building'},
+ {id:'stripe',name:'Stripe',feedUrl:'https://stripe.com/blog/feed.rss',hosts:['stripe.com'],category:'indie-building'},
+ {id:'cloudflare',name:'Cloudflare',feedUrl:'https://blog.cloudflare.com/rss/',hosts:['blog.cloudflare.com'],category:'ai-tech'},
+ {id:'techcrunch-startups',name:'TechCrunch Startups',feedUrl:'https://techcrunch.com/category/startups/feed/',hosts:['techcrunch.com'],category:'indie-building',sourceType:'independent-reporting'},
+ {id:'engadget',name:'Engadget',feedUrl:'https://www.engadget.com/rss.xml',hosts:['www.engadget.com'],category:'ai-tech',sourceType:'independent-reporting'},
+ {id:'npr-business',name:'NPR Business',feedUrl:'https://feeds.npr.org/1006/rss.xml',hosts:['www.npr.org'],category:'markets',sourceType:'independent-reporting'},
  {id:'techcrunch',name:'TechCrunch',feedUrl:'https://techcrunch.com/feed/',hosts:['techcrunch.com'],category:'ai-tech',sourceType:'independent-reporting'},
  {id:'ars-technica',name:'Ars Technica',feedUrl:'https://feeds.arstechnica.com/arstechnica/technology-lab',hosts:['arstechnica.com'],category:'ai-tech',sourceType:'independent-reporting'},
  {id:'the-verge',name:'The Verge',feedUrl:'https://www.theverge.com/rss/index.xml',hosts:['www.theverge.com'],category:'ai-tech',sourceType:'independent-reporting'},
@@ -48,6 +55,9 @@ export function canonicalNewsUrl(value,source){
   if(source.id==='fed'&&!u.pathname.startsWith('/newsevents/pressreleases/'))return '';
   if(source.id==='sec'&&!u.pathname.startsWith('/newsroom/press-releases/'))return '';
   if(source.id==='github'&&!u.pathname.startsWith('/changelog/'))return '';
+  if(source.id==='vercel'&&!/^\/(?:blog|changelog)\//.test(u.pathname))return '';
+  if(['supabase','stripe'].includes(source.id)&&!u.pathname.startsWith('/blog/'))return '';
+  if(source.id==='npr-business'&&!/^\/20\d\d\/\d\d\/\d\d\//.test(u.pathname))return '';
   if(source.id==='bleepingcomputer'&&!u.pathname.startsWith('/news/'))return '';
   if(source.id==='prnewswire-earnings'&&!u.pathname.startsWith('/news-releases/'))return '';
   if(source.id==='globenewswire'&&!u.pathname.startsWith('/news-release/'))return '';
@@ -144,7 +154,14 @@ let summarySupported=!!sourceText&&norm(text).includes(norm(sourceText));
  // Article publication metadata is authoritative. Feeds may round or update
  // timestamps; a bounded six-hour discrepancy can still be source-confirmed.
  let matchingDate=original.find(date=>!feedTime||Math.abs(Date.parse(date)-Date.parse(feedTime))<=6*3600000);
+ // Stripe's RSS rounds to midnight UTC; the article's original timestamp is
+ // authoritative when it confirms that same publication day.
+ if(!matchingDate&&source.id==='stripe'&&feedTime?.endsWith('T00:00:00.000Z'))matchingDate=original.find(date=>date.slice(0,10)===feedTime.slice(0,10));
  let articlePublishedDate=null,timeSource='article_metadata';
+ if(!matchingDate&&!original.length&&feedTime&&source.id==='supabase'){
+  const days=[...html.matchAll(/["']datePublished["']\s*:\s*["'](\d{4}-\d{2}-\d{2})["']/g)].map(match=>match[1]);
+  if(days.includes(feedTime.slice(0,10))){matchingDate=feedTime;articlePublishedDate=feedTime.slice(0,10);timeSource='official_feed_with_article_date';}
+ }
  if(!matchingDate&&!original.length&&feedTime&&['fed','sec'].includes(source.id)){
   const rawDate=source.id==='fed'?html.match(/<p\b[^>]*class=["'][^"']*article__time[^"']*["'][^>]*>([^<]+)</i)?.[1]:html.match(/Washington[^<]{0,100}?,\s*([A-Z][a-z]{2,8}\.?\s+\d{1,2},\s+\d{4})/i)?.[1];
   const parsed=rawDate?Date.parse(plainText(rawDate)+' 12:00:00 GMT'):NaN;
@@ -161,6 +178,10 @@ let summarySupported=!!sourceText&&norm(text).includes(norm(sourceText));
 export async function collectCandidates({fetcher=fetch,now=Date.now(),knownUrls=[],maxPerSource=5,seen=null}={}){
  const known=new Set(knownUrls);
  const checkedAt=new Date(now).toISOString(),candidates=[],sources=[];
+ // Bound article requests across all feeds as coverage grows. A slow publisher
+ // cannot create hundreds of simultaneous requests or block other sources.
+ let active=0;const waiting=[];
+ const articleTask=async task=>{if(active>=12)await new Promise(resolve=>waiting.push(resolve));else active++;try{return await task();}finally{if(waiting.length)waiting.shift()();else active--;}};
  // Paused sources keep their trusted hosts (earlier stories stay valid) but are not fetched.
  // GlobeNewswire answers HTTP 403, Nasdaq refuses the feed fetch and PR Newswire answers HTTP 403 for every article from our servers; remove `paused` to retry.
  await Promise.all(NEWS_SOURCES.filter(source=>!source.paused).map(async source=>{
@@ -175,14 +196,14 @@ export async function collectCandidates({fetcher=fetch,now=Date.now(),knownUrls=
    let checked=new Set();if(seen){try{checked=await seen(fresh.map(c=>c.sourceUrl));}catch{checked=new Set();}}
    status.alreadyChecked=fresh.filter(c=>checked.has(c.sourceUrl)).length;
    const current=fresh.filter(c=>!checked.has(c.sourceUrl)).slice(0,Math.max(1,Math.min(15,maxPerSource)));
-   await Promise.all(current.map(async c=>{
+   await Promise.all(current.map(c=>articleTask(async()=>{
     try{const result=verifyArticle(c,await getText(c.sourceUrl,source,fetcher),checkedAt);candidates.push(result);if(result.evidence.verified)status.verified++;else{status.unverified++;tally(result);}}
     catch(error){status.unverified++;{const why=/^(source_http_\d{3}|source_too_large|source_url_not_allowed|source_redirect_limit)$/.test(error.message||'')?error.message:/timeout|abort/i.test(error.name+' '+error.message)?'timeout':'network';const key='article_fetch_'+why;status.why[key]=(status.why[key]||0)+1;}candidates.push({...c,sourceText:c.feedSummary,evidence:{verified:false,checkedAt,feedUrl:source.feedUrl,timePrecision:c.sourcePublishedAt?'second':'unknown',verificationReasons:['article_could_not_be_verified']}});}
-   }));
+   })));
   }catch(error){status.status='failed';status.error=/^(source_http_\d{3}|source_too_large|source_url_not_allowed|xml_entities_not_allowed|invalid_feed)$/.test(error.message||'')?error.message:'source_fetch_failed';}
   sources.push(status);
  }));
- return {candidates:candidates.sort((a,b)=>String(b.sourcePublishedAt||'').localeCompare(String(a.sourcePublishedAt||''))),sources:sources.sort((a,b)=>a.id.localeCompare(b.id)),checkedAt};
+ return {candidates:candidates.sort((a,b)=>String(b.sourcePublishedAt||'').localeCompare(String(a.sourcePublishedAt||''))||Number(b.category==='indie-building')-Number(a.category==='indie-building')),sources:sources.sort((a,b)=>a.id.localeCompare(b.id)),checkedAt};
 }
 
 export const isTrustedNewsUrl=url=>NEWS_SOURCES.some(source=>!!canonicalNewsUrl(url,source));

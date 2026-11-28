@@ -16,7 +16,7 @@ const STOP = new Set('with from that this after their about into over under have
 const ACTIONS = ['launch', 'ship', 'review', 'releas', 'introduc', 'acquir', 'breach', 'hack', 'exploit', 'patch', 'outage', 'disclos', 'announc', 'updat', 'fix'];
 const PRODUCTS = /^(claude|gemini|chatgpt|gpt|copilot|sora|llama|mistral|anthropic|openai|nvidia|deepseek)$/;
 
-export const NEWS_SOURCE_RUN_CAP = 2;
+export const NEWS_SOURCE_RUN_CAP = 6;
 export const NEWS_SOURCE_KEEP_IMPORTANCE = 80;
 export const NEWS_FEED_SOURCE_CAP = 3;
 export const NEWS_FEED_WINDOW = 20;
@@ -138,16 +138,10 @@ export function suppressFromFeed(record) {
   return isCorporateFluff(record) || isSmallIssuerWire(record);
 }
 
-// Twice-daily cron is 08:00 and 20:00 UTC (3:00 AM and 3:00 PM ET while standard time is in effect).
+// Keep the public check time aligned with the quarter-hour production cron.
 export function nextNewsCheck(now = Date.now()) {
-  const date = new Date(now);
-  for (let day = 0; day < 3; day += 1) {
-    for (const hour of [8, 20]) {
-      const candidate = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + day, hour, 0, 0, 0);
-      if (candidate > now) return new Date(candidate).toISOString();
-    }
-  }
-  return new Date(now + 12 * 3600000).toISOString();
+  const interval=15*60_000;
+  return new Date((Math.floor(now/interval)+1)*interval).toISOString();
 }
 
 function wordsOf(headline) {
@@ -170,7 +164,8 @@ export function sameNewsEvent(a, b) {
   const shared = leftWords.filter(word => rightWords.has(word));
   const sharedProduct = shared.some(word => PRODUCTS.test(word));
   const sharedAction = shared.some(word => ACTIONS.some(stem => word.startsWith(stem)));
-  if (sharedProduct && sharedAction) return true;
+  const specifics=shared.filter(word=>!PRODUCTS.test(word)&&!ACTIONS.some(stem=>word.startsWith(stem)));
+  if (sharedProduct && sharedAction && specifics.length>=2) return true;
   const union = new Set([...leftWords, ...rightWords]);
   return leftWords.length >= 4 && rightWords.size >= 4 && union.size > 0 && shared.length / union.size >= 0.55;
 }

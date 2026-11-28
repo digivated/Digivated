@@ -8,6 +8,7 @@ const CATEGORY_COPY = {
   'ai-tech': 'AI and technology news, with the original source and publication time.',
   markets: 'Markets news, with the original source and publication time.',
   security: 'Security news, with the original source and publication time.',
+  'indie-building': 'Indie building, product launches and discovery news for independent makers, with original sources and publication times.',
 };
 
 async function readJson(handler, url) {
@@ -24,11 +25,13 @@ function storyHtml(story) {
   return `<article class="news-story" data-news-cat="${escapeHtml(story.category)}"><div class="news-story-main"><div class="news-story-head"><span class="news-story-category">${escapeHtml(category)}</span></div><h3><a class="news-story-link" href="${escapeHtml(newsStoryPath(story))}">${escapeHtml(story.headline)}</a></h3>${summary ? `<p class="news-summary">${escapeHtml(summary)}</p>` : ''}<p class="news-story-meta">${escapeHtml(story.sourceName || '')}</p></div></article>`;
 }
 
-export function renderNewsIndex(template, { items = [], featured = null, category = 'all', boot = null } = {}) {
-  const list = (featured ? [featured, ...items.filter(item => item?.id !== featured.id)] : items).filter(item => item?.headline && item.id);
+export function renderNewsIndex(template, { items = [], featured = null, indie = [], category = 'all', boot = null } = {}) {
+  const showIndie=category==='all'&&!boot?.q&&!boot?.stock&&indie.length>0;
+  const indieIds=new Set(showIndie?indie.map(item=>item.id):[]);
+  const list = (featured ? [featured, ...items.filter(item => item?.id !== featured.id)] : items).filter(item => item?.headline && item.id&&!indieIds.has(item.id));
   const feed = list.map(storyHtml).join('');
   let html = template;
-  if (list.length) {
+  if (list.length||showIndie) {
     html = html.replace(/(<p\b[^>]*data-news-access-status[^>]*)>/, '$1 hidden>');
     html = html.replace(/(<p\b[^>]*data-news-access-status[^>]*>)[\s\S]*?(<\/p>)/, '$1$2');
     html = html.replace(/(<p\b[^>]*data-news-status[^>]*)>/, '$1 hidden>');
@@ -58,6 +61,10 @@ export function renderNewsIndex(template, { items = [], featured = null, categor
     if (html.includes('id="news-boot"')) html = html.replace(/(<script\b[^>]*id="news-boot"[^>]*>)[\s\S]*?(<\/script>)/, `$1${json}$2`);
     else html = html.replace('</head>', `<script type="application/json" id="news-boot">${json}</script></head>`);
   }
+  if(showIndie){
+    html=html.replace(/(<section\b[^>]*data-news-indie\b[^>]*)\shidden\b/,'$1');
+    html=html.replace(/(<div\b[^>]*data-news-indie-feed[^>]*>)[\s\S]*?(<\/div>)/,`$1${indie.map(storyHtml).join('')}$2`);
+  }
   return html;
 }
 
@@ -85,8 +92,8 @@ export function makeNewsPageHandler(deps = {}) {
       if (stock) params.set('stock', stock);
       const payload = await readJson(handler, `/api/news${params.size ? `?${params}` : ''}`);
       if (!payload?.items) return finish(template);
-      const boot = { items: payload.items, featured: payload.featured || null, stocks: payload.stocks || [], next: payload.next || null, pipeline: payload.pipeline || null, updatedAt: payload.updatedAt || null, category, q, stock };
-      return finish(renderNewsIndex(template, { items: payload.items, featured: payload.featured, category, boot }));
+      const boot = { items: payload.items, indie: payload.indie || [], featured: payload.featured || null, stocks: payload.stocks || [], next: payload.next || null, pipeline: payload.pipeline || null, updatedAt: payload.updatedAt || null, category, q, stock };
+      return finish(renderNewsIndex(template, { items: payload.items, indie: payload.indie || [], featured: payload.featured, category, boot }));
     } catch {
       res.setHeader('Cache-Control', 'no-store');
       return finish(template);

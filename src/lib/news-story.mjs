@@ -2,8 +2,8 @@
 // so a story looks and links the same everywhere.
 import { cardIconMarkup } from './card-icons.mjs';
 
-export const NEWS_CATEGORIES = { 'ai-tech': 'AI & Tech', markets: 'Markets', security: 'Security' };
-export const NEWS_CATEGORY_ICONS = { 'ai-tech': 'cpu', markets: 'chart', security: 'shield' };
+export const NEWS_CATEGORIES = { 'ai-tech': 'AI & Tech', markets: 'Markets', security: 'Security', 'indie-building': 'Indie Building' };
+export const NEWS_CATEGORY_ICONS = { 'ai-tech': 'cpu', markets: 'chart', security: 'shield', 'indie-building': 'layers' };
 const ID = /^[a-f0-9]{24}$/;
 
 export const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));

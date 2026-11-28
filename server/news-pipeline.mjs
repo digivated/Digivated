@@ -38,14 +38,14 @@ export async function runNewsIngest({env=process.env,redis,fetcher=fetch,now=Dat
    const values=await redis(['MGET',...urls.map(seenKey)]);
    return new Set(urls.filter((url,index)=>Array.isArray(values)&&values[index]));
   };
-  const [collection,snapshot]=await Promise.allSettled([collect({fetcher,now:started,knownUrls:existing.map(r=>r.sourceUrl),maxPerSource:backfill?15:8,seen}),marketTask]);
+  const [collection,snapshot]=await Promise.allSettled([collect({fetcher,now:started,knownUrls:existing.map(r=>r.sourceUrl),maxPerSource:backfill?15:10,seen}),marketTask]);
   if(snapshot.status==='fulfilled'){
    if(snapshot.value.items?.length)await redis(['SET',NEWS+'markets',JSON.stringify(snapshot.value),'EX',172800]);
    else report.errors.push('Market observations are unavailable; prior dated snapshot retained.');
   }else report.errors.push('Market observations could not be checked.');
   if(collection.status!=='fulfilled')throw Error('Source collection failed.');
   report.sources=collection.value.sources||[];
-  const candidates=(collection.value.candidates||[]).slice(0,backfill?150:120);
+  const candidates=(collection.value.candidates||[]).slice(0,backfill?300:240);
   const publishedBySource=new Map();
   for(const candidate of candidates){
    if(await redis(['GET',NEWS+'paused'])==='1'){report.status='paused';break;}

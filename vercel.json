@@ -239,7 +239,7 @@
     },
     {
       "path": "/api/news-ingest",
-      "schedule": "0 */2 * * *"
+      "schedule": "*/15 * * * *"
     },
     {
       "path": "/api/launch-queue",

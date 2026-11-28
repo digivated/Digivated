@@ -1,4 +1,27 @@
 import {test,expect} from '@playwright/test';
+for(const width of [390,1440])test(`Indie Building fits the News theme and filters without duplicate stories at ${width}px`,async({page})=>{
+ await page.setViewportSize({width,height:1000});
+ const at=new Date(Date.now()-3600000).toISOString();
+ const indie={id:'d'.repeat(24),headline:'New deployment pricing for independent builders',summary:'A verified platform update with original source details for software teams.',category:'indie-building',classification:'update',sourceName:'Vercel',sourceUrl:'https://vercel.com/changelog/build-pricing',sourcePublishedAt:at,publishedAt:at};
+ const security={...indie,id:'e'.repeat(24),headline:'A confirmed security patch for developers',category:'security'};
+ const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/api/news*',route=>{
+  const category=new URL(route.request().url()).searchParams.get('category');
+  return route.fulfill({json:{items:category==='indie-building'?[indie]:[indie,security],indie:[indie],featured:null,next:null,updatedAt:at,pipeline:{status:'ok'},stocks:[]}});
+ });
+ await page.goto('http://127.0.0.1:4321/news');
+ const section=page.locator('[data-news-indie]');
+ await expect(section).toBeVisible();await expect(section).toContainText('Indie building & product discovery');
+ expect((await section.locator('.news-story-main').boundingBox())!.width).toBeGreaterThan(240);
+ await expect(section.locator('.news-story-link')).toHaveAttribute('href',/\/news\/.*dddddddddddddddddddddddd$/);
+ await expect(page.locator('[data-news-feed]')).not.toContainText(indie.headline);
+ await expect(page.locator('[data-news-updated]')).toContainText('Sources checked');
+ await page.locator('[data-news-category="indie-building"]').click();
+ await expect(section).toBeHidden();await expect(page.locator('[data-news-feed]')).toContainText(indie.headline);
+ await expect(page.locator('[data-news-latest-title]')).toHaveText('Indie Building');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+ expect(errors).toEqual([]);
+});
 for(const width of [320,390,1440])test(`News access, categories and layout at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:900});
  await page.addInitScript(()=>sessionStorage.setItem('digivated-announcement-seen-v2','1'));

@@ -1,7 +1,7 @@
 import {createHash} from 'node:crypto';
 import {NEWS_SOURCES,canonicalNewsUrl,plainText} from './news-sources.mjs';
 import {isCorporateFluff,isSmallIssuerWire} from '../src/lib/news-editorial.mjs';
-export const POLICY_VERSION='news-verified-updates-v5';
+export const POLICY_VERSION='news-verified-updates-v6';
 export const BREAKING_MAX_AGE=6*3600000;
 export const NEWS_MAX_AGE=7*24*3600000;
 const negation=/\b(?:not|no|never)\b.{0,45}\b(?:actively exploited|active exploitation|confirmed breach|global outage)\b/i;
@@ -39,13 +39,19 @@ function usefulUpdate(candidate){
   if(/\b(?:reports?|announces?|releases?)\b.{0,100}\b(?:earnings|financial results|quarter|revenue|dividend|stock split|acquisition|merger|definitive agreement|regulatory approval)\b|\b(?:earnings|financial results|dividend|stock split)\b/i.test(h))return {importance:65,reason:'attributed_listed_company_announcement',breaking:false,category:'markets'};
   return null;
  }
- if(candidate.sourceId==='github')return {importance:58,reason:'official_developer_product_update',breaking:false,category:'ai-tech'};
+ if(candidate.sourceId==='github')return {importance:58,reason:'official_developer_product_update',breaking:false,category:'indie-building'};
+ if(candidate.category==='indie-building'){
+  const change=/\b(?:introduc\w*|launch\w*|ship\w*|releas\w*|announc\w*|new|now|adds?|changes?|updates?|pricing|billing|free tier|open.source|acquir\w*|raises?|funding|faster|supports?|available)\b/i.test(h);
+  const useful=/\b(?:developers?|builders?|founders?|indie|bootstrapp\w*|startups?|SaaS|products?|tools?|software|apps?|APIs?|SDKs?|database|auth|payments?|subscription|billing|pricing|deploy\w*|workflow|open.source|MCP|agents?)\b/i.test(text);
+  if(change&&useful&&!/\b(?:how to|tutorial|case study|webinar|summit|conference|customer story)\b/i.test(h))return {importance:63,reason:'verified_builder_product_update',breaking:false,category:'indie-building'};
+  return null;
+ }
  if(/\b(?:vulnerabilit(?:y|ies)|CVE-\d{4}|security flaw|security bug|security patch|security update|data breach|ransomware|cyberattack)\b/i.test(h)&&/\b(?:fix(?:es|ed)?|patch(?:es|ed)?|warns?|confirms?|discloses?|releases?|affect(?:s|ed)?|expos(?:es|ed)|breach)\b/i.test(h))return {importance:73,reason:'verified_security_update',breaking:false,category:'security'};
  if(/\b(?:how to|tips|protect|prevent|secure|avoid|defend)\b/i.test(h)&&/\b(?:phishing|ransomware|passwords?|passkeys|authentication|malware|security|cyber|scams?|accounts?)\b/i.test(text)){
   if(/disable.{0,30}(?:security|antivirus|defender)|turn off.{0,30}(?:security|antivirus)/i.test(text))return null;
   return {importance:55,reason:'source_checked_security_guidance',breaking:false,category:'security'};
  }
- const techSource=['google','openai','techcrunch','ars-technica','the-verge'].includes(candidate.sourceId);
+ const techSource=['google','openai','techcrunch','ars-technica','the-verge','cloudflare','engadget'].includes(candidate.sourceId);
  if(techSource&&/\b(?:launch(?:es|ed)?|introduc(?:es|ing)|announc(?:es|ing)|releas(?:es|ing)|rolls? out|now available|adds?|new features?|updates?|upgrades?|support(?:s)?|API|GPT-\d|Gemini|Copilot|Claude)\b/i.test(h)&&/\b(?:AI|artificial intelligence|model|app|software|hardware|chip|processor|device|phone|laptop|robot|developer|API|browser|cloud|feature|tool|coding|code|search|Android|Chrome|Gemini|GPT|Copilot|Claude|ChatGPT)\b/i.test(text))return {importance:62,reason:'verified_technology_product_update',breaking:false,category:'ai-tech'};
  return null;
 }
@@ -68,6 +74,7 @@ export function assessCandidate(candidate,{now=Date.now()}={}){
  if(routine.test(candidate.headline))return reject('routine_or_promotional_update');
  if(isCorporateFluff(candidate))return reject('corporate_blog_fluff');
  if(isSmallIssuerWire(candidate))return reject('small_issuer_wire');
+ if(candidate.category==='indie-building'&&!usefulUpdate(candidate))return reject('outside_indie_building_scope');
  if(['securityweek','the-register'].includes(candidate.sourceId)&&!/\b(?:vulnerabilit|exploit|breach|ransomware|malware|phishing|cyberattack|security patch|security update|data leak|attackers?|threat actor|CVE-\d{4})/i.test(text))return reject('outside_security_coverage');
  const guidance=/\b(?:how to|tips|tutorial|guide to|best practices)\b/i.test(candidate.headline);
  const significant=candidate.sourceType==='issuer-release'||guidance?usefulUpdate(candidate):materiality(candidate)||usefulUpdate(candidate);
@@ -81,12 +88,12 @@ export function assessCandidate(candidate,{now=Date.now()}={}){
    ? /\b(?:stocks?|shares?|markets?|bonds?|interest rates?|inflation|GDP|earnings|revenue|profit|oil|bitcoin|crypto|Fed|banks?|economy|jobs?|merger|acquisition|IPO|tariffs?)\b/i.test(headline)
    : candidate.category==='security'
     ? /\b(?:vulnerabilit\w*|exploits?|breach|ransomware|malware|phishing|cyberattacks?|security (?:flaw|patch|update)|data leak|CVE-\d{4}|hackers?|attackers?|threat actors?)\b/i.test(headline)
-    : /\b(?:AI|artificial intelligence|GPT|Gemini|Claude|OpenAI|Nvidia|Microsoft|Google|Apple|Meta|Amazon|software|apps?|devices?|chips?|browsers?|robots?|cloud|developers?|startups?|platforms?|technology|SteamOS|Siri)\b/i.test(headline)&&/\b(?:launch\w*|releas\w*|introduc\w*|updat\w*|announc\w*|add\w*|build\w*|expand\w*|bring\w*|coming|invest\w*|fund\w*|acquir\w*|develop\w*|racing|report\w*|chang\w*)\b/i.test(headline);
+    : /\b(?:AI|artificial intelligence|GPT|Gemini|Claude|OpenAI|Nvidia|Microsoft|Google|Apple|Meta|Amazon|software|apps?|devices?|chips?|browsers?|robots?|cloud|developers?|startups?|platforms?|technology|SteamOS|Siri)\b/i.test(headline)&&/\b(?:launch\w*|releas\w*|introduc\w*|updat\w*|announc\w*|add\w*|build\w*|expand\w*|bring\w*|coming|invest\w*|fund\w*|acquir\w*|develop\w*|racing|report\w*|chang\w*|blocks?|bans?|remov\w*|discontinu\w*|cuts?|adopts?|regulat\w*)\b/i.test(headline);
   if(!relevant)return reject('outside_editorial_scope');
  }
  const selected=significant||{importance:45,reason:'verified_source_update',breaking:false};
  const category=selected.category||(/\b(?:vulnerabilit\w*|zero.day|exploits?|breach|cyberattacks?|ransomware|threat actors?)\b/i.test(candidate.headline)?'security':candidate.category);
- if(!['ai-tech','markets','security'].includes(category))return review('category_unconfirmed');
+ if(!['ai-tech','markets','security','indie-building'].includes(category))return review('category_unconfirmed');
  const summary=(candidate.sourceType==='issuer-release'?'Company announcement: ':'')+excerpt(candidate.sourceText);
  if(summary.length<60)return review('source_summary_too_short');
  return {decision:'publish',classification:selected.breaking&&candidate.sourceType!=='independent-reporting'&&age<=BREAKING_MAX_AGE?'breaking':'update',category,summary,importance:selected.importance,reasons:[selected.reason],eventKey:newsEventKey(candidate),policyVersion:POLICY_VERSION};
