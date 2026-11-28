@@ -114,3 +114,23 @@ test('BetaKit full-text feed has a bounded allowance without raising article or 
  const oversized=await collectCandidates({fetcher:async url=>({...await fetcher(url),headers:{get:()=>url==='https://betakit.com/feed/'?'2000001':null}}),now});
  assert.equal(oversized.sources.find(s=>s.id==='betakit').error,'source_too_large');
 });
+
+test('SSR preserves dollar amounts and replacement tokens in headlines, summaries and boot JSON',()=>{
+ const headline="Founder raises $1.1M, keeps $2 and $& literal";
+ const item={...candidate(),id:'a'.repeat(24),headline,summary:"Pricing includes $1, $2, $& and $` without changing page markup.",publishedAt:at};
+ const template='<nav class="news-toolbar" hidden></nav><div class="news-layout" hidden><section data-news-indie hidden><div data-news-indie-feed></div></section><div data-news-feed aria-busy="true"></div><button data-news-more>More</button></div><script id="news-boot" type="application/json"></script>';
+ for(const indie of [[],[item]]){
+  const boot={items:[item],indie};const html=renderNewsIndex(template,{items:[item],indie,boot});
+  assert.equal((html.match(/data-news-feed\b/g)||[]).length,1);
+  assert.equal((html.match(/data-news-indie-feed\b/g)||[]).length,1);
+  assert.ok(html.includes('Founder raises $1.1M, keeps $2 and $&amp; literal'));
+  assert.deepEqual(JSON.parse(html.match(/<script[^>]*id="news-boot"[^>]*>([\s\S]*?)<\/script>/)[1]),boot);
+  assert.ok(html.includes('<button data-news-more>More</button>'));
+ }
+});
+
+test('SSR fallback boot insertion preserves dollar replacement tokens too',()=>{
+ const boot={items:[],q:'$& $` $1'};
+ const html=renderNewsIndex('<head></head><body></body>',{boot});
+ assert.deepEqual(JSON.parse(html.match(/<script[^>]*id="news-boot"[^>]*>([\s\S]*?)<\/script>/)[1]),boot);
+});

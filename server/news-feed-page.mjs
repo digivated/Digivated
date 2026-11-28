@@ -39,7 +39,7 @@ export function renderNewsIndex(template, { items = [], featured = null, indie =
     html = html.replace(/(<nav\b[^>]*class="news-toolbar"[^>]*)\shidden\b/, '$1');
     html = html.replace(/(<div\b[^>]*class="news-layout"[^>]*)\shidden\b/, '$1');
     html = html.replace(/(<div\b[^>]*data-news-feed\b[^>]*?)\saria-busy="true"/, '$1 aria-busy="false"');
-    html = html.replace(/(<div\b[^>]*data-news-feed\b[^>]*>)[\s\S]*?(<\/div>)/, `$1${feed}$2`);
+    html = html.replace(/(<div\b[^>]*data-news-feed\b[^>]*>)[\s\S]*?(<\/div>)/, (_,open,close)=>open+feed+close);
   }
   if (category !== 'all' && CATEGORY_COPY[category]) {
     const label = NEWS_CATEGORIES[category];
@@ -58,12 +58,12 @@ export function renderNewsIndex(template, { items = [], featured = null, indie =
   }
   if (boot) {
     const json = JSON.stringify(boot).replace(/</g, '\\u003c');
-    if (html.includes('id="news-boot"')) html = html.replace(/(<script\b[^>]*id="news-boot"[^>]*>)[\s\S]*?(<\/script>)/, `$1${json}$2`);
-    else html = html.replace('</head>', `<script type="application/json" id="news-boot">${json}</script></head>`);
+    if (html.includes('id="news-boot"')) html = html.replace(/(<script\b[^>]*id="news-boot"[^>]*>)[\s\S]*?(<\/script>)/, (_,open,close)=>open+json+close);
+    else html = html.replace('</head>', () => `<script type="application/json" id="news-boot">${json}</script></head>`);
   }
   if(showIndie){
     html=html.replace(/(<section\b[^>]*data-news-indie\b[^>]*)\shidden\b/,'$1');
-    html=html.replace(/(<div\b[^>]*data-news-indie-feed[^>]*>)[\s\S]*?(<\/div>)/,`$1${indie.map(storyHtml).join('')}$2`);
+    html=html.replace(/(<div\b[^>]*data-news-indie-feed[^>]*>)[\s\S]*?(<\/div>)/,(_,open,close)=>open+indie.map(storyHtml).join('')+close);
   }
   return html;
 }
