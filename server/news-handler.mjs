@@ -2,7 +2,7 @@ import {NEWS,CATEGORIES,newsStatus} from './news-store.mjs';
 import {redisClient} from './submissions.mjs';
 import {safeSourceUrl,validNewsId} from '../src/lib/news-story.mjs';
 import {stocksInTheNews,storyMentions,validStockSymbol} from '../src/lib/news-companies.mjs';
-import {clusterNewsItems,headlineLocked,nextNewsCheck,pickFeatured,presentHeadline,presentSummary,suppressFromFeed} from '../src/lib/news-editorial.mjs';
+import {clusterNewsItems,diversifyBySource,headlineLocked,nextNewsCheck,pickFeatured,presentHeadline,presentSummary,suppressFromFeed} from '../src/lib/news-editorial.mjs';
 const parse=value=>{try{return value?JSON.parse(value):null;}catch{return null;}};
 // One published story plus a few others to read next (same topic first).
 export async function loadNewsStory(redis,id,now=Date.now()){
@@ -32,6 +32,11 @@ export function assembleNews(records,{now=Date.now(),category='all',q='',stock='
  const ordered=clustered;
  const featured=pickFeatured(ordered,now);
  return {items:ordered.slice(cursor,cursor+limit).map(withoutRank),featured:withoutRank(featured),next:cursor+limit<ordered.length?String(cursor+limit):null,ordered};
+}
+// Spotlight diversity is separate from Latest, which remains chronological.
+export function indieSpotlight(records,{now=Date.now(),excludeId=null}={}){
+ const recent=assembleNews(records,{now,category:'indie-building',limit:500}).items.filter(item=>item.id!==excludeId&&now-Date.parse(item.sourcePublishedAt)<=7*86400000);
+ return diversifyBySource(recent,{windowSize:4,cap:2,keepImportance:101}).slice(0,4);
 }
 export function makeNewsHandler(deps={}){
  return async(req,res)=>{
@@ -64,7 +69,7 @@ export function makeNewsHandler(deps={}){
    if(markets.updatedAt&&now-Date.parse(markets.updatedAt)>48*3600000)markets={...markets,status:'stale'};
    // Stocks in the news looks at every recent story, so it holds steady while readers filter.
    let stocks=[];try{stocks=stocksInTheNews(all,{now});}catch{}
-   const indie=assembleNews(all,{now,category:'indie-building',limit:5}).items.filter(item=>item.id!==feed.featured?.id&&now-Date.parse(item.sourcePublishedAt)<=7*86400000).slice(0,4);
+   const indie=indieSpotlight(all,{now,excludeId:feed.featured?.id});
    return send(200,{items:feed.items,indie,stocks,featured:feed.featured,next:feed.next,markets,updatedAt:status.lastCheckedAt,pipeline:{lastCheckedAt:status.lastCheckedAt,status:status.paused?'paused':status.status,nextCheckAt:nextNewsCheck(now)}});
   }catch{return send(503,{error:'News is temporarily unavailable. Please try again shortly.'});}
  };

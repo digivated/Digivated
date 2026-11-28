@@ -1,7 +1,7 @@
 import {createHash} from 'node:crypto';
 import {NEWS_SOURCES,canonicalNewsUrl,plainText} from './news-sources.mjs';
 import {isCorporateFluff,isSmallIssuerWire} from '../src/lib/news-editorial.mjs';
-export const POLICY_VERSION='news-verified-updates-v6';
+export const POLICY_VERSION='news-verified-updates-v7';
 export const BREAKING_MAX_AGE=6*3600000;
 export const NEWS_MAX_AGE=7*24*3600000;
 const negation=/\b(?:not|no|never)\b.{0,45}\b(?:actively exploited|active exploitation|confirmed breach|global outage)\b/i;
@@ -41,8 +41,8 @@ function usefulUpdate(candidate){
  }
  if(candidate.sourceId==='github')return {importance:58,reason:'official_developer_product_update',breaking:false,category:'indie-building'};
  if(candidate.category==='indie-building'){
-  const change=/\b(?:introduc\w*|launch\w*|ship\w*|releas\w*|announc\w*|new|now|adds?|changes?|updates?|pricing|billing|free tier|open.source|acquir\w*|raises?|funding|faster|supports?|available)\b/i.test(h);
-  const useful=/\b(?:developers?|builders?|founders?|indie|bootstrapp\w*|startups?|SaaS|products?|tools?|software|apps?|APIs?|SDKs?|database|auth|payments?|subscription|billing|pricing|deploy\w*|workflow|open.source|MCP|agents?)\b/i.test(text);
+  const change=/\b(?:introduc\w*|launch\w*|ship\w*|releas\w*|announc\w*|new|now|more|adds?|changes?|updates?|pricing|billing|free tier|open.source|acquir\w*|raises?|funding|faster|supports?|available|expands?|growth|revenue|profitable|profitability|milestone|shuts? down|closes?|sunsets?|discontinues?|opens?|rolls? out|enables?|integrat\w*|secures?|bootstrapp\w*|reaches?|hits?|sells?|sold|regulat\w*)\b/i.test(h);
+  const useful=/\b(?:developers?|builders?|founders?|indie|bootstrapp\w*|startups?|SaaS|products?|tools?|software|apps?|APIs?|SDKs?|database|auth|payments?|subscription|billing|pricing|deploy\w*|workflow|open.source|MCP|agents?|creators?|publishing|publishers?|newsletters?|memberships?|ecommerce|e.commerce|design|editors?|no.code|low.code|marketplaces?|monetiz\w*|distribution|customer acquisition|founder.led)\b/i.test(text);
   if(change&&useful&&!/\b(?:how to|tutorial|case study|webinar|summit|conference|customer story)\b/i.test(h))return {importance:63,reason:'verified_builder_product_update',breaking:false,category:'indie-building'};
   return null;
  }

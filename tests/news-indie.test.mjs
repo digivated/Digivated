@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { NEWS_SOURCES, collectCandidates, verifyArticle } from '../server/news-sources.mjs';
 import { assessCandidate } from '../server/news-verification.mjs';
-import { assembleNews } from '../server/news-handler.mjs';
+import { assembleNews, indieSpotlight } from '../server/news-handler.mjs';
 import { sameNewsEvent, nextNewsCheck } from '../src/lib/news-editorial.mjs';
 import { renderNewsIndex } from '../server/news-feed-page.mjs';
 
@@ -66,4 +66,51 @@ test('quarter-hour scheduling matches the next-check timestamp',async()=>{
  const config=JSON.parse(await readFile(new URL('../vercel.json',import.meta.url),'utf8'));
  assert.equal(config.crons.find(x=>x.path==='/api/news-ingest').schedule,'*/15 * * * *');
  assert.equal(nextNewsCheck(Date.parse('2026-11-25T12:01:00Z')),'2026-11-25T12:15:00.000Z');
+});
+
+test('broader indie coverage includes founder business, creator publishing and distribution changes',()=>{
+ const stories=[
+  {sourceId:'ghost',sourceUrl:'https://ghost.org/changelog/editor-controls/',headline:'More visibility controls for editor cards',sourceText:'Publishers and creators can control which newsletter members see individual editor cards, supporting paid memberships and their independent publishing businesses.'},
+  {sourceId:'tech-eu',sourceType:'independent-reporting',sourceUrl:'https://tech.eu/2026/11/25/bootstrap-milestone/',headline:'Bootstrapped startup reaches profitability with 10000 subscribers',sourceText:'The independent founder confirmed the software startup is profitable after growing subscription revenue and serving ten thousand paying customers without venture funding.'},
+  {sourceId:'betakit',sourceType:'independent-reporting',sourceUrl:'https://betakit.com/founder-acquisition/',headline:'Founder sells newsletter software business',sourceText:'The founder sold the newsletter software business to another independent company. Existing customers will retain their subscription pricing under the signed acquisition agreement.'},
+  {sourceId:'thenextweb',sourceType:'independent-reporting',sourceUrl:'https://thenextweb.com/news/marketplace-fees',headline:'Marketplace changes fees for independent creators',sourceText:'The marketplace updated the fees creators pay when selling their products. The new pricing applies to paid memberships and digital products sold through its distribution platform.'}
+ ];
+ for(const story of stories){const result=assessCandidate(candidate(story),{now});assert.equal(result.decision,'publish',story.headline);assert.equal(result.category,'indie-building');assert.equal(result.classification,'update');}
+ for(const extra of [
+  {headline:'Startup might be acquired after funding talks'},
+  {headline:'Sponsored: a new creator tool'},
+  {headline:'Weekly roundup of founder launches'},
+  {headline:'How to build a newsletter business'},
+  {headline:'Electric cars beat petrol sales',sourceText:'Electric vehicle sales exceeded petrol and diesel sales across European markets during the quarter, according to the latest registration data.'},
+  {evidence:{verified:false,timePrecision:'second'}}
+ ])assert.notEqual(assessCandidate(candidate(extra),{now}).decision,'publish');
+});
+
+test('new indie feeds keep article URLs on their approved publisher and article paths',()=>{
+ for(const id of ['ghost','tech-eu','betakit','thenextweb']){
+  const source=NEWS_SOURCES.find(s=>s.id===id);assert.ok(source&&!source.paused);
+  assert.throws(()=>verifyArticle(candidate({sourceId:id,sourceUrl:'https://example.com/article'}),'<h1>New product</h1>'),/source_url_not_allowed/);
+ }
+ for(const [id,url] of [['ghost','https://ghost.org/pricing/'],['tech-eu','https://tech.eu/about/'],['thenextweb','https://thenextweb.com/conference/']])assert.throws(()=>verifyArticle(candidate({sourceId:id,sourceUrl:url}),''),/source_url_not_allowed/);
+});
+
+
+test('indie spotlight makes room for broader publishers without reordering Latest or losing sparse coverage',()=>{
+ const records=Array.from({length:6},(_,i)=>({...candidate(),id:String(i).padStart(24,'0'),headline:`Distinct creator product ${i}`,sourcePublishedAt:new Date(now-i*60000).toISOString(),publishedAt:at}));
+ records.push({...records[0],id:'e'.repeat(24),sourceName:'Ghost',headline:'New publishing controls for newsletters',sourcePublishedAt:new Date(now-3600000).toISOString()});
+ records.push({...records[0],id:'f'.repeat(24),sourceName:'BetaKit',headline:'Bootstrapped founder sells independent software business',sourcePublishedAt:new Date(now-7200000).toISOString()});
+ assert.deepEqual(indieSpotlight(records,{now}).map(x=>x.sourceName),['Vercel','Vercel','Ghost','BetaKit']);
+ assert.deepEqual(assembleNews(records,{now}).items.map(x=>x.id),records.map(x=>x.id));
+ assert.equal(indieSpotlight(records.slice(0,4),{now}).length,4);
+ assert.ok(!indieSpotlight(records,{now,excludeId:records[0].id}).some(x=>x.id===records[0].id));
+ assert.equal(indieSpotlight(records,{now:now+8*86400000}).length,0);
+});
+
+test('BetaKit full-text feed has a bounded allowance without raising article or other feed limits',async()=>{
+ const fetcher=async url=>({ok:true,status:200,headers:{get:key=>key==='content-length'&&['https://betakit.com/feed/','https://ghost.org/changelog/rss/'].includes(url)?'1700000':null},text:async()=>'<rss><channel></channel></rss>'});
+ const result=await collectCandidates({fetcher,now});
+ assert.equal(result.sources.find(s=>s.id==='betakit').status,'ok');
+ assert.equal(result.sources.find(s=>s.id==='ghost').error,'source_too_large');
+ const oversized=await collectCandidates({fetcher:async url=>({...await fetcher(url),headers:{get:()=>url==='https://betakit.com/feed/'?'2000001':null}}),now});
+ assert.equal(oversized.sources.find(s=>s.id==='betakit').error,'source_too_large');
 });
