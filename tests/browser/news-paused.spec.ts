@@ -1,3 +1,5 @@
+import {readFile} from 'node:fs/promises';
+import {renderNewsIndex} from '../../server/news-feed-page.mjs';
 import {test,expect} from '@playwright/test';
 for(const width of [390,1440])test(`Indie Building fits the News theme and filters without duplicate stories at ${width}px`,async({page})=>{
  await page.setViewportSize({width,height:1000});
@@ -99,4 +101,24 @@ test('Markets labels issuer announcements and explicit tickers for members',asyn
  await expect(page.locator('.news-story')).toContainText('Company announcement');
  await expect(page.locator('.news-story')).toContainText('NASDAQ: SMALL');
  await expect(page.locator('.news-story')).toContainText('Example reports');
+});
+
+
+test('server-rendered dollar amounts preserve controls and hydrate into working category filters',async({page})=>{
+ const at=new Date().toISOString();
+ const story={id:'c'.repeat(24),headline:'Founder raises $1.1M for independent creator tools',summary:'The founder raised $1.1M to expand the creator software product, while keeping the $2 monthly subscription tier available for existing customers.',category:'indie-building',classification:'update',sourceName:'Tech.eu',sourceUrl:'https://tech.eu/2026/11/28/creator-tools/',sourcePublishedAt:at,publishedAt:at};
+ const payload={items:[story],indie:[story],featured:null,next:null,updatedAt:at,pipeline:{status:'ok'},stocks:[]};
+ const template=await readFile('server/generated/news.html','utf8');
+ const html=renderNewsIndex(template,{...payload,boot:payload});
+ const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.route('**/api/news*',route=>route.fulfill({json:payload}));
+ await page.route('http://127.0.0.1:4321/news',route=>route.fulfill({contentType:'text/html',body:html}));
+ await page.goto('http://127.0.0.1:4321/news');
+ await expect(page.locator('[data-news-updated]')).toContainText('Sources checked');
+ await expect(page.locator('[data-news-indie]')).toContainText(story.headline);
+ await page.locator('[data-news-category="indie-building"]').click();
+ await expect(page.locator('[data-news-indie]')).toBeHidden();
+ await expect(page.locator('[data-news-feed]')).toContainText(story.headline);
+ await expect(page.locator('[data-news-more]')).toHaveCount(1);
+ expect(errors).toEqual([]);
 });
