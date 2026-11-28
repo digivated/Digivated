@@ -13,6 +13,10 @@ export const NEWS_SOURCES=Object.freeze([
  {id:'stripe',name:'Stripe',feedUrl:'https://stripe.com/blog/feed.rss',hosts:['stripe.com'],category:'indie-building'},
  {id:'cloudflare',name:'Cloudflare',feedUrl:'https://blog.cloudflare.com/rss/',hosts:['blog.cloudflare.com'],category:'ai-tech'},
  {id:'techcrunch-startups',name:'TechCrunch Startups',feedUrl:'https://techcrunch.com/category/startups/feed/',hosts:['techcrunch.com'],category:'indie-building',sourceType:'independent-reporting'},
+ {id:'ghost',name:'Ghost',feedUrl:'https://ghost.org/changelog/rss/',hosts:['ghost.org'],category:'indie-building'},
+ {id:'tech-eu',name:'Tech.eu',feedUrl:'https://tech.eu/feed/',hosts:['tech.eu'],category:'indie-building',sourceType:'independent-reporting'},
+ {id:'betakit',name:'BetaKit',feedLimit:2_000_000,feedUrl:'https://betakit.com/feed/',hosts:['betakit.com'],category:'indie-building',sourceType:'independent-reporting'},
+ {id:'thenextweb',name:'The Next Web',feedUrl:'https://thenextweb.com/feed',hosts:['thenextweb.com'],category:'indie-building',sourceType:'independent-reporting'},
  {id:'engadget',name:'Engadget',feedUrl:'https://www.engadget.com/rss.xml',hosts:['www.engadget.com'],category:'ai-tech',sourceType:'independent-reporting'},
  {id:'npr-business',name:'NPR Business',feedUrl:'https://feeds.npr.org/1006/rss.xml',hosts:['www.npr.org'],category:'markets',sourceType:'independent-reporting'},
  {id:'techcrunch',name:'TechCrunch',feedUrl:'https://techcrunch.com/feed/',hosts:['techcrunch.com'],category:'ai-tech',sourceType:'independent-reporting'},
@@ -57,6 +61,9 @@ export function canonicalNewsUrl(value,source){
   if(source.id==='github'&&!u.pathname.startsWith('/changelog/'))return '';
   if(source.id==='vercel'&&!/^\/(?:blog|changelog)\//.test(u.pathname))return '';
   if(['supabase','stripe'].includes(source.id)&&!u.pathname.startsWith('/blog/'))return '';
+  if(source.id==='ghost'&&!u.pathname.startsWith('/changelog/'))return '';
+  if(source.id==='tech-eu'&&!/^\/20\d\d\/\d\d\/\d\d\//.test(u.pathname))return '';
+  if(source.id==='thenextweb'&&!u.pathname.startsWith('/news/'))return '';
   if(source.id==='npr-business'&&!/^\/20\d\d\/\d\d\/\d\d\//.test(u.pathname))return '';
   if(source.id==='bleepingcomputer'&&!u.pathname.startsWith('/news/'))return '';
   if(source.id==='prnewswire-earnings'&&!u.pathname.startsWith('/news-releases/'))return '';
@@ -188,7 +195,7 @@ export async function collectCandidates({fetcher=fetch,now=Date.now(),knownUrls=
   const status={id:source.id,name:source.name,status:'ok',checkedAt,feedUrl:source.feedUrl,found:0,verified:0,unverified:0,alreadyChecked:0,why:{}};
   const tally=result=>{for(const reason of result.evidence?.verificationReasons||[])status.why[reason]=(status.why[reason]||0)+1;};
   try{
-   const entries=parseFeed(await getText(source.feedUrl,source,fetcher),source);status.found=entries.length;
+   const entries=parseFeed(await getText(source.feedUrl,source,fetcher,source.feedLimit||LIMIT),source);status.found=entries.length;
    // The scheduled run checks a few items per publisher; the one-time starter
    // backfill can look farther into each feed without altering the source rules.
    const fresh=entries.filter(c=>!known.has(c.sourceUrl)&&(!c.sourcePublishedAt||(Date.parse(c.sourcePublishedAt)>=now-7*24*3600000&&Date.parse(c.sourcePublishedAt)<=now+300000)));
