@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 194 194" role="img" aria-label="tunenoodle">
+  <defs>
+    <linearGradient id="noodle-ink" gradientUnits="userSpaceOnUse" x1="32" y1="40" x2="169" y2="131">
+      <stop offset="0" stop-color="#6aa9ff"/>
+      <stop offset="0.5" stop-color="#9564f6"/>
+      <stop offset="1" stop-color="#f28fbd"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(0 16.5)">
+    <path fill="url(#noodle-ink)" d="M23 132L53 46C58 31 70 26 81 33C94 42 80 66 67 82L61 98C83 66 101 45 124 50C150 56 140 85 132 105C125 122 127 132 141 124C151 114 169 96 181 84C169 96 156 125 143 138C134 147 126 146 121 144C101 138 108 116 117 93C123 78 124 67 118 65C104 61 76 97 53 136Z"/>
+    <path fill="#f5d907" d="M35 74C9 63 13 34 37 21C62 8 99 15 109 34C120 55 99 72 80 66L85 55C99 55 105 46 99 36C91 21 64 22 46 32C27 43 25 58 40 64Z"/>
+  </g>
+</svg>

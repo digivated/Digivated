@@ -31,7 +31,7 @@ test('public projects need an image and a usable destination', () => {
   assert.equal(projectPublic(record('missing-image', { image: '' })), null);
   assert.equal(projectPublic(record('broken-link', { url: 'javascript:alert(1)' })), null);
   assert.equal(projectPublic(record('empty-link', { url: '' })), null);
-  assert.equal(projectPublic(record('valid')).image, '/api/projects?image=valid');
+  assert.match(projectPublic(record('valid')).image, /^\/api\/projects\?image=valid&v=[a-f0-9]{12}$/);
 });
 
 test('filtered raw pages still expose later projects and featured entries', async () => {
