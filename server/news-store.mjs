@@ -2,7 +2,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {AdminError} from './admin-auth.mjs';
 import {normalizeHeadline,normalizeSummary,whyItMattersLine} from '../src/lib/news-editorial.mjs';
 export const NEWS='digivated:news:';
-export const CATEGORIES=['ai-tech','markets','security'];
+export const CATEGORIES=['ai-tech','markets','security','indie-building'];
 export const newsKey=id=>NEWS+'story:'+id;
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const ID=/^[a-f0-9]{24}$/;

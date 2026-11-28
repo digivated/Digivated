@@ -120,14 +120,14 @@ test('a source cannot crowd the latest window unless the story is important', ()
   assert.ok(shown.length <= 4);
   assert.ok(shown.some(item => item.id === 'major'));
   assert.equal(ordered.filter(item => item.sourceName === 'Google').length, 9);
-  assert.equal(sourceSlotOpen(new Map([['google', 2]]), 'google', 45), false);
-  assert.equal(sourceSlotOpen(new Map([['google', 2]]), 'google', 90), true);
+  assert.equal(sourceSlotOpen(new Map([['google', 6]]), 'google', 45), false);
+  assert.equal(sourceSlotOpen(new Map([['google', 6]]), 'google', 90), true);
 });
 
-test('the next check is the following 08:00 or 20:00 UTC slot', () => {
-  assert.equal(nextNewsCheck(Date.parse('2026-11-24T18:00:00.000Z')), '2026-11-24T20:00:00.000Z');
-  assert.equal(nextNewsCheck(Date.parse('2026-11-24T20:00:00.000Z')), '2026-11-25T08:00:00.000Z');
-  assert.equal(nextNewsCheck(Date.parse('2026-11-24T21:30:00.000Z')), '2026-11-25T08:00:00.000Z');
+test('the next check is the following quarter-hour slot', () => {
+  assert.equal(nextNewsCheck(Date.parse('2026-11-24T18:00:00.000Z')), '2026-11-24T18:15:00.000Z');
+  assert.equal(nextNewsCheck(Date.parse('2026-11-24T20:00:00.000Z')), '2026-11-24T20:15:00.000Z');
+  assert.equal(nextNewsCheck(Date.parse('2026-11-24T21:30:00.000Z')), '2026-11-24T21:45:00.000Z');
 });
 
 test('why it matters is a specific line or an empty hook', () => {
@@ -173,12 +173,15 @@ test('one ingest run caps a single source and still publishes an important extra
     'Google releases Android privacy controls for devices',
     'Google announces Pixel camera update for phones',
     'Google adds Chrome reading mode for the browser',
+    'Google expands cloud observability for developers',
+    'Google launches Docs offline export',
+    'Google introduces browser hardware acceleration',
     'Introducing Gemini 9',
   ];
   const candidates = headlines.map((headline, index) => ({
     sourceId: 'google', sourceName: 'Google', sourceType: 'official-publisher', category: 'ai-tech',
     sourceUrl: `https://blog.google/products/item-${index}/`,
-    headline, sourceText: index === 4 ? 'Introducing Gemini 9, a new flagship model that is now available to developers and customers.' : text,
+    headline, sourceText: index === 7 ? 'Introducing Gemini 9, a new flagship model that is now available to developers and customers.' : text,
     sourcePublishedAt: at, evidence,
   }));
   const redis = async command => {
@@ -194,8 +197,8 @@ test('one ingest run caps a single source and still publishes an important extra
     collect: async () => ({ candidates, sources: [{ status: 'ok' }] }),
     markets: async () => ({ items: [] }),
   });
-  assert.equal(report.published, 3);
-  assert.equal(report.skipped, 2);
+  assert.equal(report.published, 7);
+  assert.equal(report.skipped, 1);
 });
 
 test('the public feed orders by source time, skips wire fluff, and reports the next check', async () => {
@@ -233,7 +236,7 @@ test('the public feed orders by source time, skips wire fluff, and reports the n
   assert.deepEqual(data.items.map(item => item.id), [recent.id, stale.id]);
   assert.equal(data.featured?.id, recent.id);
   assert.equal(data.pipeline.status, 'partial');
-  assert.equal(data.pipeline.nextCheckAt, '2026-11-24T20:00:00.000Z');
+  assert.equal(data.pipeline.nextCheckAt, '2026-11-24T18:15:00.000Z');
   assert.equal(headers['Cache-Control'].includes('no-store'), true);
 });
 

@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id);
 const state={csrf:'',items:[],next:null,paused:false,record:null,busy:false,listRequest:0,recordRequest:0};
-const categories={'ai-tech':'AI / Tech',markets:'Markets',security:'Security'};
+const categories={'ai-tech':'AI / Tech',markets:'Markets',security:'Security','indie-building':'Indie Building'};
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;};
 const date=value=>{if(typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value))return new Date(value+'T12:00:00Z').toLocaleDateString(undefined,{dateStyle:'medium',timeZone:'UTC'});const parsed=new Date(value);return value&&Number.isFinite(parsed.getTime())?parsed.toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'}):'Not recorded';};
 function status(message,editor=false){$(editor?'news-review-status':'news-owner-status').textContent=message;}
